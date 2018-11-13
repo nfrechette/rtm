@@ -27,8 +27,8 @@
 
 #include <catch.hpp>
 
-#include <rtm/vector4_32.h>
-#include <rtm/vector4_64.h>
+#include <rtm/vector4f.h>
+#include <rtm/vector4d.h>
 #include <rtm/quat_32.h>
 #include <rtm/quat_64.h>
 

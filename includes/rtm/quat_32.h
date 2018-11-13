@@ -28,7 +28,7 @@
 #include "rtm/error.h"
 #include "rtm/math.h"
 #include "rtm/scalar_32.h"
-#include "rtm/vector4_32.h"
+#include "rtm/vector4f.h"
 #include "rtm/impl/memory_utils.h"
 
 namespace rtm

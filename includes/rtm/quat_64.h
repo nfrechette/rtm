@@ -28,7 +28,7 @@
 #include "rtm/error.h"
 #include "rtm/math.h"
 #include "rtm/scalar_64.h"
-#include "rtm/vector4_64.h"
+#include "rtm/vector4d.h"
 #include "rtm/impl/memory_utils.h"
 
 namespace rtm
@@ -193,7 +193,7 @@ namespace rtm
 		double bias = dot >= 0.0 ? 1.0 : -1.0;
 		// TODO: Test with this instead: Rotation = (B * Alpha) + (A * (Bias * (1.f - Alpha)));
 		vector4d value = vector_add(start_vector, vector_mul(vector_sub(vector_mul(end_vector, bias), start_vector), alpha));
-		//Vector4_64 value = vector_add(vector_mul(end_vector, alpha), vector_mul(start_vector, bias * (1.0 - alpha)));
+		//vector4d value = vector_add(vector_mul(end_vector, alpha), vector_mul(start_vector, bias * (1.0 - alpha)));
 		return quat_normalize(vector_to_quat(value));
 	}
 
