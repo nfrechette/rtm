@@ -65,7 +65,7 @@ namespace rtm
 		return quat_set(0.0f, 0.0f, 0.0f, 1.0f);
 	}
 
-	inline Quat_32 RTM_SIMD_CALL vector_to_quat(Vector4_32Arg0 input)
+	inline Quat_32 RTM_SIMD_CALL vector_to_quat(vector4f_arg0 input)
 	{
 #if defined(RTM_SSE2_INTRINSICS) || defined(RTM_NEON_INTRINSICS)
 		return input;
@@ -242,7 +242,7 @@ namespace rtm
 #endif
 	}
 
-	inline Vector4_32 RTM_SIMD_CALL quat_rotate(Quat_32Arg0 rotation, Vector4_32Arg1 vector)
+	inline vector4f RTM_SIMD_CALL quat_rotate(Quat_32Arg0 rotation, vector4f_arg1 vector)
 	{
 		Quat_32 vector_quat = quat_set(vector_get_x(vector), vector_get_y(vector), vector_get_z(vector), 0.0f);
 		Quat_32 inv_rotation = quat_conjugate(rotation);
@@ -369,7 +369,7 @@ namespace rtm
 		// using a AND/XOR with the bias (same number of instructions)
 		float dot = vector_dot(start, end);
 		float bias = dot >= 0.0f ? 1.0f : -1.0f;
-		Vector4_32 interpolated_rotation = vector_mul_add(vector_sub(vector_mul(end, bias), start), alpha, start);
+		vector4f interpolated_rotation = vector_mul_add(vector_sub(vector_mul(end, bias), start), alpha, start);
 		// Use sqrt/div/mul to normalize because the sqrt/div are faster than rsqrt
 		float inv_len = 1.0f / sqrt(vector_length_squared(interpolated_rotation));
 		return vector_mul(interpolated_rotation, inv_len);
@@ -405,13 +405,13 @@ namespace rtm
 		return vector_mul(interpolated_rotation, inv_len);
 #else
 		// To ensure we take the shortest path, we apply a bias if the dot product is negative
-		Vector4_32 start_vector = quat_to_vector(start);
-		Vector4_32 end_vector = quat_to_vector(end);
+		vector4f start_vector = quat_to_vector(start);
+		vector4f end_vector = quat_to_vector(end);
 		float dot = vector_dot(start_vector, end_vector);
 		float bias = dot >= 0.0f ? 1.0f : -1.0f;
-		Vector4_32 interpolated_rotation = vector_mul_add(vector_sub(vector_mul(end_vector, bias), start_vector), alpha, start_vector);
+		vector4f interpolated_rotation = vector_mul_add(vector_sub(vector_mul(end_vector, bias), start_vector), alpha, start_vector);
 		// TODO: Test with this instead: Rotation = (B * Alpha) + (A * (Bias * (1.f - Alpha)));
-		//Vector4_32 value = vector_add(vector_mul(end_vector, alpha), vector_mul(start_vector, bias * (1.0f - alpha)));
+		//vector4f value = vector_add(vector_mul(end_vector, alpha), vector_mul(start_vector, bias * (1.0f - alpha)));
 		return quat_normalize(vector_to_quat(interpolated_rotation));
 #endif
 	}
@@ -430,7 +430,7 @@ namespace rtm
 		return quat_get_w(input) >= 0.f ? input : quat_neg(input);
 	}
 
-	inline Quat_32 RTM_SIMD_CALL quat_from_positive_w(Vector4_32Arg0 input)
+	inline Quat_32 RTM_SIMD_CALL quat_from_positive_w(vector4f_arg0 input)
 	{
 #if defined(RTM_SSE4_INTRINSICS)
 		__m128 x2y2z2 = _mm_mul_ps(input, input);
@@ -468,7 +468,7 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	// Conversion to/from axis/angle/euler
 
-	inline void RTM_SIMD_CALL quat_to_axis_angle(Quat_32Arg0 input, Vector4_32& out_axis, float& out_angle)
+	inline void RTM_SIMD_CALL quat_to_axis_angle(Quat_32Arg0 input, vector4f& out_axis, float& out_angle)
 	{
 		constexpr float epsilon = 1.0e-8f;
 		constexpr float epsilon_squared = epsilon * epsilon;
@@ -479,7 +479,7 @@ namespace rtm
 		out_axis = scale_sq >= epsilon_squared ? vector_div(vector_set(quat_get_x(input), quat_get_y(input), quat_get_z(input)), vector_set(sqrt(scale_sq))) : vector_set(1.0f, 0.0f, 0.0f);
 	}
 
-	inline Vector4_32 RTM_SIMD_CALL quat_get_axis(Quat_32Arg0 input)
+	inline vector4f RTM_SIMD_CALL quat_get_axis(Quat_32Arg0 input)
 	{
 		constexpr float epsilon = 1.0e-8f;
 		constexpr float epsilon_squared = epsilon * epsilon;
@@ -493,7 +493,7 @@ namespace rtm
 		return acos(quat_get_w(input)) * 2.0f;
 	}
 
-	inline Quat_32 RTM_SIMD_CALL quat_from_axis_angle(Vector4_32Arg0 axis, float angle)
+	inline Quat_32 RTM_SIMD_CALL quat_from_axis_angle(vector4f_arg0 axis, float angle)
 	{
 		float s, c;
 		sincos(0.5f * angle, s, c);

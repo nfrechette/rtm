@@ -32,7 +32,7 @@
 
 namespace rtm
 {
-	constexpr Transform_32 RTM_SIMD_CALL transform_set(Quat_32Arg0 rotation, Vector4_32Arg1 translation, Vector4_32Arg2 scale)
+	constexpr Transform_32 RTM_SIMD_CALL transform_set(Quat_32Arg0 rotation, vector4f_arg1 translation, vector4f_arg2 scale)
 	{
 		return Transform_32{ rotation, translation, scale };
 	}
@@ -51,8 +51,8 @@ namespace rtm
 	// NOTE: When scale is present, multiplication will not properly handle skew/shear, use affine matrices instead
 	inline Transform_32 RTM_SIMD_CALL transform_mul(Transform_32Arg0 lhs, Transform_32Arg1 rhs)
 	{
-		const Vector4_32 min_scale = vector_min(lhs.scale, rhs.scale);
-		const Vector4_32 scale = vector_mul(lhs.scale, rhs.scale);
+		const vector4f min_scale = vector_min(lhs.scale, rhs.scale);
+		const vector4f scale = vector_mul(lhs.scale, rhs.scale);
 
 		if (vector_any_less_than3(min_scale, vector_zero_32()))
 		{
@@ -62,19 +62,19 @@ namespace rtm
 			AffineMatrix_32 result_mtx = matrix_mul(lhs_mtx, rhs_mtx);
 			result_mtx = matrix_remove_scale(result_mtx);
 
-			const Vector4_32 sign = vector_sign(scale);
+			const vector4f sign = vector_sign(scale);
 			result_mtx.x_axis = vector_mul(result_mtx.x_axis, vector_mix_xxxx(sign));
 			result_mtx.y_axis = vector_mul(result_mtx.y_axis, vector_mix_yyyy(sign));
 			result_mtx.z_axis = vector_mul(result_mtx.z_axis, vector_mix_zzzz(sign));
 
 			const Quat_32 rotation = quat_from_matrix(result_mtx);
-			const Vector4_32 translation = result_mtx.w_axis;
+			const vector4f translation = result_mtx.w_axis;
 			return transform_set(rotation, translation, scale);
 		}
 		else
 		{
 			const Quat_32 rotation = quat_mul(lhs.rotation, rhs.rotation);
-			const Vector4_32 translation = vector_add(quat_rotate(rhs.rotation, vector_mul(lhs.translation, rhs.scale)), rhs.translation);
+			const vector4f translation = vector_add(quat_rotate(rhs.rotation, vector_mul(lhs.translation, rhs.scale)), rhs.translation);
 			return transform_set(rotation, translation, scale);
 		}
 	}
@@ -83,16 +83,16 @@ namespace rtm
 	inline Transform_32 RTM_SIMD_CALL transform_mul_no_scale(Transform_32Arg0 lhs, Transform_32Arg1 rhs)
 	{
 		const Quat_32 rotation = quat_mul(lhs.rotation, rhs.rotation);
-		const Vector4_32 translation = vector_add(quat_rotate(rhs.rotation, lhs.translation), rhs.translation);
+		const vector4f translation = vector_add(quat_rotate(rhs.rotation, lhs.translation), rhs.translation);
 		return transform_set(rotation, translation, vector_set(1.0f));
 	}
 
-	inline Vector4_32 RTM_SIMD_CALL transform_position(Transform_32Arg0 lhs, Vector4_32Arg1 rhs)
+	inline vector4f RTM_SIMD_CALL transform_position(Transform_32Arg0 lhs, vector4f_arg1 rhs)
 	{
 		return vector_add(quat_rotate(lhs.rotation, vector_mul(lhs.scale, rhs)), lhs.translation);
 	}
 
-	inline Vector4_32 RTM_SIMD_CALL transform_position_no_scale(Transform_32Arg0 lhs, Vector4_32Arg1 rhs)
+	inline vector4f RTM_SIMD_CALL transform_position_no_scale(Transform_32Arg0 lhs, vector4f_arg1 rhs)
 	{
 		return vector_add(quat_rotate(lhs.rotation, rhs), lhs.translation);
 	}
@@ -100,15 +100,15 @@ namespace rtm
 	inline Transform_32 RTM_SIMD_CALL transform_inverse(Transform_32Arg0 input)
 	{
 		const Quat_32 inv_rotation = quat_conjugate(input.rotation);
-		const Vector4_32 inv_scale = vector_reciprocal(input.scale);
-		const Vector4_32 inv_translation = vector_neg(quat_rotate(inv_rotation, vector_mul(input.translation, inv_scale)));
+		const vector4f inv_scale = vector_reciprocal(input.scale);
+		const vector4f inv_translation = vector_neg(quat_rotate(inv_rotation, vector_mul(input.translation, inv_scale)));
 		return transform_set(inv_rotation, inv_translation, inv_scale);
 	}
 
 	inline Transform_32 RTM_SIMD_CALL transform_inverse_no_scale(Transform_32Arg0 input)
 	{
 		const Quat_32 inv_rotation = quat_conjugate(input.rotation);
-		const Vector4_32 inv_translation = vector_neg(quat_rotate(inv_rotation, input.translation));
+		const vector4f inv_translation = vector_neg(quat_rotate(inv_rotation, input.translation));
 		return transform_set(inv_rotation, inv_translation, vector_set(1.0f));
 	}
 

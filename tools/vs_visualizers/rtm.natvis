@@ -2,7 +2,7 @@
 
 <AutoVisualizer xmlns="http://schemas.microsoft.com/vstudio/debugger/natvis/2010">
 
-  <Type Name="rtm::Vector4_32" Priority="MediumLow">
+  <Type Name="rtm::vector4f" Priority="MediumLow">
     <DisplayString>({x}, {y}, {z}, {w})</DisplayString>
   </Type>
 
@@ -18,11 +18,11 @@
     <DisplayString>({m128i_u32[0]}, {m128i_u32[1]}, {m128i_u32[2]}, {m128i_u32[3]})</DisplayString>
   </Type>
 
-  <Type Name="rtm::Vector4_64" Priority="MediumLow">
+  <Type Name="rtm::vector4d" Priority="MediumLow">
     <DisplayString>({x}, {y}, {z}, {w})</DisplayString>
   </Type>
 
-  <Type Name="rtm::Vector4_64">
+  <Type Name="rtm::vector4d">
     <DisplayString>({xy.m128d_f64[0]}, {xy.m128d_f64[1]}, {zw.m128d_f64[0]}, {zw.m128d_f64[1]})</DisplayString>
   </Type>
 

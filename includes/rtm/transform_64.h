@@ -32,7 +32,7 @@
 
 namespace rtm
 {
-	constexpr Transform_64 transform_set(const Quat_64& rotation, const Vector4_64& translation, const Vector4_64& scale)
+	constexpr Transform_64 transform_set(const Quat_64& rotation, const vector4d& translation, const vector4d& scale)
 	{
 		return Transform_64{ rotation, translation, scale };
 	}
@@ -51,8 +51,8 @@ namespace rtm
 	// NOTE: When scale is present, multiplication will not properly handle skew/shear, use affine matrices instead
 	inline Transform_64 transform_mul(const Transform_64& lhs, const Transform_64& rhs)
 	{
-		const Vector4_64 min_scale = vector_min(lhs.scale, rhs.scale);
-		const Vector4_64 scale = vector_mul(lhs.scale, rhs.scale);
+		const vector4d min_scale = vector_min(lhs.scale, rhs.scale);
+		const vector4d scale = vector_mul(lhs.scale, rhs.scale);
 
 		if (vector_any_less_than3(min_scale, vector_zero_64()))
 		{
@@ -62,19 +62,19 @@ namespace rtm
 			AffineMatrix_64 result_mtx = matrix_mul(lhs_mtx, rhs_mtx);
 			result_mtx = matrix_remove_scale(result_mtx);
 
-			const Vector4_64 sign = vector_sign(scale);
+			const vector4d sign = vector_sign(scale);
 			result_mtx.x_axis = vector_mul(result_mtx.x_axis, vector_mix_xxxx(sign));
 			result_mtx.y_axis = vector_mul(result_mtx.y_axis, vector_mix_yyyy(sign));
 			result_mtx.z_axis = vector_mul(result_mtx.z_axis, vector_mix_zzzz(sign));
 
 			const Quat_64 rotation = quat_from_matrix(result_mtx);
-			const Vector4_64 translation = result_mtx.w_axis;
+			const vector4d translation = result_mtx.w_axis;
 			return transform_set(rotation, translation, scale);
 		}
 		else
 		{
 			const Quat_64 rotation = quat_mul(lhs.rotation, rhs.rotation);
-			const Vector4_64 translation = vector_add(quat_rotate(rhs.rotation, vector_mul(lhs.translation, rhs.scale)), rhs.translation);
+			const vector4d translation = vector_add(quat_rotate(rhs.rotation, vector_mul(lhs.translation, rhs.scale)), rhs.translation);
 			return transform_set(rotation, translation, scale);
 		}
 	}
@@ -83,16 +83,16 @@ namespace rtm
 	inline Transform_64 transform_mul_no_scale(const Transform_64& lhs, const Transform_64& rhs)
 	{
 		const Quat_64 rotation = quat_mul(lhs.rotation, rhs.rotation);
-		const Vector4_64 translation = vector_add(quat_rotate(rhs.rotation, lhs.translation), rhs.translation);
+		const vector4d translation = vector_add(quat_rotate(rhs.rotation, lhs.translation), rhs.translation);
 		return transform_set(rotation, translation, vector_set(1.0));
 	}
 
-	inline Vector4_64 transform_position(const Transform_64& lhs, const Vector4_64& rhs)
+	inline vector4d transform_position(const Transform_64& lhs, const vector4d& rhs)
 	{
 		return vector_add(quat_rotate(lhs.rotation, vector_mul(lhs.scale, rhs)), lhs.translation);
 	}
 
-	inline Vector4_64 transform_position_no_scale(const Transform_64& lhs, const Vector4_64& rhs)
+	inline vector4d transform_position_no_scale(const Transform_64& lhs, const vector4d& rhs)
 	{
 		return vector_add(quat_rotate(lhs.rotation, rhs), lhs.translation);
 	}
@@ -100,15 +100,15 @@ namespace rtm
 	inline Transform_64 transform_inverse(const Transform_64& input)
 	{
 		const Quat_64 inv_rotation = quat_conjugate(input.rotation);
-		const Vector4_64 inv_scale = vector_reciprocal(input.scale);
-		const Vector4_64 inv_translation = vector_neg(quat_rotate(inv_rotation, vector_mul(input.translation, inv_scale)));
+		const vector4d inv_scale = vector_reciprocal(input.scale);
+		const vector4d inv_translation = vector_neg(quat_rotate(inv_rotation, vector_mul(input.translation, inv_scale)));
 		return transform_set(inv_rotation, inv_translation, inv_scale);
 	}
 
 	inline Transform_64 transform_inverse_no_scale(const Transform_64& input)
 	{
 		const Quat_64 inv_rotation = quat_conjugate(input.rotation);
-		const Vector4_64 inv_translation = vector_neg(quat_rotate(inv_rotation, input.translation));
+		const vector4d inv_translation = vector_neg(quat_rotate(inv_rotation, input.translation));
 		return transform_set(inv_rotation, inv_translation, vector_set(1.0));
 	}
 

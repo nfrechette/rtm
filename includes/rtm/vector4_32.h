@@ -35,7 +35,7 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	// Setters, getters, and casts
 
-	inline Vector4_32 RTM_SIMD_CALL vector_set(float x, float y, float z, float w)
+	inline vector4f RTM_SIMD_CALL vector_set(float x, float y, float z, float w)
 	{
 #if defined(RTM_SSE2_INTRINSICS)
 		return _mm_set_ps(w, z, y, x);
@@ -49,11 +49,11 @@ namespace rtm
 		return vld1q_f32(data);
 #endif
 #else
-		return Vector4_32{ x, y, z, w };
+		return vector4f{ x, y, z, w };
 #endif
 	}
 
-	inline Vector4_32 RTM_SIMD_CALL vector_set(float x, float y, float z)
+	inline vector4f RTM_SIMD_CALL vector_set(float x, float y, float z)
 	{
 #if defined(RTM_SSE2_INTRINSICS)
 		return _mm_set_ps(0.0f, z, y, x);
@@ -67,54 +67,54 @@ namespace rtm
 		return vld1q_f32(data);
 #endif
 #else
-		return Vector4_32{ x, y, z, 0.0f };
+		return vector4f{ x, y, z, 0.0f };
 #endif
 	}
 
-	inline Vector4_32 RTM_SIMD_CALL vector_set(float xyzw)
+	inline vector4f RTM_SIMD_CALL vector_set(float xyzw)
 	{
 #if defined(RTM_SSE2_INTRINSICS)
 		return _mm_set_ps1(xyzw);
 #elif defined(RTM_NEON_INTRINSICS)
 		return vdupq_n_f32(xyzw);
 #else
-		return Vector4_32{ xyzw, xyzw, xyzw, xyzw };
+		return vector4f{ xyzw, xyzw, xyzw, xyzw };
 #endif
 	}
 
-	inline Vector4_32 RTM_SIMD_CALL vector_unaligned_load(const float* input)
+	inline vector4f RTM_SIMD_CALL vector_unaligned_load(const float* input)
 	{
 		RTM_ASSERT(rtm_impl::is_aligned(input), "Invalid alignment");
 		return vector_set(input[0], input[1], input[2], input[3]);
 	}
 
-	inline Vector4_32 RTM_SIMD_CALL vector_unaligned_load3(const float* input)
+	inline vector4f RTM_SIMD_CALL vector_unaligned_load3(const float* input)
 	{
 		RTM_ASSERT(rtm_impl::is_aligned(input), "Invalid alignment");
 		return vector_set(input[0], input[1], input[2], 0.0f);
 	}
 
-	inline Vector4_32 RTM_SIMD_CALL vector_unaligned_load_32(const uint8_t* input)
+	inline vector4f RTM_SIMD_CALL vector_unaligned_load_32(const uint8_t* input)
 	{
 #if defined(RTM_SSE2_INTRINSICS)
 		return _mm_loadu_ps((const float*)input);
 #elif defined(RTM_NEON_INTRINSICS)
 		return vreinterpretq_f32_u8(vld1q_u8(input));
 #else
-		Vector4_32 result;
-		memcpy(&result, input, sizeof(Vector4_32));
+		vector4f result;
+		memcpy(&result, input, sizeof(vector4f));
 		return result;
 #endif
 	}
 
-	inline Vector4_32 RTM_SIMD_CALL vector_unaligned_load3_32(const uint8_t* input)
+	inline vector4f RTM_SIMD_CALL vector_unaligned_load3_32(const uint8_t* input)
 	{
 		float input_f[3];
 		memcpy(&input_f[0], input, sizeof(float) * 3);
 		return vector_set(input_f[0], input_f[1], input_f[2], 0.0f);
 	}
 
-	inline Vector4_32 RTM_SIMD_CALL vector_zero_32()
+	inline vector4f RTM_SIMD_CALL vector_zero_32()
 	{
 #if defined(RTM_SSE2_INTRINSICS)
 		return _mm_setzero_ps();
@@ -123,25 +123,25 @@ namespace rtm
 #endif
 	}
 
-	inline Vector4_32 RTM_SIMD_CALL quat_to_vector(Quat_32Arg0 input)
+	inline vector4f RTM_SIMD_CALL quat_to_vector(Quat_32Arg0 input)
 	{
 #if defined(RTM_SSE2_INTRINSICS) || defined(RTM_NEON_INTRINSICS)
 		return input;
 #else
-		return Vector4_32{ input.x, input.y, input.z, input.w };
+		return vector4f{ input.x, input.y, input.z, input.w };
 #endif
 	}
 
-	inline Vector4_32 RTM_SIMD_CALL vector_cast(const Vector4_64& input)
+	inline vector4f RTM_SIMD_CALL vector_cast(const vector4d& input)
 	{
 #if defined(RTM_SSE2_INTRINSICS)
 		return _mm_shuffle_ps(_mm_cvtpd_ps(input.xy), _mm_cvtpd_ps(input.zw), _MM_SHUFFLE(1, 0, 1, 0));
 #else
-		return Vector4_32{ float(input.x), float(input.y), float(input.z), float(input.w) };
+		return vector4f{ float(input.x), float(input.y), float(input.z), float(input.w) };
 #endif
 	}
 
-	inline float RTM_SIMD_CALL vector_get_x(Vector4_32Arg0 input)
+	inline float RTM_SIMD_CALL vector_get_x(vector4f_arg0 input)
 	{
 #if defined(RTM_SSE2_INTRINSICS)
 		return _mm_cvtss_f32(input);
@@ -152,7 +152,7 @@ namespace rtm
 #endif
 	}
 
-	inline float RTM_SIMD_CALL vector_get_y(Vector4_32Arg0 input)
+	inline float RTM_SIMD_CALL vector_get_y(vector4f_arg0 input)
 	{
 #if defined(RTM_SSE2_INTRINSICS)
 		return _mm_cvtss_f32(_mm_shuffle_ps(input, input, _MM_SHUFFLE(1, 1, 1, 1)));
@@ -163,7 +163,7 @@ namespace rtm
 #endif
 	}
 
-	inline float RTM_SIMD_CALL vector_get_z(Vector4_32Arg0 input)
+	inline float RTM_SIMD_CALL vector_get_z(vector4f_arg0 input)
 	{
 #if defined(RTM_SSE2_INTRINSICS)
 		return _mm_cvtss_f32(_mm_shuffle_ps(input, input, _MM_SHUFFLE(2, 2, 2, 2)));
@@ -174,7 +174,7 @@ namespace rtm
 #endif
 	}
 
-	inline float RTM_SIMD_CALL vector_get_w(Vector4_32Arg0 input)
+	inline float RTM_SIMD_CALL vector_get_w(vector4f_arg0 input)
 	{
 #if defined(RTM_SSE2_INTRINSICS)
 		return _mm_cvtss_f32(_mm_shuffle_ps(input, input, _MM_SHUFFLE(3, 3, 3, 3)));
@@ -186,7 +186,7 @@ namespace rtm
 	}
 
 	template<VectorMix component_index>
-	inline float RTM_SIMD_CALL vector_get_component(Vector4_32Arg0 input)
+	inline float RTM_SIMD_CALL vector_get_component(vector4f_arg0 input)
 	{
 		switch (component_index)
 		{
@@ -204,7 +204,7 @@ namespace rtm
 		}
 	}
 
-	inline float RTM_SIMD_CALL vector_get_component(Vector4_32Arg0 input, VectorMix component_index)
+	inline float RTM_SIMD_CALL vector_get_component(vector4f_arg0 input, VectorMix component_index)
 	{
 		switch (component_index)
 		{
@@ -222,12 +222,12 @@ namespace rtm
 		}
 	}
 
-	inline const float* RTM_SIMD_CALL vector_as_float_ptr(const Vector4_32& input)
+	inline const float* RTM_SIMD_CALL vector_as_float_ptr(const vector4f& input)
 	{
 		return reinterpret_cast<const float*>(&input);
 	}
 
-	inline void RTM_SIMD_CALL vector_unaligned_write(Vector4_32Arg0 input, float* output)
+	inline void RTM_SIMD_CALL vector_unaligned_write(vector4f_arg0 input, float* output)
 	{
 		RTM_ASSERT(rtm_impl::is_aligned(output), "Invalid alignment");
 		output[0] = vector_get_x(input);
@@ -236,7 +236,7 @@ namespace rtm
 		output[3] = vector_get_w(input);
 	}
 
-	inline void RTM_SIMD_CALL vector_unaligned_write3(Vector4_32Arg0 input, float* output)
+	inline void RTM_SIMD_CALL vector_unaligned_write3(vector4f_arg0 input, float* output)
 	{
 		RTM_ASSERT(rtm_impl::is_aligned(output), "Invalid alignment");
 		output[0] = vector_get_x(input);
@@ -244,12 +244,12 @@ namespace rtm
 		output[2] = vector_get_z(input);
 	}
 
-	inline void RTM_SIMD_CALL vector_unaligned_write(Vector4_32Arg0 input, uint8_t* output)
+	inline void RTM_SIMD_CALL vector_unaligned_write(vector4f_arg0 input, uint8_t* output)
 	{
-		memcpy(output, &input, sizeof(Vector4_32));
+		memcpy(output, &input, sizeof(vector4f));
 	}
 
-	inline void RTM_SIMD_CALL vector_unaligned_write3(Vector4_32Arg0 input, uint8_t* output)
+	inline void RTM_SIMD_CALL vector_unaligned_write3(vector4f_arg0 input, uint8_t* output)
 	{
 		memcpy(output, &input, sizeof(float) * 3);
 	}
@@ -257,7 +257,7 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	// Arithmetic
 
-	inline Vector4_32 RTM_SIMD_CALL vector_add(Vector4_32Arg0 lhs, Vector4_32Arg1 rhs)
+	inline vector4f RTM_SIMD_CALL vector_add(vector4f_arg0 lhs, vector4f_arg1 rhs)
 	{
 #if defined(RTM_SSE2_INTRINSICS)
 		return _mm_add_ps(lhs, rhs);
@@ -268,7 +268,7 @@ namespace rtm
 #endif
 	}
 
-	inline Vector4_32 RTM_SIMD_CALL vector_sub(Vector4_32Arg0 lhs, Vector4_32Arg1 rhs)
+	inline vector4f RTM_SIMD_CALL vector_sub(vector4f_arg0 lhs, vector4f_arg1 rhs)
 	{
 #if defined(RTM_SSE2_INTRINSICS)
 		return _mm_sub_ps(lhs, rhs);
@@ -279,7 +279,7 @@ namespace rtm
 #endif
 	}
 
-	inline Vector4_32 RTM_SIMD_CALL vector_mul(Vector4_32Arg0 lhs, Vector4_32Arg1 rhs)
+	inline vector4f RTM_SIMD_CALL vector_mul(vector4f_arg0 lhs, vector4f_arg1 rhs)
 	{
 #if defined(RTM_SSE2_INTRINSICS)
 		return _mm_mul_ps(lhs, rhs);
@@ -290,7 +290,7 @@ namespace rtm
 #endif
 	}
 
-	inline Vector4_32 RTM_SIMD_CALL vector_mul(Vector4_32Arg0 lhs, float rhs)
+	inline vector4f RTM_SIMD_CALL vector_mul(vector4f_arg0 lhs, float rhs)
 	{
 #if defined(RTM_NEON_INTRINSICS)
 		return vmulq_n_f32(lhs, rhs);
@@ -299,7 +299,7 @@ namespace rtm
 #endif
 	}
 
-	inline Vector4_32 RTM_SIMD_CALL vector_div(Vector4_32Arg0 lhs, Vector4_32Arg1 rhs)
+	inline vector4f RTM_SIMD_CALL vector_div(vector4f_arg0 lhs, vector4f_arg1 rhs)
 	{
 #if defined(RTM_SSE2_INTRINSICS)
 		return _mm_div_ps(lhs, rhs);
@@ -320,7 +320,7 @@ namespace rtm
 #endif
 	}
 
-	inline Vector4_32 RTM_SIMD_CALL vector_max(Vector4_32Arg0 lhs, Vector4_32Arg1 rhs)
+	inline vector4f RTM_SIMD_CALL vector_max(vector4f_arg0 lhs, vector4f_arg1 rhs)
 	{
 #if defined(RTM_SSE2_INTRINSICS)
 		return _mm_max_ps(lhs, rhs);
@@ -331,7 +331,7 @@ namespace rtm
 #endif
 	}
 
-	inline Vector4_32 RTM_SIMD_CALL vector_min(Vector4_32Arg0 lhs, Vector4_32Arg1 rhs)
+	inline vector4f RTM_SIMD_CALL vector_min(vector4f_arg0 lhs, vector4f_arg1 rhs)
 	{
 #if defined(RTM_SSE2_INTRINSICS)
 		return _mm_min_ps(lhs, rhs);
@@ -342,7 +342,7 @@ namespace rtm
 #endif
 	}
 
-	inline Vector4_32 RTM_SIMD_CALL vector_abs(Vector4_32Arg0 input)
+	inline vector4f RTM_SIMD_CALL vector_abs(vector4f_arg0 input)
 	{
 #if defined(RTM_SSE2_INTRINSICS)
 		return vector_max(vector_sub(_mm_setzero_ps(), input), input);
@@ -353,7 +353,7 @@ namespace rtm
 #endif
 	}
 
-	inline Vector4_32 RTM_SIMD_CALL vector_neg(Vector4_32Arg0 input)
+	inline vector4f RTM_SIMD_CALL vector_neg(vector4f_arg0 input)
 	{
 #if defined(RTM_NEON_INTRINSICS)
 		return vnegq_f32(input);
@@ -362,7 +362,7 @@ namespace rtm
 #endif
 	}
 
-	inline Vector4_32 RTM_SIMD_CALL vector_reciprocal(Vector4_32Arg0 input)
+	inline vector4f RTM_SIMD_CALL vector_reciprocal(vector4f_arg0 input)
 	{
 #if defined(RTM_SSE2_INTRINSICS)
 		// Perform two passes of Newton-Raphson iteration on the hardware estimate
@@ -389,14 +389,14 @@ namespace rtm
 #endif
 	}
 
-	inline Vector4_32 RTM_SIMD_CALL vector_cross3(Vector4_32Arg0 lhs, Vector4_32Arg1 rhs)
+	inline vector4f RTM_SIMD_CALL vector_cross3(vector4f_arg0 lhs, vector4f_arg1 rhs)
 	{
 		return vector_set(vector_get_y(lhs) * vector_get_z(rhs) - vector_get_z(lhs) * vector_get_y(rhs),
 						  vector_get_z(lhs) * vector_get_x(rhs) - vector_get_x(lhs) * vector_get_z(rhs),
 						  vector_get_x(lhs) * vector_get_y(rhs) - vector_get_y(lhs) * vector_get_x(rhs));
 	}
 
-	inline float RTM_SIMD_CALL vector_dot(Vector4_32Arg0 lhs, Vector4_32Arg1 rhs)
+	inline float RTM_SIMD_CALL vector_dot(vector4f_arg0 lhs, vector4f_arg1 rhs)
 	{
 #if defined(RTM_SSE4_INTRINSICS) && 0
 		// SSE4 dot product instruction isn't precise enough
@@ -420,7 +420,7 @@ namespace rtm
 #endif
 	}
 
-	inline Vector4_32 RTM_SIMD_CALL vector_vdot(Vector4_32Arg0 lhs, Vector4_32Arg1 rhs)
+	inline vector4f RTM_SIMD_CALL vector_vdot(vector4f_arg0 lhs, vector4f_arg1 rhs)
 	{
 #if defined(RTM_SSE4_INTRINSICS) && 0
 		// SSE4 dot product instruction isn't precise enough
@@ -444,7 +444,7 @@ namespace rtm
 #endif
 	}
 
-	inline float RTM_SIMD_CALL vector_dot3(Vector4_32Arg0 lhs, Vector4_32Arg1 rhs)
+	inline float RTM_SIMD_CALL vector_dot3(vector4f_arg0 lhs, vector4f_arg1 rhs)
 	{
 #if defined(RTM_SSE4_INTRINSICS) && 0
 		// SSE4 dot product instruction isn't precise enough
@@ -469,42 +469,42 @@ namespace rtm
 #endif
 	}
 
-	inline float RTM_SIMD_CALL vector_length_squared(Vector4_32Arg0 input)
+	inline float RTM_SIMD_CALL vector_length_squared(vector4f_arg0 input)
 	{
 		return vector_dot(input, input);
 	}
 
-	inline float RTM_SIMD_CALL vector_length_squared3(Vector4_32Arg0 input)
+	inline float RTM_SIMD_CALL vector_length_squared3(vector4f_arg0 input)
 	{
 		return vector_dot3(input, input);
 	}
 
-	inline float RTM_SIMD_CALL vector_length(Vector4_32Arg0 input)
+	inline float RTM_SIMD_CALL vector_length(vector4f_arg0 input)
 	{
 		return sqrt(vector_length_squared(input));
 	}
 
-	inline float RTM_SIMD_CALL vector_length3(Vector4_32Arg0 input)
+	inline float RTM_SIMD_CALL vector_length3(vector4f_arg0 input)
 	{
 		return sqrt(vector_length_squared3(input));
 	}
 
-	inline float RTM_SIMD_CALL vector_length_reciprocal(Vector4_32Arg0 input)
+	inline float RTM_SIMD_CALL vector_length_reciprocal(vector4f_arg0 input)
 	{
 		return sqrt_reciprocal(vector_length_squared(input));
 	}
 
-	inline float RTM_SIMD_CALL vector_length_reciprocal3(Vector4_32Arg0 input)
+	inline float RTM_SIMD_CALL vector_length_reciprocal3(vector4f_arg0 input)
 	{
 		return sqrt_reciprocal(vector_length_squared3(input));
 	}
 
-	inline float RTM_SIMD_CALL vector_distance3(Vector4_32Arg0 lhs, Vector4_32Arg1 rhs)
+	inline float RTM_SIMD_CALL vector_distance3(vector4f_arg0 lhs, vector4f_arg1 rhs)
 	{
 		return vector_length3(vector_sub(rhs, lhs));
 	}
 
-	inline Vector4_32 RTM_SIMD_CALL vector_normalize3(Vector4_32Arg0 input, float threshold = 1.0e-8f)
+	inline vector4f RTM_SIMD_CALL vector_normalize3(vector4f_arg0 input, float threshold = 1.0e-8f)
 	{
 		// Reciprocal is more accurate to normalize with
 		const float len_sq = vector_length_squared3(input);
@@ -514,13 +514,13 @@ namespace rtm
 			return input;
 	}
 
-	inline Vector4_32 RTM_SIMD_CALL vector_fraction(Vector4_32Arg0 input)
+	inline vector4f RTM_SIMD_CALL vector_fraction(vector4f_arg0 input)
 	{
 		return vector_set(fraction(vector_get_x(input)), fraction(vector_get_y(input)), fraction(vector_get_z(input)), fraction(vector_get_w(input)));
 	}
 
 	// output = (input * scale) + offset
-	inline Vector4_32 RTM_SIMD_CALL vector_mul_add(Vector4_32Arg0 input, Vector4_32Arg1 scale, Vector4_32Arg2 offset)
+	inline vector4f RTM_SIMD_CALL vector_mul_add(vector4f_arg0 input, vector4f_arg1 scale, vector4f_arg2 offset)
 	{
 #if defined(RTM_NEON_INTRINSICS)
 		return vmlaq_f32(offset, input, scale);
@@ -529,7 +529,7 @@ namespace rtm
 #endif
 	}
 
-	inline Vector4_32 RTM_SIMD_CALL vector_mul_add(Vector4_32Arg0 input, float scale, Vector4_32Arg2 offset)
+	inline vector4f RTM_SIMD_CALL vector_mul_add(vector4f_arg0 input, float scale, vector4f_arg2 offset)
 	{
 #if defined(RTM_NEON_INTRINSICS)
 		return vmlaq_n_f32(offset, input, scale);
@@ -539,7 +539,7 @@ namespace rtm
 	}
 
 	// output = offset - (input * scale)
-	inline Vector4_32 RTM_SIMD_CALL vector_neg_mul_sub(Vector4_32Arg0 input, Vector4_32Arg1 scale, Vector4_32Arg2 offset)
+	inline vector4f RTM_SIMD_CALL vector_neg_mul_sub(vector4f_arg0 input, vector4f_arg1 scale, vector4f_arg2 offset)
 	{
 #if defined(RTM_NEON_INTRINSICS)
 		return vmlsq_f32(offset, input, scale);
@@ -548,7 +548,7 @@ namespace rtm
 #endif
 	}
 
-	inline Vector4_32 RTM_SIMD_CALL vector_lerp(Vector4_32Arg0 start, Vector4_32Arg1 end, float alpha)
+	inline vector4f RTM_SIMD_CALL vector_lerp(vector4f_arg0 start, vector4f_arg1 end, float alpha)
 	{
 		return vector_mul_add(vector_sub(end, start), alpha, start);
 	}
@@ -556,29 +556,29 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	// Comparisons and masking
 
-	inline Vector4_32 RTM_SIMD_CALL vector_less_than(Vector4_32Arg0 lhs, Vector4_32Arg1 rhs)
+	inline vector4f RTM_SIMD_CALL vector_less_than(vector4f_arg0 lhs, vector4f_arg1 rhs)
 	{
 #if defined(RTM_SSE2_INTRINSICS)
 		return _mm_cmplt_ps(lhs, rhs);
 #elif defined(RTM_NEON_INTRINSICS)
 		return vcltq_f32(lhs, rhs);
 #else
-		return Vector4_32{ rtm_impl::get_mask_value(lhs.x < rhs.x), rtm_impl::get_mask_value(lhs.y < rhs.y), rtm_impl::get_mask_value(lhs.z < rhs.z), rtm_impl::get_mask_value(lhs.w < rhs.w) };
+		return vector4f{ rtm_impl::get_mask_value(lhs.x < rhs.x), rtm_impl::get_mask_value(lhs.y < rhs.y), rtm_impl::get_mask_value(lhs.z < rhs.z), rtm_impl::get_mask_value(lhs.w < rhs.w) };
 #endif
 	}
 
-	inline Vector4_32 RTM_SIMD_CALL vector_greater_equal(Vector4_32Arg0 lhs, Vector4_32Arg1 rhs)
+	inline vector4f RTM_SIMD_CALL vector_greater_equal(vector4f_arg0 lhs, vector4f_arg1 rhs)
 	{
 #if defined(RTM_SSE2_INTRINSICS)
 		return _mm_cmpge_ps(lhs, rhs);
 #elif defined(RTM_NEON_INTRINSICS)
 		return vcgeq_f32(lhs, rhs);
 #else
-		return Vector4_32{ rtm_impl::get_mask_value(lhs.x >= rhs.x), rtm_impl::get_mask_value(lhs.y >= rhs.y), rtm_impl::get_mask_value(lhs.z >= rhs.z), rtm_impl::get_mask_value(lhs.w >= rhs.w) };
+		return vector4f{ rtm_impl::get_mask_value(lhs.x >= rhs.x), rtm_impl::get_mask_value(lhs.y >= rhs.y), rtm_impl::get_mask_value(lhs.z >= rhs.z), rtm_impl::get_mask_value(lhs.w >= rhs.w) };
 #endif
 	}
 
-	inline bool RTM_SIMD_CALL vector_all_less_than(Vector4_32Arg0 lhs, Vector4_32Arg1 rhs)
+	inline bool RTM_SIMD_CALL vector_all_less_than(vector4f_arg0 lhs, vector4f_arg1 rhs)
 	{
 #if defined(RTM_SSE2_INTRINSICS)
 		return _mm_movemask_ps(_mm_cmplt_ps(lhs, rhs)) == 0xF;
@@ -592,7 +592,7 @@ namespace rtm
 #endif
 	}
 
-	inline bool RTM_SIMD_CALL vector_all_less_than3(Vector4_32Arg0 lhs, Vector4_32Arg1 rhs)
+	inline bool RTM_SIMD_CALL vector_all_less_than3(vector4f_arg0 lhs, vector4f_arg1 rhs)
 	{
 #if defined(RTM_SSE2_INTRINSICS)
 		return (_mm_movemask_ps(_mm_cmplt_ps(lhs, rhs)) & 0x7) == 0x7;
@@ -606,7 +606,7 @@ namespace rtm
 #endif
 	}
 
-	inline bool RTM_SIMD_CALL vector_any_less_than(Vector4_32Arg0 lhs, Vector4_32Arg1 rhs)
+	inline bool RTM_SIMD_CALL vector_any_less_than(vector4f_arg0 lhs, vector4f_arg1 rhs)
 	{
 #if defined(RTM_SSE2_INTRINSICS)
 		return _mm_movemask_ps(_mm_cmplt_ps(lhs, rhs)) != 0;
@@ -620,7 +620,7 @@ namespace rtm
 #endif
 	}
 
-	inline bool RTM_SIMD_CALL vector_any_less_than3(Vector4_32Arg0 lhs, Vector4_32Arg1 rhs)
+	inline bool RTM_SIMD_CALL vector_any_less_than3(vector4f_arg0 lhs, vector4f_arg1 rhs)
 	{
 #if defined(RTM_SSE2_INTRINSICS)
 		return (_mm_movemask_ps(_mm_cmplt_ps(lhs, rhs)) & 0x7) != 0;
@@ -634,7 +634,7 @@ namespace rtm
 #endif
 	}
 
-	inline bool RTM_SIMD_CALL vector_all_less_equal(Vector4_32Arg0 lhs, Vector4_32Arg1 rhs)
+	inline bool RTM_SIMD_CALL vector_all_less_equal(vector4f_arg0 lhs, vector4f_arg1 rhs)
 	{
 #if defined(RTM_SSE2_INTRINSICS)
 		return _mm_movemask_ps(_mm_cmple_ps(lhs, rhs)) == 0xF;
@@ -648,7 +648,7 @@ namespace rtm
 #endif
 	}
 
-	inline bool RTM_SIMD_CALL vector_all_less_equal3(Vector4_32Arg0 lhs, Vector4_32Arg1 rhs)
+	inline bool RTM_SIMD_CALL vector_all_less_equal3(vector4f_arg0 lhs, vector4f_arg1 rhs)
 	{
 #if defined(RTM_SSE2_INTRINSICS)
 		return (_mm_movemask_ps(_mm_cmple_ps(lhs, rhs)) & 0x7) == 0x7;
@@ -662,7 +662,7 @@ namespace rtm
 #endif
 	}
 
-	inline bool RTM_SIMD_CALL vector_any_less_equal(Vector4_32Arg0 lhs, Vector4_32Arg1 rhs)
+	inline bool RTM_SIMD_CALL vector_any_less_equal(vector4f_arg0 lhs, vector4f_arg1 rhs)
 	{
 #if defined(RTM_SSE2_INTRINSICS)
 		return _mm_movemask_ps(_mm_cmple_ps(lhs, rhs)) != 0;
@@ -676,7 +676,7 @@ namespace rtm
 #endif
 	}
 
-	inline bool RTM_SIMD_CALL vector_any_less_equal3(Vector4_32Arg0 lhs, Vector4_32Arg1 rhs)
+	inline bool RTM_SIMD_CALL vector_any_less_equal3(vector4f_arg0 lhs, vector4f_arg1 rhs)
 	{
 #if defined(RTM_SSE2_INTRINSICS)
 		return (_mm_movemask_ps(_mm_cmple_ps(lhs, rhs)) & 0x7) != 0;
@@ -690,7 +690,7 @@ namespace rtm
 #endif
 	}
 
-	inline bool RTM_SIMD_CALL vector_all_greater_equal(Vector4_32Arg0 lhs, Vector4_32Arg1 rhs)
+	inline bool RTM_SIMD_CALL vector_all_greater_equal(vector4f_arg0 lhs, vector4f_arg1 rhs)
 	{
 #if defined(RTM_SSE2_INTRINSICS)
 		return _mm_movemask_ps(_mm_cmpge_ps(lhs, rhs)) == 0xF;
@@ -704,7 +704,7 @@ namespace rtm
 #endif
 	}
 
-	inline bool RTM_SIMD_CALL vector_all_greater_equal3(Vector4_32Arg0 lhs, Vector4_32Arg1 rhs)
+	inline bool RTM_SIMD_CALL vector_all_greater_equal3(vector4f_arg0 lhs, vector4f_arg1 rhs)
 	{
 #if defined(RTM_SSE2_INTRINSICS)
 		return (_mm_movemask_ps(_mm_cmpge_ps(lhs, rhs)) & 0x7) == 0x7;
@@ -718,7 +718,7 @@ namespace rtm
 #endif
 	}
 
-	inline bool RTM_SIMD_CALL vector_any_greater_equal(Vector4_32Arg0 lhs, Vector4_32Arg1 rhs)
+	inline bool RTM_SIMD_CALL vector_any_greater_equal(vector4f_arg0 lhs, vector4f_arg1 rhs)
 	{
 #if defined(RTM_SSE2_INTRINSICS)
 		return _mm_movemask_ps(_mm_cmpge_ps(lhs, rhs)) != 0;
@@ -732,7 +732,7 @@ namespace rtm
 #endif
 	}
 
-	inline bool RTM_SIMD_CALL vector_any_greater_equal3(Vector4_32Arg0 lhs, Vector4_32Arg1 rhs)
+	inline bool RTM_SIMD_CALL vector_any_greater_equal3(vector4f_arg0 lhs, vector4f_arg1 rhs)
 	{
 #if defined(RTM_SSE2_INTRINSICS)
 		return (_mm_movemask_ps(_mm_cmpge_ps(lhs, rhs)) & 0x7) != 0;
@@ -746,32 +746,32 @@ namespace rtm
 #endif
 	}
 
-	inline bool RTM_SIMD_CALL vector_all_near_equal(Vector4_32Arg0 lhs, Vector4_32Arg1 rhs, float threshold = 0.00001f)
+	inline bool RTM_SIMD_CALL vector_all_near_equal(vector4f_arg0 lhs, vector4f_arg1 rhs, float threshold = 0.00001f)
 	{
 		return vector_all_less_equal(vector_abs(vector_sub(lhs, rhs)), vector_set(threshold));
 	}
 
-	inline bool RTM_SIMD_CALL vector_all_near_equal3(Vector4_32Arg0 lhs, Vector4_32Arg1 rhs, float threshold = 0.00001f)
+	inline bool RTM_SIMD_CALL vector_all_near_equal3(vector4f_arg0 lhs, vector4f_arg1 rhs, float threshold = 0.00001f)
 	{
 		return vector_all_less_equal3(vector_abs(vector_sub(lhs, rhs)), vector_set(threshold));
 	}
 
-	inline bool RTM_SIMD_CALL vector_any_near_equal(Vector4_32Arg0 lhs, Vector4_32Arg1 rhs, float threshold = 0.00001f)
+	inline bool RTM_SIMD_CALL vector_any_near_equal(vector4f_arg0 lhs, vector4f_arg1 rhs, float threshold = 0.00001f)
 	{
 		return vector_any_less_equal(vector_abs(vector_sub(lhs, rhs)), vector_set(threshold));
 	}
 
-	inline bool RTM_SIMD_CALL vector_any_near_equal3(Vector4_32Arg0 lhs, Vector4_32Arg1 rhs, float threshold = 0.00001f)
+	inline bool RTM_SIMD_CALL vector_any_near_equal3(vector4f_arg0 lhs, vector4f_arg1 rhs, float threshold = 0.00001f)
 	{
 		return vector_any_less_equal3(vector_abs(vector_sub(lhs, rhs)), vector_set(threshold));
 	}
 
-	inline bool RTM_SIMD_CALL vector_is_finite(Vector4_32Arg0 input)
+	inline bool RTM_SIMD_CALL vector_is_finite(vector4f_arg0 input)
 	{
 		return is_finite(vector_get_x(input)) && is_finite(vector_get_y(input)) && is_finite(vector_get_z(input)) && is_finite(vector_get_w(input));
 	}
 
-	inline bool RTM_SIMD_CALL vector_is_finite3(Vector4_32Arg0 input)
+	inline bool RTM_SIMD_CALL vector_is_finite3(vector4f_arg0 input)
 	{
 		return is_finite(vector_get_x(input)) && is_finite(vector_get_y(input)) && is_finite(vector_get_z(input));
 	}
@@ -779,19 +779,19 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	// Swizzling, permutations, and mixing
 
-	inline Vector4_32 RTM_SIMD_CALL vector_blend(Vector4_32Arg0 mask, Vector4_32Arg1 if_true, Vector4_32Arg2 if_false)
+	inline vector4f RTM_SIMD_CALL vector_blend(vector4f_arg0 mask, vector4f_arg1 if_true, vector4f_arg2 if_false)
 	{
 #if defined(RTM_SSE2_INTRINSICS)
 		return _mm_or_ps(_mm_andnot_ps(mask, if_false), _mm_and_ps(if_true, mask));
 #elif defined(RTM_NEON_INTRINSICS)
 		return vbslq_f32(mask, if_true, if_false);
 #else
-		return Vector4_32{ rtm_impl::select(mask.x, if_true.x, if_false.x), rtm_impl::select(mask.y, if_true.y, if_false.y), rtm_impl::select(mask.z, if_true.z, if_false.z), rtm_impl::select(mask.w, if_true.w, if_false.w) };
+		return vector4f{ rtm_impl::select(mask.x, if_true.x, if_false.x), rtm_impl::select(mask.y, if_true.y, if_false.y), rtm_impl::select(mask.z, if_true.z, if_false.z), rtm_impl::select(mask.w, if_true.w, if_false.w) };
 #endif
 	}
 
 	template<VectorMix comp0, VectorMix comp1, VectorMix comp2, VectorMix comp3>
-	inline Vector4_32 RTM_SIMD_CALL vector_mix(Vector4_32Arg0 input0, Vector4_32Arg1 input1)
+	inline vector4f RTM_SIMD_CALL vector_mix(vector4f_arg0 input0, vector4f_arg1 input1)
 	{
 		if (rtm_impl::is_vector_mix_arg_xyzw(comp0) && rtm_impl::is_vector_mix_arg_xyzw(comp1) && rtm_impl::is_vector_mix_arg_xyzw(comp2) && rtm_impl::is_vector_mix_arg_xyzw(comp3))
 		{
@@ -882,46 +882,46 @@ namespace rtm
 		return vector_set(x, y, z, w);
 	}
 
-	inline Vector4_32 RTM_SIMD_CALL vector_mix_xxxx(Vector4_32Arg0 input) { return vector_mix<VectorMix::X, VectorMix::X, VectorMix::X, VectorMix::X>(input, input); }
-	inline Vector4_32 RTM_SIMD_CALL vector_mix_yyyy(Vector4_32Arg0 input) { return vector_mix<VectorMix::Y, VectorMix::Y, VectorMix::Y, VectorMix::Y>(input, input); }
-	inline Vector4_32 RTM_SIMD_CALL vector_mix_zzzz(Vector4_32Arg0 input) { return vector_mix<VectorMix::Z, VectorMix::Z, VectorMix::Z, VectorMix::Z>(input, input); }
-	inline Vector4_32 RTM_SIMD_CALL vector_mix_wwww(Vector4_32Arg0 input) { return vector_mix<VectorMix::W, VectorMix::W, VectorMix::W, VectorMix::W>(input, input); }
+	inline vector4f RTM_SIMD_CALL vector_mix_xxxx(vector4f_arg0 input) { return vector_mix<VectorMix::X, VectorMix::X, VectorMix::X, VectorMix::X>(input, input); }
+	inline vector4f RTM_SIMD_CALL vector_mix_yyyy(vector4f_arg0 input) { return vector_mix<VectorMix::Y, VectorMix::Y, VectorMix::Y, VectorMix::Y>(input, input); }
+	inline vector4f RTM_SIMD_CALL vector_mix_zzzz(vector4f_arg0 input) { return vector_mix<VectorMix::Z, VectorMix::Z, VectorMix::Z, VectorMix::Z>(input, input); }
+	inline vector4f RTM_SIMD_CALL vector_mix_wwww(vector4f_arg0 input) { return vector_mix<VectorMix::W, VectorMix::W, VectorMix::W, VectorMix::W>(input, input); }
 
-	inline Vector4_32 RTM_SIMD_CALL vector_mix_xxyy(Vector4_32Arg0 input) { return vector_mix<VectorMix::X, VectorMix::X, VectorMix::Y, VectorMix::Y>(input, input); }
-	inline Vector4_32 RTM_SIMD_CALL vector_mix_xzyw(Vector4_32Arg0 input) { return vector_mix<VectorMix::X, VectorMix::Z, VectorMix::Y, VectorMix::W>(input, input); }
-	inline Vector4_32 RTM_SIMD_CALL vector_mix_yzxy(Vector4_32Arg0 input) { return vector_mix<VectorMix::Y, VectorMix::Z, VectorMix::X, VectorMix::Y>(input, input); }
-	inline Vector4_32 RTM_SIMD_CALL vector_mix_ywxz(Vector4_32Arg0 input) { return vector_mix<VectorMix::Y, VectorMix::W, VectorMix::X, VectorMix::Z>(input, input); }
-	inline Vector4_32 RTM_SIMD_CALL vector_mix_zxyx(Vector4_32Arg0 input) { return vector_mix<VectorMix::Z, VectorMix::X, VectorMix::Y, VectorMix::X>(input, input); }
-	inline Vector4_32 RTM_SIMD_CALL vector_mix_zwyz(Vector4_32Arg0 input) { return vector_mix<VectorMix::Z, VectorMix::W, VectorMix::Y, VectorMix::Z>(input, input); }
-	inline Vector4_32 RTM_SIMD_CALL vector_mix_zwzw(Vector4_32Arg0 input) { return vector_mix<VectorMix::Z, VectorMix::W, VectorMix::Z, VectorMix::W>(input, input); }
-	inline Vector4_32 RTM_SIMD_CALL vector_mix_wxwx(Vector4_32Arg0 input) { return vector_mix<VectorMix::W, VectorMix::X, VectorMix::W, VectorMix::X>(input, input); }
-	inline Vector4_32 RTM_SIMD_CALL vector_mix_wzwy(Vector4_32Arg0 input) { return vector_mix<VectorMix::W, VectorMix::Z, VectorMix::W, VectorMix::Y>(input, input); }
+	inline vector4f RTM_SIMD_CALL vector_mix_xxyy(vector4f_arg0 input) { return vector_mix<VectorMix::X, VectorMix::X, VectorMix::Y, VectorMix::Y>(input, input); }
+	inline vector4f RTM_SIMD_CALL vector_mix_xzyw(vector4f_arg0 input) { return vector_mix<VectorMix::X, VectorMix::Z, VectorMix::Y, VectorMix::W>(input, input); }
+	inline vector4f RTM_SIMD_CALL vector_mix_yzxy(vector4f_arg0 input) { return vector_mix<VectorMix::Y, VectorMix::Z, VectorMix::X, VectorMix::Y>(input, input); }
+	inline vector4f RTM_SIMD_CALL vector_mix_ywxz(vector4f_arg0 input) { return vector_mix<VectorMix::Y, VectorMix::W, VectorMix::X, VectorMix::Z>(input, input); }
+	inline vector4f RTM_SIMD_CALL vector_mix_zxyx(vector4f_arg0 input) { return vector_mix<VectorMix::Z, VectorMix::X, VectorMix::Y, VectorMix::X>(input, input); }
+	inline vector4f RTM_SIMD_CALL vector_mix_zwyz(vector4f_arg0 input) { return vector_mix<VectorMix::Z, VectorMix::W, VectorMix::Y, VectorMix::Z>(input, input); }
+	inline vector4f RTM_SIMD_CALL vector_mix_zwzw(vector4f_arg0 input) { return vector_mix<VectorMix::Z, VectorMix::W, VectorMix::Z, VectorMix::W>(input, input); }
+	inline vector4f RTM_SIMD_CALL vector_mix_wxwx(vector4f_arg0 input) { return vector_mix<VectorMix::W, VectorMix::X, VectorMix::W, VectorMix::X>(input, input); }
+	inline vector4f RTM_SIMD_CALL vector_mix_wzwy(vector4f_arg0 input) { return vector_mix<VectorMix::W, VectorMix::Z, VectorMix::W, VectorMix::Y>(input, input); }
 
-	inline Vector4_32 RTM_SIMD_CALL vector_mix_xyab(Vector4_32Arg0 input0, Vector4_32Arg1 input1) { return vector_mix<VectorMix::X, VectorMix::Y, VectorMix::A, VectorMix::B>(input0, input1); }
-	inline Vector4_32 RTM_SIMD_CALL vector_mix_xzac(Vector4_32Arg0 input0, Vector4_32Arg1 input1) { return vector_mix<VectorMix::X, VectorMix::Z, VectorMix::A, VectorMix::C>(input0, input1); }
-	inline Vector4_32 RTM_SIMD_CALL vector_mix_xbxb(Vector4_32Arg0 input0, Vector4_32Arg1 input1) { return vector_mix<VectorMix::X, VectorMix::B, VectorMix::X, VectorMix::B>(input0, input1); }
-	inline Vector4_32 RTM_SIMD_CALL vector_mix_xbzd(Vector4_32Arg0 input0, Vector4_32Arg1 input1) { return vector_mix<VectorMix::X, VectorMix::B, VectorMix::Z, VectorMix::D>(input0, input1); }
-	inline Vector4_32 RTM_SIMD_CALL vector_mix_ywbd(Vector4_32Arg0 input0, Vector4_32Arg1 input1) { return vector_mix<VectorMix::Y, VectorMix::W, VectorMix::B, VectorMix::D>(input0, input1); }
-	inline Vector4_32 RTM_SIMD_CALL vector_mix_zyax(Vector4_32Arg0 input0, Vector4_32Arg1 input1) { return vector_mix<VectorMix::Z, VectorMix::Y, VectorMix::A, VectorMix::X>(input0, input1); }
-	inline Vector4_32 RTM_SIMD_CALL vector_mix_zycx(Vector4_32Arg0 input0, Vector4_32Arg1 input1) { return vector_mix<VectorMix::Z, VectorMix::Y, VectorMix::C, VectorMix::X>(input0, input1); }
-	inline Vector4_32 RTM_SIMD_CALL vector_mix_zwcd(Vector4_32Arg0 input0, Vector4_32Arg1 input1) { return vector_mix<VectorMix::Z, VectorMix::W, VectorMix::C, VectorMix::D>(input0, input1); }
-	inline Vector4_32 RTM_SIMD_CALL vector_mix_zbaz(Vector4_32Arg0 input0, Vector4_32Arg1 input1) { return vector_mix<VectorMix::Z, VectorMix::B, VectorMix::A, VectorMix::Z>(input0, input1); }
-	inline Vector4_32 RTM_SIMD_CALL vector_mix_zdcz(Vector4_32Arg0 input0, Vector4_32Arg1 input1) { return vector_mix<VectorMix::Z, VectorMix::D, VectorMix::C, VectorMix::Z>(input0, input1); }
-	inline Vector4_32 RTM_SIMD_CALL vector_mix_wxya(Vector4_32Arg0 input0, Vector4_32Arg1 input1) { return vector_mix<VectorMix::W, VectorMix::X, VectorMix::Y, VectorMix::A>(input0, input1); }
-	inline Vector4_32 RTM_SIMD_CALL vector_mix_wxyc(Vector4_32Arg0 input0, Vector4_32Arg1 input1) { return vector_mix<VectorMix::W, VectorMix::X, VectorMix::Y, VectorMix::C>(input0, input1); }
-	inline Vector4_32 RTM_SIMD_CALL vector_mix_wbyz(Vector4_32Arg0 input0, Vector4_32Arg1 input1) { return vector_mix<VectorMix::W, VectorMix::B, VectorMix::Y, VectorMix::Z>(input0, input1); }
-	inline Vector4_32 RTM_SIMD_CALL vector_mix_wdyz(Vector4_32Arg0 input0, Vector4_32Arg1 input1) { return vector_mix<VectorMix::W, VectorMix::D, VectorMix::Y, VectorMix::Z>(input0, input1); }
-	inline Vector4_32 RTM_SIMD_CALL vector_mix_bxwa(Vector4_32Arg0 input0, Vector4_32Arg1 input1) { return vector_mix<VectorMix::B, VectorMix::X, VectorMix::W, VectorMix::A>(input0, input1); }
-	inline Vector4_32 RTM_SIMD_CALL vector_mix_bywx(Vector4_32Arg0 input0, Vector4_32Arg1 input1) { return vector_mix<VectorMix::B, VectorMix::Y, VectorMix::W, VectorMix::X>(input0, input1); }
-	inline Vector4_32 RTM_SIMD_CALL vector_mix_dxwc(Vector4_32Arg0 input0, Vector4_32Arg1 input1) { return vector_mix<VectorMix::D, VectorMix::X, VectorMix::W, VectorMix::C>(input0, input1); }
-	inline Vector4_32 RTM_SIMD_CALL vector_mix_dywx(Vector4_32Arg0 input0, Vector4_32Arg1 input1) { return vector_mix<VectorMix::D, VectorMix::Y, VectorMix::W, VectorMix::X>(input0, input1); }
+	inline vector4f RTM_SIMD_CALL vector_mix_xyab(vector4f_arg0 input0, vector4f_arg1 input1) { return vector_mix<VectorMix::X, VectorMix::Y, VectorMix::A, VectorMix::B>(input0, input1); }
+	inline vector4f RTM_SIMD_CALL vector_mix_xzac(vector4f_arg0 input0, vector4f_arg1 input1) { return vector_mix<VectorMix::X, VectorMix::Z, VectorMix::A, VectorMix::C>(input0, input1); }
+	inline vector4f RTM_SIMD_CALL vector_mix_xbxb(vector4f_arg0 input0, vector4f_arg1 input1) { return vector_mix<VectorMix::X, VectorMix::B, VectorMix::X, VectorMix::B>(input0, input1); }
+	inline vector4f RTM_SIMD_CALL vector_mix_xbzd(vector4f_arg0 input0, vector4f_arg1 input1) { return vector_mix<VectorMix::X, VectorMix::B, VectorMix::Z, VectorMix::D>(input0, input1); }
+	inline vector4f RTM_SIMD_CALL vector_mix_ywbd(vector4f_arg0 input0, vector4f_arg1 input1) { return vector_mix<VectorMix::Y, VectorMix::W, VectorMix::B, VectorMix::D>(input0, input1); }
+	inline vector4f RTM_SIMD_CALL vector_mix_zyax(vector4f_arg0 input0, vector4f_arg1 input1) { return vector_mix<VectorMix::Z, VectorMix::Y, VectorMix::A, VectorMix::X>(input0, input1); }
+	inline vector4f RTM_SIMD_CALL vector_mix_zycx(vector4f_arg0 input0, vector4f_arg1 input1) { return vector_mix<VectorMix::Z, VectorMix::Y, VectorMix::C, VectorMix::X>(input0, input1); }
+	inline vector4f RTM_SIMD_CALL vector_mix_zwcd(vector4f_arg0 input0, vector4f_arg1 input1) { return vector_mix<VectorMix::Z, VectorMix::W, VectorMix::C, VectorMix::D>(input0, input1); }
+	inline vector4f RTM_SIMD_CALL vector_mix_zbaz(vector4f_arg0 input0, vector4f_arg1 input1) { return vector_mix<VectorMix::Z, VectorMix::B, VectorMix::A, VectorMix::Z>(input0, input1); }
+	inline vector4f RTM_SIMD_CALL vector_mix_zdcz(vector4f_arg0 input0, vector4f_arg1 input1) { return vector_mix<VectorMix::Z, VectorMix::D, VectorMix::C, VectorMix::Z>(input0, input1); }
+	inline vector4f RTM_SIMD_CALL vector_mix_wxya(vector4f_arg0 input0, vector4f_arg1 input1) { return vector_mix<VectorMix::W, VectorMix::X, VectorMix::Y, VectorMix::A>(input0, input1); }
+	inline vector4f RTM_SIMD_CALL vector_mix_wxyc(vector4f_arg0 input0, vector4f_arg1 input1) { return vector_mix<VectorMix::W, VectorMix::X, VectorMix::Y, VectorMix::C>(input0, input1); }
+	inline vector4f RTM_SIMD_CALL vector_mix_wbyz(vector4f_arg0 input0, vector4f_arg1 input1) { return vector_mix<VectorMix::W, VectorMix::B, VectorMix::Y, VectorMix::Z>(input0, input1); }
+	inline vector4f RTM_SIMD_CALL vector_mix_wdyz(vector4f_arg0 input0, vector4f_arg1 input1) { return vector_mix<VectorMix::W, VectorMix::D, VectorMix::Y, VectorMix::Z>(input0, input1); }
+	inline vector4f RTM_SIMD_CALL vector_mix_bxwa(vector4f_arg0 input0, vector4f_arg1 input1) { return vector_mix<VectorMix::B, VectorMix::X, VectorMix::W, VectorMix::A>(input0, input1); }
+	inline vector4f RTM_SIMD_CALL vector_mix_bywx(vector4f_arg0 input0, vector4f_arg1 input1) { return vector_mix<VectorMix::B, VectorMix::Y, VectorMix::W, VectorMix::X>(input0, input1); }
+	inline vector4f RTM_SIMD_CALL vector_mix_dxwc(vector4f_arg0 input0, vector4f_arg1 input1) { return vector_mix<VectorMix::D, VectorMix::X, VectorMix::W, VectorMix::C>(input0, input1); }
+	inline vector4f RTM_SIMD_CALL vector_mix_dywx(vector4f_arg0 input0, vector4f_arg1 input1) { return vector_mix<VectorMix::D, VectorMix::Y, VectorMix::W, VectorMix::X>(input0, input1); }
 
 	//////////////////////////////////////////////////////////////////////////
 	// Misc
 
-	inline Vector4_32 RTM_SIMD_CALL vector_sign(Vector4_32Arg0 input)
+	inline vector4f RTM_SIMD_CALL vector_sign(vector4f_arg0 input)
 	{
-		Vector4_32 mask = vector_greater_equal(input, vector_zero_32());
+		vector4f mask = vector_greater_equal(input, vector_zero_32());
 		return vector_blend(mask, vector_set(1.0f), vector_set(-1.0f));
 	}
 }

@@ -33,39 +33,39 @@ namespace rtm
 {
 	namespace rtm_impl
 	{
-		union Converter
+		union mask_converter
 		{
 			double dbl;
 			uint64_t u64;
 			float flt[2];
 
-			constexpr Converter(uint64_t value) : u64(value) {}
-			constexpr Converter(double value) : dbl(value) {}
-			constexpr Converter(float value) : flt{value, value} {}
+			constexpr mask_converter(uint64_t value) : u64(value) {}
+			constexpr mask_converter(double value) : dbl(value) {}
+			constexpr mask_converter(float value) : flt{value, value} {}
 
 			constexpr operator double() const { return dbl; }
 			constexpr operator float() const { return flt[0]; }
 		};
 
-		constexpr Converter get_mask_value(bool is_true)
+		constexpr mask_converter get_mask_value(bool is_true)
 		{
-			return Converter(is_true ? uint64_t(0xFFFFFFFFFFFFFFFFull) : uint64_t(0));
+			return mask_converter(is_true ? uint64_t(0xFFFFFFFFFFFFFFFFull) : uint64_t(0));
 		}
 
 		constexpr double select(double mask, double if_true, double if_false)
 		{
-			return Converter(mask).u64 == 0 ? if_false : if_true;
+			return mask_converter(mask).u64 == 0 ? if_false : if_true;
 		}
 
 		constexpr float select(float mask, float if_true, float if_false)
 		{
-			return Converter(mask).u64 == 0 ? if_false : if_true;
+			return mask_converter(mask).u64 == 0 ? if_false : if_true;
 		}
 	}
 
 #if defined(RTM_SSE2_INTRINSICS)
 	typedef __m128 Quat_32;
-	typedef __m128 Vector4_32;
+	typedef __m128 vector4f;
 
 	struct Quat_64
 	{
@@ -73,14 +73,14 @@ namespace rtm
 		__m128d zw;
 	};
 
-	struct Vector4_64
+	struct vector4d
 	{
 		__m128d xy;
 		__m128d zw;
 	};
 #elif defined(RTM_NEON_INTRINSICS)
 	typedef float32x4_t Quat_32;
-	typedef float32x4_t Vector4_32;
+	typedef float32x4_t vector4f;
 
 	struct alignas(16) Quat_64
 	{
@@ -90,7 +90,7 @@ namespace rtm
 		double w;
 	};
 
-	struct alignas(16) Vector4_64
+	struct alignas(16) vector4d
 	{
 		double x;
 		double y;
@@ -106,7 +106,7 @@ namespace rtm
 		float w;
 	};
 
-	struct alignas(16) Vector4_32
+	struct alignas(16) vector4f
 	{
 		float x;
 		float y;
@@ -122,7 +122,7 @@ namespace rtm
 		double w;
 	};
 
-	struct alignas(16) Vector4_64
+	struct alignas(16) vector4d
 	{
 		double x;
 		double y;
@@ -134,31 +134,31 @@ namespace rtm
 	struct Transform_32
 	{
 		Quat_32		rotation;
-		Vector4_32	translation;
-		Vector4_32	scale;
+		vector4f	translation;
+		vector4f	scale;
 	};
 
 	struct Transform_64
 	{
 		Quat_64		rotation;
-		Vector4_64	translation;
-		Vector4_64	scale;
+		vector4d	translation;
+		vector4d	scale;
 	};
 
 	struct AffineMatrix_32
 	{
-		Vector4_32	x_axis;
-		Vector4_32	y_axis;
-		Vector4_32	z_axis;
-		Vector4_32	w_axis;
+		vector4f	x_axis;
+		vector4f	y_axis;
+		vector4f	z_axis;
+		vector4f	w_axis;
 	};
 
 	struct AffineMatrix_64
 	{
-		Vector4_64	x_axis;
-		Vector4_64	y_axis;
-		Vector4_64	z_axis;
-		Vector4_64	w_axis;
+		vector4d	x_axis;
+		vector4d	y_axis;
+		vector4d	z_axis;
+		vector4d	w_axis;
 	};
 
 	enum class VectorMix
@@ -200,13 +200,13 @@ namespace rtm
 
 #if defined(RTM_USE_VECTORCALL)
 	// On x64 with __vectorcall, the first 6x vector4 arguments can be passed by value in a register, everything else afterwards is passed by const&
-	using Vector4_32Arg0 = const Vector4_32;
-	using Vector4_32Arg1 = const Vector4_32;
-	using Vector4_32Arg2 = const Vector4_32;
-	using Vector4_32Arg3 = const Vector4_32;
-	using Vector4_32Arg4 = const Vector4_32;
-	using Vector4_32Arg5 = const Vector4_32;
-	using Vector4_32ArgN = const Vector4_32&;
+	using vector4f_arg0 = const vector4f;
+	using vector4f_arg1 = const vector4f;
+	using vector4f_arg2 = const vector4f;
+	using vector4f_arg3 = const vector4f;
+	using vector4f_arg4 = const vector4f;
+	using vector4f_arg5 = const vector4f;
+	using vector4f_argn = const vector4f&;
 
 	using Quat_32Arg0 = const Quat_32;
 	using Quat_32Arg1 = const Quat_32;
@@ -225,13 +225,13 @@ namespace rtm
 	using AffineMatrix_32ArgN = const AffineMatrix_32&;
 #elif defined(RTM_NEON_INTRINSICS)
 	// On ARM NEON, the first 4x vector4 arguments can be passed by value in a register, everything else afterwards is passed by const&
-	using Vector4_32Arg0 = const Vector4_32;
-	using Vector4_32Arg1 = const Vector4_32;
-	using Vector4_32Arg2 = const Vector4_32;
-	using Vector4_32Arg3 = const Vector4_32;
-	using Vector4_32Arg4 = const Vector4_32&;
-	using Vector4_32Arg5 = const Vector4_32&;
-	using Vector4_32ArgN = const Vector4_32&;
+	using vector4f_arg0 = const vector4f;
+	using vector4f_arg1 = const vector4f;
+	using vector4f_arg2 = const vector4f;
+	using vector4f_arg3 = const vector4f;
+	using vector4f_arg4 = const vector4f&;
+	using vector4f_arg5 = const vector4f&;
+	using vector4f_argn = const vector4f&;
 
 	using Quat_32Arg0 = const Quat_32;
 	using Quat_32Arg1 = const Quat_32;
@@ -249,13 +249,13 @@ namespace rtm
 	using AffineMatrix_32ArgN = const AffineMatrix_32&;
 #else
 	// On every other platform, everything is passed by const&
-	using Vector4_32Arg0 = const Vector4_32&;
-	using Vector4_32Arg1 = const Vector4_32&;
-	using Vector4_32Arg2 = const Vector4_32&;
-	using Vector4_32Arg3 = const Vector4_32&;
-	using Vector4_32Arg4 = const Vector4_32&;
-	using Vector4_32Arg5 = const Vector4_32&;
-	using Vector4_32ArgN = const Vector4_32&;
+	using vector4f_arg0 = const vector4f&;
+	using vector4f_arg1 = const vector4f&;
+	using vector4f_arg2 = const vector4f&;
+	using vector4f_arg3 = const vector4f&;
+	using vector4f_arg4 = const vector4f&;
+	using vector4f_arg5 = const vector4f&;
+	using vector4f_argn = const vector4f&;
 
 	using Quat_32Arg0 = const Quat_32&;
 	using Quat_32Arg1 = const Quat_32&;

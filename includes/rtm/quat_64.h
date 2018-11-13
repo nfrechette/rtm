@@ -55,7 +55,7 @@ namespace rtm
 		return quat_set(0.0, 0.0, 0.0, 1.0);
 	}
 
-	inline Quat_64 vector_to_quat(const Vector4_64& input)
+	inline Quat_64 vector_to_quat(const vector4d& input)
 	{
 #if defined(RTM_SSE2_INTRINSICS)
 		return Quat_64{ input.xy, input.zw };
@@ -149,7 +149,7 @@ namespace rtm
 		return quat_set(x, y, z, w);
 	}
 
-	inline Vector4_64 quat_rotate(const Quat_64& rotation, const Vector4_64& vector)
+	inline vector4d quat_rotate(const Quat_64& rotation, const vector4d& vector)
 	{
 		Quat_64 vector_quat = quat_set(vector_get_x(vector), vector_get_y(vector), vector_get_z(vector), 0.0);
 		Quat_64 inv_rotation = quat_conjugate(rotation);
@@ -179,7 +179,7 @@ namespace rtm
 		// TODO: Use high precision recip sqrt function and vector_mul
 		double length = quat_length(input);
 		//float length_recip = quat_length_reciprocal(input);
-		Vector4_64 input_vector = quat_to_vector(input);
+		vector4d input_vector = quat_to_vector(input);
 		//return vector_to_quat(vector_mul(input_vector, length_recip));
 		return vector_to_quat(vector_div(input_vector, vector_set(length)));
 	}
@@ -187,12 +187,12 @@ namespace rtm
 	inline Quat_64 quat_lerp(const Quat_64& start, const Quat_64& end, double alpha)
 	{
 		// To ensure we take the shortest path, we apply a bias if the dot product is negative
-		Vector4_64 start_vector = quat_to_vector(start);
-		Vector4_64 end_vector = quat_to_vector(end);
+		vector4d start_vector = quat_to_vector(start);
+		vector4d end_vector = quat_to_vector(end);
 		double dot = vector_dot(start_vector, end_vector);
 		double bias = dot >= 0.0 ? 1.0 : -1.0;
 		// TODO: Test with this instead: Rotation = (B * Alpha) + (A * (Bias * (1.f - Alpha)));
-		Vector4_64 value = vector_add(start_vector, vector_mul(vector_sub(vector_mul(end_vector, bias), start_vector), alpha));
+		vector4d value = vector_add(start_vector, vector_mul(vector_sub(vector_mul(end_vector, bias), start_vector), alpha));
 		//Vector4_64 value = vector_add(vector_mul(end_vector, alpha), vector_mul(start_vector, bias * (1.0 - alpha)));
 		return quat_normalize(vector_to_quat(value));
 	}
@@ -207,7 +207,7 @@ namespace rtm
 		return quat_get_w(input) >= 0.0 ? input : quat_neg(input);
 	}
 
-	inline Quat_64 quat_from_positive_w(const Vector4_64& input)
+	inline Quat_64 quat_from_positive_w(const vector4d& input)
 	{
 		// Operation order is important here, due to rounding, ((1.0 - (X*X)) - Y*Y) - Z*Z is more accurate than 1.0 - dot3(xyz, xyz)
 		double w_squared = ((1.0 - vector_get_x(input) * vector_get_x(input)) - vector_get_y(input) * vector_get_y(input)) - vector_get_z(input) * vector_get_z(input);
@@ -220,7 +220,7 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	// Conversion to/from axis/angle/euler
 
-	inline void quat_to_axis_angle(const Quat_64& input, Vector4_64& out_axis, double& out_angle)
+	inline void quat_to_axis_angle(const Quat_64& input, vector4d& out_axis, double& out_angle)
 	{
 		constexpr double epsilon = 1.0e-8;
 		constexpr double epsilon_squared = epsilon * epsilon;
@@ -231,7 +231,7 @@ namespace rtm
 		out_axis = scale_sq >= epsilon_squared ? vector_div(vector_set(quat_get_x(input), quat_get_y(input), quat_get_z(input)), vector_set(sqrt(scale_sq))) : vector_set(1.0, 0.0, 0.0);
 	}
 
-	inline Vector4_64 quat_get_axis(const Quat_64& input)
+	inline vector4d quat_get_axis(const Quat_64& input)
 	{
 		constexpr double epsilon = 1.0e-8;
 		constexpr double epsilon_squared = epsilon * epsilon;
@@ -245,7 +245,7 @@ namespace rtm
 		return acos(quat_get_w(input)) * 2.0;
 	}
 
-	inline Quat_64 quat_from_axis_angle(const Vector4_64& axis, double angle)
+	inline Quat_64 quat_from_axis_angle(const vector4d& axis, double angle)
 	{
 		double s, c;
 		sincos(0.5 * angle, s, c);

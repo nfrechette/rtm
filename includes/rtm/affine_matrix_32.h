@@ -44,7 +44,7 @@ namespace rtm
 	// Z axis == up
 	//////////////////////////////////////////////////////////////////////////
 
-	inline AffineMatrix_32 RTM_SIMD_CALL matrix_set(Vector4_32Arg0 x_axis, Vector4_32Arg1 y_axis, Vector4_32Arg2 z_axis, Vector4_32Arg3 w_axis)
+	inline AffineMatrix_32 RTM_SIMD_CALL matrix_set(vector4f_arg0 x_axis, vector4f_arg1 y_axis, vector4f_arg2 z_axis, vector4f_arg3 w_axis)
 	{
 		RTM_ASSERT(vector_get_w(x_axis) == 0.0f, "X axis does not have a W component == 0.0");
 		RTM_ASSERT(vector_get_w(y_axis) == 0.0f, "Y axis does not have a W component == 0.0");
@@ -53,7 +53,7 @@ namespace rtm
 		return AffineMatrix_32{x_axis, y_axis, z_axis, w_axis};
 	}
 
-	inline AffineMatrix_32 RTM_SIMD_CALL matrix_set(Quat_32Arg0 quat, Vector4_32Arg1 translation, Vector4_32Arg2 scale)
+	inline AffineMatrix_32 RTM_SIMD_CALL matrix_set(Quat_32Arg0 quat, vector4f_arg1 translation, vector4f_arg2 scale)
 	{
 		RTM_ASSERT(quat_is_normalized(quat), "Quaternion is not normalized");
 
@@ -70,10 +70,10 @@ namespace rtm
 		const float wy = quat_get_w(quat) * y2;
 		const float wz = quat_get_w(quat) * z2;
 
-		Vector4_32 x_axis = vector_mul(vector_set(1.0f - (yy + zz), xy + wz, xz - wy, 0.0f), vector_get_x(scale));
-		Vector4_32 y_axis = vector_mul(vector_set(xy - wz, 1.0f - (xx + zz), yz + wx, 0.0f), vector_get_y(scale));
-		Vector4_32 z_axis = vector_mul(vector_set(xz + wy, yz - wx, 1.0f - (xx + yy), 0.0f), vector_get_z(scale));
-		Vector4_32 w_axis = vector_set(vector_get_x(translation), vector_get_y(translation), vector_get_z(translation), 1.0f);
+		vector4f x_axis = vector_mul(vector_set(1.0f - (yy + zz), xy + wz, xz - wy, 0.0f), vector_get_x(scale));
+		vector4f y_axis = vector_mul(vector_set(xy - wz, 1.0f - (xx + zz), yz + wx, 0.0f), vector_get_y(scale));
+		vector4f z_axis = vector_mul(vector_set(xz + wy, yz - wx, 1.0f - (xx + yy), 0.0f), vector_get_z(scale));
+		vector4f w_axis = vector_set(vector_get_x(translation), vector_get_y(translation), vector_get_z(translation), 1.0f);
 		return matrix_set(x_axis, y_axis, z_axis, w_axis);
 	}
 
@@ -104,19 +104,19 @@ namespace rtm
 		const float wy = quat_get_w(quat) * y2;
 		const float wz = quat_get_w(quat) * z2;
 
-		Vector4_32 x_axis = vector_set(1.0f - (yy + zz), xy + wz, xz - wy, 0.0f);
-		Vector4_32 y_axis = vector_set(xy - wz, 1.0f - (xx + zz), yz + wx, 0.0f);
-		Vector4_32 z_axis = vector_set(xz + wy, yz - wx, 1.0f - (xx + yy), 0.0f);
-		Vector4_32 w_axis = vector_set(0.0f, 0.0f, 0.0f, 1.0f);
+		vector4f x_axis = vector_set(1.0f - (yy + zz), xy + wz, xz - wy, 0.0f);
+		vector4f y_axis = vector_set(xy - wz, 1.0f - (xx + zz), yz + wx, 0.0f);
+		vector4f z_axis = vector_set(xz + wy, yz - wx, 1.0f - (xx + yy), 0.0f);
+		vector4f w_axis = vector_set(0.0f, 0.0f, 0.0f, 1.0f);
 		return matrix_set(x_axis, y_axis, z_axis, w_axis);
 	}
 
-	inline AffineMatrix_32 RTM_SIMD_CALL matrix_from_translation(Vector4_32Arg0 translation)
+	inline AffineMatrix_32 RTM_SIMD_CALL matrix_from_translation(vector4f_arg0 translation)
 	{
 		return matrix_set(vector_set(1.0f, 0.0f, 0.0f, 0.0f), vector_set(0.0f, 1.0f, 0.0f, 0.0f), vector_set(0.0f, 0.0f, 1.0f, 0.0f), vector_set(vector_get_x(translation), vector_get_y(translation), vector_get_z(translation), 1.0f));
 	}
 
-	inline AffineMatrix_32 RTM_SIMD_CALL matrix_from_scale(Vector4_32Arg0 scale)
+	inline AffineMatrix_32 RTM_SIMD_CALL matrix_from_scale(vector4f_arg0 scale)
 	{
 		RTM_ASSERT(!vector_any_near_equal3(scale, vector_zero_32()), "Scale cannot be zero");
 		return matrix_set(vector_set(vector_get_x(scale), 0.0f, 0.0f, 0.0f), vector_set(0.0f, vector_get_y(scale), 0.0f, 0.0f), vector_set(0.0f, 0.0f, vector_get_z(scale), 0.0f), vector_set(0.0f, 0.0f, 0.0f, 1.0f));
@@ -127,7 +127,7 @@ namespace rtm
 		return matrix_set(transform.rotation, transform.translation, transform.scale);
 	}
 
-	inline const Vector4_32& matrix_get_axis(const AffineMatrix_32& input, MatrixAxis axis)
+	inline const vector4f& matrix_get_axis(const AffineMatrix_32& input, MatrixAxis axis)
 	{
 		switch (axis)
 		{
@@ -141,7 +141,7 @@ namespace rtm
 		}
 	}
 
-	inline Vector4_32& matrix_get_axis(AffineMatrix_32& input, MatrixAxis axis)
+	inline vector4f& matrix_get_axis(AffineMatrix_32& input, MatrixAxis axis)
 	{
 		switch (axis)
 		{
@@ -214,32 +214,32 @@ namespace rtm
 	// Multiplication order is as follow: local_to_world = matrix_mul(local_to_object, object_to_world)
 	inline AffineMatrix_32 RTM_SIMD_CALL matrix_mul(AffineMatrix_32Arg0 lhs, AffineMatrix_32ArgN rhs)
 	{
-		Vector4_32 tmp = vector_mul(vector_mix_xxxx(lhs.x_axis), rhs.x_axis);
+		vector4f tmp = vector_mul(vector_mix_xxxx(lhs.x_axis), rhs.x_axis);
 		tmp = vector_mul_add(vector_mix_yyyy(lhs.x_axis), rhs.y_axis, tmp);
 		tmp = vector_mul_add(vector_mix_zzzz(lhs.x_axis), rhs.z_axis, tmp);
-		Vector4_32 x_axis = tmp;
+		vector4f x_axis = tmp;
 
 		tmp = vector_mul(vector_mix_xxxx(lhs.y_axis), rhs.x_axis);
 		tmp = vector_mul_add(vector_mix_yyyy(lhs.y_axis), rhs.y_axis, tmp);
 		tmp = vector_mul_add(vector_mix_zzzz(lhs.y_axis), rhs.z_axis, tmp);
-		Vector4_32 y_axis = tmp;
+		vector4f y_axis = tmp;
 
 		tmp = vector_mul(vector_mix_xxxx(lhs.z_axis), rhs.x_axis);
 		tmp = vector_mul_add(vector_mix_yyyy(lhs.z_axis), rhs.y_axis, tmp);
 		tmp = vector_mul_add(vector_mix_zzzz(lhs.z_axis), rhs.z_axis, tmp);
-		Vector4_32 z_axis = tmp;
+		vector4f z_axis = tmp;
 
 		tmp = vector_mul(vector_mix_xxxx(lhs.w_axis), rhs.x_axis);
 		tmp = vector_mul_add(vector_mix_yyyy(lhs.w_axis), rhs.y_axis, tmp);
 		tmp = vector_mul_add(vector_mix_zzzz(lhs.w_axis), rhs.z_axis, tmp);
-		Vector4_32 w_axis = vector_add(rhs.w_axis, tmp);
+		vector4f w_axis = vector_add(rhs.w_axis, tmp);
 		return matrix_set(x_axis, y_axis, z_axis, w_axis);
 	}
 
-	inline Vector4_32 RTM_SIMD_CALL matrix_mul_position(AffineMatrix_32Arg0 lhs, Vector4_32Arg4 rhs)
+	inline vector4f RTM_SIMD_CALL matrix_mul_position(AffineMatrix_32Arg0 lhs, vector4f_arg4 rhs)
 	{
-		Vector4_32 tmp0;
-		Vector4_32 tmp1;
+		vector4f tmp0;
+		vector4f tmp1;
 
 		tmp0 = vector_mul(vector_mix_xxxx(rhs), lhs.x_axis);
 		tmp0 = vector_mul_add(vector_mix_yyyy(rhs), lhs.y_axis, tmp0);
@@ -254,15 +254,15 @@ namespace rtm
 		// affine because the last column is no longer [0,0,0,1]
 		inline AffineMatrix_32 RTM_SIMD_CALL matrix_transpose(AffineMatrix_32Arg0 input)
 		{
-			Vector4_32 tmp0 = vector_mix_xyab(input.x_axis, input.y_axis);
-			Vector4_32 tmp1 = vector_mix_zwcd(input.x_axis, input.y_axis);
-			Vector4_32 tmp2 = vector_mix_xyab(input.z_axis, input.w_axis);
-			Vector4_32 tmp3 = vector_mix_zwcd(input.z_axis, input.w_axis);
+			vector4f tmp0 = vector_mix_xyab(input.x_axis, input.y_axis);
+			vector4f tmp1 = vector_mix_zwcd(input.x_axis, input.y_axis);
+			vector4f tmp2 = vector_mix_xyab(input.z_axis, input.w_axis);
+			vector4f tmp3 = vector_mix_zwcd(input.z_axis, input.w_axis);
 
-			Vector4_32 x_axis = vector_mix_xzac(tmp0, tmp2);
-			Vector4_32 y_axis = vector_mix_ywbd(tmp0, tmp2);
-			Vector4_32 z_axis = vector_mix_xzac(tmp1, tmp3);
-			Vector4_32 w_axis = vector_mix_ywbd(tmp1, tmp3);
+			vector4f x_axis = vector_mix_xzac(tmp0, tmp2);
+			vector4f y_axis = vector_mix_ywbd(tmp0, tmp2);
+			vector4f z_axis = vector_mix_xzac(tmp1, tmp3);
+			vector4f w_axis = vector_mix_ywbd(tmp1, tmp3);
 			return AffineMatrix_32{ x_axis, y_axis, z_axis, w_axis };
 		}
 	}
@@ -272,16 +272,16 @@ namespace rtm
 		// TODO: This is a generic matrix inverse function, implement the affine version?
 		AffineMatrix_32 input_transposed = rtm_impl::matrix_transpose(input);
 
-		Vector4_32 v00 = vector_mix_xxyy(input_transposed.z_axis);
-		Vector4_32 v01 = vector_mix_xxyy(input_transposed.x_axis);
-		Vector4_32 v02 = vector_mix_xzac(input_transposed.z_axis, input_transposed.x_axis);
-		Vector4_32 v10 = vector_mix_zwzw(input_transposed.w_axis);
-		Vector4_32 v11 = vector_mix_zwzw(input_transposed.y_axis);
-		Vector4_32 v12 = vector_mix_ywbd(input_transposed.w_axis, input_transposed.y_axis);
+		vector4f v00 = vector_mix_xxyy(input_transposed.z_axis);
+		vector4f v01 = vector_mix_xxyy(input_transposed.x_axis);
+		vector4f v02 = vector_mix_xzac(input_transposed.z_axis, input_transposed.x_axis);
+		vector4f v10 = vector_mix_zwzw(input_transposed.w_axis);
+		vector4f v11 = vector_mix_zwzw(input_transposed.y_axis);
+		vector4f v12 = vector_mix_ywbd(input_transposed.w_axis, input_transposed.y_axis);
 
-		Vector4_32 d0 = vector_mul(v00, v10);
-		Vector4_32 d1 = vector_mul(v01, v11);
-		Vector4_32 d2 = vector_mul(v02, v12);
+		vector4f d0 = vector_mul(v00, v10);
+		vector4f d1 = vector_mul(v01, v11);
+		vector4f d2 = vector_mul(v02, v12);
 
 		v00 = vector_mix_zwzw(input_transposed.z_axis);
 		v01 = vector_mix_zwzw(input_transposed.x_axis);
@@ -297,16 +297,16 @@ namespace rtm
 		v00 = vector_mix_yzxy(input_transposed.y_axis);
 		v01 = vector_mix_zxyx(input_transposed.x_axis);
 		v02 = vector_mix_yzxy(input_transposed.w_axis);
-		Vector4_32 v03 = vector_mix_zxyx(input_transposed.z_axis);
+		vector4f v03 = vector_mix_zxyx(input_transposed.z_axis);
 		v10 = vector_mix_bywx(d0, d2);
 		v11 = vector_mix_wbyz(d0, d2);
 		v12 = vector_mix_dywx(d1, d2);
-		Vector4_32 v13 = vector_mix_wdyz(d1, d2);
+		vector4f v13 = vector_mix_wdyz(d1, d2);
 
-		Vector4_32 c0 = vector_mul(v00, v10);
-		Vector4_32 c2 = vector_mul(v01, v11);
-		Vector4_32 c4 = vector_mul(v02, v12);
-		Vector4_32 c6 = vector_mul(v03, v13);
+		vector4f c0 = vector_mul(v00, v10);
+		vector4f c2 = vector_mul(v01, v11);
+		vector4f c4 = vector_mul(v02, v12);
+		vector4f c6 = vector_mul(v03, v13);
 
 		v00 = vector_mix_zwyz(input_transposed.y_axis);
 		v01 = vector_mix_wzwy(input_transposed.x_axis);
@@ -331,22 +331,22 @@ namespace rtm
 		v12 = vector_mix_zdcz(d1, d2);
 		v13 = vector_mix_dxwc(d1, d2);
 
-		Vector4_32 c1 = vector_neg_mul_sub(v00, v10, c0);
+		vector4f c1 = vector_neg_mul_sub(v00, v10, c0);
 		c0 = vector_mul_add(v00, v10, c0);
-		Vector4_32 c3 = vector_mul_add(v01, v11, c2);
+		vector4f c3 = vector_mul_add(v01, v11, c2);
 		c2 = vector_neg_mul_sub(v01, v11, c2);
-		Vector4_32 c5 = vector_neg_mul_sub(v02, v12, c4);
+		vector4f c5 = vector_neg_mul_sub(v02, v12, c4);
 		c4 = vector_mul_add(v02, v12, c4);
-		Vector4_32 c7 = vector_mul_add(v03, v13, c6);
+		vector4f c7 = vector_mul_add(v03, v13, c6);
 		c6 = vector_neg_mul_sub(v03, v13, c6);
 
-		Vector4_32 x_axis = vector_mix_xbzd(c0, c1);
-		Vector4_32 y_axis = vector_mix_xbzd(c2, c3);
-		Vector4_32 z_axis = vector_mix_xbzd(c4, c5);
-		Vector4_32 w_axis = vector_mix_xbzd(c6, c7);
+		vector4f x_axis = vector_mix_xbzd(c0, c1);
+		vector4f y_axis = vector_mix_xbzd(c2, c3);
+		vector4f z_axis = vector_mix_xbzd(c4, c5);
+		vector4f w_axis = vector_mix_xbzd(c6, c7);
 
 		float det = vector_dot(x_axis, input_transposed.x_axis);
-		Vector4_32 inv_det = vector_set(reciprocal(det));
+		vector4f inv_det = vector_set(reciprocal(det));
 
 		x_axis = vector_mul(x_axis, inv_det);
 		y_axis = vector_mul(y_axis, inv_det);
