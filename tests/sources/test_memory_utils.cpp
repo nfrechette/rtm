@@ -25,13 +25,14 @@
 
 #include <catch.hpp>
 
-#include <rtm/memory_utils.h>
+#include <rtm/impl/memory_utils.h>
 
 #include <cstdint>
 #include <cstring>
 #include <limits>
 
 using namespace rtm;
+using namespace rtm::rtm_impl;
 
 TEST_CASE("misc tests", "[core][memory]")
 {
@@ -104,39 +105,16 @@ TEST_CASE("misc tests", "[core][memory]")
 	REQUIRE(align_to(ptr, 4) == (void*)0x00000004);
 	REQUIRE(align_to(ptr, 8) == (void*)0x00000008);
 
-	struct alignas(8) Align8
-	{
-		float tmp[2];
-	};
-
-	const size_t padding0 = get_required_padding<float, Align8>();
-	const size_t padding1 = get_required_padding<uint8_t, Align8>();
-	REQUIRE(padding0 == 4);
-	REQUIRE(padding1 == 7);
-
 	int32_t array[8];
 	REQUIRE(get_array_size(array) == (sizeof(array) / sizeof(array[0])));
 }
 
 TEST_CASE("raw memory support", "[core][memory]")
 {
-	uint8_t buffer[1024];
-	uint8_t* ptr = &buffer[32];
-	REQUIRE(add_offset_to_ptr<uint8_t>(ptr, 23) == ptr + 23);
-	REQUIRE(add_offset_to_ptr<uint8_t>(ptr, 64) == ptr + 64);
-
-	uint16_t value16 = 0x04FE;
-	REQUIRE(byte_swap(value16) == 0xFE04);
-
-	uint32_t value32 = 0x04FE78AB;
-	REQUIRE(byte_swap(value32) == 0xAB78FE04);
-
-	uint64_t value64 = uint64_t(0x04FE78AB0098DC56ull);
-	REQUIRE(byte_swap(value64) == uint64_t(0x56DC9800AB78FE04ull));
-
+	uint32_t value32 = 0xAB78FE04;
 	uint8_t unaligned_value_buffer[5] = { 0x00, 0x00, 0x00, 0x00, 0x00 };
 	std::memcpy(&unaligned_value_buffer[1], &value32, sizeof(uint32_t));
-	REQUIRE(unaligned_load<uint32_t>(&unaligned_value_buffer[1]) == value32);
+	REQUIRE(unaligned_read<uint32_t>(&unaligned_value_buffer[1]) == value32);
 }
 
 enum class UnsignedEnum : uint32_t

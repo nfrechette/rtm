@@ -68,7 +68,7 @@
 
 	namespace rtm
 	{
-		namespace impl
+		namespace rtm_impl
 		{
 			inline void on_assert_abort(const char* expression, int line, const char* file, const char* format, ...)
 			{
@@ -89,7 +89,7 @@
 		}
 	}
 
-	#define RTM_ASSERT(expression, format, ...) if (!(expression)) rtm::impl::on_assert_abort(#expression, __LINE__, __FILE__, format, ## __VA_ARGS__)
+	#define RTM_ASSERT(expression, format, ...) if (!(expression)) rtm::rtm_impl::on_assert_abort(#expression, __LINE__, __FILE__, format, ## __VA_ARGS__)
 	#define RTM_HAS_ASSERT_CHECKS
 
 #elif defined(RTM_ON_ASSERT_THROW)
@@ -101,7 +101,7 @@
 
 	namespace rtm
 	{
-		namespace impl
+		namespace rtm_impl
 		{
 			inline void on_assert_throw(const char* expression, int line, const char* file, const char* format, ...)
 			{
@@ -127,7 +127,7 @@
 		}
 	}
 
-	#define RTM_ASSERT(expression, format, ...) if (!(expression)) rtm::impl::on_assert_throw(#expression, __LINE__, __FILE__, format, ## __VA_ARGS__)
+	#define RTM_ASSERT(expression, format, ...) if (!(expression)) rtm::rtm_impl::on_assert_throw(#expression, __LINE__, __FILE__, format, ## __VA_ARGS__)
 	#define RTM_HAS_ASSERT_CHECKS
 
 #elif defined(RTM_ON_ASSERT_CUSTOM)

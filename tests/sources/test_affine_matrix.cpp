@@ -175,7 +175,7 @@ static void test_affine_matrix_impl(const MatrixType& identity, const FloatType 
 		Vector4Type z_axis = vector_set(FloatType(7.0), FloatType(8.0), FloatType(9.0), FloatType(0.0));
 		Vector4Type w_axis = vector_set(FloatType(10.0), FloatType(11.0), FloatType(12.0), FloatType(1.0));
 		MatrixType mtx0 = matrix_set(x_axis, y_axis, z_axis, w_axis);
-		MatrixType mtx1 = impl::matrix_transpose(mtx0);
+		MatrixType mtx1 = rtm_impl::matrix_transpose(mtx0);
 		REQUIRE(vector_all_near_equal(vector_set(FloatType(1.0), FloatType(4.0), FloatType(7.0), FloatType(10.0)), mtx1.x_axis, threshold));
 		REQUIRE(vector_all_near_equal(vector_set(FloatType(2.0), FloatType(5.0), FloatType(8.0), FloatType(11.0)), mtx1.y_axis, threshold));
 		REQUIRE(vector_all_near_equal(vector_set(FloatType(3.0), FloatType(6.0), FloatType(9.0), FloatType(12.0)), mtx1.z_axis, threshold));

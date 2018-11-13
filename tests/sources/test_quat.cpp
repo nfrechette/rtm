@@ -214,10 +214,10 @@ static void test_quat_impl(const Vector4Type& zero, const QuatType& identity, co
 			vector_set(FloatType(-1.0), FloatType(0.0), FloatType(0.0)),
 		};
 
-		for (size_t quat_index = 0; quat_index < get_array_size(test_rotations); ++quat_index)
+		for (size_t quat_index = 0; quat_index < rtm_impl::get_array_size(test_rotations); ++quat_index)
 		{
 			const QuatType& rotation = test_rotations[quat_index];
-			for (size_t vector_index = 0; vector_index < get_array_size(test_vectors); ++vector_index)
+			for (size_t vector_index = 0; vector_index < rtm_impl::get_array_size(test_vectors); ++vector_index)
 			{
 				const Vector4Type& vector = test_vectors[vector_index];
 				Vector4Type result = quat_rotate(rotation, vector);

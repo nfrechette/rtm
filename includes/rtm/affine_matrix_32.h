@@ -248,7 +248,7 @@ namespace rtm
 		return vector_add(tmp0, tmp1);
 	}
 
-	namespace impl
+	namespace rtm_impl
 	{
 		// Note: This is a generic matrix 4x4 transpose, the resulting matrix is no longer
 		// affine because the last column is no longer [0,0,0,1]
@@ -270,7 +270,7 @@ namespace rtm
 	inline AffineMatrix_32 RTM_SIMD_CALL matrix_inverse(AffineMatrix_32Arg0 input)
 	{
 		// TODO: This is a generic matrix inverse function, implement the affine version?
-		AffineMatrix_32 input_transposed = impl::matrix_transpose(input);
+		AffineMatrix_32 input_transposed = rtm_impl::matrix_transpose(input);
 
 		Vector4_32 v00 = vector_mix_xxyy(input_transposed.z_axis);
 		Vector4_32 v01 = vector_mix_xxyy(input_transposed.x_axis);

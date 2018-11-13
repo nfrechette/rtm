@@ -26,10 +26,10 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 #include "rtm/error.h"
-#include "rtm/memory_utils.h"
 #include "rtm/math.h"
 #include "rtm/scalar_64.h"
 #include "rtm/vector4_64.h"
+#include "rtm/impl/memory_utils.h"
 
 namespace rtm
 {
@@ -113,7 +113,7 @@ namespace rtm
 
 	inline void quat_unaligned_write(const Quat_64& input, double* output)
 	{
-		RTM_ASSERT(is_aligned(output), "Invalid alignment");
+		RTM_ASSERT(rtm_impl::is_aligned(output), "Invalid alignment");
 		output[0] = quat_get_x(input);
 		output[1] = quat_get_y(input);
 		output[2] = quat_get_z(input);

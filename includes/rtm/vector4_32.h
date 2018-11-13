@@ -26,9 +26,9 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 #include "rtm/error.h"
-#include "rtm/memory_utils.h"
 #include "rtm/math.h"
 #include "rtm/scalar_32.h"
+#include "rtm/impl/memory_utils.h"
 
 namespace rtm
 {
@@ -84,13 +84,13 @@ namespace rtm
 
 	inline Vector4_32 RTM_SIMD_CALL vector_unaligned_load(const float* input)
 	{
-		RTM_ASSERT(is_aligned(input), "Invalid alignment");
+		RTM_ASSERT(rtm_impl::is_aligned(input), "Invalid alignment");
 		return vector_set(input[0], input[1], input[2], input[3]);
 	}
 
 	inline Vector4_32 RTM_SIMD_CALL vector_unaligned_load3(const float* input)
 	{
-		RTM_ASSERT(is_aligned(input), "Invalid alignment");
+		RTM_ASSERT(rtm_impl::is_aligned(input), "Invalid alignment");
 		return vector_set(input[0], input[1], input[2], 0.0f);
 	}
 
@@ -229,7 +229,7 @@ namespace rtm
 
 	inline void RTM_SIMD_CALL vector_unaligned_write(Vector4_32Arg0 input, float* output)
 	{
-		RTM_ASSERT(is_aligned(output), "Invalid alignment");
+		RTM_ASSERT(rtm_impl::is_aligned(output), "Invalid alignment");
 		output[0] = vector_get_x(input);
 		output[1] = vector_get_y(input);
 		output[2] = vector_get_z(input);
@@ -238,7 +238,7 @@ namespace rtm
 
 	inline void RTM_SIMD_CALL vector_unaligned_write3(Vector4_32Arg0 input, float* output)
 	{
-		RTM_ASSERT(is_aligned(output), "Invalid alignment");
+		RTM_ASSERT(rtm_impl::is_aligned(output), "Invalid alignment");
 		output[0] = vector_get_x(input);
 		output[1] = vector_get_y(input);
 		output[2] = vector_get_z(input);
@@ -563,7 +563,7 @@ namespace rtm
 #elif defined(RTM_NEON_INTRINSICS)
 		return vcltq_f32(lhs, rhs);
 #else
-		return Vector4_32{ impl::get_mask_value(lhs.x < rhs.x), impl::get_mask_value(lhs.y < rhs.y), impl::get_mask_value(lhs.z < rhs.z), impl::get_mask_value(lhs.w < rhs.w) };
+		return Vector4_32{ rtm_impl::get_mask_value(lhs.x < rhs.x), rtm_impl::get_mask_value(lhs.y < rhs.y), rtm_impl::get_mask_value(lhs.z < rhs.z), rtm_impl::get_mask_value(lhs.w < rhs.w) };
 #endif
 	}
 
@@ -574,7 +574,7 @@ namespace rtm
 #elif defined(RTM_NEON_INTRINSICS)
 		return vcgeq_f32(lhs, rhs);
 #else
-		return Vector4_32{ impl::get_mask_value(lhs.x >= rhs.x), impl::get_mask_value(lhs.y >= rhs.y), impl::get_mask_value(lhs.z >= rhs.z), impl::get_mask_value(lhs.w >= rhs.w) };
+		return Vector4_32{ rtm_impl::get_mask_value(lhs.x >= rhs.x), rtm_impl::get_mask_value(lhs.y >= rhs.y), rtm_impl::get_mask_value(lhs.z >= rhs.z), rtm_impl::get_mask_value(lhs.w >= rhs.w) };
 #endif
 	}
 
@@ -786,14 +786,14 @@ namespace rtm
 #elif defined(RTM_NEON_INTRINSICS)
 		return vbslq_f32(mask, if_true, if_false);
 #else
-		return Vector4_32{ impl::select(mask.x, if_true.x, if_false.x), impl::select(mask.y, if_true.y, if_false.y), impl::select(mask.z, if_true.z, if_false.z), impl::select(mask.w, if_true.w, if_false.w) };
+		return Vector4_32{ rtm_impl::select(mask.x, if_true.x, if_false.x), rtm_impl::select(mask.y, if_true.y, if_false.y), rtm_impl::select(mask.z, if_true.z, if_false.z), rtm_impl::select(mask.w, if_true.w, if_false.w) };
 #endif
 	}
 
 	template<VectorMix comp0, VectorMix comp1, VectorMix comp2, VectorMix comp3>
 	inline Vector4_32 RTM_SIMD_CALL vector_mix(Vector4_32Arg0 input0, Vector4_32Arg1 input1)
 	{
-		if (impl::is_vector_mix_arg_xyzw(comp0) && impl::is_vector_mix_arg_xyzw(comp1) && impl::is_vector_mix_arg_xyzw(comp2) && impl::is_vector_mix_arg_xyzw(comp3))
+		if (rtm_impl::is_vector_mix_arg_xyzw(comp0) && rtm_impl::is_vector_mix_arg_xyzw(comp1) && rtm_impl::is_vector_mix_arg_xyzw(comp2) && rtm_impl::is_vector_mix_arg_xyzw(comp3))
 		{
 			// All four components come from input 0
 #if defined(RTM_SSE2_INTRINSICS)
@@ -803,7 +803,7 @@ namespace rtm
 #endif
 		}
 
-		if (impl::is_vector_mix_arg_abcd(comp0) && impl::is_vector_mix_arg_abcd(comp1) && impl::is_vector_mix_arg_abcd(comp2) && impl::is_vector_mix_arg_abcd(comp3))
+		if (rtm_impl::is_vector_mix_arg_abcd(comp0) && rtm_impl::is_vector_mix_arg_abcd(comp1) && rtm_impl::is_vector_mix_arg_abcd(comp2) && rtm_impl::is_vector_mix_arg_abcd(comp3))
 		{
 			// All four components come from input 1
 #if defined(RTM_SSE2_INTRINSICS)
@@ -813,7 +813,7 @@ namespace rtm
 #endif
 		}
 
-		if (static_condition<(comp0 == VectorMix::X || comp0 == VectorMix::Y) && (comp1 == VectorMix::X || comp1 == VectorMix::Y) && (comp2 == VectorMix::A || comp2 == VectorMix::B) && (comp3 == VectorMix::A && comp3 == VectorMix::B)>::test())
+		if (rtm_impl::static_condition<(comp0 == VectorMix::X || comp0 == VectorMix::Y) && (comp1 == VectorMix::X || comp1 == VectorMix::Y) && (comp2 == VectorMix::A || comp2 == VectorMix::B) && (comp3 == VectorMix::A && comp3 == VectorMix::B)>::test())
 		{
 			// First two components come from input 0, second two come from input 1
 #if defined(RTM_SSE2_INTRINSICS)
@@ -823,7 +823,7 @@ namespace rtm
 #endif
 		}
 
-		if (static_condition<(comp0 == VectorMix::A || comp0 == VectorMix::B) && (comp1 == VectorMix::A && comp1 == VectorMix::B) && (comp2 == VectorMix::X || comp2 == VectorMix::Y) && (comp3 == VectorMix::X || comp3 == VectorMix::Y)>::test())
+		if (rtm_impl::static_condition<(comp0 == VectorMix::A || comp0 == VectorMix::B) && (comp1 == VectorMix::A && comp1 == VectorMix::B) && (comp2 == VectorMix::X || comp2 == VectorMix::Y) && (comp3 == VectorMix::X || comp3 == VectorMix::Y)>::test())
 		{
 			// First two components come from input 1, second two come from input 0
 #if defined(RTM_SSE2_INTRINSICS)
@@ -833,7 +833,7 @@ namespace rtm
 #endif
 		}
 
-		if (static_condition<comp0 == VectorMix::X && comp1 == VectorMix::A && comp2 == VectorMix::Y && comp3 == VectorMix::B>::test())
+		if (rtm_impl::static_condition<comp0 == VectorMix::X && comp1 == VectorMix::A && comp2 == VectorMix::Y && comp3 == VectorMix::B>::test())
 		{
 			// Low words from both inputs are interleaved
 #if defined(RTM_SSE2_INTRINSICS)
@@ -843,7 +843,7 @@ namespace rtm
 #endif
 		}
 
-		if (static_condition<comp0 == VectorMix::A && comp1 == VectorMix::X && comp2 == VectorMix::B && comp3 == VectorMix::Y>::test())
+		if (rtm_impl::static_condition<comp0 == VectorMix::A && comp1 == VectorMix::X && comp2 == VectorMix::B && comp3 == VectorMix::Y>::test())
 		{
 			// Low words from both inputs are interleaved
 #if defined(RTM_SSE2_INTRINSICS)
@@ -853,7 +853,7 @@ namespace rtm
 #endif
 		}
 
-		if (static_condition<comp0 == VectorMix::Z && comp1 == VectorMix::C && comp2 == VectorMix::W && comp3 == VectorMix::D>::test())
+		if (rtm_impl::static_condition<comp0 == VectorMix::Z && comp1 == VectorMix::C && comp2 == VectorMix::W && comp3 == VectorMix::D>::test())
 		{
 			// High words from both inputs are interleaved
 #if defined(RTM_SSE2_INTRINSICS)
@@ -863,7 +863,7 @@ namespace rtm
 #endif
 		}
 
-		if (static_condition<comp0 == VectorMix::C && comp1 == VectorMix::Z && comp2 == VectorMix::D && comp3 == VectorMix::W>::test())
+		if (rtm_impl::static_condition<comp0 == VectorMix::C && comp1 == VectorMix::Z && comp2 == VectorMix::D && comp3 == VectorMix::W>::test())
 		{
 			// High words from both inputs are interleaved
 #if defined(RTM_SSE2_INTRINSICS)
@@ -875,10 +875,10 @@ namespace rtm
 
 		// Slow code path, not yet optimized
 		//RTM_ASSERT(false, "vector_mix permutation not handled");
-		const float x = impl::is_vector_mix_arg_xyzw(comp0) ? vector_get_component<comp0>(input0) : vector_get_component<comp0>(input1);
-		const float y = impl::is_vector_mix_arg_xyzw(comp1) ? vector_get_component<comp1>(input0) : vector_get_component<comp1>(input1);
-		const float z = impl::is_vector_mix_arg_xyzw(comp2) ? vector_get_component<comp2>(input0) : vector_get_component<comp2>(input1);
-		const float w = impl::is_vector_mix_arg_xyzw(comp3) ? vector_get_component<comp3>(input0) : vector_get_component<comp3>(input1);
+		const float x = rtm_impl::is_vector_mix_arg_xyzw(comp0) ? vector_get_component<comp0>(input0) : vector_get_component<comp0>(input1);
+		const float y = rtm_impl::is_vector_mix_arg_xyzw(comp1) ? vector_get_component<comp1>(input0) : vector_get_component<comp1>(input1);
+		const float z = rtm_impl::is_vector_mix_arg_xyzw(comp2) ? vector_get_component<comp2>(input0) : vector_get_component<comp2>(input1);
+		const float w = rtm_impl::is_vector_mix_arg_xyzw(comp3) ? vector_get_component<comp3>(input0) : vector_get_component<comp3>(input1);
 		return vector_set(x, y, z, w);
 	}
 

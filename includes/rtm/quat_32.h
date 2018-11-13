@@ -26,10 +26,10 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 #include "rtm/error.h"
-#include "rtm/memory_utils.h"
 #include "rtm/math.h"
 #include "rtm/scalar_32.h"
 #include "rtm/vector4_32.h"
+#include "rtm/impl/memory_utils.h"
 
 namespace rtm
 {
@@ -56,7 +56,7 @@ namespace rtm
 
 	inline Quat_32 RTM_SIMD_CALL quat_unaligned_load(const float* input)
 	{
-		RTM_ASSERT(is_aligned(input), "Invalid alignment");
+		RTM_ASSERT(rtm_impl::is_aligned(input), "Invalid alignment");
 		return quat_set(input[0], input[1], input[2], input[3]);
 	}
 
@@ -129,7 +129,7 @@ namespace rtm
 
 	inline void RTM_SIMD_CALL quat_unaligned_write(Quat_32Arg0 input, float* output)
 	{
-		RTM_ASSERT(is_aligned(output), "Invalid alignment");
+		RTM_ASSERT(rtm_impl::is_aligned(output), "Invalid alignment");
 		output[0] = quat_get_x(input);
 		output[1] = quat_get_y(input);
 		output[2] = quat_get_z(input);

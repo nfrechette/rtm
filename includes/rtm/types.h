@@ -31,7 +31,7 @@
 
 namespace rtm
 {
-	namespace impl
+	namespace rtm_impl
 	{
 		union Converter
 		{
@@ -189,7 +189,7 @@ namespace rtm
 	#define RTM_IS_VECTOR_MIX_ARG_ABCD(arg) (int32_t(arg) >= int32_t(VectorMix::A) && int32_t(arg) <= int32_t(VectorMix::D))
 	#define RTM_GET_VECTOR_MIX_COMPONENT_INDEX(arg) (RTM_IS_VECTOR_MIX_ARG_XYZW(arg) ? int8_t(arg) : (int8_t(arg) - 4))
 
-	namespace impl
+	namespace rtm_impl
 	{
 		constexpr bool is_vector_mix_arg_xyzw(VectorMix arg) { return int32_t(arg) >= int32_t(VectorMix::X) && int32_t(arg) <= int32_t(VectorMix::W); }
 		constexpr bool is_vector_mix_arg_abcd(VectorMix arg) { return int32_t(arg) >= int32_t(VectorMix::A) && int32_t(arg) <= int32_t(VectorMix::D); }
