@@ -563,7 +563,7 @@ namespace rtm
 #elif defined(RTM_NEON_INTRINSICS)
 		return vcltq_f32(lhs, rhs);
 #else
-		return Vector4_32{ math_impl::get_mask_value(lhs.x < rhs.x), math_impl::get_mask_value(lhs.y < rhs.y), math_impl::get_mask_value(lhs.z < rhs.z), math_impl::get_mask_value(lhs.w < rhs.w) };
+		return Vector4_32{ impl::get_mask_value(lhs.x < rhs.x), impl::get_mask_value(lhs.y < rhs.y), impl::get_mask_value(lhs.z < rhs.z), impl::get_mask_value(lhs.w < rhs.w) };
 #endif
 	}
 
@@ -574,7 +574,7 @@ namespace rtm
 #elif defined(RTM_NEON_INTRINSICS)
 		return vcgeq_f32(lhs, rhs);
 #else
-		return Vector4_32{ math_impl::get_mask_value(lhs.x >= rhs.x), math_impl::get_mask_value(lhs.y >= rhs.y), math_impl::get_mask_value(lhs.z >= rhs.z), math_impl::get_mask_value(lhs.w >= rhs.w) };
+		return Vector4_32{ impl::get_mask_value(lhs.x >= rhs.x), impl::get_mask_value(lhs.y >= rhs.y), impl::get_mask_value(lhs.z >= rhs.z), impl::get_mask_value(lhs.w >= rhs.w) };
 #endif
 	}
 
@@ -786,7 +786,7 @@ namespace rtm
 #elif defined(RTM_NEON_INTRINSICS)
 		return vbslq_f32(mask, if_true, if_false);
 #else
-		return Vector4_32{ math_impl::select(mask.x, if_true.x, if_false.x), math_impl::select(mask.y, if_true.y, if_false.y), math_impl::select(mask.z, if_true.z, if_false.z), math_impl::select(mask.w, if_true.w, if_false.w) };
+		return Vector4_32{ impl::select(mask.x, if_true.x, if_false.x), impl::select(mask.y, if_true.y, if_false.y), impl::select(mask.z, if_true.z, if_false.z), impl::select(mask.w, if_true.w, if_false.w) };
 #endif
 	}
 
