@@ -339,7 +339,9 @@ namespace rtm
 		z_axis = vector_mul(z_axis, inv_det);
 		w_axis = vector_mul(w_axis, inv_det);
 
-#if defined(RTM_NO_INTRINSICS)
+#if defined(RTM_HAS_ASSERT_CHECKS)
+		// Due to floating point noise we might have 0,0,0,~1 but not quite 0,0,0,1
+		// We only really care if we assert
 		w_axis = vector_set(vector_get_x(w_axis), vector_get_y(w_axis), vector_get_z(w_axis), 1.0);
 #endif
 
