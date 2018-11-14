@@ -103,8 +103,8 @@ static void test_affine_matrix_impl(const MatrixType& identity, const FloatType 
 		QuatType rotation_around_z = quat_from_euler(deg2rad(FloatType(0.0)), deg2rad(FloatType(90.0)), deg2rad(FloatType(0.0)));
 		Vector4Type translation = vector_set(FloatType(1.0), FloatType(2.0), FloatType(3.0));
 		Vector4Type scale = vector_set(FloatType(4.0), FloatType(5.0), FloatType(6.0));
-		TransformType transform = transform_set(rotation_around_z, translation, scale);
-		MatrixType mtx = matrix_from_transform(transform);
+		TransformType transform = qvv_set(rotation_around_z, translation, scale);
+		MatrixType mtx = matrix_from_qvv(transform);
 		REQUIRE(vector_all_near_equal(vector_set(FloatType(0.0), FloatType(4.0), FloatType(0.0), FloatType(0.0)), mtx.x_axis, threshold));
 		REQUIRE(vector_all_near_equal(vector_set(FloatType(-5.0), FloatType(0.0), FloatType(0.0), FloatType(0.0)), mtx.y_axis, threshold));
 		REQUIRE(vector_all_near_equal(vector_set(FloatType(0.0), FloatType(0.0), FloatType(6.0), FloatType(0.0)), mtx.z_axis, threshold));
