@@ -26,15 +26,13 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 #include "rtm/math.h"
+#include "rtm/impl/scalar_common.h"
 
 #include <algorithm>
 #include <cmath>
 
 namespace rtm
 {
-	// TODO: Get a higher precision number
-	constexpr double k_pi_64 = 3.141592654;
-
 	inline double floor(double input)
 	{
 		return std::floor(input);
@@ -109,7 +107,7 @@ namespace rtm
 
 	constexpr double deg2rad(double deg)
 	{
-		return (deg / 180.0) * k_pi_64;
+		return (deg / 180.0) * (double)k_pi;
 	}
 
 	inline bool scalar_near_equal(double lhs, double rhs, double threshold)
