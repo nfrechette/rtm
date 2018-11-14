@@ -25,8 +25,8 @@
 
 #include <catch.hpp>
 
-#include <rtm/transform_32.h>
-#include <rtm/transform_64.h>
+#include <rtm/qvvf.h>
+#include <rtm/qvvd.h>
 
 using namespace rtm;
 
