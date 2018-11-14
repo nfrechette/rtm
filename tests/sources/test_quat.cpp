@@ -68,7 +68,7 @@ static FloatType scalar_dot(const QuatType& lhs, const QuatType& rhs)
 template<typename QuatType, typename FloatType>
 static QuatType scalar_normalize(const QuatType& input)
 {
-	FloatType inv_len = FloatType(1.0) / rtm::sqrt(scalar_dot<QuatType, FloatType>(input, input));
+	FloatType inv_len = FloatType(1.0) / rtm::scalar_sqrt(scalar_dot<QuatType, FloatType>(input, input));
 	return quat_set(quat_get_x(input) * inv_len, quat_get_y(input) * inv_len, quat_get_z(input) * inv_len, quat_get_w(input) * inv_len);
 }
 
@@ -143,7 +143,7 @@ static void test_quat_impl(const Vector4Type& zero, const QuatType& identity, co
 	// Arithmetic
 
 	{
-		QuatType quat = quat_from_euler(deg2rad(FloatType(30.0)), deg2rad(FloatType(-45.0)), deg2rad(FloatType(90.0)));
+		QuatType quat = quat_from_euler(scalar_deg_to_rad(FloatType(30.0)), scalar_deg_to_rad(FloatType(-45.0)), scalar_deg_to_rad(FloatType(90.0)));
 		QuatType quat_conj = quat_conjugate(quat);
 		REQUIRE(quat_get_x(quat_conj) == -quat_get_x(quat));
 		REQUIRE(quat_get_y(quat_conj) == -quat_get_y(quat));
@@ -152,8 +152,8 @@ static void test_quat_impl(const Vector4Type& zero, const QuatType& identity, co
 	}
 
 	{
-		QuatType quat0 = quat_from_euler(deg2rad(FloatType(30.0)), deg2rad(FloatType(-45.0)), deg2rad(FloatType(90.0)));
-		QuatType quat1 = quat_from_euler(deg2rad(FloatType(45.0)), deg2rad(FloatType(60.0)), deg2rad(FloatType(120.0)));
+		QuatType quat0 = quat_from_euler(scalar_deg_to_rad(FloatType(30.0)), scalar_deg_to_rad(FloatType(-45.0)), scalar_deg_to_rad(FloatType(90.0)));
+		QuatType quat1 = quat_from_euler(scalar_deg_to_rad(FloatType(45.0)), scalar_deg_to_rad(FloatType(60.0)), scalar_deg_to_rad(FloatType(120.0)));
 		QuatType result = quat_mul(quat0, quat1);
 		QuatType result_ref = quat_mul_scalar<QuatType, Vector4Type, FloatType>(quat0, quat1);
 		REQUIRE(quat_near_equal(result, result_ref, threshold));
@@ -169,13 +169,13 @@ static void test_quat_impl(const Vector4Type& zero, const QuatType& identity, co
 		Vector4Type x_axis = vector_set(FloatType(1.0), FloatType(0.0), FloatType(0.0));
 		Vector4Type y_axis = vector_set(FloatType(0.0), FloatType(1.0), FloatType(0.0));
 
-		QuatType rotation_around_z = quat_from_euler(deg2rad(FloatType(0.0)), deg2rad(FloatType(90.0)), deg2rad(FloatType(0.0)));
+		QuatType rotation_around_z = quat_from_euler(scalar_deg_to_rad(FloatType(0.0)), scalar_deg_to_rad(FloatType(90.0)), scalar_deg_to_rad(FloatType(0.0)));
 		Vector4Type result = quat_rotate(rotation_around_z, x_axis);
 		REQUIRE(vector_all_near_equal3(result, vector_set(FloatType(0.0), FloatType(1.0), FloatType(0.0)), threshold));
 		result = quat_rotate(rotation_around_z, y_axis);
 		REQUIRE(vector_all_near_equal3(result, vector_set(FloatType(-1.0), FloatType(0.0), FloatType(0.0)), threshold));
 
-		QuatType rotation_around_x = quat_from_euler(deg2rad(FloatType(0.0)), deg2rad(FloatType(0.0)), deg2rad(FloatType(90.0)));
+		QuatType rotation_around_x = quat_from_euler(scalar_deg_to_rad(FloatType(0.0)), scalar_deg_to_rad(FloatType(0.0)), scalar_deg_to_rad(FloatType(90.0)));
 		result = quat_rotate(rotation_around_x, x_axis);
 		REQUIRE(vector_all_near_equal3(result, vector_set(FloatType(1.0), FloatType(0.0), FloatType(0.0)), threshold));
 		result = quat_rotate(rotation_around_x, y_axis);
@@ -196,11 +196,11 @@ static void test_quat_impl(const Vector4Type& zero, const QuatType& identity, co
 	{
 		const QuatType test_rotations[] = {
 			identity,
-			quat_from_euler(deg2rad(FloatType(30.0)), deg2rad(FloatType(-45.0)), deg2rad(FloatType(90.0))),
-			quat_from_euler(deg2rad(FloatType(45.0)), deg2rad(FloatType(60.0)), deg2rad(FloatType(120.0))),
-			quat_from_euler(deg2rad(FloatType(0.0)), deg2rad(FloatType(180.0)), deg2rad(FloatType(45.0))),
-			quat_from_euler(deg2rad(FloatType(-120.0)), deg2rad(FloatType(-90.0)), deg2rad(FloatType(0.0))),
-			quat_from_euler(deg2rad(FloatType(-0.01)), deg2rad(FloatType(0.02)), deg2rad(FloatType(-0.03))),
+			quat_from_euler(scalar_deg_to_rad(FloatType(30.0)), scalar_deg_to_rad(FloatType(-45.0)), scalar_deg_to_rad(FloatType(90.0))),
+			quat_from_euler(scalar_deg_to_rad(FloatType(45.0)), scalar_deg_to_rad(FloatType(60.0)), scalar_deg_to_rad(FloatType(120.0))),
+			quat_from_euler(scalar_deg_to_rad(FloatType(0.0)), scalar_deg_to_rad(FloatType(180.0)), scalar_deg_to_rad(FloatType(45.0))),
+			quat_from_euler(scalar_deg_to_rad(FloatType(-120.0)), scalar_deg_to_rad(FloatType(-90.0)), scalar_deg_to_rad(FloatType(0.0))),
+			quat_from_euler(scalar_deg_to_rad(FloatType(-0.01)), scalar_deg_to_rad(FloatType(0.02)), scalar_deg_to_rad(FloatType(-0.03))),
 		};
 
 		const Vector4Type test_vectors[] = {
@@ -228,7 +228,7 @@ static void test_quat_impl(const Vector4Type& zero, const QuatType& identity, co
 	}
 
 	{
-		QuatType quat = quat_from_euler(deg2rad(FloatType(30.0)), deg2rad(FloatType(-45.0)), deg2rad(FloatType(90.0)));
+		QuatType quat = quat_from_euler(scalar_deg_to_rad(FloatType(30.0)), scalar_deg_to_rad(FloatType(-45.0)), scalar_deg_to_rad(FloatType(90.0)));
 		Vector4Type vec = quat_to_vector(quat);
 
 		REQUIRE(scalar_near_equal(quat_length_squared(quat), vector_length_squared(vec), threshold));
@@ -247,8 +247,8 @@ static void test_quat_impl(const Vector4Type& zero, const QuatType& identity, co
 	}
 
 	{
-		QuatType quat0 = quat_from_euler(deg2rad(FloatType(30.0)), deg2rad(FloatType(-45.0)), deg2rad(FloatType(90.0)));
-		QuatType quat1 = quat_from_euler(deg2rad(FloatType(45.0)), deg2rad(FloatType(60.0)), deg2rad(FloatType(120.0)));
+		QuatType quat0 = quat_from_euler(scalar_deg_to_rad(FloatType(30.0)), scalar_deg_to_rad(FloatType(-45.0)), scalar_deg_to_rad(FloatType(90.0)));
+		QuatType quat1 = quat_from_euler(scalar_deg_to_rad(FloatType(45.0)), scalar_deg_to_rad(FloatType(60.0)), scalar_deg_to_rad(FloatType(120.0)));
 
 		QuatType scalar_result = scalar_lerp<QuatType, FloatType>(quat0, quat1, FloatType(0.33));
 
@@ -265,7 +265,7 @@ static void test_quat_impl(const Vector4Type& zero, const QuatType& identity, co
 	}
 
 	{
-		QuatType quat0 = quat_from_euler(deg2rad(FloatType(30.0)), deg2rad(FloatType(-45.0)), deg2rad(FloatType(90.0)));
+		QuatType quat0 = quat_from_euler(scalar_deg_to_rad(FloatType(30.0)), scalar_deg_to_rad(FloatType(-45.0)), scalar_deg_to_rad(FloatType(90.0)));
 		QuatType quat1 = quat_neg(quat0);
 
 		REQUIRE(quat_get_x(quat0) == -quat_get_x(quat1));
@@ -301,17 +301,17 @@ static void test_quat_impl(const Vector4Type& zero, const QuatType& identity, co
 	// Conversion to/from axis/angle/euler
 
 	{
-		QuatType rotation = quat_from_euler(deg2rad(FloatType(0.0)), deg2rad(FloatType(90.0)), deg2rad(FloatType(0.0)));
+		QuatType rotation = quat_from_euler(scalar_deg_to_rad(FloatType(0.0)), scalar_deg_to_rad(FloatType(90.0)), scalar_deg_to_rad(FloatType(0.0)));
 		Vector4Type axis;
 		FloatType angle;
 		quat_to_axis_angle(rotation, axis, angle);
 		REQUIRE(vector_all_near_equal3(axis, vector_set(FloatType(0.0), FloatType(0.0), FloatType(1.0)), threshold));
 		REQUIRE(vector_all_near_equal3(quat_get_axis(rotation), vector_set(FloatType(0.0), FloatType(0.0), FloatType(1.0)), threshold));
-		REQUIRE(scalar_near_equal(quat_get_angle(rotation), deg2rad(FloatType(90.0)), threshold));
+		REQUIRE(scalar_near_equal(quat_get_angle(rotation), scalar_deg_to_rad(FloatType(90.0)), threshold));
 	}
 
 	{
-		QuatType rotation = quat_from_euler(deg2rad(FloatType(0.0)), deg2rad(FloatType(90.0)), deg2rad(FloatType(0.0)));
+		QuatType rotation = quat_from_euler(scalar_deg_to_rad(FloatType(0.0)), scalar_deg_to_rad(FloatType(90.0)), scalar_deg_to_rad(FloatType(0.0)));
 		Vector4Type axis;
 		FloatType angle;
 		quat_to_axis_angle(rotation, axis, angle);
@@ -323,7 +323,7 @@ static void test_quat_impl(const Vector4Type& zero, const QuatType& identity, co
 		QuatType rotation = quat_set(FloatType(0.39564531008956383), FloatType(0.044254239301713752), FloatType(0.22768840967675355), FloatType(0.88863059760894492));
 		Vector4Type axis_ref = vector_set(FloatType(1.0), FloatType(0.0), FloatType(0.0));
 		axis_ref = quat_rotate(rotation, axis_ref);
-		FloatType angle_ref = deg2rad(FloatType(57.0));
+		FloatType angle_ref = scalar_deg_to_rad(FloatType(57.0));
 		QuatType result = quat_from_axis_angle(axis_ref, angle_ref);
 		Vector4Type axis;
 		FloatType angle;

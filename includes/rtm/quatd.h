@@ -165,7 +165,7 @@ namespace rtm
 	inline double quat_length(const quatd& input)
 	{
 		// TODO: Use intrinsics to avoid scalar coercion
-		return sqrt(quat_length_squared(input));
+		return scalar_sqrt(quat_length_squared(input));
 	}
 
 	inline double quat_length_reciprocal(const quatd& input)
@@ -213,7 +213,7 @@ namespace rtm
 		double w_squared = ((1.0 - vector_get_x(input) * vector_get_x(input)) - vector_get_y(input) * vector_get_y(input)) - vector_get_z(input) * vector_get_z(input);
 		// w_squared can be negative either due to rounding or due to quantization imprecision, we take the absolute value
 		// to ensure the resulting quaternion is always normalized with a positive W component
-		double w = sqrt(abs(w_squared));
+		double w = scalar_sqrt(scalar_abs(w_squared));
 		return quat_set(vector_get_x(input), vector_get_y(input), vector_get_z(input), w);
 	}
 
@@ -225,10 +225,10 @@ namespace rtm
 		constexpr double epsilon = 1.0e-8;
 		constexpr double epsilon_squared = epsilon * epsilon;
 
-		out_angle = acos(quat_get_w(input)) * 2.0;
+		out_angle = scalar_acos(quat_get_w(input)) * 2.0;
 
-		double scale_sq = max(1.0 - quat_get_w(input) * quat_get_w(input), 0.0);
-		out_axis = scale_sq >= epsilon_squared ? vector_div(vector_set(quat_get_x(input), quat_get_y(input), quat_get_z(input)), vector_set(sqrt(scale_sq))) : vector_set(1.0, 0.0, 0.0);
+		double scale_sq = scalar_max(1.0 - quat_get_w(input) * quat_get_w(input), 0.0);
+		out_axis = scale_sq >= epsilon_squared ? vector_div(vector_set(quat_get_x(input), quat_get_y(input), quat_get_z(input)), vector_set(scalar_sqrt(scale_sq))) : vector_set(1.0, 0.0, 0.0);
 	}
 
 	inline vector4d quat_get_axis(const quatd& input)
@@ -236,19 +236,19 @@ namespace rtm
 		constexpr double epsilon = 1.0e-8;
 		constexpr double epsilon_squared = epsilon * epsilon;
 
-		double scale_sq = max(1.0 - quat_get_w(input) * quat_get_w(input), 0.0);
-		return scale_sq >= epsilon_squared ? vector_div(vector_set(quat_get_x(input), quat_get_y(input), quat_get_z(input)), vector_set(sqrt(scale_sq))) : vector_set(1.0, 0.0, 0.0);
+		double scale_sq = scalar_max(1.0 - quat_get_w(input) * quat_get_w(input), 0.0);
+		return scale_sq >= epsilon_squared ? vector_div(vector_set(quat_get_x(input), quat_get_y(input), quat_get_z(input)), vector_set(scalar_sqrt(scale_sq))) : vector_set(1.0, 0.0, 0.0);
 	}
 
 	inline double quat_get_angle(const quatd& input)
 	{
-		return acos(quat_get_w(input)) * 2.0;
+		return scalar_acos(quat_get_w(input)) * 2.0;
 	}
 
 	inline quatd quat_from_axis_angle(const vector4d& axis, double angle)
 	{
 		double s, c;
-		sincos(0.5 * angle, s, c);
+		scalar_sincos(0.5 * angle, s, c);
 
 		return quat_set(s * vector_get_x(axis), s * vector_get_y(axis), s * vector_get_z(axis), c);
 	}
@@ -261,9 +261,9 @@ namespace rtm
 		double sp, sy, sr;
 		double cp, cy, cr;
 
-		sincos(pitch * 0.5, sp, cp);
-		sincos(yaw * 0.5, sy, cy);
-		sincos(roll * 0.5, sr, cr);
+		scalar_sincos(pitch * 0.5, sp, cp);
+		scalar_sincos(yaw * 0.5, sy, cy);
+		scalar_sincos(roll * 0.5, sr, cr);
 
 		return quat_set(cr * sp * sy - sr * cp * cy,
 			-cr * sp * cy - sr * cp * sy,
@@ -276,13 +276,13 @@ namespace rtm
 
 	inline bool quat_is_finite(const quatd& input)
 	{
-		return is_finite(quat_get_x(input)) && is_finite(quat_get_y(input)) && is_finite(quat_get_z(input)) && is_finite(quat_get_w(input));
+		return scalar_is_finite(quat_get_x(input)) && scalar_is_finite(quat_get_y(input)) && scalar_is_finite(quat_get_z(input)) && scalar_is_finite(quat_get_w(input));
 	}
 
 	inline bool quat_is_normalized(const quatd& input, double threshold = 0.00001)
 	{
 		double length_squared = quat_length_squared(input);
-		return abs(length_squared - 1.0) < threshold;
+		return scalar_abs(length_squared - 1.0) < threshold;
 	}
 
 	inline bool quat_near_equal(const quatd& lhs, const quatd& rhs, double threshold = 0.00001)
@@ -293,7 +293,7 @@ namespace rtm
 	inline bool quat_near_identity(const quatd& input, double threshold_angle = 0.00284714461)
 	{
 		// See the quatf version of quat_near_identity for details.
-		const double positive_w_angle = acos(abs(quat_get_w(input))) * 2.0;
+		const double positive_w_angle = scalar_acos(scalar_abs(quat_get_w(input))) * 2.0;
 		return positive_w_angle < threshold_angle;
 	}
 }

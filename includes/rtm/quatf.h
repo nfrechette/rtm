@@ -301,7 +301,7 @@ namespace rtm
 		return _mm_mul_ps(input, inv_len);
 #elif defined (RTM_NEON_INTRINSICS)
 		// Use sqrt/div/mul to normalize because the sqrt/div are faster than rsqrt
-		float inv_len = 1.0f / sqrt(vector_length_squared(input));
+		float inv_len = 1.0f / scalar_sqrt(vector_length_squared(input));
 		return vector_mul(input, inv_len);
 #else
 		// Reciprocal is more accurate to normalize with
@@ -371,7 +371,7 @@ namespace rtm
 		float bias = dot >= 0.0f ? 1.0f : -1.0f;
 		vector4f interpolated_rotation = vector_mul_add(vector_sub(vector_mul(end, bias), start), alpha, start);
 		// Use sqrt/div/mul to normalize because the sqrt/div are faster than rsqrt
-		float inv_len = 1.0f / sqrt(vector_length_squared(interpolated_rotation));
+		float inv_len = 1.0f / scalar_sqrt(vector_length_squared(interpolated_rotation));
 		return vector_mul(interpolated_rotation, inv_len);
 #elif defined(RTM_NEON_INTRINSICS)
 		// Calculate the vector4 dot product: dot(start, end)
@@ -401,7 +401,7 @@ namespace rtm
 		float dot = vget_lane_f32(x2y2z2w2, 0);
 
 		// Use sqrt/div/mul to normalize because the sqrt/div are faster than rsqrt
-		float inv_len = 1.0f / sqrt(dot);
+		float inv_len = 1.0f / scalar_sqrt(dot);
 		return vector_mul(interpolated_rotation, inv_len);
 #else
 		// To ensure we take the shortest path, we apply a bias if the dot product is negative
@@ -453,14 +453,14 @@ namespace rtm
 		// sub is dependent on the result of the mul where the C impl below pipelines a bit better it seems
 		float32x4_t x2y2z2 = vmulq_f32(input, input);
 		float w_squared = ((1.0f - vgetq_lane_f32(x2y2z2, 0)) - vgetq_lane_f32(x2y2z2, 1)) - vgetq_lane_f32(x2y2z2, 2);
-		float w = rtm::sqrt(rtm::abs(w_squared));
+		float w = rtm::scalar_sqrt(rtm::scalar_abs(w_squared));
 		return vsetq_lane_f32(w, input, 3);
 #else
 		// Operation order is important here, due to rounding, ((1.0 - (X*X)) - Y*Y) - Z*Z is more accurate than 1.0 - dot3(xyz, xyz)
 		float w_squared = ((1.0f - vector_get_x(input) * vector_get_x(input)) - vector_get_y(input) * vector_get_y(input)) - vector_get_z(input) * vector_get_z(input);
 		// w_squared can be negative either due to rounding or due to quantization imprecision, we take the absolute value
 		// to ensure the resulting quaternion is always normalized with a positive W component
-		float w = sqrt(abs(w_squared));
+		float w = scalar_sqrt(scalar_abs(w_squared));
 		return quat_set(vector_get_x(input), vector_get_y(input), vector_get_z(input), w);
 #endif
 	}
@@ -473,10 +473,10 @@ namespace rtm
 		constexpr float epsilon = 1.0e-8f;
 		constexpr float epsilon_squared = epsilon * epsilon;
 
-		out_angle = acos(quat_get_w(input)) * 2.0f;
+		out_angle = scalar_acos(quat_get_w(input)) * 2.0f;
 
-		float scale_sq = max(1.0f - quat_get_w(input) * quat_get_w(input), 0.0f);
-		out_axis = scale_sq >= epsilon_squared ? vector_div(vector_set(quat_get_x(input), quat_get_y(input), quat_get_z(input)), vector_set(sqrt(scale_sq))) : vector_set(1.0f, 0.0f, 0.0f);
+		float scale_sq = scalar_max(1.0f - quat_get_w(input) * quat_get_w(input), 0.0f);
+		out_axis = scale_sq >= epsilon_squared ? vector_div(vector_set(quat_get_x(input), quat_get_y(input), quat_get_z(input)), vector_set(scalar_sqrt(scale_sq))) : vector_set(1.0f, 0.0f, 0.0f);
 	}
 
 	inline vector4f RTM_SIMD_CALL quat_get_axis(quatf_arg0 input)
@@ -484,19 +484,19 @@ namespace rtm
 		constexpr float epsilon = 1.0e-8f;
 		constexpr float epsilon_squared = epsilon * epsilon;
 
-		float scale_sq = max(1.0f - quat_get_w(input) * quat_get_w(input), 0.0f);
-		return scale_sq >= epsilon_squared ? vector_div(vector_set(quat_get_x(input), quat_get_y(input), quat_get_z(input)), vector_set(sqrt(scale_sq))) : vector_set(1.0f, 0.0f, 0.0f);
+		float scale_sq = scalar_max(1.0f - quat_get_w(input) * quat_get_w(input), 0.0f);
+		return scale_sq >= epsilon_squared ? vector_div(vector_set(quat_get_x(input), quat_get_y(input), quat_get_z(input)), vector_set(scalar_sqrt(scale_sq))) : vector_set(1.0f, 0.0f, 0.0f);
 	}
 
 	inline float RTM_SIMD_CALL quat_get_angle(quatf_arg0 input)
 	{
-		return acos(quat_get_w(input)) * 2.0f;
+		return scalar_acos(quat_get_w(input)) * 2.0f;
 	}
 
 	inline quatf RTM_SIMD_CALL quat_from_axis_angle(vector4f_arg0 axis, float angle)
 	{
 		float s, c;
-		sincos(0.5f * angle, s, c);
+		scalar_sincos(0.5f * angle, s, c);
 
 		return quat_set(s * vector_get_x(axis), s * vector_get_y(axis), s * vector_get_z(axis), c);
 	}
@@ -509,9 +509,9 @@ namespace rtm
 		float sp, sy, sr;
 		float cp, cy, cr;
 
-		sincos(pitch * 0.5f, sp, cp);
-		sincos(yaw * 0.5f, sy, cy);
-		sincos(roll * 0.5f, sr, cr);
+		scalar_sincos(pitch * 0.5f, sp, cp);
+		scalar_sincos(yaw * 0.5f, sy, cy);
+		scalar_sincos(roll * 0.5f, sr, cr);
 
 		return quat_set(cr * sp * sy - sr * cp * cy,
 			-cr * sp * cy - sr * cp * sy,
@@ -524,13 +524,13 @@ namespace rtm
 
 	inline bool RTM_SIMD_CALL quat_is_finite(quatf_arg0 input)
 	{
-		return is_finite(quat_get_x(input)) && is_finite(quat_get_y(input)) && is_finite(quat_get_z(input)) && is_finite(quat_get_w(input));
+		return scalar_is_finite(quat_get_x(input)) && scalar_is_finite(quat_get_y(input)) && scalar_is_finite(quat_get_z(input)) && scalar_is_finite(quat_get_w(input));
 	}
 
 	inline bool RTM_SIMD_CALL quat_is_normalized(quatf_arg0 input, float threshold = 0.00001f)
 	{
 		float length_squared = quat_length_squared(input);
-		return abs(length_squared - 1.0f) < threshold;
+		return scalar_abs(length_squared - 1.0f) < threshold;
 	}
 
 	inline bool RTM_SIMD_CALL quat_near_equal(quatf_arg0 lhs, quatf_arg1 rhs, float threshold = 0.00001f)
@@ -553,7 +553,7 @@ namespace rtm
 		// If the quat.w is close to -1.0, the angle will be near 2*PI which is close to
 		// a negative 0 rotation. By forcing quat.w to be positive, we'll end up with
 		// the shortest path.
-		const float positive_w_angle = acos(abs(quat_get_w(input))) * 2.0f;
+		const float positive_w_angle = scalar_acos(scalar_abs(quat_get_w(input))) * 2.0f;
 		return positive_w_angle < threshold_angle;
 	}
 }

@@ -33,105 +33,105 @@
 
 namespace rtm
 {
-	inline double floor(double input)
+	inline double scalar_floor(double input)
 	{
 		return std::floor(input);
 	}
 
-	inline double ceil(double input)
+	inline double scalar_ceil(double input)
 	{
 		return std::ceil(input);
 	}
 
-	inline double clamp(double input, double min, double max)
+	inline double scalar_clamp(double input, double min, double max)
 	{
 		return std::min(std::max(input, min), max);
 	}
 
-	inline double abs(double input)
+	inline double scalar_abs(double input)
 	{
 		return std::fabs(input);
 	}
 
-	inline double sqrt(double input)
+	inline double scalar_sqrt(double input)
 	{
 		return std::sqrt(input);
 	}
 
-	inline double sqrt_reciprocal(double input)
+	inline double scalar_sqrt_reciprocal(double input)
 	{
 		// TODO: Use recip instruction
-		return 1.0 / sqrt(input);
+		return 1.0 / scalar_sqrt(input);
 	}
 
-	inline double reciprocal(double input)
+	inline double scalar_reciprocal(double input)
 	{
 		return 1.0 / input;
 	}
 
-	inline double sin(double angle)
+	inline double scalar_sin(double angle)
 	{
 		return std::sin(angle);
 	}
 
-	inline double cos(double angle)
+	inline double scalar_cos(double angle)
 	{
 		return std::cos(angle);
 	}
 
-	inline void sincos(double angle, double& out_sin, double& out_cos)
+	inline void scalar_sincos(double angle, double& out_sin, double& out_cos)
 	{
-		out_sin = sin(angle);
-		out_cos = cos(angle);
+		out_sin = scalar_sin(angle);
+		out_cos = scalar_cos(angle);
 	}
 
-	inline double acos(double value)
+	inline double scalar_acos(double value)
 	{
 		return std::acos(value);
 	}
 
-	inline double atan2(double left, double right)
+	inline double scalar_atan2(double left, double right)
 	{
 		return std::atan2(left, right);
 	}
 
-	inline double min(double left, double right)
+	inline double scalar_min(double left, double right)
 	{
 		return std::min(left, right);
 	}
 
-	inline double max(double left, double right)
+	inline double scalar_max(double left, double right)
 	{
 		return std::max(left, right);
 	}
 
-	constexpr double deg2rad(double deg)
+	constexpr double scalar_deg_to_rad(double deg)
 	{
-		return (deg / 180.0) * (double)k_pi;
+		return deg * ((double)k_pi / 180.0);
 	}
 
 	inline bool scalar_near_equal(double lhs, double rhs, double threshold)
 	{
-		return abs(lhs - rhs) < threshold;
+		return scalar_abs(lhs - rhs) < threshold;
 	}
 
-	inline bool is_finite(double input)
+	inline bool scalar_is_finite(double input)
 	{
 		return std::isfinite(input);
 	}
 
-	inline double symmetric_round(double input)
+	inline double scalar_symmetric_round(double input)
 	{
-		return input >= 0.0 ? floor(input + 0.5) : ceil(input - 0.5);
+		return input >= 0.0 ? scalar_floor(input + 0.5) : scalar_ceil(input - 0.5);
 	}
 
-	inline double fraction(double value)
+	inline double scalar_fraction(double value)
 	{
-		return value - floor(value);
+		return value - scalar_floor(value);
 	}
 
 	template<typename SrcIntegralType>
-	inline double safe_to_double(SrcIntegralType input)
+	inline double scalar_safe_to_double(SrcIntegralType input)
 	{
 		double input_f = double(input);
 		RTM_ASSERT(SrcIntegralType(input_f) == input, "Conversion to double would result in truncation");

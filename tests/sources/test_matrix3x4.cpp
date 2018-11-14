@@ -58,7 +58,7 @@ static void test_affine_matrix_impl(const MatrixType& identity, const FloatType 
 	}
 
 	{
-		QuatType rotation_around_z = quat_from_euler(deg2rad(FloatType(0.0)), deg2rad(FloatType(90.0)), deg2rad(FloatType(0.0)));
+		QuatType rotation_around_z = quat_from_euler(scalar_deg_to_rad(FloatType(0.0)), scalar_deg_to_rad(FloatType(90.0)), scalar_deg_to_rad(FloatType(0.0)));
 		Vector4Type translation = vector_set(FloatType(1.0), FloatType(2.0), FloatType(3.0));
 		MatrixType mtx = matrix_set(rotation_around_z, translation, vector_set(FloatType(1.0)));
 		REQUIRE(vector_all_near_equal(vector_set(FloatType(0.0), FloatType(1.0), FloatType(0.0), FloatType(0.0)), mtx.x_axis, threshold));
@@ -75,7 +75,7 @@ static void test_affine_matrix_impl(const MatrixType& identity, const FloatType 
 	}
 
 	{
-		QuatType rotation_around_z = quat_from_euler(deg2rad(FloatType(0.0)), deg2rad(FloatType(90.0)), deg2rad(FloatType(0.0)));
+		QuatType rotation_around_z = quat_from_euler(scalar_deg_to_rad(FloatType(0.0)), scalar_deg_to_rad(FloatType(90.0)), scalar_deg_to_rad(FloatType(0.0)));
 		MatrixType mtx = matrix_from_quat(rotation_around_z);
 		REQUIRE(vector_all_near_equal(vector_set(FloatType(0.0), FloatType(1.0), FloatType(0.0), FloatType(0.0)), mtx.x_axis, threshold));
 		REQUIRE(vector_all_near_equal(vector_set(FloatType(-1.0), FloatType(0.0), FloatType(0.0), FloatType(0.0)), mtx.y_axis, threshold));
@@ -100,7 +100,7 @@ static void test_affine_matrix_impl(const MatrixType& identity, const FloatType 
 	}
 
 	{
-		QuatType rotation_around_z = quat_from_euler(deg2rad(FloatType(0.0)), deg2rad(FloatType(90.0)), deg2rad(FloatType(0.0)));
+		QuatType rotation_around_z = quat_from_euler(scalar_deg_to_rad(FloatType(0.0)), scalar_deg_to_rad(FloatType(90.0)), scalar_deg_to_rad(FloatType(0.0)));
 		Vector4Type translation = vector_set(FloatType(1.0), FloatType(2.0), FloatType(3.0));
 		Vector4Type scale = vector_set(FloatType(4.0), FloatType(5.0), FloatType(6.0));
 		TransformType transform = qvv_set(rotation_around_z, translation, scale);
@@ -112,7 +112,7 @@ static void test_affine_matrix_impl(const MatrixType& identity, const FloatType 
 	}
 
 	{
-		QuatType rotation_around_z = quat_from_euler(deg2rad(FloatType(0.0)), deg2rad(FloatType(90.0)), deg2rad(FloatType(0.0)));
+		QuatType rotation_around_z = quat_from_euler(scalar_deg_to_rad(FloatType(0.0)), scalar_deg_to_rad(FloatType(90.0)), scalar_deg_to_rad(FloatType(0.0)));
 		Vector4Type translation = vector_set(FloatType(1.0), FloatType(2.0), FloatType(3.0));
 		Vector4Type scale = vector_set(FloatType(4.0), FloatType(5.0), FloatType(6.0));
 		MatrixType mtx = matrix_set(rotation_around_z, translation, scale);
@@ -129,7 +129,7 @@ static void test_affine_matrix_impl(const MatrixType& identity, const FloatType 
 	}
 
 	{
-		QuatType rotation_around_z = quat_from_euler(deg2rad(FloatType(0.0)), deg2rad(FloatType(90.0)), deg2rad(FloatType(0.0)));
+		QuatType rotation_around_z = quat_from_euler(scalar_deg_to_rad(FloatType(0.0)), scalar_deg_to_rad(FloatType(90.0)), scalar_deg_to_rad(FloatType(0.0)));
 		MatrixType mtx = matrix_from_quat(rotation_around_z);
 		QuatType rotation = quat_from_matrix(mtx);
 		REQUIRE(quat_near_equal(rotation_around_z, rotation, threshold));
@@ -139,14 +139,14 @@ static void test_affine_matrix_impl(const MatrixType& identity, const FloatType 
 		Vector4Type x_axis = vector_set(FloatType(1.0), FloatType(0.0), FloatType(0.0));
 		Vector4Type y_axis = vector_set(FloatType(0.0), FloatType(1.0), FloatType(0.0));
 
-		QuatType rotation_around_z = quat_from_euler(deg2rad(FloatType(0.0)), deg2rad(FloatType(90.0)), deg2rad(FloatType(0.0)));
+		QuatType rotation_around_z = quat_from_euler(scalar_deg_to_rad(FloatType(0.0)), scalar_deg_to_rad(FloatType(90.0)), scalar_deg_to_rad(FloatType(0.0)));
 		MatrixType mtx_a = matrix_set(rotation_around_z, x_axis, vector_set(FloatType(1.0)));
 		Vector4Type result = matrix_mul_position(mtx_a, x_axis);
 		REQUIRE(vector_all_near_equal3(result, vector_set(FloatType(1.0), FloatType(1.0), FloatType(0.0)), threshold));
 		result = matrix_mul_position(mtx_a, y_axis);
 		REQUIRE(vector_all_near_equal3(result, vector_set(FloatType(0.0), FloatType(0.0), FloatType(0.0)), threshold));
 
-		QuatType rotation_around_x = quat_from_euler(deg2rad(FloatType(0.0)), deg2rad(FloatType(0.0)), deg2rad(FloatType(90.0)));
+		QuatType rotation_around_x = quat_from_euler(scalar_deg_to_rad(FloatType(0.0)), scalar_deg_to_rad(FloatType(0.0)), scalar_deg_to_rad(FloatType(90.0)));
 		MatrixType mtx_b = matrix_set(rotation_around_x, y_axis, vector_set(FloatType(1.0)));
 		result = matrix_mul_position(mtx_b, x_axis);
 		REQUIRE(vector_all_near_equal3(result, vector_set(FloatType(1.0), FloatType(1.0), FloatType(0.0)), threshold));
@@ -183,7 +183,7 @@ static void test_affine_matrix_impl(const MatrixType& identity, const FloatType 
 	}
 
 	{
-		QuatType rotation_around_z = quat_from_euler(deg2rad(FloatType(0.0)), deg2rad(FloatType(90.0)), deg2rad(FloatType(0.0)));
+		QuatType rotation_around_z = quat_from_euler(scalar_deg_to_rad(FloatType(0.0)), scalar_deg_to_rad(FloatType(90.0)), scalar_deg_to_rad(FloatType(0.0)));
 		Vector4Type translation = vector_set(FloatType(1.0), FloatType(2.0), FloatType(3.0));
 		Vector4Type scale = vector_set(FloatType(4.0), FloatType(5.0), FloatType(6.0));
 		MatrixType mtx = matrix_set(rotation_around_z, translation, scale);
@@ -196,7 +196,7 @@ static void test_affine_matrix_impl(const MatrixType& identity, const FloatType 
 	}
 
 	{
-		QuatType rotation_around_z = quat_from_euler(deg2rad(FloatType(0.0)), deg2rad(FloatType(90.0)), deg2rad(FloatType(0.0)));
+		QuatType rotation_around_z = quat_from_euler(scalar_deg_to_rad(FloatType(0.0)), scalar_deg_to_rad(FloatType(90.0)), scalar_deg_to_rad(FloatType(0.0)));
 		Vector4Type translation = vector_set(FloatType(1.0), FloatType(2.0), FloatType(3.0));
 		Vector4Type scale = vector_set(FloatType(4.0), FloatType(5.0), FloatType(6.0));
 		MatrixType mtx0 = matrix_set(rotation_around_z, translation, scale);
@@ -213,7 +213,7 @@ TEST_CASE("matrix3x4f math", "[math][matrix3x4]")
 	test_affine_matrix_impl<matrix3x4f, qvvf, float>(matrix_identity_32(), 1.0e-4f);
 
 	{
-		quatf rotation_around_z = quat_from_euler(deg2rad(0.0f), deg2rad(90.0f), deg2rad(0.0f));
+		quatf rotation_around_z = quat_from_euler(scalar_deg_to_rad(0.0f), scalar_deg_to_rad(90.0f), scalar_deg_to_rad(0.0f));
 		vector4f translation = vector_set(1.0f, 2.0f, 3.0f);
 		vector4f scale = vector_set(4.0f, 5.0f, 6.0f);
 		matrix3x4f src = matrix_set(rotation_around_z, translation, scale);
@@ -230,7 +230,7 @@ TEST_CASE("matrix3x4d math", "[math][matrix3x4]")
 	test_affine_matrix_impl<matrix3x4d, qvvd, double>(matrix_identity_64(), 1.0e-4);
 
 	{
-		quatd rotation_around_z = quat_from_euler(deg2rad(0.0), deg2rad(90.0), deg2rad(0.0));
+		quatd rotation_around_z = quat_from_euler(scalar_deg_to_rad(0.0), scalar_deg_to_rad(90.0), scalar_deg_to_rad(0.0));
 		vector4d translation = vector_set(1.0, 2.0, 3.0);
 		vector4d scale = vector_set(4.0, 5.0, 6.0);
 		matrix3x4d src = matrix_set(rotation_around_z, translation, scale);

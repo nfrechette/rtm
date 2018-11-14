@@ -327,7 +327,7 @@ namespace rtm
 #elif defined(RTM_NEON_INTRINSICS)
 		return vmaxq_f32(lhs, rhs);
 #else
-		return vector_set(max(lhs.x, rhs.x), max(lhs.y, rhs.y), max(lhs.z, rhs.z), max(lhs.w, rhs.w));
+		return vector_set(scalar_max(lhs.x, rhs.x), scalar_max(lhs.y, rhs.y), scalar_max(lhs.z, rhs.z), scalar_max(lhs.w, rhs.w));
 #endif
 	}
 
@@ -338,7 +338,7 @@ namespace rtm
 #elif defined(RTM_NEON_INTRINSICS)
 		return vminq_f32(lhs, rhs);
 #else
-		return vector_set(min(lhs.x, rhs.x), min(lhs.y, rhs.y), min(lhs.z, rhs.z), min(lhs.w, rhs.w));
+		return vector_set(scalar_min(lhs.x, rhs.x), scalar_min(lhs.y, rhs.y), scalar_min(lhs.z, rhs.z), scalar_min(lhs.w, rhs.w));
 #endif
 	}
 
@@ -349,7 +349,7 @@ namespace rtm
 #elif defined(RTM_NEON_INTRINSICS)
 		return vabsq_f32(input);
 #else
-		return vector_set(abs(input.x), abs(input.y), abs(input.z), abs(input.w));
+		return vector_set(scalar_abs(input.x), scalar_abs(input.y), scalar_abs(input.z), scalar_abs(input.w));
 #endif
 	}
 
@@ -481,22 +481,22 @@ namespace rtm
 
 	inline float RTM_SIMD_CALL vector_length(vector4f_arg0 input)
 	{
-		return sqrt(vector_length_squared(input));
+		return scalar_sqrt(vector_length_squared(input));
 	}
 
 	inline float RTM_SIMD_CALL vector_length3(vector4f_arg0 input)
 	{
-		return sqrt(vector_length_squared3(input));
+		return scalar_sqrt(vector_length_squared3(input));
 	}
 
 	inline float RTM_SIMD_CALL vector_length_reciprocal(vector4f_arg0 input)
 	{
-		return sqrt_reciprocal(vector_length_squared(input));
+		return scalar_sqrt_reciprocal(vector_length_squared(input));
 	}
 
 	inline float RTM_SIMD_CALL vector_length_reciprocal3(vector4f_arg0 input)
 	{
-		return sqrt_reciprocal(vector_length_squared3(input));
+		return scalar_sqrt_reciprocal(vector_length_squared3(input));
 	}
 
 	inline float RTM_SIMD_CALL vector_distance3(vector4f_arg0 lhs, vector4f_arg1 rhs)
@@ -509,14 +509,14 @@ namespace rtm
 		// Reciprocal is more accurate to normalize with
 		const float len_sq = vector_length_squared3(input);
 		if (len_sq >= threshold)
-			return vector_mul(input, sqrt_reciprocal(len_sq));
+			return vector_mul(input, scalar_sqrt_reciprocal(len_sq));
 		else
 			return input;
 	}
 
 	inline vector4f RTM_SIMD_CALL vector_fraction(vector4f_arg0 input)
 	{
-		return vector_set(fraction(vector_get_x(input)), fraction(vector_get_y(input)), fraction(vector_get_z(input)), fraction(vector_get_w(input)));
+		return vector_set(scalar_fraction(vector_get_x(input)), scalar_fraction(vector_get_y(input)), scalar_fraction(vector_get_z(input)), scalar_fraction(vector_get_w(input)));
 	}
 
 	// output = (input * scale) + offset
@@ -768,12 +768,12 @@ namespace rtm
 
 	inline bool RTM_SIMD_CALL vector_is_finite(vector4f_arg0 input)
 	{
-		return is_finite(vector_get_x(input)) && is_finite(vector_get_y(input)) && is_finite(vector_get_z(input)) && is_finite(vector_get_w(input));
+		return scalar_is_finite(vector_get_x(input)) && scalar_is_finite(vector_get_y(input)) && scalar_is_finite(vector_get_z(input)) && scalar_is_finite(vector_get_w(input));
 	}
 
 	inline bool RTM_SIMD_CALL vector_is_finite3(vector4f_arg0 input)
 	{
-		return is_finite(vector_get_x(input)) && is_finite(vector_get_y(input)) && is_finite(vector_get_z(input));
+		return scalar_is_finite(vector_get_x(input)) && scalar_is_finite(vector_get_y(input)) && scalar_is_finite(vector_get_z(input));
 	}
 
 	//////////////////////////////////////////////////////////////////////////

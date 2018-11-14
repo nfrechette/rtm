@@ -38,29 +38,29 @@ static void test_scalar_impl(const FloatType pi, const FloatType threshold)
 	const FloatType half_pi = pi * FloatType(0.5);
 	const FloatType two_pi = pi * FloatType(2.0);
 
-	REQUIRE(rtm::floor(FloatType(0.0)) == FloatType(0.0));
-	REQUIRE(rtm::floor(FloatType(0.5)) == FloatType(0.0));
-	REQUIRE(rtm::floor(FloatType(2.5)) == FloatType(2.0));
-	REQUIRE(rtm::floor(FloatType(3.0)) == FloatType(3.0));
-	REQUIRE(rtm::floor(FloatType(-0.5)) == FloatType(-1.0));
-	REQUIRE(rtm::floor(FloatType(-2.5)) == FloatType(-3.0));
-	REQUIRE(rtm::floor(FloatType(-3.0)) == FloatType(-3.0));
+	REQUIRE(rtm::scalar_floor(FloatType(0.0)) == FloatType(0.0));
+	REQUIRE(rtm::scalar_floor(FloatType(0.5)) == FloatType(0.0));
+	REQUIRE(rtm::scalar_floor(FloatType(2.5)) == FloatType(2.0));
+	REQUIRE(rtm::scalar_floor(FloatType(3.0)) == FloatType(3.0));
+	REQUIRE(rtm::scalar_floor(FloatType(-0.5)) == FloatType(-1.0));
+	REQUIRE(rtm::scalar_floor(FloatType(-2.5)) == FloatType(-3.0));
+	REQUIRE(rtm::scalar_floor(FloatType(-3.0)) == FloatType(-3.0));
 
-	REQUIRE(rtm::ceil(FloatType(0.0)) == FloatType(0.0));
-	REQUIRE(rtm::ceil(FloatType(0.5)) == FloatType(1.0));
-	REQUIRE(rtm::ceil(FloatType(2.5)) == FloatType(3.0));
-	REQUIRE(rtm::ceil(FloatType(3.0)) == FloatType(3.0));
-	REQUIRE(rtm::ceil(FloatType(-0.5)) == FloatType(0.0));
-	REQUIRE(rtm::ceil(FloatType(-2.5)) == FloatType(-2.0));
-	REQUIRE(rtm::ceil(FloatType(-3.0)) == FloatType(-3.0));
+	REQUIRE(rtm::scalar_ceil(FloatType(0.0)) == FloatType(0.0));
+	REQUIRE(rtm::scalar_ceil(FloatType(0.5)) == FloatType(1.0));
+	REQUIRE(rtm::scalar_ceil(FloatType(2.5)) == FloatType(3.0));
+	REQUIRE(rtm::scalar_ceil(FloatType(3.0)) == FloatType(3.0));
+	REQUIRE(rtm::scalar_ceil(FloatType(-0.5)) == FloatType(0.0));
+	REQUIRE(rtm::scalar_ceil(FloatType(-2.5)) == FloatType(-2.0));
+	REQUIRE(rtm::scalar_ceil(FloatType(-3.0)) == FloatType(-3.0));
 
-	REQUIRE(clamp(FloatType(0.5), FloatType(0.0), FloatType(1.0)) == FloatType(0.5));
-	REQUIRE(clamp(FloatType(-0.5), FloatType(0.0), FloatType(1.0)) == FloatType(0.0));
-	REQUIRE(clamp(FloatType(1.5), FloatType(0.0), FloatType(1.0)) == FloatType(1.0));
+	REQUIRE(scalar_clamp(FloatType(0.5), FloatType(0.0), FloatType(1.0)) == FloatType(0.5));
+	REQUIRE(scalar_clamp(FloatType(-0.5), FloatType(0.0), FloatType(1.0)) == FloatType(0.0));
+	REQUIRE(scalar_clamp(FloatType(1.5), FloatType(0.0), FloatType(1.0)) == FloatType(1.0));
 
-	REQUIRE(rtm::abs(FloatType(0.0)) == FloatType(0.0));
-	REQUIRE(rtm::abs(FloatType(2.0)) == FloatType(2.0));
-	REQUIRE(rtm::abs(FloatType(-2.0)) == FloatType(2.0));
+	REQUIRE(rtm::scalar_abs(FloatType(0.0)) == FloatType(0.0));
+	REQUIRE(rtm::scalar_abs(FloatType(2.0)) == FloatType(2.0));
+	REQUIRE(rtm::scalar_abs(FloatType(-2.0)) == FloatType(2.0));
 
 	REQUIRE(scalar_near_equal(FloatType(1.0), FloatType(1.0), FloatType(0.00001)) == true);
 	REQUIRE(scalar_near_equal(FloatType(1.0), FloatType(1.000001), FloatType(0.00001)) == true);
@@ -68,90 +68,90 @@ static void test_scalar_impl(const FloatType pi, const FloatType threshold)
 	REQUIRE(scalar_near_equal(FloatType(1.0), FloatType(1.001), FloatType(0.00001)) == false);
 	REQUIRE(scalar_near_equal(FloatType(1.0), FloatType(0.999), FloatType(0.00001)) == false);
 
-	REQUIRE(rtm::sqrt(FloatType(0.0)) == FloatType(0.0));
-	REQUIRE(scalar_near_equal(rtm::sqrt(FloatType(0.5)), std::sqrt(FloatType(0.5)), threshold));
-	REQUIRE(scalar_near_equal(rtm::sqrt(FloatType(32.5)), std::sqrt(FloatType(32.5)), threshold));
+	REQUIRE(rtm::scalar_sqrt(FloatType(0.0)) == FloatType(0.0));
+	REQUIRE(scalar_near_equal(rtm::scalar_sqrt(FloatType(0.5)), std::sqrt(FloatType(0.5)), threshold));
+	REQUIRE(scalar_near_equal(rtm::scalar_sqrt(FloatType(32.5)), std::sqrt(FloatType(32.5)), threshold));
 
-	REQUIRE(scalar_near_equal(rtm::sqrt_reciprocal(FloatType(0.5)), FloatType(1.0) / std::sqrt(FloatType(0.5)), threshold));
-	REQUIRE(scalar_near_equal(rtm::sqrt_reciprocal(FloatType(32.5)), FloatType(1.0) / std::sqrt(FloatType(32.5)), threshold));
+	REQUIRE(scalar_near_equal(rtm::scalar_sqrt_reciprocal(FloatType(0.5)), FloatType(1.0) / std::sqrt(FloatType(0.5)), threshold));
+	REQUIRE(scalar_near_equal(rtm::scalar_sqrt_reciprocal(FloatType(32.5)), FloatType(1.0) / std::sqrt(FloatType(32.5)), threshold));
 
-	REQUIRE(scalar_near_equal(rtm::reciprocal(FloatType(0.5)), FloatType(1.0 / 0.5), threshold));
-	REQUIRE(scalar_near_equal(rtm::reciprocal(FloatType(32.5)), FloatType(1.0 / 32.5), threshold));
-	REQUIRE(scalar_near_equal(rtm::reciprocal(FloatType(-0.5)), FloatType(1.0 / -0.5), threshold));
-	REQUIRE(scalar_near_equal(rtm::reciprocal(FloatType(-32.5)), FloatType(1.0 / -32.5), threshold));
+	REQUIRE(scalar_near_equal(rtm::scalar_reciprocal(FloatType(0.5)), FloatType(1.0 / 0.5), threshold));
+	REQUIRE(scalar_near_equal(rtm::scalar_reciprocal(FloatType(32.5)), FloatType(1.0 / 32.5), threshold));
+	REQUIRE(scalar_near_equal(rtm::scalar_reciprocal(FloatType(-0.5)), FloatType(1.0 / -0.5), threshold));
+	REQUIRE(scalar_near_equal(rtm::scalar_reciprocal(FloatType(-32.5)), FloatType(1.0 / -32.5), threshold));
 
 	const FloatType angles[] = { FloatType(0.0), pi, -pi, half_pi, -half_pi, FloatType(0.5), FloatType(32.5), FloatType(-0.5), FloatType(-32.5) };
 
 	for (const FloatType angle : angles)
 	{
-		REQUIRE(scalar_near_equal(rtm::sin(angle), std::sin(angle), threshold));
-		REQUIRE(scalar_near_equal(rtm::cos(angle), std::cos(angle), threshold));
+		REQUIRE(scalar_near_equal(rtm::scalar_sin(angle), std::sin(angle), threshold));
+		REQUIRE(scalar_near_equal(rtm::scalar_cos(angle), std::cos(angle), threshold));
 
 		FloatType sin_result;
 		FloatType cos_result;
-		rtm::sincos(angle, sin_result, cos_result);
+		rtm::scalar_sincos(angle, sin_result, cos_result);
 		REQUIRE(scalar_near_equal(sin_result, std::sin(angle), threshold));
 		REQUIRE(scalar_near_equal(cos_result, std::cos(angle), threshold));
 	}
 
-	REQUIRE(scalar_near_equal(rtm::acos(FloatType(-1.0)), std::acos(FloatType(-1.0)), threshold));
-	REQUIRE(scalar_near_equal(rtm::acos(FloatType(-0.75)), std::acos(FloatType(-0.75)), threshold));
-	REQUIRE(scalar_near_equal(rtm::acos(FloatType(-0.5)), std::acos(FloatType(-0.5)), threshold));
-	REQUIRE(scalar_near_equal(rtm::acos(FloatType(-0.25)), std::acos(-FloatType(0.25)), threshold));
-	REQUIRE(scalar_near_equal(rtm::acos(FloatType(0.0)), std::acos(FloatType(0.0)), threshold));
-	REQUIRE(scalar_near_equal(rtm::acos(FloatType(0.25)), std::acos(FloatType(0.25)), threshold));
-	REQUIRE(scalar_near_equal(rtm::acos(FloatType(0.5)), std::acos(FloatType(0.5)), threshold));
-	REQUIRE(scalar_near_equal(rtm::acos(FloatType(0.75)), std::acos(FloatType(0.75)), threshold));
-	REQUIRE(scalar_near_equal(rtm::acos(FloatType(1.0)), std::acos(FloatType(1.0)), threshold));
+	REQUIRE(scalar_near_equal(rtm::scalar_acos(FloatType(-1.0)), std::acos(FloatType(-1.0)), threshold));
+	REQUIRE(scalar_near_equal(rtm::scalar_acos(FloatType(-0.75)), std::acos(FloatType(-0.75)), threshold));
+	REQUIRE(scalar_near_equal(rtm::scalar_acos(FloatType(-0.5)), std::acos(FloatType(-0.5)), threshold));
+	REQUIRE(scalar_near_equal(rtm::scalar_acos(FloatType(-0.25)), std::acos(-FloatType(0.25)), threshold));
+	REQUIRE(scalar_near_equal(rtm::scalar_acos(FloatType(0.0)), std::acos(FloatType(0.0)), threshold));
+	REQUIRE(scalar_near_equal(rtm::scalar_acos(FloatType(0.25)), std::acos(FloatType(0.25)), threshold));
+	REQUIRE(scalar_near_equal(rtm::scalar_acos(FloatType(0.5)), std::acos(FloatType(0.5)), threshold));
+	REQUIRE(scalar_near_equal(rtm::scalar_acos(FloatType(0.75)), std::acos(FloatType(0.75)), threshold));
+	REQUIRE(scalar_near_equal(rtm::scalar_acos(FloatType(1.0)), std::acos(FloatType(1.0)), threshold));
 
-	REQUIRE(scalar_near_equal(rtm::atan2(FloatType(-2.0), FloatType(-2.0)), std::atan2(FloatType(-2.0), FloatType(-2.0)), threshold));
-	REQUIRE(scalar_near_equal(rtm::atan2(FloatType(-1.0), FloatType(-2.0)), std::atan2(FloatType(-1.0), FloatType(-2.0)), threshold));
-	REQUIRE(scalar_near_equal(rtm::atan2(FloatType(-2.0), FloatType(-1.0)), std::atan2(FloatType(-2.0), FloatType(-1.0)), threshold));
-	REQUIRE(scalar_near_equal(rtm::atan2(FloatType(2.0), FloatType(2.0)), std::atan2(FloatType(2.0), FloatType(2.0)), threshold));
-	REQUIRE(scalar_near_equal(rtm::atan2(FloatType(1.0), FloatType(2.0)), std::atan2(FloatType(1.0), FloatType(2.0)), threshold));
-	REQUIRE(scalar_near_equal(rtm::atan2(FloatType(2.0), FloatType(1.0)), std::atan2(FloatType(2.0), FloatType(1.0)), threshold));
+	REQUIRE(scalar_near_equal(rtm::scalar_atan2(FloatType(-2.0), FloatType(-2.0)), std::atan2(FloatType(-2.0), FloatType(-2.0)), threshold));
+	REQUIRE(scalar_near_equal(rtm::scalar_atan2(FloatType(-1.0), FloatType(-2.0)), std::atan2(FloatType(-1.0), FloatType(-2.0)), threshold));
+	REQUIRE(scalar_near_equal(rtm::scalar_atan2(FloatType(-2.0), FloatType(-1.0)), std::atan2(FloatType(-2.0), FloatType(-1.0)), threshold));
+	REQUIRE(scalar_near_equal(rtm::scalar_atan2(FloatType(2.0), FloatType(2.0)), std::atan2(FloatType(2.0), FloatType(2.0)), threshold));
+	REQUIRE(scalar_near_equal(rtm::scalar_atan2(FloatType(1.0), FloatType(2.0)), std::atan2(FloatType(1.0), FloatType(2.0)), threshold));
+	REQUIRE(scalar_near_equal(rtm::scalar_atan2(FloatType(2.0), FloatType(1.0)), std::atan2(FloatType(2.0), FloatType(1.0)), threshold));
 
-	REQUIRE(rtm::min(FloatType(-0.5), FloatType(1.0)) == FloatType(-0.5));
-	REQUIRE(rtm::min(FloatType(1.0), FloatType(-0.5)) == FloatType(-0.5));
-	REQUIRE(rtm::min(FloatType(1.0), FloatType(1.0)) == FloatType(1.0));
+	REQUIRE(rtm::scalar_min(FloatType(-0.5), FloatType(1.0)) == FloatType(-0.5));
+	REQUIRE(rtm::scalar_min(FloatType(1.0), FloatType(-0.5)) == FloatType(-0.5));
+	REQUIRE(rtm::scalar_min(FloatType(1.0), FloatType(1.0)) == FloatType(1.0));
 
-	REQUIRE(rtm::max(FloatType(-0.5), FloatType(1.0)) == FloatType(1.0));
-	REQUIRE(rtm::max(FloatType(1.0), FloatType(-0.5)) == FloatType(1.0));
-	REQUIRE(rtm::max(FloatType(1.0), FloatType(1.0)) == FloatType(1.0));
+	REQUIRE(rtm::scalar_max(FloatType(-0.5), FloatType(1.0)) == FloatType(1.0));
+	REQUIRE(rtm::scalar_max(FloatType(1.0), FloatType(-0.5)) == FloatType(1.0));
+	REQUIRE(rtm::scalar_max(FloatType(1.0), FloatType(1.0)) == FloatType(1.0));
 
-	REQUIRE(deg2rad(FloatType(0.0)) == FloatType(0.0));
-	REQUIRE(scalar_near_equal(deg2rad(FloatType(90.0)), half_pi, threshold));
-	REQUIRE(scalar_near_equal(deg2rad(FloatType(-90.0)), -half_pi, threshold));
-	REQUIRE(scalar_near_equal(deg2rad(FloatType(180.0)), pi, threshold));
-	REQUIRE(scalar_near_equal(deg2rad(FloatType(-180.0)), -pi, threshold));
-	REQUIRE(scalar_near_equal(deg2rad(FloatType(360.0)), two_pi, threshold));
-	REQUIRE(scalar_near_equal(deg2rad(FloatType(-360.0)), -two_pi, threshold));
+	REQUIRE(scalar_deg_to_rad(FloatType(0.0)) == FloatType(0.0));
+	REQUIRE(scalar_near_equal(scalar_deg_to_rad(FloatType(90.0)), half_pi, threshold));
+	REQUIRE(scalar_near_equal(scalar_deg_to_rad(FloatType(-90.0)), -half_pi, threshold));
+	REQUIRE(scalar_near_equal(scalar_deg_to_rad(FloatType(180.0)), pi, threshold));
+	REQUIRE(scalar_near_equal(scalar_deg_to_rad(FloatType(-180.0)), -pi, threshold));
+	REQUIRE(scalar_near_equal(scalar_deg_to_rad(FloatType(360.0)), two_pi, threshold));
+	REQUIRE(scalar_near_equal(scalar_deg_to_rad(FloatType(-360.0)), -two_pi, threshold));
 
-	REQUIRE(rtm::is_finite(FloatType(0.0)) == true);
-	REQUIRE(rtm::is_finite(FloatType(32.0)) == true);
-	REQUIRE(rtm::is_finite(FloatType(-32.0)) == true);
-	REQUIRE(rtm::is_finite(std::numeric_limits<FloatType>::infinity()) == false);
-	REQUIRE(rtm::is_finite(std::numeric_limits<FloatType>::quiet_NaN()) == false);
-	REQUIRE(rtm::is_finite(std::numeric_limits<FloatType>::signaling_NaN()) == false);
+	REQUIRE(rtm::scalar_is_finite(FloatType(0.0)) == true);
+	REQUIRE(rtm::scalar_is_finite(FloatType(32.0)) == true);
+	REQUIRE(rtm::scalar_is_finite(FloatType(-32.0)) == true);
+	REQUIRE(rtm::scalar_is_finite(std::numeric_limits<FloatType>::infinity()) == false);
+	REQUIRE(rtm::scalar_is_finite(std::numeric_limits<FloatType>::quiet_NaN()) == false);
+	REQUIRE(rtm::scalar_is_finite(std::numeric_limits<FloatType>::signaling_NaN()) == false);
 
-	REQUIRE(symmetric_round(FloatType(-1.75)) == FloatType(-2.0));
-	REQUIRE(symmetric_round(FloatType(-1.5)) == FloatType(-2.0));
-	REQUIRE(symmetric_round(FloatType(-1.4999)) == FloatType(-1.0));
-	REQUIRE(symmetric_round(FloatType(-0.5)) == FloatType(-1.0));
-	REQUIRE(symmetric_round(FloatType(-0.4999)) == FloatType(0.0));
-	REQUIRE(symmetric_round(FloatType(0.0)) == FloatType(0.0));
-	REQUIRE(symmetric_round(FloatType(0.4999)) == FloatType(0.0));
-	REQUIRE(symmetric_round(FloatType(0.5)) == FloatType(1.0));
-	REQUIRE(symmetric_round(FloatType(1.4999)) == FloatType(1.0));
-	REQUIRE(symmetric_round(FloatType(1.5)) == FloatType(2.0));
-	REQUIRE(symmetric_round(FloatType(1.75)) == FloatType(2.0));
+	REQUIRE(scalar_symmetric_round(FloatType(-1.75)) == FloatType(-2.0));
+	REQUIRE(scalar_symmetric_round(FloatType(-1.5)) == FloatType(-2.0));
+	REQUIRE(scalar_symmetric_round(FloatType(-1.4999)) == FloatType(-1.0));
+	REQUIRE(scalar_symmetric_round(FloatType(-0.5)) == FloatType(-1.0));
+	REQUIRE(scalar_symmetric_round(FloatType(-0.4999)) == FloatType(0.0));
+	REQUIRE(scalar_symmetric_round(FloatType(0.0)) == FloatType(0.0));
+	REQUIRE(scalar_symmetric_round(FloatType(0.4999)) == FloatType(0.0));
+	REQUIRE(scalar_symmetric_round(FloatType(0.5)) == FloatType(1.0));
+	REQUIRE(scalar_symmetric_round(FloatType(1.4999)) == FloatType(1.0));
+	REQUIRE(scalar_symmetric_round(FloatType(1.5)) == FloatType(2.0));
+	REQUIRE(scalar_symmetric_round(FloatType(1.75)) == FloatType(2.0));
 
-	REQUIRE(fraction(FloatType(0.0)) == FloatType(0.0));
-	REQUIRE(fraction(FloatType(1.0)) == FloatType(0.0));
-	REQUIRE(fraction(FloatType(-1.0)) == FloatType(0.0));
-	REQUIRE(scalar_near_equal(fraction(FloatType(0.25)), FloatType(0.25), threshold));
-	REQUIRE(scalar_near_equal(fraction(FloatType(0.5)), FloatType(0.5), threshold));
-	REQUIRE(scalar_near_equal(fraction(FloatType(0.75)), FloatType(0.75), threshold));
+	REQUIRE(scalar_fraction(FloatType(0.0)) == FloatType(0.0));
+	REQUIRE(scalar_fraction(FloatType(1.0)) == FloatType(0.0));
+	REQUIRE(scalar_fraction(FloatType(-1.0)) == FloatType(0.0));
+	REQUIRE(scalar_near_equal(scalar_fraction(FloatType(0.25)), FloatType(0.25), threshold));
+	REQUIRE(scalar_near_equal(scalar_fraction(FloatType(0.5)), FloatType(0.5), threshold));
+	REQUIRE(scalar_near_equal(scalar_fraction(FloatType(0.75)), FloatType(0.75), threshold));
 }
 
 TEST_CASE("scalar 32 math", "[math][scalar]")

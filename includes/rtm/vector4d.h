@@ -268,7 +268,7 @@ namespace rtm
 #if defined(RTM_SSE2_INTRINSICS)
 		return vector4d{ _mm_max_pd(lhs.xy, rhs.xy), _mm_max_pd(lhs.zw, rhs.zw) };
 #else
-		return vector_set(max(lhs.x, rhs.x), max(lhs.y, rhs.y), max(lhs.z, rhs.z), max(lhs.w, rhs.w));
+		return vector_set(scalar_max(lhs.x, rhs.x), scalar_max(lhs.y, rhs.y), scalar_max(lhs.z, rhs.z), scalar_max(lhs.w, rhs.w));
 #endif
 	}
 
@@ -277,7 +277,7 @@ namespace rtm
 #if defined(RTM_SSE2_INTRINSICS)
 		return vector4d{ _mm_min_pd(lhs.xy, rhs.xy), _mm_min_pd(lhs.zw, rhs.zw) };
 #else
-		return vector_set(min(lhs.x, rhs.x), min(lhs.y, rhs.y), min(lhs.z, rhs.z), min(lhs.w, rhs.w));
+		return vector_set(scalar_min(lhs.x, rhs.x), scalar_min(lhs.y, rhs.y), scalar_min(lhs.z, rhs.z), scalar_min(lhs.w, rhs.w));
 #endif
 	}
 
@@ -287,7 +287,7 @@ namespace rtm
 		vector4d zero{ _mm_setzero_pd(), _mm_setzero_pd() };
 		return vector_max(vector_sub(zero, input), input);
 #else
-		return vector_set(abs(input.x), abs(input.y), abs(input.z), abs(input.w));
+		return vector_set(scalar_abs(input.x), scalar_abs(input.y), scalar_abs(input.z), scalar_abs(input.w));
 #endif
 	}
 
@@ -335,12 +335,12 @@ namespace rtm
 
 	inline double vector_length(const vector4d& input)
 	{
-		return sqrt(vector_length_squared(input));
+		return scalar_sqrt(vector_length_squared(input));
 	}
 
 	inline double vector_length3(const vector4d& input)
 	{
-		return sqrt(vector_length_squared3(input));
+		return scalar_sqrt(vector_length_squared3(input));
 	}
 
 	inline double vector_length_reciprocal(const vector4d& input)
@@ -363,14 +363,14 @@ namespace rtm
 		// Reciprocal is more accurate to normalize with
 		const double len_sq = vector_length_squared3(input);
 		if (len_sq >= threshold)
-			return vector_mul(input, sqrt_reciprocal(len_sq));
+			return vector_mul(input, scalar_sqrt_reciprocal(len_sq));
 		else
 			return input;
 	}
 
 	inline vector4d vector_fraction(const vector4d& input)
 	{
-		return vector_set(fraction(vector_get_x(input)), fraction(vector_get_y(input)), fraction(vector_get_z(input)), fraction(vector_get_w(input)));
+		return vector_set(scalar_fraction(vector_get_x(input)), scalar_fraction(vector_get_y(input)), scalar_fraction(vector_get_z(input)), scalar_fraction(vector_get_w(input)));
 	}
 
 	// output = (input * scale) + offset
@@ -574,12 +574,12 @@ namespace rtm
 
 	inline bool vector_is_finite(const vector4d& input)
 	{
-		return is_finite(vector_get_x(input)) && is_finite(vector_get_y(input)) && is_finite(vector_get_z(input)) && is_finite(vector_get_w(input));
+		return scalar_is_finite(vector_get_x(input)) && scalar_is_finite(vector_get_y(input)) && scalar_is_finite(vector_get_z(input)) && scalar_is_finite(vector_get_w(input));
 	}
 
 	inline bool vector_is_finite3(const vector4d& input)
 	{
-		return is_finite(vector_get_x(input)) && is_finite(vector_get_y(input)) && is_finite(vector_get_z(input));
+		return scalar_is_finite(vector_get_x(input)) && scalar_is_finite(vector_get_y(input)) && scalar_is_finite(vector_get_z(input));
 	}
 
 	//////////////////////////////////////////////////////////////////////////
