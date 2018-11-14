@@ -122,7 +122,7 @@ namespace rtm
 		return matrix_set(vector_set(vector_get_x(scale), 0.0f, 0.0f, 0.0f), vector_set(0.0f, vector_get_y(scale), 0.0f, 0.0f), vector_set(0.0f, 0.0f, vector_get_z(scale), 0.0f), vector_set(0.0f, 0.0f, 0.0f, 1.0f));
 	}
 
-	inline AffineMatrix_32 RTM_SIMD_CALL matrix_from_transform(Transform_32Arg0 transform)
+	inline AffineMatrix_32 RTM_SIMD_CALL matrix_from_transform(qvvf_arg0 transform)
 	{
 		return matrix_set(transform.rotation, transform.translation, transform.scale);
 	}

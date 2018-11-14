@@ -210,7 +210,7 @@ static void test_affine_matrix_impl(const MatrixType& identity, const FloatType 
 
 TEST_CASE("affine matrix 32 math", "[math][affinematrix]")
 {
-	test_affine_matrix_impl<AffineMatrix_32, Transform_32, float>(matrix_identity_32(), 1.0e-4f);
+	test_affine_matrix_impl<AffineMatrix_32, qvvf, float>(matrix_identity_32(), 1.0e-4f);
 
 	{
 		quatf rotation_around_z = quat_from_euler(deg2rad(0.0f), deg2rad(90.0f), deg2rad(0.0f));
@@ -227,7 +227,7 @@ TEST_CASE("affine matrix 32 math", "[math][affinematrix]")
 
 TEST_CASE("affine matrix 64 math", "[math][affinematrix]")
 {
-	test_affine_matrix_impl<AffineMatrix_64, Transform_64, double>(matrix_identity_64(), 1.0e-4);
+	test_affine_matrix_impl<AffineMatrix_64, qvvd, double>(matrix_identity_64(), 1.0e-4);
 
 	{
 		quatd rotation_around_z = quat_from_euler(deg2rad(0.0), deg2rad(90.0), deg2rad(0.0));

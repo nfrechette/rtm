@@ -131,14 +131,14 @@ namespace rtm
 	};
 #endif
 
-	struct Transform_32
+	struct qvvf
 	{
 		quatf		rotation;
 		vector4f	translation;
 		vector4f	scale;
 	};
 
-	struct Transform_64
+	struct qvvd
 	{
 		quatd		rotation;
 		vector4d	translation;
@@ -217,9 +217,9 @@ namespace rtm
 	using quatf_argn = const quatf&;
 
 	// With __vectorcall, vector aggregates are also passed by register
-	using Transform_32Arg0 = const Transform_32;
-	using Transform_32Arg1 = const Transform_32;
-	using Transform_32ArgN = const Transform_32&;
+	using qvvf_arg0 = const qvvf;
+	using qvvf_arg1 = const qvvf;
+	using qvvf_argn = const qvvf&;
 
 	using AffineMatrix_32Arg0 = const AffineMatrix_32;
 	using AffineMatrix_32ArgN = const AffineMatrix_32&;
@@ -241,9 +241,9 @@ namespace rtm
 	using quatf_arg5 = const quatf&;
 	using quatf_argn = const quatf&;
 
-	using Transform_32Arg0 = const Transform_32&;
-	using Transform_32Arg1 = const Transform_32&;
-	using Transform_32ArgN = const Transform_32&;
+	using qvvf_arg0 = const qvvf&;
+	using qvvf_arg1 = const qvvf&;
+	using qvvf_argn = const qvvf&;
 
 	using AffineMatrix_32Arg0 = const AffineMatrix_32&;
 	using AffineMatrix_32ArgN = const AffineMatrix_32&;
@@ -265,9 +265,9 @@ namespace rtm
 	using quatf_arg5 = const quatf&;
 	using quatf_argn = const quatf&;
 
-	using Transform_32Arg0 = const Transform_32&;
-	using Transform_32Arg1 = const Transform_32&;
-	using Transform_32ArgN = const Transform_32&;
+	using qvvf_arg0 = const qvvf&;
+	using qvvf_arg1 = const qvvf&;
+	using qvvf_argn = const qvvf&;
 
 	using AffineMatrix_32Arg0 = const AffineMatrix_32&;
 	using AffineMatrix_32ArgN = const AffineMatrix_32&;

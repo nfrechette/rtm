@@ -32,24 +32,24 @@
 
 namespace rtm
 {
-	constexpr Transform_64 transform_set(const quatd& rotation, const vector4d& translation, const vector4d& scale)
+	constexpr qvvd transform_set(const quatd& rotation, const vector4d& translation, const vector4d& scale)
 	{
-		return Transform_64{ rotation, translation, scale };
+		return qvvd{ rotation, translation, scale };
 	}
 
-	inline Transform_64 transform_identity_64()
+	inline qvvd transform_identity_64()
 	{
 		return transform_set(quat_identity_64(), vector_zero_64(), vector_set(1.0));
 	}
 
-	inline Transform_64 transform_cast(const Transform_32& input)
+	inline qvvd transform_cast(const qvvf& input)
 	{
-		return Transform_64{ quat_cast(input.rotation), vector_cast(input.translation), vector_cast(input.scale) };
+		return qvvd{ quat_cast(input.rotation), vector_cast(input.translation), vector_cast(input.scale) };
 	}
 
 	// Multiplication order is as follow: local_to_world = transform_mul(local_to_object, object_to_world)
 	// NOTE: When scale is present, multiplication will not properly handle skew/shear, use affine matrices instead
-	inline Transform_64 transform_mul(const Transform_64& lhs, const Transform_64& rhs)
+	inline qvvd transform_mul(const qvvd& lhs, const qvvd& rhs)
 	{
 		const vector4d min_scale = vector_min(lhs.scale, rhs.scale);
 		const vector4d scale = vector_mul(lhs.scale, rhs.scale);
@@ -80,24 +80,24 @@ namespace rtm
 	}
 
 	// Multiplication order is as follow: local_to_world = transform_mul(local_to_object, object_to_world)
-	inline Transform_64 transform_mul_no_scale(const Transform_64& lhs, const Transform_64& rhs)
+	inline qvvd transform_mul_no_scale(const qvvd& lhs, const qvvd& rhs)
 	{
 		const quatd rotation = quat_mul(lhs.rotation, rhs.rotation);
 		const vector4d translation = vector_add(quat_rotate(rhs.rotation, lhs.translation), rhs.translation);
 		return transform_set(rotation, translation, vector_set(1.0));
 	}
 
-	inline vector4d transform_position(const Transform_64& lhs, const vector4d& rhs)
+	inline vector4d transform_position(const qvvd& lhs, const vector4d& rhs)
 	{
 		return vector_add(quat_rotate(lhs.rotation, vector_mul(lhs.scale, rhs)), lhs.translation);
 	}
 
-	inline vector4d transform_position_no_scale(const Transform_64& lhs, const vector4d& rhs)
+	inline vector4d transform_position_no_scale(const qvvd& lhs, const vector4d& rhs)
 	{
 		return vector_add(quat_rotate(lhs.rotation, rhs), lhs.translation);
 	}
 
-	inline Transform_64 transform_inverse(const Transform_64& input)
+	inline qvvd transform_inverse(const qvvd& input)
 	{
 		const quatd inv_rotation = quat_conjugate(input.rotation);
 		const vector4d inv_scale = vector_reciprocal(input.scale);
@@ -105,14 +105,14 @@ namespace rtm
 		return transform_set(inv_rotation, inv_translation, inv_scale);
 	}
 
-	inline Transform_64 transform_inverse_no_scale(const Transform_64& input)
+	inline qvvd transform_inverse_no_scale(const qvvd& input)
 	{
 		const quatd inv_rotation = quat_conjugate(input.rotation);
 		const vector4d inv_translation = vector_neg(quat_rotate(inv_rotation, input.translation));
 		return transform_set(inv_rotation, inv_translation, vector_set(1.0));
 	}
 
-	inline Transform_64 transform_normalize(const Transform_64& input)
+	inline qvvd transform_normalize(const qvvd& input)
 	{
 		const quatd rotation = quat_normalize(input.rotation);
 		return transform_set(rotation, input.translation, input.scale);

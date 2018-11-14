@@ -122,7 +122,7 @@ namespace rtm
 		return matrix_set(vector_set(vector_get_x(scale), 0.0, 0.0, 0.0), vector_set(0.0, vector_get_y(scale), 0.0, 0.0), vector_set(0.0, 0.0, vector_get_z(scale), 0.0), vector_set(0.0, 0.0, 0.0, 1.0));
 	}
 
-	inline AffineMatrix_64 matrix_from_transform(const Transform_64& transform)
+	inline AffineMatrix_64 matrix_from_transform(const qvvd& transform)
 	{
 		return matrix_set(transform.rotation, transform.translation, transform.scale);
 	}

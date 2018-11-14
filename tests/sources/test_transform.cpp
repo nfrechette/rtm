@@ -158,13 +158,13 @@ static void test_transform_impl(const TransformType& identity, const FloatType t
 
 TEST_CASE("transform 32 math", "[math][transform]")
 {
-	test_transform_impl<Transform_32, float>(transform_identity_32(), 1.0e-4f);
+	test_transform_impl<qvvf, float>(transform_identity_32(), 1.0e-4f);
 
 	const quatf src_rotation = quat_set(0.39564531008956383f, 0.044254239301713752f, 0.22768840967675355f, 0.88863059760894492f);
 	const vector4f src_translation = vector_set(-2.65f, 2.996113f, 0.68123521f);
 	const vector4f src_scale = vector_set(1.2f, 0.8f, 2.1f);
-	const Transform_32 src = transform_set(src_rotation, src_translation, src_scale);
-	const Transform_64 dst = transform_cast(src);
+	const qvvf src = transform_set(src_rotation, src_translation, src_scale);
+	const qvvd dst = transform_cast(src);
 	REQUIRE(quat_near_equal(src.rotation, quat_cast(dst.rotation), 1.0e-6f));
 	REQUIRE(vector_all_near_equal3(src.translation, vector_cast(dst.translation), 1.0e-6f));
 	REQUIRE(vector_all_near_equal3(src.scale, vector_cast(dst.scale), 1.0e-6f));
@@ -172,13 +172,13 @@ TEST_CASE("transform 32 math", "[math][transform]")
 
 TEST_CASE("transform 64 math", "[math][transform]")
 {
-	test_transform_impl<Transform_64, double>(transform_identity_64(), 1.0e-6);
+	test_transform_impl<qvvd, double>(transform_identity_64(), 1.0e-6);
 
 	const quatd src_rotation = quat_set(0.39564531008956383, 0.044254239301713752, 0.22768840967675355, 0.88863059760894492);
 	const vector4d src_translation = vector_set(-2.65, 2.996113, 0.68123521);
 	const vector4d src_scale = vector_set(1.2, 0.8, 2.1);
-	const Transform_64 src = transform_set(src_rotation, src_translation, src_scale);
-	const Transform_32 dst = transform_cast(src);
+	const qvvd src = transform_set(src_rotation, src_translation, src_scale);
+	const qvvf dst = transform_cast(src);
 	REQUIRE(quat_near_equal(src.rotation, quat_cast(dst.rotation), 1.0e-6));
 	REQUIRE(vector_all_near_equal3(src.translation, vector_cast(dst.translation), 1.0e-6));
 	REQUIRE(vector_all_near_equal3(src.scale, vector_cast(dst.scale), 1.0e-6));
