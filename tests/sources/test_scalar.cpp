@@ -25,8 +25,8 @@
 
 #include <catch.hpp>
 
-#include <rtm/scalar_32.h>
-#include <rtm/scalar_64.h>
+#include <rtm/scalarf.h>
+#include <rtm/scalard.h>
 
 #include <limits>
 

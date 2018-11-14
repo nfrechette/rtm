@@ -27,7 +27,7 @@
 
 #include "rtm/error.h"
 #include "rtm/math.h"
-#include "rtm/scalar_64.h"
+#include "rtm/scalard.h"
 #include "rtm/vector4d.h"
 #include "rtm/impl/memory_utils.h"
 
