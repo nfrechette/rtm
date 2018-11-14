@@ -174,12 +174,12 @@ namespace rtm
 		D = 7,
 	};
 
-	enum class MatrixAxis
+	enum class axis
 	{
-		X = 0,
-		Y = 1,
-		Z = 2,
-		W = 3,
+		x = 0,
+		y = 1,
+		z = 2,
+		w = 3,
 	};
 
 	// The result is sometimes required as part of an immediate for an intrinsic

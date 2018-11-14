@@ -8,7 +8,7 @@
 
 This library is geared towards realtime applications that require their math types to be as fast as possible. Much care was taken to maximize [inlining opportunities](todo) and for code generation to be optimal when a function isn't inlined by passing values in registers whenever possible.
 
-Types currently supported: vector3, vector4, quaternions, affine matrices, and QVV transforms.
+Types currently supported: vector3, vector4, quaternions, affine matrices (matrix3x4), and QVV transforms.
 
 ## Philosophy
 

@@ -127,28 +127,28 @@ namespace rtm
 		return matrix_set(transform.rotation, transform.translation, transform.scale);
 	}
 
-	inline const vector4f& matrix_get_axis(const matrix3x4f& input, MatrixAxis axis)
+	inline const vector4f& matrix_get_axis(const matrix3x4f& input, axis axis)
 	{
 		switch (axis)
 		{
-		case MatrixAxis::X: return input.x_axis;
-		case MatrixAxis::Y: return input.y_axis;
-		case MatrixAxis::Z: return input.z_axis;
-		case MatrixAxis::W: return input.w_axis;
+		case axis::x: return input.x_axis;
+		case axis::y: return input.y_axis;
+		case axis::z: return input.z_axis;
+		case axis::w: return input.w_axis;
 		default:
 			RTM_ASSERT(false, "Invalid matrix axis");
 			return input.x_axis;
 		}
 	}
 
-	inline vector4f& matrix_get_axis(matrix3x4f& input, MatrixAxis axis)
+	inline vector4f& matrix_get_axis(matrix3x4f& input, axis axis)
 	{
 		switch (axis)
 		{
-		case MatrixAxis::X: return input.x_axis;
-		case MatrixAxis::Y: return input.y_axis;
-		case MatrixAxis::Z: return input.z_axis;
-		case MatrixAxis::W: return input.w_axis;
+		case axis::x: return input.x_axis;
+		case axis::y: return input.y_axis;
+		case axis::z: return input.z_axis;
+		case axis::w: return input.w_axis;
 		default:
 			RTM_ASSERT(false, "Invalid matrix axis");
 			return input.x_axis;
@@ -181,16 +181,16 @@ namespace rtm
 			int8_t best_axis = 0;
 			if (vector_get_y(input.y_axis) > vector_get_x(input.x_axis))
 				best_axis = 1;
-			if (vector_get_z(input.z_axis) > vector_get_component(matrix_get_axis(input, MatrixAxis(best_axis)), VectorMix(best_axis)))
+			if (vector_get_z(input.z_axis) > vector_get_component(matrix_get_axis(input, axis(best_axis)), VectorMix(best_axis)))
 				best_axis = 2;
 
 			const int8_t next_best_axis = (best_axis + 1) % 3;
 			const int8_t next_next_best_axis = (next_best_axis + 1) % 3;
 
 			const float mtx_pseudo_trace = 1.0f +
-				vector_get_component(matrix_get_axis(input, MatrixAxis(best_axis)), VectorMix(best_axis)) -
-				vector_get_component(matrix_get_axis(input, MatrixAxis(next_best_axis)), VectorMix(next_best_axis)) -
-				vector_get_component(matrix_get_axis(input, MatrixAxis(next_next_best_axis)), VectorMix(next_next_best_axis));
+				vector_get_component(matrix_get_axis(input, axis(best_axis)), VectorMix(best_axis)) -
+				vector_get_component(matrix_get_axis(input, axis(next_best_axis)), VectorMix(next_best_axis)) -
+				vector_get_component(matrix_get_axis(input, axis(next_next_best_axis)), VectorMix(next_next_best_axis));
 
 			const float inv_pseudo_trace = sqrt_reciprocal(mtx_pseudo_trace);
 			const float half_inv_pseudo_trace = inv_pseudo_trace * 0.5f;
@@ -198,14 +198,14 @@ namespace rtm
 			float quat_values[4];
 			quat_values[best_axis] = reciprocal(inv_pseudo_trace) * 0.5f;
 			quat_values[next_best_axis] = half_inv_pseudo_trace *
-				(vector_get_component(matrix_get_axis(input, MatrixAxis(best_axis)), VectorMix(next_best_axis)) +
-					vector_get_component(matrix_get_axis(input, MatrixAxis(next_best_axis)), VectorMix(best_axis)));
+				(vector_get_component(matrix_get_axis(input, axis(best_axis)), VectorMix(next_best_axis)) +
+					vector_get_component(matrix_get_axis(input, axis(next_best_axis)), VectorMix(best_axis)));
 			quat_values[next_next_best_axis] = half_inv_pseudo_trace *
-				(vector_get_component(matrix_get_axis(input, MatrixAxis(best_axis)), VectorMix(next_next_best_axis)) +
-					vector_get_component(matrix_get_axis(input, MatrixAxis(next_next_best_axis)), VectorMix(best_axis)));
+				(vector_get_component(matrix_get_axis(input, axis(best_axis)), VectorMix(next_next_best_axis)) +
+					vector_get_component(matrix_get_axis(input, axis(next_next_best_axis)), VectorMix(best_axis)));
 			quat_values[3] = half_inv_pseudo_trace *
-				(vector_get_component(matrix_get_axis(input, MatrixAxis(next_best_axis)), VectorMix(next_next_best_axis)) -
-					vector_get_component(matrix_get_axis(input, MatrixAxis(next_next_best_axis)), VectorMix(next_best_axis)));
+				(vector_get_component(matrix_get_axis(input, axis(next_best_axis)), VectorMix(next_next_best_axis)) -
+					vector_get_component(matrix_get_axis(input, axis(next_next_best_axis)), VectorMix(next_best_axis)));
 
 			return quat_normalize(quat_unaligned_load(&quat_values[0]));
 		}
