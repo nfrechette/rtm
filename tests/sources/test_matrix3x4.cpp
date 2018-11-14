@@ -25,8 +25,8 @@
 
 #include <catch.hpp>
 
-#include <rtm/affine_matrix_32.h>
-#include <rtm/affine_matrix_64.h>
+#include <rtm/matrix3x4f.h>
+#include <rtm/matrix3x4d.h>
 #include <rtm/qvvf.h>
 #include <rtm/qvvd.h>
 
@@ -208,7 +208,7 @@ static void test_affine_matrix_impl(const MatrixType& identity, const FloatType 
 	}
 }
 
-TEST_CASE("affine matrix 32 math", "[math][affinematrix]")
+TEST_CASE("matrix3x4f math", "[math][matrix3x4]")
 {
 	test_affine_matrix_impl<matrix3x4f, qvvf, float>(matrix_identity_32(), 1.0e-4f);
 
@@ -225,7 +225,7 @@ TEST_CASE("affine matrix 32 math", "[math][affinematrix]")
 	}
 }
 
-TEST_CASE("affine matrix 64 math", "[math][affinematrix]")
+TEST_CASE("matrix3x4d math", "[math][matrix3x4]")
 {
 	test_affine_matrix_impl<matrix3x4d, qvvd, double>(matrix_identity_64(), 1.0e-4);
 

@@ -28,7 +28,7 @@
 #include "rtm/math.h"
 #include "rtm/quatd.h"
 #include "rtm/vector4d.h"
-#include "rtm/affine_matrix_64.h"
+#include "rtm/matrix3x4d.h"
 
 namespace rtm
 {
