@@ -183,7 +183,7 @@ namespace rtm
 	};
 
 	// The result is sometimes required as part of an immediate for an intrinsic
-	// and as such we much know the value at compile time and constexpr isn't always evaluated.
+	// and as such we must know the value at compile time and constexpr isn't always evaluated.
 	// Required at least on GCC 5 in Debug
 	#define RTM_IS_VECTOR_MIX_ARG_XYZW(arg) (int32_t(arg) >= int32_t(VectorMix::X) && int32_t(arg) <= int32_t(VectorMix::W))
 	#define RTM_IS_VECTOR_MIX_ARG_ABCD(arg) (int32_t(arg) >= int32_t(VectorMix::A) && int32_t(arg) <= int32_t(VectorMix::D))
