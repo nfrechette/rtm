@@ -145,7 +145,7 @@ namespace rtm
 		vector4d	scale;
 	};
 
-	struct AffineMatrix_32
+	struct matrix3x4f
 	{
 		vector4f	x_axis;
 		vector4f	y_axis;
@@ -153,7 +153,7 @@ namespace rtm
 		vector4f	w_axis;
 	};
 
-	struct AffineMatrix_64
+	struct matrix3x4d
 	{
 		vector4d	x_axis;
 		vector4d	y_axis;
@@ -221,8 +221,8 @@ namespace rtm
 	using qvvf_arg1 = const qvvf;
 	using qvvf_argn = const qvvf&;
 
-	using AffineMatrix_32Arg0 = const AffineMatrix_32;
-	using AffineMatrix_32ArgN = const AffineMatrix_32&;
+	using matrix3x4f_arg0 = const matrix3x4f;
+	using matrix3x4f_argn = const matrix3x4f&;
 #elif defined(RTM_NEON_INTRINSICS)
 	// On ARM NEON, the first 4x vector4 arguments can be passed by value in a register, everything else afterwards is passed by const&
 	using vector4f_arg0 = const vector4f;
@@ -245,8 +245,8 @@ namespace rtm
 	using qvvf_arg1 = const qvvf&;
 	using qvvf_argn = const qvvf&;
 
-	using AffineMatrix_32Arg0 = const AffineMatrix_32&;
-	using AffineMatrix_32ArgN = const AffineMatrix_32&;
+	using matrix3x4f_arg0 = const matrix3x4f&;
+	using matrix3x4f_argn = const matrix3x4f&;
 #else
 	// On every other platform, everything is passed by const&
 	using vector4f_arg0 = const vector4f&;
@@ -269,7 +269,7 @@ namespace rtm
 	using qvvf_arg1 = const qvvf&;
 	using qvvf_argn = const qvvf&;
 
-	using AffineMatrix_32Arg0 = const AffineMatrix_32&;
-	using AffineMatrix_32ArgN = const AffineMatrix_32&;
+	using matrix3x4f_arg0 = const matrix3x4f&;
+	using matrix3x4f_argn = const matrix3x4f&;
 #endif
 }

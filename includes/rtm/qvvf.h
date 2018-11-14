@@ -57,9 +57,9 @@ namespace rtm
 		if (vector_any_less_than3(min_scale, vector_zero_32()))
 		{
 			// If we have negative scale, we go through a matrix
-			const AffineMatrix_32 lhs_mtx = matrix_from_qvv(lhs);
-			const AffineMatrix_32 rhs_mtx = matrix_from_qvv(rhs);
-			AffineMatrix_32 result_mtx = matrix_mul(lhs_mtx, rhs_mtx);
+			const matrix3x4f lhs_mtx = matrix_from_qvv(lhs);
+			const matrix3x4f rhs_mtx = matrix_from_qvv(rhs);
+			matrix3x4f result_mtx = matrix_mul(lhs_mtx, rhs_mtx);
 			result_mtx = matrix_remove_scale(result_mtx);
 
 			const vector4f sign = vector_sign(scale);

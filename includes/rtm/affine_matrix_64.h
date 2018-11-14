@@ -44,16 +44,16 @@ namespace rtm
 	// Z axis == up
 	//////////////////////////////////////////////////////////////////////////
 
-	inline AffineMatrix_64 matrix_set(const vector4d& x_axis, const vector4d& y_axis, const vector4d& z_axis, const vector4d& w_axis)
+	inline matrix3x4d matrix_set(const vector4d& x_axis, const vector4d& y_axis, const vector4d& z_axis, const vector4d& w_axis)
 	{
 		RTM_ASSERT(vector_get_w(x_axis) == 0.0, "X axis does not have a W component == 0.0");
 		RTM_ASSERT(vector_get_w(y_axis) == 0.0, "Y axis does not have a W component == 0.0");
 		RTM_ASSERT(vector_get_w(z_axis) == 0.0, "Z axis does not have a W component == 0.0");
 		RTM_ASSERT(vector_get_w(w_axis) == 1.0, "W axis does not have a W component == 1.0");
-		return AffineMatrix_64{x_axis, y_axis, z_axis, w_axis};
+		return matrix3x4d{x_axis, y_axis, z_axis, w_axis};
 	}
 
-	inline AffineMatrix_64 matrix_set(const quatd& quat, const vector4d& translation, const vector4d& scale)
+	inline matrix3x4d matrix_set(const quatd& quat, const vector4d& translation, const vector4d& scale)
 	{
 		RTM_ASSERT(quat_is_normalized(quat), "Quaternion is not normalized");
 
@@ -77,17 +77,17 @@ namespace rtm
 		return matrix_set(x_axis, y_axis, z_axis, w_axis);
 	}
 
-	inline AffineMatrix_64 matrix_identity_64()
+	inline matrix3x4d matrix_identity_64()
 	{
 		return matrix_set(vector_set(1.0, 0.0, 0.0, 0.0), vector_set(0.0, 1.0, 0.0, 0.0), vector_set(0.0, 0.0, 1.0, 0.0), vector_set(0.0, 0.0, 0.0, 1.0));
 	}
 
-	inline AffineMatrix_64 matrix_cast(const AffineMatrix_32& input)
+	inline matrix3x4d matrix_cast(const matrix3x4f& input)
 	{
 		return matrix_set(vector_cast(input.x_axis), vector_cast(input.y_axis), vector_cast(input.z_axis), vector_cast(input.w_axis));
 	}
 
-	inline AffineMatrix_64 matrix_from_quat(const quatd& quat)
+	inline matrix3x4d matrix_from_quat(const quatd& quat)
 	{
 		RTM_ASSERT(quat_is_normalized(quat), "Quaternion is not normalized");
 
@@ -111,23 +111,23 @@ namespace rtm
 		return matrix_set(x_axis, y_axis, z_axis, w_axis);
 	}
 
-	inline AffineMatrix_64 matrix_from_translation(const vector4d& translation)
+	inline matrix3x4d matrix_from_translation(const vector4d& translation)
 	{
 		return matrix_set(vector_set(1.0, 0.0, 0.0, 0.0), vector_set(0.0, 1.0, 0.0, 0.0), vector_set(0.0, 0.0, 1.0, 0.0), vector_set(vector_get_x(translation), vector_get_y(translation), vector_get_z(translation), 1.0));
 	}
 
-	inline AffineMatrix_64 matrix_from_scale(const vector4d& scale)
+	inline matrix3x4d matrix_from_scale(const vector4d& scale)
 	{
 		RTM_ASSERT(!vector_any_near_equal3(scale, vector_zero_64()), "Scale cannot be zero");
 		return matrix_set(vector_set(vector_get_x(scale), 0.0, 0.0, 0.0), vector_set(0.0, vector_get_y(scale), 0.0, 0.0), vector_set(0.0, 0.0, vector_get_z(scale), 0.0), vector_set(0.0, 0.0, 0.0, 1.0));
 	}
 
-	inline AffineMatrix_64 matrix_from_qvv(const qvvd& transform)
+	inline matrix3x4d matrix_from_qvv(const qvvd& transform)
 	{
 		return matrix_set(transform.rotation, transform.translation, transform.scale);
 	}
 
-	inline const vector4d& matrix_get_axis(const AffineMatrix_64& input, MatrixAxis axis)
+	inline const vector4d& matrix_get_axis(const matrix3x4d& input, MatrixAxis axis)
 	{
 		switch (axis)
 		{
@@ -141,7 +141,7 @@ namespace rtm
 		}
 	}
 
-	inline vector4d& matrix_get_axis(AffineMatrix_64& input, MatrixAxis axis)
+	inline vector4d& matrix_get_axis(matrix3x4d& input, MatrixAxis axis)
 	{
 		switch (axis)
 		{
@@ -155,7 +155,7 @@ namespace rtm
 		}
 	}
 
-	inline quatd quat_from_matrix(const AffineMatrix_64& input)
+	inline quatd quat_from_matrix(const matrix3x4d& input)
 	{
 		if (vector_all_near_equal3(input.x_axis, vector_zero_64()) || vector_all_near_equal3(input.y_axis, vector_zero_64()) || vector_all_near_equal3(input.z_axis, vector_zero_64()))
 		{
@@ -212,7 +212,7 @@ namespace rtm
 	}
 
 	// Multiplication order is as follow: local_to_world = matrix_mul(local_to_object, object_to_world)
-	inline AffineMatrix_64 matrix_mul(const AffineMatrix_64& lhs, const AffineMatrix_64& rhs)
+	inline matrix3x4d matrix_mul(const matrix3x4d& lhs, const matrix3x4d& rhs)
 	{
 		vector4d tmp = vector_mul(vector_mix_xxxx(lhs.x_axis), rhs.x_axis);
 		tmp = vector_mul_add(vector_mix_yyyy(lhs.x_axis), rhs.y_axis, tmp);
@@ -236,7 +236,7 @@ namespace rtm
 		return matrix_set(x_axis, y_axis, z_axis, w_axis);
 	}
 
-	inline vector4d matrix_mul_position(const AffineMatrix_64& lhs, const vector4d& rhs)
+	inline vector4d matrix_mul_position(const matrix3x4d& lhs, const vector4d& rhs)
 	{
 		vector4d tmp0;
 		vector4d tmp1;
@@ -252,7 +252,7 @@ namespace rtm
 	{
 		// Note: This is a generic matrix 4x4 transpose, the resulting matrix is no longer
 		// affine because the last column is no longer [0,0,0,1]
-		inline AffineMatrix_64 matrix_transpose(const AffineMatrix_64& input)
+		inline matrix3x4d matrix_transpose(const matrix3x4d& input)
 		{
 			vector4d tmp0 = vector_mix_xyab(input.x_axis, input.y_axis);
 			vector4d tmp1 = vector_mix_zwcd(input.x_axis, input.y_axis);
@@ -263,14 +263,14 @@ namespace rtm
 			vector4d y_axis = vector_mix_ywbd(tmp0, tmp2);
 			vector4d z_axis = vector_mix_xzac(tmp1, tmp3);
 			vector4d w_axis = vector_mix_ywbd(tmp1, tmp3);
-			return AffineMatrix_64{ x_axis, y_axis, z_axis, w_axis };
+			return matrix3x4d{ x_axis, y_axis, z_axis, w_axis };
 		}
 	}
 
-	inline AffineMatrix_64 matrix_inverse(const AffineMatrix_64& input)
+	inline matrix3x4d matrix_inverse(const matrix3x4d& input)
 	{
 		// TODO: This is a generic matrix inverse function, implement the affine version?
-		AffineMatrix_64 input_transposed = rtm_impl::matrix_transpose(input);
+		matrix3x4d input_transposed = rtm_impl::matrix_transpose(input);
 
 		vector4d v00 = vector_mix_xxyy(input_transposed.z_axis);
 		vector4d v01 = vector_mix_xxyy(input_transposed.x_axis);
@@ -360,9 +360,9 @@ namespace rtm
 		return matrix_set(x_axis, y_axis, z_axis, w_axis);
 	}
 
-	inline AffineMatrix_64 matrix_remove_scale(const AffineMatrix_64& input)
+	inline matrix3x4d matrix_remove_scale(const matrix3x4d& input)
 	{
-		AffineMatrix_64 result;
+		matrix3x4d result;
 		result.x_axis = vector_normalize3(input.x_axis);
 		result.y_axis = vector_normalize3(input.y_axis);
 		result.z_axis = vector_normalize3(input.z_axis);

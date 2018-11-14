@@ -44,16 +44,16 @@ namespace rtm
 	// Z axis == up
 	//////////////////////////////////////////////////////////////////////////
 
-	inline AffineMatrix_32 RTM_SIMD_CALL matrix_set(vector4f_arg0 x_axis, vector4f_arg1 y_axis, vector4f_arg2 z_axis, vector4f_arg3 w_axis)
+	inline matrix3x4f RTM_SIMD_CALL matrix_set(vector4f_arg0 x_axis, vector4f_arg1 y_axis, vector4f_arg2 z_axis, vector4f_arg3 w_axis)
 	{
 		RTM_ASSERT(vector_get_w(x_axis) == 0.0f, "X axis does not have a W component == 0.0");
 		RTM_ASSERT(vector_get_w(y_axis) == 0.0f, "Y axis does not have a W component == 0.0");
 		RTM_ASSERT(vector_get_w(z_axis) == 0.0f, "Z axis does not have a W component == 0.0");
 		RTM_ASSERT(vector_get_w(w_axis) == 1.0f, "W axis does not have a W component == 1.0");
-		return AffineMatrix_32{x_axis, y_axis, z_axis, w_axis};
+		return matrix3x4f{x_axis, y_axis, z_axis, w_axis};
 	}
 
-	inline AffineMatrix_32 RTM_SIMD_CALL matrix_set(quatf_arg0 quat, vector4f_arg1 translation, vector4f_arg2 scale)
+	inline matrix3x4f RTM_SIMD_CALL matrix_set(quatf_arg0 quat, vector4f_arg1 translation, vector4f_arg2 scale)
 	{
 		RTM_ASSERT(quat_is_normalized(quat), "Quaternion is not normalized");
 
@@ -77,17 +77,17 @@ namespace rtm
 		return matrix_set(x_axis, y_axis, z_axis, w_axis);
 	}
 
-	inline AffineMatrix_32 RTM_SIMD_CALL matrix_identity_32()
+	inline matrix3x4f RTM_SIMD_CALL matrix_identity_32()
 	{
 		return matrix_set(vector_set(1.0f, 0.0f, 0.0f, 0.0f), vector_set(0.0f, 1.0f, 0.0f, 0.0f), vector_set(0.0f, 0.0f, 1.0f, 0.0f), vector_set(0.0f, 0.0f, 0.0f, 1.0f));
 	}
 
-	inline AffineMatrix_32 RTM_SIMD_CALL matrix_cast(const AffineMatrix_64& input)
+	inline matrix3x4f RTM_SIMD_CALL matrix_cast(const matrix3x4d& input)
 	{
 		return matrix_set(vector_cast(input.x_axis), vector_cast(input.y_axis), vector_cast(input.z_axis), vector_cast(input.w_axis));
 	}
 
-	inline AffineMatrix_32 RTM_SIMD_CALL matrix_from_quat(quatf_arg0 quat)
+	inline matrix3x4f RTM_SIMD_CALL matrix_from_quat(quatf_arg0 quat)
 	{
 		RTM_ASSERT(quat_is_normalized(quat), "Quaternion is not normalized");
 
@@ -111,23 +111,23 @@ namespace rtm
 		return matrix_set(x_axis, y_axis, z_axis, w_axis);
 	}
 
-	inline AffineMatrix_32 RTM_SIMD_CALL matrix_from_translation(vector4f_arg0 translation)
+	inline matrix3x4f RTM_SIMD_CALL matrix_from_translation(vector4f_arg0 translation)
 	{
 		return matrix_set(vector_set(1.0f, 0.0f, 0.0f, 0.0f), vector_set(0.0f, 1.0f, 0.0f, 0.0f), vector_set(0.0f, 0.0f, 1.0f, 0.0f), vector_set(vector_get_x(translation), vector_get_y(translation), vector_get_z(translation), 1.0f));
 	}
 
-	inline AffineMatrix_32 RTM_SIMD_CALL matrix_from_scale(vector4f_arg0 scale)
+	inline matrix3x4f RTM_SIMD_CALL matrix_from_scale(vector4f_arg0 scale)
 	{
 		RTM_ASSERT(!vector_any_near_equal3(scale, vector_zero_32()), "Scale cannot be zero");
 		return matrix_set(vector_set(vector_get_x(scale), 0.0f, 0.0f, 0.0f), vector_set(0.0f, vector_get_y(scale), 0.0f, 0.0f), vector_set(0.0f, 0.0f, vector_get_z(scale), 0.0f), vector_set(0.0f, 0.0f, 0.0f, 1.0f));
 	}
 
-	inline AffineMatrix_32 RTM_SIMD_CALL matrix_from_qvv(qvvf_arg0 transform)
+	inline matrix3x4f RTM_SIMD_CALL matrix_from_qvv(qvvf_arg0 transform)
 	{
 		return matrix_set(transform.rotation, transform.translation, transform.scale);
 	}
 
-	inline const vector4f& matrix_get_axis(const AffineMatrix_32& input, MatrixAxis axis)
+	inline const vector4f& matrix_get_axis(const matrix3x4f& input, MatrixAxis axis)
 	{
 		switch (axis)
 		{
@@ -141,7 +141,7 @@ namespace rtm
 		}
 	}
 
-	inline vector4f& matrix_get_axis(AffineMatrix_32& input, MatrixAxis axis)
+	inline vector4f& matrix_get_axis(matrix3x4f& input, MatrixAxis axis)
 	{
 		switch (axis)
 		{
@@ -155,7 +155,7 @@ namespace rtm
 		}
 	}
 
-	inline quatf RTM_SIMD_CALL quat_from_matrix(AffineMatrix_32Arg0 input)
+	inline quatf RTM_SIMD_CALL quat_from_matrix(matrix3x4f_arg0 input)
 	{
 		if (vector_all_near_equal3(input.x_axis, vector_zero_32()) || vector_all_near_equal3(input.y_axis, vector_zero_32()) || vector_all_near_equal3(input.z_axis, vector_zero_32()))
 		{
@@ -212,7 +212,7 @@ namespace rtm
 	}
 
 	// Multiplication order is as follow: local_to_world = matrix_mul(local_to_object, object_to_world)
-	inline AffineMatrix_32 RTM_SIMD_CALL matrix_mul(AffineMatrix_32Arg0 lhs, AffineMatrix_32ArgN rhs)
+	inline matrix3x4f RTM_SIMD_CALL matrix_mul(matrix3x4f_arg0 lhs, matrix3x4f_argn rhs)
 	{
 		vector4f tmp = vector_mul(vector_mix_xxxx(lhs.x_axis), rhs.x_axis);
 		tmp = vector_mul_add(vector_mix_yyyy(lhs.x_axis), rhs.y_axis, tmp);
@@ -236,7 +236,7 @@ namespace rtm
 		return matrix_set(x_axis, y_axis, z_axis, w_axis);
 	}
 
-	inline vector4f RTM_SIMD_CALL matrix_mul_position(AffineMatrix_32Arg0 lhs, vector4f_arg4 rhs)
+	inline vector4f RTM_SIMD_CALL matrix_mul_position(matrix3x4f_arg0 lhs, vector4f_arg4 rhs)
 	{
 		vector4f tmp0;
 		vector4f tmp1;
@@ -252,7 +252,7 @@ namespace rtm
 	{
 		// Note: This is a generic matrix 4x4 transpose, the resulting matrix is no longer
 		// affine because the last column is no longer [0,0,0,1]
-		inline AffineMatrix_32 RTM_SIMD_CALL matrix_transpose(AffineMatrix_32Arg0 input)
+		inline matrix3x4f RTM_SIMD_CALL matrix_transpose(matrix3x4f_arg0 input)
 		{
 			vector4f tmp0 = vector_mix_xyab(input.x_axis, input.y_axis);
 			vector4f tmp1 = vector_mix_zwcd(input.x_axis, input.y_axis);
@@ -263,14 +263,14 @@ namespace rtm
 			vector4f y_axis = vector_mix_ywbd(tmp0, tmp2);
 			vector4f z_axis = vector_mix_xzac(tmp1, tmp3);
 			vector4f w_axis = vector_mix_ywbd(tmp1, tmp3);
-			return AffineMatrix_32{ x_axis, y_axis, z_axis, w_axis };
+			return matrix3x4f{ x_axis, y_axis, z_axis, w_axis };
 		}
 	}
 
-	inline AffineMatrix_32 RTM_SIMD_CALL matrix_inverse(AffineMatrix_32Arg0 input)
+	inline matrix3x4f RTM_SIMD_CALL matrix_inverse(matrix3x4f_arg0 input)
 	{
 		// TODO: This is a generic matrix inverse function, implement the affine version?
-		AffineMatrix_32 input_transposed = rtm_impl::matrix_transpose(input);
+		matrix3x4f input_transposed = rtm_impl::matrix_transpose(input);
 
 		vector4f v00 = vector_mix_xxyy(input_transposed.z_axis);
 		vector4f v01 = vector_mix_xxyy(input_transposed.x_axis);
@@ -360,9 +360,9 @@ namespace rtm
 		return matrix_set(x_axis, y_axis, z_axis, w_axis);
 	}
 
-	inline AffineMatrix_32 RTM_SIMD_CALL matrix_remove_scale(AffineMatrix_32Arg0 input)
+	inline matrix3x4f RTM_SIMD_CALL matrix_remove_scale(matrix3x4f_arg0 input)
 	{
-		AffineMatrix_32 result;
+		matrix3x4f result;
 		result.x_axis = vector_normalize3(input.x_axis);
 		result.y_axis = vector_normalize3(input.y_axis);
 		result.z_axis = vector_normalize3(input.z_axis);
