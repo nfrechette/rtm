@@ -28,7 +28,7 @@
 #include "rtm/error.h"
 #include "rtm/math.h"
 #include "rtm/vector4f.h"
-#include "rtm/quat_32.h"
+#include "rtm/quatf.h"
 
 namespace rtm
 {

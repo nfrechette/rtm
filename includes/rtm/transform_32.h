@@ -26,7 +26,7 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 #include "rtm/math.h"
-#include "rtm/quat_32.h"
+#include "rtm/quatf.h"
 #include "rtm/vector4f.h"
 #include "rtm/affine_matrix_32.h"
 
