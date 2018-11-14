@@ -32,7 +32,7 @@
 
 namespace rtm
 {
-	constexpr Transform_64 transform_set(const Quat_64& rotation, const vector4d& translation, const vector4d& scale)
+	constexpr Transform_64 transform_set(const quatd& rotation, const vector4d& translation, const vector4d& scale)
 	{
 		return Transform_64{ rotation, translation, scale };
 	}
@@ -67,13 +67,13 @@ namespace rtm
 			result_mtx.y_axis = vector_mul(result_mtx.y_axis, vector_mix_yyyy(sign));
 			result_mtx.z_axis = vector_mul(result_mtx.z_axis, vector_mix_zzzz(sign));
 
-			const Quat_64 rotation = quat_from_matrix(result_mtx);
+			const quatd rotation = quat_from_matrix(result_mtx);
 			const vector4d translation = result_mtx.w_axis;
 			return transform_set(rotation, translation, scale);
 		}
 		else
 		{
-			const Quat_64 rotation = quat_mul(lhs.rotation, rhs.rotation);
+			const quatd rotation = quat_mul(lhs.rotation, rhs.rotation);
 			const vector4d translation = vector_add(quat_rotate(rhs.rotation, vector_mul(lhs.translation, rhs.scale)), rhs.translation);
 			return transform_set(rotation, translation, scale);
 		}
@@ -82,7 +82,7 @@ namespace rtm
 	// Multiplication order is as follow: local_to_world = transform_mul(local_to_object, object_to_world)
 	inline Transform_64 transform_mul_no_scale(const Transform_64& lhs, const Transform_64& rhs)
 	{
-		const Quat_64 rotation = quat_mul(lhs.rotation, rhs.rotation);
+		const quatd rotation = quat_mul(lhs.rotation, rhs.rotation);
 		const vector4d translation = vector_add(quat_rotate(rhs.rotation, lhs.translation), rhs.translation);
 		return transform_set(rotation, translation, vector_set(1.0));
 	}
@@ -99,7 +99,7 @@ namespace rtm
 
 	inline Transform_64 transform_inverse(const Transform_64& input)
 	{
-		const Quat_64 inv_rotation = quat_conjugate(input.rotation);
+		const quatd inv_rotation = quat_conjugate(input.rotation);
 		const vector4d inv_scale = vector_reciprocal(input.scale);
 		const vector4d inv_translation = vector_neg(quat_rotate(inv_rotation, vector_mul(input.translation, inv_scale)));
 		return transform_set(inv_rotation, inv_translation, inv_scale);
@@ -107,14 +107,14 @@ namespace rtm
 
 	inline Transform_64 transform_inverse_no_scale(const Transform_64& input)
 	{
-		const Quat_64 inv_rotation = quat_conjugate(input.rotation);
+		const quatd inv_rotation = quat_conjugate(input.rotation);
 		const vector4d inv_translation = vector_neg(quat_rotate(inv_rotation, input.translation));
 		return transform_set(inv_rotation, inv_translation, vector_set(1.0));
 	}
 
 	inline Transform_64 transform_normalize(const Transform_64& input)
 	{
-		const Quat_64 rotation = quat_normalize(input.rotation);
+		const quatd rotation = quat_normalize(input.rotation);
 		return transform_set(rotation, input.translation, input.scale);
 	}
 }

@@ -53,7 +53,7 @@ namespace rtm
 		return AffineMatrix_32{x_axis, y_axis, z_axis, w_axis};
 	}
 
-	inline AffineMatrix_32 RTM_SIMD_CALL matrix_set(Quat_32Arg0 quat, vector4f_arg1 translation, vector4f_arg2 scale)
+	inline AffineMatrix_32 RTM_SIMD_CALL matrix_set(quatf_arg0 quat, vector4f_arg1 translation, vector4f_arg2 scale)
 	{
 		RTM_ASSERT(quat_is_normalized(quat), "Quaternion is not normalized");
 
@@ -87,7 +87,7 @@ namespace rtm
 		return matrix_set(vector_cast(input.x_axis), vector_cast(input.y_axis), vector_cast(input.z_axis), vector_cast(input.w_axis));
 	}
 
-	inline AffineMatrix_32 RTM_SIMD_CALL matrix_from_quat(Quat_32Arg0 quat)
+	inline AffineMatrix_32 RTM_SIMD_CALL matrix_from_quat(quatf_arg0 quat)
 	{
 		RTM_ASSERT(quat_is_normalized(quat), "Quaternion is not normalized");
 
@@ -155,7 +155,7 @@ namespace rtm
 		}
 	}
 
-	inline Quat_32 RTM_SIMD_CALL quat_from_matrix(AffineMatrix_32Arg0 input)
+	inline quatf RTM_SIMD_CALL quat_from_matrix(AffineMatrix_32Arg0 input)
 	{
 		if (vector_all_near_equal3(input.x_axis, vector_zero_32()) || vector_all_near_equal3(input.y_axis, vector_zero_32()) || vector_all_near_equal3(input.z_axis, vector_zero_32()))
 		{

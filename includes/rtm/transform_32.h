@@ -32,7 +32,7 @@
 
 namespace rtm
 {
-	constexpr Transform_32 RTM_SIMD_CALL transform_set(Quat_32Arg0 rotation, vector4f_arg1 translation, vector4f_arg2 scale)
+	constexpr Transform_32 RTM_SIMD_CALL transform_set(quatf_arg0 rotation, vector4f_arg1 translation, vector4f_arg2 scale)
 	{
 		return Transform_32{ rotation, translation, scale };
 	}
@@ -67,13 +67,13 @@ namespace rtm
 			result_mtx.y_axis = vector_mul(result_mtx.y_axis, vector_mix_yyyy(sign));
 			result_mtx.z_axis = vector_mul(result_mtx.z_axis, vector_mix_zzzz(sign));
 
-			const Quat_32 rotation = quat_from_matrix(result_mtx);
+			const quatf rotation = quat_from_matrix(result_mtx);
 			const vector4f translation = result_mtx.w_axis;
 			return transform_set(rotation, translation, scale);
 		}
 		else
 		{
-			const Quat_32 rotation = quat_mul(lhs.rotation, rhs.rotation);
+			const quatf rotation = quat_mul(lhs.rotation, rhs.rotation);
 			const vector4f translation = vector_add(quat_rotate(rhs.rotation, vector_mul(lhs.translation, rhs.scale)), rhs.translation);
 			return transform_set(rotation, translation, scale);
 		}
@@ -82,7 +82,7 @@ namespace rtm
 	// Multiplication order is as follow: local_to_world = transform_mul(local_to_object, object_to_world)
 	inline Transform_32 RTM_SIMD_CALL transform_mul_no_scale(Transform_32Arg0 lhs, Transform_32Arg1 rhs)
 	{
-		const Quat_32 rotation = quat_mul(lhs.rotation, rhs.rotation);
+		const quatf rotation = quat_mul(lhs.rotation, rhs.rotation);
 		const vector4f translation = vector_add(quat_rotate(rhs.rotation, lhs.translation), rhs.translation);
 		return transform_set(rotation, translation, vector_set(1.0f));
 	}
@@ -99,7 +99,7 @@ namespace rtm
 
 	inline Transform_32 RTM_SIMD_CALL transform_inverse(Transform_32Arg0 input)
 	{
-		const Quat_32 inv_rotation = quat_conjugate(input.rotation);
+		const quatf inv_rotation = quat_conjugate(input.rotation);
 		const vector4f inv_scale = vector_reciprocal(input.scale);
 		const vector4f inv_translation = vector_neg(quat_rotate(inv_rotation, vector_mul(input.translation, inv_scale)));
 		return transform_set(inv_rotation, inv_translation, inv_scale);
@@ -107,14 +107,14 @@ namespace rtm
 
 	inline Transform_32 RTM_SIMD_CALL transform_inverse_no_scale(Transform_32Arg0 input)
 	{
-		const Quat_32 inv_rotation = quat_conjugate(input.rotation);
+		const quatf inv_rotation = quat_conjugate(input.rotation);
 		const vector4f inv_translation = vector_neg(quat_rotate(inv_rotation, input.translation));
 		return transform_set(inv_rotation, inv_translation, vector_set(1.0f));
 	}
 
 	inline Transform_32 RTM_SIMD_CALL transform_normalize(Transform_32Arg0 input)
 	{
-		const Quat_32 rotation = quat_normalize(input.rotation);
+		const quatf rotation = quat_normalize(input.rotation);
 		return transform_set(rotation, input.translation, input.scale);
 	}
 }

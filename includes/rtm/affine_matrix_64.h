@@ -53,7 +53,7 @@ namespace rtm
 		return AffineMatrix_64{x_axis, y_axis, z_axis, w_axis};
 	}
 
-	inline AffineMatrix_64 matrix_set(const Quat_64& quat, const vector4d& translation, const vector4d& scale)
+	inline AffineMatrix_64 matrix_set(const quatd& quat, const vector4d& translation, const vector4d& scale)
 	{
 		RTM_ASSERT(quat_is_normalized(quat), "Quaternion is not normalized");
 
@@ -87,7 +87,7 @@ namespace rtm
 		return matrix_set(vector_cast(input.x_axis), vector_cast(input.y_axis), vector_cast(input.z_axis), vector_cast(input.w_axis));
 	}
 
-	inline AffineMatrix_64 matrix_from_quat(const Quat_64& quat)
+	inline AffineMatrix_64 matrix_from_quat(const quatd& quat)
 	{
 		RTM_ASSERT(quat_is_normalized(quat), "Quaternion is not normalized");
 
@@ -155,7 +155,7 @@ namespace rtm
 		}
 	}
 
-	inline Quat_64 quat_from_matrix(const AffineMatrix_64& input)
+	inline quatd quat_from_matrix(const AffineMatrix_64& input)
 	{
 		if (vector_all_near_equal3(input.x_axis, vector_zero_64()) || vector_all_near_equal3(input.y_axis, vector_zero_64()) || vector_all_near_equal3(input.z_axis, vector_zero_64()))
 		{

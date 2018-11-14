@@ -64,10 +64,10 @@ namespace rtm
 	}
 
 #if defined(RTM_SSE2_INTRINSICS)
-	typedef __m128 Quat_32;
+	typedef __m128 quatf;
 	typedef __m128 vector4f;
 
-	struct Quat_64
+	struct quatd
 	{
 		__m128d xy;
 		__m128d zw;
@@ -79,10 +79,10 @@ namespace rtm
 		__m128d zw;
 	};
 #elif defined(RTM_NEON_INTRINSICS)
-	typedef float32x4_t Quat_32;
+	typedef float32x4_t quatf;
 	typedef float32x4_t vector4f;
 
-	struct alignas(16) Quat_64
+	struct alignas(16) quatd
 	{
 		double x;
 		double y;
@@ -98,7 +98,7 @@ namespace rtm
 		double w;
 	};
 #else
-	struct alignas(16) Quat_32
+	struct alignas(16) quatf
 	{
 		float x;
 		float y;
@@ -114,7 +114,7 @@ namespace rtm
 		float w;
 	};
 
-	struct alignas(16) Quat_64
+	struct alignas(16) quatd
 	{
 		double x;
 		double y;
@@ -133,14 +133,14 @@ namespace rtm
 
 	struct Transform_32
 	{
-		Quat_32		rotation;
+		quatf		rotation;
 		vector4f	translation;
 		vector4f	scale;
 	};
 
 	struct Transform_64
 	{
-		Quat_64		rotation;
+		quatd		rotation;
 		vector4d	translation;
 		vector4d	scale;
 	};
@@ -208,13 +208,13 @@ namespace rtm
 	using vector4f_arg5 = const vector4f;
 	using vector4f_argn = const vector4f&;
 
-	using Quat_32Arg0 = const Quat_32;
-	using Quat_32Arg1 = const Quat_32;
-	using Quat_32Arg2 = const Quat_32;
-	using Quat_32Arg3 = const Quat_32;
-	using Quat_32Arg4 = const Quat_32;
-	using Quat_32Arg5 = const Quat_32;
-	using Quat_32ArgN = const Quat_32&;
+	using quatf_arg0 = const quatf;
+	using quatf_arg1 = const quatf;
+	using quatf_arg2 = const quatf;
+	using quatf_arg3 = const quatf;
+	using quatf_arg4 = const quatf;
+	using quatf_arg5 = const quatf;
+	using quatf_argn = const quatf&;
 
 	// With __vectorcall, vector aggregates are also passed by register
 	using Transform_32Arg0 = const Transform_32;
@@ -233,13 +233,13 @@ namespace rtm
 	using vector4f_arg5 = const vector4f&;
 	using vector4f_argn = const vector4f&;
 
-	using Quat_32Arg0 = const Quat_32;
-	using Quat_32Arg1 = const Quat_32;
-	using Quat_32Arg2 = const Quat_32;
-	using Quat_32Arg3 = const Quat_32;
-	using Quat_32Arg4 = const Quat_32&;
-	using Quat_32Arg5 = const Quat_32&;
-	using Quat_32ArgN = const Quat_32&;
+	using quatf_arg0 = const quatf;
+	using quatf_arg1 = const quatf;
+	using quatf_arg2 = const quatf;
+	using quatf_arg3 = const quatf;
+	using quatf_arg4 = const quatf&;
+	using quatf_arg5 = const quatf&;
+	using quatf_argn = const quatf&;
 
 	using Transform_32Arg0 = const Transform_32&;
 	using Transform_32Arg1 = const Transform_32&;
@@ -257,13 +257,13 @@ namespace rtm
 	using vector4f_arg5 = const vector4f&;
 	using vector4f_argn = const vector4f&;
 
-	using Quat_32Arg0 = const Quat_32&;
-	using Quat_32Arg1 = const Quat_32&;
-	using Quat_32Arg2 = const Quat_32&;
-	using Quat_32Arg3 = const Quat_32&;
-	using Quat_32Arg4 = const Quat_32&;
-	using Quat_32Arg5 = const Quat_32&;
-	using Quat_32ArgN = const Quat_32&;
+	using quatf_arg0 = const quatf&;
+	using quatf_arg1 = const quatf&;
+	using quatf_arg2 = const quatf&;
+	using quatf_arg3 = const quatf&;
+	using quatf_arg4 = const quatf&;
+	using quatf_arg5 = const quatf&;
+	using quatf_argn = const quatf&;
 
 	using Transform_32Arg0 = const Transform_32&;
 	using Transform_32Arg1 = const Transform_32&;

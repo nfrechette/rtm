@@ -94,7 +94,7 @@ namespace rtm
 		return vector_set(0.0, 0.0, 0.0, 0.0);
 	}
 
-	inline vector4d quat_to_vector(const Quat_64& input)
+	inline vector4d quat_to_vector(const quatd& input)
 	{
 #if defined(RTM_SSE2_INTRINSICS)
 		return vector4d{ input.xy, input.zw };

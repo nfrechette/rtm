@@ -123,7 +123,7 @@ namespace rtm
 #endif
 	}
 
-	inline vector4f RTM_SIMD_CALL quat_to_vector(Quat_32Arg0 input)
+	inline vector4f RTM_SIMD_CALL quat_to_vector(quatf_arg0 input)
 	{
 #if defined(RTM_SSE2_INTRINSICS) || defined(RTM_NEON_INTRINSICS)
 		return input;

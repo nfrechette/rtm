@@ -6,7 +6,7 @@
     <DisplayString>({x}, {y}, {z}, {w})</DisplayString>
   </Type>
 
-  <Type Name="rtm::Quat_32" Priority="MediumLow">
+  <Type Name="rtm::quatf" Priority="MediumLow">
     <DisplayString>({x}, {y}, {z}, {w})</DisplayString>
   </Type>
 
@@ -26,11 +26,11 @@
     <DisplayString>({xy.m128d_f64[0]}, {xy.m128d_f64[1]}, {zw.m128d_f64[0]}, {zw.m128d_f64[1]})</DisplayString>
   </Type>
 
-  <Type Name="rtm::Quat_64" Priority="MediumLow">
+  <Type Name="rtm::quatd" Priority="MediumLow">
     <DisplayString>({x}, {y}, {z}, {w})</DisplayString>
   </Type>
 
-  <Type Name="rtm::Quat_64">
+  <Type Name="rtm::quatd">
     <DisplayString>({xy.m128d_f64[0]}, {xy.m128d_f64[1]}, {zw.m128d_f64[0]}, {zw.m128d_f64[1]})</DisplayString>
   </Type>
 

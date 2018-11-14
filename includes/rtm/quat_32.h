@@ -36,7 +36,7 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	// Setters, getters, and casts
 
-	inline Quat_32 RTM_SIMD_CALL quat_set(float x, float y, float z, float w)
+	inline quatf RTM_SIMD_CALL quat_set(float x, float y, float z, float w)
 	{
 #if defined(RTM_SSE2_INTRINSICS)
 		return _mm_set_ps(w, z, y, x);
@@ -50,40 +50,40 @@ namespace rtm
 		return vld1q_f32(data);
 #endif
 #else
-		return Quat_32{ x, y, z, w };
+		return quatf{ x, y, z, w };
 #endif
 	}
 
-	inline Quat_32 RTM_SIMD_CALL quat_unaligned_load(const float* input)
+	inline quatf RTM_SIMD_CALL quat_unaligned_load(const float* input)
 	{
 		RTM_ASSERT(rtm_impl::is_aligned(input), "Invalid alignment");
 		return quat_set(input[0], input[1], input[2], input[3]);
 	}
 
-	inline Quat_32 RTM_SIMD_CALL quat_identity_32()
+	inline quatf RTM_SIMD_CALL quat_identity_32()
 	{
 		return quat_set(0.0f, 0.0f, 0.0f, 1.0f);
 	}
 
-	inline Quat_32 RTM_SIMD_CALL vector_to_quat(vector4f_arg0 input)
+	inline quatf RTM_SIMD_CALL vector_to_quat(vector4f_arg0 input)
 	{
 #if defined(RTM_SSE2_INTRINSICS) || defined(RTM_NEON_INTRINSICS)
 		return input;
 #else
-		return Quat_32{ input.x, input.y, input.z, input.w };
+		return quatf{ input.x, input.y, input.z, input.w };
 #endif
 	}
 
-	inline Quat_32 RTM_SIMD_CALL quat_cast(const Quat_64& input)
+	inline quatf RTM_SIMD_CALL quat_cast(const quatd& input)
 	{
 #if defined(RTM_SSE2_INTRINSICS)
 		return _mm_shuffle_ps(_mm_cvtpd_ps(input.xy), _mm_cvtpd_ps(input.zw), _MM_SHUFFLE(1, 0, 1, 0));
 #else
-		return Quat_32{ float(input.x), float(input.y), float(input.z), float(input.w) };
+		return quatf{ float(input.x), float(input.y), float(input.z), float(input.w) };
 #endif
 	}
 
-	inline float RTM_SIMD_CALL quat_get_x(Quat_32Arg0 input)
+	inline float RTM_SIMD_CALL quat_get_x(quatf_arg0 input)
 	{
 #if defined(RTM_SSE2_INTRINSICS)
 		return _mm_cvtss_f32(input);
@@ -94,7 +94,7 @@ namespace rtm
 #endif
 	}
 
-	inline float RTM_SIMD_CALL quat_get_y(Quat_32Arg0 input)
+	inline float RTM_SIMD_CALL quat_get_y(quatf_arg0 input)
 	{
 #if defined(RTM_SSE2_INTRINSICS)
 		return _mm_cvtss_f32(_mm_shuffle_ps(input, input, _MM_SHUFFLE(1, 1, 1, 1)));
@@ -105,7 +105,7 @@ namespace rtm
 #endif
 	}
 
-	inline float RTM_SIMD_CALL quat_get_z(Quat_32Arg0 input)
+	inline float RTM_SIMD_CALL quat_get_z(quatf_arg0 input)
 	{
 #if defined(RTM_SSE2_INTRINSICS)
 		return _mm_cvtss_f32(_mm_shuffle_ps(input, input, _MM_SHUFFLE(2, 2, 2, 2)));
@@ -116,7 +116,7 @@ namespace rtm
 #endif
 	}
 
-	inline float RTM_SIMD_CALL quat_get_w(Quat_32Arg0 input)
+	inline float RTM_SIMD_CALL quat_get_w(quatf_arg0 input)
 	{
 #if defined(RTM_SSE2_INTRINSICS)
 		return _mm_cvtss_f32(_mm_shuffle_ps(input, input, _MM_SHUFFLE(3, 3, 3, 3)));
@@ -127,7 +127,7 @@ namespace rtm
 #endif
 	}
 
-	inline void RTM_SIMD_CALL quat_unaligned_write(Quat_32Arg0 input, float* output)
+	inline void RTM_SIMD_CALL quat_unaligned_write(quatf_arg0 input, float* output)
 	{
 		RTM_ASSERT(rtm_impl::is_aligned(output), "Invalid alignment");
 		output[0] = quat_get_x(input);
@@ -139,13 +139,13 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	// Arithmetic
 
-	inline Quat_32 RTM_SIMD_CALL quat_conjugate(Quat_32Arg0 input)
+	inline quatf RTM_SIMD_CALL quat_conjugate(quatf_arg0 input)
 	{
 		return quat_set(-quat_get_x(input), -quat_get_y(input), -quat_get_z(input), quat_get_w(input));
 	}
 
 	// Multiplication order is as follow: local_to_world = quat_mul(local_to_object, object_to_world)
-	inline Quat_32 RTM_SIMD_CALL quat_mul(Quat_32Arg0 lhs, Quat_32Arg1 rhs)
+	inline quatf RTM_SIMD_CALL quat_mul(quatf_arg0 lhs, quatf_arg1 rhs)
 	{
 #if defined(RTM_SSE4_INTRINSICS) && 0
 		// TODO: Profile this, the accuracy is the same as with SSE2, should be binary exact
@@ -242,29 +242,29 @@ namespace rtm
 #endif
 	}
 
-	inline vector4f RTM_SIMD_CALL quat_rotate(Quat_32Arg0 rotation, vector4f_arg1 vector)
+	inline vector4f RTM_SIMD_CALL quat_rotate(quatf_arg0 rotation, vector4f_arg1 vector)
 	{
-		Quat_32 vector_quat = quat_set(vector_get_x(vector), vector_get_y(vector), vector_get_z(vector), 0.0f);
-		Quat_32 inv_rotation = quat_conjugate(rotation);
+		quatf vector_quat = quat_set(vector_get_x(vector), vector_get_y(vector), vector_get_z(vector), 0.0f);
+		quatf inv_rotation = quat_conjugate(rotation);
 		return quat_to_vector(quat_mul(quat_mul(inv_rotation, vector_quat), rotation));
 	}
 
-	inline float RTM_SIMD_CALL quat_length_squared(Quat_32Arg0 input)
+	inline float RTM_SIMD_CALL quat_length_squared(quatf_arg0 input)
 	{
 		return vector_length_squared(quat_to_vector(input));
 	}
 
-	inline float RTM_SIMD_CALL quat_length(Quat_32Arg0 input)
+	inline float RTM_SIMD_CALL quat_length(quatf_arg0 input)
 	{
 		return vector_length(quat_to_vector(input));
 	}
 
-	inline float RTM_SIMD_CALL quat_length_reciprocal(Quat_32Arg0 input)
+	inline float RTM_SIMD_CALL quat_length_reciprocal(quatf_arg0 input)
 	{
 		return vector_length_reciprocal(quat_to_vector(input));
 	}
 
-	inline Quat_32 RTM_SIMD_CALL quat_normalize(Quat_32Arg0 input)
+	inline quatf RTM_SIMD_CALL quat_normalize(quatf_arg0 input)
 	{
 #if defined(RTM_SSE2_INTRINSICS)
 		// We first calculate the dot product to get the length squared: dot(input, input)
@@ -310,7 +310,7 @@ namespace rtm
 #endif
 	}
 
-	inline Quat_32 RTM_SIMD_CALL quat_lerp(Quat_32Arg0 start, Quat_32Arg1 end, float alpha)
+	inline quatf RTM_SIMD_CALL quat_lerp(quatf_arg0 start, quatf_arg1 end, float alpha)
 	{
 #if defined(RTM_SSE2_INTRINSICS)
 		// Calculate the vector4 dot product: dot(start, end)
@@ -416,7 +416,7 @@ namespace rtm
 #endif
 	}
 
-	inline Quat_32 RTM_SIMD_CALL quat_neg(Quat_32Arg0 input)
+	inline quatf RTM_SIMD_CALL quat_neg(quatf_arg0 input)
 	{
 #if defined(RTM_NEON_INTRINSICS)
 		return vnegq_f32(input);
@@ -425,12 +425,12 @@ namespace rtm
 #endif
 	}
 
-	inline Quat_32 RTM_SIMD_CALL quat_ensure_positive_w(Quat_32Arg0 input)
+	inline quatf RTM_SIMD_CALL quat_ensure_positive_w(quatf_arg0 input)
 	{
 		return quat_get_w(input) >= 0.f ? input : quat_neg(input);
 	}
 
-	inline Quat_32 RTM_SIMD_CALL quat_from_positive_w(vector4f_arg0 input)
+	inline quatf RTM_SIMD_CALL quat_from_positive_w(vector4f_arg0 input)
 	{
 #if defined(RTM_SSE4_INTRINSICS)
 		__m128 x2y2z2 = _mm_mul_ps(input, input);
@@ -468,7 +468,7 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	// Conversion to/from axis/angle/euler
 
-	inline void RTM_SIMD_CALL quat_to_axis_angle(Quat_32Arg0 input, vector4f& out_axis, float& out_angle)
+	inline void RTM_SIMD_CALL quat_to_axis_angle(quatf_arg0 input, vector4f& out_axis, float& out_angle)
 	{
 		constexpr float epsilon = 1.0e-8f;
 		constexpr float epsilon_squared = epsilon * epsilon;
@@ -479,7 +479,7 @@ namespace rtm
 		out_axis = scale_sq >= epsilon_squared ? vector_div(vector_set(quat_get_x(input), quat_get_y(input), quat_get_z(input)), vector_set(sqrt(scale_sq))) : vector_set(1.0f, 0.0f, 0.0f);
 	}
 
-	inline vector4f RTM_SIMD_CALL quat_get_axis(Quat_32Arg0 input)
+	inline vector4f RTM_SIMD_CALL quat_get_axis(quatf_arg0 input)
 	{
 		constexpr float epsilon = 1.0e-8f;
 		constexpr float epsilon_squared = epsilon * epsilon;
@@ -488,12 +488,12 @@ namespace rtm
 		return scale_sq >= epsilon_squared ? vector_div(vector_set(quat_get_x(input), quat_get_y(input), quat_get_z(input)), vector_set(sqrt(scale_sq))) : vector_set(1.0f, 0.0f, 0.0f);
 	}
 
-	inline float RTM_SIMD_CALL quat_get_angle(Quat_32Arg0 input)
+	inline float RTM_SIMD_CALL quat_get_angle(quatf_arg0 input)
 	{
 		return acos(quat_get_w(input)) * 2.0f;
 	}
 
-	inline Quat_32 RTM_SIMD_CALL quat_from_axis_angle(vector4f_arg0 axis, float angle)
+	inline quatf RTM_SIMD_CALL quat_from_axis_angle(vector4f_arg0 axis, float angle)
 	{
 		float s, c;
 		sincos(0.5f * angle, s, c);
@@ -504,7 +504,7 @@ namespace rtm
 	// Pitch is around the Y axis (right)
 	// Yaw is around the Z axis (up)
 	// Roll is around the X axis (forward)
-	inline Quat_32 RTM_SIMD_CALL quat_from_euler(float pitch, float yaw, float roll)
+	inline quatf RTM_SIMD_CALL quat_from_euler(float pitch, float yaw, float roll)
 	{
 		float sp, sy, sr;
 		float cp, cy, cr;
@@ -522,23 +522,23 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	// Comparisons and masking
 
-	inline bool RTM_SIMD_CALL quat_is_finite(Quat_32Arg0 input)
+	inline bool RTM_SIMD_CALL quat_is_finite(quatf_arg0 input)
 	{
 		return is_finite(quat_get_x(input)) && is_finite(quat_get_y(input)) && is_finite(quat_get_z(input)) && is_finite(quat_get_w(input));
 	}
 
-	inline bool RTM_SIMD_CALL quat_is_normalized(Quat_32Arg0 input, float threshold = 0.00001f)
+	inline bool RTM_SIMD_CALL quat_is_normalized(quatf_arg0 input, float threshold = 0.00001f)
 	{
 		float length_squared = quat_length_squared(input);
 		return abs(length_squared - 1.0f) < threshold;
 	}
 
-	inline bool RTM_SIMD_CALL quat_near_equal(Quat_32Arg0 lhs, Quat_32Arg1 rhs, float threshold = 0.00001f)
+	inline bool RTM_SIMD_CALL quat_near_equal(quatf_arg0 lhs, quatf_arg1 rhs, float threshold = 0.00001f)
 	{
 		return vector_all_near_equal(quat_to_vector(lhs), quat_to_vector(rhs), threshold);
 	}
 
-	inline bool RTM_SIMD_CALL quat_near_identity(Quat_32Arg0 input, float threshold_angle = 0.00284714461f)
+	inline bool RTM_SIMD_CALL quat_near_identity(quatf_arg0 input, float threshold_angle = 0.00284714461f)
 	{
 		// Because of floating point precision, we cannot represent very small rotations.
 		// The closest float to 1.0 that is not 1.0 itself yields:

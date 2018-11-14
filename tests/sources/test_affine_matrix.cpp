@@ -213,7 +213,7 @@ TEST_CASE("affine matrix 32 math", "[math][affinematrix]")
 	test_affine_matrix_impl<AffineMatrix_32, Transform_32, float>(matrix_identity_32(), 1.0e-4f);
 
 	{
-		Quat_32 rotation_around_z = quat_from_euler(deg2rad(0.0f), deg2rad(90.0f), deg2rad(0.0f));
+		quatf rotation_around_z = quat_from_euler(deg2rad(0.0f), deg2rad(90.0f), deg2rad(0.0f));
 		vector4f translation = vector_set(1.0f, 2.0f, 3.0f);
 		vector4f scale = vector_set(4.0f, 5.0f, 6.0f);
 		AffineMatrix_32 src = matrix_set(rotation_around_z, translation, scale);
@@ -230,7 +230,7 @@ TEST_CASE("affine matrix 64 math", "[math][affinematrix]")
 	test_affine_matrix_impl<AffineMatrix_64, Transform_64, double>(matrix_identity_64(), 1.0e-4);
 
 	{
-		Quat_64 rotation_around_z = quat_from_euler(deg2rad(0.0), deg2rad(90.0), deg2rad(0.0));
+		quatd rotation_around_z = quat_from_euler(deg2rad(0.0), deg2rad(90.0), deg2rad(0.0));
 		vector4d translation = vector_set(1.0, 2.0, 3.0);
 		vector4d scale = vector_set(4.0, 5.0, 6.0);
 		AffineMatrix_64 src = matrix_set(rotation_around_z, translation, scale);
