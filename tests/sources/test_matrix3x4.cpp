@@ -116,16 +116,16 @@ static void test_affine_matrix_impl(const MatrixType& identity, const FloatType 
 		Vector4Type translation = vector_set(FloatType(1.0), FloatType(2.0), FloatType(3.0));
 		Vector4Type scale = vector_set(FloatType(4.0), FloatType(5.0), FloatType(6.0));
 		MatrixType mtx = matrix_set(rotation_around_z, translation, scale);
-		REQUIRE(vector_all_near_equal(matrix_get_axis(mtx, axis::x), mtx.x_axis, threshold));
-		REQUIRE(vector_all_near_equal(matrix_get_axis(mtx, axis::y), mtx.y_axis, threshold));
-		REQUIRE(vector_all_near_equal(matrix_get_axis(mtx, axis::z), mtx.z_axis, threshold));
-		REQUIRE(vector_all_near_equal(matrix_get_axis(mtx, axis::w), mtx.w_axis, threshold));
+		REQUIRE(vector_all_near_equal(matrix_get_axis(mtx, axis4::x), mtx.x_axis, threshold));
+		REQUIRE(vector_all_near_equal(matrix_get_axis(mtx, axis4::y), mtx.y_axis, threshold));
+		REQUIRE(vector_all_near_equal(matrix_get_axis(mtx, axis4::z), mtx.z_axis, threshold));
+		REQUIRE(vector_all_near_equal(matrix_get_axis(mtx, axis4::w), mtx.w_axis, threshold));
 
 		const MatrixType mtx2 = mtx;
-		REQUIRE(vector_all_near_equal(matrix_get_axis(mtx2, axis::x), mtx2.x_axis, threshold));
-		REQUIRE(vector_all_near_equal(matrix_get_axis(mtx2, axis::y), mtx2.y_axis, threshold));
-		REQUIRE(vector_all_near_equal(matrix_get_axis(mtx2, axis::z), mtx2.z_axis, threshold));
-		REQUIRE(vector_all_near_equal(matrix_get_axis(mtx2, axis::w), mtx2.w_axis, threshold));
+		REQUIRE(vector_all_near_equal(matrix_get_axis(mtx2, axis4::x), mtx2.x_axis, threshold));
+		REQUIRE(vector_all_near_equal(matrix_get_axis(mtx2, axis4::y), mtx2.y_axis, threshold));
+		REQUIRE(vector_all_near_equal(matrix_get_axis(mtx2, axis4::z), mtx2.z_axis, threshold));
+		REQUIRE(vector_all_near_equal(matrix_get_axis(mtx2, axis4::w), mtx2.w_axis, threshold));
 	}
 
 	{

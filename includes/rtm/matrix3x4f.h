@@ -127,14 +127,14 @@ namespace rtm
 		return matrix_set(transform.rotation, transform.translation, transform.scale);
 	}
 
-	inline const vector4f& matrix_get_axis(const matrix3x4f& input, axis axis_)
+	inline const vector4f& matrix_get_axis(const matrix3x4f& input, axis4 axis_)
 	{
 		switch (axis_)
 		{
-		case axis::x: return input.x_axis;
-		case axis::y: return input.y_axis;
-		case axis::z: return input.z_axis;
-		case axis::w: return input.w_axis;
+		case axis4::x: return input.x_axis;
+		case axis4::y: return input.y_axis;
+		case axis4::z: return input.z_axis;
+		case axis4::w: return input.w_axis;
 		default:
 			RTM_ASSERT(false, "Invalid matrix axis");
 			return input.x_axis;
@@ -165,19 +165,19 @@ namespace rtm
 		else
 		{
 			// Note that axis4::xyzw have the same values as mix4::xyzw
-			int8_t best_axis = (int8_t)axis::x;
+			int8_t best_axis = (int8_t)axis4::x;
 			if (vector_get_y(input.y_axis) > vector_get_x(input.x_axis))
-				best_axis = (int8_t)axis::y;
-			if (vector_get_z(input.z_axis) > vector_get_component(matrix_get_axis(input, axis(best_axis)), mix4(best_axis)))
-				best_axis = (int8_t)axis::z;
+				best_axis = (int8_t)axis4::y;
+			if (vector_get_z(input.z_axis) > vector_get_component(matrix_get_axis(input, axis4(best_axis)), mix4(best_axis)))
+				best_axis = (int8_t)axis4::z;
 
 			const int8_t next_best_axis = (best_axis + 1) % 3;
 			const int8_t next_next_best_axis = (next_best_axis + 1) % 3;
 
 			const float mtx_pseudo_trace = 1.0f +
-				vector_get_component(matrix_get_axis(input, axis(best_axis)), mix4(best_axis)) -
-				vector_get_component(matrix_get_axis(input, axis(next_best_axis)), mix4(next_best_axis)) -
-				vector_get_component(matrix_get_axis(input, axis(next_next_best_axis)), mix4(next_next_best_axis));
+				vector_get_component(matrix_get_axis(input, axis4(best_axis)), mix4(best_axis)) -
+				vector_get_component(matrix_get_axis(input, axis4(next_best_axis)), mix4(next_best_axis)) -
+				vector_get_component(matrix_get_axis(input, axis4(next_next_best_axis)), mix4(next_next_best_axis));
 
 			const float inv_pseudo_trace = scalar_sqrt_reciprocal(mtx_pseudo_trace);
 			const float half_inv_pseudo_trace = inv_pseudo_trace * 0.5f;
@@ -185,14 +185,14 @@ namespace rtm
 			float quat_values[4];
 			quat_values[best_axis] = scalar_reciprocal(inv_pseudo_trace) * 0.5f;
 			quat_values[next_best_axis] = half_inv_pseudo_trace *
-				(vector_get_component(matrix_get_axis(input, axis(best_axis)), mix4(next_best_axis)) +
-					vector_get_component(matrix_get_axis(input, axis(next_best_axis)), mix4(best_axis)));
+				(vector_get_component(matrix_get_axis(input, axis4(best_axis)), mix4(next_best_axis)) +
+					vector_get_component(matrix_get_axis(input, axis4(next_best_axis)), mix4(best_axis)));
 			quat_values[next_next_best_axis] = half_inv_pseudo_trace *
-				(vector_get_component(matrix_get_axis(input, axis(best_axis)), mix4(next_next_best_axis)) +
-					vector_get_component(matrix_get_axis(input, axis(next_next_best_axis)), mix4(best_axis)));
+				(vector_get_component(matrix_get_axis(input, axis4(best_axis)), mix4(next_next_best_axis)) +
+					vector_get_component(matrix_get_axis(input, axis4(next_next_best_axis)), mix4(best_axis)));
 			quat_values[3] = half_inv_pseudo_trace *
-				(vector_get_component(matrix_get_axis(input, axis(next_best_axis)), mix4(next_next_best_axis)) -
-					vector_get_component(matrix_get_axis(input, axis(next_next_best_axis)), mix4(next_best_axis)));
+				(vector_get_component(matrix_get_axis(input, axis4(next_best_axis)), mix4(next_next_best_axis)) -
+					vector_get_component(matrix_get_axis(input, axis4(next_next_best_axis)), mix4(next_best_axis)));
 
 			return quat_normalize(quat_unaligned_load(&quat_values[0]));
 		}
