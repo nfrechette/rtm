@@ -63,9 +63,9 @@ namespace rtm
 			result_mtx = matrix_remove_scale(result_mtx);
 
 			const vector4f sign = vector_sign(scale);
-			result_mtx.x_axis = vector_mul(result_mtx.x_axis, vector_mix_xxxx(sign));
-			result_mtx.y_axis = vector_mul(result_mtx.y_axis, vector_mix_yyyy(sign));
-			result_mtx.z_axis = vector_mul(result_mtx.z_axis, vector_mix_zzzz(sign));
+			result_mtx.x_axis = vector_mul(result_mtx.x_axis, vector_dup_x(sign));
+			result_mtx.y_axis = vector_mul(result_mtx.y_axis, vector_dup_y(sign));
+			result_mtx.z_axis = vector_mul(result_mtx.z_axis, vector_dup_z(sign));
 
 			const quatf rotation = quat_from_matrix(result_mtx);
 			const vector4f translation = result_mtx.w_axis;

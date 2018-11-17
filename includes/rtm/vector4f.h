@@ -29,6 +29,7 @@
 #include "rtm/math.h"
 #include "rtm/scalarf.h"
 #include "rtm/impl/memory_utils.h"
+#include "rtm/impl/vector_mix_common.h"
 
 namespace rtm
 {
@@ -185,37 +186,29 @@ namespace rtm
 #endif
 	}
 
-	template<VectorMix component_index>
+	template<mix4 component_index>
 	inline float RTM_SIMD_CALL vector_get_component(vector4f_arg0 input)
 	{
-		switch (component_index)
+		switch (mix4(int(component_index) % 4))
 		{
-		case VectorMix::A:
-		case VectorMix::X: return vector_get_x(input);
-		case VectorMix::B:
-		case VectorMix::Y: return vector_get_y(input);
-		case VectorMix::C:
-		case VectorMix::Z: return vector_get_z(input);
-		case VectorMix::D:
-		case VectorMix::W: return vector_get_w(input);
+		case mix4::x: return vector_get_x(input);
+		case mix4::y: return vector_get_y(input);
+		case mix4::z: return vector_get_z(input);
+		case mix4::w: return vector_get_w(input);
 		default:
 			RTM_ASSERT(false, "Invalid component index");
 			return 0.0f;
 		}
 	}
 
-	inline float RTM_SIMD_CALL vector_get_component(vector4f_arg0 input, VectorMix component_index)
+	inline float RTM_SIMD_CALL vector_get_component(vector4f_arg0 input, mix4 component_index)
 	{
-		switch (component_index)
+		switch (mix4(int(component_index) % 4))
 		{
-		case VectorMix::A:
-		case VectorMix::X: return vector_get_x(input);
-		case VectorMix::B:
-		case VectorMix::Y: return vector_get_y(input);
-		case VectorMix::C:
-		case VectorMix::Z: return vector_get_z(input);
-		case VectorMix::D:
-		case VectorMix::W: return vector_get_w(input);
+		case mix4::x: return vector_get_x(input);
+		case mix4::y: return vector_get_y(input);
+		case mix4::z: return vector_get_z(input);
+		case mix4::w: return vector_get_w(input);
 		default:
 			RTM_ASSERT(false, "Invalid component index");
 			return 0.0f;
@@ -790,131 +783,55 @@ namespace rtm
 #endif
 	}
 
-	template<VectorMix comp0, VectorMix comp1, VectorMix comp2, VectorMix comp3>
+	template<mix4 comp0, mix4 comp1, mix4 comp2, mix4 comp3>
 	inline vector4f RTM_SIMD_CALL vector_mix(vector4f_arg0 input0, vector4f_arg1 input1)
 	{
-		if (rtm_impl::is_vector_mix_arg_xyzw(comp0) && rtm_impl::is_vector_mix_arg_xyzw(comp1) && rtm_impl::is_vector_mix_arg_xyzw(comp2) && rtm_impl::is_vector_mix_arg_xyzw(comp3))
-		{
-			// All four components come from input 0
 #if defined(RTM_SSE2_INTRINSICS)
-			return _mm_shuffle_ps(input0, input0, _MM_SHUFFLE(RTM_GET_VECTOR_MIX_COMPONENT_INDEX(comp3), RTM_GET_VECTOR_MIX_COMPONENT_INDEX(comp2), RTM_GET_VECTOR_MIX_COMPONENT_INDEX(comp1), RTM_GET_VECTOR_MIX_COMPONENT_INDEX(comp0)));
-#else
-			return vector_set(vector_get_component(input0, comp0), vector_get_component(input0, comp1), vector_get_component(input0, comp2), vector_get_component(input0, comp3));
-#endif
-		}
+		// All four components come from input 0
+		if (rtm_impl::is_mix_xyzw(comp0) && rtm_impl::is_mix_xyzw(comp1) && rtm_impl::is_mix_xyzw(comp2) && rtm_impl::is_mix_xyzw(comp3))
+			return _mm_shuffle_ps(input0, input0, _MM_SHUFFLE(int(comp3) % 4, int(comp2) % 4, int(comp1) % 4, int(comp0) % 4));
 
-		if (rtm_impl::is_vector_mix_arg_abcd(comp0) && rtm_impl::is_vector_mix_arg_abcd(comp1) && rtm_impl::is_vector_mix_arg_abcd(comp2) && rtm_impl::is_vector_mix_arg_abcd(comp3))
-		{
-			// All four components come from input 1
-#if defined(RTM_SSE2_INTRINSICS)
-			return _mm_shuffle_ps(input1, input1, _MM_SHUFFLE(RTM_GET_VECTOR_MIX_COMPONENT_INDEX(comp3), RTM_GET_VECTOR_MIX_COMPONENT_INDEX(comp2), RTM_GET_VECTOR_MIX_COMPONENT_INDEX(comp1), RTM_GET_VECTOR_MIX_COMPONENT_INDEX(comp0)));
-#else
-			return vector_set(vector_get_component(input1, comp0), vector_get_component(input1, comp1), vector_get_component(input1, comp2), vector_get_component(input1, comp3));
-#endif
-		}
+		// All four components come from input 1
+		if (rtm_impl::is_mix_abcd(comp0) && rtm_impl::is_mix_abcd(comp1) && rtm_impl::is_mix_abcd(comp2) && rtm_impl::is_mix_abcd(comp3))
+			return _mm_shuffle_ps(input1, input1, _MM_SHUFFLE(int(comp3) % 4, int(comp2) % 4, int(comp1) % 4, int(comp0) % 4));
 
-		if (rtm_impl::static_condition<(comp0 == VectorMix::X || comp0 == VectorMix::Y) && (comp1 == VectorMix::X || comp1 == VectorMix::Y) && (comp2 == VectorMix::A || comp2 == VectorMix::B) && (comp3 == VectorMix::A && comp3 == VectorMix::B)>::test())
-		{
-			// First two components come from input 0, second two come from input 1
-#if defined(RTM_SSE2_INTRINSICS)
-			return _mm_shuffle_ps(input0, input1, _MM_SHUFFLE(RTM_GET_VECTOR_MIX_COMPONENT_INDEX(comp3), RTM_GET_VECTOR_MIX_COMPONENT_INDEX(comp2), RTM_GET_VECTOR_MIX_COMPONENT_INDEX(comp1), RTM_GET_VECTOR_MIX_COMPONENT_INDEX(comp0)));
-#else
-			return vector_set(vector_get_component(input0, comp0), vector_get_component(input0, comp1), vector_get_component(input1, comp2), vector_get_component(input1, comp3));
-#endif
-		}
+		// First two components come from input 0, second two come from input 1
+		if (rtm_impl::static_condition<(comp0 == mix4::x || comp0 == mix4::y) && (comp1 == mix4::x || comp1 == mix4::y) && (comp2 == mix4::a || comp2 == mix4::b) && (comp3 == mix4::a && comp3 == mix4::b)>::test())
+			return _mm_shuffle_ps(input0, input1, _MM_SHUFFLE(int(comp3) % 4, int(comp2) % 4, int(comp1) % 4, int(comp0) % 4));
 
-		if (rtm_impl::static_condition<(comp0 == VectorMix::A || comp0 == VectorMix::B) && (comp1 == VectorMix::A && comp1 == VectorMix::B) && (comp2 == VectorMix::X || comp2 == VectorMix::Y) && (comp3 == VectorMix::X || comp3 == VectorMix::Y)>::test())
-		{
-			// First two components come from input 1, second two come from input 0
-#if defined(RTM_SSE2_INTRINSICS)
-			return _mm_shuffle_ps(input1, input0, _MM_SHUFFLE(RTM_GET_VECTOR_MIX_COMPONENT_INDEX(comp3), RTM_GET_VECTOR_MIX_COMPONENT_INDEX(comp2), RTM_GET_VECTOR_MIX_COMPONENT_INDEX(comp1), RTM_GET_VECTOR_MIX_COMPONENT_INDEX(comp0)));
-#else
-			return vector_set(vector_get_component(input1, comp0), vector_get_component(input1, comp1), vector_get_component(input0, comp2), vector_get_component(input0, comp3));
-#endif
-		}
+		// First two components come from input 1, second two come from input 0
+		if (rtm_impl::static_condition<(comp0 == mix4::a || comp0 == mix4::b) && (comp1 == mix4::a && comp1 == mix4::b) && (comp2 == mix4::x || comp2 == mix4::y) && (comp3 == mix4::x || comp3 == mix4::y)>::test())
+			return _mm_shuffle_ps(input1, input0, _MM_SHUFFLE(int(comp3) % 4, int(comp2) % 4, int(comp1) % 4, int(comp0) % 4));
 
-		if (rtm_impl::static_condition<comp0 == VectorMix::X && comp1 == VectorMix::A && comp2 == VectorMix::Y && comp3 == VectorMix::B>::test())
-		{
-			// Low words from both inputs are interleaved
-#if defined(RTM_SSE2_INTRINSICS)
+		// Low words from both inputs are interleaved
+		if (rtm_impl::static_condition<comp0 == mix4::x && comp1 == mix4::a && comp2 == mix4::y && comp3 == mix4::b>::test())
 			return _mm_unpacklo_ps(input0, input1);
-#else
-			return vector_set(vector_get_component(input0, comp0), vector_get_component(input1, comp1), vector_get_component(input0, comp2), vector_get_component(input1, comp3));
-#endif
-		}
 
-		if (rtm_impl::static_condition<comp0 == VectorMix::A && comp1 == VectorMix::X && comp2 == VectorMix::B && comp3 == VectorMix::Y>::test())
-		{
-			// Low words from both inputs are interleaved
-#if defined(RTM_SSE2_INTRINSICS)
+		// Low words from both inputs are interleaved
+		if (rtm_impl::static_condition<comp0 == mix4::a && comp1 == mix4::x && comp2 == mix4::b && comp3 == mix4::y>::test())
 			return _mm_unpacklo_ps(input1, input0);
-#else
-			return vector_set(vector_get_component(input1, comp0), vector_get_component(input0, comp1), vector_get_component(input1, comp2), vector_get_component(input0, comp3));
-#endif
-		}
 
-		if (rtm_impl::static_condition<comp0 == VectorMix::Z && comp1 == VectorMix::C && comp2 == VectorMix::W && comp3 == VectorMix::D>::test())
-		{
-			// High words from both inputs are interleaved
-#if defined(RTM_SSE2_INTRINSICS)
+		// High words from both inputs are interleaved
+		if (rtm_impl::static_condition<comp0 == mix4::z && comp1 == mix4::c && comp2 == mix4::w && comp3 == mix4::d>::test())
 			return _mm_unpackhi_ps(input0, input1);
-#else
-			return vector_set(vector_get_component(input0, comp0), vector_get_component(input1, comp1), vector_get_component(input0, comp2), vector_get_component(input1, comp3));
-#endif
-		}
 
-		if (rtm_impl::static_condition<comp0 == VectorMix::C && comp1 == VectorMix::Z && comp2 == VectorMix::D && comp3 == VectorMix::W>::test())
-		{
-			// High words from both inputs are interleaved
-#if defined(RTM_SSE2_INTRINSICS)
+		// High words from both inputs are interleaved
+		if (rtm_impl::static_condition<comp0 == mix4::c && comp1 == mix4::z && comp2 == mix4::d && comp3 == mix4::w>::test())
 			return _mm_unpackhi_ps(input1, input0);
-#else
-			return vector_set(vector_get_component(input1, comp0), vector_get_component(input0, comp1), vector_get_component(input1, comp2), vector_get_component(input0, comp3));
-#endif
-		}
+#endif	// defined(RTM_SSE2_INTRINSICS)
 
-		// Slow code path, not yet optimized
-		//RTM_ASSERT(false, "vector_mix permutation not handled");
-		const float x = rtm_impl::is_vector_mix_arg_xyzw(comp0) ? vector_get_component<comp0>(input0) : vector_get_component<comp0>(input1);
-		const float y = rtm_impl::is_vector_mix_arg_xyzw(comp1) ? vector_get_component<comp1>(input0) : vector_get_component<comp1>(input1);
-		const float z = rtm_impl::is_vector_mix_arg_xyzw(comp2) ? vector_get_component<comp2>(input0) : vector_get_component<comp2>(input1);
-		const float w = rtm_impl::is_vector_mix_arg_xyzw(comp3) ? vector_get_component<comp3>(input0) : vector_get_component<comp3>(input1);
+		// Slow code path, not yet optimized or not using intrinsics
+		const float x = rtm_impl::is_mix_xyzw(comp0) ? vector_get_component<comp0>(input0) : vector_get_component<comp0>(input1);
+		const float y = rtm_impl::is_mix_xyzw(comp1) ? vector_get_component<comp1>(input0) : vector_get_component<comp1>(input1);
+		const float z = rtm_impl::is_mix_xyzw(comp2) ? vector_get_component<comp2>(input0) : vector_get_component<comp2>(input1);
+		const float w = rtm_impl::is_mix_xyzw(comp3) ? vector_get_component<comp3>(input0) : vector_get_component<comp3>(input1);
 		return vector_set(x, y, z, w);
 	}
 
-	inline vector4f RTM_SIMD_CALL vector_mix_xxxx(vector4f_arg0 input) { return vector_mix<VectorMix::X, VectorMix::X, VectorMix::X, VectorMix::X>(input, input); }
-	inline vector4f RTM_SIMD_CALL vector_mix_yyyy(vector4f_arg0 input) { return vector_mix<VectorMix::Y, VectorMix::Y, VectorMix::Y, VectorMix::Y>(input, input); }
-	inline vector4f RTM_SIMD_CALL vector_mix_zzzz(vector4f_arg0 input) { return vector_mix<VectorMix::Z, VectorMix::Z, VectorMix::Z, VectorMix::Z>(input, input); }
-	inline vector4f RTM_SIMD_CALL vector_mix_wwww(vector4f_arg0 input) { return vector_mix<VectorMix::W, VectorMix::W, VectorMix::W, VectorMix::W>(input, input); }
-
-	inline vector4f RTM_SIMD_CALL vector_mix_xxyy(vector4f_arg0 input) { return vector_mix<VectorMix::X, VectorMix::X, VectorMix::Y, VectorMix::Y>(input, input); }
-	inline vector4f RTM_SIMD_CALL vector_mix_xzyw(vector4f_arg0 input) { return vector_mix<VectorMix::X, VectorMix::Z, VectorMix::Y, VectorMix::W>(input, input); }
-	inline vector4f RTM_SIMD_CALL vector_mix_yzxy(vector4f_arg0 input) { return vector_mix<VectorMix::Y, VectorMix::Z, VectorMix::X, VectorMix::Y>(input, input); }
-	inline vector4f RTM_SIMD_CALL vector_mix_ywxz(vector4f_arg0 input) { return vector_mix<VectorMix::Y, VectorMix::W, VectorMix::X, VectorMix::Z>(input, input); }
-	inline vector4f RTM_SIMD_CALL vector_mix_zxyx(vector4f_arg0 input) { return vector_mix<VectorMix::Z, VectorMix::X, VectorMix::Y, VectorMix::X>(input, input); }
-	inline vector4f RTM_SIMD_CALL vector_mix_zwyz(vector4f_arg0 input) { return vector_mix<VectorMix::Z, VectorMix::W, VectorMix::Y, VectorMix::Z>(input, input); }
-	inline vector4f RTM_SIMD_CALL vector_mix_zwzw(vector4f_arg0 input) { return vector_mix<VectorMix::Z, VectorMix::W, VectorMix::Z, VectorMix::W>(input, input); }
-	inline vector4f RTM_SIMD_CALL vector_mix_wxwx(vector4f_arg0 input) { return vector_mix<VectorMix::W, VectorMix::X, VectorMix::W, VectorMix::X>(input, input); }
-	inline vector4f RTM_SIMD_CALL vector_mix_wzwy(vector4f_arg0 input) { return vector_mix<VectorMix::W, VectorMix::Z, VectorMix::W, VectorMix::Y>(input, input); }
-
-	inline vector4f RTM_SIMD_CALL vector_mix_xyab(vector4f_arg0 input0, vector4f_arg1 input1) { return vector_mix<VectorMix::X, VectorMix::Y, VectorMix::A, VectorMix::B>(input0, input1); }
-	inline vector4f RTM_SIMD_CALL vector_mix_xzac(vector4f_arg0 input0, vector4f_arg1 input1) { return vector_mix<VectorMix::X, VectorMix::Z, VectorMix::A, VectorMix::C>(input0, input1); }
-	inline vector4f RTM_SIMD_CALL vector_mix_xbxb(vector4f_arg0 input0, vector4f_arg1 input1) { return vector_mix<VectorMix::X, VectorMix::B, VectorMix::X, VectorMix::B>(input0, input1); }
-	inline vector4f RTM_SIMD_CALL vector_mix_xbzd(vector4f_arg0 input0, vector4f_arg1 input1) { return vector_mix<VectorMix::X, VectorMix::B, VectorMix::Z, VectorMix::D>(input0, input1); }
-	inline vector4f RTM_SIMD_CALL vector_mix_ywbd(vector4f_arg0 input0, vector4f_arg1 input1) { return vector_mix<VectorMix::Y, VectorMix::W, VectorMix::B, VectorMix::D>(input0, input1); }
-	inline vector4f RTM_SIMD_CALL vector_mix_zyax(vector4f_arg0 input0, vector4f_arg1 input1) { return vector_mix<VectorMix::Z, VectorMix::Y, VectorMix::A, VectorMix::X>(input0, input1); }
-	inline vector4f RTM_SIMD_CALL vector_mix_zycx(vector4f_arg0 input0, vector4f_arg1 input1) { return vector_mix<VectorMix::Z, VectorMix::Y, VectorMix::C, VectorMix::X>(input0, input1); }
-	inline vector4f RTM_SIMD_CALL vector_mix_zwcd(vector4f_arg0 input0, vector4f_arg1 input1) { return vector_mix<VectorMix::Z, VectorMix::W, VectorMix::C, VectorMix::D>(input0, input1); }
-	inline vector4f RTM_SIMD_CALL vector_mix_zbaz(vector4f_arg0 input0, vector4f_arg1 input1) { return vector_mix<VectorMix::Z, VectorMix::B, VectorMix::A, VectorMix::Z>(input0, input1); }
-	inline vector4f RTM_SIMD_CALL vector_mix_zdcz(vector4f_arg0 input0, vector4f_arg1 input1) { return vector_mix<VectorMix::Z, VectorMix::D, VectorMix::C, VectorMix::Z>(input0, input1); }
-	inline vector4f RTM_SIMD_CALL vector_mix_wxya(vector4f_arg0 input0, vector4f_arg1 input1) { return vector_mix<VectorMix::W, VectorMix::X, VectorMix::Y, VectorMix::A>(input0, input1); }
-	inline vector4f RTM_SIMD_CALL vector_mix_wxyc(vector4f_arg0 input0, vector4f_arg1 input1) { return vector_mix<VectorMix::W, VectorMix::X, VectorMix::Y, VectorMix::C>(input0, input1); }
-	inline vector4f RTM_SIMD_CALL vector_mix_wbyz(vector4f_arg0 input0, vector4f_arg1 input1) { return vector_mix<VectorMix::W, VectorMix::B, VectorMix::Y, VectorMix::Z>(input0, input1); }
-	inline vector4f RTM_SIMD_CALL vector_mix_wdyz(vector4f_arg0 input0, vector4f_arg1 input1) { return vector_mix<VectorMix::W, VectorMix::D, VectorMix::Y, VectorMix::Z>(input0, input1); }
-	inline vector4f RTM_SIMD_CALL vector_mix_bxwa(vector4f_arg0 input0, vector4f_arg1 input1) { return vector_mix<VectorMix::B, VectorMix::X, VectorMix::W, VectorMix::A>(input0, input1); }
-	inline vector4f RTM_SIMD_CALL vector_mix_bywx(vector4f_arg0 input0, vector4f_arg1 input1) { return vector_mix<VectorMix::B, VectorMix::Y, VectorMix::W, VectorMix::X>(input0, input1); }
-	inline vector4f RTM_SIMD_CALL vector_mix_dxwc(vector4f_arg0 input0, vector4f_arg1 input1) { return vector_mix<VectorMix::D, VectorMix::X, VectorMix::W, VectorMix::C>(input0, input1); }
-	inline vector4f RTM_SIMD_CALL vector_mix_dywx(vector4f_arg0 input0, vector4f_arg1 input1) { return vector_mix<VectorMix::D, VectorMix::Y, VectorMix::W, VectorMix::X>(input0, input1); }
+	inline vector4f RTM_SIMD_CALL vector_dup_x(vector4f_arg0 input) { return vector_mix<mix4::x, mix4::x, mix4::x, mix4::x>(input, input); }
+	inline vector4f RTM_SIMD_CALL vector_dup_y(vector4f_arg0 input) { return vector_mix<mix4::y, mix4::y, mix4::y, mix4::y>(input, input); }
+	inline vector4f RTM_SIMD_CALL vector_dup_z(vector4f_arg0 input) { return vector_mix<mix4::z, mix4::z, mix4::z, mix4::z>(input, input); }
+	inline vector4f RTM_SIMD_CALL vector_dup_w(vector4f_arg0 input) { return vector_mix<mix4::w, mix4::w, mix4::w, mix4::w>(input, input); }
 
 	//////////////////////////////////////////////////////////////////////////
 	// Misc

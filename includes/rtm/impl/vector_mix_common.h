@@ -1,7 +1,8 @@
+#pragma once
+
 ////////////////////////////////////////////////////////////////////////////////
 // The MIT License (MIT)
 //
-// Copyright (c) 2018 Nicholas Frechette & Animation Compression Library contributors
 // Copyright (c) 2018 Nicholas Frechette & Realtime Math contributors
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -23,16 +24,18 @@
 // SOFTWARE.
 ////////////////////////////////////////////////////////////////////////////////
 
-#include "test_vector4_impl.h"
+#include "rtm/types.h"
 
-TEST_CASE("vector4d math", "[math][vector4]")
+#include <cstdint>
+
+namespace rtm
 {
-	test_vector4_impl<vector4d, quatd, double>(vector_zero_64(), quat_identity_64(), 1.0e-9);
+	namespace rtm_impl
+	{
+		// Returns true if mix4 component is one of [xyzw]
+		constexpr bool is_mix_xyzw(mix4 arg) { return uint32_t(arg) <= uint32_t(mix4::w); }
 
-	const vector4d src = vector_set(-2.65, 2.996113, 0.68123521, -5.9182);
-	const vector4f dst = vector_cast(src);
-	REQUIRE(scalar_near_equal(vector_get_x(dst), -2.65f, 1.0e-6f));
-	REQUIRE(scalar_near_equal(vector_get_y(dst), 2.996113f, 1.0e-6f));
-	REQUIRE(scalar_near_equal(vector_get_z(dst), 0.68123521f, 1.0e-6f));
-	REQUIRE(scalar_near_equal(vector_get_w(dst), -5.9182f, 1.0e-6f));
+		// Returns true if mix4 component is one of [abcd]
+		constexpr bool is_mix_abcd(mix4 arg) { return uint32_t(arg) >= uint32_t(mix4::a); }
+	}
 }

@@ -161,17 +161,20 @@ namespace rtm
 		vector4d	w_axis;
 	};
 
-	enum class VectorMix
+	//////////////////////////////////////////////////////////////////////////
+	// Represents a component when mixing/shuffling/permuting vectors
+	//////////////////////////////////////////////////////////////////////////
+	enum class mix4
 	{
-		X = 0,
-		Y = 1,
-		Z = 2,
-		W = 3,
+		x = 0,
+		y = 1,
+		z = 2,
+		w = 3,
 
-		A = 4,
-		B = 5,
-		C = 6,
-		D = 7,
+		a = 4,
+		b = 5,
+		c = 6,
+		d = 7,
 	};
 
 	enum class axis
@@ -181,20 +184,6 @@ namespace rtm
 		z = 2,
 		w = 3,
 	};
-
-	// The result is sometimes required as part of an immediate for an intrinsic
-	// and as such we must know the value at compile time and constexpr isn't always evaluated.
-	// Required at least on GCC 5 in Debug
-	#define RTM_IS_VECTOR_MIX_ARG_XYZW(arg) (int32_t(arg) >= int32_t(VectorMix::X) && int32_t(arg) <= int32_t(VectorMix::W))
-	#define RTM_IS_VECTOR_MIX_ARG_ABCD(arg) (int32_t(arg) >= int32_t(VectorMix::A) && int32_t(arg) <= int32_t(VectorMix::D))
-	#define RTM_GET_VECTOR_MIX_COMPONENT_INDEX(arg) (RTM_IS_VECTOR_MIX_ARG_XYZW(arg) ? int8_t(arg) : (int8_t(arg) - 4))
-
-	namespace rtm_impl
-	{
-		constexpr bool is_vector_mix_arg_xyzw(VectorMix arg) { return int32_t(arg) >= int32_t(VectorMix::X) && int32_t(arg) <= int32_t(VectorMix::W); }
-		constexpr bool is_vector_mix_arg_abcd(VectorMix arg) { return int32_t(arg) >= int32_t(VectorMix::A) && int32_t(arg) <= int32_t(VectorMix::D); }
-		constexpr int8_t get_vector_mix_component_index(VectorMix arg) { return is_vector_mix_arg_xyzw(arg) ? int8_t(arg) : (int8_t(arg) - 4); }
-	}
 
 	//////////////////////////////////////////////////////////////////////////
 

@@ -115,13 +115,13 @@ inline Vector4Type scalar_normalize3(const Vector4Type& input, FloatType thresho
 		return input;
 }
 
-template<typename Vector4Type, VectorMix comp0, VectorMix comp1, VectorMix comp2, VectorMix comp3>
+template<typename Vector4Type, mix4 comp0, mix4 comp1, mix4 comp2, mix4 comp3>
 inline Vector4Type scalar_mix(const Vector4Type& input0, const Vector4Type& input1)
 {
-	const auto x = rtm_impl::is_vector_mix_arg_xyzw(comp0) ? vector_get_component<comp0>(input0) : vector_get_component<comp0>(input1);
-	const auto y = rtm_impl::is_vector_mix_arg_xyzw(comp1) ? vector_get_component<comp1>(input0) : vector_get_component<comp1>(input1);
-	const auto z = rtm_impl::is_vector_mix_arg_xyzw(comp2) ? vector_get_component<comp2>(input0) : vector_get_component<comp2>(input1);
-	const auto w = rtm_impl::is_vector_mix_arg_xyzw(comp3) ? vector_get_component<comp3>(input0) : vector_get_component<comp3>(input1);
+	const auto x = rtm_impl::is_mix_xyzw(comp0) ? vector_get_component<comp0>(input0) : vector_get_component<comp0>(input1);
+	const auto y = rtm_impl::is_mix_xyzw(comp1) ? vector_get_component<comp1>(input0) : vector_get_component<comp1>(input1);
+	const auto z = rtm_impl::is_mix_xyzw(comp2) ? vector_get_component<comp2>(input0) : vector_get_component<comp2>(input1);
+	const auto w = rtm_impl::is_mix_xyzw(comp3) ? vector_get_component<comp3>(input0) : vector_get_component<comp3>(input1);
 	return vector_set(x, y, z, w);
 }
 
@@ -191,25 +191,25 @@ void test_vector4_impl(const Vector4Type& zero, const QuatType& identity, const 
 	REQUIRE(vector_get_z(quat_to_vector(identity)) == quat_get_z(identity));
 	REQUIRE(vector_get_w(quat_to_vector(identity)) == quat_get_w(identity));
 
-	REQUIRE(vector_get_component<VectorMix::X>(vector_set(FloatType(0.0), FloatType(2.34), FloatType(-3.12), FloatType(10000.0))) == FloatType(0.0));
-	REQUIRE(vector_get_component<VectorMix::Y>(vector_set(FloatType(0.0), FloatType(2.34), FloatType(-3.12), FloatType(10000.0))) == FloatType(2.34));
-	REQUIRE(vector_get_component<VectorMix::Z>(vector_set(FloatType(0.0), FloatType(2.34), FloatType(-3.12), FloatType(10000.0))) == FloatType(-3.12));
-	REQUIRE(vector_get_component<VectorMix::W>(vector_set(FloatType(0.0), FloatType(2.34), FloatType(-3.12), FloatType(10000.0))) == FloatType(10000.0));
+	REQUIRE(vector_get_component<mix4::x>(vector_set(FloatType(0.0), FloatType(2.34), FloatType(-3.12), FloatType(10000.0))) == FloatType(0.0));
+	REQUIRE(vector_get_component<mix4::y>(vector_set(FloatType(0.0), FloatType(2.34), FloatType(-3.12), FloatType(10000.0))) == FloatType(2.34));
+	REQUIRE(vector_get_component<mix4::z>(vector_set(FloatType(0.0), FloatType(2.34), FloatType(-3.12), FloatType(10000.0))) == FloatType(-3.12));
+	REQUIRE(vector_get_component<mix4::w>(vector_set(FloatType(0.0), FloatType(2.34), FloatType(-3.12), FloatType(10000.0))) == FloatType(10000.0));
 
-	REQUIRE(vector_get_component<VectorMix::A>(vector_set(FloatType(0.0), FloatType(2.34), FloatType(-3.12), FloatType(10000.0))) == FloatType(0.0));
-	REQUIRE(vector_get_component<VectorMix::B>(vector_set(FloatType(0.0), FloatType(2.34), FloatType(-3.12), FloatType(10000.0))) == FloatType(2.34));
-	REQUIRE(vector_get_component<VectorMix::C>(vector_set(FloatType(0.0), FloatType(2.34), FloatType(-3.12), FloatType(10000.0))) == FloatType(-3.12));
-	REQUIRE(vector_get_component<VectorMix::D>(vector_set(FloatType(0.0), FloatType(2.34), FloatType(-3.12), FloatType(10000.0))) == FloatType(10000.0));
+	REQUIRE(vector_get_component<mix4::a>(vector_set(FloatType(0.0), FloatType(2.34), FloatType(-3.12), FloatType(10000.0))) == FloatType(0.0));
+	REQUIRE(vector_get_component<mix4::b>(vector_set(FloatType(0.0), FloatType(2.34), FloatType(-3.12), FloatType(10000.0))) == FloatType(2.34));
+	REQUIRE(vector_get_component<mix4::c>(vector_set(FloatType(0.0), FloatType(2.34), FloatType(-3.12), FloatType(10000.0))) == FloatType(-3.12));
+	REQUIRE(vector_get_component<mix4::d>(vector_set(FloatType(0.0), FloatType(2.34), FloatType(-3.12), FloatType(10000.0))) == FloatType(10000.0));
 
-	REQUIRE(vector_get_component(vector_set(FloatType(0.0), FloatType(2.34), FloatType(-3.12), FloatType(10000.0)), VectorMix::X) == FloatType(0.0));
-	REQUIRE(vector_get_component(vector_set(FloatType(0.0), FloatType(2.34), FloatType(-3.12), FloatType(10000.0)), VectorMix::Y) == FloatType(2.34));
-	REQUIRE(vector_get_component(vector_set(FloatType(0.0), FloatType(2.34), FloatType(-3.12), FloatType(10000.0)), VectorMix::Z) == FloatType(-3.12));
-	REQUIRE(vector_get_component(vector_set(FloatType(0.0), FloatType(2.34), FloatType(-3.12), FloatType(10000.0)), VectorMix::W) == FloatType(10000.0));
+	REQUIRE(vector_get_component(vector_set(FloatType(0.0), FloatType(2.34), FloatType(-3.12), FloatType(10000.0)), mix4::x) == FloatType(0.0));
+	REQUIRE(vector_get_component(vector_set(FloatType(0.0), FloatType(2.34), FloatType(-3.12), FloatType(10000.0)), mix4::y) == FloatType(2.34));
+	REQUIRE(vector_get_component(vector_set(FloatType(0.0), FloatType(2.34), FloatType(-3.12), FloatType(10000.0)), mix4::z) == FloatType(-3.12));
+	REQUIRE(vector_get_component(vector_set(FloatType(0.0), FloatType(2.34), FloatType(-3.12), FloatType(10000.0)), mix4::w) == FloatType(10000.0));
 
-	REQUIRE(vector_get_component(vector_set(FloatType(0.0), FloatType(2.34), FloatType(-3.12), FloatType(10000.0)), VectorMix::A) == FloatType(0.0));
-	REQUIRE(vector_get_component(vector_set(FloatType(0.0), FloatType(2.34), FloatType(-3.12), FloatType(10000.0)), VectorMix::B) == FloatType(2.34));
-	REQUIRE(vector_get_component(vector_set(FloatType(0.0), FloatType(2.34), FloatType(-3.12), FloatType(10000.0)), VectorMix::C) == FloatType(-3.12));
-	REQUIRE(vector_get_component(vector_set(FloatType(0.0), FloatType(2.34), FloatType(-3.12), FloatType(10000.0)), VectorMix::D) == FloatType(10000.0));
+	REQUIRE(vector_get_component(vector_set(FloatType(0.0), FloatType(2.34), FloatType(-3.12), FloatType(10000.0)), mix4::a) == FloatType(0.0));
+	REQUIRE(vector_get_component(vector_set(FloatType(0.0), FloatType(2.34), FloatType(-3.12), FloatType(10000.0)), mix4::b) == FloatType(2.34));
+	REQUIRE(vector_get_component(vector_set(FloatType(0.0), FloatType(2.34), FloatType(-3.12), FloatType(10000.0)), mix4::c) == FloatType(-3.12));
+	REQUIRE(vector_get_component(vector_set(FloatType(0.0), FloatType(2.34), FloatType(-3.12), FloatType(10000.0)), mix4::d) == FloatType(10000.0));
 
 	REQUIRE((vector_as_float_ptr_raw<Vector4Type, FloatType>(vector_unaligned_load(&tmp.values[0]))[0] == tmp.values[0]));
 	REQUIRE((vector_as_float_ptr_raw<Vector4Type, FloatType>(vector_unaligned_load(&tmp.values[0]))[1] == tmp.values[1]));
@@ -556,38 +556,38 @@ void test_vector4_impl(const Vector4Type& zero, const QuatType& identity, const 
 	REQUIRE(vector_get_w(vector_sign(test_value0)) == scalar_sign(test_value0_flt[3]));
 }
 
-template<typename Vector4Type, typename FloatType, VectorMix XArg>
-void test_vector4_vector_mix_impl(const FloatType threshold)
+template<typename Vector4Type, typename FloatType, mix4 XArg>
+void test_vector_mix_impl(const FloatType threshold)
 {
 #define RTM_TEST_MIX_XYZ(results, input0, input1, comp0, comp1, comp2) \
-	results[(int)comp0][(int)comp1][(int)comp2][(int)VectorMix::X] = vector_all_near_equal(vector_mix<comp0, comp1, comp2, VectorMix::X>(input0, input1), scalar_mix<Vector4Type, comp0, comp1, comp2, VectorMix::X>(input0, input1), threshold); \
-	results[(int)comp0][(int)comp1][(int)comp2][(int)VectorMix::Y] = vector_all_near_equal(vector_mix<comp0, comp1, comp2, VectorMix::Y>(input0, input1), scalar_mix<Vector4Type, comp0, comp1, comp2, VectorMix::Y>(input0, input1), threshold); \
-	results[(int)comp0][(int)comp1][(int)comp2][(int)VectorMix::Z] = vector_all_near_equal(vector_mix<comp0, comp1, comp2, VectorMix::Z>(input0, input1), scalar_mix<Vector4Type, comp0, comp1, comp2, VectorMix::Z>(input0, input1), threshold); \
-	results[(int)comp0][(int)comp1][(int)comp2][(int)VectorMix::W] = vector_all_near_equal(vector_mix<comp0, comp1, comp2, VectorMix::W>(input0, input1), scalar_mix<Vector4Type, comp0, comp1, comp2, VectorMix::W>(input0, input1), threshold); \
-	results[(int)comp0][(int)comp1][(int)comp2][(int)VectorMix::A] = vector_all_near_equal(vector_mix<comp0, comp1, comp2, VectorMix::A>(input0, input1), scalar_mix<Vector4Type, comp0, comp1, comp2, VectorMix::A>(input0, input1), threshold); \
-	results[(int)comp0][(int)comp1][(int)comp2][(int)VectorMix::B] = vector_all_near_equal(vector_mix<comp0, comp1, comp2, VectorMix::B>(input0, input1), scalar_mix<Vector4Type, comp0, comp1, comp2, VectorMix::B>(input0, input1), threshold); \
-	results[(int)comp0][(int)comp1][(int)comp2][(int)VectorMix::C] = vector_all_near_equal(vector_mix<comp0, comp1, comp2, VectorMix::C>(input0, input1), scalar_mix<Vector4Type, comp0, comp1, comp2, VectorMix::C>(input0, input1), threshold); \
-	results[(int)comp0][(int)comp1][(int)comp2][(int)VectorMix::D] = vector_all_near_equal(vector_mix<comp0, comp1, comp2, VectorMix::D>(input0, input1), scalar_mix<Vector4Type, comp0, comp1, comp2, VectorMix::D>(input0, input1), threshold)
+	results[(int)comp0][(int)comp1][(int)comp2][(int)mix4::x] = vector_all_near_equal(vector_mix<comp0, comp1, comp2, mix4::x>(input0, input1), scalar_mix<Vector4Type, comp0, comp1, comp2, mix4::x>(input0, input1), threshold); \
+	results[(int)comp0][(int)comp1][(int)comp2][(int)mix4::y] = vector_all_near_equal(vector_mix<comp0, comp1, comp2, mix4::y>(input0, input1), scalar_mix<Vector4Type, comp0, comp1, comp2, mix4::y>(input0, input1), threshold); \
+	results[(int)comp0][(int)comp1][(int)comp2][(int)mix4::z] = vector_all_near_equal(vector_mix<comp0, comp1, comp2, mix4::z>(input0, input1), scalar_mix<Vector4Type, comp0, comp1, comp2, mix4::z>(input0, input1), threshold); \
+	results[(int)comp0][(int)comp1][(int)comp2][(int)mix4::w] = vector_all_near_equal(vector_mix<comp0, comp1, comp2, mix4::w>(input0, input1), scalar_mix<Vector4Type, comp0, comp1, comp2, mix4::w>(input0, input1), threshold); \
+	results[(int)comp0][(int)comp1][(int)comp2][(int)mix4::a] = vector_all_near_equal(vector_mix<comp0, comp1, comp2, mix4::a>(input0, input1), scalar_mix<Vector4Type, comp0, comp1, comp2, mix4::a>(input0, input1), threshold); \
+	results[(int)comp0][(int)comp1][(int)comp2][(int)mix4::b] = vector_all_near_equal(vector_mix<comp0, comp1, comp2, mix4::b>(input0, input1), scalar_mix<Vector4Type, comp0, comp1, comp2, mix4::b>(input0, input1), threshold); \
+	results[(int)comp0][(int)comp1][(int)comp2][(int)mix4::c] = vector_all_near_equal(vector_mix<comp0, comp1, comp2, mix4::c>(input0, input1), scalar_mix<Vector4Type, comp0, comp1, comp2, mix4::c>(input0, input1), threshold); \
+	results[(int)comp0][(int)comp1][(int)comp2][(int)mix4::d] = vector_all_near_equal(vector_mix<comp0, comp1, comp2, mix4::d>(input0, input1), scalar_mix<Vector4Type, comp0, comp1, comp2, mix4::d>(input0, input1), threshold)
 
 #define RTM_TEST_MIX_XY(results, input0, input1, comp0, comp1) \
-	RTM_TEST_MIX_XYZ(results, input0, input1, comp0, comp1, VectorMix::X); \
-	RTM_TEST_MIX_XYZ(results, input0, input1, comp0, comp1, VectorMix::Y); \
-	RTM_TEST_MIX_XYZ(results, input0, input1, comp0, comp1, VectorMix::Z); \
-	RTM_TEST_MIX_XYZ(results, input0, input1, comp0, comp1, VectorMix::W); \
-	RTM_TEST_MIX_XYZ(results, input0, input1, comp0, comp1, VectorMix::A); \
-	RTM_TEST_MIX_XYZ(results, input0, input1, comp0, comp1, VectorMix::B); \
-	RTM_TEST_MIX_XYZ(results, input0, input1, comp0, comp1, VectorMix::C); \
-	RTM_TEST_MIX_XYZ(results, input0, input1, comp0, comp1, VectorMix::D)
+	RTM_TEST_MIX_XYZ(results, input0, input1, comp0, comp1, mix4::x); \
+	RTM_TEST_MIX_XYZ(results, input0, input1, comp0, comp1, mix4::y); \
+	RTM_TEST_MIX_XYZ(results, input0, input1, comp0, comp1, mix4::z); \
+	RTM_TEST_MIX_XYZ(results, input0, input1, comp0, comp1, mix4::w); \
+	RTM_TEST_MIX_XYZ(results, input0, input1, comp0, comp1, mix4::a); \
+	RTM_TEST_MIX_XYZ(results, input0, input1, comp0, comp1, mix4::b); \
+	RTM_TEST_MIX_XYZ(results, input0, input1, comp0, comp1, mix4::c); \
+	RTM_TEST_MIX_XYZ(results, input0, input1, comp0, comp1, mix4::d)
 
 #define RTM_TEST_MIX_X(results, input0, input1, comp0) \
-	RTM_TEST_MIX_XY(results, input0, input1, comp0, VectorMix::X); \
-	RTM_TEST_MIX_XY(results, input0, input1, comp0, VectorMix::Y); \
-	RTM_TEST_MIX_XY(results, input0, input1, comp0, VectorMix::Z); \
-	RTM_TEST_MIX_XY(results, input0, input1, comp0, VectorMix::W); \
-	RTM_TEST_MIX_XY(results, input0, input1, comp0, VectorMix::A); \
-	RTM_TEST_MIX_XY(results, input0, input1, comp0, VectorMix::B); \
-	RTM_TEST_MIX_XY(results, input0, input1, comp0, VectorMix::C); \
-	RTM_TEST_MIX_XY(results, input0, input1, comp0, VectorMix::D)
+	RTM_TEST_MIX_XY(results, input0, input1, comp0, mix4::x); \
+	RTM_TEST_MIX_XY(results, input0, input1, comp0, mix4::y); \
+	RTM_TEST_MIX_XY(results, input0, input1, comp0, mix4::z); \
+	RTM_TEST_MIX_XY(results, input0, input1, comp0, mix4::w); \
+	RTM_TEST_MIX_XY(results, input0, input1, comp0, mix4::a); \
+	RTM_TEST_MIX_XY(results, input0, input1, comp0, mix4::b); \
+	RTM_TEST_MIX_XY(results, input0, input1, comp0, mix4::c); \
+	RTM_TEST_MIX_XY(results, input0, input1, comp0, mix4::d)
 
 	// This generates 8*8*8*8 = 4096 unit tests... it takes a while to compile and uses a lot of stack space
 	// Disabled by default to reduce the build time

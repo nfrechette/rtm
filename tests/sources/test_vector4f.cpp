@@ -25,7 +25,7 @@
 
 #include "test_vector4_impl.h"
 
-TEST_CASE("vector4 32 math", "[math][vector4]")
+TEST_CASE("vector4f math", "[math][vector4]")
 {
 #if defined(RTM_NO_INTRINSICS)
 	const float threshold = 1.0e-4f;
