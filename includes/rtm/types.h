@@ -64,24 +64,46 @@ namespace rtm
 	}
 
 #if defined(RTM_SSE2_INTRINSICS)
-	typedef __m128 quatf;
-	typedef __m128 vector4f;
+	//////////////////////////////////////////////////////////////////////////
+	// A quaternion (4D complex number) where the imaginary part is the W component.
+	// It accurately represents a 3D rotation with no gimbal lock as long as it is kept normalized.
+	//////////////////////////////////////////////////////////////////////////
+	using quatf = __m128;
 
+	//////////////////////////////////////////////////////////////////////////
+	// A quaternion (4D complex number) where the imaginary part is the W component.
+	// It accurately represents a 3D rotation with no gimbal lock as long as it is kept normalized.
+	//////////////////////////////////////////////////////////////////////////
 	struct quatd
 	{
 		__m128d xy;
 		__m128d zw;
 	};
 
+	//////////////////////////////////////////////////////////////////////////
+	// A 4D vector.
+	//////////////////////////////////////////////////////////////////////////
+	using vector4f = __m128;
+
+	//////////////////////////////////////////////////////////////////////////
+	// A 4D vector.
+	//////////////////////////////////////////////////////////////////////////
 	struct vector4d
 	{
 		__m128d xy;
 		__m128d zw;
 	};
 #elif defined(RTM_NEON_INTRINSICS)
-	typedef float32x4_t quatf;
-	typedef float32x4_t vector4f;
+	//////////////////////////////////////////////////////////////////////////
+	// A quaternion (4D complex number) where the imaginary part is the W component.
+	// It accurately represents a 3D rotation with no gimbal lock as long as it is kept normalized.
+	//////////////////////////////////////////////////////////////////////////
+	using quatf = float32x4_t;
 
+	//////////////////////////////////////////////////////////////////////////
+	// A quaternion (4D complex number) where the imaginary part is the W component.
+	// It accurately represents a 3D rotation with no gimbal lock as long as it is kept normalized.
+	//////////////////////////////////////////////////////////////////////////
 	struct alignas(16) quatd
 	{
 		double x;
@@ -90,6 +112,14 @@ namespace rtm
 		double w;
 	};
 
+	//////////////////////////////////////////////////////////////////////////
+	// A 4D vector.
+	//////////////////////////////////////////////////////////////////////////
+	using vector4f = float32x4_t;
+
+	//////////////////////////////////////////////////////////////////////////
+	// A 4D vector.
+	//////////////////////////////////////////////////////////////////////////
 	struct alignas(16) vector4d
 	{
 		double x;
@@ -98,6 +128,10 @@ namespace rtm
 		double w;
 	};
 #else
+	//////////////////////////////////////////////////////////////////////////
+	// A quaternion (4D complex number) where the imaginary part is the W component.
+	// It accurately represents a 3D rotation with no gimbal lock as long as it is kept normalized.
+	//////////////////////////////////////////////////////////////////////////
 	struct alignas(16) quatf
 	{
 		float x;
@@ -106,14 +140,10 @@ namespace rtm
 		float w;
 	};
 
-	struct alignas(16) vector4f
-	{
-		float x;
-		float y;
-		float z;
-		float w;
-	};
-
+	//////////////////////////////////////////////////////////////////////////
+	// A quaternion (4D complex number) where the imaginary part is the W component.
+	// It accurately represents a 3D rotation with no gimbal lock as long as it is kept normalized.
+	//////////////////////////////////////////////////////////////////////////
 	struct alignas(16) quatd
 	{
 		double x;
@@ -122,6 +152,20 @@ namespace rtm
 		double w;
 	};
 
+	//////////////////////////////////////////////////////////////////////////
+	// A 4D vector.
+	//////////////////////////////////////////////////////////////////////////
+	struct alignas(16) vector4f
+	{
+		float x;
+		float y;
+		float z;
+		float w;
+	};
+
+	//////////////////////////////////////////////////////////////////////////
+	// A 4D vector.
+	//////////////////////////////////////////////////////////////////////////
 	struct alignas(16) vector4d
 	{
 		double x;
@@ -131,6 +175,12 @@ namespace rtm
 	};
 #endif
 
+	//////////////////////////////////////////////////////////////////////////
+	// A QVV transform represents a 3D rotation (quaternion), 3D translation (vector), and 3D scale (vector).
+	// It properly handles positive scaling but negative scaling is a bit more problematic.
+	// A best effort is made by converting the quaternion to a matrix during those operations.
+	// If scale fidelity is important, consider using an affine matrix 3x4 instead.
+	//////////////////////////////////////////////////////////////////////////
 	struct qvvf
 	{
 		quatf		rotation;
@@ -138,6 +188,12 @@ namespace rtm
 		vector4f	scale;
 	};
 
+	//////////////////////////////////////////////////////////////////////////
+	// A QVV transform represents a 3D rotation (quaternion), 3D translation (vector), and 3D scale (vector).
+	// It properly handles positive scaling but negative scaling is a bit more problematic.
+	// A best effort is made by converting the quaternion to a matrix during those operations.
+	// If scale fidelity is important, consider using an affine matrix 3x4 instead.
+	//////////////////////////////////////////////////////////////////////////
 	struct qvvd
 	{
 		quatd		rotation;
@@ -145,6 +201,18 @@ namespace rtm
 		vector4d	scale;
 	};
 
+	//////////////////////////////////////////////////////////////////////////
+	// An 4x4 affine matrix represents a 3D rotation, 3D translation, and 3D scale.
+	// It properly deals with skew/shear when present but once scale with mirroring is combined,
+	// it cannot be safely extracted back.
+	//
+	// Affine matrices have their last column always equal to [0, 0, 0, 1] which is why it is 3x4.
+	//
+	// Left handed coordinate system:
+	// X axis == forward
+	// Y axis == right
+	// Z axis == up
+	//////////////////////////////////////////////////////////////////////////
 	struct matrix3x4f
 	{
 		vector4f	x_axis;
@@ -153,6 +221,18 @@ namespace rtm
 		vector4f	w_axis;
 	};
 
+	//////////////////////////////////////////////////////////////////////////
+	// An 4x4 affine matrix represents a 3D rotation, 3D translation, and 3D scale.
+	// It properly deals with skew/shear when present but once scale with mirroring is combined,
+	// it cannot be safely extracted back.
+	//
+	// Affine matrices have their last column always equal to [0, 0, 0, 1] which is why it is 3x4.
+	//
+	// Left handed coordinate system:
+	// X axis == forward
+	// Y axis == right
+	// Z axis == up
+	//////////////////////////////////////////////////////////////////////////
 	struct matrix3x4d
 	{
 		vector4d	x_axis;
@@ -162,7 +242,8 @@ namespace rtm
 	};
 
 	//////////////////////////////////////////////////////////////////////////
-	// Represents a component when mixing/shuffling/permuting vectors
+	// Represents a component when mixing/shuffling/permuting vectors.
+	// [xyzw] are used to refer to the first input while [abcd] refer to the second input.
 	//////////////////////////////////////////////////////////////////////////
 	enum class mix4
 	{
@@ -189,6 +270,7 @@ namespace rtm
 	};
 
 	//////////////////////////////////////////////////////////////////////////
+	// Register passing typedefs
 
 #if defined(RTM_USE_VECTORCALL)
 	// On x64 with __vectorcall, the first 6x vector4 arguments can be passed by value in a register, everything else afterwards is passed by const&

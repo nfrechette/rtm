@@ -32,18 +32,6 @@
 
 namespace rtm
 {
-	//////////////////////////////////////////////////////////////////////////
-	// An 4x4 affine matrix represents a 3D rotation, 3D translation, and 3D scale.
-	// It properly deals with skew/shear when present but once scale with mirroring is combined,
-	// it cannot be safely extracted back.
-	//
-	// Affine matrices have their last column always equal to [0, 0, 0, 1]
-	//
-	// X axis == forward
-	// Y axis == right
-	// Z axis == up
-	//////////////////////////////////////////////////////////////////////////
-
 	inline matrix3x4f RTM_SIMD_CALL matrix_set(vector4f_arg0 x_axis, vector4f_arg1 y_axis, vector4f_arg2 z_axis, vector4f_arg3 w_axis)
 	{
 		RTM_ASSERT(vector_get_w(x_axis) == 0.0f, "X axis does not have a W component == 0.0");
