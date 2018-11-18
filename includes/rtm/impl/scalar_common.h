@@ -24,6 +24,8 @@
 // SOFTWARE.
 ////////////////////////////////////////////////////////////////////////////////
 
+#include "rtm/error.h"
+
 namespace rtm
 {
 	namespace rtm_impl
@@ -31,11 +33,11 @@ namespace rtm
 		// A helper struct to wrap scalar constants and ensure type safe coercion.
 		struct scalar_constant
 		{
-			explicit constexpr scalar_constant(double dbl_) : flt(float(dbl_)), dbl(dbl_) {}
-			constexpr scalar_constant(float flt_, double dbl_) : flt(flt_), dbl(dbl_) {}
+			explicit constexpr scalar_constant(double dbl_) RTM_NO_EXCEPT : flt(float(dbl_)), dbl(dbl_) {}
+			constexpr scalar_constant(float flt_, double dbl_) RTM_NO_EXCEPT : flt(flt_), dbl(dbl_) {}
 
-			constexpr operator float() const { return flt; }
-			constexpr operator double() const { return dbl; }
+			constexpr operator float() const RTM_NO_EXCEPT { return flt; }
+			constexpr operator double() const RTM_NO_EXCEPT { return dbl; }
 
 			float flt;
 			double dbl;

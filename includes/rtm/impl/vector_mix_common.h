@@ -33,9 +33,9 @@ namespace rtm
 	namespace rtm_impl
 	{
 		// Returns true if mix4 component is one of [xyzw]
-		constexpr bool is_mix_xyzw(mix4 arg) { return uint32_t(arg) <= uint32_t(mix4::w); }
+		constexpr bool is_mix_xyzw(mix4 arg) RTM_NO_EXCEPT { return uint32_t(arg) <= uint32_t(mix4::w); }
 
 		// Returns true if mix4 component is one of [abcd]
-		constexpr bool is_mix_abcd(mix4 arg) { return uint32_t(arg) >= uint32_t(mix4::a); }
+		constexpr bool is_mix_abcd(mix4 arg) RTM_NO_EXCEPT { return uint32_t(arg) >= uint32_t(mix4::a); }
 	}
 }

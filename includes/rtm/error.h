@@ -91,6 +91,7 @@
 
 	#define RTM_ASSERT(expression, format, ...) if (!(expression)) rtm::rtm_impl::on_assert_abort(#expression, __LINE__, __FILE__, format, ## __VA_ARGS__)
 	#define RTM_HAS_ASSERT_CHECKS
+	#define RTM_NO_EXCEPT noexcept
 
 #elif defined(RTM_ON_ASSERT_THROW)
 
@@ -129,6 +130,7 @@
 
 	#define RTM_ASSERT(expression, format, ...) if (!(expression)) rtm::rtm_impl::on_assert_throw(#expression, __LINE__, __FILE__, format, ## __VA_ARGS__)
 	#define RTM_HAS_ASSERT_CHECKS
+	#define RTM_NO_EXCEPT
 
 #elif defined(RTM_ON_ASSERT_CUSTOM)
 
@@ -137,10 +139,12 @@
 	#endif
 
 	#define RTM_HAS_ASSERT_CHECKS
+	#define RTM_NO_EXCEPT noexcept
 
 #else
 
 	#define RTM_ASSERT(expression, format, ...) ((void)0)
+	#define RTM_NO_EXCEPT noexcept
 
 #endif
 

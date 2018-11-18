@@ -32,24 +32,24 @@
 
 namespace rtm
 {
-	constexpr qvvd qvv_set(const quatd& rotation, const vector4d& translation, const vector4d& scale)
+	constexpr qvvd qvv_set(const quatd& rotation, const vector4d& translation, const vector4d& scale) RTM_NO_EXCEPT
 	{
 		return qvvd{ rotation, translation, scale };
 	}
 
-	inline qvvd qvv_identity_64()
+	inline qvvd qvv_identity_64() RTM_NO_EXCEPT
 	{
 		return qvv_set(quat_identity_64(), vector_zero_64(), vector_set(1.0));
 	}
 
-	inline qvvd qvv_cast(const qvvf& input)
+	inline qvvd qvv_cast(const qvvf& input) RTM_NO_EXCEPT
 	{
 		return qvvd{ quat_cast(input.rotation), vector_cast(input.translation), vector_cast(input.scale) };
 	}
 
 	// Multiplication order is as follow: local_to_world = qvv_mul(local_to_object, object_to_world)
 	// NOTE: When scale is present, multiplication will not properly handle skew/shear, use affine matrices instead
-	inline qvvd qvv_mul(const qvvd& lhs, const qvvd& rhs)
+	inline qvvd qvv_mul(const qvvd& lhs, const qvvd& rhs) RTM_NO_EXCEPT
 	{
 		const vector4d min_scale = vector_min(lhs.scale, rhs.scale);
 		const vector4d scale = vector_mul(lhs.scale, rhs.scale);
@@ -80,24 +80,24 @@ namespace rtm
 	}
 
 	// Multiplication order is as follow: local_to_world = qvv_mul(local_to_object, object_to_world)
-	inline qvvd qvv_mul_no_scale(const qvvd& lhs, const qvvd& rhs)
+	inline qvvd qvv_mul_no_scale(const qvvd& lhs, const qvvd& rhs) RTM_NO_EXCEPT
 	{
 		const quatd rotation = quat_mul(lhs.rotation, rhs.rotation);
 		const vector4d translation = vector_add(quat_rotate(rhs.rotation, lhs.translation), rhs.translation);
 		return qvv_set(rotation, translation, vector_set(1.0));
 	}
 
-	inline vector4d qvv_mul_position(const qvvd& lhs, const vector4d& rhs)
+	inline vector4d qvv_mul_position(const qvvd& lhs, const vector4d& rhs) RTM_NO_EXCEPT
 	{
 		return vector_add(quat_rotate(lhs.rotation, vector_mul(lhs.scale, rhs)), lhs.translation);
 	}
 
-	inline vector4d qvv_mul_position_no_scale(const qvvd& lhs, const vector4d& rhs)
+	inline vector4d qvv_mul_position_no_scale(const qvvd& lhs, const vector4d& rhs) RTM_NO_EXCEPT
 	{
 		return vector_add(quat_rotate(lhs.rotation, rhs), lhs.translation);
 	}
 
-	inline qvvd qvv_inverse(const qvvd& input)
+	inline qvvd qvv_inverse(const qvvd& input) RTM_NO_EXCEPT
 	{
 		const quatd inv_rotation = quat_conjugate(input.rotation);
 		const vector4d inv_scale = vector_reciprocal(input.scale);
@@ -105,14 +105,14 @@ namespace rtm
 		return qvv_set(inv_rotation, inv_translation, inv_scale);
 	}
 
-	inline qvvd qvv_inverse_no_scale(const qvvd& input)
+	inline qvvd qvv_inverse_no_scale(const qvvd& input) RTM_NO_EXCEPT
 	{
 		const quatd inv_rotation = quat_conjugate(input.rotation);
 		const vector4d inv_translation = vector_neg(quat_rotate(inv_rotation, input.translation));
 		return qvv_set(inv_rotation, inv_translation, vector_set(1.0));
 	}
 
-	inline qvvd qvv_normalize(const qvvd& input)
+	inline qvvd qvv_normalize(const qvvd& input) RTM_NO_EXCEPT
 	{
 		const quatd rotation = quat_normalize(input.rotation);
 		return qvv_set(rotation, input.translation, input.scale);

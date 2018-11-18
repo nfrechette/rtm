@@ -33,27 +33,27 @@
 
 namespace rtm
 {
-	inline float scalar_floor(float input)
+	inline float scalar_floor(float input) RTM_NO_EXCEPT
 	{
 		return std::floor(input);
 	}
 
-	inline float scalar_ceil(float input)
+	inline float scalar_ceil(float input) RTM_NO_EXCEPT
 	{
 		return std::ceil(input);
 	}
 
-	inline float scalar_clamp(float input, float min, float max)
+	inline float scalar_clamp(float input, float min, float max) RTM_NO_EXCEPT
 	{
 		return std::min(std::max(input, min), max);
 	}
 
-	inline float scalar_abs(float input)
+	inline float scalar_abs(float input) RTM_NO_EXCEPT
 	{
 		return std::fabs(input);
 	}
 
-	inline float scalar_sqrt(float input)
+	inline float scalar_sqrt(float input) RTM_NO_EXCEPT
 	{
 #if defined(RTM_SSE2_INTRINSICS)
 		return _mm_cvtss_f32(_mm_sqrt_ss(_mm_set_ps1(input)));
@@ -62,7 +62,7 @@ namespace rtm
 #endif
 	}
 
-	inline float scalar_sqrt_reciprocal(float input)
+	inline float scalar_sqrt_reciprocal(float input) RTM_NO_EXCEPT
 	{
 #if defined(RTM_SSE2_INTRINSICS)
 		// Perform two passes of Newton-Raphson iteration on the hardware estimate
@@ -87,7 +87,7 @@ namespace rtm
 #endif
 	}
 
-	inline float scalar_reciprocal(float input)
+	inline float scalar_reciprocal(float input) RTM_NO_EXCEPT
 	{
 #if defined(RTM_SSE2_INTRINSICS)
 		// Perform two passes of Newton-Raphson iteration on the hardware estimate
@@ -106,69 +106,69 @@ namespace rtm
 #endif
 	}
 
-	inline float scalar_sin(float angle)
+	inline float scalar_sin(float angle) RTM_NO_EXCEPT
 	{
 		return std::sin(angle);
 	}
 
-	inline float scalar_cos(float angle)
+	inline float scalar_cos(float angle) RTM_NO_EXCEPT
 	{
 		return std::cos(angle);
 	}
 
-	inline void scalar_sincos(float angle, float& out_sin, float& out_cos)
+	inline void scalar_sincos(float angle, float& out_sin, float& out_cos) RTM_NO_EXCEPT
 	{
 		out_sin = scalar_sin(angle);
 		out_cos = scalar_cos(angle);
 	}
 
-	inline float scalar_acos(float value)
+	inline float scalar_acos(float value) RTM_NO_EXCEPT
 	{
 		return std::acos(value);
 	}
 
-	inline float scalar_atan2(float left, float right)
+	inline float scalar_atan2(float left, float right) RTM_NO_EXCEPT
 	{
 		return std::atan2(left, right);
 	}
 
-	inline float scalar_min(float left, float right)
+	inline float scalar_min(float left, float right) RTM_NO_EXCEPT
 	{
 		return std::min(left, right);
 	}
 
-	inline float scalar_max(float left, float right)
+	inline float scalar_max(float left, float right) RTM_NO_EXCEPT
 	{
 		return std::max(left, right);
 	}
 
-	constexpr float scalar_deg_to_rad(float deg)
+	constexpr float scalar_deg_to_rad(float deg) RTM_NO_EXCEPT
 	{
 		return deg * ((float)k_pi / 180.0f);
 	}
 
-	inline bool scalar_near_equal(float lhs, float rhs, float threshold)
+	inline bool scalar_near_equal(float lhs, float rhs, float threshold) RTM_NO_EXCEPT
 	{
 		return scalar_abs(lhs - rhs) < threshold;
 	}
 
-	inline bool scalar_is_finite(float input)
+	inline bool scalar_is_finite(float input) RTM_NO_EXCEPT
 	{
 		return std::isfinite(input);
 	}
 
-	inline float scalar_symmetric_round(float input)
+	inline float scalar_symmetric_round(float input) RTM_NO_EXCEPT
 	{
 		return input >= 0.0f ? scalar_floor(input + 0.5f) : scalar_ceil(input - 0.5f);
 	}
 
-	inline float scalar_fraction(float value)
+	inline float scalar_fraction(float value) RTM_NO_EXCEPT
 	{
 		return value - scalar_floor(value);
 	}
 
 	template<typename SrcIntegralType>
-	inline float scalar_safe_to_float(SrcIntegralType input)
+	inline float scalar_safe_to_float(SrcIntegralType input) RTM_NO_EXCEPT
 	{
 		float input_f = float(input);
 		RTM_ASSERT(SrcIntegralType(input_f) == input, "Conversion to float would result in truncation");

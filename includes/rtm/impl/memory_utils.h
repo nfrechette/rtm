@@ -49,61 +49,61 @@ namespace rtm
 		// Allows static branching without any warnings
 
 		template<bool expression_result>
-		struct static_condition { static constexpr bool test() { return true; } };
+		struct static_condition { static constexpr bool test() RTM_NO_EXCEPT { return true; } };
 
 		template<>
-		struct static_condition<false> { static constexpr bool test() { return false; } };
+		struct static_condition<false> { static constexpr bool test() RTM_NO_EXCEPT { return false; } };
 
 		//////////////////////////////////////////////////////////////////////////
 		// Various miscellaneous utilities related to alignment
 
-		constexpr bool is_power_of_two(size_t input)
+		constexpr bool is_power_of_two(size_t input) RTM_NO_EXCEPT
 		{
 			return input != 0 && (input & (input - 1)) == 0;
 		}
 
 		template<typename Type>
-		constexpr bool is_alignment_valid(size_t alignment)
+		constexpr bool is_alignment_valid(size_t alignment) RTM_NO_EXCEPT
 		{
 			return is_power_of_two(alignment) && alignment >= alignof(Type);
 		}
 
 		template<typename PtrType>
-		inline bool is_aligned_to(PtrType* value, size_t alignment)
+		inline bool is_aligned_to(PtrType* value, size_t alignment) RTM_NO_EXCEPT
 		{
 			RTM_ASSERT(is_power_of_two(alignment), "Alignment value must be a power of two");
 			return (reinterpret_cast<intptr_t>(value) & (alignment - 1)) == 0;
 		}
 
 		template<typename IntegralType>
-		inline bool is_aligned_to(IntegralType value, size_t alignment)
+		inline bool is_aligned_to(IntegralType value, size_t alignment) RTM_NO_EXCEPT
 		{
 			RTM_ASSERT(is_power_of_two(alignment), "Alignment value must be a power of two");
 			return (static_cast<size_t>(value) & (alignment - 1)) == 0;
 		}
 
 		template<typename PtrType>
-		constexpr bool is_aligned(PtrType* value)
+		constexpr bool is_aligned(PtrType* value) RTM_NO_EXCEPT
 		{
 			return is_aligned_to(value, alignof(PtrType));
 		}
 
 		template<typename PtrType>
-		inline PtrType* align_to(PtrType* value, size_t alignment)
+		inline PtrType* align_to(PtrType* value, size_t alignment) RTM_NO_EXCEPT
 		{
 			RTM_ASSERT(is_power_of_two(alignment), "Alignment value must be a power of two");
 			return reinterpret_cast<PtrType*>((reinterpret_cast<intptr_t>(value) + (alignment - 1)) & ~(alignment - 1));
 		}
 
 		template<typename IntegralType>
-		inline IntegralType align_to(IntegralType value, size_t alignment)
+		inline IntegralType align_to(IntegralType value, size_t alignment) RTM_NO_EXCEPT
 		{
 			RTM_ASSERT(is_power_of_two(alignment), "Alignment value must be a power of two");
 			return static_cast<IntegralType>((static_cast<size_t>(value) + (alignment - 1)) & ~(alignment - 1));
 		}
 
 		template<typename ElementType, size_t num_elements>
-		constexpr size_t get_array_size(ElementType const (&)[num_elements]) { return num_elements; }
+		constexpr size_t get_array_size(ElementType const (&)[num_elements]) RTM_NO_EXCEPT { return num_elements; }
 
 		//////////////////////////////////////////////////////////////////////////
 		// Type safe casting
@@ -111,7 +111,7 @@ namespace rtm
 		template<typename DestPtrType, typename SrcType>
 		struct safe_ptr_to_ptr_cast_impl
 		{
-			inline static DestPtrType* cast(SrcType* input)
+			inline static DestPtrType* cast(SrcType* input) RTM_NO_EXCEPT
 			{
 				RTM_ASSERT(is_aligned_to(input, alignof(DestPtrType)), "reinterpret_cast would result in an unaligned pointer");
 				return reinterpret_cast<DestPtrType*>(input);
@@ -121,13 +121,13 @@ namespace rtm
 		template<typename SrcType>
 		struct safe_ptr_to_ptr_cast_impl<void, SrcType>
 		{
-			static constexpr void* cast(SrcType* input) { return input; }
+			static constexpr void* cast(SrcType* input) RTM_NO_EXCEPT { return input; }
 		};
 
 		template<typename DestPtrType, typename SrcType>
 		struct safe_int_to_ptr_cast_impl
 		{
-			inline static DestPtrType* cast(SrcType input)
+			inline static DestPtrType* cast(SrcType input) RTM_NO_EXCEPT
 			{
 				RTM_ASSERT(is_aligned_to(input, alignof(DestPtrType)), "reinterpret_cast would result in an unaligned pointer");
 				return reinterpret_cast<DestPtrType*>(input);
@@ -137,17 +137,17 @@ namespace rtm
 		template<typename SrcType>
 		struct safe_int_to_ptr_cast_impl<void, SrcType>
 		{
-			static constexpr void* cast(SrcType input) { return reinterpret_cast<void*>(input); }
+			static constexpr void* cast(SrcType input) RTM_NO_EXCEPT { return reinterpret_cast<void*>(input); }
 		};
 
 		template<typename DestPtrType, typename SrcType>
-		inline DestPtrType* safe_ptr_cast(SrcType* input)
+		inline DestPtrType* safe_ptr_cast(SrcType* input) RTM_NO_EXCEPT
 		{
 			return safe_ptr_to_ptr_cast_impl<DestPtrType, SrcType>::cast(input);
 		}
 
 		template<typename DestPtrType, typename SrcType>
-		inline DestPtrType* safe_ptr_cast(SrcType input)
+		inline DestPtrType* safe_ptr_cast(SrcType input) RTM_NO_EXCEPT
 		{
 			return safe_int_to_ptr_cast_impl<DestPtrType, SrcType>::cast(input);
 		}
@@ -161,7 +161,7 @@ namespace rtm
 		template<typename DstType, typename SrcType, bool is_floating_point = false>
 		struct is_static_cast_safe_s
 		{
-			static bool test(SrcType input)
+			static bool test(SrcType input) RTM_NO_EXCEPT
 			{
 				using SrcRealType = typename safe_underlying_type<SrcType, std::is_enum<SrcType>::value>::type;
 
@@ -177,21 +177,21 @@ namespace rtm
 		template<typename DstType, typename SrcType>
 		struct is_static_cast_safe_s<DstType, SrcType, true>
 		{
-			static bool test(SrcType input)
+			static bool test(SrcType input) RTM_NO_EXCEPT
 			{
 				return SrcType(DstType(input)) == input;
 			}
 		};
 
 		template<typename DstType, typename SrcType>
-		inline bool is_static_cast_safe(SrcType input)
+		inline bool is_static_cast_safe(SrcType input) RTM_NO_EXCEPT
 		{
 			// TODO: In C++17 this should be folded to constexpr if
 			return is_static_cast_safe_s<DstType, SrcType, static_condition<(std::is_floating_point<SrcType>::value || std::is_floating_point<DstType>::value)>::test()>::test(input);
 		}
 
 		template<typename DstType, typename SrcType>
-		inline DstType safe_static_cast(SrcType input)
+		inline DstType safe_static_cast(SrcType input) RTM_NO_EXCEPT
 		{
 #if defined(RTM_HAS_ASSERT_CHECKS)
 			const bool is_safe = is_static_cast_safe<DstType, SrcType>(input);
@@ -205,7 +205,7 @@ namespace rtm
 		// Raw memory read/write support
 
 		template<typename DataType>
-		inline DataType unaligned_read(const void* input)
+		inline DataType unaligned_read(const void* input) RTM_NO_EXCEPT
 		{
 			DataType result;
 			memcpy(&result, input, sizeof(DataType));
@@ -213,13 +213,13 @@ namespace rtm
 		}
 
 		template<typename DataType>
-		inline DataType aligned_read(const void* input)
+		inline DataType aligned_read(const void* input) RTM_NO_EXCEPT
 		{
 			return *safe_ptr_cast<const DataType, const void*>(input);
 		}
 
 		template<typename DataType>
-		inline void unaligned_write(DataType input, void* output)
+		inline void unaligned_write(DataType input, void* output) RTM_NO_EXCEPT
 		{
 			memcpy(output, &input, sizeof(DataType));
 		}

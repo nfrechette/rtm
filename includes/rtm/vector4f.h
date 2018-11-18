@@ -36,7 +36,7 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	// Setters, getters, and casts
 
-	inline vector4f RTM_SIMD_CALL vector_set(float x, float y, float z, float w)
+	inline vector4f RTM_SIMD_CALL vector_set(float x, float y, float z, float w) RTM_NO_EXCEPT
 	{
 #if defined(RTM_SSE2_INTRINSICS)
 		return _mm_set_ps(w, z, y, x);
@@ -54,7 +54,7 @@ namespace rtm
 #endif
 	}
 
-	inline vector4f RTM_SIMD_CALL vector_set(float x, float y, float z)
+	inline vector4f RTM_SIMD_CALL vector_set(float x, float y, float z) RTM_NO_EXCEPT
 	{
 #if defined(RTM_SSE2_INTRINSICS)
 		return _mm_set_ps(0.0f, z, y, x);
@@ -72,7 +72,7 @@ namespace rtm
 #endif
 	}
 
-	inline vector4f RTM_SIMD_CALL vector_set(float xyzw)
+	inline vector4f RTM_SIMD_CALL vector_set(float xyzw) RTM_NO_EXCEPT
 	{
 #if defined(RTM_SSE2_INTRINSICS)
 		return _mm_set_ps1(xyzw);
@@ -83,19 +83,19 @@ namespace rtm
 #endif
 	}
 
-	inline vector4f RTM_SIMD_CALL vector_unaligned_load(const float* input)
+	inline vector4f RTM_SIMD_CALL vector_unaligned_load(const float* input) RTM_NO_EXCEPT
 	{
 		RTM_ASSERT(rtm_impl::is_aligned(input), "Invalid alignment");
 		return vector_set(input[0], input[1], input[2], input[3]);
 	}
 
-	inline vector4f RTM_SIMD_CALL vector_unaligned_load3(const float* input)
+	inline vector4f RTM_SIMD_CALL vector_unaligned_load3(const float* input) RTM_NO_EXCEPT
 	{
 		RTM_ASSERT(rtm_impl::is_aligned(input), "Invalid alignment");
 		return vector_set(input[0], input[1], input[2], 0.0f);
 	}
 
-	inline vector4f RTM_SIMD_CALL vector_unaligned_load_32(const uint8_t* input)
+	inline vector4f RTM_SIMD_CALL vector_unaligned_load_32(const uint8_t* input) RTM_NO_EXCEPT
 	{
 #if defined(RTM_SSE2_INTRINSICS)
 		return _mm_loadu_ps((const float*)input);
@@ -108,14 +108,14 @@ namespace rtm
 #endif
 	}
 
-	inline vector4f RTM_SIMD_CALL vector_unaligned_load3_32(const uint8_t* input)
+	inline vector4f RTM_SIMD_CALL vector_unaligned_load3_32(const uint8_t* input) RTM_NO_EXCEPT
 	{
 		float input_f[3];
 		memcpy(&input_f[0], input, sizeof(float) * 3);
 		return vector_set(input_f[0], input_f[1], input_f[2], 0.0f);
 	}
 
-	inline vector4f RTM_SIMD_CALL vector_zero_32()
+	inline vector4f RTM_SIMD_CALL vector_zero_32() RTM_NO_EXCEPT
 	{
 #if defined(RTM_SSE2_INTRINSICS)
 		return _mm_setzero_ps();
@@ -124,7 +124,7 @@ namespace rtm
 #endif
 	}
 
-	inline vector4f RTM_SIMD_CALL quat_to_vector(quatf_arg0 input)
+	inline vector4f RTM_SIMD_CALL quat_to_vector(quatf_arg0 input) RTM_NO_EXCEPT
 	{
 #if defined(RTM_SSE2_INTRINSICS) || defined(RTM_NEON_INTRINSICS)
 		return input;
@@ -133,7 +133,7 @@ namespace rtm
 #endif
 	}
 
-	inline vector4f RTM_SIMD_CALL vector_cast(const vector4d& input)
+	inline vector4f RTM_SIMD_CALL vector_cast(const vector4d& input) RTM_NO_EXCEPT
 	{
 #if defined(RTM_SSE2_INTRINSICS)
 		return _mm_shuffle_ps(_mm_cvtpd_ps(input.xy), _mm_cvtpd_ps(input.zw), _MM_SHUFFLE(1, 0, 1, 0));
@@ -142,7 +142,7 @@ namespace rtm
 #endif
 	}
 
-	inline float RTM_SIMD_CALL vector_get_x(vector4f_arg0 input)
+	inline float RTM_SIMD_CALL vector_get_x(vector4f_arg0 input) RTM_NO_EXCEPT
 	{
 #if defined(RTM_SSE2_INTRINSICS)
 		return _mm_cvtss_f32(input);
@@ -153,7 +153,7 @@ namespace rtm
 #endif
 	}
 
-	inline float RTM_SIMD_CALL vector_get_y(vector4f_arg0 input)
+	inline float RTM_SIMD_CALL vector_get_y(vector4f_arg0 input) RTM_NO_EXCEPT
 	{
 #if defined(RTM_SSE2_INTRINSICS)
 		return _mm_cvtss_f32(_mm_shuffle_ps(input, input, _MM_SHUFFLE(1, 1, 1, 1)));
@@ -164,7 +164,7 @@ namespace rtm
 #endif
 	}
 
-	inline float RTM_SIMD_CALL vector_get_z(vector4f_arg0 input)
+	inline float RTM_SIMD_CALL vector_get_z(vector4f_arg0 input) RTM_NO_EXCEPT
 	{
 #if defined(RTM_SSE2_INTRINSICS)
 		return _mm_cvtss_f32(_mm_shuffle_ps(input, input, _MM_SHUFFLE(2, 2, 2, 2)));
@@ -175,7 +175,7 @@ namespace rtm
 #endif
 	}
 
-	inline float RTM_SIMD_CALL vector_get_w(vector4f_arg0 input)
+	inline float RTM_SIMD_CALL vector_get_w(vector4f_arg0 input) RTM_NO_EXCEPT
 	{
 #if defined(RTM_SSE2_INTRINSICS)
 		return _mm_cvtss_f32(_mm_shuffle_ps(input, input, _MM_SHUFFLE(3, 3, 3, 3)));
@@ -187,7 +187,7 @@ namespace rtm
 	}
 
 	template<mix4 component_index>
-	inline float RTM_SIMD_CALL vector_get_component(vector4f_arg0 input)
+	inline float RTM_SIMD_CALL vector_get_component(vector4f_arg0 input) RTM_NO_EXCEPT
 	{
 		switch (mix4(int(component_index) % 4))
 		{
@@ -201,7 +201,7 @@ namespace rtm
 		}
 	}
 
-	inline float RTM_SIMD_CALL vector_get_component(vector4f_arg0 input, mix4 component_index)
+	inline float RTM_SIMD_CALL vector_get_component(vector4f_arg0 input, mix4 component_index) RTM_NO_EXCEPT
 	{
 		switch (mix4(int(component_index) % 4))
 		{
@@ -215,12 +215,12 @@ namespace rtm
 		}
 	}
 
-	inline const float* RTM_SIMD_CALL vector_as_float_ptr(const vector4f& input)
+	inline const float* RTM_SIMD_CALL vector_as_float_ptr(const vector4f& input) RTM_NO_EXCEPT
 	{
 		return reinterpret_cast<const float*>(&input);
 	}
 
-	inline void RTM_SIMD_CALL vector_unaligned_write(vector4f_arg0 input, float* output)
+	inline void RTM_SIMD_CALL vector_unaligned_write(vector4f_arg0 input, float* output) RTM_NO_EXCEPT
 	{
 		RTM_ASSERT(rtm_impl::is_aligned(output), "Invalid alignment");
 		output[0] = vector_get_x(input);
@@ -229,7 +229,7 @@ namespace rtm
 		output[3] = vector_get_w(input);
 	}
 
-	inline void RTM_SIMD_CALL vector_unaligned_write3(vector4f_arg0 input, float* output)
+	inline void RTM_SIMD_CALL vector_unaligned_write3(vector4f_arg0 input, float* output) RTM_NO_EXCEPT
 	{
 		RTM_ASSERT(rtm_impl::is_aligned(output), "Invalid alignment");
 		output[0] = vector_get_x(input);
@@ -237,12 +237,12 @@ namespace rtm
 		output[2] = vector_get_z(input);
 	}
 
-	inline void RTM_SIMD_CALL vector_unaligned_write(vector4f_arg0 input, uint8_t* output)
+	inline void RTM_SIMD_CALL vector_unaligned_write(vector4f_arg0 input, uint8_t* output) RTM_NO_EXCEPT
 	{
 		memcpy(output, &input, sizeof(vector4f));
 	}
 
-	inline void RTM_SIMD_CALL vector_unaligned_write3(vector4f_arg0 input, uint8_t* output)
+	inline void RTM_SIMD_CALL vector_unaligned_write3(vector4f_arg0 input, uint8_t* output) RTM_NO_EXCEPT
 	{
 		memcpy(output, &input, sizeof(float) * 3);
 	}
@@ -250,7 +250,7 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	// Arithmetic
 
-	inline vector4f RTM_SIMD_CALL vector_add(vector4f_arg0 lhs, vector4f_arg1 rhs)
+	inline vector4f RTM_SIMD_CALL vector_add(vector4f_arg0 lhs, vector4f_arg1 rhs) RTM_NO_EXCEPT
 	{
 #if defined(RTM_SSE2_INTRINSICS)
 		return _mm_add_ps(lhs, rhs);
@@ -261,7 +261,7 @@ namespace rtm
 #endif
 	}
 
-	inline vector4f RTM_SIMD_CALL vector_sub(vector4f_arg0 lhs, vector4f_arg1 rhs)
+	inline vector4f RTM_SIMD_CALL vector_sub(vector4f_arg0 lhs, vector4f_arg1 rhs) RTM_NO_EXCEPT
 	{
 #if defined(RTM_SSE2_INTRINSICS)
 		return _mm_sub_ps(lhs, rhs);
@@ -272,7 +272,7 @@ namespace rtm
 #endif
 	}
 
-	inline vector4f RTM_SIMD_CALL vector_mul(vector4f_arg0 lhs, vector4f_arg1 rhs)
+	inline vector4f RTM_SIMD_CALL vector_mul(vector4f_arg0 lhs, vector4f_arg1 rhs) RTM_NO_EXCEPT
 	{
 #if defined(RTM_SSE2_INTRINSICS)
 		return _mm_mul_ps(lhs, rhs);
@@ -283,7 +283,7 @@ namespace rtm
 #endif
 	}
 
-	inline vector4f RTM_SIMD_CALL vector_mul(vector4f_arg0 lhs, float rhs)
+	inline vector4f RTM_SIMD_CALL vector_mul(vector4f_arg0 lhs, float rhs) RTM_NO_EXCEPT
 	{
 #if defined(RTM_NEON_INTRINSICS)
 		return vmulq_n_f32(lhs, rhs);
@@ -292,7 +292,7 @@ namespace rtm
 #endif
 	}
 
-	inline vector4f RTM_SIMD_CALL vector_div(vector4f_arg0 lhs, vector4f_arg1 rhs)
+	inline vector4f RTM_SIMD_CALL vector_div(vector4f_arg0 lhs, vector4f_arg1 rhs) RTM_NO_EXCEPT
 	{
 #if defined(RTM_SSE2_INTRINSICS)
 		return _mm_div_ps(lhs, rhs);
@@ -313,7 +313,7 @@ namespace rtm
 #endif
 	}
 
-	inline vector4f RTM_SIMD_CALL vector_max(vector4f_arg0 lhs, vector4f_arg1 rhs)
+	inline vector4f RTM_SIMD_CALL vector_max(vector4f_arg0 lhs, vector4f_arg1 rhs) RTM_NO_EXCEPT
 	{
 #if defined(RTM_SSE2_INTRINSICS)
 		return _mm_max_ps(lhs, rhs);
@@ -324,7 +324,7 @@ namespace rtm
 #endif
 	}
 
-	inline vector4f RTM_SIMD_CALL vector_min(vector4f_arg0 lhs, vector4f_arg1 rhs)
+	inline vector4f RTM_SIMD_CALL vector_min(vector4f_arg0 lhs, vector4f_arg1 rhs) RTM_NO_EXCEPT
 	{
 #if defined(RTM_SSE2_INTRINSICS)
 		return _mm_min_ps(lhs, rhs);
@@ -335,7 +335,7 @@ namespace rtm
 #endif
 	}
 
-	inline vector4f RTM_SIMD_CALL vector_abs(vector4f_arg0 input)
+	inline vector4f RTM_SIMD_CALL vector_abs(vector4f_arg0 input) RTM_NO_EXCEPT
 	{
 #if defined(RTM_SSE2_INTRINSICS)
 		return vector_max(vector_sub(_mm_setzero_ps(), input), input);
@@ -346,7 +346,7 @@ namespace rtm
 #endif
 	}
 
-	inline vector4f RTM_SIMD_CALL vector_neg(vector4f_arg0 input)
+	inline vector4f RTM_SIMD_CALL vector_neg(vector4f_arg0 input) RTM_NO_EXCEPT
 	{
 #if defined(RTM_NEON_INTRINSICS)
 		return vnegq_f32(input);
@@ -355,7 +355,7 @@ namespace rtm
 #endif
 	}
 
-	inline vector4f RTM_SIMD_CALL vector_reciprocal(vector4f_arg0 input)
+	inline vector4f RTM_SIMD_CALL vector_reciprocal(vector4f_arg0 input) RTM_NO_EXCEPT
 	{
 #if defined(RTM_SSE2_INTRINSICS)
 		// Perform two passes of Newton-Raphson iteration on the hardware estimate
@@ -382,14 +382,14 @@ namespace rtm
 #endif
 	}
 
-	inline vector4f RTM_SIMD_CALL vector_cross3(vector4f_arg0 lhs, vector4f_arg1 rhs)
+	inline vector4f RTM_SIMD_CALL vector_cross3(vector4f_arg0 lhs, vector4f_arg1 rhs) RTM_NO_EXCEPT
 	{
 		return vector_set(vector_get_y(lhs) * vector_get_z(rhs) - vector_get_z(lhs) * vector_get_y(rhs),
 						  vector_get_z(lhs) * vector_get_x(rhs) - vector_get_x(lhs) * vector_get_z(rhs),
 						  vector_get_x(lhs) * vector_get_y(rhs) - vector_get_y(lhs) * vector_get_x(rhs));
 	}
 
-	inline float RTM_SIMD_CALL vector_dot(vector4f_arg0 lhs, vector4f_arg1 rhs)
+	inline float RTM_SIMD_CALL vector_dot(vector4f_arg0 lhs, vector4f_arg1 rhs) RTM_NO_EXCEPT
 	{
 #if defined(RTM_SSE4_INTRINSICS) && 0
 		// SSE4 dot product instruction isn't precise enough
@@ -413,7 +413,7 @@ namespace rtm
 #endif
 	}
 
-	inline vector4f RTM_SIMD_CALL vector_vdot(vector4f_arg0 lhs, vector4f_arg1 rhs)
+	inline vector4f RTM_SIMD_CALL vector_vdot(vector4f_arg0 lhs, vector4f_arg1 rhs) RTM_NO_EXCEPT
 	{
 #if defined(RTM_SSE4_INTRINSICS) && 0
 		// SSE4 dot product instruction isn't precise enough
@@ -437,7 +437,7 @@ namespace rtm
 #endif
 	}
 
-	inline float RTM_SIMD_CALL vector_dot3(vector4f_arg0 lhs, vector4f_arg1 rhs)
+	inline float RTM_SIMD_CALL vector_dot3(vector4f_arg0 lhs, vector4f_arg1 rhs) RTM_NO_EXCEPT
 	{
 #if defined(RTM_SSE4_INTRINSICS) && 0
 		// SSE4 dot product instruction isn't precise enough
@@ -462,42 +462,42 @@ namespace rtm
 #endif
 	}
 
-	inline float RTM_SIMD_CALL vector_length_squared(vector4f_arg0 input)
+	inline float RTM_SIMD_CALL vector_length_squared(vector4f_arg0 input) RTM_NO_EXCEPT
 	{
 		return vector_dot(input, input);
 	}
 
-	inline float RTM_SIMD_CALL vector_length_squared3(vector4f_arg0 input)
+	inline float RTM_SIMD_CALL vector_length_squared3(vector4f_arg0 input) RTM_NO_EXCEPT
 	{
 		return vector_dot3(input, input);
 	}
 
-	inline float RTM_SIMD_CALL vector_length(vector4f_arg0 input)
+	inline float RTM_SIMD_CALL vector_length(vector4f_arg0 input) RTM_NO_EXCEPT
 	{
 		return scalar_sqrt(vector_length_squared(input));
 	}
 
-	inline float RTM_SIMD_CALL vector_length3(vector4f_arg0 input)
+	inline float RTM_SIMD_CALL vector_length3(vector4f_arg0 input) RTM_NO_EXCEPT
 	{
 		return scalar_sqrt(vector_length_squared3(input));
 	}
 
-	inline float RTM_SIMD_CALL vector_length_reciprocal(vector4f_arg0 input)
+	inline float RTM_SIMD_CALL vector_length_reciprocal(vector4f_arg0 input) RTM_NO_EXCEPT
 	{
 		return scalar_sqrt_reciprocal(vector_length_squared(input));
 	}
 
-	inline float RTM_SIMD_CALL vector_length_reciprocal3(vector4f_arg0 input)
+	inline float RTM_SIMD_CALL vector_length_reciprocal3(vector4f_arg0 input) RTM_NO_EXCEPT
 	{
 		return scalar_sqrt_reciprocal(vector_length_squared3(input));
 	}
 
-	inline float RTM_SIMD_CALL vector_distance3(vector4f_arg0 lhs, vector4f_arg1 rhs)
+	inline float RTM_SIMD_CALL vector_distance3(vector4f_arg0 lhs, vector4f_arg1 rhs) RTM_NO_EXCEPT
 	{
 		return vector_length3(vector_sub(rhs, lhs));
 	}
 
-	inline vector4f RTM_SIMD_CALL vector_normalize3(vector4f_arg0 input, float threshold = 1.0e-8f)
+	inline vector4f RTM_SIMD_CALL vector_normalize3(vector4f_arg0 input, float threshold = 1.0e-8f) RTM_NO_EXCEPT
 	{
 		// Reciprocal is more accurate to normalize with
 		const float len_sq = vector_length_squared3(input);
@@ -507,13 +507,13 @@ namespace rtm
 			return input;
 	}
 
-	inline vector4f RTM_SIMD_CALL vector_fraction(vector4f_arg0 input)
+	inline vector4f RTM_SIMD_CALL vector_fraction(vector4f_arg0 input) RTM_NO_EXCEPT
 	{
 		return vector_set(scalar_fraction(vector_get_x(input)), scalar_fraction(vector_get_y(input)), scalar_fraction(vector_get_z(input)), scalar_fraction(vector_get_w(input)));
 	}
 
 	// output = (input * scale) + offset
-	inline vector4f RTM_SIMD_CALL vector_mul_add(vector4f_arg0 input, vector4f_arg1 scale, vector4f_arg2 offset)
+	inline vector4f RTM_SIMD_CALL vector_mul_add(vector4f_arg0 input, vector4f_arg1 scale, vector4f_arg2 offset) RTM_NO_EXCEPT
 	{
 #if defined(RTM_NEON_INTRINSICS)
 		return vmlaq_f32(offset, input, scale);
@@ -522,7 +522,7 @@ namespace rtm
 #endif
 	}
 
-	inline vector4f RTM_SIMD_CALL vector_mul_add(vector4f_arg0 input, float scale, vector4f_arg2 offset)
+	inline vector4f RTM_SIMD_CALL vector_mul_add(vector4f_arg0 input, float scale, vector4f_arg2 offset) RTM_NO_EXCEPT
 	{
 #if defined(RTM_NEON_INTRINSICS)
 		return vmlaq_n_f32(offset, input, scale);
@@ -532,7 +532,7 @@ namespace rtm
 	}
 
 	// output = offset - (input * scale)
-	inline vector4f RTM_SIMD_CALL vector_neg_mul_sub(vector4f_arg0 input, vector4f_arg1 scale, vector4f_arg2 offset)
+	inline vector4f RTM_SIMD_CALL vector_neg_mul_sub(vector4f_arg0 input, vector4f_arg1 scale, vector4f_arg2 offset) RTM_NO_EXCEPT
 	{
 #if defined(RTM_NEON_INTRINSICS)
 		return vmlsq_f32(offset, input, scale);
@@ -541,7 +541,7 @@ namespace rtm
 #endif
 	}
 
-	inline vector4f RTM_SIMD_CALL vector_lerp(vector4f_arg0 start, vector4f_arg1 end, float alpha)
+	inline vector4f RTM_SIMD_CALL vector_lerp(vector4f_arg0 start, vector4f_arg1 end, float alpha) RTM_NO_EXCEPT
 	{
 		return vector_mul_add(vector_sub(end, start), alpha, start);
 	}
@@ -549,7 +549,7 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	// Comparisons and masking
 
-	inline vector4f RTM_SIMD_CALL vector_less_than(vector4f_arg0 lhs, vector4f_arg1 rhs)
+	inline vector4f RTM_SIMD_CALL vector_less_than(vector4f_arg0 lhs, vector4f_arg1 rhs) RTM_NO_EXCEPT
 	{
 #if defined(RTM_SSE2_INTRINSICS)
 		return _mm_cmplt_ps(lhs, rhs);
@@ -560,7 +560,7 @@ namespace rtm
 #endif
 	}
 
-	inline vector4f RTM_SIMD_CALL vector_greater_equal(vector4f_arg0 lhs, vector4f_arg1 rhs)
+	inline vector4f RTM_SIMD_CALL vector_greater_equal(vector4f_arg0 lhs, vector4f_arg1 rhs) RTM_NO_EXCEPT
 	{
 #if defined(RTM_SSE2_INTRINSICS)
 		return _mm_cmpge_ps(lhs, rhs);
@@ -571,7 +571,7 @@ namespace rtm
 #endif
 	}
 
-	inline bool RTM_SIMD_CALL vector_all_less_than(vector4f_arg0 lhs, vector4f_arg1 rhs)
+	inline bool RTM_SIMD_CALL vector_all_less_than(vector4f_arg0 lhs, vector4f_arg1 rhs) RTM_NO_EXCEPT
 	{
 #if defined(RTM_SSE2_INTRINSICS)
 		return _mm_movemask_ps(_mm_cmplt_ps(lhs, rhs)) == 0xF;
@@ -585,7 +585,7 @@ namespace rtm
 #endif
 	}
 
-	inline bool RTM_SIMD_CALL vector_all_less_than3(vector4f_arg0 lhs, vector4f_arg1 rhs)
+	inline bool RTM_SIMD_CALL vector_all_less_than3(vector4f_arg0 lhs, vector4f_arg1 rhs) RTM_NO_EXCEPT
 	{
 #if defined(RTM_SSE2_INTRINSICS)
 		return (_mm_movemask_ps(_mm_cmplt_ps(lhs, rhs)) & 0x7) == 0x7;
@@ -599,7 +599,7 @@ namespace rtm
 #endif
 	}
 
-	inline bool RTM_SIMD_CALL vector_any_less_than(vector4f_arg0 lhs, vector4f_arg1 rhs)
+	inline bool RTM_SIMD_CALL vector_any_less_than(vector4f_arg0 lhs, vector4f_arg1 rhs) RTM_NO_EXCEPT
 	{
 #if defined(RTM_SSE2_INTRINSICS)
 		return _mm_movemask_ps(_mm_cmplt_ps(lhs, rhs)) != 0;
@@ -613,7 +613,7 @@ namespace rtm
 #endif
 	}
 
-	inline bool RTM_SIMD_CALL vector_any_less_than3(vector4f_arg0 lhs, vector4f_arg1 rhs)
+	inline bool RTM_SIMD_CALL vector_any_less_than3(vector4f_arg0 lhs, vector4f_arg1 rhs) RTM_NO_EXCEPT
 	{
 #if defined(RTM_SSE2_INTRINSICS)
 		return (_mm_movemask_ps(_mm_cmplt_ps(lhs, rhs)) & 0x7) != 0;
@@ -627,7 +627,7 @@ namespace rtm
 #endif
 	}
 
-	inline bool RTM_SIMD_CALL vector_all_less_equal(vector4f_arg0 lhs, vector4f_arg1 rhs)
+	inline bool RTM_SIMD_CALL vector_all_less_equal(vector4f_arg0 lhs, vector4f_arg1 rhs) RTM_NO_EXCEPT
 	{
 #if defined(RTM_SSE2_INTRINSICS)
 		return _mm_movemask_ps(_mm_cmple_ps(lhs, rhs)) == 0xF;
@@ -641,7 +641,7 @@ namespace rtm
 #endif
 	}
 
-	inline bool RTM_SIMD_CALL vector_all_less_equal3(vector4f_arg0 lhs, vector4f_arg1 rhs)
+	inline bool RTM_SIMD_CALL vector_all_less_equal3(vector4f_arg0 lhs, vector4f_arg1 rhs) RTM_NO_EXCEPT
 	{
 #if defined(RTM_SSE2_INTRINSICS)
 		return (_mm_movemask_ps(_mm_cmple_ps(lhs, rhs)) & 0x7) == 0x7;
@@ -655,7 +655,7 @@ namespace rtm
 #endif
 	}
 
-	inline bool RTM_SIMD_CALL vector_any_less_equal(vector4f_arg0 lhs, vector4f_arg1 rhs)
+	inline bool RTM_SIMD_CALL vector_any_less_equal(vector4f_arg0 lhs, vector4f_arg1 rhs) RTM_NO_EXCEPT
 	{
 #if defined(RTM_SSE2_INTRINSICS)
 		return _mm_movemask_ps(_mm_cmple_ps(lhs, rhs)) != 0;
@@ -669,7 +669,7 @@ namespace rtm
 #endif
 	}
 
-	inline bool RTM_SIMD_CALL vector_any_less_equal3(vector4f_arg0 lhs, vector4f_arg1 rhs)
+	inline bool RTM_SIMD_CALL vector_any_less_equal3(vector4f_arg0 lhs, vector4f_arg1 rhs) RTM_NO_EXCEPT
 	{
 #if defined(RTM_SSE2_INTRINSICS)
 		return (_mm_movemask_ps(_mm_cmple_ps(lhs, rhs)) & 0x7) != 0;
@@ -683,7 +683,7 @@ namespace rtm
 #endif
 	}
 
-	inline bool RTM_SIMD_CALL vector_all_greater_equal(vector4f_arg0 lhs, vector4f_arg1 rhs)
+	inline bool RTM_SIMD_CALL vector_all_greater_equal(vector4f_arg0 lhs, vector4f_arg1 rhs) RTM_NO_EXCEPT
 	{
 #if defined(RTM_SSE2_INTRINSICS)
 		return _mm_movemask_ps(_mm_cmpge_ps(lhs, rhs)) == 0xF;
@@ -697,7 +697,7 @@ namespace rtm
 #endif
 	}
 
-	inline bool RTM_SIMD_CALL vector_all_greater_equal3(vector4f_arg0 lhs, vector4f_arg1 rhs)
+	inline bool RTM_SIMD_CALL vector_all_greater_equal3(vector4f_arg0 lhs, vector4f_arg1 rhs) RTM_NO_EXCEPT
 	{
 #if defined(RTM_SSE2_INTRINSICS)
 		return (_mm_movemask_ps(_mm_cmpge_ps(lhs, rhs)) & 0x7) == 0x7;
@@ -711,7 +711,7 @@ namespace rtm
 #endif
 	}
 
-	inline bool RTM_SIMD_CALL vector_any_greater_equal(vector4f_arg0 lhs, vector4f_arg1 rhs)
+	inline bool RTM_SIMD_CALL vector_any_greater_equal(vector4f_arg0 lhs, vector4f_arg1 rhs) RTM_NO_EXCEPT
 	{
 #if defined(RTM_SSE2_INTRINSICS)
 		return _mm_movemask_ps(_mm_cmpge_ps(lhs, rhs)) != 0;
@@ -725,7 +725,7 @@ namespace rtm
 #endif
 	}
 
-	inline bool RTM_SIMD_CALL vector_any_greater_equal3(vector4f_arg0 lhs, vector4f_arg1 rhs)
+	inline bool RTM_SIMD_CALL vector_any_greater_equal3(vector4f_arg0 lhs, vector4f_arg1 rhs) RTM_NO_EXCEPT
 	{
 #if defined(RTM_SSE2_INTRINSICS)
 		return (_mm_movemask_ps(_mm_cmpge_ps(lhs, rhs)) & 0x7) != 0;
@@ -739,32 +739,32 @@ namespace rtm
 #endif
 	}
 
-	inline bool RTM_SIMD_CALL vector_all_near_equal(vector4f_arg0 lhs, vector4f_arg1 rhs, float threshold = 0.00001f)
+	inline bool RTM_SIMD_CALL vector_all_near_equal(vector4f_arg0 lhs, vector4f_arg1 rhs, float threshold = 0.00001f) RTM_NO_EXCEPT
 	{
 		return vector_all_less_equal(vector_abs(vector_sub(lhs, rhs)), vector_set(threshold));
 	}
 
-	inline bool RTM_SIMD_CALL vector_all_near_equal3(vector4f_arg0 lhs, vector4f_arg1 rhs, float threshold = 0.00001f)
+	inline bool RTM_SIMD_CALL vector_all_near_equal3(vector4f_arg0 lhs, vector4f_arg1 rhs, float threshold = 0.00001f) RTM_NO_EXCEPT
 	{
 		return vector_all_less_equal3(vector_abs(vector_sub(lhs, rhs)), vector_set(threshold));
 	}
 
-	inline bool RTM_SIMD_CALL vector_any_near_equal(vector4f_arg0 lhs, vector4f_arg1 rhs, float threshold = 0.00001f)
+	inline bool RTM_SIMD_CALL vector_any_near_equal(vector4f_arg0 lhs, vector4f_arg1 rhs, float threshold = 0.00001f) RTM_NO_EXCEPT
 	{
 		return vector_any_less_equal(vector_abs(vector_sub(lhs, rhs)), vector_set(threshold));
 	}
 
-	inline bool RTM_SIMD_CALL vector_any_near_equal3(vector4f_arg0 lhs, vector4f_arg1 rhs, float threshold = 0.00001f)
+	inline bool RTM_SIMD_CALL vector_any_near_equal3(vector4f_arg0 lhs, vector4f_arg1 rhs, float threshold = 0.00001f) RTM_NO_EXCEPT
 	{
 		return vector_any_less_equal3(vector_abs(vector_sub(lhs, rhs)), vector_set(threshold));
 	}
 
-	inline bool RTM_SIMD_CALL vector_is_finite(vector4f_arg0 input)
+	inline bool RTM_SIMD_CALL vector_is_finite(vector4f_arg0 input) RTM_NO_EXCEPT
 	{
 		return scalar_is_finite(vector_get_x(input)) && scalar_is_finite(vector_get_y(input)) && scalar_is_finite(vector_get_z(input)) && scalar_is_finite(vector_get_w(input));
 	}
 
-	inline bool RTM_SIMD_CALL vector_is_finite3(vector4f_arg0 input)
+	inline bool RTM_SIMD_CALL vector_is_finite3(vector4f_arg0 input) RTM_NO_EXCEPT
 	{
 		return scalar_is_finite(vector_get_x(input)) && scalar_is_finite(vector_get_y(input)) && scalar_is_finite(vector_get_z(input));
 	}
@@ -772,7 +772,7 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	// Swizzling, permutations, and mixing
 
-	inline vector4f RTM_SIMD_CALL vector_blend(vector4f_arg0 mask, vector4f_arg1 if_true, vector4f_arg2 if_false)
+	inline vector4f RTM_SIMD_CALL vector_blend(vector4f_arg0 mask, vector4f_arg1 if_true, vector4f_arg2 if_false) RTM_NO_EXCEPT
 	{
 #if defined(RTM_SSE2_INTRINSICS)
 		return _mm_or_ps(_mm_andnot_ps(mask, if_false), _mm_and_ps(if_true, mask));
@@ -784,7 +784,7 @@ namespace rtm
 	}
 
 	template<mix4 comp0, mix4 comp1, mix4 comp2, mix4 comp3>
-	inline vector4f RTM_SIMD_CALL vector_mix(vector4f_arg0 input0, vector4f_arg1 input1)
+	inline vector4f RTM_SIMD_CALL vector_mix(vector4f_arg0 input0, vector4f_arg1 input1) RTM_NO_EXCEPT
 	{
 #if defined(RTM_SSE2_INTRINSICS)
 		// All four components come from input 0
@@ -828,15 +828,15 @@ namespace rtm
 		return vector_set(x, y, z, w);
 	}
 
-	inline vector4f RTM_SIMD_CALL vector_dup_x(vector4f_arg0 input) { return vector_mix<mix4::x, mix4::x, mix4::x, mix4::x>(input, input); }
-	inline vector4f RTM_SIMD_CALL vector_dup_y(vector4f_arg0 input) { return vector_mix<mix4::y, mix4::y, mix4::y, mix4::y>(input, input); }
-	inline vector4f RTM_SIMD_CALL vector_dup_z(vector4f_arg0 input) { return vector_mix<mix4::z, mix4::z, mix4::z, mix4::z>(input, input); }
-	inline vector4f RTM_SIMD_CALL vector_dup_w(vector4f_arg0 input) { return vector_mix<mix4::w, mix4::w, mix4::w, mix4::w>(input, input); }
+	inline vector4f RTM_SIMD_CALL vector_dup_x(vector4f_arg0 input) RTM_NO_EXCEPT { return vector_mix<mix4::x, mix4::x, mix4::x, mix4::x>(input, input); }
+	inline vector4f RTM_SIMD_CALL vector_dup_y(vector4f_arg0 input) RTM_NO_EXCEPT { return vector_mix<mix4::y, mix4::y, mix4::y, mix4::y>(input, input); }
+	inline vector4f RTM_SIMD_CALL vector_dup_z(vector4f_arg0 input) RTM_NO_EXCEPT { return vector_mix<mix4::z, mix4::z, mix4::z, mix4::z>(input, input); }
+	inline vector4f RTM_SIMD_CALL vector_dup_w(vector4f_arg0 input) RTM_NO_EXCEPT { return vector_mix<mix4::w, mix4::w, mix4::w, mix4::w>(input, input); }
 
 	//////////////////////////////////////////////////////////////////////////
 	// Misc
 
-	inline vector4f RTM_SIMD_CALL vector_sign(vector4f_arg0 input)
+	inline vector4f RTM_SIMD_CALL vector_sign(vector4f_arg0 input) RTM_NO_EXCEPT
 	{
 		vector4f mask = vector_greater_equal(input, vector_zero_32());
 		return vector_blend(mask, vector_set(1.0f), vector_set(-1.0f));
