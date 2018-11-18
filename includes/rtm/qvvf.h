@@ -29,19 +29,10 @@
 #include "rtm/quatf.h"
 #include "rtm/vector4f.h"
 #include "rtm/matrix3x4f.h"
+#include "rtm/impl/qvv_common.h"
 
 namespace rtm
 {
-	constexpr qvvf RTM_SIMD_CALL qvv_set(quatf_arg0 rotation, vector4f_arg1 translation, vector4f_arg2 scale) RTM_NO_EXCEPT
-	{
-		return qvvf{ rotation, translation, scale };
-	}
-
-	inline qvvf RTM_SIMD_CALL qvv_identity_32() RTM_NO_EXCEPT
-	{
-		return qvv_set(quat_identity(), vector_zero_32(), vector_set(1.0f));
-	}
-
 	inline qvvf RTM_SIMD_CALL qvv_cast(const qvvd& input) RTM_NO_EXCEPT
 	{
 		return qvvf{ quat_cast(input.rotation), vector_cast(input.translation), vector_cast(input.scale) };

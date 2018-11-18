@@ -158,7 +158,7 @@ static void test_qvv_impl(const TransformType& identity, const FloatType thresho
 
 TEST_CASE("qvvf math", "[math][qvv]")
 {
-	test_qvv_impl<qvvf, float>(qvv_identity_32(), 1.0e-4f);
+	test_qvv_impl<qvvf, float>(qvv_identity(), 1.0e-4f);
 
 	const quatf src_rotation = quat_set(0.39564531008956383f, 0.044254239301713752f, 0.22768840967675355f, 0.88863059760894492f);
 	const vector4f src_translation = vector_set(-2.65f, 2.996113f, 0.68123521f);
@@ -172,7 +172,7 @@ TEST_CASE("qvvf math", "[math][qvv]")
 
 TEST_CASE("qvvd math", "[math][qvv]")
 {
-	test_qvv_impl<qvvd, double>(qvv_identity_64(), 1.0e-6);
+	test_qvv_impl<qvvd, double>(qvv_identity(), 1.0e-6);
 
 	const quatd src_rotation = quat_set(0.39564531008956383, 0.044254239301713752, 0.22768840967675355, 0.88863059760894492);
 	const vector4d src_translation = vector_set(-2.65, 2.996113, 0.68123521);
