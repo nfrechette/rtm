@@ -210,7 +210,7 @@ static void test_affine_matrix_impl(const MatrixType& identity, const FloatType 
 
 TEST_CASE("matrix3x4f math", "[math][matrix3x4]")
 {
-	test_affine_matrix_impl<matrix3x4f, qvvf, float>(matrix_identity_32(), 1.0e-4f);
+	test_affine_matrix_impl<matrix3x4f, qvvf, float>(matrix_identity(), 1.0e-4f);
 
 	{
 		quatf rotation_around_z = quat_from_euler(scalar_deg_to_rad(0.0f), scalar_deg_to_rad(90.0f), scalar_deg_to_rad(0.0f));
@@ -227,7 +227,7 @@ TEST_CASE("matrix3x4f math", "[math][matrix3x4]")
 
 TEST_CASE("matrix3x4d math", "[math][matrix3x4]")
 {
-	test_affine_matrix_impl<matrix3x4d, qvvd, double>(matrix_identity_64(), 1.0e-4);
+	test_affine_matrix_impl<matrix3x4d, qvvd, double>(matrix_identity(), 1.0e-4);
 
 	{
 		quatd rotation_around_z = quat_from_euler(scalar_deg_to_rad(0.0), scalar_deg_to_rad(90.0), scalar_deg_to_rad(0.0));

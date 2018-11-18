@@ -29,18 +29,10 @@
 #include "rtm/math.h"
 #include "rtm/vector4d.h"
 #include "rtm/quatd.h"
+#include "rtm/impl/matrix_common.h"
 
 namespace rtm
 {
-	inline matrix3x4d matrix_set(const vector4d& x_axis, const vector4d& y_axis, const vector4d& z_axis, const vector4d& w_axis) RTM_NO_EXCEPT
-	{
-		RTM_ASSERT(vector_get_w(x_axis) == 0.0, "X axis does not have a W component == 0.0");
-		RTM_ASSERT(vector_get_w(y_axis) == 0.0, "Y axis does not have a W component == 0.0");
-		RTM_ASSERT(vector_get_w(z_axis) == 0.0, "Z axis does not have a W component == 0.0");
-		RTM_ASSERT(vector_get_w(w_axis) == 1.0, "W axis does not have a W component == 1.0");
-		return matrix3x4d{x_axis, y_axis, z_axis, w_axis};
-	}
-
 	inline matrix3x4d matrix_set(const quatd& quat, const vector4d& translation, const vector4d& scale) RTM_NO_EXCEPT
 	{
 		RTM_ASSERT(quat_is_normalized(quat), "Quaternion is not normalized");
@@ -63,11 +55,6 @@ namespace rtm
 		vector4d z_axis = vector_mul(vector_set(xz + wy, yz - wx, 1.0 - (xx + yy), 0.0), vector_get_z(scale));
 		vector4d w_axis = vector_set(vector_get_x(translation), vector_get_y(translation), vector_get_z(translation), 1.0);
 		return matrix_set(x_axis, y_axis, z_axis, w_axis);
-	}
-
-	inline matrix3x4d matrix_identity_64() RTM_NO_EXCEPT
-	{
-		return matrix_set(vector_set(1.0, 0.0, 0.0, 0.0), vector_set(0.0, 1.0, 0.0, 0.0), vector_set(0.0, 0.0, 1.0, 0.0), vector_set(0.0, 0.0, 0.0, 1.0));
 	}
 
 	inline matrix3x4d matrix_cast(const matrix3x4f& input) RTM_NO_EXCEPT
