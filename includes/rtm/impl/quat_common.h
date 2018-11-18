@@ -29,6 +29,33 @@
 
 namespace rtm
 {
+	inline quatf RTM_SIMD_CALL quat_set(float x, float y, float z, float w) RTM_NO_EXCEPT
+	{
+#if defined(RTM_SSE2_INTRINSICS)
+		return _mm_set_ps(w, z, y, x);
+#elif defined(RTM_NEON_INTRINSICS)
+#if 1
+		float32x2_t V0 = vcreate_f32(((uint64_t)*(const uint32_t*)&x) | ((uint64_t)(*(const uint32_t*)&y) << 32));
+		float32x2_t V1 = vcreate_f32(((uint64_t)*(const uint32_t*)&z) | ((uint64_t)(*(const uint32_t*)&w) << 32));
+		return vcombine_f32(V0, V1);
+#else
+		float __attribute__((aligned(16))) data[4] = { x, y, z, w };
+		return vld1q_f32(data);
+#endif
+#else
+		return quatf{ x, y, z, w };
+#endif
+	}
+
+	inline quatd RTM_SIMD_CALL quat_set(double x, double y, double z, double w) RTM_NO_EXCEPT
+	{
+#if defined(RTM_SSE2_INTRINSICS)
+		return quatd{ _mm_set_pd(y, x), _mm_set_pd(w, z) };
+#else
+		return quatd{ x, y, z, w };
+#endif
+	}
+
 	namespace rtm_impl
 	{
 		enum class quat_constants

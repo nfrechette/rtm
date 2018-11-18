@@ -37,24 +37,6 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	// Setters, getters, and casts
 
-	inline quatf RTM_SIMD_CALL quat_set(float x, float y, float z, float w) RTM_NO_EXCEPT
-	{
-#if defined(RTM_SSE2_INTRINSICS)
-		return _mm_set_ps(w, z, y, x);
-#elif defined(RTM_NEON_INTRINSICS)
-#if 1
-		float32x2_t V0 = vcreate_f32(((uint64_t)*(const uint32_t*)&x) | ((uint64_t)(*(const uint32_t*)&y) << 32));
-		float32x2_t V1 = vcreate_f32(((uint64_t)*(const uint32_t*)&z) | ((uint64_t)(*(const uint32_t*)&w) << 32));
-		return vcombine_f32(V0, V1);
-#else
-		float __attribute__((aligned(16))) data[4] = { x, y, z, w };
-		return vld1q_f32(data);
-#endif
-#else
-		return quatf{ x, y, z, w };
-#endif
-	}
-
 	inline quatf RTM_SIMD_CALL quat_unaligned_load(const float* input) RTM_NO_EXCEPT
 	{
 		RTM_ASSERT(rtm_impl::is_aligned(input), "Invalid alignment");

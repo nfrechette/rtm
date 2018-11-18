@@ -37,15 +37,6 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	// Setters, getters, and casts
 
-	inline quatd quat_set(double x, double y, double z, double w) RTM_NO_EXCEPT
-	{
-#if defined(RTM_SSE2_INTRINSICS)
-		return quatd{ _mm_set_pd(y, x), _mm_set_pd(w, z) };
-#else
-		return quatd{ x, y, z, w };
-#endif
-	}
-
 	inline quatd quat_unaligned_load(const double* input) RTM_NO_EXCEPT
 	{
 		return quat_set(input[0], input[1], input[2], input[3]);
