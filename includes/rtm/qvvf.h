@@ -39,7 +39,7 @@ namespace rtm
 
 	inline qvvf RTM_SIMD_CALL qvv_identity_32() RTM_NO_EXCEPT
 	{
-		return qvv_set(quat_identity_32(), vector_zero_32(), vector_set(1.0f));
+		return qvv_set(quat_identity(), vector_zero_32(), vector_set(1.0f));
 	}
 
 	inline qvvf RTM_SIMD_CALL qvv_cast(const qvvd& input) RTM_NO_EXCEPT

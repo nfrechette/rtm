@@ -1,7 +1,8 @@
+#pragma once
+
 ////////////////////////////////////////////////////////////////////////////////
 // The MIT License (MIT)
 //
-// Copyright (c) 2018 Nicholas Frechette & Animation Compression Library contributors
 // Copyright (c) 2018 Nicholas Frechette & Realtime Math contributors
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -23,16 +24,45 @@
 // SOFTWARE.
 ////////////////////////////////////////////////////////////////////////////////
 
-#include "test_vector4_impl.h"
+#include "rtm/error.h"
+#include "rtm/math.h"
 
-TEST_CASE("vector4d math", "[math][vector4]")
+namespace rtm
 {
-	test_vector4_impl<vector4d, quatd, double>(vector_zero_64(), quat_identity(), 1.0e-9);
+	namespace rtm_impl
+	{
+		enum class quat_constants
+		{
+			identity
+		};
 
-	const vector4d src = vector_set(-2.65, 2.996113, 0.68123521, -5.9182);
-	const vector4f dst = vector_cast(src);
-	REQUIRE(scalar_near_equal(vector_get_x(dst), -2.65f, 1.0e-6f));
-	REQUIRE(scalar_near_equal(vector_get_y(dst), 2.996113f, 1.0e-6f));
-	REQUIRE(scalar_near_equal(vector_get_z(dst), 0.68123521f, 1.0e-6f));
-	REQUIRE(scalar_near_equal(vector_get_w(dst), -5.9182f, 1.0e-6f));
+		template<quat_constants constant>
+		struct quat_constant
+		{
+			inline RTM_SIMD_CALL operator quatd() RTM_NO_EXCEPT
+			{
+				switch (constant)
+				{
+				case quat_constants::identity:
+				default:
+					return quat_set(0.0, 0.0, 0.0, 1.0);
+				}
+			}
+
+			inline RTM_SIMD_CALL operator quatf() RTM_NO_EXCEPT
+			{
+				switch (constant)
+				{
+				case quat_constants::identity:
+				default:
+					return quat_set(0.0f, 0.0f, 0.0f, 1.0f);
+				}
+			}
+		};
+	}
+
+	inline rtm_impl::quat_constant<rtm_impl::quat_constants::identity> quat_identity() RTM_NO_EXCEPT
+	{
+		return rtm_impl::quat_constant<rtm_impl::quat_constants::identity>();
+	}
 }

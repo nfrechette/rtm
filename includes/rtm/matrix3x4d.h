@@ -134,7 +134,7 @@ namespace rtm
 		if (vector_all_near_equal3(input.x_axis, vector_zero_64()) || vector_all_near_equal3(input.y_axis, vector_zero_64()) || vector_all_near_equal3(input.z_axis, vector_zero_64()))
 		{
 			// Zero scale not supported, return the identity
-			return quat_identity_64();
+			return quat_identity();
 		}
 
 		const double mtx_trace = vector_get_x(input.x_axis) + vector_get_y(input.y_axis) + vector_get_z(input.z_axis);

@@ -30,6 +30,7 @@
 #include "rtm/scalard.h"
 #include "rtm/vector4d.h"
 #include "rtm/impl/memory_utils.h"
+#include "rtm/impl/quat_common.h"
 
 namespace rtm
 {
@@ -48,11 +49,6 @@ namespace rtm
 	inline quatd quat_unaligned_load(const double* input) RTM_NO_EXCEPT
 	{
 		return quat_set(input[0], input[1], input[2], input[3]);
-	}
-
-	inline quatd quat_identity_64()
-	{
-		return quat_set(0.0, 0.0, 0.0, 1.0);
 	}
 
 	inline quatd vector_to_quat(const vector4d& input) RTM_NO_EXCEPT

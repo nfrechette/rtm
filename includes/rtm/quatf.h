@@ -30,6 +30,7 @@
 #include "rtm/scalarf.h"
 #include "rtm/vector4f.h"
 #include "rtm/impl/memory_utils.h"
+#include "rtm/impl/quat_common.h"
 
 namespace rtm
 {
@@ -58,11 +59,6 @@ namespace rtm
 	{
 		RTM_ASSERT(rtm_impl::is_aligned(input), "Invalid alignment");
 		return quat_set(input[0], input[1], input[2], input[3]);
-	}
-
-	inline quatf RTM_SIMD_CALL quat_identity_32() RTM_NO_EXCEPT
-	{
-		return quat_set(0.0f, 0.0f, 0.0f, 1.0f);
 	}
 
 	inline quatf RTM_SIMD_CALL vector_to_quat(vector4f_arg0 input) RTM_NO_EXCEPT

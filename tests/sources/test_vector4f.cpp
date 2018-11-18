@@ -33,7 +33,7 @@ TEST_CASE("vector4f math", "[math][vector4]")
 	const float threshold = 1.0e-5f;
 #endif
 
-	test_vector4_impl<vector4f, quatf, float>(vector_zero_32(), quat_identity_32(), threshold);
+	test_vector4_impl<vector4f, quatf, float>(vector_zero_32(), quat_identity(), threshold);
 
 	const vector4f src = vector_set(-2.65f, 2.996113f, 0.68123521f, -5.9182f);
 	const vector4d dst = vector_cast(src);
