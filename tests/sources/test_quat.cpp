@@ -377,7 +377,7 @@ static void test_quat_impl(const Vector4Type& zero, const QuatType& identity, co
 
 TEST_CASE("quat 32 math", "[math][quat]")
 {
-	test_quat_impl<quatf, vector4f, float>(vector_zero_32(), quat_identity(), 1.0e-4f);
+	test_quat_impl<quatf, vector4f, float>(vector_zero(), quat_identity(), 1.0e-4f);
 
 	const quatf src = quat_set(0.39564531008956383f, 0.044254239301713752f, 0.22768840967675355f, 0.88863059760894492f);
 	const quatd dst = quat_cast(src);
@@ -389,7 +389,7 @@ TEST_CASE("quat 32 math", "[math][quat]")
 
 TEST_CASE("quat 64 math", "[math][quat]")
 {
-	test_quat_impl<quatd, vector4d, double>(vector_zero_64(), quat_identity(), 1.0e-6);
+	test_quat_impl<quatd, vector4d, double>(vector_zero(), quat_identity(), 1.0e-6);
 
 	const quatd src = quat_set(0.39564531008956383, 0.044254239301713752, 0.22768840967675355, 0.88863059760894492);
 	const quatf dst = quat_cast(src);

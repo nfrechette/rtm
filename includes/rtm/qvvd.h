@@ -45,7 +45,7 @@ namespace rtm
 		const vector4d min_scale = vector_min(lhs.scale, rhs.scale);
 		const vector4d scale = vector_mul(lhs.scale, rhs.scale);
 
-		if (vector_any_less_than3(min_scale, vector_zero_64()))
+		if (vector_any_less_than3(min_scale, vector_zero()))
 		{
 			// If we have negative scale, we go through a matrix
 			const matrix3x4d lhs_mtx = matrix_from_qvv(lhs);

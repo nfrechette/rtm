@@ -93,7 +93,7 @@ namespace rtm
 
 	inline matrix3x4d matrix_from_scale(const vector4d& scale)
 	{
-		RTM_ASSERT(!vector_any_near_equal3(scale, vector_zero_64()), "Scale cannot be zero");
+		RTM_ASSERT(!vector_any_near_equal3(scale, vector_zero()), "Scale cannot be zero");
 		return matrix_set(vector_set(vector_get_x(scale), 0.0, 0.0, 0.0), vector_set(0.0, vector_get_y(scale), 0.0, 0.0), vector_set(0.0, 0.0, vector_get_z(scale), 0.0), vector_set(0.0, 0.0, 0.0, 1.0));
 	}
 
@@ -118,7 +118,8 @@ namespace rtm
 
 	inline quatd quat_from_matrix(const matrix3x4d& input) RTM_NO_EXCEPT
 	{
-		if (vector_all_near_equal3(input.x_axis, vector_zero_64()) || vector_all_near_equal3(input.y_axis, vector_zero_64()) || vector_all_near_equal3(input.z_axis, vector_zero_64()))
+		const vector4d zero = vector_zero();
+		if (vector_all_near_equal3(input.x_axis, zero) || vector_all_near_equal3(input.y_axis, zero) || vector_all_near_equal3(input.z_axis, zero))
 		{
 			// Zero scale not supported, return the identity
 			return quat_identity();

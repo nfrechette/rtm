@@ -32,38 +32,6 @@
 
 namespace rtm
 {
-	namespace rtm_impl
-	{
-		union mask_converter
-		{
-			double dbl;
-			uint64_t u64;
-			float flt[2];
-
-			constexpr mask_converter(uint64_t value) RTM_NO_EXCEPT : u64(value) {}
-			constexpr mask_converter(double value) RTM_NO_EXCEPT : dbl(value) {}
-			constexpr mask_converter(float value) RTM_NO_EXCEPT : flt{value, value} {}
-
-			constexpr operator double() const RTM_NO_EXCEPT { return dbl; }
-			constexpr operator float() const RTM_NO_EXCEPT { return flt[0]; }
-		};
-
-		constexpr mask_converter get_mask_value(bool is_true) RTM_NO_EXCEPT
-		{
-			return mask_converter(is_true ? uint64_t(0xFFFFFFFFFFFFFFFFull) : uint64_t(0));
-		}
-
-		constexpr double select(double mask, double if_true, double if_false) RTM_NO_EXCEPT
-		{
-			return mask_converter(mask).u64 == 0 ? if_false : if_true;
-		}
-
-		constexpr float select(float mask, float if_true, float if_false) RTM_NO_EXCEPT
-		{
-			return mask_converter(mask).u64 == 0 ? if_false : if_true;
-		}
-	}
-
 #if defined(RTM_SSE2_INTRINSICS)
 	//////////////////////////////////////////////////////////////////////////
 	// A quaternion (4D complex number) where the imaginary part is the W component.

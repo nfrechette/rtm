@@ -36,53 +36,6 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	// Setters, getters, and casts
 
-	inline vector4f RTM_SIMD_CALL vector_set(float x, float y, float z, float w) RTM_NO_EXCEPT
-	{
-#if defined(RTM_SSE2_INTRINSICS)
-		return _mm_set_ps(w, z, y, x);
-#elif defined(RTM_NEON_INTRINSICS)
-#if 1
-		float32x2_t V0 = vcreate_f32(((uint64_t)*(const uint32_t*)&x) | ((uint64_t)(*(const uint32_t*)&y) << 32));
-		float32x2_t V1 = vcreate_f32(((uint64_t)*(const uint32_t*)&z) | ((uint64_t)(*(const uint32_t*)&w) << 32));
-		return vcombine_f32(V0, V1);
-#else
-		float __attribute__((aligned(16))) data[4] = { x, y, z, w };
-		return vld1q_f32(data);
-#endif
-#else
-		return vector4f{ x, y, z, w };
-#endif
-	}
-
-	inline vector4f RTM_SIMD_CALL vector_set(float x, float y, float z) RTM_NO_EXCEPT
-	{
-#if defined(RTM_SSE2_INTRINSICS)
-		return _mm_set_ps(0.0f, z, y, x);
-#elif defined(RTM_NEON_INTRINSICS)
-#if 1
-		float32x2_t V0 = vcreate_f32(((uint64_t)*(const uint32_t*)&x) | ((uint64_t)(*(const uint32_t*)&y) << 32));
-		float32x2_t V1 = vcreate_f32((uint64_t)*(const uint32_t*)&z);
-		return vcombine_f32(V0, V1);
-#else
-		float __attribute__((aligned(16))) data[4] = { x, y, z };
-		return vld1q_f32(data);
-#endif
-#else
-		return vector4f{ x, y, z, 0.0f };
-#endif
-	}
-
-	inline vector4f RTM_SIMD_CALL vector_set(float xyzw) RTM_NO_EXCEPT
-	{
-#if defined(RTM_SSE2_INTRINSICS)
-		return _mm_set_ps1(xyzw);
-#elif defined(RTM_NEON_INTRINSICS)
-		return vdupq_n_f32(xyzw);
-#else
-		return vector4f{ xyzw, xyzw, xyzw, xyzw };
-#endif
-	}
-
 	inline vector4f RTM_SIMD_CALL vector_unaligned_load(const float* input) RTM_NO_EXCEPT
 	{
 		RTM_ASSERT(rtm_impl::is_aligned(input), "Invalid alignment");
@@ -93,35 +46,6 @@ namespace rtm
 	{
 		RTM_ASSERT(rtm_impl::is_aligned(input), "Invalid alignment");
 		return vector_set(input[0], input[1], input[2], 0.0f);
-	}
-
-	inline vector4f RTM_SIMD_CALL vector_unaligned_load_32(const uint8_t* input) RTM_NO_EXCEPT
-	{
-#if defined(RTM_SSE2_INTRINSICS)
-		return _mm_loadu_ps((const float*)input);
-#elif defined(RTM_NEON_INTRINSICS)
-		return vreinterpretq_f32_u8(vld1q_u8(input));
-#else
-		vector4f result;
-		memcpy(&result, input, sizeof(vector4f));
-		return result;
-#endif
-	}
-
-	inline vector4f RTM_SIMD_CALL vector_unaligned_load3_32(const uint8_t* input) RTM_NO_EXCEPT
-	{
-		float input_f[3];
-		memcpy(&input_f[0], input, sizeof(float) * 3);
-		return vector_set(input_f[0], input_f[1], input_f[2], 0.0f);
-	}
-
-	inline vector4f RTM_SIMD_CALL vector_zero_32() RTM_NO_EXCEPT
-	{
-#if defined(RTM_SSE2_INTRINSICS)
-		return _mm_setzero_ps();
-#else
-		return vector_set(0.0f);
-#endif
 	}
 
 	inline vector4f RTM_SIMD_CALL quat_to_vector(quatf_arg0 input) RTM_NO_EXCEPT
@@ -838,7 +762,7 @@ namespace rtm
 
 	inline vector4f RTM_SIMD_CALL vector_sign(vector4f_arg0 input) RTM_NO_EXCEPT
 	{
-		vector4f mask = vector_greater_equal(input, vector_zero_32());
+		vector4f mask = vector_greater_equal(input, vector_zero());
 		return vector_blend(mask, vector_set(1.0f), vector_set(-1.0f));
 	}
 }

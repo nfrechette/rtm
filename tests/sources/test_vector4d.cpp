@@ -27,7 +27,7 @@
 
 TEST_CASE("vector4d math", "[math][vector4]")
 {
-	test_vector4_impl<vector4d, quatd, double>(vector_zero_64(), quat_identity(), 1.0e-9);
+	test_vector4_impl<vector4d, quatd, double>(vector_zero(), quat_identity(), 1.0e-9);
 
 	const vector4d src = vector_set(-2.65, 2.996113, 0.68123521, -5.9182);
 	const vector4f dst = vector_cast(src);

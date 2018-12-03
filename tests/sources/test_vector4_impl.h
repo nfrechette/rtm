@@ -43,13 +43,13 @@ inline Vector4Type vector_unaligned_load_raw(const uint8_t* input);
 template<>
 inline vector4f vector_unaligned_load_raw<vector4f>(const uint8_t* input)
 {
-	return vector_unaligned_load_32(input);
+	return vector_unaligned_load(input);
 }
 
 template<>
 inline vector4d vector_unaligned_load_raw<vector4d>(const uint8_t* input)
 {
-	return vector_unaligned_load_64(input);
+	return vector_unaligned_load(input);
 }
 
 template<typename Vector4Type>
@@ -58,13 +58,13 @@ inline Vector4Type vector_unaligned_load3_raw(const uint8_t* input);
 template<>
 inline vector4f vector_unaligned_load3_raw<vector4f>(const uint8_t* input)
 {
-	return vector_unaligned_load3_32(input);
+	return vector_unaligned_load3(input);
 }
 
 template<>
 inline vector4d vector_unaligned_load3_raw<vector4d>(const uint8_t* input)
 {
-	return vector_unaligned_load3_64(input);
+	return vector_unaligned_load3(input);
 }
 
 template<typename Vector4Type, typename FloatType>

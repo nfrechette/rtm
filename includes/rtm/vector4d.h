@@ -36,34 +36,6 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	// Setters, getters, and casts
 
-	inline vector4d vector_set(double x, double y, double z, double w) RTM_NO_EXCEPT
-	{
-#if defined(RTM_SSE2_INTRINSICS)
-		return vector4d{ _mm_set_pd(y, x), _mm_set_pd(w, z) };
-#else
-		return vector4d{ x, y, z, w };
-#endif
-	}
-
-	inline vector4d vector_set(double x, double y, double z) RTM_NO_EXCEPT
-	{
-#if defined(RTM_SSE2_INTRINSICS)
-		return vector4d{ _mm_set_pd(y, x), _mm_set_pd(0.0, z) };
-#else
-		return vector4d{ x, y, z, 0.0 };
-#endif
-	}
-
-	inline vector4d vector_set(double xyzw) RTM_NO_EXCEPT
-	{
-#if defined(RTM_SSE2_INTRINSICS)
-		__m128d xyzw_pd = _mm_set1_pd(xyzw);
-		return vector4d{ xyzw_pd, xyzw_pd };
-#else
-		return vector4d{ xyzw, xyzw, xyzw, xyzw };
-#endif
-	}
-
 	inline vector4d vector_unaligned_load(const double* input) RTM_NO_EXCEPT
 	{
 		RTM_ASSERT(rtm_impl::is_aligned_to(input, 4), "Invalid alignment");
@@ -74,25 +46,6 @@ namespace rtm
 	{
 		RTM_ASSERT(rtm_impl::is_aligned_to(input, 4), "Invalid alignment");
 		return vector_set(input[0], input[1], input[2], 0.0);
-	}
-
-	inline vector4d vector_unaligned_load_64(const uint8_t* input) RTM_NO_EXCEPT
-	{
-		vector4d result;
-		memcpy(&result, input, sizeof(vector4d));
-		return result;
-	}
-
-	inline vector4d vector_unaligned_load3_64(const uint8_t* input) RTM_NO_EXCEPT
-	{
-		double input_f[3];
-		memcpy(&input_f[0], input, sizeof(double) * 3);
-		return vector_set(input_f[0], input_f[1], input_f[2], 0.0);
-	}
-
-	inline vector4d vector_zero_64() RTM_NO_EXCEPT
-	{
-		return vector_set(0.0, 0.0, 0.0, 0.0);
 	}
 
 	inline vector4d quat_to_vector(const quatd& input) RTM_NO_EXCEPT
@@ -610,7 +563,7 @@ namespace rtm
 
 	inline vector4d vector_sign(const vector4d& input) RTM_NO_EXCEPT
 	{
-		vector4d mask = vector_greater_equal(input, vector_zero_64());
+		vector4d mask = vector_greater_equal(input, vector_zero());
 		return vector_blend(mask, vector_set(1.0), vector_set(-1.0));
 	}
 }

@@ -93,7 +93,7 @@ namespace rtm
 
 	inline matrix3x4f RTM_SIMD_CALL matrix_from_scale(vector4f_arg0 scale) RTM_NO_EXCEPT
 	{
-		RTM_ASSERT(!vector_any_near_equal3(scale, vector_zero_32()), "Scale cannot be zero");
+		RTM_ASSERT(!vector_any_near_equal3(scale, vector_zero()), "Scale cannot be zero");
 		return matrix_set(vector_set(vector_get_x(scale), 0.0f, 0.0f, 0.0f), vector_set(0.0f, vector_get_y(scale), 0.0f, 0.0f), vector_set(0.0f, 0.0f, vector_get_z(scale), 0.0f), vector_set(0.0f, 0.0f, 0.0f, 1.0f));
 	}
 
@@ -118,7 +118,8 @@ namespace rtm
 
 	inline quatf RTM_SIMD_CALL quat_from_matrix(matrix3x4f_arg0 input) RTM_NO_EXCEPT
 	{
-		if (vector_all_near_equal3(input.x_axis, vector_zero_32()) || vector_all_near_equal3(input.y_axis, vector_zero_32()) || vector_all_near_equal3(input.z_axis, vector_zero_32()))
+		const vector4f zero = vector_zero();
+		if (vector_all_near_equal3(input.x_axis, zero) || vector_all_near_equal3(input.y_axis, zero) || vector_all_near_equal3(input.z_axis, zero))
 		{
 			// Zero scale not supported, return the identity
 			return quat_identity();

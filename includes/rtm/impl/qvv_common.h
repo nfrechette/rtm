@@ -55,7 +55,7 @@ namespace rtm
 				{
 				case qvv_constants::identity:
 				default:
-					return qvv_set(quat_identity(), vector_zero_64(), vector_set(1.0));
+					return qvv_set(quat_identity(), vector_zero(), vector_set(1.0));
 				}
 			}
 
@@ -65,7 +65,7 @@ namespace rtm
 				{
 				case qvv_constants::identity:
 				default:
-					return qvv_set(quat_identity(), vector_zero_32(), vector_set(1.0f));
+					return qvv_set(quat_identity(), vector_zero(), vector_set(1.0f));
 				}
 			}
 		};
