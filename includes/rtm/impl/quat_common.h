@@ -88,7 +88,7 @@ namespace rtm
 		};
 	}
 
-	inline rtm_impl::quat_constant<rtm_impl::quat_constants::identity> quat_identity() RTM_NO_EXCEPT
+	inline rtm_impl::quat_constant<rtm_impl::quat_constants::identity> RTM_SIMD_CALL quat_identity() RTM_NO_EXCEPT
 	{
 		return rtm_impl::quat_constant<rtm_impl::quat_constants::identity>();
 	}

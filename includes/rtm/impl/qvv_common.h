@@ -71,7 +71,7 @@ namespace rtm
 		};
 	}
 
-	inline rtm_impl::qvv_constant<rtm_impl::qvv_constants::identity> qvv_identity() RTM_NO_EXCEPT
+	inline rtm_impl::qvv_constant<rtm_impl::qvv_constants::identity> RTM_SIMD_CALL qvv_identity() RTM_NO_EXCEPT
 	{
 		return rtm_impl::qvv_constant<rtm_impl::qvv_constants::identity>();
 	}

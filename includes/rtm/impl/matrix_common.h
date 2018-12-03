@@ -81,7 +81,7 @@ namespace rtm
 		};
 	}
 
-	inline rtm_impl::matrix_constant<rtm_impl::matrix_constants::identity> matrix_identity() RTM_NO_EXCEPT
+	inline rtm_impl::matrix_constant<rtm_impl::matrix_constants::identity> RTM_SIMD_CALL matrix_identity() RTM_NO_EXCEPT
 	{
 		return rtm_impl::matrix_constant<rtm_impl::matrix_constants::identity>();
 	}
