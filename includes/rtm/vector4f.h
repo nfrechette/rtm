@@ -29,7 +29,7 @@
 #include "rtm/math.h"
 #include "rtm/scalarf.h"
 #include "rtm/impl/memory_utils.h"
-#include "rtm/impl/vector_mix_common.h"
+#include "rtm/impl/vector_common.h"
 
 namespace rtm
 {
