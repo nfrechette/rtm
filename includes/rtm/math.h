@@ -104,5 +104,6 @@
 	#endif
 #endif
 
-// By default, we include the type definitions
+// By default, we include the type definitions and error handling
+#include "rtm/impl/error.h"
 #include "rtm/types.h"

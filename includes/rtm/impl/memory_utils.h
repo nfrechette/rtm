@@ -25,7 +25,7 @@
 // SOFTWARE.
 ////////////////////////////////////////////////////////////////////////////////
 
-#include "rtm/error.h"
+#include "rtm/impl/error.h"
 
 #include <cstdint>
 #include <cstring>

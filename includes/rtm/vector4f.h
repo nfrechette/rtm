@@ -25,7 +25,6 @@
 // SOFTWARE.
 ////////////////////////////////////////////////////////////////////////////////
 
-#include "rtm/error.h"
 #include "rtm/math.h"
 #include "rtm/scalarf.h"
 #include "rtm/impl/memory_utils.h"

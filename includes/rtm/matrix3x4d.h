@@ -25,7 +25,6 @@
 // SOFTWARE.
 ////////////////////////////////////////////////////////////////////////////////
 
-#include "rtm/error.h"
 #include "rtm/math.h"
 #include "rtm/vector4d.h"
 #include "rtm/quatd.h"
