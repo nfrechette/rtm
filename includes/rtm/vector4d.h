@@ -734,7 +734,7 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	// Per component selection depending on the mask: mask != 0 ? if_true : if_false
 	//////////////////////////////////////////////////////////////////////////
-	inline vector4d vector_blend(const vector4d& mask, const vector4d& if_true, const vector4d& if_false) RTM_NO_EXCEPT
+	inline vector4d vector_select(const vector4d& mask, const vector4d& if_true, const vector4d& if_false) RTM_NO_EXCEPT
 	{
 #if defined(RTM_SSE2_INTRINSICS)
 		__m128d xy = _mm_or_pd(_mm_andnot_pd(mask.xy, if_false.xy), _mm_and_pd(if_true.xy, mask.xy));
@@ -792,6 +792,6 @@ namespace rtm
 	inline vector4d vector_sign(const vector4d& input) RTM_NO_EXCEPT
 	{
 		vector4d mask = vector_greater_equal(input, vector_zero());
-		return vector_blend(mask, vector_set(1.0), vector_set(-1.0));
+		return vector_select(mask, vector_set(1.0), vector_set(-1.0));
 	}
 }

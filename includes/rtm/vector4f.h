@@ -899,7 +899,7 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	// Per component selection depending on the mask: mask != 0 ? if_true : if_false
 	//////////////////////////////////////////////////////////////////////////
-	inline vector4f RTM_SIMD_CALL vector_blend(vector4f_arg0 mask, vector4f_arg1 if_true, vector4f_arg2 if_false) RTM_NO_EXCEPT
+	inline vector4f RTM_SIMD_CALL vector_select(vector4f_arg0 mask, vector4f_arg1 if_true, vector4f_arg2 if_false) RTM_NO_EXCEPT
 	{
 #if defined(RTM_SSE2_INTRINSICS)
 		return _mm_or_ps(_mm_andnot_ps(mask, if_false), _mm_and_ps(if_true, mask));
@@ -991,6 +991,6 @@ namespace rtm
 	inline vector4f RTM_SIMD_CALL vector_sign(vector4f_arg0 input) RTM_NO_EXCEPT
 	{
 		vector4f mask = vector_greater_equal(input, vector_zero());
-		return vector_blend(mask, vector_set(1.0f), vector_set(-1.0f));
+		return vector_select(mask, vector_set(1.0f), vector_set(-1.0f));
 	}
 }

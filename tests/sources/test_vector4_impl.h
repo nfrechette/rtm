@@ -537,14 +537,14 @@ void test_vector4_impl(const Vector4Type& zero, const QuatType& identity, const 
 	//////////////////////////////////////////////////////////////////////////
 	// Swizzling, permutations, and mixing
 
-	REQUIRE(scalar_near_equal(vector_get_x(vector_blend(vector_less_than(zero, vector_set(FloatType(1.0))), test_value0, test_value1)), test_value0_flt[0], threshold));
-	REQUIRE(scalar_near_equal(vector_get_y(vector_blend(vector_less_than(zero, vector_set(FloatType(1.0))), test_value0, test_value1)), test_value0_flt[1], threshold));
-	REQUIRE(scalar_near_equal(vector_get_z(vector_blend(vector_less_than(zero, vector_set(FloatType(1.0))), test_value0, test_value1)), test_value0_flt[2], threshold));
-	REQUIRE(scalar_near_equal(vector_get_w(vector_blend(vector_less_than(zero, vector_set(FloatType(1.0))), test_value0, test_value1)), test_value0_flt[3], threshold));
-	REQUIRE(scalar_near_equal(vector_get_x(vector_blend(vector_less_than(vector_set(FloatType(1.0)), zero), test_value0, test_value1)), test_value1_flt[0], threshold));
-	REQUIRE(scalar_near_equal(vector_get_y(vector_blend(vector_less_than(vector_set(FloatType(1.0)), zero), test_value0, test_value1)), test_value1_flt[1], threshold));
-	REQUIRE(scalar_near_equal(vector_get_z(vector_blend(vector_less_than(vector_set(FloatType(1.0)), zero), test_value0, test_value1)), test_value1_flt[2], threshold));
-	REQUIRE(scalar_near_equal(vector_get_w(vector_blend(vector_less_than(vector_set(FloatType(1.0)), zero), test_value0, test_value1)), test_value1_flt[3], threshold));
+	REQUIRE(scalar_near_equal(vector_get_x(vector_select(vector_less_than(zero, vector_set(FloatType(1.0))), test_value0, test_value1)), test_value0_flt[0], threshold));
+	REQUIRE(scalar_near_equal(vector_get_y(vector_select(vector_less_than(zero, vector_set(FloatType(1.0))), test_value0, test_value1)), test_value0_flt[1], threshold));
+	REQUIRE(scalar_near_equal(vector_get_z(vector_select(vector_less_than(zero, vector_set(FloatType(1.0))), test_value0, test_value1)), test_value0_flt[2], threshold));
+	REQUIRE(scalar_near_equal(vector_get_w(vector_select(vector_less_than(zero, vector_set(FloatType(1.0))), test_value0, test_value1)), test_value0_flt[3], threshold));
+	REQUIRE(scalar_near_equal(vector_get_x(vector_select(vector_less_than(vector_set(FloatType(1.0)), zero), test_value0, test_value1)), test_value1_flt[0], threshold));
+	REQUIRE(scalar_near_equal(vector_get_y(vector_select(vector_less_than(vector_set(FloatType(1.0)), zero), test_value0, test_value1)), test_value1_flt[1], threshold));
+	REQUIRE(scalar_near_equal(vector_get_z(vector_select(vector_less_than(vector_set(FloatType(1.0)), zero), test_value0, test_value1)), test_value1_flt[2], threshold));
+	REQUIRE(scalar_near_equal(vector_get_w(vector_select(vector_less_than(vector_set(FloatType(1.0)), zero), test_value0, test_value1)), test_value1_flt[3], threshold));
 
 	//////////////////////////////////////////////////////////////////////////
 	// Misc
