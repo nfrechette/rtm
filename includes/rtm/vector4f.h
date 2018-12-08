@@ -539,14 +539,14 @@ namespace rtm
 	// If the length of the input is below the supplied threshold, the
 	// fall back value is returned instead.
 	//////////////////////////////////////////////////////////////////////////
-	inline vector4f RTM_SIMD_CALL vector_normalize3(vector4f_arg0 input, float threshold = 1.0e-8f) RTM_NO_EXCEPT
+	inline vector4f RTM_SIMD_CALL vector_normalize3(vector4f_arg0 input, vector4f_arg1 fallback, float threshold = 1.0e-8f) RTM_NO_EXCEPT
 	{
 		// Reciprocal is more accurate to normalize with
 		const float len_sq = vector_length_squared3(input);
 		if (len_sq >= threshold)
 			return vector_mul(input, scalar_sqrt_reciprocal(len_sq));
 		else
-			return input;
+			return fallback;
 	}
 
 	//////////////////////////////////////////////////////////////////////////

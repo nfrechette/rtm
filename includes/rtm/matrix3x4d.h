@@ -375,9 +375,9 @@ namespace rtm
 	inline matrix3x4d matrix_remove_scale(const matrix3x4d& input) RTM_NO_EXCEPT
 	{
 		matrix3x4d result;
-		result.x_axis = vector_normalize3(input.x_axis);
-		result.y_axis = vector_normalize3(input.y_axis);
-		result.z_axis = vector_normalize3(input.z_axis);
+		result.x_axis = vector_normalize3(input.x_axis, input.x_axis);
+		result.y_axis = vector_normalize3(input.y_axis, input.y_axis);
+		result.z_axis = vector_normalize3(input.z_axis, input.z_axis);
 		result.w_axis = input.w_axis;
 		return result;
 	}
