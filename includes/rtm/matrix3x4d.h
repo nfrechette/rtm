@@ -240,27 +240,24 @@ namespace rtm
 		return vector_add(tmp0, tmp1);
 	}
 
-	namespace rtm_impl
+	//////////////////////////////////////////////////////////////////////////
+	// Transposes a 3x4 affine matrix.
+	// Note: This is a generic matrix 4x4 transpose, the resulting matrix is no longer
+	// affine because the last row is no longer [0,0,0,1]
+	// TODO: Output a full 4x4 matrix
+	//////////////////////////////////////////////////////////////////////////
+	inline matrix3x4d matrix_transpose(const matrix3x4d& input) RTM_NO_EXCEPT
 	{
-		//////////////////////////////////////////////////////////////////////////
-		// Transposes a 3x4 affine matrix.
-		// Note: This is a generic matrix 4x4 transpose, the resulting matrix is no longer
-		// affine because the last row is no longer [0,0,0,1]
-		// TODO: Output a full 4x4 matrix
-		//////////////////////////////////////////////////////////////////////////
-		inline matrix3x4d matrix_transpose(const matrix3x4d& input) RTM_NO_EXCEPT
-		{
-			vector4d tmp0 = vector_mix<mix4::x, mix4::y, mix4::a, mix4::b>(input.x_axis, input.y_axis);
-			vector4d tmp1 = vector_mix<mix4::z, mix4::w, mix4::c, mix4::d>(input.x_axis, input.y_axis);
-			vector4d tmp2 = vector_mix<mix4::x, mix4::y, mix4::a, mix4::b>(input.z_axis, input.w_axis);
-			vector4d tmp3 = vector_mix<mix4::z, mix4::w, mix4::c, mix4::d>(input.z_axis, input.w_axis);
+		vector4d tmp0 = vector_mix<mix4::x, mix4::y, mix4::a, mix4::b>(input.x_axis, input.y_axis);
+		vector4d tmp1 = vector_mix<mix4::z, mix4::w, mix4::c, mix4::d>(input.x_axis, input.y_axis);
+		vector4d tmp2 = vector_mix<mix4::x, mix4::y, mix4::a, mix4::b>(input.z_axis, input.w_axis);
+		vector4d tmp3 = vector_mix<mix4::z, mix4::w, mix4::c, mix4::d>(input.z_axis, input.w_axis);
 
-			vector4d x_axis = vector_mix<mix4::x, mix4::z, mix4::a, mix4::c>(tmp0, tmp2);
-			vector4d y_axis = vector_mix<mix4::y, mix4::w, mix4::b, mix4::d>(tmp0, tmp2);
-			vector4d z_axis = vector_mix<mix4::x, mix4::z, mix4::a, mix4::c>(tmp1, tmp3);
-			vector4d w_axis = vector_mix<mix4::y, mix4::w, mix4::b, mix4::d>(tmp1, tmp3);
-			return matrix3x4d{ x_axis, y_axis, z_axis, w_axis };
-		}
+		vector4d x_axis = vector_mix<mix4::x, mix4::z, mix4::a, mix4::c>(tmp0, tmp2);
+		vector4d y_axis = vector_mix<mix4::y, mix4::w, mix4::b, mix4::d>(tmp0, tmp2);
+		vector4d z_axis = vector_mix<mix4::x, mix4::z, mix4::a, mix4::c>(tmp1, tmp3);
+		vector4d w_axis = vector_mix<mix4::y, mix4::w, mix4::b, mix4::d>(tmp1, tmp3);
+		return matrix3x4d{ x_axis, y_axis, z_axis, w_axis };
 	}
 
 	//////////////////////////////////////////////////////////////////////////
@@ -272,7 +269,7 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	inline matrix3x4d matrix_inverse(const matrix3x4d& input) RTM_NO_EXCEPT
 	{
-		matrix3x4d input_transposed = rtm_impl::matrix_transpose(input);
+		matrix3x4d input_transposed = matrix_transpose(input);
 
 		vector4d v00 = vector_mix<mix4::x, mix4::x, mix4::y, mix4::y>(input_transposed.z_axis, input_transposed.z_axis);
 		vector4d v01 = vector_mix<mix4::x, mix4::x, mix4::y, mix4::y>(input_transposed.x_axis, input_transposed.x_axis);
