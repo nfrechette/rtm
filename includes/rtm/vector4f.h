@@ -173,7 +173,7 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	// Returns a floating point pointer to the vector4 data.
 	//////////////////////////////////////////////////////////////////////////
-	inline const float* RTM_SIMD_CALL vector_as_float_ptr(const vector4f& input) RTM_NO_EXCEPT
+	inline const float* RTM_SIMD_CALL vector_to_pointer(const vector4f& input) RTM_NO_EXCEPT
 	{
 		return reinterpret_cast<const float*>(&input);
 	}

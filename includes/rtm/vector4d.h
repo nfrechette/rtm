@@ -167,7 +167,7 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	// Returns a floating point pointer to the vector4 data.
 	//////////////////////////////////////////////////////////////////////////
-	inline const double* vector_as_double_ptr(const vector4d& input) RTM_NO_EXCEPT
+	inline const double* vector_to_pointer(const vector4d& input) RTM_NO_EXCEPT
 	{
 		return reinterpret_cast<const double*>(&input);
 	}

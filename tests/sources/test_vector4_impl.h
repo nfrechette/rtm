@@ -73,13 +73,13 @@ inline const FloatType* vector_as_float_ptr_raw(const Vector4Type& input);
 template<>
 inline const float* vector_as_float_ptr_raw<vector4f, float>(const vector4f& input)
 {
-	return vector_as_float_ptr(input);
+	return vector_to_pointer(input);
 }
 
 template<>
 inline const double* vector_as_float_ptr_raw<vector4d, double>(const vector4d& input)
 {
-	return vector_as_double_ptr(input);
+	return vector_to_pointer(input);
 }
 
 template<typename Vector4Type>
