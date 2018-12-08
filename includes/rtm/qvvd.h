@@ -72,7 +72,7 @@ namespace rtm
 		else
 		{
 			const quatd rotation = quat_mul(lhs.rotation, rhs.rotation);
-			const vector4d translation = vector_add(quat_rotate(rhs.rotation, vector_mul(lhs.translation, rhs.scale)), rhs.translation);
+			const vector4d translation = vector_add(quat_mul_vector3(rhs.rotation, vector_mul(lhs.translation, rhs.scale)), rhs.translation);
 			return qvv_set(rotation, translation, scale);
 		}
 	}
@@ -85,7 +85,7 @@ namespace rtm
 	inline qvvd qvv_mul_no_scale(const qvvd& lhs, const qvvd& rhs) RTM_NO_EXCEPT
 	{
 		const quatd rotation = quat_mul(lhs.rotation, rhs.rotation);
-		const vector4d translation = vector_add(quat_rotate(rhs.rotation, lhs.translation), rhs.translation);
+		const vector4d translation = vector_add(quat_mul_vector3(rhs.rotation, lhs.translation), rhs.translation);
 		return qvv_set(rotation, translation, vector_set(1.0));
 	}
 
@@ -94,7 +94,7 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	inline vector4d qvv_mul_position(const qvvd& lhs, const vector4d& rhs) RTM_NO_EXCEPT
 	{
-		return vector_add(quat_rotate(lhs.rotation, vector_mul(lhs.scale, rhs)), lhs.translation);
+		return vector_add(quat_mul_vector3(lhs.rotation, vector_mul(lhs.scale, rhs)), lhs.translation);
 	}
 
 	//////////////////////////////////////////////////////////////////////////
@@ -102,7 +102,7 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	inline vector4d qvv_mul_position_no_scale(const qvvd& lhs, const vector4d& rhs) RTM_NO_EXCEPT
 	{
-		return vector_add(quat_rotate(lhs.rotation, rhs), lhs.translation);
+		return vector_add(quat_mul_vector3(lhs.rotation, rhs), lhs.translation);
 	}
 
 	//////////////////////////////////////////////////////////////////////////
@@ -112,7 +112,7 @@ namespace rtm
 	{
 		const quatd inv_rotation = quat_conjugate(input.rotation);
 		const vector4d inv_scale = vector_reciprocal(input.scale);
-		const vector4d inv_translation = vector_neg(quat_rotate(inv_rotation, vector_mul(input.translation, inv_scale)));
+		const vector4d inv_translation = vector_neg(quat_mul_vector3(inv_rotation, vector_mul(input.translation, inv_scale)));
 		return qvv_set(inv_rotation, inv_translation, inv_scale);
 	}
 
@@ -123,7 +123,7 @@ namespace rtm
 	inline qvvd qvv_inverse_no_scale(const qvvd& input) RTM_NO_EXCEPT
 	{
 		const quatd inv_rotation = quat_conjugate(input.rotation);
-		const vector4d inv_translation = vector_neg(quat_rotate(inv_rotation, input.translation));
+		const vector4d inv_translation = vector_neg(quat_mul_vector3(inv_rotation, input.translation));
 		return qvv_set(inv_rotation, inv_translation, vector_set(1.0));
 	}
 

@@ -175,9 +175,9 @@ namespace rtm
 	}
 
 	//////////////////////////////////////////////////////////////////////////
-	// Multiplies a quaternion and a 3D point, rotating it.
+	// Multiplies a quaternion and a 3D vector, rotating it.
 	//////////////////////////////////////////////////////////////////////////
-	inline vector4d quat_rotate(const quatd& rotation, const vector4d& vector) RTM_NO_EXCEPT
+	inline vector4d quat_mul_vector3(const quatd& rotation, const vector4d& vector) RTM_NO_EXCEPT
 	{
 		quatd vector_quat = quat_set(vector_get_x(vector), vector_get_y(vector), vector_get_z(vector), 0.0);
 		quatd inv_rotation = quat_conjugate(rotation);
