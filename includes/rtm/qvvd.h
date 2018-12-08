@@ -92,17 +92,17 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	// Multiplies a QVV transform and a 3D point.
 	//////////////////////////////////////////////////////////////////////////
-	inline vector4d qvv_mul_position(const qvvd& lhs, const vector4d& rhs) RTM_NO_EXCEPT
+	inline vector4d qvv_mul_point3(const qvvd& qvv, const vector4d& point) RTM_NO_EXCEPT
 	{
-		return vector_add(quat_mul_vector3(lhs.rotation, vector_mul(lhs.scale, rhs)), lhs.translation);
+		return vector_add(quat_mul_vector3(qvv.rotation, vector_mul(qvv.scale, point)), qvv.translation);
 	}
 
 	//////////////////////////////////////////////////////////////////////////
 	// Multiplies a QVV transform and a 3D point ignoring 3D scale.
 	//////////////////////////////////////////////////////////////////////////
-	inline vector4d qvv_mul_position_no_scale(const qvvd& lhs, const vector4d& rhs) RTM_NO_EXCEPT
+	inline vector4d qvv_mul_point3_no_scale(const qvvd& qvv, const vector4d& point) RTM_NO_EXCEPT
 	{
-		return vector_add(quat_mul_vector3(lhs.rotation, rhs), lhs.translation);
+		return vector_add(quat_mul_vector3(qvv.rotation, point), qvv.translation);
 	}
 
 	//////////////////////////////////////////////////////////////////////////

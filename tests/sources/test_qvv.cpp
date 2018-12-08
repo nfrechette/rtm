@@ -56,32 +56,32 @@ static void test_qvv_impl(const TransformType& identity, const FloatType thresho
 
 		QuatType rotation_around_z = quat_from_euler(scalar_deg_to_rad(FloatType(0.0)), scalar_deg_to_rad(FloatType(90.0)), scalar_deg_to_rad(FloatType(0.0)));
 		TransformType transform_a = qvv_set(rotation_around_z, x_axis, test_scale);
-		Vector4Type result = qvv_mul_position(transform_a, x_axis);
+		Vector4Type result = qvv_mul_point3(transform_a, x_axis);
 		REQUIRE(vector_all_near_equal3(result, vector_set(FloatType(1.0), FloatType(1.2), FloatType(0.0)), threshold));
-		result = qvv_mul_position(transform_a, y_axis);
+		result = qvv_mul_point3(transform_a, y_axis);
 		REQUIRE(vector_all_near_equal3(result, vector_set(FloatType(-0.2), FloatType(0.0), FloatType(0.0)), threshold));
 
 		QuatType rotation_around_x = quat_from_euler(scalar_deg_to_rad(FloatType(0.0)), scalar_deg_to_rad(FloatType(0.0)), scalar_deg_to_rad(FloatType(90.0)));
 		TransformType transform_b = qvv_set(rotation_around_x, y_axis, test_scale);
-		result = qvv_mul_position(transform_b, x_axis);
+		result = qvv_mul_point3(transform_b, x_axis);
 		REQUIRE(vector_all_near_equal3(result, vector_set(FloatType(1.2), FloatType(1.0), FloatType(0.0)), threshold));
-		result = qvv_mul_position(transform_b, y_axis);
+		result = qvv_mul_point3(transform_b, y_axis);
 		REQUIRE(vector_all_near_equal3(result, vector_set(FloatType(0.0), FloatType(1.0), FloatType(-1.2)), threshold));
 
 		TransformType transform_ab = qvv_mul(transform_a, transform_b);
 		TransformType transform_ba = qvv_mul(transform_b, transform_a);
-		result = qvv_mul_position(transform_ab, x_axis);
+		result = qvv_mul_point3(transform_ab, x_axis);
 		REQUIRE(vector_all_near_equal3(result, vector_set(FloatType(1.2), FloatType(1.0), FloatType(-1.44)), threshold));
-		REQUIRE(vector_all_near_equal3(result, qvv_mul_position(transform_b, qvv_mul_position(transform_a, x_axis)), threshold));
-		result = qvv_mul_position(transform_ab, y_axis);
+		REQUIRE(vector_all_near_equal3(result, qvv_mul_point3(transform_b, qvv_mul_point3(transform_a, x_axis)), threshold));
+		result = qvv_mul_point3(transform_ab, y_axis);
 		REQUIRE(vector_all_near_equal3(result, vector_set(FloatType(-0.24), FloatType(1.0), FloatType(0.0)), threshold));
-		REQUIRE(vector_all_near_equal3(result, qvv_mul_position(transform_b, qvv_mul_position(transform_a, y_axis)), threshold));
-		result = qvv_mul_position(transform_ba, x_axis);
+		REQUIRE(vector_all_near_equal3(result, qvv_mul_point3(transform_b, qvv_mul_point3(transform_a, y_axis)), threshold));
+		result = qvv_mul_point3(transform_ba, x_axis);
 		REQUIRE(vector_all_near_equal3(result, vector_set(FloatType(-0.2), FloatType(1.44), FloatType(0.0)), threshold));
-		REQUIRE(vector_all_near_equal3(result, qvv_mul_position(transform_a, qvv_mul_position(transform_b, x_axis)), threshold));
-		result = qvv_mul_position(transform_ba, y_axis);
+		REQUIRE(vector_all_near_equal3(result, qvv_mul_point3(transform_a, qvv_mul_point3(transform_b, x_axis)), threshold));
+		result = qvv_mul_point3(transform_ba, y_axis);
 		REQUIRE(vector_all_near_equal3(result, vector_set(FloatType(-0.2), FloatType(0.0), FloatType(-1.44)), threshold));
-		REQUIRE(vector_all_near_equal3(result, qvv_mul_position(transform_a, qvv_mul_position(transform_b, y_axis)), threshold));
+		REQUIRE(vector_all_near_equal3(result, qvv_mul_point3(transform_a, qvv_mul_point3(transform_b, y_axis)), threshold));
 	}
 
 	{
@@ -90,32 +90,32 @@ static void test_qvv_impl(const TransformType& identity, const FloatType thresho
 
 		QuatType rotation_around_z = quat_from_euler(scalar_deg_to_rad(FloatType(0.0)), scalar_deg_to_rad(FloatType(90.0)), scalar_deg_to_rad(FloatType(0.0)));
 		TransformType transform_a = qvv_set(rotation_around_z, x_axis, vector_set(FloatType(1.0)));
-		Vector4Type result = qvv_mul_position_no_scale(transform_a, x_axis);
+		Vector4Type result = qvv_mul_point3_no_scale(transform_a, x_axis);
 		REQUIRE(vector_all_near_equal3(result, vector_set(FloatType(1.0), FloatType(1.0), FloatType(0.0)), threshold));
-		result = qvv_mul_position_no_scale(transform_a, y_axis);
+		result = qvv_mul_point3_no_scale(transform_a, y_axis);
 		REQUIRE(vector_all_near_equal3(result, vector_set(FloatType(0.0), FloatType(0.0), FloatType(0.0)), threshold));
 
 		QuatType rotation_around_x = quat_from_euler(scalar_deg_to_rad(FloatType(0.0)), scalar_deg_to_rad(FloatType(0.0)), scalar_deg_to_rad(FloatType(90.0)));
 		TransformType transform_b = qvv_set(rotation_around_x, y_axis, vector_set(FloatType(1.0)));
-		result = qvv_mul_position_no_scale(transform_b, x_axis);
+		result = qvv_mul_point3_no_scale(transform_b, x_axis);
 		REQUIRE(vector_all_near_equal3(result, vector_set(FloatType(1.0), FloatType(1.0), FloatType(0.0)), threshold));
-		result = qvv_mul_position_no_scale(transform_b, y_axis);
+		result = qvv_mul_point3_no_scale(transform_b, y_axis);
 		REQUIRE(vector_all_near_equal3(result, vector_set(FloatType(0.0), FloatType(1.0), FloatType(-1.0)), threshold));
 
 		TransformType transform_ab = qvv_mul_no_scale(transform_a, transform_b);
 		TransformType transform_ba = qvv_mul_no_scale(transform_b, transform_a);
-		result = qvv_mul_position_no_scale(transform_ab, x_axis);
+		result = qvv_mul_point3_no_scale(transform_ab, x_axis);
 		REQUIRE(vector_all_near_equal3(result, vector_set(FloatType(1.0), FloatType(1.0), FloatType(-1.0)), threshold));
-		REQUIRE(vector_all_near_equal3(result, qvv_mul_position_no_scale(transform_b, qvv_mul_position_no_scale(transform_a, x_axis)), threshold));
-		result = qvv_mul_position_no_scale(transform_ab, y_axis);
+		REQUIRE(vector_all_near_equal3(result, qvv_mul_point3_no_scale(transform_b, qvv_mul_point3_no_scale(transform_a, x_axis)), threshold));
+		result = qvv_mul_point3_no_scale(transform_ab, y_axis);
 		REQUIRE(vector_all_near_equal3(result, vector_set(FloatType(0.0), FloatType(1.0), FloatType(0.0)), threshold));
-		REQUIRE(vector_all_near_equal3(result, qvv_mul_position_no_scale(transform_b, qvv_mul_position_no_scale(transform_a, y_axis)), threshold));
-		result = qvv_mul_position_no_scale(transform_ba, x_axis);
+		REQUIRE(vector_all_near_equal3(result, qvv_mul_point3_no_scale(transform_b, qvv_mul_point3_no_scale(transform_a, y_axis)), threshold));
+		result = qvv_mul_point3_no_scale(transform_ba, x_axis);
 		REQUIRE(vector_all_near_equal3(result, vector_set(FloatType(0.0), FloatType(1.0), FloatType(0.0)), threshold));
-		REQUIRE(vector_all_near_equal3(result, qvv_mul_position_no_scale(transform_a, qvv_mul_position_no_scale(transform_b, x_axis)), threshold));
-		result = qvv_mul_position_no_scale(transform_ba, y_axis);
+		REQUIRE(vector_all_near_equal3(result, qvv_mul_point3_no_scale(transform_a, qvv_mul_point3_no_scale(transform_b, x_axis)), threshold));
+		result = qvv_mul_point3_no_scale(transform_ba, y_axis);
 		REQUIRE(vector_all_near_equal3(result, vector_set(FloatType(0.0), FloatType(0.0), FloatType(-1.0)), threshold));
-		REQUIRE(vector_all_near_equal3(result, qvv_mul_position_no_scale(transform_a, qvv_mul_position_no_scale(transform_b, y_axis)), threshold));
+		REQUIRE(vector_all_near_equal3(result, qvv_mul_point3_no_scale(transform_a, qvv_mul_point3_no_scale(transform_b, y_axis)), threshold));
 	}
 
 	{
