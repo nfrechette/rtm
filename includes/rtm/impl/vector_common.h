@@ -31,6 +31,9 @@
 
 namespace rtm
 {
+	//////////////////////////////////////////////////////////////////////////
+	// Creates a vector4 from all 4 components.
+	//////////////////////////////////////////////////////////////////////////
 	inline vector4f RTM_SIMD_CALL vector_set(float x, float y, float z, float w) RTM_NO_EXCEPT
 	{
 #if defined(RTM_SSE2_INTRINSICS)
@@ -49,6 +52,9 @@ namespace rtm
 #endif
 	}
 
+	//////////////////////////////////////////////////////////////////////////
+	// Creates a vector4 from the [xyz] components and sets [w] to 0.0.
+	//////////////////////////////////////////////////////////////////////////
 	inline vector4f RTM_SIMD_CALL vector_set(float x, float y, float z) RTM_NO_EXCEPT
 	{
 #if defined(RTM_SSE2_INTRINSICS)
@@ -67,6 +73,9 @@ namespace rtm
 #endif
 	}
 
+	//////////////////////////////////////////////////////////////////////////
+	// Creates a vector4 from a single value for all 4 components.
+	//////////////////////////////////////////////////////////////////////////
 	inline vector4f RTM_SIMD_CALL vector_set(float xyzw) RTM_NO_EXCEPT
 	{
 #if defined(RTM_SSE2_INTRINSICS)
@@ -78,6 +87,9 @@ namespace rtm
 #endif
 	}
 
+	//////////////////////////////////////////////////////////////////////////
+	// Creates a vector4 from all 4 components.
+	//////////////////////////////////////////////////////////////////////////
 	inline vector4d vector_set(double x, double y, double z, double w) RTM_NO_EXCEPT
 	{
 #if defined(RTM_SSE2_INTRINSICS)
@@ -87,6 +99,9 @@ namespace rtm
 #endif
 	}
 
+	//////////////////////////////////////////////////////////////////////////
+	// Creates a vector4 from the [xyz] components and sets [w] to 0.0.
+	//////////////////////////////////////////////////////////////////////////
 	inline vector4d vector_set(double x, double y, double z) RTM_NO_EXCEPT
 	{
 #if defined(RTM_SSE2_INTRINSICS)
@@ -96,6 +111,9 @@ namespace rtm
 #endif
 	}
 
+	//////////////////////////////////////////////////////////////////////////
+	// Creates a vector4 from a single value for all 4 components.
+	//////////////////////////////////////////////////////////////////////////
 	inline vector4d vector_set(double xyzw) RTM_NO_EXCEPT
 	{
 #if defined(RTM_SSE2_INTRINSICS)
@@ -108,12 +126,19 @@ namespace rtm
 
 	namespace rtm_impl
 	{
+		//////////////////////////////////////////////////////////////////////////
 		// Returns true if mix4 component is one of [xyzw]
+		//////////////////////////////////////////////////////////////////////////
 		constexpr bool is_mix_xyzw(mix4 arg) RTM_NO_EXCEPT { return uint32_t(arg) <= uint32_t(mix4::w); }
 
+		//////////////////////////////////////////////////////////////////////////
 		// Returns true if mix4 component is one of [abcd]
+		//////////////////////////////////////////////////////////////////////////
 		constexpr bool is_mix_abcd(mix4 arg) RTM_NO_EXCEPT { return uint32_t(arg) >= uint32_t(mix4::a); }
 
+		//////////////////////////////////////////////////////////////////////////
+		// This is a helper struct to help manipulate SIMD masks.
+		//////////////////////////////////////////////////////////////////////////
 		union mask_converter
 		{
 			double dbl;
@@ -128,26 +153,44 @@ namespace rtm
 			constexpr operator float() const RTM_NO_EXCEPT { return flt[0]; }
 		};
 
+		//////////////////////////////////////////////////////////////////////////
+		// Returns a SIMD mask value from a boolean.
+		//////////////////////////////////////////////////////////////////////////
 		constexpr mask_converter get_mask_value(bool is_true) RTM_NO_EXCEPT
 		{
 			return mask_converter(is_true ? uint64_t(0xFFFFFFFFFFFFFFFFull) : uint64_t(0));
 		}
 
+		//////////////////////////////////////////////////////////////////////////
+		// Selects if_false if the SIMD mask value is 0, otherwise if_true.
+		//////////////////////////////////////////////////////////////////////////
 		constexpr double select(double mask, double if_true, double if_false) RTM_NO_EXCEPT
 		{
 			return mask_converter(mask).u64 == 0 ? if_false : if_true;
 		}
 
+		//////////////////////////////////////////////////////////////////////////
+		// Selects if_false if the SIMD mask value is 0, otherwise if_true.
+		//////////////////////////////////////////////////////////////////////////
 		constexpr float select(float mask, float if_true, float if_false) RTM_NO_EXCEPT
 		{
 			return mask_converter(mask).u64 == 0 ? if_false : if_true;
 		}
 
+		//////////////////////////////////////////////////////////////////////////
+		// Various vector constants
+		//////////////////////////////////////////////////////////////////////////
 		enum class vector_constants
 		{
 			zero
 		};
 
+		//////////////////////////////////////////////////////////////////////////
+		// This is a helper struct to allow a single consistent API between
+		// various vector types when the semantics are identical but the return
+		// type differs. Implicit coercion is used to return the desired value
+		// at the call site.
+		//////////////////////////////////////////////////////////////////////////
 		template<vector_constants constant>
 		struct vector_constant
 		{
@@ -181,12 +224,21 @@ namespace rtm
 			}
 		};
 
+		//////////////////////////////////////////////////////////////////////////
+		// Various vector widths we can load
+		//////////////////////////////////////////////////////////////////////////
 		enum class vector_unaligned_loader_width
 		{
 			vec3,
 			vec4,
 		};
 
+		//////////////////////////////////////////////////////////////////////////
+		// This is a helper struct to allow a single consistent API between
+		// various vector types when the semantics are identical but the return
+		// type differs. Implicit coercion is used to return the desired value
+		// at the call site.
+		//////////////////////////////////////////////////////////////////////////
 		template<vector_unaligned_loader_width width>
 		struct vector_unaligned_loader
 		{
@@ -242,16 +294,25 @@ namespace rtm
 		};
 	}
 
+	//////////////////////////////////////////////////////////////////////////
+	// Returns a vector consisting of all zeros.
+	//////////////////////////////////////////////////////////////////////////
 	inline rtm_impl::vector_constant<rtm_impl::vector_constants::zero> RTM_SIMD_CALL vector_zero() RTM_NO_EXCEPT
 	{
 		return rtm_impl::vector_constant<rtm_impl::vector_constants::zero>();
 	}
 
+	//////////////////////////////////////////////////////////////////////////
+	// Loads an unaligned vector4.
+	//////////////////////////////////////////////////////////////////////////
 	inline rtm_impl::vector_unaligned_loader<rtm_impl::vector_unaligned_loader_width::vec4> RTM_SIMD_CALL vector_unaligned_load(const uint8_t* input) RTM_NO_EXCEPT
 	{
 		return rtm_impl::vector_unaligned_loader<rtm_impl::vector_unaligned_loader_width::vec4>(input);
 	}
 
+	//////////////////////////////////////////////////////////////////////////
+	// Loads an unaligned vector3 and sets the [w] component to 0.0.
+	//////////////////////////////////////////////////////////////////////////
 	inline rtm_impl::vector_unaligned_loader<rtm_impl::vector_unaligned_loader_width::vec3> RTM_SIMD_CALL vector_unaligned_load3(const uint8_t* input) RTM_NO_EXCEPT
 	{
 		return rtm_impl::vector_unaligned_loader<rtm_impl::vector_unaligned_loader_width::vec3>(input);

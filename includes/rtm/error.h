@@ -149,8 +149,9 @@
 #endif
 
 //////////////////////////////////////////////////////////////////////////
+// Deprecation support
+//////////////////////////////////////////////////////////////////////////
 
-// Allow deprecation support
 #if defined(__has_cpp_attribute) && __cplusplus >= 201402L
 	#if __has_cpp_attribute(deprecated)
 		#define RTM_DEPRECATED(msg) [[deprecated(msg)]]

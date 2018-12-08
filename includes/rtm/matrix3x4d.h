@@ -33,6 +33,9 @@
 
 namespace rtm
 {
+	//////////////////////////////////////////////////////////////////////////
+	// Sets a 3x4 affine matrix from a rotation quaternion, translation, and 3D scale.
+	//////////////////////////////////////////////////////////////////////////
 	inline matrix3x4d matrix_set(const quatd& quat, const vector4d& translation, const vector4d& scale) RTM_NO_EXCEPT
 	{
 		RTM_ASSERT(quat_is_normalized(quat), "Quaternion is not normalized");
@@ -57,11 +60,17 @@ namespace rtm
 		return matrix_set(x_axis, y_axis, z_axis, w_axis);
 	}
 
+	//////////////////////////////////////////////////////////////////////////
+	// Casts a 3x4 affine matrix from a float32 variant to a float64 variant.
+	//////////////////////////////////////////////////////////////////////////
 	inline matrix3x4d matrix_cast(const matrix3x4f& input) RTM_NO_EXCEPT
 	{
 		return matrix_set(vector_cast(input.x_axis), vector_cast(input.y_axis), vector_cast(input.z_axis), vector_cast(input.w_axis));
 	}
 
+	//////////////////////////////////////////////////////////////////////////
+	// Converts a rotation quaternion into a 3x4 affine matrix.
+	//////////////////////////////////////////////////////////////////////////
 	inline matrix3x4d matrix_from_quat(const quatd& quat) RTM_NO_EXCEPT
 	{
 		RTM_ASSERT(quat_is_normalized(quat), "Quaternion is not normalized");
@@ -86,25 +95,37 @@ namespace rtm
 		return matrix_set(x_axis, y_axis, z_axis, w_axis);
 	}
 
+	//////////////////////////////////////////////////////////////////////////
+	// Converts a translation vector into a 3x4 affine matrix.
+	//////////////////////////////////////////////////////////////////////////
 	inline matrix3x4d matrix_from_translation(const vector4d& translation) RTM_NO_EXCEPT
 	{
 		return matrix_set(vector_set(1.0, 0.0, 0.0, 0.0), vector_set(0.0, 1.0, 0.0, 0.0), vector_set(0.0, 0.0, 1.0, 0.0), vector_set(vector_get_x(translation), vector_get_y(translation), vector_get_z(translation), 1.0));
 	}
 
+	//////////////////////////////////////////////////////////////////////////
+	// Converts a 3D scale vector into a 3x4 affine matrix.
+	//////////////////////////////////////////////////////////////////////////
 	inline matrix3x4d matrix_from_scale(const vector4d& scale)
 	{
 		RTM_ASSERT(!vector_any_near_equal3(scale, vector_zero()), "Scale cannot be zero");
 		return matrix_set(vector_set(vector_get_x(scale), 0.0, 0.0, 0.0), vector_set(0.0, vector_get_y(scale), 0.0, 0.0), vector_set(0.0, 0.0, vector_get_z(scale), 0.0), vector_set(0.0, 0.0, 0.0, 1.0));
 	}
 
+	//////////////////////////////////////////////////////////////////////////
+	// Converts a QVV transform into a 3x4 affine matrix.
+	//////////////////////////////////////////////////////////////////////////
 	inline matrix3x4d matrix_from_qvv(const qvvd& transform) RTM_NO_EXCEPT
 	{
 		return matrix_set(transform.rotation, transform.translation, transform.scale);
 	}
 
-	inline const vector4d& matrix_get_axis(const matrix3x4d& input, axis4 axis_) RTM_NO_EXCEPT
+	//////////////////////////////////////////////////////////////////////////
+	// Returns the desired 3x4 affine matrix axis.
+	//////////////////////////////////////////////////////////////////////////
+	inline const vector4d& matrix_get_axis(const matrix3x4d& input, axis4 axis) RTM_NO_EXCEPT
 	{
-		switch (axis_)
+		switch (axis)
 		{
 		case axis4::x: return input.x_axis;
 		case axis4::y: return input.y_axis;
@@ -116,6 +137,9 @@ namespace rtm
 		}
 	}
 
+	//////////////////////////////////////////////////////////////////////////
+	// Converts a 3x4 affine matrix into a rotation quaternion.
+	//////////////////////////////////////////////////////////////////////////
 	inline quatd quat_from_matrix(const matrix3x4d& input) RTM_NO_EXCEPT
 	{
 		const vector4d zero = vector_zero();
@@ -174,7 +198,10 @@ namespace rtm
 		}
 	}
 
+	//////////////////////////////////////////////////////////////////////////
+	// Multiplies two 3x4 affine matrices.
 	// Multiplication order is as follow: local_to_world = matrix_mul(local_to_object, object_to_world)
+	//////////////////////////////////////////////////////////////////////////
 	inline matrix3x4d matrix_mul(const matrix3x4d& lhs, const matrix3x4d& rhs) RTM_NO_EXCEPT
 	{
 		vector4d tmp = vector_mul(vector_dup_x(lhs.x_axis), rhs.x_axis);
@@ -199,6 +226,9 @@ namespace rtm
 		return matrix_set(x_axis, y_axis, z_axis, w_axis);
 	}
 
+	//////////////////////////////////////////////////////////////////////////
+	// Multiplies a 3x4 affine matrix and a 3D point.
+	//////////////////////////////////////////////////////////////////////////
 	inline vector4d matrix_mul_position(const matrix3x4d& lhs, const vector4d& rhs) RTM_NO_EXCEPT
 	{
 		vector4d tmp0;
@@ -213,8 +243,12 @@ namespace rtm
 
 	namespace rtm_impl
 	{
+		//////////////////////////////////////////////////////////////////////////
+		// Transposes a 3x4 affine matrix.
 		// Note: This is a generic matrix 4x4 transpose, the resulting matrix is no longer
-		// affine because the last column is no longer [0,0,0,1]
+		// affine because the last row is no longer [0,0,0,1]
+		// TODO: Output a full 4x4 matrix
+		//////////////////////////////////////////////////////////////////////////
 		inline matrix3x4d matrix_transpose(const matrix3x4d& input) RTM_NO_EXCEPT
 		{
 			vector4d tmp0 = vector_mix<mix4::x, mix4::y, mix4::a, mix4::b>(input.x_axis, input.y_axis);
@@ -230,9 +264,15 @@ namespace rtm
 		}
 	}
 
+	//////////////////////////////////////////////////////////////////////////
+	// Inverses a 3x4 affine matrix.
+	// Note: This is a generic matrix 4x4 transpose, the resulting matrix is no longer
+	// affine because the last row is no longer [0,0,0,1]
+	// TODO: Output a full 4x4 matrix
+	// TODO: This is a generic matrix inverse function, implement the affine version?
+	//////////////////////////////////////////////////////////////////////////
 	inline matrix3x4d matrix_inverse(const matrix3x4d& input) RTM_NO_EXCEPT
 	{
-		// TODO: This is a generic matrix inverse function, implement the affine version?
 		matrix3x4d input_transposed = rtm_impl::matrix_transpose(input);
 
 		vector4d v00 = vector_mix<mix4::x, mix4::x, mix4::y, mix4::y>(input_transposed.z_axis, input_transposed.z_axis);
@@ -325,6 +365,14 @@ namespace rtm
 		return matrix_set(x_axis, y_axis, z_axis, w_axis);
 	}
 
+	//////////////////////////////////////////////////////////////////////////
+	// Removes the 3D scale from a 3x4 affine matrix.
+	// Note that if the scaling is 0.0 for a particular axis, the original rotation axis cannot
+	// be recovered safely and no attempt is done to do so. In theory, we could use the other axes
+	// to try and recover it.
+	// TODO: Implement rotation recovering, perhaps in a separate function and rename this
+	// one to matrix_remove_non_zero_scale(..)
+	//////////////////////////////////////////////////////////////////////////
 	inline matrix3x4d matrix_remove_scale(const matrix3x4d& input) RTM_NO_EXCEPT
 	{
 		matrix3x4d result;

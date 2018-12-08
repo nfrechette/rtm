@@ -35,19 +35,30 @@ namespace rtm
 {
 	//////////////////////////////////////////////////////////////////////////
 	// Setters, getters, and casts
+	//////////////////////////////////////////////////////////////////////////
 
+
+	//////////////////////////////////////////////////////////////////////////
+	// Loads an unaligned vector4 from memory.
+	//////////////////////////////////////////////////////////////////////////
 	inline vector4d vector_unaligned_load(const double* input) RTM_NO_EXCEPT
 	{
 		RTM_ASSERT(rtm_impl::is_aligned_to(input, 4), "Invalid alignment");
 		return vector_set(input[0], input[1], input[2], input[3]);
 	}
 
+	//////////////////////////////////////////////////////////////////////////
+	// Loads an unaligned vector3 from memory and sets the resulting [w] component to 0.0.
+	//////////////////////////////////////////////////////////////////////////
 	inline vector4d vector_unaligned_load3(const double* input) RTM_NO_EXCEPT
 	{
 		RTM_ASSERT(rtm_impl::is_aligned_to(input, 4), "Invalid alignment");
 		return vector_set(input[0], input[1], input[2], 0.0);
 	}
 
+	//////////////////////////////////////////////////////////////////////////
+	// Casts a quaternion to a vector4.
+	//////////////////////////////////////////////////////////////////////////
 	inline vector4d quat_to_vector(const quatd& input) RTM_NO_EXCEPT
 	{
 #if defined(RTM_SSE2_INTRINSICS)
@@ -57,6 +68,9 @@ namespace rtm
 #endif
 	}
 
+	//////////////////////////////////////////////////////////////////////////
+	// Casts a vector4 float32 variant to a float64 variant.
+	//////////////////////////////////////////////////////////////////////////
 	inline vector4d vector_cast(const vector4f& input) RTM_NO_EXCEPT
 	{
 #if defined(RTM_SSE2_INTRINSICS)
@@ -68,6 +82,9 @@ namespace rtm
 #endif
 	}
 
+	//////////////////////////////////////////////////////////////////////////
+	// Returns the vector4 [x] component.
+	//////////////////////////////////////////////////////////////////////////
 	inline double vector_get_x(const vector4d& input) RTM_NO_EXCEPT
 	{
 #if defined(RTM_SSE2_INTRINSICS)
@@ -77,6 +94,9 @@ namespace rtm
 #endif
 	}
 
+	//////////////////////////////////////////////////////////////////////////
+	// Returns the vector4 [y] component.
+	//////////////////////////////////////////////////////////////////////////
 	inline double vector_get_y(const vector4d& input) RTM_NO_EXCEPT
 	{
 #if defined(RTM_SSE2_INTRINSICS)
@@ -86,6 +106,9 @@ namespace rtm
 #endif
 	}
 
+	//////////////////////////////////////////////////////////////////////////
+	// Returns the vector4 [z] component.
+	//////////////////////////////////////////////////////////////////////////
 	inline double vector_get_z(const vector4d& input) RTM_NO_EXCEPT
 	{
 #if defined(RTM_SSE2_INTRINSICS)
@@ -95,6 +118,9 @@ namespace rtm
 #endif
 	}
 
+	//////////////////////////////////////////////////////////////////////////
+	// Returns the vector4 [w] component.
+	//////////////////////////////////////////////////////////////////////////
 	inline double vector_get_w(const vector4d& input) RTM_NO_EXCEPT
 	{
 #if defined(RTM_SSE2_INTRINSICS)
@@ -104,40 +130,52 @@ namespace rtm
 #endif
 	}
 
-	template<mix4 component_index>
+	//////////////////////////////////////////////////////////////////////////
+	// Returns the vector4 desired component.
+	//////////////////////////////////////////////////////////////////////////
+	template<mix4 component>
 	inline double vector_get_component(const vector4d& input) RTM_NO_EXCEPT
 	{
-		switch (mix4(int(component_index) % 4))
+		switch (mix4(int(component) % 4))
 		{
 		case mix4::x: return vector_get_x(input);
 		case mix4::y: return vector_get_y(input);
 		case mix4::z: return vector_get_z(input);
 		case mix4::w: return vector_get_w(input);
 		default:
-			RTM_ASSERT(false, "Invalid component index");
+			RTM_ASSERT(false, "Invalid component");
 			return 0.0;
 		}
 	}
 
-	inline double vector_get_component(const vector4d& input, mix4 component_index) RTM_NO_EXCEPT
+	//////////////////////////////////////////////////////////////////////////
+	// Returns the vector4 desired component.
+	//////////////////////////////////////////////////////////////////////////
+	inline double vector_get_component(const vector4d& input, mix4 component) RTM_NO_EXCEPT
 	{
-		switch (mix4(int(component_index) % 4))
+		switch (mix4(int(component) % 4))
 		{
 		case mix4::x: return vector_get_x(input);
 		case mix4::y: return vector_get_y(input);
 		case mix4::z: return vector_get_z(input);
 		case mix4::w: return vector_get_w(input);
 		default:
-			RTM_ASSERT(false, "Invalid component index");
+			RTM_ASSERT(false, "Invalid component");
 			return 0.0;
 		}
 	}
 
+	//////////////////////////////////////////////////////////////////////////
+	// Returns a floating point pointer to the vector4 data.
+	//////////////////////////////////////////////////////////////////////////
 	inline const double* vector_as_double_ptr(const vector4d& input) RTM_NO_EXCEPT
 	{
 		return reinterpret_cast<const double*>(&input);
 	}
 
+	//////////////////////////////////////////////////////////////////////////
+	// Writes a vector4 to unaligned memory.
+	//////////////////////////////////////////////////////////////////////////
 	inline void vector_unaligned_write(const vector4d& input, double* output) RTM_NO_EXCEPT
 	{
 		RTM_ASSERT(rtm_impl::is_aligned_to(output, 4), "Invalid alignment");
@@ -147,6 +185,9 @@ namespace rtm
 		output[3] = vector_get_w(input);
 	}
 
+	//////////////////////////////////////////////////////////////////////////
+	// Writes a vector3 to unaligned memory.
+	//////////////////////////////////////////////////////////////////////////
 	inline void vector_unaligned_write3(const vector4d& input, double* output) RTM_NO_EXCEPT
 	{
 		RTM_ASSERT(rtm_impl::is_aligned_to(output, 4), "Invalid alignment");
@@ -155,19 +196,32 @@ namespace rtm
 		output[2] = vector_get_z(input);
 	}
 
+	//////////////////////////////////////////////////////////////////////////
+	// Writes a vector4 to unaligned memory.
+	//////////////////////////////////////////////////////////////////////////
 	inline void vector_unaligned_write(const vector4d& input, uint8_t* output) RTM_NO_EXCEPT
 	{
 		memcpy(output, &input, sizeof(vector4d));
 	}
 
+	//////////////////////////////////////////////////////////////////////////
+	// Writes a vector3 to unaligned memory.
+	//////////////////////////////////////////////////////////////////////////
 	inline void vector_unaligned_write3(const vector4d& input, uint8_t* output)
 	{
 		memcpy(output, &input, sizeof(double) * 3);
 	}
 
+
+
 	//////////////////////////////////////////////////////////////////////////
 	// Arithmetic
+	//////////////////////////////////////////////////////////////////////////
 
+
+	//////////////////////////////////////////////////////////////////////////
+	// Per component addition of the two inputs: lhs + rhs
+	//////////////////////////////////////////////////////////////////////////
 	inline vector4d vector_add(const vector4d& lhs, const vector4d& rhs) RTM_NO_EXCEPT
 	{
 #if defined(RTM_SSE2_INTRINSICS)
@@ -177,6 +231,9 @@ namespace rtm
 #endif
 	}
 
+	//////////////////////////////////////////////////////////////////////////
+	// Per component subtraction of the two inputs: lhs - rhs
+	//////////////////////////////////////////////////////////////////////////
 	inline vector4d vector_sub(const vector4d& lhs, const vector4d& rhs) RTM_NO_EXCEPT
 	{
 #if defined(RTM_SSE2_INTRINSICS)
@@ -186,6 +243,9 @@ namespace rtm
 #endif
 	}
 
+	//////////////////////////////////////////////////////////////////////////
+	// Per component multiplication of the two inputs: lhs * rhs
+	//////////////////////////////////////////////////////////////////////////
 	inline vector4d vector_mul(const vector4d& lhs, const vector4d& rhs) RTM_NO_EXCEPT
 	{
 #if defined(RTM_SSE2_INTRINSICS)
@@ -195,11 +255,17 @@ namespace rtm
 #endif
 	}
 
+	//////////////////////////////////////////////////////////////////////////
+	// Per component multiplication of the vector by a scalar: lhs * rhs
+	//////////////////////////////////////////////////////////////////////////
 	inline vector4d vector_mul(const vector4d& lhs, double rhs) RTM_NO_EXCEPT
 	{
 		return vector_mul(lhs, vector_set(rhs));
 	}
 
+	//////////////////////////////////////////////////////////////////////////
+	// Per component division of the two inputs: lhs / rhs
+	//////////////////////////////////////////////////////////////////////////
 	inline vector4d vector_div(const vector4d& lhs, const vector4d& rhs) RTM_NO_EXCEPT
 	{
 #if defined(RTM_SSE2_INTRINSICS)
@@ -209,6 +275,9 @@ namespace rtm
 #endif
 	}
 
+	//////////////////////////////////////////////////////////////////////////
+	// Per component maximum of the two inputs: max(lhs, rhs)
+	//////////////////////////////////////////////////////////////////////////
 	inline vector4d vector_max(const vector4d& lhs, const vector4d& rhs) RTM_NO_EXCEPT
 	{
 #if defined(RTM_SSE2_INTRINSICS)
@@ -218,6 +287,9 @@ namespace rtm
 #endif
 	}
 
+	//////////////////////////////////////////////////////////////////////////
+	// Per component minimum of the two inputs: min(lhs, rhs)
+	//////////////////////////////////////////////////////////////////////////
 	inline vector4d vector_min(const vector4d& lhs, const vector4d& rhs) RTM_NO_EXCEPT
 	{
 #if defined(RTM_SSE2_INTRINSICS)
@@ -227,6 +299,9 @@ namespace rtm
 #endif
 	}
 
+	//////////////////////////////////////////////////////////////////////////
+	// Per component absolute of the input: abs(input)
+	//////////////////////////////////////////////////////////////////////////
 	inline vector4d vector_abs(const vector4d& input) RTM_NO_EXCEPT
 	{
 #if defined(RTM_SSE2_INTRINSICS)
@@ -237,16 +312,25 @@ namespace rtm
 #endif
 	}
 
+	//////////////////////////////////////////////////////////////////////////
+	// Per component negation of the input: -input
+	//////////////////////////////////////////////////////////////////////////
 	inline vector4d vector_neg(const vector4d& input) RTM_NO_EXCEPT
 	{
 		return vector_mul(input, -1.0);
 	}
 
+	//////////////////////////////////////////////////////////////////////////
+	// Per component reciprocal of the input: 1.0 / input
+	//////////////////////////////////////////////////////////////////////////
 	inline vector4d vector_reciprocal(const vector4d& input) RTM_NO_EXCEPT
 	{
 		return vector_div(vector_set(1.0), input);
 	}
 
+	//////////////////////////////////////////////////////////////////////////
+	// 3D cross product: lhs x rhs
+	//////////////////////////////////////////////////////////////////////////
 	inline vector4d vector_cross3(const vector4d& lhs, const vector4d& rhs) RTM_NO_EXCEPT
 	{
 		return vector_set(vector_get_y(lhs) * vector_get_z(rhs) - vector_get_z(lhs) * vector_get_y(rhs),
@@ -254,56 +338,91 @@ namespace rtm
 						  vector_get_x(lhs) * vector_get_y(rhs) - vector_get_y(lhs) * vector_get_x(rhs));
 	}
 
+	//////////////////////////////////////////////////////////////////////////
+	// 4D dot product: lhs . rhs
+	//////////////////////////////////////////////////////////////////////////
 	inline double vector_dot(const vector4d& lhs, const vector4d& rhs) RTM_NO_EXCEPT
 	{
 		return (vector_get_x(lhs) * vector_get_x(rhs)) + (vector_get_y(lhs) * vector_get_y(rhs)) + (vector_get_z(lhs) * vector_get_z(rhs)) + (vector_get_w(lhs) * vector_get_w(rhs));
 	}
 
+	//////////////////////////////////////////////////////////////////////////
+	// 4D dot product replicated in all components: lhs . rhs
+	//////////////////////////////////////////////////////////////////////////
 	inline vector4d vector_vdot(const vector4d& lhs, const vector4d& rhs) RTM_NO_EXCEPT
 	{
 		return vector_set(vector_dot(lhs, rhs));
 	}
 
+	//////////////////////////////////////////////////////////////////////////
+	// 3D dot product: lhs . rhs
+	//////////////////////////////////////////////////////////////////////////
 	inline double vector_dot3(const vector4d& lhs, const vector4d& rhs) RTM_NO_EXCEPT
 	{
 		return (vector_get_x(lhs) * vector_get_x(rhs)) + (vector_get_y(lhs) * vector_get_y(rhs)) + (vector_get_z(lhs) * vector_get_z(rhs));
 	}
 
+	//////////////////////////////////////////////////////////////////////////
+	// Returns the squared length/norm of the vector4.
+	//////////////////////////////////////////////////////////////////////////
 	inline double vector_length_squared(const vector4d& input) RTM_NO_EXCEPT
 	{
 		return vector_dot(input, input);
 	}
 
+	//////////////////////////////////////////////////////////////////////////
+	// Returns the squared length/norm of the vector3.
+	//////////////////////////////////////////////////////////////////////////
 	inline double vector_length_squared3(const vector4d& input) RTM_NO_EXCEPT
 	{
 		return vector_dot3(input, input);
 	}
 
+	//////////////////////////////////////////////////////////////////////////
+	// Returns the length/norm of the vector4.
+	//////////////////////////////////////////////////////////////////////////
 	inline double vector_length(const vector4d& input) RTM_NO_EXCEPT
 	{
 		return scalar_sqrt(vector_length_squared(input));
 	}
 
+	//////////////////////////////////////////////////////////////////////////
+	// Returns the length/norm of the vector3.
+	//////////////////////////////////////////////////////////////////////////
 	inline double vector_length3(const vector4d& input) RTM_NO_EXCEPT
 	{
 		return scalar_sqrt(vector_length_squared3(input));
 	}
 
+	//////////////////////////////////////////////////////////////////////////
+	// Returns the reciprocal length/norm of the vector4.
+	//////////////////////////////////////////////////////////////////////////
 	inline double vector_length_reciprocal(const vector4d& input) RTM_NO_EXCEPT
 	{
 		return 1.0 / vector_length(input);
 	}
 
+	//////////////////////////////////////////////////////////////////////////
+	// Returns the reciprocal length/norm of the vector3.
+	//////////////////////////////////////////////////////////////////////////
 	inline double vector_length_reciprocal3(const vector4d& input) RTM_NO_EXCEPT
 	{
 		return 1.0 / vector_length3(input);
 	}
 
+	//////////////////////////////////////////////////////////////////////////
+	// Returns the distance between two 3D points.
+	//////////////////////////////////////////////////////////////////////////
 	inline double vector_distance3(const vector4d& lhs, const vector4d& rhs) RTM_NO_EXCEPT
 	{
 		return vector_length3(vector_sub(rhs, lhs));
 	}
 
+	//////////////////////////////////////////////////////////////////////////
+	// Returns a normalized vector3.
+	// If the length of the input is below the supplied threshold, the
+	// fall back value is returned instead.
+	//////////////////////////////////////////////////////////////////////////
 	inline vector4d vector_normalize3(const vector4d& input, double threshold = 1.0e-8) RTM_NO_EXCEPT
 	{
 		// Reciprocal is more accurate to normalize with
@@ -314,36 +433,57 @@ namespace rtm
 			return input;
 	}
 
+	//////////////////////////////////////////////////////////////////////////
+	// Returns per component the fractional part of the input.
+	//////////////////////////////////////////////////////////////////////////
 	inline vector4d vector_fraction(const vector4d& input) RTM_NO_EXCEPT
 	{
 		return vector_set(scalar_fraction(vector_get_x(input)), scalar_fraction(vector_get_y(input)), scalar_fraction(vector_get_z(input)), scalar_fraction(vector_get_w(input)));
 	}
 
-	// output = (input * scale) + offset
-	inline vector4d vector_mul_add(const vector4d& input, const vector4d& scale, const vector4d& offset) RTM_NO_EXCEPT
+	//////////////////////////////////////////////////////////////////////////
+	// Per component multiplication/addition of the three inputs: v2 + (v0 * v1)
+	//////////////////////////////////////////////////////////////////////////
+	inline vector4d vector_mul_add(const vector4d& v0, const vector4d& v1, const vector4d& v2) RTM_NO_EXCEPT
 	{
-		return vector_add(vector_mul(input, scale), offset);
+		return vector_add(vector_mul(v0, v1), v2);
 	}
 
-	inline vector4d vector_mul_add(const vector4d& input, double scale, const vector4d& offset) RTM_NO_EXCEPT
+	//////////////////////////////////////////////////////////////////////////
+	// Per component multiplication/addition of the three inputs: v2 + (v0 * s1)
+	//////////////////////////////////////////////////////////////////////////
+	inline vector4d vector_mul_add(const vector4d& v0, double s1, const vector4d& v2) RTM_NO_EXCEPT
 	{
-		return vector_add(vector_mul(input, scale), offset);
+		return vector_add(vector_mul(v0, s1), v2);
 	}
 
-	// output = offset - (input * scale)
-	inline vector4d vector_neg_mul_sub(const vector4d& input, const vector4d& scale, const vector4d& offset) RTM_NO_EXCEPT
+	//////////////////////////////////////////////////////////////////////////
+	// Per component negative multiplication/subtraction of the three inputs: -((v0 * v1) - v2)
+	// This is mathematically equivalent to: v2 - (v0 * v1)
+	//////////////////////////////////////////////////////////////////////////
+	inline vector4d vector_neg_mul_sub(const vector4d& v0, const vector4d& v1, const vector4d& v2) RTM_NO_EXCEPT
 	{
-		return vector_sub(offset, vector_mul(input, scale));
+		return vector_sub(v2, vector_mul(v0, v1));
 	}
 
+	//////////////////////////////////////////////////////////////////////////
+	// Per component linear interpolation of the two inputs at the specified alpha.
+	//////////////////////////////////////////////////////////////////////////
 	inline vector4d vector_lerp(const vector4d& start, const vector4d& end, double alpha) RTM_NO_EXCEPT
 	{
 		return vector_mul_add(vector_sub(end, start), alpha, start);
 	}
 
+
+
 	//////////////////////////////////////////////////////////////////////////
 	// Comparisons and masking
+	//////////////////////////////////////////////////////////////////////////
 
+
+	//////////////////////////////////////////////////////////////////////////
+	// Returns per component ~0 if less than, otherwise 0: lhs < rhs ? ~0 : 0
+	//////////////////////////////////////////////////////////////////////////
 	inline vector4d vector_less_than(const vector4d& lhs, const vector4d& rhs) RTM_NO_EXCEPT
 	{
 #if defined(RTM_SSE2_INTRINSICS)
@@ -355,6 +495,9 @@ namespace rtm
 #endif
 	}
 
+	//////////////////////////////////////////////////////////////////////////
+	// Returns per component ~0 if greater equal, otherwise 0: lhs >= rhs ? ~0 : 0
+	//////////////////////////////////////////////////////////////////////////
 	inline vector4d vector_greater_equal(const vector4d& lhs, const vector4d& rhs) RTM_NO_EXCEPT
 	{
 #if defined(RTM_SSE2_INTRINSICS)
@@ -366,6 +509,9 @@ namespace rtm
 #endif
 	}
 
+	//////////////////////////////////////////////////////////////////////////
+	// Returns true if all 4 components are less than, otherwise false: all(lhs < rhs)
+	//////////////////////////////////////////////////////////////////////////
 	inline bool vector_all_less_than(const vector4d& lhs, const vector4d& rhs) RTM_NO_EXCEPT
 	{
 #if defined(RTM_SSE2_INTRINSICS)
@@ -377,6 +523,9 @@ namespace rtm
 #endif
 	}
 
+	//////////////////////////////////////////////////////////////////////////
+	// Returns true if all 3 components are less than, otherwise false: all(lhs < rhs)
+	//////////////////////////////////////////////////////////////////////////
 	inline bool vector_all_less_than3(const vector4d& lhs, const vector4d& rhs) RTM_NO_EXCEPT
 	{
 #if defined(RTM_SSE2_INTRINSICS)
@@ -388,6 +537,9 @@ namespace rtm
 #endif
 	}
 
+	//////////////////////////////////////////////////////////////////////////
+	// Returns true if any 4 components are less than, otherwise false: any(lhs < rhs)
+	//////////////////////////////////////////////////////////////////////////
 	inline bool vector_any_less_than(const vector4d& lhs, const vector4d& rhs) RTM_NO_EXCEPT
 	{
 #if defined(RTM_SSE2_INTRINSICS)
@@ -399,6 +551,9 @@ namespace rtm
 #endif
 	}
 
+	//////////////////////////////////////////////////////////////////////////
+	// Returns true if any 3 components are less than, otherwise false: any(lhs < rhs)
+	//////////////////////////////////////////////////////////////////////////
 	inline bool vector_any_less_than3(const vector4d& lhs, const vector4d& rhs) RTM_NO_EXCEPT
 	{
 #if defined(RTM_SSE2_INTRINSICS)
@@ -410,6 +565,9 @@ namespace rtm
 #endif
 	}
 
+	//////////////////////////////////////////////////////////////////////////
+	// Returns true if all 4 components are less equal, otherwise false: all(lhs <= rhs)
+	//////////////////////////////////////////////////////////////////////////
 	inline bool vector_all_less_equal(const vector4d& lhs, const vector4d& rhs) RTM_NO_EXCEPT
 	{
 #if defined(RTM_SSE2_INTRINSICS)
@@ -421,6 +579,9 @@ namespace rtm
 #endif
 	}
 
+	//////////////////////////////////////////////////////////////////////////
+	// Returns true if all 3 components are less equal, otherwise false: all(lhs <= rhs)
+	//////////////////////////////////////////////////////////////////////////
 	inline bool vector_all_less_equal3(const vector4d& lhs, const vector4d& rhs) RTM_NO_EXCEPT
 	{
 #if defined(RTM_SSE2_INTRINSICS)
@@ -432,6 +593,9 @@ namespace rtm
 #endif
 	}
 
+	//////////////////////////////////////////////////////////////////////////
+	// Returns true if any 4 components are less equal, otherwise false: any(lhs <= rhs)
+	//////////////////////////////////////////////////////////////////////////
 	inline bool vector_any_less_equal(const vector4d& lhs, const vector4d& rhs) RTM_NO_EXCEPT
 	{
 #if defined(RTM_SSE2_INTRINSICS)
@@ -443,6 +607,9 @@ namespace rtm
 #endif
 	}
 
+	//////////////////////////////////////////////////////////////////////////
+	// Returns true if any 3 components are less equal, otherwise false: any(lhs <= rhs)
+	//////////////////////////////////////////////////////////////////////////
 	inline bool vector_any_less_equal3(const vector4d& lhs, const vector4d& rhs) RTM_NO_EXCEPT
 	{
 #if defined(RTM_SSE2_INTRINSICS)
@@ -454,6 +621,9 @@ namespace rtm
 #endif
 	}
 
+	//////////////////////////////////////////////////////////////////////////
+	// Returns true if all 4 components are greater equal, otherwise false: all(lhs >= rhs)
+	//////////////////////////////////////////////////////////////////////////
 	inline bool vector_all_greater_equal(const vector4d& lhs, const vector4d& rhs) RTM_NO_EXCEPT
 	{
 #if defined(RTM_SSE2_INTRINSICS)
@@ -465,6 +635,9 @@ namespace rtm
 #endif
 	}
 
+	//////////////////////////////////////////////////////////////////////////
+	// Returns true if all 3 components are greater equal, otherwise false: all(lhs >= rhs)
+	//////////////////////////////////////////////////////////////////////////
 	inline bool vector_all_greater_equal3(const vector4d& lhs, const vector4d& rhs) RTM_NO_EXCEPT
 	{
 #if defined(RTM_SSE2_INTRINSICS)
@@ -476,6 +649,9 @@ namespace rtm
 #endif
 	}
 
+	//////////////////////////////////////////////////////////////////////////
+	// Returns true if any 4 components are greater equal, otherwise false: any(lhs >= rhs)
+	//////////////////////////////////////////////////////////////////////////
 	inline bool vector_any_greater_equal(const vector4d& lhs, const vector4d& rhs) RTM_NO_EXCEPT
 	{
 #if defined(RTM_SSE2_INTRINSICS)
@@ -487,6 +663,9 @@ namespace rtm
 #endif
 	}
 
+	//////////////////////////////////////////////////////////////////////////
+	// Returns true if any 3 components are greater equal, otherwise false: any(lhs >= rhs)
+	//////////////////////////////////////////////////////////////////////////
 	inline bool vector_any_greater_equal3(const vector4d& lhs, const vector4d& rhs) RTM_NO_EXCEPT
 	{
 #if defined(RTM_SSE2_INTRINSICS)
@@ -498,39 +677,64 @@ namespace rtm
 #endif
 	}
 
+	//////////////////////////////////////////////////////////////////////////
+	// Returns true if all 4 components are near equal, otherwise false: all(abs(lhs - rhs) < threshold)
+	//////////////////////////////////////////////////////////////////////////
 	inline bool vector_all_near_equal(const vector4d& lhs, const vector4d& rhs, double threshold = 0.00001) RTM_NO_EXCEPT
 	{
 		return vector_all_less_equal(vector_abs(vector_sub(lhs, rhs)), vector_set(threshold));
 	}
 
+	//////////////////////////////////////////////////////////////////////////
+	// Returns true if all 3 components are near equal, otherwise false: all(abs(lhs - rhs) < threshold)
+	//////////////////////////////////////////////////////////////////////////
 	inline bool vector_all_near_equal3(const vector4d& lhs, const vector4d& rhs, double threshold = 0.00001) RTM_NO_EXCEPT
 	{
 		return vector_all_less_equal3(vector_abs(vector_sub(lhs, rhs)), vector_set(threshold));
 	}
 
+	//////////////////////////////////////////////////////////////////////////
+	// Returns true if any 4 components are near equal, otherwise false: any(abs(lhs - rhs) < threshold)
+	//////////////////////////////////////////////////////////////////////////
 	inline bool vector_any_near_equal(const vector4d& lhs, const vector4d& rhs, double threshold = 0.00001) RTM_NO_EXCEPT
 	{
 		return vector_any_less_equal(vector_abs(vector_sub(lhs, rhs)), vector_set(threshold));
 	}
 
+	//////////////////////////////////////////////////////////////////////////
+	// Returns true if any 3 components are near equal, otherwise false: any(abs(lhs - rhs) < threshold)
+	//////////////////////////////////////////////////////////////////////////
 	inline bool vector_any_near_equal3(const vector4d& lhs, const vector4d& rhs, double threshold = 0.00001) RTM_NO_EXCEPT
 	{
 		return vector_any_less_equal3(vector_abs(vector_sub(lhs, rhs)), vector_set(threshold));
 	}
 
+	//////////////////////////////////////////////////////////////////////////
+	// Returns true if all 4 components are finite (not NaN/Inf), otherwise false: all(finite(input))
+	//////////////////////////////////////////////////////////////////////////
 	inline bool vector_is_finite(const vector4d& input) RTM_NO_EXCEPT
 	{
 		return scalar_is_finite(vector_get_x(input)) && scalar_is_finite(vector_get_y(input)) && scalar_is_finite(vector_get_z(input)) && scalar_is_finite(vector_get_w(input));
 	}
 
+	//////////////////////////////////////////////////////////////////////////
+	// Returns true if all 3 components are finite (not NaN/Inf), otherwise false: all(finite(input))
+	//////////////////////////////////////////////////////////////////////////
 	inline bool vector_is_finite3(const vector4d& input) RTM_NO_EXCEPT
 	{
 		return scalar_is_finite(vector_get_x(input)) && scalar_is_finite(vector_get_y(input)) && scalar_is_finite(vector_get_z(input));
 	}
 
+
+
 	//////////////////////////////////////////////////////////////////////////
 	// Swizzling, permutations, and mixing
+	//////////////////////////////////////////////////////////////////////////
 
+
+	//////////////////////////////////////////////////////////////////////////
+	// Per component selection depending on the mask: mask != 0 ? if_true : if_false
+	//////////////////////////////////////////////////////////////////////////
 	inline vector4d vector_blend(const vector4d& mask, const vector4d& if_true, const vector4d& if_false) RTM_NO_EXCEPT
 	{
 #if defined(RTM_SSE2_INTRINSICS)
@@ -542,6 +746,10 @@ namespace rtm
 #endif
 	}
 
+	//////////////////////////////////////////////////////////////////////////
+	// Mixes two inputs and returns the desired components.
+	// [xyzw] indexes into the first input while [abcd] indexes in the second.
+	//////////////////////////////////////////////////////////////////////////
 	template<mix4 comp0, mix4 comp1, mix4 comp2, mix4 comp3>
 	inline vector4d vector_mix(const vector4d& input0, const vector4d& input1) RTM_NO_EXCEPT
 	{
@@ -553,14 +761,29 @@ namespace rtm
 		return vector_set(x, y, z, w);
 	}
 
+	//////////////////////////////////////////////////////////////////////////
+	// Replicates the [x] component in all components.
+	//////////////////////////////////////////////////////////////////////////
 	inline vector4d vector_dup_x(const vector4d& input) RTM_NO_EXCEPT { return vector_mix<mix4::x, mix4::x, mix4::x, mix4::x>(input, input); }
+
+	//////////////////////////////////////////////////////////////////////////
+	// Replicates the [y] component in all components.
+	//////////////////////////////////////////////////////////////////////////
 	inline vector4d vector_dup_y(const vector4d& input) RTM_NO_EXCEPT { return vector_mix<mix4::y, mix4::y, mix4::y, mix4::y>(input, input); }
+
+	//////////////////////////////////////////////////////////////////////////
+	// Replicates the [z] component in all components.
+	//////////////////////////////////////////////////////////////////////////
 	inline vector4d vector_dup_z(const vector4d& input) RTM_NO_EXCEPT { return vector_mix<mix4::z, mix4::z, mix4::z, mix4::z>(input, input); }
+
+	//////////////////////////////////////////////////////////////////////////
+	// Replicates the [w] component in all components.
+	//////////////////////////////////////////////////////////////////////////
 	inline vector4d vector_dup_w(const vector4d& input) RTM_NO_EXCEPT { return vector_mix<mix4::w, mix4::w, mix4::w, mix4::w>(input, input); }
 
 	//////////////////////////////////////////////////////////////////////////
-	// Misc
-
+	// Returns per component the sign of the input vector: input >= 0.0 ? 1.0 : -1.0
+	//////////////////////////////////////////////////////////////////////////
 	inline vector4d vector_sign(const vector4d& input) RTM_NO_EXCEPT
 	{
 		vector4d mask = vector_greater_equal(input, vector_zero());

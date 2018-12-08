@@ -31,6 +31,9 @@
 
 namespace rtm
 {
+	//////////////////////////////////////////////////////////////////////////
+	// Sets all 4 axes and creates a 3x4 affine matrix.
+	//////////////////////////////////////////////////////////////////////////
 	inline matrix3x4f RTM_SIMD_CALL matrix_set(vector4f_arg0 x_axis, vector4f_arg1 y_axis, vector4f_arg2 z_axis, vector4f_arg3 w_axis) RTM_NO_EXCEPT
 	{
 		RTM_ASSERT(vector_get_w(x_axis) == 0.0f, "X axis does not have a W component == 0.0");
@@ -40,6 +43,9 @@ namespace rtm
 		return matrix3x4f{ x_axis, y_axis, z_axis, w_axis };
 	}
 
+	//////////////////////////////////////////////////////////////////////////
+	// Sets all 4 axes and creates a 3x4 affine matrix.
+	//////////////////////////////////////////////////////////////////////////
 	inline matrix3x4d RTM_SIMD_CALL matrix_set(const vector4d& x_axis, const vector4d& y_axis, const vector4d& z_axis, const vector4d& w_axis) RTM_NO_EXCEPT
 	{
 		RTM_ASSERT(vector_get_w(x_axis) == 0.0, "X axis does not have a W component == 0.0");
@@ -51,11 +57,20 @@ namespace rtm
 
 	namespace rtm_impl
 	{
+		//////////////////////////////////////////////////////////////////////////
+		// Various matrix constants
+		//////////////////////////////////////////////////////////////////////////
 		enum class matrix_constants
 		{
 			identity
 		};
 
+		//////////////////////////////////////////////////////////////////////////
+		// This is a helper struct to allow a single consistent API between
+		// various matrix types when the semantics are identical but the return
+		// type differs. Implicit coercion is used to return the desired value
+		// at the call site.
+		//////////////////////////////////////////////////////////////////////////
 		template<matrix_constants constant>
 		struct matrix_constant
 		{
@@ -65,7 +80,7 @@ namespace rtm
 				{
 				case matrix_constants::identity:
 				default:
-					return matrix_set(vector_set(1.0, 0.0, 0.0, 0.0), vector_set(0.0, 1.0, 0.0, 0.0), vector_set(0.0, 0.0, 1.0, 0.0), vector_set(0.0, 0.0, 0.0, 1.0));
+					return matrix3x4d{ vector_set(1.0, 0.0, 0.0, 0.0), vector_set(0.0, 1.0, 0.0, 0.0), vector_set(0.0, 0.0, 1.0, 0.0), vector_set(0.0, 0.0, 0.0, 1.0) };
 				}
 			}
 
@@ -75,12 +90,15 @@ namespace rtm
 				{
 				case matrix_constants::identity:
 				default:
-					return matrix_set(vector_set(1.0f, 0.0f, 0.0f, 0.0f), vector_set(0.0f, 1.0f, 0.0f, 0.0f), vector_set(0.0f, 0.0f, 1.0f, 0.0f), vector_set(0.0f, 0.0f, 0.0f, 1.0f));
+					return matrix3x4f{ vector_set(1.0f, 0.0f, 0.0f, 0.0f), vector_set(0.0f, 1.0f, 0.0f, 0.0f), vector_set(0.0f, 0.0f, 1.0f, 0.0f), vector_set(0.0f, 0.0f, 0.0f, 1.0f) };
 				}
 			}
 		};
 	}
 
+	//////////////////////////////////////////////////////////////////////////
+	// Returns the identity matrix.
+	//////////////////////////////////////////////////////////////////////////
 	inline rtm_impl::matrix_constant<rtm_impl::matrix_constants::identity> RTM_SIMD_CALL matrix_identity() RTM_NO_EXCEPT
 	{
 		return rtm_impl::matrix_constant<rtm_impl::matrix_constants::identity>();

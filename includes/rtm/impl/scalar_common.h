@@ -30,7 +30,12 @@ namespace rtm
 {
 	namespace rtm_impl
 	{
-		// A helper struct to wrap scalar constants and ensure type safe coercion.
+		//////////////////////////////////////////////////////////////////////////
+		// This is a helper struct to allow a single consistent API between
+		// various quaternion types when the semantics are identical but the return
+		// type differs. Implicit coercion is used to return the desired value
+		// at the call site.
+		//////////////////////////////////////////////////////////////////////////
 		struct scalar_constant
 		{
 			explicit constexpr scalar_constant(double dbl_) RTM_NO_EXCEPT : flt(float(dbl_)), dbl(dbl_) {}
@@ -44,7 +49,10 @@ namespace rtm
 		};
 	}
 
-	constexpr rtm_impl::scalar_constant k_pi(3.14159265358979323846);
-	constexpr rtm_impl::scalar_constant k_pi_2(1.57079632679489661923);
-	constexpr rtm_impl::scalar_constant k_pi_4(0.785398163397448309616);
+	//////////////////////////////////////////////////////////////////////////
+	// Various constants
+	//////////////////////////////////////////////////////////////////////////
+	constexpr rtm_impl::scalar_constant k_pi(3.14159265358979323846);			// PI
+	constexpr rtm_impl::scalar_constant k_pi_2(1.57079632679489661923);			// PI / 2
+	constexpr rtm_impl::scalar_constant k_pi_4(0.785398163397448309616);		// PI / 4
 }

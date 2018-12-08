@@ -171,11 +171,11 @@ namespace rtm
 	};
 
 	//////////////////////////////////////////////////////////////////////////
-	// An 4x4 affine matrix represents a 3D rotation, 3D translation, and 3D scale.
+	// An 3x4 affine matrix represents a 3D rotation, 3D translation, and 3D scale.
 	// It properly deals with skew/shear when present but once scale with mirroring is combined,
 	// it cannot be safely extracted back.
 	//
-	// Affine matrices have their last column always equal to [0, 0, 0, 1] which is why it is 3x4.
+	// Affine matrices have their last row always equal to [0, 0, 0, 1] which is why it is 3x4.
 	//
 	// Left handed coordinate system:
 	// X axis == forward
@@ -191,11 +191,11 @@ namespace rtm
 	};
 
 	//////////////////////////////////////////////////////////////////////////
-	// An 4x4 affine matrix represents a 3D rotation, 3D translation, and 3D scale.
+	// An 3x4 affine matrix represents a 3D rotation, 3D translation, and 3D scale.
 	// It properly deals with skew/shear when present but once scale with mirroring is combined,
 	// it cannot be safely extracted back.
 	//
-	// Affine matrices have their last column always equal to [0, 0, 0, 1] which is why it is 3x4.
+	// Affine matrices have their last row always equal to [0, 0, 0, 1] which is why it is 3x4.
 	//
 	// Left handed coordinate system:
 	// X axis == forward
@@ -240,6 +240,7 @@ namespace rtm
 
 	//////////////////////////////////////////////////////////////////////////
 	// Register passing typedefs
+	//////////////////////////////////////////////////////////////////////////
 
 #if defined(RTM_USE_VECTORCALL)
 	// On x64 with __vectorcall, the first 6x vector4 arguments can be passed by value in a register, everything else afterwards is passed by const&

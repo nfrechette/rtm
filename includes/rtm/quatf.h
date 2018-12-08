@@ -36,13 +36,22 @@ namespace rtm
 {
 	//////////////////////////////////////////////////////////////////////////
 	// Setters, getters, and casts
+	//////////////////////////////////////////////////////////////////////////
 
+
+
+	//////////////////////////////////////////////////////////////////////////
+	// Loads an unaligned quaternion from memory.
+	//////////////////////////////////////////////////////////////////////////
 	inline quatf RTM_SIMD_CALL quat_unaligned_load(const float* input) RTM_NO_EXCEPT
 	{
 		RTM_ASSERT(rtm_impl::is_aligned(input), "Invalid alignment");
 		return quat_set(input[0], input[1], input[2], input[3]);
 	}
 
+	//////////////////////////////////////////////////////////////////////////
+	// Casts a vector4 to a quaternion.
+	//////////////////////////////////////////////////////////////////////////
 	inline quatf RTM_SIMD_CALL vector_to_quat(vector4f_arg0 input) RTM_NO_EXCEPT
 	{
 #if defined(RTM_SSE2_INTRINSICS) || defined(RTM_NEON_INTRINSICS)
@@ -52,6 +61,9 @@ namespace rtm
 #endif
 	}
 
+	//////////////////////////////////////////////////////////////////////////
+	// Casts a quaternion float64 variant to a float32 variant.
+	//////////////////////////////////////////////////////////////////////////
 	inline quatf RTM_SIMD_CALL quat_cast(const quatd& input) RTM_NO_EXCEPT
 	{
 #if defined(RTM_SSE2_INTRINSICS)
@@ -61,6 +73,9 @@ namespace rtm
 #endif
 	}
 
+	//////////////////////////////////////////////////////////////////////////
+	// Returns the quaternion [x] component (real part).
+	//////////////////////////////////////////////////////////////////////////
 	inline float RTM_SIMD_CALL quat_get_x(quatf_arg0 input) RTM_NO_EXCEPT
 	{
 #if defined(RTM_SSE2_INTRINSICS)
@@ -72,6 +87,9 @@ namespace rtm
 #endif
 	}
 
+	//////////////////////////////////////////////////////////////////////////
+	// Returns the quaternion [y] component (real part).
+	//////////////////////////////////////////////////////////////////////////
 	inline float RTM_SIMD_CALL quat_get_y(quatf_arg0 input) RTM_NO_EXCEPT
 	{
 #if defined(RTM_SSE2_INTRINSICS)
@@ -83,6 +101,9 @@ namespace rtm
 #endif
 	}
 
+	//////////////////////////////////////////////////////////////////////////
+	// Returns the quaternion [z] component (real part).
+	//////////////////////////////////////////////////////////////////////////
 	inline float RTM_SIMD_CALL quat_get_z(quatf_arg0 input) RTM_NO_EXCEPT
 	{
 #if defined(RTM_SSE2_INTRINSICS)
@@ -94,6 +115,9 @@ namespace rtm
 #endif
 	}
 
+	//////////////////////////////////////////////////////////////////////////
+	// Returns the quaternion [w] component (imaginary part).
+	//////////////////////////////////////////////////////////////////////////
 	inline float RTM_SIMD_CALL quat_get_w(quatf_arg0 input) RTM_NO_EXCEPT
 	{
 #if defined(RTM_SSE2_INTRINSICS)
@@ -105,6 +129,9 @@ namespace rtm
 #endif
 	}
 
+	//////////////////////////////////////////////////////////////////////////
+	// Writes a quaternion to unaligned memory.
+	//////////////////////////////////////////////////////////////////////////
 	inline void RTM_SIMD_CALL quat_unaligned_write(quatf_arg0 input, float* output) RTM_NO_EXCEPT
 	{
 		RTM_ASSERT(rtm_impl::is_aligned(output), "Invalid alignment");
@@ -114,15 +141,27 @@ namespace rtm
 		output[3] = quat_get_w(input);
 	}
 
+
+
 	//////////////////////////////////////////////////////////////////////////
 	// Arithmetic
+	//////////////////////////////////////////////////////////////////////////
 
+
+
+	//////////////////////////////////////////////////////////////////////////
+	// Returns the quaternion conjugate.
+	//////////////////////////////////////////////////////////////////////////
 	inline quatf RTM_SIMD_CALL quat_conjugate(quatf_arg0 input) RTM_NO_EXCEPT
 	{
 		return quat_set(-quat_get_x(input), -quat_get_y(input), -quat_get_z(input), quat_get_w(input));
 	}
 
+	//////////////////////////////////////////////////////////////////////////
+	// Multiplies two quaternions.
+	// Note that due to floating point rounding, the result might not be perfectly normalized.
 	// Multiplication order is as follow: local_to_world = quat_mul(local_to_object, object_to_world)
+	//////////////////////////////////////////////////////////////////////////
 	inline quatf RTM_SIMD_CALL quat_mul(quatf_arg0 lhs, quatf_arg1 rhs) RTM_NO_EXCEPT
 	{
 #if defined(RTM_SSE4_INTRINSICS) && 0
@@ -220,6 +259,9 @@ namespace rtm
 #endif
 	}
 
+	//////////////////////////////////////////////////////////////////////////
+	// Multiplies a quaternion and a 3D point, rotating it.
+	//////////////////////////////////////////////////////////////////////////
 	inline vector4f RTM_SIMD_CALL quat_rotate(quatf_arg0 rotation, vector4f_arg1 vector) RTM_NO_EXCEPT
 	{
 		quatf vector_quat = quat_set(vector_get_x(vector), vector_get_y(vector), vector_get_z(vector), 0.0f);
@@ -227,21 +269,35 @@ namespace rtm
 		return quat_to_vector(quat_mul(quat_mul(inv_rotation, vector_quat), rotation));
 	}
 
+	//////////////////////////////////////////////////////////////////////////
+	// Returns the squared length/norm of the quaternion.
+	//////////////////////////////////////////////////////////////////////////
 	inline float RTM_SIMD_CALL quat_length_squared(quatf_arg0 input) RTM_NO_EXCEPT
 	{
 		return vector_length_squared(quat_to_vector(input));
 	}
 
+	//////////////////////////////////////////////////////////////////////////
+	// Returns the length/norm of the quaternion.
+	//////////////////////////////////////////////////////////////////////////
 	inline float RTM_SIMD_CALL quat_length(quatf_arg0 input) RTM_NO_EXCEPT
 	{
 		return vector_length(quat_to_vector(input));
 	}
 
+	//////////////////////////////////////////////////////////////////////////
+	// Returns the reciprocal length/norm of the quaternion.
+	//////////////////////////////////////////////////////////////////////////
 	inline float RTM_SIMD_CALL quat_length_reciprocal(quatf_arg0 input) RTM_NO_EXCEPT
 	{
 		return vector_length_reciprocal(quat_to_vector(input));
 	}
 
+	//////////////////////////////////////////////////////////////////////////
+	// Returns a normalized quaternion.
+	// Note that if the input quaternion is invalid (pure zero or with NaN/Inf),
+	// the result is undefined.
+	//////////////////////////////////////////////////////////////////////////
 	inline quatf RTM_SIMD_CALL quat_normalize(quatf_arg0 input) RTM_NO_EXCEPT
 	{
 #if defined(RTM_SSE2_INTRINSICS)
@@ -288,6 +344,9 @@ namespace rtm
 #endif
 	}
 
+	//////////////////////////////////////////////////////////////////////////
+	// Returns the linear interpolation between start and end for a given alpha value.
+	//////////////////////////////////////////////////////////////////////////
 	inline quatf RTM_SIMD_CALL quat_lerp(quatf_arg0 start, quatf_arg1 end, float alpha) RTM_NO_EXCEPT
 	{
 #if defined(RTM_SSE2_INTRINSICS)
@@ -394,6 +453,9 @@ namespace rtm
 #endif
 	}
 
+	//////////////////////////////////////////////////////////////////////////
+	// Returns a component wise negated quaternion.
+	//////////////////////////////////////////////////////////////////////////
 	inline quatf RTM_SIMD_CALL quat_neg(quatf_arg0 input) RTM_NO_EXCEPT
 	{
 #if defined(RTM_NEON_INTRINSICS)
@@ -403,11 +465,19 @@ namespace rtm
 #endif
 	}
 
+	//////////////////////////////////////////////////////////////////////////
+	// Returns the quaternion on the hypersphere with a positive [w] component
+	// that represents the same 3D rotation as the input.
+	//////////////////////////////////////////////////////////////////////////
 	inline quatf RTM_SIMD_CALL quat_ensure_positive_w(quatf_arg0 input) RTM_NO_EXCEPT
 	{
 		return quat_get_w(input) >= 0.f ? input : quat_neg(input);
 	}
 
+	//////////////////////////////////////////////////////////////////////////
+	// Returns a quaternion constructed from a vector3 representing the [xyz]
+	// components while reconstructing the [w] component by assuming it is positive.
+	//////////////////////////////////////////////////////////////////////////
 	inline quatf RTM_SIMD_CALL quat_from_positive_w(vector4f_arg0 input) RTM_NO_EXCEPT
 	{
 #if defined(RTM_SSE4_INTRINSICS)
@@ -443,9 +513,17 @@ namespace rtm
 #endif
 	}
 
+
+
 	//////////////////////////////////////////////////////////////////////////
 	// Conversion to/from axis/angle/euler
+	//////////////////////////////////////////////////////////////////////////
 
+
+
+	//////////////////////////////////////////////////////////////////////////
+	// Returns the rotation axis and rotation angle that make up the input quaternion.
+	//////////////////////////////////////////////////////////////////////////
 	inline void RTM_SIMD_CALL quat_to_axis_angle(quatf_arg0 input, vector4f& out_axis, float& out_angle) RTM_NO_EXCEPT
 	{
 		constexpr float epsilon = 1.0e-8f;
@@ -457,6 +535,9 @@ namespace rtm
 		out_axis = scale_sq >= epsilon_squared ? vector_div(vector_set(quat_get_x(input), quat_get_y(input), quat_get_z(input)), vector_set(scalar_sqrt(scale_sq))) : vector_set(1.0f, 0.0f, 0.0f);
 	}
 
+	//////////////////////////////////////////////////////////////////////////
+	// Returns the rotation axis part of the input quaternion.
+	//////////////////////////////////////////////////////////////////////////
 	inline vector4f RTM_SIMD_CALL quat_get_axis(quatf_arg0 input) RTM_NO_EXCEPT
 	{
 		constexpr float epsilon = 1.0e-8f;
@@ -466,11 +547,17 @@ namespace rtm
 		return scale_sq >= epsilon_squared ? vector_div(vector_set(quat_get_x(input), quat_get_y(input), quat_get_z(input)), vector_set(scalar_sqrt(scale_sq))) : vector_set(1.0f, 0.0f, 0.0f);
 	}
 
+	//////////////////////////////////////////////////////////////////////////
+	// Returns the rotation angle part of the input quaternion.
+	//////////////////////////////////////////////////////////////////////////
 	inline float RTM_SIMD_CALL quat_get_angle(quatf_arg0 input) RTM_NO_EXCEPT
 	{
 		return scalar_acos(quat_get_w(input)) * 2.0f;
 	}
 
+	//////////////////////////////////////////////////////////////////////////
+	// Creates a quaternion from a rotation axis and a rotation angle.
+	//////////////////////////////////////////////////////////////////////////
 	inline quatf RTM_SIMD_CALL quat_from_axis_angle(vector4f_arg0 axis, float angle) RTM_NO_EXCEPT
 	{
 		float s, c;
@@ -479,9 +566,12 @@ namespace rtm
 		return quat_set(s * vector_get_x(axis), s * vector_get_y(axis), s * vector_get_z(axis), c);
 	}
 
+	//////////////////////////////////////////////////////////////////////////
+	// Creates a quaternion from Euler Pitch/Yaw/Roll angles.
 	// Pitch is around the Y axis (right)
 	// Yaw is around the Z axis (up)
 	// Roll is around the X axis (forward)
+	//////////////////////////////////////////////////////////////////////////
 	inline quatf RTM_SIMD_CALL quat_from_euler(float pitch, float yaw, float roll) RTM_NO_EXCEPT
 	{
 		float sp, sy, sr;
@@ -497,25 +587,43 @@ namespace rtm
 			cr * cp * cy + sr * sp * sy);
 	}
 
+
+
 	//////////////////////////////////////////////////////////////////////////
 	// Comparisons and masking
+	//////////////////////////////////////////////////////////////////////////
 
+
+
+	//////////////////////////////////////////////////////////////////////////
+	// Returns true if the input quaternion does not contain any NaN or Inf, otherwise false.
+	//////////////////////////////////////////////////////////////////////////
 	inline bool RTM_SIMD_CALL quat_is_finite(quatf_arg0 input) RTM_NO_EXCEPT
 	{
 		return scalar_is_finite(quat_get_x(input)) && scalar_is_finite(quat_get_y(input)) && scalar_is_finite(quat_get_z(input)) && scalar_is_finite(quat_get_w(input));
 	}
 
+	//////////////////////////////////////////////////////////////////////////
+	// Returns true if the input quaternion is normalized, otherwise false.
+	//////////////////////////////////////////////////////////////////////////
 	inline bool RTM_SIMD_CALL quat_is_normalized(quatf_arg0 input, float threshold = 0.00001f) RTM_NO_EXCEPT
 	{
 		float length_squared = quat_length_squared(input);
 		return scalar_abs(length_squared - 1.0f) < threshold;
 	}
 
+	//////////////////////////////////////////////////////////////////////////
+	// Returns true if the two quaternions are nearly equal component wise, otherwise false.
+	//////////////////////////////////////////////////////////////////////////
 	inline bool RTM_SIMD_CALL quat_near_equal(quatf_arg0 lhs, quatf_arg1 rhs, float threshold = 0.00001f) RTM_NO_EXCEPT
 	{
 		return vector_all_near_equal(quat_to_vector(lhs), quat_to_vector(rhs), threshold);
 	}
 
+	//////////////////////////////////////////////////////////////////////////
+	// Returns true if the input quaternion is nearly equal to the identity quaternion
+	// by comparing its rotation angle.
+	//////////////////////////////////////////////////////////////////////////
 	inline bool RTM_SIMD_CALL quat_near_identity(quatf_arg0 input, float threshold_angle = 0.00284714461f) RTM_NO_EXCEPT
 	{
 		// Because of floating point precision, we cannot represent very small rotations.

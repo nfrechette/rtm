@@ -36,7 +36,7 @@
 
 //////////////////////////////////////////////////////////////////////////
 // This file contains various memory related utility functions and other misc helpers.
-// Everything is hidden in an impl namespace even though they could useful and used
+// Everything is hidden in an impl namespace even though they could be useful and used
 // by anyone only to avoid polluting the rtm namespace. If these become useful enough,
 // they might be moved into their own external dependency.
 //////////////////////////////////////////////////////////////////////////
@@ -47,7 +47,7 @@ namespace rtm
 	{
 		//////////////////////////////////////////////////////////////////////////
 		// Allows static branching without any warnings
-
+		//////////////////////////////////////////////////////////////////////////
 		template<bool expression_result>
 		struct static_condition { static constexpr bool test() RTM_NO_EXCEPT { return true; } };
 
@@ -55,19 +55,25 @@ namespace rtm
 		struct static_condition<false> { static constexpr bool test() RTM_NO_EXCEPT { return false; } };
 
 		//////////////////////////////////////////////////////////////////////////
-		// Various miscellaneous utilities related to alignment
-
+		// Returns true if the input is a power of two, false otherwise.
+		//////////////////////////////////////////////////////////////////////////
 		constexpr bool is_power_of_two(size_t input) RTM_NO_EXCEPT
 		{
 			return input != 0 && (input & (input - 1)) == 0;
 		}
 
+		//////////////////////////////////////////////////////////////////////////
+		// Returns true if the alignment provided satisfies the requirement for the provided Type, false otherwise.
+		//////////////////////////////////////////////////////////////////////////
 		template<typename Type>
 		constexpr bool is_alignment_valid(size_t alignment) RTM_NO_EXCEPT
 		{
 			return is_power_of_two(alignment) && alignment >= alignof(Type);
 		}
 
+		//////////////////////////////////////////////////////////////////////////
+		// Returns true if the pointer provided satisfies the specified alignment, false otherwise.
+		//////////////////////////////////////////////////////////////////////////
 		template<typename PtrType>
 		inline bool is_aligned_to(PtrType* value, size_t alignment) RTM_NO_EXCEPT
 		{
@@ -75,6 +81,9 @@ namespace rtm
 			return (reinterpret_cast<intptr_t>(value) & (alignment - 1)) == 0;
 		}
 
+		//////////////////////////////////////////////////////////////////////////
+		// Returns true if the integral value provided satisfies the specified alignment, false otherwise.
+		//////////////////////////////////////////////////////////////////////////
 		template<typename IntegralType>
 		inline bool is_aligned_to(IntegralType value, size_t alignment) RTM_NO_EXCEPT
 		{
@@ -82,12 +91,18 @@ namespace rtm
 			return (static_cast<size_t>(value) & (alignment - 1)) == 0;
 		}
 
+		//////////////////////////////////////////////////////////////////////////
+		// Returns true if the provided pointer satisfies the alignment of PtrType, false otherwise.
+		//////////////////////////////////////////////////////////////////////////
 		template<typename PtrType>
 		constexpr bool is_aligned(PtrType* value) RTM_NO_EXCEPT
 		{
 			return is_aligned_to(value, alignof(PtrType));
 		}
 
+		//////////////////////////////////////////////////////////////////////////
+		// The input pointer is rounded up to the desired alignment.
+		//////////////////////////////////////////////////////////////////////////
 		template<typename PtrType>
 		inline PtrType* align_to(PtrType* value, size_t alignment) RTM_NO_EXCEPT
 		{
@@ -95,6 +110,9 @@ namespace rtm
 			return reinterpret_cast<PtrType*>((reinterpret_cast<intptr_t>(value) + (alignment - 1)) & ~(alignment - 1));
 		}
 
+		//////////////////////////////////////////////////////////////////////////
+		// The input integral value is rounded up to the desired alignment.
+		//////////////////////////////////////////////////////////////////////////
 		template<typename IntegralType>
 		inline IntegralType align_to(IntegralType value, size_t alignment) RTM_NO_EXCEPT
 		{
@@ -102,12 +120,15 @@ namespace rtm
 			return static_cast<IntegralType>((static_cast<size_t>(value) + (alignment - 1)) & ~(alignment - 1));
 		}
 
+		//////////////////////////////////////////////////////////////////////////
+		// Returns the array size for the provided array.
+		//////////////////////////////////////////////////////////////////////////
 		template<typename ElementType, size_t num_elements>
 		constexpr size_t get_array_size(ElementType const (&)[num_elements]) RTM_NO_EXCEPT { return num_elements; }
 
 		//////////////////////////////////////////////////////////////////////////
 		// Type safe casting
-
+		//////////////////////////////////////////////////////////////////////////
 		template<typename DestPtrType, typename SrcType>
 		struct safe_ptr_to_ptr_cast_impl
 		{
@@ -202,8 +223,8 @@ namespace rtm
 		}
 
 		//////////////////////////////////////////////////////////////////////////
-		// Raw memory read/write support
-
+		// Reads a DataType from the input pointer regardless of its alignment.
+		//////////////////////////////////////////////////////////////////////////
 		template<typename DataType>
 		inline DataType unaligned_read(const void* input) RTM_NO_EXCEPT
 		{
@@ -212,12 +233,18 @@ namespace rtm
 			return result;
 		}
 
+		//////////////////////////////////////////////////////////////////////////
+		// Reads a DataType from the input pointer with an alignment check.
+		//////////////////////////////////////////////////////////////////////////
 		template<typename DataType>
 		inline DataType aligned_read(const void* input) RTM_NO_EXCEPT
 		{
 			return *safe_ptr_cast<const DataType, const void*>(input);
 		}
 
+		//////////////////////////////////////////////////////////////////////////
+		// Writes a DataType into the output pointer regardless of its alignment.
+		//////////////////////////////////////////////////////////////////////////
 		template<typename DataType>
 		inline void unaligned_write(DataType input, void* output) RTM_NO_EXCEPT
 		{

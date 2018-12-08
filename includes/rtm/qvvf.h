@@ -33,13 +33,20 @@
 
 namespace rtm
 {
+	//////////////////////////////////////////////////////////////////////////
+	// Casts a QVV transform float64 variant to a float32 variant.
+	//////////////////////////////////////////////////////////////////////////
 	inline qvvf RTM_SIMD_CALL qvv_cast(const qvvd& input) RTM_NO_EXCEPT
 	{
 		return qvvf{ quat_cast(input.rotation), vector_cast(input.translation), vector_cast(input.scale) };
 	}
 
+	//////////////////////////////////////////////////////////////////////////
+	// Multiplies two QVV transforms.
 	// Multiplication order is as follow: local_to_world = qvv_mul(local_to_object, object_to_world)
-	// NOTE: When scale is present, multiplication will not properly handle skew/shear, use affine matrices instead
+	// NOTE: When scale is present, multiplication will not properly handle skew/shear,
+	// use affine matrices if you have issues.
+	//////////////////////////////////////////////////////////////////////////
 	inline qvvf RTM_SIMD_CALL qvv_mul(qvvf_arg0 lhs, qvvf_arg1 rhs) RTM_NO_EXCEPT
 	{
 		const vector4f min_scale = vector_min(lhs.scale, rhs.scale);
@@ -70,7 +77,11 @@ namespace rtm
 		}
 	}
 
+	//////////////////////////////////////////////////////////////////////////
+	// Multiplies two QVV transforms ignoring 3D scale.
+	// The resulting QVV transform with have a [1,1,1] 3D scale.
 	// Multiplication order is as follow: local_to_world = qvv_mul(local_to_object, object_to_world)
+	//////////////////////////////////////////////////////////////////////////
 	inline qvvf RTM_SIMD_CALL qvv_mul_no_scale(qvvf_arg0 lhs, qvvf_arg1 rhs) RTM_NO_EXCEPT
 	{
 		const quatf rotation = quat_mul(lhs.rotation, rhs.rotation);
@@ -78,16 +89,25 @@ namespace rtm
 		return qvv_set(rotation, translation, vector_set(1.0f));
 	}
 
+	//////////////////////////////////////////////////////////////////////////
+	// Multiplies a QVV transform and a 3D point.
+	//////////////////////////////////////////////////////////////////////////
 	inline vector4f RTM_SIMD_CALL qvv_mul_position(qvvf_arg0 lhs, vector4f_arg1 rhs) RTM_NO_EXCEPT
 	{
 		return vector_add(quat_rotate(lhs.rotation, vector_mul(lhs.scale, rhs)), lhs.translation);
 	}
 
+	//////////////////////////////////////////////////////////////////////////
+	// Multiplies a QVV transform and a 3D point ignoring 3D scale.
+	//////////////////////////////////////////////////////////////////////////
 	inline vector4f RTM_SIMD_CALL qvv_mul_position_no_scale(qvvf_arg0 lhs, vector4f_arg1 rhs) RTM_NO_EXCEPT
 	{
 		return vector_add(quat_rotate(lhs.rotation, rhs), lhs.translation);
 	}
 
+	//////////////////////////////////////////////////////////////////////////
+	// Returns the inverse of the input QVV transform.
+	//////////////////////////////////////////////////////////////////////////
 	inline qvvf RTM_SIMD_CALL qvv_inverse(qvvf_arg0 input) RTM_NO_EXCEPT
 	{
 		const quatf inv_rotation = quat_conjugate(input.rotation);
@@ -96,6 +116,10 @@ namespace rtm
 		return qvv_set(inv_rotation, inv_translation, inv_scale);
 	}
 
+	//////////////////////////////////////////////////////////////////////////
+	// Returns the inverse of the input QVV transform ignoring 3D scale.
+	// The resulting QVV transform with have a [1,1,1] 3D scale.
+	//////////////////////////////////////////////////////////////////////////
 	inline qvvf RTM_SIMD_CALL qvv_inverse_no_scale(qvvf_arg0 input) RTM_NO_EXCEPT
 	{
 		const quatf inv_rotation = quat_conjugate(input.rotation);
@@ -103,6 +127,9 @@ namespace rtm
 		return qvv_set(inv_rotation, inv_translation, vector_set(1.0f));
 	}
 
+	//////////////////////////////////////////////////////////////////////////
+	// Returns a QVV transforms with the rotation part normalized.
+	//////////////////////////////////////////////////////////////////////////
 	inline qvvf RTM_SIMD_CALL qvv_normalize(qvvf_arg0 input) RTM_NO_EXCEPT
 	{
 		const quatf rotation = quat_normalize(input.rotation);

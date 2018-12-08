@@ -25,6 +25,10 @@
 // SOFTWARE.
 ////////////////////////////////////////////////////////////////////////////////
 
+//////////////////////////////////////////////////////////////////////////
+// Detect which intrinsics the current compilation environment supports.
+//////////////////////////////////////////////////////////////////////////
+
 #if !defined(RTM_NO_INTRINSICS)
 	#if defined(__AVX__)
 		#define RTM_AVX_INTRINSICS
@@ -56,6 +60,7 @@
 		#endif
 	#endif
 
+	// If SSE2 and NEON aren't used, we default to the scalar implementation
 	#if !defined(RTM_SSE2_INTRINSICS) && !defined(RTM_NEON_INTRINSICS)
 		#define RTM_NO_INTRINSICS
 	#endif
@@ -90,6 +95,7 @@
 	#include <arm_neon.h>
 #endif
 
+// Specify the SIMD calling convention is we can
 #if !defined(RTM_SIMD_CALL)
 	#if defined(RTM_USE_VECTORCALL)
 		#define RTM_SIMD_CALL __vectorcall
@@ -98,4 +104,5 @@
 	#endif
 #endif
 
+// By default, we include the type definitions
 #include "rtm/types.h"
