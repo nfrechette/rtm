@@ -228,7 +228,7 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	// Multiplies a 3x4 affine matrix and a 3D point.
 	//////////////////////////////////////////////////////////////////////////
-	inline vector4d matrix_mul_position(const matrix3x4d& lhs, const vector4d& rhs) RTM_NO_EXCEPT
+	inline vector4d matrix_mul_point3(const matrix3x4d& lhs, const vector4d& rhs) RTM_NO_EXCEPT
 	{
 		vector4d tmp0;
 		vector4d tmp1;

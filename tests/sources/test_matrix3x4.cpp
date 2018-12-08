@@ -141,32 +141,32 @@ static void test_affine_matrix_impl(const MatrixType& identity, const FloatType 
 
 		QuatType rotation_around_z = quat_from_euler(scalar_deg_to_rad(FloatType(0.0)), scalar_deg_to_rad(FloatType(90.0)), scalar_deg_to_rad(FloatType(0.0)));
 		MatrixType mtx_a = matrix_set(rotation_around_z, x_axis, vector_set(FloatType(1.0)));
-		Vector4Type result = matrix_mul_position(mtx_a, x_axis);
+		Vector4Type result = matrix_mul_point3(mtx_a, x_axis);
 		REQUIRE(vector_all_near_equal3(result, vector_set(FloatType(1.0), FloatType(1.0), FloatType(0.0)), threshold));
-		result = matrix_mul_position(mtx_a, y_axis);
+		result = matrix_mul_point3(mtx_a, y_axis);
 		REQUIRE(vector_all_near_equal3(result, vector_set(FloatType(0.0), FloatType(0.0), FloatType(0.0)), threshold));
 
 		QuatType rotation_around_x = quat_from_euler(scalar_deg_to_rad(FloatType(0.0)), scalar_deg_to_rad(FloatType(0.0)), scalar_deg_to_rad(FloatType(90.0)));
 		MatrixType mtx_b = matrix_set(rotation_around_x, y_axis, vector_set(FloatType(1.0)));
-		result = matrix_mul_position(mtx_b, x_axis);
+		result = matrix_mul_point3(mtx_b, x_axis);
 		REQUIRE(vector_all_near_equal3(result, vector_set(FloatType(1.0), FloatType(1.0), FloatType(0.0)), threshold));
-		result = matrix_mul_position(mtx_b, y_axis);
+		result = matrix_mul_point3(mtx_b, y_axis);
 		REQUIRE(vector_all_near_equal3(result, vector_set(FloatType(0.0), FloatType(1.0), FloatType(-1.0)), threshold));
 
 		MatrixType mtx_ab = matrix_mul(mtx_a, mtx_b);
 		MatrixType mtx_ba = matrix_mul(mtx_b, mtx_a);
-		result = matrix_mul_position(mtx_ab, x_axis);
+		result = matrix_mul_point3(mtx_ab, x_axis);
 		REQUIRE(vector_all_near_equal3(result, vector_set(FloatType(1.0), FloatType(1.0), FloatType(-1.0)), threshold));
-		REQUIRE(vector_all_near_equal3(result, matrix_mul_position(mtx_b, matrix_mul_position(mtx_a, x_axis)), threshold));
-		result = matrix_mul_position(mtx_ab, y_axis);
+		REQUIRE(vector_all_near_equal3(result, matrix_mul_point3(mtx_b, matrix_mul_point3(mtx_a, x_axis)), threshold));
+		result = matrix_mul_point3(mtx_ab, y_axis);
 		REQUIRE(vector_all_near_equal3(result, vector_set(FloatType(0.0), FloatType(1.0), FloatType(0.0)), threshold));
-		REQUIRE(vector_all_near_equal3(result, matrix_mul_position(mtx_b, matrix_mul_position(mtx_a, y_axis)), threshold));
-		result = matrix_mul_position(mtx_ba, x_axis);
+		REQUIRE(vector_all_near_equal3(result, matrix_mul_point3(mtx_b, matrix_mul_point3(mtx_a, y_axis)), threshold));
+		result = matrix_mul_point3(mtx_ba, x_axis);
 		REQUIRE(vector_all_near_equal3(result, vector_set(FloatType(0.0), FloatType(1.0), FloatType(0.0)), threshold));
-		REQUIRE(vector_all_near_equal3(result, matrix_mul_position(mtx_a, matrix_mul_position(mtx_b, x_axis)), threshold));
-		result = matrix_mul_position(mtx_ba, y_axis);
+		REQUIRE(vector_all_near_equal3(result, matrix_mul_point3(mtx_a, matrix_mul_point3(mtx_b, x_axis)), threshold));
+		result = matrix_mul_point3(mtx_ba, y_axis);
 		REQUIRE(vector_all_near_equal3(result, vector_set(FloatType(0.0), FloatType(0.0), FloatType(-1.0)), threshold));
-		REQUIRE(vector_all_near_equal3(result, matrix_mul_position(mtx_a, matrix_mul_position(mtx_b, y_axis)), threshold));
+		REQUIRE(vector_all_near_equal3(result, matrix_mul_point3(mtx_a, matrix_mul_point3(mtx_b, y_axis)), threshold));
 	}
 
 	{
