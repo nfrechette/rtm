@@ -575,7 +575,7 @@ namespace rtm
 	inline vector4f RTM_SIMD_CALL vector_mul_add(vector4f_arg0 v0, float s1, vector4f_arg2 v2) RTM_NO_EXCEPT
 	{
 #if defined(RTM_NEON_INTRINSICS)
-		return vmlaq_n_f32(v2, v0, scale);
+		return vmlaq_n_f32(v2, v0, s1);
 #else
 		return vector_add(vector_mul(v0, s1), v2);
 #endif

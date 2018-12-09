@@ -35,11 +35,11 @@ using namespace rtm;
 template<typename FloatType>
 static void test_affine_matrix_impl(const FloatType threshold)
 {
-	using QuatType = quat_type<FloatType>::type;
-	using Vector4Type = vector4_type<FloatType>::type;
-	using QVVType = qvv_type<FloatType>::type;
-	using Matrix3x4Type = matrix3x4_type<FloatType>::type;
-	using Matrix4x4Type = matrix4x4_type<FloatType>::type;
+	using QuatType = typename quat_type<FloatType>::type;
+	using Vector4Type = typename vector4_type<FloatType>::type;
+	using QVVType = typename qvv_type<FloatType>::type;
+	using Matrix3x4Type = typename matrix3x4_type<FloatType>::type;
+	using Matrix4x4Type = typename matrix4x4_type<FloatType>::type;
 
 	const Matrix3x4Type identity = matrix_identity();
 
