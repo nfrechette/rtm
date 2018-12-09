@@ -244,9 +244,8 @@ namespace rtm
 	// Transposes a 3x4 affine matrix.
 	// Note: This is a generic matrix 4x4 transpose, the resulting matrix is no longer
 	// affine because the last row is no longer [0,0,0,1]
-	// TODO: Output a full 4x4 matrix
 	//////////////////////////////////////////////////////////////////////////
-	inline matrix3x4d matrix_transpose(const matrix3x4d& input) RTM_NO_EXCEPT
+	inline matrix4x4d matrix_transpose(const matrix3x4d& input) RTM_NO_EXCEPT
 	{
 		vector4d tmp0 = vector_mix<mix4::x, mix4::y, mix4::a, mix4::b>(input.x_axis, input.y_axis);
 		vector4d tmp1 = vector_mix<mix4::z, mix4::w, mix4::c, mix4::d>(input.x_axis, input.y_axis);
@@ -257,7 +256,7 @@ namespace rtm
 		vector4d y_axis = vector_mix<mix4::y, mix4::w, mix4::b, mix4::d>(tmp0, tmp2);
 		vector4d z_axis = vector_mix<mix4::x, mix4::z, mix4::a, mix4::c>(tmp1, tmp3);
 		vector4d w_axis = vector_mix<mix4::y, mix4::w, mix4::b, mix4::d>(tmp1, tmp3);
-		return matrix3x4d{ x_axis, y_axis, z_axis, w_axis };
+		return matrix4x4d{ x_axis, y_axis, z_axis, w_axis };
 	}
 
 	//////////////////////////////////////////////////////////////////////////
@@ -266,7 +265,7 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	inline matrix3x4d matrix_inverse(const matrix3x4d& input) RTM_NO_EXCEPT
 	{
-		matrix3x4d input_transposed = matrix_transpose(input);
+		matrix4x4d input_transposed = matrix_transpose(input);
 
 		vector4d v00 = vector_mix<mix4::x, mix4::x, mix4::y, mix4::y>(input_transposed.z_axis, input_transposed.z_axis);
 		vector4d v01 = vector_mix<mix4::x, mix4::x, mix4::y, mix4::y>(input_transposed.x_axis, input_transposed.x_axis);
