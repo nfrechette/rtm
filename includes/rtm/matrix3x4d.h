@@ -262,10 +262,7 @@ namespace rtm
 
 	//////////////////////////////////////////////////////////////////////////
 	// Inverses a 3x4 affine matrix.
-	// Note: This is a generic matrix 4x4 transpose, the resulting matrix is no longer
-	// affine because the last row is no longer [0,0,0,1]
-	// TODO: Output a full 4x4 matrix
-	// TODO: This is a generic matrix inverse function, implement the affine version?
+	// TODO: This is a generic matrix inverse function, can we do better?
 	//////////////////////////////////////////////////////////////////////////
 	inline matrix3x4d matrix_inverse(const matrix3x4d& input) RTM_NO_EXCEPT
 	{
@@ -364,7 +361,7 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	// Removes the 3D scale from a 3x4 affine matrix.
 	// Note that if the scaling is 0.0 for a particular axis, the original rotation axis cannot
-	// be recovered safely and no attempt is done to do so. In theory, we could use the other axes
+	// be recovered trivially and no attempt is done to do so. In theory, we could use the other axes
 	// to try and recover it.
 	// TODO: Implement rotation recovering, perhaps in a separate function and rename this
 	// one to matrix_remove_non_zero_scale(..)
