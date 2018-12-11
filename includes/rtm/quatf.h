@@ -26,6 +26,7 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 #include "rtm/math.h"
+#include "rtm/anglef.h"
 #include "rtm/scalarf.h"
 #include "rtm/vector4f.h"
 #include "rtm/impl/memory_utils.h"
@@ -523,12 +524,12 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	// Returns the rotation axis and rotation angle that make up the input quaternion.
 	//////////////////////////////////////////////////////////////////////////
-	inline void RTM_SIMD_CALL quat_to_axis_angle(quatf_arg0 input, vector4f& out_axis, float& out_angle) RTM_NO_EXCEPT
+	inline void RTM_SIMD_CALL quat_to_axis_angle(quatf_arg0 input, vector4f& out_axis, anglef& out_angle) RTM_NO_EXCEPT
 	{
 		constexpr float epsilon = 1.0e-8f;
 		constexpr float epsilon_squared = epsilon * epsilon;
 
-		out_angle = scalar_acos(quat_get_w(input)) * 2.0f;
+		out_angle = radians(scalar_acos(quat_get_w(input)) * 2.0f);
 
 		float scale_sq = scalar_max(1.0f - quat_get_w(input) * quat_get_w(input), 0.0f);
 		out_axis = scale_sq >= epsilon_squared ? vector_div(vector_set(quat_get_x(input), quat_get_y(input), quat_get_z(input)), vector_set(scalar_sqrt(scale_sq))) : vector_set(1.0f, 0.0f, 0.0f);
@@ -549,18 +550,18 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	// Returns the rotation angle part of the input quaternion.
 	//////////////////////////////////////////////////////////////////////////
-	inline float RTM_SIMD_CALL quat_get_angle(quatf_arg0 input) RTM_NO_EXCEPT
+	inline anglef RTM_SIMD_CALL quat_get_angle(quatf_arg0 input) RTM_NO_EXCEPT
 	{
-		return scalar_acos(quat_get_w(input)) * 2.0f;
+		return radians(scalar_acos(quat_get_w(input)) * 2.0f);
 	}
 
 	//////////////////////////////////////////////////////////////////////////
 	// Creates a quaternion from a rotation axis and a rotation angle.
 	//////////////////////////////////////////////////////////////////////////
-	inline quatf RTM_SIMD_CALL quat_from_axis_angle(vector4f_arg0 axis, float angle) RTM_NO_EXCEPT
+	inline quatf RTM_SIMD_CALL quat_from_axis_angle(vector4f_arg0 axis, anglef angle) RTM_NO_EXCEPT
 	{
 		float s, c;
-		scalar_sincos(0.5f * angle, s, c);
+		scalar_sincos(0.5f * angle.as_radians(), s, c);
 
 		return quat_set(s * vector_get_x(axis), s * vector_get_y(axis), s * vector_get_z(axis), c);
 	}
@@ -571,14 +572,14 @@ namespace rtm
 	// Yaw is around the Z axis (up)
 	// Roll is around the X axis (forward)
 	//////////////////////////////////////////////////////////////////////////
-	inline quatf RTM_SIMD_CALL quat_from_euler(float pitch, float yaw, float roll) RTM_NO_EXCEPT
+	inline quatf RTM_SIMD_CALL quat_from_euler(anglef pitch, anglef yaw, anglef roll) RTM_NO_EXCEPT
 	{
 		float sp, sy, sr;
 		float cp, cy, cr;
 
-		scalar_sincos(pitch * 0.5f, sp, cp);
-		scalar_sincos(yaw * 0.5f, sy, cy);
-		scalar_sincos(roll * 0.5f, sr, cr);
+		scalar_sincos(pitch.as_radians() * 0.5f, sp, cp);
+		scalar_sincos(yaw.as_radians() * 0.5f, sy, cy);
+		scalar_sincos(roll.as_radians() * 0.5f, sr, cr);
 
 		return quat_set(cr * sp * sy - sr * cp * cy,
 			-cr * sp * cy - sr * cp * sy,
@@ -623,7 +624,7 @@ namespace rtm
 	// Returns true if the input quaternion is nearly equal to the identity quaternion
 	// by comparing its rotation angle.
 	//////////////////////////////////////////////////////////////////////////
-	inline bool RTM_SIMD_CALL quat_near_identity(quatf_arg0 input, float threshold_angle = 0.00284714461f) RTM_NO_EXCEPT
+	inline bool RTM_SIMD_CALL quat_near_identity(quatf_arg0 input, anglef threshold_angle = radians(0.00284714461f)) RTM_NO_EXCEPT
 	{
 		// Because of floating point precision, we cannot represent very small rotations.
 		// The closest float to 1.0 that is not 1.0 itself yields:
@@ -639,6 +640,6 @@ namespace rtm
 		// a negative 0 rotation. By forcing quat.w to be positive, we'll end up with
 		// the shortest path.
 		const float positive_w_angle = scalar_acos(scalar_abs(quat_get_w(input))) * 2.0f;
-		return positive_w_angle < threshold_angle;
+		return positive_w_angle < threshold_angle.as_radians();
 	}
 }

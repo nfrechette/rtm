@@ -119,14 +119,6 @@ static void test_scalar_impl(const FloatType pi, const FloatType threshold)
 	REQUIRE(rtm::scalar_max(FloatType(1.0), FloatType(-0.5)) == FloatType(1.0));
 	REQUIRE(rtm::scalar_max(FloatType(1.0), FloatType(1.0)) == FloatType(1.0));
 
-	REQUIRE(scalar_deg_to_rad(FloatType(0.0)) == FloatType(0.0));
-	REQUIRE(scalar_near_equal(scalar_deg_to_rad(FloatType(90.0)), half_pi, threshold));
-	REQUIRE(scalar_near_equal(scalar_deg_to_rad(FloatType(-90.0)), -half_pi, threshold));
-	REQUIRE(scalar_near_equal(scalar_deg_to_rad(FloatType(180.0)), pi, threshold));
-	REQUIRE(scalar_near_equal(scalar_deg_to_rad(FloatType(-180.0)), -pi, threshold));
-	REQUIRE(scalar_near_equal(scalar_deg_to_rad(FloatType(360.0)), two_pi, threshold));
-	REQUIRE(scalar_near_equal(scalar_deg_to_rad(FloatType(-360.0)), -two_pi, threshold));
-
 	REQUIRE(rtm::scalar_is_finite(FloatType(0.0)) == true);
 	REQUIRE(rtm::scalar_is_finite(FloatType(32.0)) == true);
 	REQUIRE(rtm::scalar_is_finite(FloatType(-32.0)) == true);

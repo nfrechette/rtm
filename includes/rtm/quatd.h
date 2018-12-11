@@ -26,6 +26,7 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 #include "rtm/math.h"
+#include "rtm/angled.h"
 #include "rtm/scalard.h"
 #include "rtm/vector4d.h"
 #include "rtm/impl/memory_utils.h"
@@ -284,12 +285,12 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	// Returns the rotation axis and rotation angle that make up the input quaternion.
 	//////////////////////////////////////////////////////////////////////////
-	inline void quat_to_axis_angle(const quatd& input, vector4d& out_axis, double& out_angle) RTM_NO_EXCEPT
+	inline void quat_to_axis_angle(const quatd& input, vector4d& out_axis, angled& out_angle) RTM_NO_EXCEPT
 	{
 		constexpr double epsilon = 1.0e-8;
 		constexpr double epsilon_squared = epsilon * epsilon;
 
-		out_angle = scalar_acos(quat_get_w(input)) * 2.0;
+		out_angle = radians(scalar_acos(quat_get_w(input)) * 2.0);
 
 		double scale_sq = scalar_max(1.0 - quat_get_w(input) * quat_get_w(input), 0.0);
 		out_axis = scale_sq >= epsilon_squared ? vector_div(vector_set(quat_get_x(input), quat_get_y(input), quat_get_z(input)), vector_set(scalar_sqrt(scale_sq))) : vector_set(1.0, 0.0, 0.0);
@@ -310,18 +311,18 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	// Returns the rotation angle part of the input quaternion.
 	//////////////////////////////////////////////////////////////////////////
-	inline double quat_get_angle(const quatd& input) RTM_NO_EXCEPT
+	inline angled quat_get_angle(const quatd& input) RTM_NO_EXCEPT
 	{
-		return scalar_acos(quat_get_w(input)) * 2.0;
+		return radians(scalar_acos(quat_get_w(input)) * 2.0);
 	}
 
 	//////////////////////////////////////////////////////////////////////////
 	// Creates a quaternion from a rotation axis and a rotation angle.
 	//////////////////////////////////////////////////////////////////////////
-	inline quatd quat_from_axis_angle(const vector4d& axis, double angle) RTM_NO_EXCEPT
+	inline quatd quat_from_axis_angle(const vector4d& axis, angled angle) RTM_NO_EXCEPT
 	{
 		double s, c;
-		scalar_sincos(0.5 * angle, s, c);
+		scalar_sincos(0.5 * angle.as_radians(), s, c);
 
 		return quat_set(s * vector_get_x(axis), s * vector_get_y(axis), s * vector_get_z(axis), c);
 	}
@@ -332,14 +333,14 @@ namespace rtm
 	// Yaw is around the Z axis (up)
 	// Roll is around the X axis (forward)
 	//////////////////////////////////////////////////////////////////////////
-	inline quatd quat_from_euler(double pitch, double yaw, double roll) RTM_NO_EXCEPT
+	inline quatd quat_from_euler(angled pitch, angled yaw, angled roll) RTM_NO_EXCEPT
 	{
 		double sp, sy, sr;
 		double cp, cy, cr;
 
-		scalar_sincos(pitch * 0.5, sp, cp);
-		scalar_sincos(yaw * 0.5, sy, cy);
-		scalar_sincos(roll * 0.5, sr, cr);
+		scalar_sincos(pitch.as_radians() * 0.5, sp, cp);
+		scalar_sincos(yaw.as_radians() * 0.5, sy, cy);
+		scalar_sincos(roll.as_radians() * 0.5, sr, cr);
 
 		return quat_set(cr * sp * sy - sr * cp * cy,
 			-cr * sp * cy - sr * cp * sy,
@@ -384,10 +385,10 @@ namespace rtm
 	// Returns true if the input quaternion is nearly equal to the identity quaternion
 	// by comparing its rotation angle.
 	//////////////////////////////////////////////////////////////////////////
-	inline bool quat_near_identity(const quatd& input, double threshold_angle = 0.00284714461) RTM_NO_EXCEPT
+	inline bool quat_near_identity(const quatd& input, angled threshold_angle = radians(0.00284714461)) RTM_NO_EXCEPT
 	{
 		// See the quatf version of quat_near_identity for details.
 		const double positive_w_angle = scalar_acos(scalar_abs(quat_get_w(input))) * 2.0;
-		return positive_w_angle < threshold_angle;
+		return positive_w_angle < threshold_angle.as_radians();
 	}
 }
