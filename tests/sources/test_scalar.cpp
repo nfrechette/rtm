@@ -25,6 +25,8 @@
 
 #include <catch.hpp>
 
+#include <rtm/anglef.h>
+#include <rtm/angled.h>
 #include <rtm/scalarf.h>
 #include <rtm/scalard.h>
 

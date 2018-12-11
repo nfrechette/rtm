@@ -25,7 +25,7 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 #include "rtm/math.h"
-#include "rtm/impl/scalar_common.h"
+#include "rtm/impl/angle_common.h"
 
 namespace rtm
 {

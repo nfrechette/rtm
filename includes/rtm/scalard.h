@@ -26,7 +26,6 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 #include "rtm/math.h"
-#include "rtm/impl/scalar_common.h"
 
 #include <algorithm>
 #include <cmath>
