@@ -32,16 +32,16 @@ namespace rtm
 	{
 		//////////////////////////////////////////////////////////////////////////
 		// This is a helper struct to allow a single consistent API between
-		// various scalar types when the semantics are identical but the return
+		// various angle types when the semantics are identical but the return
 		// type differs. Implicit coercion is used to return the desired value
 		// at the call site.
 		//////////////////////////////////////////////////////////////////////////
-		struct scalar_constant
+		struct angle_constant
 		{
-			explicit constexpr scalar_constant(double dbl_) RTM_NO_EXCEPT : flt(float(dbl_)), dbl(dbl_) {}
-			constexpr scalar_constant(float flt_, double dbl_) RTM_NO_EXCEPT : flt(flt_), dbl(dbl_) {}
+			explicit constexpr angle_constant(double dbl_) RTM_NO_EXCEPT : flt(float(dbl_)), dbl(dbl_) {}
+			constexpr angle_constant(float flt_, double dbl_) RTM_NO_EXCEPT : flt(flt_), dbl(dbl_) {}
 
-			constexpr scalar_constant operator-() const RTM_NO_EXCEPT { return scalar_constant(-flt, -dbl); }
+			constexpr angle_constant operator-() const RTM_NO_EXCEPT { return angle_constant(-flt, -dbl); }
 
 			constexpr operator float() const RTM_NO_EXCEPT { return flt; }
 			constexpr operator double() const RTM_NO_EXCEPT { return dbl; }
@@ -55,7 +55,7 @@ namespace rtm
 	// Various constants
 	//////////////////////////////////////////////////////////////////////////
 
-	constexpr rtm_impl::scalar_constant k_pi(3.14159265358979323846);			// PI
-	constexpr rtm_impl::scalar_constant k_pi_2(1.57079632679489661923);			// PI / 2
-	constexpr rtm_impl::scalar_constant k_pi_4(0.785398163397448309616);		// PI / 4
+	constexpr rtm_impl::angle_constant k_pi(3.14159265358979323846);			// PI
+	constexpr rtm_impl::angle_constant k_pi_2(1.57079632679489661923);			// PI / 2
+	constexpr rtm_impl::angle_constant k_pi_4(0.785398163397448309616);		// PI / 4
 }

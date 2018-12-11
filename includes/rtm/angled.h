@@ -52,6 +52,9 @@ namespace rtm
 	{
 	public:
 		constexpr angled() RTM_NO_EXCEPT : m_radians(0.0) {}
+		constexpr angled(rtm_impl::angle_constant angle) RTM_NO_EXCEPT : m_radians(angle) {}
+
+		constexpr angled operator-() const RTM_NO_EXCEPT { return angled(-m_radians); }
 
 		constexpr double as_radians() const { return m_radians; }
 		constexpr double as_degrees() const { return scalar_rad_to_deg(m_radians); }
