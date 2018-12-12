@@ -72,7 +72,7 @@ namespace rtm
 		else
 		{
 			const quatf rotation = quat_mul(lhs.rotation, rhs.rotation);
-			const vector4f translation = vector_add(quat_mul_vector3(rhs.rotation, vector_mul(lhs.translation, rhs.scale)), rhs.translation);
+			const vector4f translation = vector_add(quat_mul_vector3(vector_mul(lhs.translation, rhs.scale), rhs.rotation), rhs.translation);
 			return qvv_set(rotation, translation, scale);
 		}
 	}
@@ -85,24 +85,26 @@ namespace rtm
 	inline qvvf RTM_SIMD_CALL qvv_mul_no_scale(qvvf_arg0 lhs, qvvf_arg1 rhs) RTM_NO_EXCEPT
 	{
 		const quatf rotation = quat_mul(lhs.rotation, rhs.rotation);
-		const vector4f translation = vector_add(quat_mul_vector3(rhs.rotation, lhs.translation), rhs.translation);
+		const vector4f translation = vector_add(quat_mul_vector3(lhs.translation, rhs.rotation), rhs.translation);
 		return qvv_set(rotation, translation, vector_set(1.0f));
 	}
 
 	//////////////////////////////////////////////////////////////////////////
 	// Multiplies a QVV transform and a 3D point.
+	// Multiplication order is as follow: world_position = qvv_mul_point3(local_position, local_to_world)
 	//////////////////////////////////////////////////////////////////////////
-	inline vector4f RTM_SIMD_CALL qvv_mul_point3(qvvf_arg0 qvv, vector4f_arg1 point) RTM_NO_EXCEPT
+	inline vector4f RTM_SIMD_CALL qvv_mul_point3(vector4f_arg0 point, qvvf_arg1 qvv) RTM_NO_EXCEPT
 	{
-		return vector_add(quat_mul_vector3(qvv.rotation, vector_mul(qvv.scale, point)), qvv.translation);
+		return vector_add(quat_mul_vector3(vector_mul(qvv.scale, point), qvv.rotation), qvv.translation);
 	}
 
 	//////////////////////////////////////////////////////////////////////////
 	// Multiplies a QVV transform and a 3D point ignoring 3D scale.
+	// Multiplication order is as follow: world_position = qvv_mul_point3_no_scale(local_position, local_to_world)
 	//////////////////////////////////////////////////////////////////////////
-	inline vector4f RTM_SIMD_CALL qvv_mul_point3_no_scale(qvvf_arg0 qvv, vector4f_arg1 point) RTM_NO_EXCEPT
+	inline vector4f RTM_SIMD_CALL qvv_mul_point3_no_scale(vector4f_arg0 point, qvvf_arg1 qvv) RTM_NO_EXCEPT
 	{
-		return vector_add(quat_mul_vector3(qvv.rotation, point), qvv.translation);
+		return vector_add(quat_mul_vector3(point, qvv.rotation), qvv.translation);
 	}
 
 	//////////////////////////////////////////////////////////////////////////
@@ -112,7 +114,7 @@ namespace rtm
 	{
 		const quatf inv_rotation = quat_conjugate(input.rotation);
 		const vector4f inv_scale = vector_reciprocal(input.scale);
-		const vector4f inv_translation = vector_neg(quat_mul_vector3(inv_rotation, vector_mul(input.translation, inv_scale)));
+		const vector4f inv_translation = vector_neg(quat_mul_vector3(vector_mul(input.translation, inv_scale), inv_rotation));
 		return qvv_set(inv_rotation, inv_translation, inv_scale);
 	}
 
@@ -123,7 +125,7 @@ namespace rtm
 	inline qvvf RTM_SIMD_CALL qvv_inverse_no_scale(qvvf_arg0 input) RTM_NO_EXCEPT
 	{
 		const quatf inv_rotation = quat_conjugate(input.rotation);
-		const vector4f inv_translation = vector_neg(quat_mul_vector3(inv_rotation, input.translation));
+		const vector4f inv_translation = vector_neg(quat_mul_vector3(input.translation, inv_rotation));
 		return qvv_set(inv_rotation, inv_translation, vector_set(1.0f));
 	}
 

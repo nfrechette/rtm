@@ -227,15 +227,16 @@ namespace rtm
 
 	//////////////////////////////////////////////////////////////////////////
 	// Multiplies a 3x4 affine matrix and a 3D point.
+	// Multiplication order is as follow: world_position = matrix_mul(local_position, local_to_world)
 	//////////////////////////////////////////////////////////////////////////
-	inline vector4d matrix_mul_point3(const matrix3x4d& lhs, const vector4d& rhs) RTM_NO_EXCEPT
+	inline vector4d matrix_mul_point3(const vector4d& point, const matrix3x4d& mtx) RTM_NO_EXCEPT
 	{
 		vector4d tmp0;
 		vector4d tmp1;
 
-		tmp0 = vector_mul(vector_dup_x(rhs), lhs.x_axis);
-		tmp0 = vector_mul_add(vector_dup_y(rhs), lhs.y_axis, tmp0);
-		tmp1 = vector_mul_add(vector_dup_z(rhs), lhs.z_axis, lhs.w_axis);
+		tmp0 = vector_mul(vector_dup_x(point), mtx.x_axis);
+		tmp0 = vector_mul_add(vector_dup_y(point), mtx.y_axis, tmp0);
+		tmp1 = vector_mul_add(vector_dup_z(point), mtx.z_axis, mtx.w_axis);
 
 		return vector_add(tmp0, tmp1);
 	}

@@ -35,7 +35,7 @@
 using namespace rtm;
 
 template<typename QuatType, typename Vector4Type, typename FloatType>
-static Vector4Type quat_rotate_scalar(const QuatType& rotation, const Vector4Type& vector)
+static Vector4Type quat_rotate_scalar(const Vector4Type& vector, const QuatType& rotation)
 {
 	// (q.W*q.W-qv.qv)v + 2(qv.v)qv + 2 q.W (qv x v)
 	Vector4Type qv = vector_set(quat_get_x(rotation), quat_get_y(rotation), quat_get_z(rotation));
@@ -177,26 +177,26 @@ static void test_quat_impl(const FloatType threshold)
 		Vector4Type y_axis = vector_set(FloatType(0.0), FloatType(1.0), FloatType(0.0));
 
 		QuatType rotation_around_z = quat_from_euler(degrees(FloatType(0.0)), degrees(FloatType(90.0)), degrees(FloatType(0.0)));
-		Vector4Type result = quat_mul_vector3(rotation_around_z, x_axis);
+		Vector4Type result = quat_mul_vector3(x_axis, rotation_around_z);
 		REQUIRE(vector_all_near_equal3(result, vector_set(FloatType(0.0), FloatType(1.0), FloatType(0.0)), threshold));
-		result = quat_mul_vector3(rotation_around_z, y_axis);
+		result = quat_mul_vector3(y_axis, rotation_around_z);
 		REQUIRE(vector_all_near_equal3(result, vector_set(FloatType(-1.0), FloatType(0.0), FloatType(0.0)), threshold));
 
 		QuatType rotation_around_x = quat_from_euler(degrees(FloatType(0.0)), degrees(FloatType(0.0)), degrees(FloatType(90.0)));
-		result = quat_mul_vector3(rotation_around_x, x_axis);
+		result = quat_mul_vector3(x_axis, rotation_around_x);
 		REQUIRE(vector_all_near_equal3(result, vector_set(FloatType(1.0), FloatType(0.0), FloatType(0.0)), threshold));
-		result = quat_mul_vector3(rotation_around_x, y_axis);
+		result = quat_mul_vector3(y_axis, rotation_around_x);
 		REQUIRE(vector_all_near_equal3(result, vector_set(FloatType(0.0), FloatType(0.0), FloatType(-1.0)), threshold));
 
 		QuatType rotation_xz = quat_mul(rotation_around_x, rotation_around_z);
 		QuatType rotation_zx = quat_mul(rotation_around_z, rotation_around_x);
-		result = quat_mul_vector3(rotation_xz, x_axis);
+		result = quat_mul_vector3(x_axis, rotation_xz);
 		REQUIRE(vector_all_near_equal3(result, vector_set(FloatType(0.0), FloatType(1.0), FloatType(0.0)), threshold));
-		result = quat_mul_vector3(rotation_xz, y_axis);
+		result = quat_mul_vector3(y_axis, rotation_xz);
 		REQUIRE(vector_all_near_equal3(result, vector_set(FloatType(0.0), FloatType(0.0), FloatType(-1.0)), threshold));
-		result = quat_mul_vector3(rotation_zx, x_axis);
+		result = quat_mul_vector3(x_axis, rotation_zx);
 		REQUIRE(vector_all_near_equal3(result, vector_set(FloatType(0.0), FloatType(0.0), FloatType(-1.0)), threshold));
-		result = quat_mul_vector3(rotation_zx, y_axis);
+		result = quat_mul_vector3(y_axis, rotation_zx);
 		REQUIRE(vector_all_near_equal3(result, vector_set(FloatType(-1.0), FloatType(0.0), FloatType(0.0)), threshold));
 	}
 
@@ -227,8 +227,8 @@ static void test_quat_impl(const FloatType threshold)
 			for (size_t vector_index = 0; vector_index < rtm_impl::get_array_size(test_vectors); ++vector_index)
 			{
 				const Vector4Type& vector = test_vectors[vector_index];
-				Vector4Type result = quat_mul_vector3(rotation, vector);
-				Vector4Type result_ref = quat_rotate_scalar<QuatType, Vector4Type, FloatType>(rotation, vector);
+				Vector4Type result = quat_mul_vector3(vector, rotation);
+				Vector4Type result_ref = quat_rotate_scalar<QuatType, Vector4Type, FloatType>(vector, rotation);
 				REQUIRE(vector_all_near_equal3(result, result_ref, threshold));
 			}
 		}
@@ -329,7 +329,7 @@ static void test_quat_impl(const FloatType threshold)
 	{
 		QuatType rotation = quat_set(FloatType(0.39564531008956383), FloatType(0.044254239301713752), FloatType(0.22768840967675355), FloatType(0.88863059760894492));
 		Vector4Type axis_ref = vector_set(FloatType(1.0), FloatType(0.0), FloatType(0.0));
-		axis_ref = quat_mul_vector3(rotation, axis_ref);
+		axis_ref = quat_mul_vector3(axis_ref, rotation);
 		AngleType angle_ref = degrees(FloatType(57.0));
 		QuatType result = quat_from_axis_angle(axis_ref, angle_ref);
 		Vector4Type axis;
