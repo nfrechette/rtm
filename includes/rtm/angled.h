@@ -52,31 +52,26 @@ namespace rtm
 	{
 	public:
 		constexpr angled() RTM_NO_EXCEPT : m_radians(0.0) {}
-		constexpr angled(rtm_impl::angle_constant angle) RTM_NO_EXCEPT : m_radians(angle) {}
 
 		constexpr angled operator-() const RTM_NO_EXCEPT { return angled(-m_radians); }
 
-		constexpr double as_radians() const { return m_radians; }
-		constexpr double as_degrees() const { return scalar_rad_to_deg(m_radians); }
+		constexpr double as_radians() const RTM_NO_EXCEPT { return m_radians; }
+		constexpr double as_degrees() const RTM_NO_EXCEPT { return scalar_rad_to_deg(m_radians); }
 
 	protected:
 		constexpr angled(double rad) RTM_NO_EXCEPT : m_radians(rad) {}
+		constexpr angled(rtm_impl::angle_constant angle) RTM_NO_EXCEPT : m_radians(angle) {}
 
 		double m_radians;
 
-		friend constexpr angled radians(double rad);
-		friend constexpr angled degrees(double rad);
+		friend constexpr angled radians(double rad) RTM_NO_EXCEPT;
+		friend constexpr angled degrees(double rad) RTM_NO_EXCEPT;
 	};
-
-	//////////////////////////////////////////////////////////////////////////
-	// Returns the proper angle type for a floating point type.
-	//////////////////////////////////////////////////////////////////////////
-	template<> struct angle_type<double> { using type = angled; };
 
 	//////////////////////////////////////////////////////////////////////////
 	// Constructs an angle from a radians value.
 	//////////////////////////////////////////////////////////////////////////
-	constexpr angled radians(double rad)
+	constexpr angled radians(double rad) RTM_NO_EXCEPT
 	{
 		return angled(rad);
 	}
@@ -84,7 +79,7 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	// Constructs an angle from a degrees value.
 	//////////////////////////////////////////////////////////////////////////
-	constexpr angled degrees(double deg)
+	constexpr angled degrees(double deg) RTM_NO_EXCEPT
 	{
 		return angled(scalar_deg_to_rad(deg));
 	}

@@ -34,15 +34,26 @@ using namespace rtm;
 template<typename FloatType>
 static void test_angle_impl(const FloatType threshold)
 {
-	const FloatType two_pi = FloatType(k_pi) * FloatType(2.0);
-
 	REQUIRE(scalar_deg_to_rad(FloatType(0.0)) == FloatType(0.0));
 	REQUIRE(scalar_near_equal(scalar_deg_to_rad(FloatType(90.0)), k_pi_2, threshold));
 	REQUIRE(scalar_near_equal(scalar_deg_to_rad(FloatType(-90.0)), -k_pi_2, threshold));
 	REQUIRE(scalar_near_equal(scalar_deg_to_rad(FloatType(180.0)), k_pi, threshold));
 	REQUIRE(scalar_near_equal(scalar_deg_to_rad(FloatType(-180.0)), -k_pi, threshold));
-	REQUIRE(scalar_near_equal(scalar_deg_to_rad(FloatType(360.0)), two_pi, threshold));
-	REQUIRE(scalar_near_equal(scalar_deg_to_rad(FloatType(-360.0)), -two_pi, threshold));
+	REQUIRE(scalar_near_equal(scalar_deg_to_rad(FloatType(360.0)), k_2_pi, threshold));
+	REQUIRE(scalar_near_equal(scalar_deg_to_rad(FloatType(-360.0)), -k_2_pi, threshold));
+
+	REQUIRE(scalar_rad_to_deg(FloatType(0.0)) == FloatType(0.0));
+	REQUIRE(scalar_near_equal(scalar_rad_to_deg(FloatType(k_pi_2)), FloatType(90.0), threshold));
+	REQUIRE(scalar_near_equal(scalar_rad_to_deg(FloatType(-k_pi_2)), FloatType(-90.0), threshold));
+	REQUIRE(scalar_near_equal(scalar_rad_to_deg(FloatType(k_pi)), FloatType(180.0), threshold));
+	REQUIRE(scalar_near_equal(scalar_rad_to_deg(FloatType(-k_pi)), FloatType(-180.0), threshold));
+	REQUIRE(scalar_near_equal(scalar_rad_to_deg(FloatType(k_2_pi)), FloatType(360.0), threshold));
+	REQUIRE(scalar_near_equal(scalar_rad_to_deg(FloatType(-k_2_pi)), FloatType(-360.0), threshold));
+
+	REQUIRE(scalar_near_equal(degrees(FloatType(180.0)).as_radians(), radians(FloatType(k_pi)).as_radians(), threshold));
+	REQUIRE(scalar_near_equal(degrees(FloatType(90.0)).as_radians(), radians(FloatType(k_pi_2)).as_radians(), threshold));
+	REQUIRE(scalar_near_equal(degrees(FloatType(180.0)).as_degrees(), radians(FloatType(k_pi)).as_degrees(), threshold));
+	REQUIRE(scalar_near_equal(degrees(FloatType(90.0)).as_degrees(), radians(FloatType(k_pi_2)).as_degrees(), threshold));
 }
 
 TEST_CASE("anglef math", "[math][angle]")

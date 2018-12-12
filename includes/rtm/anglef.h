@@ -52,31 +52,26 @@ namespace rtm
 	{
 	public:
 		constexpr anglef() RTM_NO_EXCEPT : m_radians(0.0f) {}
-		constexpr anglef(rtm_impl::angle_constant angle) RTM_NO_EXCEPT : m_radians(angle) {}
 
 		constexpr anglef operator-() const RTM_NO_EXCEPT { return anglef(-m_radians); }
 
-		constexpr float as_radians() const { return m_radians; }
-		constexpr float as_degrees() const { return scalar_rad_to_deg(m_radians); }
+		constexpr float as_radians() const RTM_NO_EXCEPT { return m_radians; }
+		constexpr float as_degrees() const RTM_NO_EXCEPT { return scalar_rad_to_deg(m_radians); }
 
 	protected:
 		constexpr anglef(float rad) RTM_NO_EXCEPT : m_radians(rad) {}
+		constexpr anglef(rtm_impl::angle_constant angle) RTM_NO_EXCEPT : m_radians(angle) {}
 
 		float m_radians;
 
-		friend constexpr anglef radians(float rad);
-		friend constexpr anglef degrees(float rad);
+		friend constexpr anglef radians(float rad) RTM_NO_EXCEPT;
+		friend constexpr anglef degrees(float rad) RTM_NO_EXCEPT;
 	};
-
-	//////////////////////////////////////////////////////////////////////////
-	// Returns the proper angle type for a floating point type.
-	//////////////////////////////////////////////////////////////////////////
-	template<> struct angle_type<float> { using type = anglef; };
 
 	//////////////////////////////////////////////////////////////////////////
 	// Constructs an angle from a radians value.
 	//////////////////////////////////////////////////////////////////////////
-	constexpr anglef radians(float rad)
+	constexpr anglef radians(float rad) RTM_NO_EXCEPT
 	{
 		return anglef(rad);
 	}
@@ -84,7 +79,7 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	// Constructs an angle from a degrees value.
 	//////////////////////////////////////////////////////////////////////////
-	constexpr anglef degrees(float deg)
+	constexpr anglef degrees(float deg) RTM_NO_EXCEPT
 	{
 		return anglef(scalar_deg_to_rad(deg));
 	}

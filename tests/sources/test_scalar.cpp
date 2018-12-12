@@ -35,11 +35,8 @@
 using namespace rtm;
 
 template<typename FloatType>
-static void test_scalar_impl(const FloatType pi, const FloatType threshold)
+static void test_scalar_impl(const FloatType threshold)
 {
-	const FloatType half_pi = pi * FloatType(0.5);
-	const FloatType two_pi = pi * FloatType(2.0);
-
 	REQUIRE(rtm::scalar_floor(FloatType(0.0)) == FloatType(0.0));
 	REQUIRE(rtm::scalar_floor(FloatType(0.5)) == FloatType(0.0));
 	REQUIRE(rtm::scalar_floor(FloatType(2.5)) == FloatType(2.0));
@@ -82,7 +79,7 @@ static void test_scalar_impl(const FloatType pi, const FloatType threshold)
 	REQUIRE(scalar_near_equal(rtm::scalar_reciprocal(FloatType(-0.5)), FloatType(1.0 / -0.5), threshold));
 	REQUIRE(scalar_near_equal(rtm::scalar_reciprocal(FloatType(-32.5)), FloatType(1.0 / -32.5), threshold));
 
-	const FloatType angles[] = { FloatType(0.0), pi, -pi, half_pi, -half_pi, FloatType(0.5), FloatType(32.5), FloatType(-0.5), FloatType(-32.5) };
+	const FloatType angles[] = { FloatType(0.0), k_pi, -k_pi, k_pi_2, -k_pi_2, FloatType(0.5), FloatType(32.5), FloatType(-0.5), FloatType(-32.5) };
 
 	for (const FloatType angle : angles)
 	{
@@ -150,10 +147,10 @@ static void test_scalar_impl(const FloatType pi, const FloatType threshold)
 
 TEST_CASE("scalar 32 math", "[math][scalar]")
 {
-	test_scalar_impl<float>(rtm::k_pi, 1.0e-6f);
+	test_scalar_impl<float>(1.0e-6f);
 }
 
 TEST_CASE("scalar 64 math", "[math][scalar]")
 {
-	test_scalar_impl<double>(rtm::k_pi, 1.0e-9);
+	test_scalar_impl<double>(1.0e-9);
 }
