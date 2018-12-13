@@ -25,6 +25,7 @@
 
 #include <catch.hpp>
 
+#include <rtm/type_traits.h>
 #include <rtm/matrix3x4f.h>
 #include <rtm/matrix3x4d.h>
 #include <rtm/qvvf.h>

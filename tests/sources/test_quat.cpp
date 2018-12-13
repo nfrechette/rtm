@@ -25,6 +25,7 @@
 
 #include <catch.hpp>
 
+#include <rtm/type_traits.h>
 #include <rtm/quatf.h>
 #include <rtm/quatd.h>
 #include <rtm/vector4f.h>
