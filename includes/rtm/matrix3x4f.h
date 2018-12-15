@@ -201,7 +201,7 @@ namespace rtm
 	// Multiplies two 3x4 affine matrices.
 	// Multiplication order is as follow: local_to_world = matrix_mul(local_to_object, object_to_world)
 	//////////////////////////////////////////////////////////////////////////
-	inline matrix3x4f RTM_SIMD_CALL matrix_mul(matrix3x4f_arg0 lhs, matrix3x4f_argn rhs) RTM_NO_EXCEPT
+	inline matrix3x4f RTM_SIMD_CALL matrix_mul(matrix3x4f_arg0 lhs, matrix3x4f_arg1 rhs) RTM_NO_EXCEPT
 	{
 		vector4f tmp = vector_mul(vector_dup_x(lhs.x_axis), rhs.x_axis);
 		tmp = vector_mul_add(vector_dup_y(lhs.x_axis), rhs.y_axis, tmp);
