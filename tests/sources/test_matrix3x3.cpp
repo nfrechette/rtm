@@ -38,7 +38,6 @@ static void test_matrix_impl(const FloatType threshold)
 {
 	using QuatType = typename quat_type<FloatType>::type;
 	using Vector4Type = typename vector4_type<FloatType>::type;
-	using QVVType = typename qvv_type<FloatType>::type;
 	using Matrix3x3Type = typename matrix3x3_type<FloatType>::type;
 	using Matrix3x4Type = typename matrix3x4_type<FloatType>::type;
 
