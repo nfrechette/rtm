@@ -53,6 +53,14 @@ namespace rtm
 	template<> struct qvv_type<double> { using type = qvvd; };
 
 	//////////////////////////////////////////////////////////////////////////
+	// Returns the proper matrix3x3 type for a floating point type.
+	//////////////////////////////////////////////////////////////////////////
+	template<typename FloatType>
+	struct matrix3x3_type {};
+	template<> struct matrix3x3_type<float> { using type = matrix3x3f; };
+	template<> struct matrix3x3_type<double> { using type = matrix3x3d; };
+
+	//////////////////////////////////////////////////////////////////////////
 	// Returns the proper matrix3x4 type for a floating point type.
 	//////////////////////////////////////////////////////////////////////////
 	template<typename FloatType>

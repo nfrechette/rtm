@@ -194,7 +194,7 @@ namespace rtm
 		template<vector_constants constant>
 		struct vector_constant
 		{
-			inline RTM_SIMD_CALL operator vector4d() RTM_NO_EXCEPT
+			inline RTM_SIMD_CALL operator vector4d() const RTM_NO_EXCEPT
 			{
 				switch (constant)
 				{
@@ -209,7 +209,7 @@ namespace rtm
 				}
 			}
 
-			inline RTM_SIMD_CALL operator vector4f() RTM_NO_EXCEPT
+			inline RTM_SIMD_CALL operator vector4f() const RTM_NO_EXCEPT
 			{
 				switch (constant)
 				{
@@ -244,7 +244,7 @@ namespace rtm
 		{
 			constexpr vector_unaligned_loader(const uint8_t* ptr_) RTM_NO_EXCEPT : ptr(ptr_) {}
 
-			inline RTM_SIMD_CALL operator vector4d() RTM_NO_EXCEPT
+			inline RTM_SIMD_CALL operator vector4d() const RTM_NO_EXCEPT
 			{
 				switch (width)
 				{
@@ -264,7 +264,7 @@ namespace rtm
 				}
 			}
 
-			inline RTM_SIMD_CALL operator vector4f() RTM_NO_EXCEPT
+			inline RTM_SIMD_CALL operator vector4f() const RTM_NO_EXCEPT
 			{
 				switch (width)
 				{

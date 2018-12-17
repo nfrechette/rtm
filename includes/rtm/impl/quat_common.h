@@ -80,7 +80,7 @@ namespace rtm
 		template<quat_constants constant>
 		struct quat_constant
 		{
-			inline RTM_SIMD_CALL operator quatd() RTM_NO_EXCEPT
+			inline RTM_SIMD_CALL operator quatd() const RTM_NO_EXCEPT
 			{
 				switch (constant)
 				{
@@ -90,7 +90,7 @@ namespace rtm
 				}
 			}
 
-			inline RTM_SIMD_CALL operator quatf() RTM_NO_EXCEPT
+			inline RTM_SIMD_CALL operator quatf() const RTM_NO_EXCEPT
 			{
 				switch (constant)
 				{
@@ -105,7 +105,7 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	// Returns the identity quaternion.
 	//////////////////////////////////////////////////////////////////////////
-	inline rtm_impl::quat_constant<rtm_impl::quat_constants::identity> RTM_SIMD_CALL quat_identity() RTM_NO_EXCEPT
+	constexpr rtm_impl::quat_constant<rtm_impl::quat_constants::identity> RTM_SIMD_CALL quat_identity() RTM_NO_EXCEPT
 	{
 		return rtm_impl::quat_constant<rtm_impl::quat_constants::identity>();
 	}

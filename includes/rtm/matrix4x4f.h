@@ -3,7 +3,6 @@
 ////////////////////////////////////////////////////////////////////////////////
 // The MIT License (MIT)
 //
-// Copyright (c) 2017 Nicholas Frechette & Animation Compression Library contributors
 // Copyright (c) 2018 Nicholas Frechette & Realtime Math contributors
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -27,59 +26,14 @@
 
 #include "rtm/math.h"
 #include "rtm/vector4f.h"
-#include "rtm/quatf.h"
 #include "rtm/impl/matrix_common.h"
-#include "rtm/impl/matrix_affine_common.h"
 
 namespace rtm
 {
 	//////////////////////////////////////////////////////////////////////////
-	// Converts a translation vector into a 3x4 affine matrix.
+	// Returns the desired 4x4 matrix axis.
 	//////////////////////////////////////////////////////////////////////////
-	inline matrix3x4f RTM_SIMD_CALL matrix_from_translation(vector4f_arg0 translation) RTM_NO_EXCEPT
-	{
-		return matrix_set(vector_set(1.0f, 0.0f, 0.0f, 0.0f), vector_set(0.0f, 1.0f, 0.0f, 0.0f), vector_set(0.0f, 0.0f, 1.0f, 0.0f), vector_set(vector_get_x(translation), vector_get_y(translation), vector_get_z(translation), 1.0f));
-	}
-
-	//////////////////////////////////////////////////////////////////////////
-	// Sets a 3x4 affine matrix from a rotation quaternion, translation, and 3D scale.
-	//////////////////////////////////////////////////////////////////////////
-	inline matrix3x4f RTM_SIMD_CALL matrix_from_qvv(quatf_arg0 quat, vector4f_arg1 translation, vector4f_arg2 scale) RTM_NO_EXCEPT
-	{
-		RTM_ASSERT(quat_is_normalized(quat), "Quaternion is not normalized");
-
-		const float x2 = quat_get_x(quat) + quat_get_x(quat);
-		const float y2 = quat_get_y(quat) + quat_get_y(quat);
-		const float z2 = quat_get_z(quat) + quat_get_z(quat);
-		const float xx = quat_get_x(quat) * x2;
-		const float xy = quat_get_x(quat) * y2;
-		const float xz = quat_get_x(quat) * z2;
-		const float yy = quat_get_y(quat) * y2;
-		const float yz = quat_get_y(quat) * z2;
-		const float zz = quat_get_z(quat) * z2;
-		const float wx = quat_get_w(quat) * x2;
-		const float wy = quat_get_w(quat) * y2;
-		const float wz = quat_get_w(quat) * z2;
-
-		vector4f x_axis = vector_mul(vector_set(1.0f - (yy + zz), xy + wz, xz - wy, 0.0f), vector_get_x(scale));
-		vector4f y_axis = vector_mul(vector_set(xy - wz, 1.0f - (xx + zz), yz + wx, 0.0f), vector_get_y(scale));
-		vector4f z_axis = vector_mul(vector_set(xz + wy, yz - wx, 1.0f - (xx + yy), 0.0f), vector_get_z(scale));
-		vector4f w_axis = vector_set(vector_get_x(translation), vector_get_y(translation), vector_get_z(translation), 1.0f);
-		return matrix_set(x_axis, y_axis, z_axis, w_axis);
-	}
-
-	//////////////////////////////////////////////////////////////////////////
-	// Converts a QVV transform into a 3x4 affine matrix.
-	//////////////////////////////////////////////////////////////////////////
-	inline matrix3x4f RTM_SIMD_CALL matrix_from_qvv(qvvf_arg0 transform) RTM_NO_EXCEPT
-	{
-		return matrix_from_qvv(transform.rotation, transform.translation, transform.scale);
-	}
-
-	//////////////////////////////////////////////////////////////////////////
-	// Returns the desired 3x4 affine matrix axis.
-	//////////////////////////////////////////////////////////////////////////
-	inline const vector4f& matrix_get_axis(const matrix3x4f& input, axis4 axis) RTM_NO_EXCEPT
+	inline vector4f matrix_get_axis(matrix4x4f_arg0 input, axis4 axis) RTM_NO_EXCEPT
 	{
 		switch (axis)
 		{
@@ -94,18 +48,10 @@ namespace rtm
 	}
 
 	//////////////////////////////////////////////////////////////////////////
-	// Converts a 3x4 affine matrix into a rotation quaternion.
-	//////////////////////////////////////////////////////////////////////////
-	inline quatf RTM_SIMD_CALL quat_from_matrix(matrix3x4f_arg0 input) RTM_NO_EXCEPT
-	{
-		return rtm_impl::quat_from_matrix(input.x_axis, input.y_axis, input.z_axis);
-	}
-
-	//////////////////////////////////////////////////////////////////////////
-	// Multiplies two 3x4 affine matrices.
+	// Multiplies two 4x4 matrices.
 	// Multiplication order is as follow: local_to_world = matrix_mul(local_to_object, object_to_world)
 	//////////////////////////////////////////////////////////////////////////
-	inline matrix3x4f RTM_SIMD_CALL matrix_mul(matrix3x4f_arg0 lhs, matrix3x4f_arg1 rhs) RTM_NO_EXCEPT
+	inline matrix4x4f RTM_SIMD_CALL matrix_mul(matrix4x4f_arg0 lhs, matrix4x4f_arg1 rhs) RTM_NO_EXCEPT
 	{
 		vector4f tmp = vector_mul(vector_dup_x(lhs.x_axis), rhs.x_axis);
 		tmp = vector_mul_add(vector_dup_y(lhs.x_axis), rhs.y_axis, tmp);
@@ -126,49 +72,46 @@ namespace rtm
 		tmp = vector_mul_add(vector_dup_y(lhs.w_axis), rhs.y_axis, tmp);
 		tmp = vector_mul_add(vector_dup_z(lhs.w_axis), rhs.z_axis, tmp);
 		vector4f w_axis = vector_add(rhs.w_axis, tmp);
-		return matrix_set(x_axis, y_axis, z_axis, w_axis);
-	}
-
-	//////////////////////////////////////////////////////////////////////////
-	// Multiplies a 3x4 affine matrix and a 3D point.
-	// Multiplication order is as follow: world_position = matrix_mul(local_position, local_to_world)
-	//////////////////////////////////////////////////////////////////////////
-	inline vector4f RTM_SIMD_CALL matrix_mul_point3(vector4f_arg0 point, matrix3x4f_arg0 mtx) RTM_NO_EXCEPT
-	{
-		vector4f tmp0;
-		vector4f tmp1;
-
-		tmp0 = vector_mul(vector_dup_x(point), mtx.x_axis);
-		tmp0 = vector_mul_add(vector_dup_y(point), mtx.y_axis, tmp0);
-		tmp1 = vector_mul_add(vector_dup_z(point), mtx.z_axis, mtx.w_axis);
-
-		return vector_add(tmp0, tmp1);
-	}
-
-	//////////////////////////////////////////////////////////////////////////
-	// Transposes a 3x4 affine matrix.
-	// Note: This is a generic matrix 4x4 transpose, the resulting matrix is no longer
-	// affine because the last row is no longer [0,0,0,1]
-	//////////////////////////////////////////////////////////////////////////
-	inline matrix4x4f RTM_SIMD_CALL matrix_transpose(matrix3x4f_arg0 input) RTM_NO_EXCEPT
-	{
-		const vector4f v00_v01_v10_v11 = vector_mix<mix4::x, mix4::y, mix4::a, mix4::b>(input.x_axis, input.y_axis);
-		const vector4f v02_v03_v12_v13 = vector_mix<mix4::z, mix4::w, mix4::c, mix4::d>(input.x_axis, input.y_axis);
-		const vector4f v20_v21_v30_v31 = vector_mix<mix4::x, mix4::y, mix4::a, mix4::b>(input.z_axis, input.w_axis);
-		const vector4f v22_v23_v32_v33 = vector_mix<mix4::z, mix4::w, mix4::c, mix4::d>(input.z_axis, input.w_axis);
-
-		const vector4f x_axis = vector_mix<mix4::x, mix4::z, mix4::a, mix4::c>(v00_v01_v10_v11, v20_v21_v30_v31);
-		const vector4f y_axis = vector_mix<mix4::y, mix4::w, mix4::b, mix4::d>(v00_v01_v10_v11, v20_v21_v30_v31);
-		const vector4f z_axis = vector_mix<mix4::x, mix4::z, mix4::a, mix4::c>(v02_v03_v12_v13, v22_v23_v32_v33);
-		const vector4f w_axis = vector_mix<mix4::y, mix4::w, mix4::b, mix4::d>(v02_v03_v12_v13, v22_v23_v32_v33);
 		return matrix4x4f{ x_axis, y_axis, z_axis, w_axis };
 	}
 
 	//////////////////////////////////////////////////////////////////////////
-	// Inverses a 3x4 affine matrix.
-	// TODO: This is a generic matrix inverse function, can we do better?
+	// Multiplies a 4x4 matrix and a 4D vector.
+	// Multiplication order is as follow: world_position = matrix_mul(local_position, local_to_world)
 	//////////////////////////////////////////////////////////////////////////
-	inline matrix3x4f RTM_SIMD_CALL matrix_inverse(matrix3x4f_arg0 input) RTM_NO_EXCEPT
+	inline vector4f RTM_SIMD_CALL matrix_mul_vector(vector4f_arg0 vec4, matrix4x4f_arg0 mtx) RTM_NO_EXCEPT
+	{
+		vector4f tmp;
+
+		tmp = vector_mul(vector_dup_x(vec4), mtx.x_axis);
+		tmp = vector_mul_add(vector_dup_y(vec4), mtx.y_axis, tmp);
+		tmp = vector_mul_add(vector_dup_z(vec4), mtx.z_axis, tmp);
+		tmp = vector_mul_add(vector_dup_w(vec4), mtx.w_axis, tmp);
+
+		return tmp;
+	}
+
+	//////////////////////////////////////////////////////////////////////////
+	// Transposes a 4x4 matrix.
+	//////////////////////////////////////////////////////////////////////////
+	inline matrix4x4f RTM_SIMD_CALL matrix_transpose(matrix4x4f_arg0 input) RTM_NO_EXCEPT
+	{
+		vector4f tmp0 = vector_mix<mix4::x, mix4::y, mix4::a, mix4::b>(input.x_axis, input.y_axis);
+		vector4f tmp1 = vector_mix<mix4::z, mix4::w, mix4::c, mix4::d>(input.x_axis, input.y_axis);
+		vector4f tmp2 = vector_mix<mix4::x, mix4::y, mix4::a, mix4::b>(input.z_axis, input.w_axis);
+		vector4f tmp3 = vector_mix<mix4::z, mix4::w, mix4::c, mix4::d>(input.z_axis, input.w_axis);
+
+		vector4f x_axis = vector_mix<mix4::x, mix4::z, mix4::a, mix4::c>(tmp0, tmp2);
+		vector4f y_axis = vector_mix<mix4::y, mix4::w, mix4::b, mix4::d>(tmp0, tmp2);
+		vector4f z_axis = vector_mix<mix4::x, mix4::z, mix4::a, mix4::c>(tmp1, tmp3);
+		vector4f w_axis = vector_mix<mix4::y, mix4::w, mix4::b, mix4::d>(tmp1, tmp3);
+		return matrix4x4f{ x_axis, y_axis, z_axis, w_axis };
+	}
+
+	//////////////////////////////////////////////////////////////////////////
+	// Inverses a 4x4 matrix.
+	//////////////////////////////////////////////////////////////////////////
+	inline matrix4x4f RTM_SIMD_CALL matrix_inverse(matrix4x4f_arg0 input) RTM_NO_EXCEPT
 	{
 		matrix4x4f input_transposed = matrix_transpose(input);
 
@@ -253,30 +196,6 @@ namespace rtm
 		z_axis = vector_mul(z_axis, inv_det);
 		w_axis = vector_mul(w_axis, inv_det);
 
-#if defined(RTM_HAS_ASSERT_CHECKS)
-		// Due to floating point noise we might have 0,0,0,~1 but not quite 0,0,0,1
-		// We only really care if we assert
-		w_axis = vector_set(vector_get_x(w_axis), vector_get_y(w_axis), vector_get_z(w_axis), 1.0f);
-#endif
-
-		return matrix_set(x_axis, y_axis, z_axis, w_axis);
-	}
-
-	//////////////////////////////////////////////////////////////////////////
-	// Removes the 3D scale from a 3x4 affine matrix.
-	// Note that if the scaling is 0.0 for a particular axis, the original rotation axis cannot
-	// be recovered trivially and no attempt is done to do so. In theory, we could use the other axes
-	// to try and recover it.
-	// TODO: Implement rotation recovering, perhaps in a separate function and rename this
-	// one to matrix_remove_non_zero_scale(..)
-	//////////////////////////////////////////////////////////////////////////
-	inline matrix3x4f RTM_SIMD_CALL matrix_remove_scale(matrix3x4f_arg0 input) RTM_NO_EXCEPT
-	{
-		matrix3x4f result;
-		result.x_axis = vector_normalize3(input.x_axis, input.x_axis);
-		result.y_axis = vector_normalize3(input.y_axis, input.y_axis);
-		result.z_axis = vector_normalize3(input.z_axis, input.z_axis);
-		result.w_axis = input.w_axis;
-		return result;
+		return matrix4x4f{ x_axis, y_axis, z_axis, w_axis };
 	}
 }

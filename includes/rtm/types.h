@@ -170,6 +170,28 @@ namespace rtm
 	};
 
 	//////////////////////////////////////////////////////////////////////////
+	// A generic 3x3 matrix.
+	// Note: The [w] component of every column vector is undefined.
+	//////////////////////////////////////////////////////////////////////////
+	struct matrix3x3f
+	{
+		vector4f	x_axis;
+		vector4f	y_axis;
+		vector4f	z_axis;
+	};
+
+	//////////////////////////////////////////////////////////////////////////
+	// A generic 3x3 matrix.
+	// Note: The [w] component of every column vector is undefined.
+	//////////////////////////////////////////////////////////////////////////
+	struct matrix3x3d
+	{
+		vector4d	x_axis;
+		vector4d	y_axis;
+		vector4d	z_axis;
+	};
+
+	//////////////////////////////////////////////////////////////////////////
 	// An 3x4 affine matrix represents a 3D rotation, 3D translation, and 3D scale.
 	// It properly deals with skew/shear when present but once scale with mirroring is combined,
 	// it cannot be safely extracted back.

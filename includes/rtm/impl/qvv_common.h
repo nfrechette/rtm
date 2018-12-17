@@ -63,7 +63,7 @@ namespace rtm
 		template<qvv_constants constant>
 		struct qvv_constant
 		{
-			inline RTM_SIMD_CALL operator qvvd() RTM_NO_EXCEPT
+			inline RTM_SIMD_CALL operator qvvd() const RTM_NO_EXCEPT
 			{
 				switch (constant)
 				{
@@ -73,7 +73,7 @@ namespace rtm
 				}
 			}
 
-			inline RTM_SIMD_CALL operator qvvf() RTM_NO_EXCEPT
+			inline RTM_SIMD_CALL operator qvvf() const RTM_NO_EXCEPT
 			{
 				switch (constant)
 				{
@@ -88,7 +88,7 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	// Returns the identity QVV transform.
 	//////////////////////////////////////////////////////////////////////////
-	inline rtm_impl::qvv_constant<rtm_impl::qvv_constants::identity> RTM_SIMD_CALL qvv_identity() RTM_NO_EXCEPT
+	constexpr rtm_impl::qvv_constant<rtm_impl::qvv_constants::identity> RTM_SIMD_CALL qvv_identity() RTM_NO_EXCEPT
 	{
 		return rtm_impl::qvv_constant<rtm_impl::qvv_constants::identity>();
 	}

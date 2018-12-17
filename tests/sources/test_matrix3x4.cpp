@@ -66,14 +66,14 @@ static void test_affine_matrix_impl(const FloatType threshold)
 	{
 		QuatType rotation_around_z = quat_from_euler(degrees(FloatType(0.0)), degrees(FloatType(90.0)), degrees(FloatType(0.0)));
 		Vector4Type translation = vector_set(FloatType(1.0), FloatType(2.0), FloatType(3.0));
-		Matrix3x4Type mtx = matrix_set(rotation_around_z, translation, vector_set(FloatType(1.0)));
+		Matrix3x4Type mtx = matrix_from_qvv(rotation_around_z, translation, vector_set(FloatType(1.0)));
 		REQUIRE(vector_all_near_equal(vector_set(FloatType(0.0), FloatType(1.0), FloatType(0.0), FloatType(0.0)), mtx.x_axis, threshold));
 		REQUIRE(vector_all_near_equal(vector_set(FloatType(-1.0), FloatType(0.0), FloatType(0.0), FloatType(0.0)), mtx.y_axis, threshold));
 		REQUIRE(vector_all_near_equal(vector_set(FloatType(0.0), FloatType(0.0), FloatType(1.0), FloatType(0.0)), mtx.z_axis, threshold));
 		REQUIRE(vector_all_near_equal(vector_set(FloatType(1.0), FloatType(2.0), FloatType(3.0), FloatType(1.0)), mtx.w_axis, threshold));
 
 		Vector4Type scale = vector_set(FloatType(4.0), FloatType(5.0), FloatType(6.0));
-		mtx = matrix_set(rotation_around_z, translation, scale);
+		mtx = matrix_from_qvv(rotation_around_z, translation, scale);
 		REQUIRE(vector_all_near_equal(vector_set(FloatType(0.0), FloatType(4.0), FloatType(0.0), FloatType(0.0)), mtx.x_axis, threshold));
 		REQUIRE(vector_all_near_equal(vector_set(FloatType(-5.0), FloatType(0.0), FloatType(0.0), FloatType(0.0)), mtx.y_axis, threshold));
 		REQUIRE(vector_all_near_equal(vector_set(FloatType(0.0), FloatType(0.0), FloatType(6.0), FloatType(0.0)), mtx.z_axis, threshold));
@@ -121,7 +121,7 @@ static void test_affine_matrix_impl(const FloatType threshold)
 		QuatType rotation_around_z = quat_from_euler(degrees(FloatType(0.0)), degrees(FloatType(90.0)), degrees(FloatType(0.0)));
 		Vector4Type translation = vector_set(FloatType(1.0), FloatType(2.0), FloatType(3.0));
 		Vector4Type scale = vector_set(FloatType(4.0), FloatType(5.0), FloatType(6.0));
-		Matrix3x4Type mtx = matrix_set(rotation_around_z, translation, scale);
+		Matrix3x4Type mtx = matrix_from_qvv(rotation_around_z, translation, scale);
 		REQUIRE(vector_all_near_equal(matrix_get_axis(mtx, axis4::x), mtx.x_axis, threshold));
 		REQUIRE(vector_all_near_equal(matrix_get_axis(mtx, axis4::y), mtx.y_axis, threshold));
 		REQUIRE(vector_all_near_equal(matrix_get_axis(mtx, axis4::z), mtx.z_axis, threshold));
@@ -146,14 +146,14 @@ static void test_affine_matrix_impl(const FloatType threshold)
 		Vector4Type y_axis = vector_set(FloatType(0.0), FloatType(1.0), FloatType(0.0));
 
 		QuatType rotation_around_z = quat_from_euler(degrees(FloatType(0.0)), degrees(FloatType(90.0)), degrees(FloatType(0.0)));
-		Matrix3x4Type mtx_a = matrix_set(rotation_around_z, x_axis, vector_set(FloatType(1.0)));
+		Matrix3x4Type mtx_a = matrix_from_qvv(rotation_around_z, x_axis, vector_set(FloatType(1.0)));
 		Vector4Type result = matrix_mul_point3(x_axis, mtx_a);
 		REQUIRE(vector_all_near_equal3(result, vector_set(FloatType(1.0), FloatType(1.0), FloatType(0.0)), threshold));
 		result = matrix_mul_point3(y_axis, mtx_a);
 		REQUIRE(vector_all_near_equal3(result, vector_set(FloatType(0.0), FloatType(0.0), FloatType(0.0)), threshold));
 
 		QuatType rotation_around_x = quat_from_euler(degrees(FloatType(0.0)), degrees(FloatType(0.0)), degrees(FloatType(90.0)));
-		Matrix3x4Type mtx_b = matrix_set(rotation_around_x, y_axis, vector_set(FloatType(1.0)));
+		Matrix3x4Type mtx_b = matrix_from_qvv(rotation_around_x, y_axis, vector_set(FloatType(1.0)));
 		result = matrix_mul_point3(x_axis, mtx_b);
 		REQUIRE(vector_all_near_equal3(result, vector_set(FloatType(1.0), FloatType(1.0), FloatType(0.0)), threshold));
 		result = matrix_mul_point3(y_axis, mtx_b);
@@ -192,7 +192,20 @@ static void test_affine_matrix_impl(const FloatType threshold)
 		QuatType rotation_around_z = quat_from_euler(degrees(FloatType(0.0)), degrees(FloatType(90.0)), degrees(FloatType(0.0)));
 		Vector4Type translation = vector_set(FloatType(1.0), FloatType(2.0), FloatType(3.0));
 		Vector4Type scale = vector_set(FloatType(4.0), FloatType(5.0), FloatType(6.0));
-		Matrix3x4Type mtx = matrix_set(rotation_around_z, translation, scale);
+		Matrix3x4Type mtx = matrix_from_qvv(rotation_around_z, translation, scale);
+		Matrix3x4Type inv_mtx = matrix_inverse(mtx);
+		Matrix3x4Type result = matrix_mul(mtx, inv_mtx);
+		REQUIRE(vector_all_near_equal(vector_set(FloatType(1.0), FloatType(0.0), FloatType(0.0), FloatType(0.0)), result.x_axis, threshold));
+		REQUIRE(vector_all_near_equal(vector_set(FloatType(0.0), FloatType(1.0), FloatType(0.0), FloatType(0.0)), result.y_axis, threshold));
+		REQUIRE(vector_all_near_equal(vector_set(FloatType(0.0), FloatType(0.0), FloatType(1.0), FloatType(0.0)), result.z_axis, threshold));
+		REQUIRE(vector_all_near_equal(vector_set(FloatType(0.0), FloatType(0.0), FloatType(0.0), FloatType(1.0)), result.w_axis, threshold));
+	}
+
+	{
+		QuatType rotation = quat_from_euler(degrees(FloatType(12.3)), degrees(FloatType(42.8)), degrees(FloatType(33.41)));
+		Vector4Type translation = vector_set(FloatType(1.0), FloatType(2.0), FloatType(3.0));
+		Vector4Type scale = vector_set(FloatType(4.0), FloatType(5.0), FloatType(6.0));
+		Matrix3x4Type mtx = matrix_from_qvv(rotation, translation, scale);
 		Matrix3x4Type inv_mtx = matrix_inverse(mtx);
 		Matrix3x4Type result = matrix_mul(mtx, inv_mtx);
 		REQUIRE(vector_all_near_equal(vector_set(FloatType(1.0), FloatType(0.0), FloatType(0.0), FloatType(0.0)), result.x_axis, threshold));
@@ -205,7 +218,7 @@ static void test_affine_matrix_impl(const FloatType threshold)
 		QuatType rotation_around_z = quat_from_euler(degrees(FloatType(0.0)), degrees(FloatType(90.0)), degrees(FloatType(0.0)));
 		Vector4Type translation = vector_set(FloatType(1.0), FloatType(2.0), FloatType(3.0));
 		Vector4Type scale = vector_set(FloatType(4.0), FloatType(5.0), FloatType(6.0));
-		Matrix3x4Type mtx0 = matrix_set(rotation_around_z, translation, scale);
+		Matrix3x4Type mtx0 = matrix_from_qvv(rotation_around_z, translation, scale);
 		Matrix3x4Type mtx0_no_scale = matrix_remove_scale(mtx0);
 		REQUIRE(vector_all_near_equal(vector_set(FloatType(0.0), FloatType(1.0), FloatType(0.0), FloatType(0.0)), mtx0_no_scale.x_axis, threshold));
 		REQUIRE(vector_all_near_equal(vector_set(FloatType(-1.0), FloatType(0.0), FloatType(0.0), FloatType(0.0)), mtx0_no_scale.y_axis, threshold));
@@ -222,7 +235,7 @@ TEST_CASE("matrix3x4f math", "[math][matrix3x4]")
 		quatf rotation_around_z = quat_from_euler(degrees(0.0f), degrees(90.0f), degrees(0.0f));
 		vector4f translation = vector_set(1.0f, 2.0f, 3.0f);
 		vector4f scale = vector_set(4.0f, 5.0f, 6.0f);
-		matrix3x4f src = matrix_set(rotation_around_z, translation, scale);
+		matrix3x4f src = matrix_from_qvv(rotation_around_z, translation, scale);
 		matrix3x4d dst = matrix_cast(src);
 		REQUIRE(vector_all_near_equal(vector_cast(src.x_axis), dst.x_axis, 1.0e-4));
 		REQUIRE(vector_all_near_equal(vector_cast(src.y_axis), dst.y_axis, 1.0e-4));
@@ -239,7 +252,7 @@ TEST_CASE("matrix3x4d math", "[math][matrix3x4]")
 		quatd rotation_around_z = quat_from_euler(degrees(0.0), degrees(90.0), degrees(0.0));
 		vector4d translation = vector_set(1.0, 2.0, 3.0);
 		vector4d scale = vector_set(4.0, 5.0, 6.0);
-		matrix3x4d src = matrix_set(rotation_around_z, translation, scale);
+		matrix3x4d src = matrix_from_qvv(rotation_around_z, translation, scale);
 		matrix3x4f dst = matrix_cast(src);
 		REQUIRE(vector_all_near_equal(vector_cast(src.x_axis), dst.x_axis, 1.0e-4f));
 		REQUIRE(vector_all_near_equal(vector_cast(src.y_axis), dst.y_axis, 1.0e-4f));

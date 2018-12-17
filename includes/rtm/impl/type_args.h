@@ -58,13 +58,22 @@ namespace rtm
 	using quatf_argn = const quatf&;
 
 	// With __vectorcall, vector aggregates are also passed by register and they can use up to 4 registers.
+
 	using qvvf_arg0 = const qvvf;
 	using qvvf_arg1 = const qvvf;
 	using qvvf_argn = const qvvf&;
 
+	using matrix3x3f_arg0 = const matrix3x3f;
+	using matrix3x3f_arg1 = const matrix3x3f&;
+	using matrix3x3f_argn = const matrix3x3f&;
+
 	using matrix3x4f_arg0 = const matrix3x4f;
 	using matrix3x4f_arg1 = const matrix3x4f&;
 	using matrix3x4f_argn = const matrix3x4f&;
+
+	using matrix4x4f_arg0 = const matrix4x4f;
+	using matrix4x4f_arg1 = const matrix4x4f&;
+	using matrix4x4f_argn = const matrix4x4f&;
 #elif defined(RTM_NEON64_INTRINSICS)
 	// On ARM64 NEON, the first 8x vector4f/quatf arguments can be passed by value in a register,
 	// everything else afterwards is passed by const&. They can also be returned by register.
@@ -92,13 +101,22 @@ namespace rtm
 	// With ARM64 NEON, vector aggregates are also passed by register but the whole aggregate
 	// must fit in the number of registers available (e.g. we can pass 2x qvvf but not 3x).
 	// A qvvf can also be returned by register.
+
 	using qvvf_arg0 = const qvvf;
 	using qvvf_arg1 = const qvvf;
 	using qvvf_argn = const qvvf&;
 
+	using matrix3x3f_arg0 = const matrix3x3f;
+	using matrix3x3f_arg1 = const matrix3x3f;
+	using matrix3x3f_argn = const matrix3x3f&;
+
 	using matrix3x4f_arg0 = const matrix3x4f;
 	using matrix3x4f_arg1 = const matrix3x4f;
 	using matrix3x4f_argn = const matrix3x4f&;
+
+	using matrix4x4f_arg0 = const matrix4x4f;
+	using matrix4x4f_arg1 = const matrix4x4f;
+	using matrix4x4f_argn = const matrix4x4f&;
 #elif defined(RTM_NEON_INTRINSICS)
 	// On ARM NEON, the first 4x vector4f/quatf arguments can be passed by value in a register,
 	// everything else afterwards is passed by const&. They can also be returned by register.
@@ -123,13 +141,23 @@ namespace rtm
 	using quatf_arg7 = const quatf&;
 	using quatf_argn = const quatf&;
 
+	// ARM NEON does not support passing aggregates by register.
+
 	using qvvf_arg0 = const qvvf&;
 	using qvvf_arg1 = const qvvf&;
 	using qvvf_argn = const qvvf&;
 
+	using matrix3x3f_arg0 = const matrix3x3f&;
+	using matrix3x3f_arg1 = const matrix3x3f&;
+	using matrix3x3f_argn = const matrix3x3f&;
+
 	using matrix3x4f_arg0 = const matrix3x4f&;
 	using matrix3x4f_arg1 = const matrix3x4f&;
 	using matrix3x4f_argn = const matrix3x4f&;
+
+	using matrix4x4f_arg0 = const matrix4x4f&;
+	using matrix4x4f_arg1 = const matrix4x4f&;
+	using matrix4x4f_argn = const matrix4x4f&;
 #elif defined(__x86_64__) && defined(__GNUG__) && !defined(__clang__)
 	// On x64 with gcc, the first 8x vector4f/quatf arguments can be passed by value in a register,
 	// everything else afterwards is passed by const&. They can also be returned by register.
@@ -155,13 +183,22 @@ namespace rtm
 	using quatf_argn = const quatf&;
 
 	// gcc does not appear to support passing and returning aggregates by register
+
 	using qvvf_arg0 = const qvvf&;
 	using qvvf_arg1 = const qvvf&;
 	using qvvf_argn = const qvvf&;
 
+	using matrix3x3f_arg0 = const matrix3x3f&;
+	using matrix3x3f_arg1 = const matrix3x3f&;
+	using matrix3x3f_argn = const matrix3x3f&;
+
 	using matrix3x4f_arg0 = const matrix3x4f&;
 	using matrix3x4f_arg1 = const matrix3x4f&;
 	using matrix3x4f_argn = const matrix3x4f&;
+
+	using matrix4x4f_arg0 = const matrix4x4f&;
+	using matrix4x4f_arg1 = const matrix4x4f&;
+	using matrix4x4f_argn = const matrix4x4f&;
 #elif defined(__x86_64__) && defined(__clang__)
 	// On x64 with clang, the first 8x vector4f/quatf arguments can be passed by value in a register,
 	// everything else afterwards is passed by const&. They can also be returned by register.
@@ -192,13 +229,22 @@ namespace rtm
 	// if multiple qvv_mul(..) are called, forcing the return value to be written and read back
 	// before the next function call can be made. It might be faster regardless as the compiler
 	// might be able to insert other instructions in between.
+
 	using qvvf_arg0 = const qvvf&;
 	using qvvf_arg1 = const qvvf&;
 	using qvvf_argn = const qvvf&;
 
+	using matrix3x3f_arg0 = const matrix3x3f&;
+	using matrix3x3f_arg1 = const matrix3x3f&;
+	using matrix3x3f_argn = const matrix3x3f&;
+
 	using matrix3x4f_arg0 = const matrix3x4f&;
 	using matrix3x4f_arg1 = const matrix3x4f&;
 	using matrix3x4f_argn = const matrix3x4f&;
+
+	using matrix4x4f_arg0 = const matrix4x4f&;
+	using matrix4x4f_arg1 = const matrix4x4f&;
+	using matrix4x4f_argn = const matrix4x4f&;
 #else
 	// On every other platform, everything is passed by const&
 	using vector4f_arg0 = const vector4f&;
@@ -225,8 +271,16 @@ namespace rtm
 	using qvvf_arg1 = const qvvf&;
 	using qvvf_argn = const qvvf&;
 
+	using matrix3x3f_arg0 = const matrix3x3f&;
+	using matrix3x3f_arg1 = const matrix3x3f&;
+	using matrix3x3f_argn = const matrix3x3f&;
+
 	using matrix3x4f_arg0 = const matrix3x4f&;
 	using matrix3x4f_arg1 = const matrix3x4f&;
 	using matrix3x4f_argn = const matrix3x4f&;
+
+	using matrix4x4f_arg0 = const matrix4x4f&;
+	using matrix4x4f_arg1 = const matrix4x4f&;
+	using matrix4x4f_argn = const matrix4x4f&;
 #endif
 }
