@@ -166,100 +166,66 @@ namespace rtm
 
 	//////////////////////////////////////////////////////////////////////////
 	// Inverses a 3x4 affine matrix.
-	// TODO: This is a generic matrix inverse function, can we do better?
 	//////////////////////////////////////////////////////////////////////////
 	inline matrix3x4f RTM_SIMD_CALL matrix_inverse(matrix3x4f_arg0 input) RTM_NO_EXCEPT
 	{
-		matrix4x4f input_transposed = matrix_transpose(input);
+		// Invert the 3x3 portion of the matrix that contains the rotation and 3D scale
+		// Note that we make sure to preserve the 0.0 in the [w] components
+		const vector4f v00_v01_v10_v11 = vector_mix<mix4::x, mix4::y, mix4::a, mix4::b>(input.x_axis, input.y_axis);
+		const vector4f v02_v03_v12_v13 = vector_mix<mix4::z, mix4::w, mix4::c, mix4::d>(input.x_axis, input.y_axis);
 
-		vector4f v00 = vector_mix<mix4::x, mix4::x, mix4::y, mix4::y>(input_transposed.z_axis, input_transposed.z_axis);
-		vector4f v01 = vector_mix<mix4::x, mix4::x, mix4::y, mix4::y>(input_transposed.x_axis, input_transposed.x_axis);
-		vector4f v02 = vector_mix<mix4::x, mix4::z, mix4::a, mix4::c>(input_transposed.z_axis, input_transposed.x_axis);
-		vector4f v10 = vector_mix<mix4::z, mix4::w, mix4::z, mix4::w>(input_transposed.w_axis, input_transposed.w_axis);
-		vector4f v11 = vector_mix<mix4::z, mix4::w, mix4::z, mix4::w>(input_transposed.y_axis, input_transposed.y_axis);
-		vector4f v12 = vector_mix<mix4::y, mix4::w, mix4::b, mix4::d>(input_transposed.w_axis, input_transposed.y_axis);
+		const vector4f v00_v10_v20_v22 = vector_mix<mix4::x, mix4::z, mix4::a, mix4::c>(v00_v01_v10_v11, input.z_axis);
+		const vector4f v01_v11_v21_v23 = vector_mix<mix4::y, mix4::w, mix4::b, mix4::d>(v00_v01_v10_v11, input.z_axis);
+		const vector4f v02_v12_v22_v22 = vector_mix<mix4::x, mix4::z, mix4::c, mix4::c>(v02_v03_v12_v13, input.z_axis);
 
-		vector4f d0 = vector_mul(v00, v10);
-		vector4f d1 = vector_mul(v01, v11);
-		vector4f d2 = vector_mul(v02, v12);
+		const vector4f v11_v21_v01_0 = vector_mix<mix4::y, mix4::z, mix4::b, mix4::d>(v01_v11_v21_v23, input.x_axis);
+		const vector4f v22_v02_v12_v10 = vector_mix<mix4::z, mix4::x, mix4::c, mix4::a>(v02_v12_v22_v22, input.y_axis);
+		const vector4f v11v22_v21v02_v01v12_0 = vector_mul(v11_v21_v01_0, v22_v02_v12_v10);
 
-		v00 = vector_mix<mix4::z, mix4::w, mix4::z, mix4::w>(input_transposed.z_axis, input_transposed.z_axis);
-		v01 = vector_mix<mix4::z, mix4::w, mix4::z, mix4::w>(input_transposed.x_axis, input_transposed.x_axis);
-		v02 = vector_mix<mix4::y, mix4::w, mix4::b, mix4::d>(input_transposed.z_axis, input_transposed.x_axis);
-		v10 = vector_mix<mix4::x, mix4::x, mix4::y, mix4::y>(input_transposed.w_axis, input_transposed.w_axis);
-		v11 = vector_mix<mix4::x, mix4::x, mix4::y, mix4::y>(input_transposed.y_axis, input_transposed.y_axis);
-		v12 = vector_mix<mix4::x, mix4::z, mix4::a, mix4::c>(input_transposed.w_axis, input_transposed.y_axis);
+		const vector4f v01_v02_0_v12 = vector_mix<mix4::y, mix4::z, mix4::d, mix4::c>(input.x_axis, input.y_axis);
 
-		d0 = vector_neg_mul_sub(v00, v10, d0);
-		d1 = vector_neg_mul_sub(v01, v11, d1);
-		d2 = vector_neg_mul_sub(v02, v12, d2);
+		const vector4f v12_v01_v11_0 = vector_mix<mix4::w, mix4::x, mix4::b, mix4::d>(v01_v02_0_v12, v01_v11_v21_v23);
+		const vector4f v21_v22_v02_0 = vector_mix<mix4::y, mix4::z, mix4::b, mix4::c>(input.z_axis, v01_v02_0_v12);
 
-		v00 = vector_mix<mix4::y, mix4::z, mix4::x, mix4::y>(input_transposed.y_axis, input_transposed.y_axis);
-		v01 = vector_mix<mix4::z, mix4::x, mix4::y, mix4::x>(input_transposed.x_axis, input_transposed.x_axis);
-		v02 = vector_mix<mix4::y, mix4::z, mix4::x, mix4::y>(input_transposed.w_axis, input_transposed.w_axis);
-		vector4f v03 = vector_mix<mix4::z, mix4::x, mix4::y, mix4::x>(input_transposed.z_axis, input_transposed.z_axis);
-		v10 = vector_mix<mix4::b, mix4::y, mix4::w, mix4::x>(d0, d2);
-		v11 = vector_mix<mix4::w, mix4::b, mix4::y, mix4::z>(d0, d2);
-		v12 = vector_mix<mix4::d, mix4::y, mix4::w, mix4::x>(d1, d2);
-		vector4f v13 = vector_mix<mix4::w, mix4::d, mix4::y, mix4::z>(d1, d2);
+		vector4f x_axis = vector_neg_mul_sub(v12_v01_v11_0, v21_v22_v02_0, v11v22_v21v02_v01v12_0);
 
-		vector4f c0 = vector_mul(v00, v10);
-		vector4f c2 = vector_mul(v01, v11);
-		vector4f c4 = vector_mul(v02, v12);
-		vector4f c6 = vector_mul(v03, v13);
+		const vector4f v20_v00_v10_v22 = vector_mix<mix4::z, mix4::x, mix4::d, mix4::a>(v00_v10_v20_v22, v22_v02_v12_v10);
+		const vector4f v12_v22_v02_0 = vector_mix<mix4::y, mix4::z, mix4::c, mix4::d>(v02_v12_v22_v22, v21_v22_v02_0);
+		const vector4f v20v12_v00v22_v10v02_0 = vector_mul(v20_v00_v10_v22, v12_v22_v02_0);
 
-		v00 = vector_mix<mix4::z, mix4::w, mix4::y, mix4::z>(input_transposed.y_axis, input_transposed.y_axis);
-		v01 = vector_mix<mix4::w, mix4::z, mix4::w, mix4::y>(input_transposed.x_axis, input_transposed.x_axis);
-		v02 = vector_mix<mix4::z, mix4::w, mix4::y, mix4::z>(input_transposed.w_axis, input_transposed.w_axis);
-		v03 = vector_mix<mix4::w, mix4::z, mix4::w, mix4::y>(input_transposed.z_axis, input_transposed.z_axis);
-		v10 = vector_mix<mix4::w, mix4::x, mix4::y, mix4::a>(d0, d2);
-		v11 = vector_mix<mix4::z, mix4::y, mix4::a, mix4::x>(d0, d2);
-		v12 = vector_mix<mix4::w, mix4::x, mix4::y, mix4::c>(d1, d2);
-		v13 = vector_mix<mix4::z, mix4::y, mix4::c, mix4::x>(d1, d2);
+		const vector4f v10_v02_v00 = vector_mix<mix4::w, mix4::y, mix4::b, mix4::c>(v22_v02_v12_v10, v20_v00_v10_v22);
+		const vector4f v22_v20_v12_0 = vector_mix<mix4::w, mix4::x, mix4::a, mix4::d>(v20_v00_v10_v22, v12_v22_v02_0);
 
-		c0 = vector_neg_mul_sub(v00, v10, c0);
-		c2 = vector_neg_mul_sub(v01, v11, c2);
-		c4 = vector_neg_mul_sub(v02, v12, c4);
-		c6 = vector_neg_mul_sub(v03, v13, c6);
+		vector4f y_axis = vector_neg_mul_sub(v10_v02_v00, v22_v20_v12_0, v20v12_v00v22_v10v02_0);
 
-		v00 = vector_mix<mix4::w, mix4::x, mix4::w, mix4::x>(input_transposed.y_axis, input_transposed.y_axis);
-		v01 = vector_mix<mix4::y, mix4::w, mix4::x, mix4::z>(input_transposed.x_axis, input_transposed.x_axis);
-		v02 = vector_mix<mix4::w, mix4::x, mix4::w, mix4::x>(input_transposed.w_axis, input_transposed.w_axis);
-		v03 = vector_mix<mix4::y, mix4::w, mix4::x, mix4::z>(input_transposed.z_axis, input_transposed.z_axis);
-		v10 = vector_mix<mix4::z, mix4::b, mix4::a, mix4::z>(d0, d2);
-		v11 = vector_mix<mix4::b, mix4::x, mix4::w, mix4::a>(d0, d2);
-		v12 = vector_mix<mix4::z, mix4::d, mix4::c, mix4::z>(d1, d2);
-		v13 = vector_mix<mix4::d, mix4::x, mix4::w, mix4::c>(d1, d2);
+		const vector4f v10_v20_v00 = vector_mix<mix4::z, mix4::x, mix4::c, mix4::c>(v20_v00_v10_v22, v10_v02_v00);
+		const vector4f v21_v01_v11_0 = vector_mix<mix4::y, mix4::z, mix4::c, mix4::d>(v11_v21_v01_0, v12_v01_v11_0);
+		const vector4f v10v21_v20v01_v00v11_0 = vector_mul(v10_v20_v00, v21_v01_v11_0);
 
-		vector4f c1 = vector_neg_mul_sub(v00, v10, c0);
-		c0 = vector_mul_add(v00, v10, c0);
-		vector4f c3 = vector_mul_add(v01, v11, c2);
-		c2 = vector_neg_mul_sub(v01, v11, c2);
-		vector4f c5 = vector_neg_mul_sub(v02, v12, c4);
-		c4 = vector_mul_add(v02, v12, c4);
-		vector4f c7 = vector_mul_add(v03, v13, c6);
-		c6 = vector_neg_mul_sub(v03, v13, c6);
+		const vector4f v20_v00_v01_0 = vector_mix<mix4::y, mix4::z, mix4::c, mix4::d>(v10_v20_v00, v11_v21_v01_0);
+		const vector4f v11_v21_v10 = vector_mix<mix4::x, mix4::y, mix4::a, mix4::c>(v11_v21_v01_0, v10_v20_v00);
 
-		vector4f x_axis = vector_mix<mix4::x, mix4::b, mix4::z, mix4::d>(c0, c1);
-		vector4f y_axis = vector_mix<mix4::x, mix4::b, mix4::z, mix4::d>(c2, c3);
-		vector4f z_axis = vector_mix<mix4::x, mix4::b, mix4::z, mix4::d>(c4, c5);
-		vector4f w_axis = vector_mix<mix4::x, mix4::b, mix4::z, mix4::d>(c6, c7);
+		vector4f z_axis = vector_neg_mul_sub(v20_v00_v01_0, v11_v21_v10, v10v21_v20v01_v00v11_0);
 
-		float det = vector_dot(x_axis, input_transposed.x_axis);
-		vector4f inv_det = vector_set(scalar_reciprocal(det));
+		const vector4f o00_o00_o10_o10 = vector_mix<mix4::x, mix4::x, mix4::a, mix4::a>(x_axis, y_axis);
+		const vector4f o00_o10_o20 = vector_mix<mix4::x, mix4::z, mix4::a, mix4::a>(o00_o00_o10_o10, z_axis);
+
+		const float det = vector_dot(o00_o10_o20, input.x_axis);
+		const vector4f inv_det = vector_set(scalar_reciprocal(det));
 
 		x_axis = vector_mul(x_axis, inv_det);
 		y_axis = vector_mul(y_axis, inv_det);
 		z_axis = vector_mul(z_axis, inv_det);
-		w_axis = vector_mul(w_axis, inv_det);
 
-#if defined(RTM_HAS_ASSERT_CHECKS)
-		// Due to floating point noise we might have 0,0,0,~1 but not quite 0,0,0,1
-		// We only really care if we assert
-		w_axis = vector_set(vector_get_x(w_axis), vector_get_y(w_axis), vector_get_z(w_axis), 1.0f);
-#endif
+		// Invert the translation
+		const vector4f tmp0 = vector_mul(vector_dup_z(input.w_axis), z_axis);
+		const vector4f tmp1 = vector_mul_add(vector_dup_y(input.w_axis), y_axis, tmp0);
+		vector4f w_axis = vector_neg(vector_mul_add(vector_dup_x(input.w_axis), x_axis, tmp1));
 
-		return matrix_set(x_axis, y_axis, z_axis, w_axis);
+		// Preserve our 1.0 in the [w] component
+		w_axis = vector_mix<mix4::x, mix4::y, mix4::z, mix4::d>(w_axis, input.w_axis);
+
+		return matrix3x4f{ x_axis, y_axis, z_axis, w_axis };
 	}
 
 	//////////////////////////////////////////////////////////////////////////
