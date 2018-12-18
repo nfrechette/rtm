@@ -242,7 +242,7 @@ namespace rtm
 		template<vector_unaligned_loader_width width>
 		struct vector_unaligned_loader
 		{
-			constexpr vector_unaligned_loader(const uint8_t* ptr_) RTM_NO_EXCEPT : ptr(ptr_) {}
+			constexpr explicit vector_unaligned_loader(const uint8_t* ptr_) RTM_NO_EXCEPT : ptr(ptr_) {}
 
 			inline RTM_SIMD_CALL operator vector4d() const RTM_NO_EXCEPT
 			{
@@ -297,7 +297,7 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	// Returns a vector consisting of all zeros.
 	//////////////////////////////////////////////////////////////////////////
-	inline rtm_impl::vector_constant<rtm_impl::vector_constants::zero> RTM_SIMD_CALL vector_zero() RTM_NO_EXCEPT
+	constexpr rtm_impl::vector_constant<rtm_impl::vector_constants::zero> RTM_SIMD_CALL vector_zero() RTM_NO_EXCEPT
 	{
 		return rtm_impl::vector_constant<rtm_impl::vector_constants::zero>();
 	}
@@ -305,7 +305,7 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	// Loads an unaligned vector4.
 	//////////////////////////////////////////////////////////////////////////
-	inline rtm_impl::vector_unaligned_loader<rtm_impl::vector_unaligned_loader_width::vec4> RTM_SIMD_CALL vector_unaligned_load(const uint8_t* input) RTM_NO_EXCEPT
+	constexpr rtm_impl::vector_unaligned_loader<rtm_impl::vector_unaligned_loader_width::vec4> RTM_SIMD_CALL vector_unaligned_load(const uint8_t* input) RTM_NO_EXCEPT
 	{
 		return rtm_impl::vector_unaligned_loader<rtm_impl::vector_unaligned_loader_width::vec4>(input);
 	}
@@ -313,7 +313,7 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	// Loads an unaligned vector3 and sets the [w] component to 0.0.
 	//////////////////////////////////////////////////////////////////////////
-	inline rtm_impl::vector_unaligned_loader<rtm_impl::vector_unaligned_loader_width::vec3> RTM_SIMD_CALL vector_unaligned_load3(const uint8_t* input) RTM_NO_EXCEPT
+	constexpr rtm_impl::vector_unaligned_loader<rtm_impl::vector_unaligned_loader_width::vec3> RTM_SIMD_CALL vector_unaligned_load3(const uint8_t* input) RTM_NO_EXCEPT
 	{
 		return rtm_impl::vector_unaligned_loader<rtm_impl::vector_unaligned_loader_width::vec3>(input);
 	}
