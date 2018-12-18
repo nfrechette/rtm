@@ -27,6 +27,7 @@
 #include "rtm/math.h"
 #include "rtm/vector4f.h"
 #include "rtm/vector4d.h"
+#include "rtm/type_traits.h"
 #include "rtm/impl/matrix_cast.h"
 
 namespace rtm
@@ -113,10 +114,14 @@ namespace rtm
 
 		//////////////////////////////////////////////////////////////////////////
 		// A helper struct to set matrices with similar width.
+		// Note: We use a float type as a template argument because GCC loses alignment
+		// attributes on template argument types.
 		//////////////////////////////////////////////////////////////////////////
-		template<typename vector_type>
+		template<typename float_type>
 		struct matrix_setter4x4
 		{
+			using vector4 = typename float_traits<float_type>::vector4;
+
 			//////////////////////////////////////////////////////////////////////////
 			// Sets all 4 axes and creates a 3x4 affine matrix.
 			//////////////////////////////////////////////////////////////////////////
@@ -157,10 +162,10 @@ namespace rtm
 				return matrix4x4f{ x_axis, y_axis, z_axis, w_axis };
 			}
 
-			vector_type	x_axis;
-			vector_type	y_axis;
-			vector_type	z_axis;
-			vector_type	w_axis;
+			vector4	x_axis;
+			vector4	y_axis;
+			vector4	z_axis;
+			vector4	w_axis;
 		};
 	}
 
@@ -183,17 +188,17 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	// Sets all 4 axes and creates a matrix.
 	//////////////////////////////////////////////////////////////////////////
-	constexpr rtm_impl::matrix_setter4x4<vector4f> RTM_SIMD_CALL matrix_set(vector4f_arg0 x_axis, vector4f_arg1 y_axis, vector4f_arg2 z_axis, vector4f_arg3 w_axis) RTM_NO_EXCEPT
+	constexpr rtm_impl::matrix_setter4x4<float> RTM_SIMD_CALL matrix_set(vector4f_arg0 x_axis, vector4f_arg1 y_axis, vector4f_arg2 z_axis, vector4f_arg3 w_axis) RTM_NO_EXCEPT
 	{
-		return rtm_impl::matrix_setter4x4<vector4f>{ x_axis, y_axis, z_axis, w_axis };
+		return rtm_impl::matrix_setter4x4<float>{ x_axis, y_axis, z_axis, w_axis };
 	}
 
 	//////////////////////////////////////////////////////////////////////////
 	// Sets all 4 axes and creates a matrix.
 	//////////////////////////////////////////////////////////////////////////
-	constexpr rtm_impl::matrix_setter4x4<vector4d> RTM_SIMD_CALL matrix_set(const vector4d& x_axis, const vector4d& y_axis, const vector4d& z_axis, const vector4d& w_axis) RTM_NO_EXCEPT
+	constexpr rtm_impl::matrix_setter4x4<double> RTM_SIMD_CALL matrix_set(const vector4d& x_axis, const vector4d& y_axis, const vector4d& z_axis, const vector4d& w_axis) RTM_NO_EXCEPT
 	{
-		return rtm_impl::matrix_setter4x4<vector4d>{ x_axis, y_axis, z_axis, w_axis };
+		return rtm_impl::matrix_setter4x4<double>{ x_axis, y_axis, z_axis, w_axis };
 	}
 
 	//////////////////////////////////////////////////////////////////////////
