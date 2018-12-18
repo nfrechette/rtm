@@ -29,6 +29,7 @@
 #include "rtm/vector4d.h"
 #include "rtm/quatf.h"
 #include "rtm/quatd.h"
+#include "rtm/type_traits.h"
 
 namespace rtm
 {
@@ -36,79 +37,92 @@ namespace rtm
 	{
 		//////////////////////////////////////////////////////////////////////////
 		// A helper struct to convert a quaternion to matrices of similar width.
+		// Note: We use a float type as a template argument because GCC loses alignment
+		// attributes on template argument types.
 		//////////////////////////////////////////////////////////////////////////
-		template<typename float_type, typename quat_type, typename vector4_type, typename matrix3x3_type, typename matrix3x4_type>
+		template<typename float_type>
 		struct matrix_from_quat_helper
 		{
-			inline RTM_SIMD_CALL operator matrix3x3_type() const RTM_NO_EXCEPT
+			using quat = typename float_traits<float_type>::quat;
+			using vector4 = typename float_traits<float_type>::vector4;
+			using matrix3x3 = typename float_traits<float_type>::matrix3x3;
+			using matrix3x4 = typename float_traits<float_type>::matrix3x4;
+
+			inline RTM_SIMD_CALL operator matrix3x3() const RTM_NO_EXCEPT
 			{
-				RTM_ASSERT(quat_is_normalized(quat), "Quaternion is not normalized");
+				RTM_ASSERT(quat_is_normalized(quat_input), "Quaternion is not normalized");
 
-				const float_type x2 = quat_get_x(quat) + quat_get_x(quat);
-				const float_type y2 = quat_get_y(quat) + quat_get_y(quat);
-				const float_type z2 = quat_get_z(quat) + quat_get_z(quat);
-				const float_type xx = quat_get_x(quat) * x2;
-				const float_type xy = quat_get_x(quat) * y2;
-				const float_type xz = quat_get_x(quat) * z2;
-				const float_type yy = quat_get_y(quat) * y2;
-				const float_type yz = quat_get_y(quat) * z2;
-				const float_type zz = quat_get_z(quat) * z2;
-				const float_type wx = quat_get_w(quat) * x2;
-				const float_type wy = quat_get_w(quat) * y2;
-				const float_type wz = quat_get_w(quat) * z2;
+				const float_type x2 = quat_get_x(quat_input) + quat_get_x(quat_input);
+				const float_type y2 = quat_get_y(quat_input) + quat_get_y(quat_input);
+				const float_type z2 = quat_get_z(quat_input) + quat_get_z(quat_input);
+				const float_type xx = quat_get_x(quat_input) * x2;
+				const float_type xy = quat_get_x(quat_input) * y2;
+				const float_type xz = quat_get_x(quat_input) * z2;
+				const float_type yy = quat_get_y(quat_input) * y2;
+				const float_type yz = quat_get_y(quat_input) * z2;
+				const float_type zz = quat_get_z(quat_input) * z2;
+				const float_type wx = quat_get_w(quat_input) * x2;
+				const float_type wy = quat_get_w(quat_input) * y2;
+				const float_type wz = quat_get_w(quat_input) * z2;
 
-				const vector4_type x_axis = vector_set(float_type(1.0) - (yy + zz), xy + wz, xz - wy, float_type(0.0));
-				const vector4_type y_axis = vector_set(xy - wz, float_type(1.0) - (xx + zz), yz + wx, float_type(0.0));
-				const vector4_type z_axis = vector_set(xz + wy, yz - wx, float_type(1.0) - (xx + yy), float_type(0.0));
-				return matrix3x3_type{ x_axis, y_axis, z_axis };
+				const vector4 x_axis = vector_set(float_type(1.0) - (yy + zz), xy + wz, xz - wy, float_type(0.0));
+				const vector4 y_axis = vector_set(xy - wz, float_type(1.0) - (xx + zz), yz + wx, float_type(0.0));
+				const vector4 z_axis = vector_set(xz + wy, yz - wx, float_type(1.0) - (xx + yy), float_type(0.0));
+				return matrix3x3{ x_axis, y_axis, z_axis };
 			}
 
-			inline RTM_SIMD_CALL operator matrix3x4_type() const RTM_NO_EXCEPT
+			inline RTM_SIMD_CALL operator matrix3x4() const RTM_NO_EXCEPT
 			{
-				RTM_ASSERT(quat_is_normalized(quat), "Quaternion is not normalized");
+				RTM_ASSERT(quat_is_normalized(quat_input), "Quaternion is not normalized");
 
-				const float_type x2 = quat_get_x(quat) + quat_get_x(quat);
-				const float_type y2 = quat_get_y(quat) + quat_get_y(quat);
-				const float_type z2 = quat_get_z(quat) + quat_get_z(quat);
-				const float_type xx = quat_get_x(quat) * x2;
-				const float_type xy = quat_get_x(quat) * y2;
-				const float_type xz = quat_get_x(quat) * z2;
-				const float_type yy = quat_get_y(quat) * y2;
-				const float_type yz = quat_get_y(quat) * z2;
-				const float_type zz = quat_get_z(quat) * z2;
-				const float_type wx = quat_get_w(quat) * x2;
-				const float_type wy = quat_get_w(quat) * y2;
-				const float_type wz = quat_get_w(quat) * z2;
+				const float_type x2 = quat_get_x(quat_input) + quat_get_x(quat_input);
+				const float_type y2 = quat_get_y(quat_input) + quat_get_y(quat_input);
+				const float_type z2 = quat_get_z(quat_input) + quat_get_z(quat_input);
+				const float_type xx = quat_get_x(quat_input) * x2;
+				const float_type xy = quat_get_x(quat_input) * y2;
+				const float_type xz = quat_get_x(quat_input) * z2;
+				const float_type yy = quat_get_y(quat_input) * y2;
+				const float_type yz = quat_get_y(quat_input) * z2;
+				const float_type zz = quat_get_z(quat_input) * z2;
+				const float_type wx = quat_get_w(quat_input) * x2;
+				const float_type wy = quat_get_w(quat_input) * y2;
+				const float_type wz = quat_get_w(quat_input) * z2;
 
-				const vector4_type x_axis = vector_set(float_type(1.0) - (yy + zz), xy + wz, xz - wy, float_type(0.0));
-				const vector4_type y_axis = vector_set(xy - wz, float_type(1.0) - (xx + zz), yz + wx, float_type(0.0));
-				const vector4_type z_axis = vector_set(xz + wy, yz - wx, float_type(1.0) - (xx + yy), float_type(0.0));
-				const vector4_type w_axis = vector_set(float_type(0.0), float_type(0.0), float_type(0.0), float_type(1.0));
-				return matrix3x4_type{ x_axis, y_axis, z_axis, w_axis };
+				const vector4 x_axis = vector_set(float_type(1.0) - (yy + zz), xy + wz, xz - wy, float_type(0.0));
+				const vector4 y_axis = vector_set(xy - wz, float_type(1.0) - (xx + zz), yz + wx, float_type(0.0));
+				const vector4 z_axis = vector_set(xz + wy, yz - wx, float_type(1.0) - (xx + yy), float_type(0.0));
+				const vector4 w_axis = vector_set(float_type(0.0), float_type(0.0), float_type(0.0), float_type(1.0));
+				return matrix3x4{ x_axis, y_axis, z_axis, w_axis };
 			}
 
-			quat_type quat;
+			quat quat_input;
 		};
 
 		//////////////////////////////////////////////////////////////////////////
 		// A helper struct to convert a 3D scale vector to matrices of similar width.
+		// Note: We use a float type as a template argument because GCC loses alignment
+		// attributes on template argument types.
 		//////////////////////////////////////////////////////////////////////////
-		template<typename float_type, typename vector4_type, typename matrix3x3_type, typename matrix3x4_type>
+		template<typename float_type>
 		struct matrix_from_scale_helper
 		{
-			inline RTM_SIMD_CALL operator matrix3x3_type() const RTM_NO_EXCEPT
+			using vector4 = typename float_traits<float_type>::vector4;
+			using matrix3x3 = typename float_traits<float_type>::matrix3x3;
+			using matrix3x4 = typename float_traits<float_type>::matrix3x4;
+
+			inline RTM_SIMD_CALL operator matrix3x3() const RTM_NO_EXCEPT
 			{
 				RTM_ASSERT(!vector_any_near_equal3(scale, vector_zero()), "Scale cannot be zero");
-				return matrix3x3_type{ vector_set(vector_get_x(scale), float_type(0.0), float_type(0.0), float_type(0.0)), vector_set(float_type(0.0), vector_get_y(scale), float_type(0.0), float_type(0.0)), vector_set(float_type(0.0), float_type(0.0), vector_get_z(scale), float_type(0.0)) };
+				return matrix3x3{ vector_set(vector_get_x(scale), float_type(0.0), float_type(0.0), float_type(0.0)), vector_set(float_type(0.0), vector_get_y(scale), float_type(0.0), float_type(0.0)), vector_set(float_type(0.0), float_type(0.0), vector_get_z(scale), float_type(0.0)) };
 			}
 
-			inline RTM_SIMD_CALL operator matrix3x4_type() const RTM_NO_EXCEPT
+			inline RTM_SIMD_CALL operator matrix3x4() const RTM_NO_EXCEPT
 			{
 				RTM_ASSERT(!vector_any_near_equal3(scale, vector_zero()), "Scale cannot be zero");
-				return matrix3x4_type{ vector_set(vector_get_x(scale), float_type(0.0), float_type(0.0), float_type(0.0)), vector_set(float_type(0.0), vector_get_y(scale), float_type(0.0), float_type(0.0)), vector_set(float_type(0.0), float_type(0.0), vector_get_z(scale), float_type(0.0)), vector_set(float_type(0.0), float_type(0.0), float_type(0.0), float_type(1.0)) };
+				return matrix3x4{ vector_set(vector_get_x(scale), float_type(0.0), float_type(0.0), float_type(0.0)), vector_set(float_type(0.0), vector_get_y(scale), float_type(0.0), float_type(0.0)), vector_set(float_type(0.0), float_type(0.0), vector_get_z(scale), float_type(0.0)), vector_set(float_type(0.0), float_type(0.0), float_type(0.0), float_type(1.0)) };
 			}
 
-			vector4_type scale;
+			vector4 scale;
 		};
 
 		constexpr vector4f RTM_SIMD_CALL matrix_get_axis(vector4f_arg0 x_axis, vector4f_arg1 y_axis, vector4f_arg2 z_axis, axis4 axis)
@@ -247,32 +261,32 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	// Converts a rotation quaternion into a 3x3 or 3x4 affine matrix.
 	//////////////////////////////////////////////////////////////////////////
-	constexpr rtm_impl::matrix_from_quat_helper<float, quatf, vector4f, matrix3x3f, matrix3x4f> RTM_SIMD_CALL matrix_from_quat(quatf_arg0 quat) RTM_NO_EXCEPT
+	constexpr rtm_impl::matrix_from_quat_helper<float> RTM_SIMD_CALL matrix_from_quat(quatf_arg0 quat) RTM_NO_EXCEPT
 	{
-		return rtm_impl::matrix_from_quat_helper<float, quatf, vector4f, matrix3x3f, matrix3x4f>{ quat };
+		return rtm_impl::matrix_from_quat_helper<float>{ quat };
 	}
 
 	//////////////////////////////////////////////////////////////////////////
 	// Converts a rotation quaternion into a 3x3 or 3x4 affine matrix.
 	//////////////////////////////////////////////////////////////////////////
-	constexpr rtm_impl::matrix_from_quat_helper<double, quatd, vector4d, matrix3x3d, matrix3x4d> RTM_SIMD_CALL matrix_from_quat(const quatd& quat) RTM_NO_EXCEPT
+	constexpr rtm_impl::matrix_from_quat_helper<double> RTM_SIMD_CALL matrix_from_quat(const quatd& quat) RTM_NO_EXCEPT
 	{
-		return rtm_impl::matrix_from_quat_helper<double, quatd, vector4d, matrix3x3d, matrix3x4d>{ quat };
+		return rtm_impl::matrix_from_quat_helper<double>{ quat };
 	}
 
 	//////////////////////////////////////////////////////////////////////////
 	// Converts a 3D scale vector into a 3x3 or 3x4 affine matrix.
 	//////////////////////////////////////////////////////////////////////////
-	constexpr rtm_impl::matrix_from_scale_helper<float, vector4f, matrix3x3f, matrix3x4f> RTM_SIMD_CALL matrix_from_scale(vector4f_arg0 scale) RTM_NO_EXCEPT
+	constexpr rtm_impl::matrix_from_scale_helper<float> RTM_SIMD_CALL matrix_from_scale(vector4f_arg0 scale) RTM_NO_EXCEPT
 	{
-		return rtm_impl::matrix_from_scale_helper<float, vector4f, matrix3x3f, matrix3x4f>{ scale };
+		return rtm_impl::matrix_from_scale_helper<float>{ scale };
 	}
 
 	//////////////////////////////////////////////////////////////////////////
 	// Converts a 3D scale vector into a 3x3 or 3x4 affine matrix.
 	//////////////////////////////////////////////////////////////////////////
-	constexpr rtm_impl::matrix_from_scale_helper<double, vector4d, matrix3x3d, matrix3x4d> RTM_SIMD_CALL matrix_from_scale(const vector4d& scale) RTM_NO_EXCEPT
+	constexpr rtm_impl::matrix_from_scale_helper<double> RTM_SIMD_CALL matrix_from_scale(const vector4d& scale) RTM_NO_EXCEPT
 	{
-		return rtm_impl::matrix_from_scale_helper<double, vector4d, matrix3x3d, matrix3x4d>{ scale };
+		return rtm_impl::matrix_from_scale_helper<double>{ scale };
 	}
 }
