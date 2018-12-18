@@ -34,7 +34,7 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	// Returns the desired 3x3 matrix axis.
 	//////////////////////////////////////////////////////////////////////////
-	inline vector4f matrix_get_axis(matrix3x3f_arg0 input, axis4 axis) RTM_NO_EXCEPT
+	inline vector4f RTM_SIMD_CALL matrix_get_axis(matrix3x3f_arg0 input, axis4 axis) RTM_NO_EXCEPT
 	{
 		switch (axis)
 		{

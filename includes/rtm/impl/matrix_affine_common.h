@@ -115,12 +115,12 @@ namespace rtm
 			vector4_type scale;
 		};
 
-		constexpr vector4f matrix_get_axis(vector4f_arg0 x_axis, vector4f_arg1 y_axis, vector4f_arg2 z_axis, axis4 axis)
+		constexpr vector4f RTM_SIMD_CALL matrix_get_axis(vector4f_arg0 x_axis, vector4f_arg1 y_axis, vector4f_arg2 z_axis, axis4 axis)
 		{
 			return axis == axis4::x ? x_axis : (axis == axis4::y ? y_axis : z_axis);
 		}
 
-		constexpr const vector4d& matrix_get_axis(const vector4d& x_axis, const vector4d& y_axis, const vector4d& z_axis, axis4 axis)
+		constexpr const vector4d& RTM_SIMD_CALL matrix_get_axis(const vector4d& x_axis, const vector4d& y_axis, const vector4d& z_axis, axis4 axis)
 		{
 			return axis == axis4::x ? x_axis : (axis == axis4::y ? y_axis : z_axis);
 		}
