@@ -29,58 +29,32 @@
 namespace rtm
 {
 	//////////////////////////////////////////////////////////////////////////
-	// Returns the proper vector4 type for a floating point type.
+	// Returns the proper types for a floating point type.
 	//////////////////////////////////////////////////////////////////////////
-	template<typename FloatType>
-	struct vector4_type {};
-	template<> struct vector4_type<float> { using type = vector4f; };
-	template<> struct vector4_type<double> { using type = vector4d; };
+	template<typename float_type>
+	struct float_traits {};
 
-	//////////////////////////////////////////////////////////////////////////
-	// Returns the proper quaternion type for a floating point type.
-	//////////////////////////////////////////////////////////////////////////
-	template<typename FloatType>
-	struct quat_type {};
-	template<> struct quat_type<float> { using type = quatf; };
-	template<> struct quat_type<double> { using type = quatd; };
+	template<>
+	struct float_traits<float>
+	{
+		using angle = anglef;
+		using vector4 = vector4f;
+		using quat = quatf;
+		using qvv = qvvf;
+		using matrix3x3 = matrix3x3f;
+		using matrix3x4 = matrix3x4f;
+		using matrix4x4 = matrix4x4f;
+	};
 
-	//////////////////////////////////////////////////////////////////////////
-	// Returns the proper QVV type for a floating point type.
-	//////////////////////////////////////////////////////////////////////////
-	template<typename FloatType>
-	struct qvv_type {};
-	template<> struct qvv_type<float> { using type = qvvf; };
-	template<> struct qvv_type<double> { using type = qvvd; };
-
-	//////////////////////////////////////////////////////////////////////////
-	// Returns the proper matrix3x3 type for a floating point type.
-	//////////////////////////////////////////////////////////////////////////
-	template<typename FloatType>
-	struct matrix3x3_type {};
-	template<> struct matrix3x3_type<float> { using type = matrix3x3f; };
-	template<> struct matrix3x3_type<double> { using type = matrix3x3d; };
-
-	//////////////////////////////////////////////////////////////////////////
-	// Returns the proper matrix3x4 type for a floating point type.
-	//////////////////////////////////////////////////////////////////////////
-	template<typename FloatType>
-	struct matrix3x4_type {};
-	template<> struct matrix3x4_type<float> { using type = matrix3x4f; };
-	template<> struct matrix3x4_type<double> { using type = matrix3x4d; };
-
-	//////////////////////////////////////////////////////////////////////////
-	// Returns the proper matrix4x4 type for a floating point type.
-	//////////////////////////////////////////////////////////////////////////
-	template<typename FloatType>
-	struct matrix4x4_type {};
-	template<> struct matrix4x4_type<float> { using type = matrix4x4f; };
-	template<> struct matrix4x4_type<double> { using type = matrix4x4d; };
-
-	//////////////////////////////////////////////////////////////////////////
-	// Returns the proper angle type for a floating point type.
-	//////////////////////////////////////////////////////////////////////////
-	template<typename FloatType>
-	struct angle_type {};
-	template<> struct angle_type<float> { using type = anglef; };
-	template<> struct angle_type<double> { using type = angled; };
+	template<>
+	struct float_traits<double>
+	{
+		using angle = angled;
+		using vector4 = vector4d;
+		using quat = quatd;
+		using qvv = qvvd;
+		using matrix3x3 = matrix3x3d;
+		using matrix3x4 = matrix3x4d;
+		using matrix4x4 = matrix4x4d;
+	};
 }

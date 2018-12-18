@@ -36,10 +36,10 @@ using namespace rtm;
 template<typename FloatType>
 static void test_matrix_impl(const FloatType threshold)
 {
-	using QuatType = typename quat_type<FloatType>::type;
-	using Vector4Type = typename vector4_type<FloatType>::type;
-	using Matrix3x3Type = typename matrix3x3_type<FloatType>::type;
-	using Matrix3x4Type = typename matrix3x4_type<FloatType>::type;
+	using QuatType = typename float_traits<FloatType>::quat;
+	using Vector4Type = typename float_traits<FloatType>::vector4;
+	using Matrix3x3Type = typename float_traits<FloatType>::matrix3x3;
+	using Matrix3x4Type = typename float_traits<FloatType>::matrix3x4;
 
 	const Matrix3x3Type identity = matrix_identity();
 
