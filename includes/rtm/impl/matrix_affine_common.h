@@ -40,8 +40,6 @@ namespace rtm
 		template<typename float_type, typename quat_type, typename vector4_type, typename matrix3x3_type, typename matrix3x4_type>
 		struct matrix_from_quat_helper
 		{
-			constexpr explicit matrix_from_quat_helper(quat_type quat_) RTM_NO_EXCEPT : quat(quat_) {}
-
 			inline RTM_SIMD_CALL operator matrix3x3_type() const RTM_NO_EXCEPT
 			{
 				RTM_ASSERT(quat_is_normalized(quat), "Quaternion is not normalized");
@@ -98,8 +96,6 @@ namespace rtm
 		template<typename float_type, typename vector4_type, typename matrix3x3_type, typename matrix3x4_type>
 		struct matrix_from_scale_helper
 		{
-			constexpr explicit matrix_from_scale_helper(vector4_type scale_) RTM_NO_EXCEPT : scale(scale_) {}
-
 			inline RTM_SIMD_CALL operator matrix3x3_type() const RTM_NO_EXCEPT
 			{
 				RTM_ASSERT(!vector_any_near_equal3(scale, vector_zero()), "Scale cannot be zero");
@@ -253,7 +249,7 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	constexpr rtm_impl::matrix_from_quat_helper<float, quatf, vector4f, matrix3x3f, matrix3x4f> RTM_SIMD_CALL matrix_from_quat(quatf_arg0 quat) RTM_NO_EXCEPT
 	{
-		return rtm_impl::matrix_from_quat_helper<float, quatf, vector4f, matrix3x3f, matrix3x4f>(quat);
+		return rtm_impl::matrix_from_quat_helper<float, quatf, vector4f, matrix3x3f, matrix3x4f>{ quat };
 	}
 
 	//////////////////////////////////////////////////////////////////////////
@@ -261,7 +257,7 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	constexpr rtm_impl::matrix_from_quat_helper<double, quatd, vector4d, matrix3x3d, matrix3x4d> RTM_SIMD_CALL matrix_from_quat(const quatd& quat) RTM_NO_EXCEPT
 	{
-		return rtm_impl::matrix_from_quat_helper<double, quatd, vector4d, matrix3x3d, matrix3x4d>(quat);
+		return rtm_impl::matrix_from_quat_helper<double, quatd, vector4d, matrix3x3d, matrix3x4d>{ quat };
 	}
 
 	//////////////////////////////////////////////////////////////////////////
@@ -269,7 +265,7 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	constexpr rtm_impl::matrix_from_scale_helper<float, vector4f, matrix3x3f, matrix3x4f> RTM_SIMD_CALL matrix_from_scale(vector4f_arg0 scale) RTM_NO_EXCEPT
 	{
-		return rtm_impl::matrix_from_scale_helper<float, vector4f, matrix3x3f, matrix3x4f>(scale);
+		return rtm_impl::matrix_from_scale_helper<float, vector4f, matrix3x3f, matrix3x4f>{ scale };
 	}
 
 	//////////////////////////////////////////////////////////////////////////
@@ -277,6 +273,6 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	constexpr rtm_impl::matrix_from_scale_helper<double, vector4d, matrix3x3d, matrix3x4d> RTM_SIMD_CALL matrix_from_scale(const vector4d& scale) RTM_NO_EXCEPT
 	{
-		return rtm_impl::matrix_from_scale_helper<double, vector4d, matrix3x3d, matrix3x4d>(scale);
+		return rtm_impl::matrix_from_scale_helper<double, vector4d, matrix3x3d, matrix3x4d>{ scale };
 	}
 }
