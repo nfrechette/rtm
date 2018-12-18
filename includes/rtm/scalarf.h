@@ -72,7 +72,7 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	// Returns the square root of the input.
 	//////////////////////////////////////////////////////////////////////////
-	inline float scalar_sqrt(float input) RTM_NO_EXCEPT
+	inline float RTM_SIMD_CALL scalar_sqrt(float input) RTM_NO_EXCEPT
 	{
 #if defined(RTM_SSE2_INTRINSICS)
 		return _mm_cvtss_f32(_mm_sqrt_ss(_mm_set_ps1(input)));
@@ -84,7 +84,7 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	// Returns the reciprocal square root of the input.
 	//////////////////////////////////////////////////////////////////////////
-	inline float scalar_sqrt_reciprocal(float input) RTM_NO_EXCEPT
+	inline float RTM_SIMD_CALL scalar_sqrt_reciprocal(float input) RTM_NO_EXCEPT
 	{
 #if defined(RTM_SSE2_INTRINSICS)
 		// Perform two passes of Newton-Raphson iteration on the hardware estimate
@@ -112,7 +112,7 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	// Returns the reciprocal of the input.
 	//////////////////////////////////////////////////////////////////////////
-	inline float scalar_reciprocal(float input) RTM_NO_EXCEPT
+	inline float RTM_SIMD_CALL scalar_reciprocal(float input) RTM_NO_EXCEPT
 	{
 #if defined(RTM_SSE2_INTRINSICS)
 		// Perform two passes of Newton-Raphson iteration on the hardware estimate
