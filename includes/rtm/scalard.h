@@ -34,8 +34,8 @@ namespace rtm
 {
 	//////////////////////////////////////////////////////////////////////////
 	// Returns the largest integer value not greater than the input.
-	// scalar_floor(1.8) -> 1.0
-	// scalar_floor(-1.8) -> -2.0
+	// scalar_floor(1.8) = 1.0
+	// scalar_floor(-1.8) = -2.0
 	//////////////////////////////////////////////////////////////////////////
 	inline double scalar_floor(double input) RTM_NO_EXCEPT
 	{
