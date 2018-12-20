@@ -91,7 +91,7 @@ namespace rtm
 				const vector4 x_axis = vector_set(float_type(1.0) - (yy + zz), xy + wz, xz - wy, float_type(0.0));
 				const vector4 y_axis = vector_set(xy - wz, float_type(1.0) - (xx + zz), yz + wx, float_type(0.0));
 				const vector4 z_axis = vector_set(xz + wy, yz - wx, float_type(1.0) - (xx + yy), float_type(0.0));
-				const vector4 w_axis = vector_set(float_type(0.0), float_type(0.0), float_type(0.0), float_type(1.0));
+				const vector4 w_axis = vector_zero();
 				return matrix3x4{ x_axis, y_axis, z_axis, w_axis };
 			}
 
@@ -119,7 +119,7 @@ namespace rtm
 			inline RTM_SIMD_CALL operator matrix3x4() const RTM_NO_EXCEPT
 			{
 				RTM_ASSERT(!vector_any_near_equal3(scale, vector_zero()), "Scale cannot be zero");
-				return matrix3x4{ vector_set(vector_get_x(scale), float_type(0.0), float_type(0.0), float_type(0.0)), vector_set(float_type(0.0), vector_get_y(scale), float_type(0.0), float_type(0.0)), vector_set(float_type(0.0), float_type(0.0), vector_get_z(scale), float_type(0.0)), vector_set(float_type(0.0), float_type(0.0), float_type(0.0), float_type(1.0)) };
+				return matrix3x4{ vector_set(vector_get_x(scale), float_type(0.0), float_type(0.0), float_type(0.0)), vector_set(float_type(0.0), vector_get_y(scale), float_type(0.0), float_type(0.0)), vector_set(float_type(0.0), float_type(0.0), vector_get_z(scale), float_type(0.0)), vector_zero() };
 			}
 
 			vector4 scale;

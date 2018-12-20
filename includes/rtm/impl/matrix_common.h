@@ -125,24 +125,16 @@ namespace rtm
 			//////////////////////////////////////////////////////////////////////////
 			// Sets all 4 axes and creates a 3x4 affine matrix.
 			//////////////////////////////////////////////////////////////////////////
-			inline RTM_SIMD_CALL operator matrix3x4d() const RTM_NO_EXCEPT
+			constexpr RTM_SIMD_CALL operator matrix3x4d() const RTM_NO_EXCEPT
 			{
-				RTM_ASSERT(vector_get_w(x_axis) == 0.0, "X axis does not have a W component == 0.0");
-				RTM_ASSERT(vector_get_w(y_axis) == 0.0, "Y axis does not have a W component == 0.0");
-				RTM_ASSERT(vector_get_w(z_axis) == 0.0, "Z axis does not have a W component == 0.0");
-				RTM_ASSERT(vector_get_w(w_axis) == 1.0, "W axis does not have a W component == 1.0");
 				return matrix3x4d{ x_axis, y_axis, z_axis, w_axis };
 			}
 
 			//////////////////////////////////////////////////////////////////////////
 			// Sets all 4 axes and creates a 3x4 affine matrix.
 			//////////////////////////////////////////////////////////////////////////
-			inline RTM_SIMD_CALL operator matrix3x4f() const RTM_NO_EXCEPT
+			constexpr RTM_SIMD_CALL operator matrix3x4f() const RTM_NO_EXCEPT
 			{
-				RTM_ASSERT(vector_get_w(x_axis) == 0.0f, "X axis does not have a W component == 0.0");
-				RTM_ASSERT(vector_get_w(y_axis) == 0.0f, "Y axis does not have a W component == 0.0");
-				RTM_ASSERT(vector_get_w(z_axis) == 0.0f, "Z axis does not have a W component == 0.0");
-				RTM_ASSERT(vector_get_w(w_axis) == 1.0f, "W axis does not have a W component == 1.0");
 				return matrix3x4f{ x_axis, y_axis, z_axis, w_axis };
 			}
 

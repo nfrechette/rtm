@@ -196,7 +196,8 @@ namespace rtm
 	// It properly deals with skew/shear when present but once scale with mirroring is combined,
 	// it cannot be safely extracted back.
 	//
-	// Affine matrices have their last row always equal to [0, 0, 0, 1] which is why it is 3x4.
+	// Affine matrices are 4x4 but have their last row always equal to [0, 0, 0, 1] which is why it is 3x4.
+	// Note: We do not track the implicit last row and it is thus undefined.
 	//
 	// Left handed coordinate system:
 	// X axis == forward
@@ -216,7 +217,8 @@ namespace rtm
 	// It properly deals with skew/shear when present but once scale with mirroring is combined,
 	// it cannot be safely extracted back.
 	//
-	// Affine matrices have their last row always equal to [0, 0, 0, 1] which is why it is 3x4.
+	// Affine matrices are 4x4 but have their last row always equal to [0, 0, 0, 1] which is why it is 3x4.
+	// Note: We do not track the implicit last row and it is thus undefined.
 	//
 	// Left handed coordinate system:
 	// X axis == forward

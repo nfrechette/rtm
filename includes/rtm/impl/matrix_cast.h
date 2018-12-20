@@ -55,18 +55,13 @@ namespace rtm
 
 			inline RTM_SIMD_CALL operator matrix3x4f() const RTM_NO_EXCEPT
 			{
-				RTM_ASSERT(vector_get_w(mtx.x_axis) == 0.0f, "X axis does not have a W component == 0.0");
-				RTM_ASSERT(vector_get_w(mtx.y_axis) == 0.0f, "Y axis does not have a W component == 0.0");
-				RTM_ASSERT(vector_get_w(mtx.z_axis) == 0.0f, "Z axis does not have a W component == 0.0");
-				return matrix3x4f{ mtx.x_axis, mtx.y_axis, mtx.z_axis, vector_set(0.0f, 0.0f, 0.0f, 1.0f) };
+				return matrix3x4f{ mtx.x_axis, mtx.y_axis, mtx.z_axis, vector_zero() };
 			}
 
 			inline RTM_SIMD_CALL operator matrix3x4d() const RTM_NO_EXCEPT
 			{
-				RTM_ASSERT(vector_get_w(mtx.x_axis) == 0.0f, "X axis does not have a W component == 0.0");
-				RTM_ASSERT(vector_get_w(mtx.y_axis) == 0.0f, "Y axis does not have a W component == 0.0");
-				RTM_ASSERT(vector_get_w(mtx.z_axis) == 0.0f, "Z axis does not have a W component == 0.0");
-				return matrix3x4d{ vector_cast(mtx.x_axis), vector_cast(mtx.y_axis), vector_cast(mtx.z_axis), vector_set(0.0, 0.0, 0.0, 1.0) };
+				const vector4d z_axis = vector_cast(mtx.z_axis);
+				return matrix3x4d{ vector_cast(mtx.x_axis), vector_cast(mtx.y_axis), z_axis, z_axis };
 			}
 
 			constexpr RTM_SIMD_CALL operator matrix4x4f() const RTM_NO_EXCEPT
@@ -100,18 +95,13 @@ namespace rtm
 
 			inline RTM_SIMD_CALL operator matrix3x4f() const RTM_NO_EXCEPT
 			{
-				RTM_ASSERT(vector_get_w(mtx.x_axis) == 0.0, "X axis does not have a W component == 0.0");
-				RTM_ASSERT(vector_get_w(mtx.y_axis) == 0.0, "Y axis does not have a W component == 0.0");
-				RTM_ASSERT(vector_get_w(mtx.z_axis) == 0.0, "Z axis does not have a W component == 0.0");
-				return matrix3x4f{ vector_cast(mtx.x_axis), vector_cast(mtx.y_axis), vector_cast(mtx.z_axis), vector_set(0.0f, 0.0f, 0.0f, 1.0f) };
+				const vector4f z_axis = vector_cast(mtx.z_axis);
+				return matrix3x4f{ vector_cast(mtx.x_axis), vector_cast(mtx.y_axis), z_axis, z_axis };
 			}
 
 			inline RTM_SIMD_CALL operator matrix3x4d() const RTM_NO_EXCEPT
 			{
-				RTM_ASSERT(vector_get_w(mtx.x_axis) == 0.0f, "X axis does not have a W component == 0.0");
-				RTM_ASSERT(vector_get_w(mtx.y_axis) == 0.0f, "Y axis does not have a W component == 0.0");
-				RTM_ASSERT(vector_get_w(mtx.z_axis) == 0.0f, "Z axis does not have a W component == 0.0");
-				return matrix3x4d{ mtx.x_axis, mtx.y_axis, mtx.z_axis, vector_set(0.0, 0.0, 0.0, 1.0) };
+				return matrix3x4d{ mtx.x_axis, mtx.y_axis, mtx.z_axis, vector_zero() };
 			}
 
 			inline RTM_SIMD_CALL operator matrix4x4f() const RTM_NO_EXCEPT
@@ -219,19 +209,13 @@ namespace rtm
 				return matrix3x3d{ vector_cast(mtx.x_axis), vector_cast(mtx.y_axis), vector_cast(mtx.z_axis) };
 			}
 
-			inline RTM_SIMD_CALL operator matrix3x4f() const RTM_NO_EXCEPT
+			constexpr RTM_SIMD_CALL operator matrix3x4f() const RTM_NO_EXCEPT
 			{
-				RTM_ASSERT(vector_get_w(mtx.x_axis) == 0.0f, "X axis does not have a W component == 0.0");
-				RTM_ASSERT(vector_get_w(mtx.y_axis) == 0.0f, "Y axis does not have a W component == 0.0");
-				RTM_ASSERT(vector_get_w(mtx.z_axis) == 0.0f, "Z axis does not have a W component == 0.0");
 				return matrix3x4f{ mtx.x_axis, mtx.y_axis, mtx.z_axis, mtx.w_axis };
 			}
 
 			inline RTM_SIMD_CALL operator matrix3x4d() const RTM_NO_EXCEPT
 			{
-				RTM_ASSERT(vector_get_w(mtx.x_axis) == 0.0f, "X axis does not have a W component == 0.0");
-				RTM_ASSERT(vector_get_w(mtx.y_axis) == 0.0f, "Y axis does not have a W component == 0.0");
-				RTM_ASSERT(vector_get_w(mtx.z_axis) == 0.0f, "Z axis does not have a W component == 0.0");
 				return matrix3x4d{ vector_cast(mtx.x_axis), vector_cast(mtx.y_axis), vector_cast(mtx.z_axis), vector_cast(mtx.w_axis) };
 			}
 
@@ -265,17 +249,11 @@ namespace rtm
 
 			inline RTM_SIMD_CALL operator matrix3x4f() const RTM_NO_EXCEPT
 			{
-				RTM_ASSERT(vector_get_w(mtx.x_axis) == 0.0, "X axis does not have a W component == 0.0");
-				RTM_ASSERT(vector_get_w(mtx.y_axis) == 0.0, "Y axis does not have a W component == 0.0");
-				RTM_ASSERT(vector_get_w(mtx.z_axis) == 0.0, "Z axis does not have a W component == 0.0");
 				return matrix3x4f{ vector_cast(mtx.x_axis), vector_cast(mtx.y_axis), vector_cast(mtx.z_axis), vector_cast(mtx.w_axis) };
 			}
 
-			inline RTM_SIMD_CALL operator matrix3x4d() const RTM_NO_EXCEPT
+			constexpr RTM_SIMD_CALL operator matrix3x4d() const RTM_NO_EXCEPT
 			{
-				RTM_ASSERT(vector_get_w(mtx.x_axis) == 0.0, "X axis does not have a W component == 0.0");
-				RTM_ASSERT(vector_get_w(mtx.y_axis) == 0.0, "Y axis does not have a W component == 0.0");
-				RTM_ASSERT(vector_get_w(mtx.z_axis) == 0.0, "Z axis does not have a W component == 0.0");
 				return matrix3x4d{ mtx.x_axis, mtx.y_axis, mtx.z_axis, mtx.w_axis };
 			}
 
@@ -295,6 +273,8 @@ namespace rtm
 
 	//////////////////////////////////////////////////////////////////////////
 	// Casts a matrix from one variant to another.
+	// Note: When casting a smaller matrix into a larger one, new elements are
+	// undefined.
 	//////////////////////////////////////////////////////////////////////////
 	template<typename matrix_type>
 	constexpr rtm_impl::matrix_caster<matrix_type> RTM_SIMD_CALL matrix_cast(const matrix_type& input) RTM_NO_EXCEPT
