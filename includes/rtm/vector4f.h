@@ -331,6 +331,14 @@ namespace rtm
 	}
 
 	//////////////////////////////////////////////////////////////////////////
+	// Per component clamping of an input between a minimum and a maximum value: min(max_value, max(min_value, input))
+	//////////////////////////////////////////////////////////////////////////
+	inline vector4f RTM_SIMD_CALL vector_clamp(vector4f_arg0 input, vector4f_arg1 min_value, vector4f_arg2 max_value) RTM_NO_EXCEPT
+	{
+		return vector_min(max_value, vector_max(min_value, input));
+	}
+
+	//////////////////////////////////////////////////////////////////////////
 	// Per component absolute of the input: abs(input)
 	//////////////////////////////////////////////////////////////////////////
 	inline vector4f RTM_SIMD_CALL vector_abs(vector4f_arg0 input) RTM_NO_EXCEPT
@@ -383,6 +391,32 @@ namespace rtm
 		return x2;
 #else
 		return vector_div(vector_set(1.0f), input);
+#endif
+	}
+
+	//////////////////////////////////////////////////////////////////////////
+	// Per component returns the smallest integer value not less than the input.
+	// vector_ceil([1.8, 1.0, -1.8, -1.0]) = [2.0, 1.0, -1.0, -1.0]
+	//////////////////////////////////////////////////////////////////////////
+	inline vector4f RTM_SIMD_CALL vector_ceil(vector4f_arg0 input) RTM_NO_EXCEPT
+	{
+#if defined(RTM_SSE4_INTRINSICS)
+		return _mm_ceil_ps(input);
+#else
+		return vector_set(scalar_ceil(vector_get_x(input)), scalar_ceil(vector_get_y(input)), scalar_ceil(vector_get_z(input)), scalar_ceil(vector_get_w(input)));
+#endif
+	}
+
+	//////////////////////////////////////////////////////////////////////////
+	// Per component returns the largest integer value not greater than the input.
+	// vector_floor([1.8, 1.0, -1.8, -1.0]) = [1.0, 1.0, -2.0, -1.0]
+	//////////////////////////////////////////////////////////////////////////
+	inline vector4f RTM_SIMD_CALL vector_floor(vector4f_arg0 input) RTM_NO_EXCEPT
+	{
+#if defined(RTM_SSE4_INTRINSICS)
+		return _mm_floor_ps(input);
+#else
+		return vector_set(scalar_floor(vector_get_x(input)), scalar_floor(vector_get_y(input)), scalar_floor(vector_get_z(input)), scalar_floor(vector_get_w(input)));
 #endif
 	}
 
@@ -620,6 +654,20 @@ namespace rtm
 		return vcltq_f32(lhs, rhs);
 #else
 		return vector4f{ rtm_impl::get_mask_value(lhs.x < rhs.x), rtm_impl::get_mask_value(lhs.y < rhs.y), rtm_impl::get_mask_value(lhs.z < rhs.z), rtm_impl::get_mask_value(lhs.w < rhs.w) };
+#endif
+	}
+
+	//////////////////////////////////////////////////////////////////////////
+	// Returns per component ~0 if less equal, otherwise 0: lhs <= rhs ? ~0 : 0
+	//////////////////////////////////////////////////////////////////////////
+	inline vector4f RTM_SIMD_CALL vector_less_equal(vector4f_arg0 lhs, vector4f_arg1 rhs) RTM_NO_EXCEPT
+	{
+#if defined(RTM_SSE2_INTRINSICS)
+		return _mm_cmple_ps(lhs, rhs);
+#elif defined(RTM_NEON_INTRINSICS)
+		return vcleq_f32(lhs, rhs);
+#else
+		return vector4f{ rtm_impl::get_mask_value(lhs.x <= rhs.x), rtm_impl::get_mask_value(lhs.y <= rhs.y), rtm_impl::get_mask_value(lhs.z <= rhs.z), rtm_impl::get_mask_value(lhs.w <= rhs.w) };
 #endif
 	}
 

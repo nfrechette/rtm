@@ -299,6 +299,14 @@ namespace rtm
 	}
 
 	//////////////////////////////////////////////////////////////////////////
+	// Per component clamping of an input between a minimum and a maximum value: min(max_value, max(min_value, input))
+	//////////////////////////////////////////////////////////////////////////
+	inline vector4d vector_clamp(const vector4d& input, const vector4d& min_value, const vector4d& max_value) RTM_NO_EXCEPT
+	{
+		return vector_min(max_value, vector_max(min_value, input));
+	}
+
+	//////////////////////////////////////////////////////////////////////////
 	// Per component absolute of the input: abs(input)
 	//////////////////////////////////////////////////////////////////////////
 	inline vector4d vector_abs(const vector4d& input) RTM_NO_EXCEPT
@@ -325,6 +333,24 @@ namespace rtm
 	inline vector4d vector_reciprocal(const vector4d& input) RTM_NO_EXCEPT
 	{
 		return vector_div(vector_set(1.0), input);
+	}
+
+	//////////////////////////////////////////////////////////////////////////
+	// Per component returns the smallest integer value not less than the input.
+	// vector_ceil([1.8, 1.0, -1.8, -1.0]) = [2.0, 1.0, -1.0, -1.0]
+	//////////////////////////////////////////////////////////////////////////
+	inline vector4d vector_ceil(const vector4d& input) RTM_NO_EXCEPT
+	{
+		return vector_set(scalar_ceil(vector_get_x(input)), scalar_ceil(vector_get_y(input)), scalar_ceil(vector_get_z(input)), scalar_ceil(vector_get_w(input)));
+	}
+
+	//////////////////////////////////////////////////////////////////////////
+	// Per component returns the largest integer value not greater than the input.
+	// vector_floor([1.8, 1.0, -1.8, -1.0]) = [1.0, 1.0, -2.0, -1.0]
+	//////////////////////////////////////////////////////////////////////////
+	inline vector4d vector_floor(const vector4d& input) RTM_NO_EXCEPT
+	{
+		return vector_set(scalar_floor(vector_get_x(input)), scalar_floor(vector_get_y(input)), scalar_floor(vector_get_z(input)), scalar_floor(vector_get_w(input)));
 	}
 
 	//////////////////////////////////////////////////////////////////////////
@@ -491,6 +517,20 @@ namespace rtm
 		return vector4d{xy_lt_pd, zw_lt_pd};
 #else
 		return vector4d{rtm_impl::get_mask_value(lhs.x < rhs.x), rtm_impl::get_mask_value(lhs.y < rhs.y), rtm_impl::get_mask_value(lhs.z < rhs.z), rtm_impl::get_mask_value(lhs.w < rhs.w)};
+#endif
+	}
+
+	//////////////////////////////////////////////////////////////////////////
+	// Returns per component ~0 if less equal, otherwise 0: lhs <= rhs ? ~0 : 0
+	//////////////////////////////////////////////////////////////////////////
+	inline vector4d vector_less_equal(const vector4d& lhs, const vector4d& rhs) RTM_NO_EXCEPT
+	{
+#if defined(RTM_SSE2_INTRINSICS)
+		__m128d xy_lt_pd = _mm_cmple_pd(lhs.xy, rhs.xy);
+		__m128d zw_lt_pd = _mm_cmple_pd(lhs.zw, rhs.zw);
+		return vector4d{ xy_lt_pd, zw_lt_pd };
+#else
+		return vector4d{ rtm_impl::get_mask_value(lhs.x <= rhs.x), rtm_impl::get_mask_value(lhs.y <= rhs.y), rtm_impl::get_mask_value(lhs.z <= rhs.z), rtm_impl::get_mask_value(lhs.w <= rhs.w) };
 #endif
 	}
 

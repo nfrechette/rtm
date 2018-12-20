@@ -141,9 +141,11 @@ void test_vector4_impl(const Vector4Type& zero, const QuatType& identity, const 
 	const FloatType test_value0_flt[4] = { FloatType(2.0), FloatType(9.34), FloatType(-54.12), FloatType(6000.0) };
 	const FloatType test_value1_flt[4] = { FloatType(0.75), FloatType(-4.52), FloatType(44.68), FloatType(-54225.0) };
 	const FloatType test_value2_flt[4] = { FloatType(-2.65), FloatType(2.996113), FloatType(0.68123521), FloatType(-5.9182) };
+	const FloatType test_value3_flt[4] = { FloatType(2.0), FloatType(-9.34), FloatType(54.12), FloatType(6000.1) };
 	const Vector4Type test_value0 = vector_set(test_value0_flt[0], test_value0_flt[1], test_value0_flt[2], test_value0_flt[3]);
 	const Vector4Type test_value1 = vector_set(test_value1_flt[0], test_value1_flt[1], test_value1_flt[2], test_value1_flt[3]);
 	const Vector4Type test_value2 = vector_set(test_value2_flt[0], test_value2_flt[1], test_value2_flt[2], test_value2_flt[3]);
+	const Vector4Type test_value3 = vector_set(test_value3_flt[0], test_value3_flt[1], test_value3_flt[2], test_value3_flt[3]);
 
 	//////////////////////////////////////////////////////////////////////////
 	// Setters, getters, and casts
@@ -272,6 +274,11 @@ void test_vector4_impl(const Vector4Type& zero, const QuatType& identity, const 
 	REQUIRE(scalar_near_equal(vector_get_z(vector_min(test_value0, test_value1)), rtm::scalar_min(test_value0_flt[2], test_value1_flt[2]), threshold));
 	REQUIRE(scalar_near_equal(vector_get_w(vector_min(test_value0, test_value1)), rtm::scalar_min(test_value0_flt[3], test_value1_flt[3]), threshold));
 
+	REQUIRE(scalar_near_equal(vector_get_x(vector_clamp(test_value0, test_value1, test_value2)), rtm::scalar_clamp(test_value0_flt[0], test_value1_flt[0], test_value2_flt[0]), threshold));
+	REQUIRE(scalar_near_equal(vector_get_y(vector_clamp(test_value0, test_value1, test_value2)), rtm::scalar_clamp(test_value0_flt[1], test_value1_flt[1], test_value2_flt[1]), threshold));
+	REQUIRE(scalar_near_equal(vector_get_z(vector_clamp(test_value0, test_value1, test_value2)), rtm::scalar_clamp(test_value0_flt[2], test_value1_flt[2], test_value2_flt[2]), threshold));
+	REQUIRE(scalar_near_equal(vector_get_w(vector_clamp(test_value0, test_value1, test_value2)), rtm::scalar_clamp(test_value0_flt[3], test_value1_flt[3], test_value2_flt[3]), threshold));
+
 	REQUIRE(scalar_near_equal(vector_get_x(vector_abs(test_value0)), rtm::scalar_abs(test_value0_flt[0]), threshold));
 	REQUIRE(scalar_near_equal(vector_get_y(vector_abs(test_value0)), rtm::scalar_abs(test_value0_flt[1]), threshold));
 	REQUIRE(scalar_near_equal(vector_get_z(vector_abs(test_value0)), rtm::scalar_abs(test_value0_flt[2]), threshold));
@@ -286,6 +293,16 @@ void test_vector4_impl(const Vector4Type& zero, const QuatType& identity, const 
 	REQUIRE(scalar_near_equal(vector_get_y(vector_reciprocal(test_value0)), rtm::scalar_reciprocal(test_value0_flt[1]), threshold));
 	REQUIRE(scalar_near_equal(vector_get_z(vector_reciprocal(test_value0)), rtm::scalar_reciprocal(test_value0_flt[2]), threshold));
 	REQUIRE(scalar_near_equal(vector_get_w(vector_reciprocal(test_value0)), rtm::scalar_reciprocal(test_value0_flt[3]), threshold));
+
+	REQUIRE(scalar_near_equal(vector_get_x(vector_floor(test_value0)), rtm::scalar_floor(test_value0_flt[0]), threshold));
+	REQUIRE(scalar_near_equal(vector_get_y(vector_floor(test_value0)), rtm::scalar_floor(test_value0_flt[1]), threshold));
+	REQUIRE(scalar_near_equal(vector_get_z(vector_floor(test_value0)), rtm::scalar_floor(test_value0_flt[2]), threshold));
+	REQUIRE(scalar_near_equal(vector_get_w(vector_floor(test_value0)), rtm::scalar_floor(test_value0_flt[3]), threshold));
+
+	REQUIRE(scalar_near_equal(vector_get_x(vector_ceil(test_value0)), rtm::scalar_ceil(test_value0_flt[0]), threshold));
+	REQUIRE(scalar_near_equal(vector_get_y(vector_ceil(test_value0)), rtm::scalar_ceil(test_value0_flt[1]), threshold));
+	REQUIRE(scalar_near_equal(vector_get_z(vector_ceil(test_value0)), rtm::scalar_ceil(test_value0_flt[2]), threshold));
+	REQUIRE(scalar_near_equal(vector_get_w(vector_ceil(test_value0)), rtm::scalar_ceil(test_value0_flt[3]), threshold));
 
 	const Vector4Type scalar_cross3_result = scalar_cross3<Vector4Type>(test_value0, test_value1);
 	const Vector4Type vector_cross3_result = vector_cross3(test_value0, test_value1);
@@ -367,6 +384,11 @@ void test_vector4_impl(const Vector4Type& zero, const QuatType& identity, const 
 	REQUIRE((vector_get_y(vector_less_than(test_value0, test_value1)) != FloatType(0.0)) == (test_value0_flt[1] < test_value1_flt[1]));
 	REQUIRE((vector_get_z(vector_less_than(test_value0, test_value1)) != FloatType(0.0)) == (test_value0_flt[2] < test_value1_flt[2]));
 	REQUIRE((vector_get_w(vector_less_than(test_value0, test_value1)) != FloatType(0.0)) == (test_value0_flt[3] < test_value1_flt[3]));
+
+	REQUIRE((vector_get_x(vector_less_equal(test_value0, test_value3)) != FloatType(0.0)) == (test_value0_flt[0] <= test_value3_flt[0]));
+	REQUIRE((vector_get_y(vector_less_equal(test_value0, test_value3)) != FloatType(0.0)) == (test_value0_flt[1] <= test_value3_flt[1]));
+	REQUIRE((vector_get_z(vector_less_equal(test_value0, test_value3)) != FloatType(0.0)) == (test_value0_flt[2] <= test_value3_flt[2]));
+	REQUIRE((vector_get_w(vector_less_equal(test_value0, test_value3)) != FloatType(0.0)) == (test_value0_flt[3] <= test_value3_flt[3]));
 
 	REQUIRE((vector_get_x(vector_greater_equal(test_value0, test_value1)) != FloatType(0.0)) == (test_value0_flt[0] >= test_value1_flt[0]));
 	REQUIRE((vector_get_y(vector_greater_equal(test_value0, test_value1)) != FloatType(0.0)) == (test_value0_flt[1] >= test_value1_flt[1]));
