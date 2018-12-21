@@ -38,6 +38,7 @@ namespace rtm
 	struct float_traits<float>
 	{
 		using angle = anglef;
+		using scalar = scalarf;
 		using vector4 = vector4f;
 		using quat = quatf;
 		using qvv = qvvf;
@@ -50,6 +51,7 @@ namespace rtm
 	struct float_traits<double>
 	{
 		using angle = angled;
+		using scalar = scalard;
 		using vector4 = vector4d;
 		using quat = quatd;
 		using qvv = qvvd;

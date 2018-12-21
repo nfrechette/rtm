@@ -458,9 +458,36 @@ namespace rtm
 	}
 
 	//////////////////////////////////////////////////////////////////////////
+	// 4D dot product: lhs . rhs
+	//////////////////////////////////////////////////////////////////////////
+	inline scalarf RTM_SIMD_CALL vector_dot_as_scalar(vector4f_arg0 lhs, vector4f_arg1 rhs) RTM_NO_EXCEPT
+	{
+#if defined(RTM_SSE4_INTRINSICS) && 0
+		// SSE4 dot product instruction isn't precise enough
+		return _mm_cvtss_f32(_mm_dp_ps(lhs, rhs, 0xFF));
+#elif defined(RTM_SSE2_INTRINSICS)
+		__m128 x2_y2_z2_w2 = _mm_mul_ps(lhs, rhs);
+		__m128 z2_w2_0_0 = _mm_shuffle_ps(x2_y2_z2_w2, x2_y2_z2_w2, _MM_SHUFFLE(0, 0, 3, 2));
+		__m128 x2z2_y2w2_0_0 = _mm_add_ps(x2_y2_z2_w2, z2_w2_0_0);
+		__m128 y2w2_0_0_0 = _mm_shuffle_ps(x2z2_y2w2_0_0, x2z2_y2w2_0_0, _MM_SHUFFLE(0, 0, 0, 1));
+		__m128 x2y2z2w2_0_0_0 = _mm_add_ps(x2z2_y2w2_0_0, y2w2_0_0_0);
+		return x2y2z2w2_0_0_0;
+#elif defined(RTM_NEON_INTRINSICS)
+		float32x4_t x2_y2_z2_w2 = vmulq_f32(lhs, rhs);
+		float32x2_t x2_y2 = vget_low_f32(x2_y2_z2_w2);
+		float32x2_t z2_w2 = vget_high_f32(x2_y2_z2_w2);
+		float32x2_t x2z2_y2w2 = vadd_f32(x2_y2, z2_w2);
+		float32x2_t x2y2z2w2 = vpadd_f32(x2z2_y2w2, x2z2_y2w2);
+		return vget_lane_f32(x2y2z2w2, 0);
+#else
+		return (vector_get_x(lhs) * vector_get_x(rhs)) + (vector_get_y(lhs) * vector_get_y(rhs)) + (vector_get_z(lhs) * vector_get_z(rhs)) + (vector_get_w(lhs) * vector_get_w(rhs));
+#endif
+	}
+
+	//////////////////////////////////////////////////////////////////////////
 	// 4D dot product replicated in all components: lhs . rhs
 	//////////////////////////////////////////////////////////////////////////
-	inline vector4f RTM_SIMD_CALL vector_vdot(vector4f_arg0 lhs, vector4f_arg1 rhs) RTM_NO_EXCEPT
+	inline vector4f RTM_SIMD_CALL vector_dot_as_vector(vector4f_arg0 lhs, vector4f_arg1 rhs) RTM_NO_EXCEPT
 	{
 #if defined(RTM_SSE4_INTRINSICS) && 0
 		// SSE4 dot product instruction isn't precise enough

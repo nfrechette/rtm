@@ -37,6 +37,8 @@ using namespace rtm;
 template<typename FloatType>
 static void test_scalar_impl(const FloatType threshold)
 {
+	REQUIRE(scalar_cast(scalar_set(FloatType(0.2345))) == FloatType(0.2345));
+
 	REQUIRE(scalar_floor(FloatType(0.0)) == FloatType(0.0));
 	REQUIRE(scalar_floor(FloatType(0.5)) == FloatType(0.0));
 	REQUIRE(scalar_floor(FloatType(2.5)) == FloatType(2.0));
@@ -78,6 +80,11 @@ static void test_scalar_impl(const FloatType threshold)
 	REQUIRE(scalar_near_equal(scalar_reciprocal(FloatType(32.5)), FloatType(1.0 / 32.5), threshold));
 	REQUIRE(scalar_near_equal(scalar_reciprocal(FloatType(-0.5)), FloatType(1.0 / -0.5), threshold));
 	REQUIRE(scalar_near_equal(scalar_reciprocal(FloatType(-32.5)), FloatType(1.0 / -32.5), threshold));
+
+	REQUIRE(scalar_near_equal(scalar_cast(scalar_reciprocal(scalar_set(FloatType(0.5)))), FloatType(1.0 / 0.5), threshold));
+	REQUIRE(scalar_near_equal(scalar_cast(scalar_reciprocal(scalar_set(FloatType(32.5)))), FloatType(1.0 / 32.5), threshold));
+	REQUIRE(scalar_near_equal(scalar_cast(scalar_reciprocal(scalar_set(FloatType(-0.5)))), FloatType(1.0 / -0.5), threshold));
+	REQUIRE(scalar_near_equal(scalar_cast(scalar_reciprocal(scalar_set(FloatType(-32.5)))), FloatType(1.0 / -32.5), threshold));
 
 	const FloatType angles[] = { FloatType(0.0), k_pi, -k_pi, k_pi_2, -k_pi_2, FloatType(0.5), FloatType(32.5), FloatType(-0.5), FloatType(-32.5) };
 

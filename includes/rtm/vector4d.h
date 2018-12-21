@@ -372,9 +372,17 @@ namespace rtm
 	}
 
 	//////////////////////////////////////////////////////////////////////////
+	// 4D dot product: lhs . rhs
+	//////////////////////////////////////////////////////////////////////////
+	inline scalard vector_dot_as_scalar(const vector4d& lhs, const vector4d& rhs) RTM_NO_EXCEPT
+	{
+		return scalar_set((vector_get_x(lhs) * vector_get_x(rhs)) + (vector_get_y(lhs) * vector_get_y(rhs)) + (vector_get_z(lhs) * vector_get_z(rhs)) + (vector_get_w(lhs) * vector_get_w(rhs)));
+	}
+
+	//////////////////////////////////////////////////////////////////////////
 	// 4D dot product replicated in all components: lhs . rhs
 	//////////////////////////////////////////////////////////////////////////
-	inline vector4d vector_vdot(const vector4d& lhs, const vector4d& rhs) RTM_NO_EXCEPT
+	inline vector4d vector_dot_as_vector(const vector4d& lhs, const vector4d& rhs) RTM_NO_EXCEPT
 	{
 		return vector_set(vector_dot(lhs, rhs));
 	}

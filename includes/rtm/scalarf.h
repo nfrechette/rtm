@@ -33,6 +33,28 @@
 namespace rtm
 {
 	//////////////////////////////////////////////////////////////////////////
+	// Creates a scalar from a floating point value.
+	//////////////////////////////////////////////////////////////////////////
+	inline scalarf RTM_SIMD_CALL scalar_set(float xyzw) RTM_NO_EXCEPT
+	{
+#if defined(RTM_SSE2_INTRINSICS)
+		return _mm_set_ps1(xyzw);
+#else
+		return xyzw;
+#endif
+	}
+
+#if defined(RTM_SSE2_INTRINSICS)
+	//////////////////////////////////////////////////////////////////////////
+	// Casts a scalar into a floating point value.
+	//////////////////////////////////////////////////////////////////////////
+	inline float RTM_SIMD_CALL scalar_cast(scalarf_arg0 input) RTM_NO_EXCEPT
+	{
+		return _mm_cvtss_f32(input);
+	}
+#endif
+
+	//////////////////////////////////////////////////////////////////////////
 	// Returns the largest integer value not greater than the input.
 	// scalar_floor(1.8) = 1.0
 	// scalar_floor(-1.8) = -2.0
@@ -130,6 +152,25 @@ namespace rtm
 		return 1.0f / input;
 #endif
 	}
+
+#if defined(RTM_SSE2_INTRINSICS)
+	//////////////////////////////////////////////////////////////////////////
+	// Returns the reciprocal of the input.
+	//////////////////////////////////////////////////////////////////////////
+	inline scalarf RTM_SIMD_CALL scalar_reciprocal(scalarf_arg0 input) RTM_NO_EXCEPT
+	{
+		// Perform two passes of Newton-Raphson iteration on the hardware estimate
+		__m128 x0 = _mm_rcp_ss(input);
+
+		// First iteration
+		__m128 x1 = _mm_sub_ss(_mm_add_ss(x0, x0), _mm_mul_ss(input, _mm_mul_ss(x0, x0)));
+
+		// Second iteration
+		__m128 x2 = _mm_sub_ss(_mm_add_ss(x1, x1), _mm_mul_ss(input, _mm_mul_ss(x1, x1)));
+
+		return x2;
+	}
+#endif
 
 	//////////////////////////////////////////////////////////////////////////
 	// Returns the sine of the input angle.

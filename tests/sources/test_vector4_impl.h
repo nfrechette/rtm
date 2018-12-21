@@ -27,6 +27,9 @@
 
 #include <catch.hpp>
 
+#include <rtm/type_traits.h>
+#include <rtm/scalarf.h>
+#include <rtm/scalard.h>
 #include <rtm/vector4f.h>
 #include <rtm/vector4d.h>
 #include <rtm/quatf.h>
@@ -125,9 +128,16 @@ inline Vector4Type scalar_mix(const Vector4Type& input0, const Vector4Type& inpu
 	return vector_set(x, y, z, w);
 }
 
-template<typename Vector4Type, typename QuatType, typename FloatType>
-void test_vector4_impl(const Vector4Type& zero, const QuatType& identity, const FloatType threshold)
+template<typename FloatType>
+void test_vector4_impl(const FloatType threshold)
 {
+	using QuatType = typename float_traits<FloatType>::quat;
+	using Vector4Type = typename float_traits<FloatType>::vector4;
+	using ScalarType = typename float_traits<FloatType>::scalar;
+
+	const Vector4Type zero = vector_zero();
+	const QuatType identity = quat_identity();
+
 	struct alignas(16) Tmp
 	{
 		uint8_t padding0[8];	//  8 |  8
@@ -163,6 +173,11 @@ void test_vector4_impl(const Vector4Type& zero, const QuatType& identity, const 
 	REQUIRE(vector_get_y(vector_set(FloatType(-3.12))) == FloatType(-3.12));
 	REQUIRE(vector_get_z(vector_set(FloatType(-3.12))) == FloatType(-3.12));
 	REQUIRE(vector_get_w(vector_set(FloatType(-3.12))) == FloatType(-3.12));
+
+	REQUIRE(vector_get_x(vector_set(scalar_set(FloatType(-3.12)))) == FloatType(-3.12));
+	REQUIRE(vector_get_y(vector_set(scalar_set(FloatType(-3.12)))) == FloatType(-3.12));
+	REQUIRE(vector_get_z(vector_set(scalar_set(FloatType(-3.12)))) == FloatType(-3.12));
+	REQUIRE(vector_get_w(vector_set(scalar_set(FloatType(-3.12)))) == FloatType(-3.12));
 
 	REQUIRE(vector_get_x(zero) == FloatType(0.0));
 	REQUIRE(vector_get_y(zero) == FloatType(0.0));
@@ -322,7 +337,10 @@ void test_vector4_impl(const Vector4Type& zero, const QuatType& identity, const 
 	const FloatType vector_dot3_result = vector_dot3(test_value10, test_value11);
 	REQUIRE(scalar_near_equal(vector_dot3_result, scalar_dot3_result, threshold));
 
-	const Vector4Type vector_vdot_result = vector_vdot(test_value10, test_value11);
+	const ScalarType vector_sdot_result = vector_dot_as_scalar(test_value10, test_value11);
+	REQUIRE(scalar_near_equal(scalar_cast(vector_sdot_result), scalar_dot_result, threshold));
+
+	const Vector4Type vector_vdot_result = vector_dot_as_vector(test_value10, test_value11);
 	REQUIRE(scalar_near_equal(vector_get_x(vector_vdot_result), scalar_dot_result, threshold));
 	REQUIRE(scalar_near_equal(vector_get_y(vector_vdot_result), scalar_dot_result, threshold));
 	REQUIRE(scalar_near_equal(vector_get_z(vector_vdot_result), scalar_dot_result, threshold));

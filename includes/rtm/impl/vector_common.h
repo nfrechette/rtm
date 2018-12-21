@@ -87,6 +87,16 @@ namespace rtm
 #endif
 	}
 
+#if defined(RTM_SSE2_INTRINSICS)
+	//////////////////////////////////////////////////////////////////////////
+	// Creates a vector4 from a single value for all 4 components.
+	//////////////////////////////////////////////////////////////////////////
+	inline vector4f RTM_SIMD_CALL vector_set(scalarf_arg0 xyzw) RTM_NO_EXCEPT
+	{
+		return _mm_shuffle_ps(xyzw, xyzw, _MM_SHUFFLE(0, 0, 0, 0));
+	}
+#endif
+
 	//////////////////////////////////////////////////////////////////////////
 	// Creates a vector4 from all 4 components.
 	//////////////////////////////////////////////////////////////////////////
@@ -123,6 +133,17 @@ namespace rtm
 		return vector4d{ xyzw, xyzw, xyzw, xyzw };
 #endif
 	}
+
+#if defined(RTM_SSE2_INTRINSICS)
+	//////////////////////////////////////////////////////////////////////////
+	// Creates a vector4 from a single value for all 4 components.
+	//////////////////////////////////////////////////////////////////////////
+	inline vector4d RTM_SIMD_CALL vector_set(scalard xyzw) RTM_NO_EXCEPT
+	{
+		const __m128d xyzw_pd = _mm_shuffle_pd(xyzw, xyzw, 0);
+		return vector4d{ xyzw_pd, xyzw_pd };
+	}
+#endif
 
 	namespace rtm_impl
 	{

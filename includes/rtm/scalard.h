@@ -33,6 +33,28 @@
 namespace rtm
 {
 	//////////////////////////////////////////////////////////////////////////
+	// Creates a scalar from a floating point value.
+	//////////////////////////////////////////////////////////////////////////
+	inline scalard RTM_SIMD_CALL scalar_set(double xyzw) RTM_NO_EXCEPT
+	{
+#if defined(RTM_SSE2_INTRINSICS)
+		return _mm_set1_pd(xyzw);
+#else
+		return xyzw;
+#endif
+	}
+
+#if defined(RTM_SSE2_INTRINSICS)
+	//////////////////////////////////////////////////////////////////////////
+	// Casts a scalar into a floating point value.
+	//////////////////////////////////////////////////////////////////////////
+	inline double RTM_SIMD_CALL scalar_cast(scalard input) RTM_NO_EXCEPT
+	{
+		return _mm_cvtsd_f64(input);
+	}
+#endif
+
+	//////////////////////////////////////////////////////////////////////////
 	// Returns the largest integer value not greater than the input.
 	// scalar_floor(1.8) = 1.0
 	// scalar_floor(-1.8) = -2.0
@@ -82,7 +104,6 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	inline double scalar_sqrt_reciprocal(double input) RTM_NO_EXCEPT
 	{
-		// TODO: Use recip instruction
 		return 1.0 / scalar_sqrt(input);
 	}
 
@@ -93,6 +114,16 @@ namespace rtm
 	{
 		return 1.0 / input;
 	}
+
+#if defined(RTM_SSE2_INTRINSICS)
+	//////////////////////////////////////////////////////////////////////////
+	// Returns the reciprocal of the input.
+	//////////////////////////////////////////////////////////////////////////
+	inline scalard RTM_SIMD_CALL scalar_reciprocal(scalard input) RTM_NO_EXCEPT
+	{
+		return _mm_div_sd(_mm_set1_pd(1.0), input);
+	}
+#endif
 
 	//////////////////////////////////////////////////////////////////////////
 	// Returns the sine of the input angle.

@@ -143,6 +143,64 @@ namespace rtm
 	};
 #endif
 
+#if defined(RTM_SSE2_INTRINSICS)
+	//////////////////////////////////////////////////////////////////////////
+	// A SIMD friendly scalar type. Different architectures have an easier or harder time
+	// working with scalar floating point numbers. For example, older PowerPC processors
+	// had to write to memory and reload from it to transfer from one register file into
+	// another (e.g convert from a float to a SIMD vector). Modern processors handle
+	// this much better but inefficiencies remain, especially with SSE. While it is
+	// free to convert a SIMD scalar into a float with _mm_cvtss_f32(..) the reverse generally
+	// requires the compiler to fill the unused SIMD lanes with known values (either zero or the same).
+	// This introduces an extra instruction that isn't always required when only the first lane is used
+	// such as with scalar_sqrt_reciprocal(..). By introducing a type for SIMD scalar values,
+	// each platform is free to make an optimal choice.
+	//////////////////////////////////////////////////////////////////////////
+	using scalarf = __m128;
+
+	//////////////////////////////////////////////////////////////////////////
+	// A SIMD friendly scalar type. Different architectures have an easier or harder time
+	// working with scalar floating point numbers. For example, older PowerPC processors
+	// had to write to memory and reload from it to transfer from one register file into
+	// another (e.g convert from a float to a SIMD vector). Modern processors handle
+	// this much better but inefficiencies remain, especially with SSE. While it is
+	// free to convert a SIMD scalar into a float with _mm_cvtss_f32(..) the reverse generally
+	// requires the compiler to fill the unused SIMD lanes with known values (either zero or the same).
+	// This introduces an extra instruction that isn't always required when only the first lane is used
+	// such as with scalar_sqrt_reciprocal(..). By introducing a type for SIMD scalar values,
+	// each platform is free to make an optimal choice.
+	//////////////////////////////////////////////////////////////////////////
+	using scalard = __m128d;
+#else
+	//////////////////////////////////////////////////////////////////////////
+	// A SIMD friendly scalar type. Different architectures have an easier or harder time
+	// working with scalar floating point numbers. For example, older PowerPC processors
+	// had to write to memory and reload from it to transfer from one register file into
+	// another (e.g convert from a float to a SIMD vector). Modern processors handle
+	// this much better but inefficiencies remain, especially with SSE. While it is
+	// free to convert a SIMD scalar into a float with _mm_cvtss_f32(..) the reverse generally
+	// requires the compiler to fill the unused SIMD lanes with known values (either zero or the same).
+	// This introduces an extra instruction that isn't always required when only the first lane is used
+	// such as with scalar_sqrt_reciprocal(..). By introducing a type for SIMD scalar values,
+	// each platform is free to make an optimal choice.
+	//////////////////////////////////////////////////////////////////////////
+	using scalarf = float;
+
+	//////////////////////////////////////////////////////////////////////////
+	// A SIMD friendly scalar type. Different architectures have an easier or harder time
+	// working with scalar floating point numbers. For example, older PowerPC processors
+	// had to write to memory and reload from it to transfer from one register file into
+	// another (e.g convert from a float to a SIMD vector). Modern processors handle
+	// this much better but inefficiencies remain, especially with SSE. While it is
+	// free to convert a SIMD scalar into a float with _mm_cvtss_f32(..) the reverse generally
+	// requires the compiler to fill the unused SIMD lanes with known values (either zero or the same).
+	// This introduces an extra instruction that isn't always required when only the first lane is used
+	// such as with scalar_sqrt_reciprocal(..). By introducing a type for SIMD scalar values,
+	// each platform is free to make an optimal choice.
+	//////////////////////////////////////////////////////////////////////////
+	using scalard = double;
+#endif
+
 	//////////////////////////////////////////////////////////////////////////
 	// A QVV transform represents a 3D rotation (quaternion), 3D translation (vector), and 3D scale (vector).
 	// It properly handles positive scaling but negative scaling is a bit more problematic.

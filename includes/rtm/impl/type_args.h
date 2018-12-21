@@ -57,6 +57,16 @@ namespace rtm
 	using quatf_arg7 = const quatf&;
 	using quatf_argn = const quatf&;
 
+	using scalarf_arg0 = const scalarf;
+	using scalarf_arg1 = const scalarf;
+	using scalarf_arg2 = const scalarf;
+	using scalarf_arg3 = const scalarf;
+	using scalarf_arg4 = const scalarf;
+	using scalarf_arg5 = const scalarf;
+	using scalarf_arg6 = const scalarf&;
+	using scalarf_arg7 = const scalarf&;
+	using scalarf_argn = const scalarf&;
+
 	// With __vectorcall, vector aggregates are also passed by register and they can use up to 4 registers.
 
 	using qvvf_arg0 = const qvvf;
@@ -97,6 +107,16 @@ namespace rtm
 	using quatf_arg6 = const quatf;
 	using quatf_arg7 = const quatf;
 	using quatf_argn = const quatf&;
+
+	using scalarf_arg0 = const scalarf;
+	using scalarf_arg1 = const scalarf;
+	using scalarf_arg2 = const scalarf;
+	using scalarf_arg3 = const scalarf;
+	using scalarf_arg4 = const scalarf;
+	using scalarf_arg5 = const scalarf;
+	using scalarf_arg6 = const scalarf;
+	using scalarf_arg7 = const scalarf;
+	using scalarf_argn = const scalarf;
 
 	// With ARM64 NEON, vector aggregates are also passed by register but the whole aggregate
 	// must fit in the number of registers available (e.g. we can pass 2x qvvf but not 3x).
@@ -141,6 +161,16 @@ namespace rtm
 	using quatf_arg7 = const quatf&;
 	using quatf_argn = const quatf&;
 
+	using scalarf_arg0 = const scalarf;
+	using scalarf_arg1 = const scalarf;
+	using scalarf_arg2 = const scalarf;
+	using scalarf_arg3 = const scalarf;
+	using scalarf_arg4 = const scalarf;
+	using scalarf_arg5 = const scalarf;
+	using scalarf_arg6 = const scalarf;
+	using scalarf_arg7 = const scalarf;
+	using scalarf_argn = const scalarf;
+
 	// ARM NEON does not support passing aggregates by register.
 
 	using qvvf_arg0 = const qvvf&;
@@ -182,6 +212,16 @@ namespace rtm
 	using quatf_arg7 = const quatf;
 	using quatf_argn = const quatf&;
 
+	using scalarf_arg0 = const scalarf;
+	using scalarf_arg1 = const scalarf;
+	using scalarf_arg2 = const scalarf;
+	using scalarf_arg3 = const scalarf;
+	using scalarf_arg4 = const scalarf;
+	using scalarf_arg5 = const scalarf;
+	using scalarf_arg6 = const scalarf;
+	using scalarf_arg7 = const scalarf;
+	using scalarf_argn = const scalarf&;
+
 	// gcc does not appear to support passing and returning aggregates by register
 
 	using qvvf_arg0 = const qvvf&;
@@ -222,6 +262,16 @@ namespace rtm
 	using quatf_arg6 = const quatf;
 	using quatf_arg7 = const quatf;
 	using quatf_argn = const quatf&;
+
+	using scalarf_arg0 = const scalarf;
+	using scalarf_arg1 = const scalarf;
+	using scalarf_arg2 = const scalarf;
+	using scalarf_arg3 = const scalarf;
+	using scalarf_arg4 = const scalarf;
+	using scalarf_arg5 = const scalarf;
+	using scalarf_arg6 = const scalarf;
+	using scalarf_arg7 = const scalarf;
+	using scalarf_argn = const scalarf&;
 
 	// We could pass up to 2 full qvvf types by register and the rotation/translation of
 	// the third but aggregates are not returned by register.
@@ -266,6 +316,16 @@ namespace rtm
 	using quatf_arg6 = const quatf&;
 	using quatf_arg7 = const quatf&;
 	using quatf_argn = const quatf&;
+
+	using scalarf_arg0 = const scalarf;
+	using scalarf_arg1 = const scalarf;
+	using scalarf_arg2 = const scalarf;
+	using scalarf_arg3 = const scalarf;
+	using scalarf_arg4 = const scalarf;
+	using scalarf_arg5 = const scalarf;
+	using scalarf_arg6 = const scalarf;
+	using scalarf_arg7 = const scalarf;
+	using scalarf_argn = const scalarf;
 
 	using qvvf_arg0 = const qvvf&;
 	using qvvf_arg1 = const qvvf&;
