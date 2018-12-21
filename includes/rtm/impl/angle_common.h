@@ -46,6 +46,7 @@ namespace rtm
 			constexpr operator float() const RTM_NO_EXCEPT { return flt; }
 			constexpr operator double() const RTM_NO_EXCEPT { return dbl; }
 
+			// Angle in radians as a float and double
 			float flt;
 			double dbl;
 

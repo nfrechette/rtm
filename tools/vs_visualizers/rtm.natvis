@@ -18,6 +18,10 @@
     <DisplayString>({m128i_u32[0]}, {m128i_u32[1]}, {m128i_u32[2]}, {m128i_u32[3]})</DisplayString>
   </Type>
 
+	<Type Name="__m128d">
+		<DisplayString>({m128d_f64[0]}, {m128d_f64[1]})</DisplayString>
+	</Type>
+
   <Type Name="rtm::vector4d" Priority="MediumLow">
     <DisplayString>({x}, {y}, {z}, {w})</DisplayString>
   </Type>
@@ -33,5 +37,17 @@
   <Type Name="rtm::quatd">
     <DisplayString>({xy.m128d_f64[0]}, {xy.m128d_f64[1]}, {zw.m128d_f64[0]}, {zw.m128d_f64[1]})</DisplayString>
   </Type>
+
+	<Type Name="rtm::anglef">
+		<DisplayString>Degrees: {m_radians * (180.0f / 3.14159265358979323846f)}</DisplayString>
+	</Type>
+
+	<Type Name="rtm::angled">
+		<DisplayString>Degrees: {m_radians * (180.0 / 3.14159265358979323846)}</DisplayString>
+	</Type>
+
+	<Type Name="rtm::rtm_impl::angle_constant">
+		<DisplayString>Degrees: {dbl * (180.0 / 3.14159265358979323846)}</DisplayString>
+	</Type>
 
 </AutoVisualizer>
