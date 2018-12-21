@@ -61,5 +61,7 @@ namespace rtm
 	constexpr rtm_impl::angle_constant k_pi(3.14159265358979323846);					// PI
 	constexpr rtm_impl::angle_constant k_pi_2(1.57079632679489661923);					// PI / 2
 	constexpr rtm_impl::angle_constant k_pi_4(0.785398163397448309616);					// PI / 4
+	constexpr rtm_impl::angle_constant k_pi_180((double)k_pi / 180.0);					// PI / 180
+	constexpr rtm_impl::angle_constant k_inv_pi_180(180.0 / (double)k_pi);				// 180 / PI
 	constexpr rtm_impl::angle_constant k_2_pi(6.283185307179586476925286766559);		// PI * 2
 }
