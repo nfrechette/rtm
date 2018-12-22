@@ -44,15 +44,17 @@ namespace rtm
 #endif
 	}
 
-#if defined(RTM_SSE2_INTRINSICS)
 	//////////////////////////////////////////////////////////////////////////
 	// Casts a scalar into a floating point value.
 	//////////////////////////////////////////////////////////////////////////
 	inline double RTM_SIMD_CALL scalar_cast(scalard input) RTM_NO_EXCEPT
 	{
+#if defined(RTM_SSE2_INTRINSICS)
 		return _mm_cvtsd_f64(input);
-	}
+#else
+		return input;
 #endif
+	}
 
 	//////////////////////////////////////////////////////////////////////////
 	// Returns the largest integer value not greater than the input.
