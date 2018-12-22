@@ -7,9 +7,7 @@
 
 # Realtime Math
 
-This library is geared towards realtime applications that require their math types to be as fast as possible. Much care was taken to maximize [inlining opportunities](todo) and for code generation to be optimal when a function isn't inlined by passing values in registers whenever possible.
-
-Types currently supported: vector3, vector4, quaternions, affine matrices (matrix3x4), and QVV transforms.
+This library is geared towards realtime applications that require their math to be as fast as possible. Much care was taken to maximize inlining opportunities and for code generation to be optimal when a function isn't inlined by passing values in registers whenever possible.
 
 ## Philosophy
 
@@ -18,7 +16,8 @@ Much thought was put into designing the library for it to be as flexible and pow
 *  The library consists of **100% C++11** header files and is thus easy to integrate in any project
 *  The interface follows C-style conventions to ensure optimal code generation
 *  Both *float32* and *float64* arithmetic are supported
-*  Row vectors are used, see [here](todo) for details
+*  Row vectors are used
+*  See [here](./docs/api_conventions.md) for more details
 
 ## Supported platforms
 
@@ -33,8 +32,6 @@ The above supported platform list is only what is tested every release but if it
 ## Getting started
 
 If you would like to contribute to RTM head on over to the [getting started](./docs/getting_started.md) section in order to setup your environment and make sure to check out the [contributing guidelines](CONTRIBUTING.md).
-
-If you would like to integrate RTM into your own project, follow the integration instructions [here](./docs#how-to-integrate-the-library).
 
 ## External dependencies
 

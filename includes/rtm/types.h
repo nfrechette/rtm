@@ -33,13 +33,13 @@ namespace rtm
 {
 #if defined(RTM_SSE2_INTRINSICS)
 	//////////////////////////////////////////////////////////////////////////
-	// A quaternion (4D complex number) where the imaginary part is the W component.
+	// A quaternion (4D complex number) where the imaginary part is the [w] component.
 	// It accurately represents a 3D rotation with no gimbal lock as long as it is kept normalized.
 	//////////////////////////////////////////////////////////////////////////
 	using quatf = __m128;
 
 	//////////////////////////////////////////////////////////////////////////
-	// A quaternion (4D complex number) where the imaginary part is the W component.
+	// A quaternion (4D complex number) where the imaginary part is the [w] component.
 	// It accurately represents a 3D rotation with no gimbal lock as long as it is kept normalized.
 	//////////////////////////////////////////////////////////////////////////
 	struct quatd
@@ -63,13 +63,13 @@ namespace rtm
 	};
 #elif defined(RTM_NEON_INTRINSICS)
 	//////////////////////////////////////////////////////////////////////////
-	// A quaternion (4D complex number) where the imaginary part is the W component.
+	// A quaternion (4D complex number) where the imaginary part is the [w] component.
 	// It accurately represents a 3D rotation with no gimbal lock as long as it is kept normalized.
 	//////////////////////////////////////////////////////////////////////////
 	using quatf = float32x4_t;
 
 	//////////////////////////////////////////////////////////////////////////
-	// A quaternion (4D complex number) where the imaginary part is the W component.
+	// A quaternion (4D complex number) where the imaginary part is the [w] component.
 	// It accurately represents a 3D rotation with no gimbal lock as long as it is kept normalized.
 	//////////////////////////////////////////////////////////////////////////
 	struct alignas(16) quatd
@@ -97,7 +97,7 @@ namespace rtm
 	};
 #else
 	//////////////////////////////////////////////////////////////////////////
-	// A quaternion (4D complex number) where the imaginary part is the W component.
+	// A quaternion (4D complex number) where the imaginary part is the [w] component.
 	// It accurately represents a 3D rotation with no gimbal lock as long as it is kept normalized.
 	//////////////////////////////////////////////////////////////////////////
 	struct alignas(16) quatf
@@ -109,7 +109,7 @@ namespace rtm
 	};
 
 	//////////////////////////////////////////////////////////////////////////
-	// A quaternion (4D complex number) where the imaginary part is the W component.
+	// A quaternion (4D complex number) where the imaginary part is the [w] component.
 	// It accurately represents a 3D rotation with no gimbal lock as long as it is kept normalized.
 	//////////////////////////////////////////////////////////////////////////
 	struct alignas(16) quatd
