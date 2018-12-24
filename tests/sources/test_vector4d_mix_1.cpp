@@ -25,7 +25,7 @@
 
 #include "test_vector4_impl.h"
 
-TEST_CASE("vector4d vector_mix<a|b|c|d,_,_,_,_>", "[math][vector4]")
+TEST_CASE("vector4d vector_mix<a b c d>", "[math][vector4]")
 {
 	test_vector_mix_impl<vector4d, double, mix4::a>(1.0e-9);
 	test_vector_mix_impl<vector4d, double, mix4::b>(1.0e-9);

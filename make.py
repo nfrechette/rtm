@@ -1,3 +1,4 @@
+import argparse
 import os
 import platform
 import shutil
@@ -5,127 +6,65 @@ import subprocess
 import sys
 
 def parse_argv():
-	options = {}
-	options['build'] = False
-	options['clean'] = False
-	options['unit_test'] = False
-	options['use_avx'] = False
-	options['use_simd'] = True
-	options['compiler'] = None
-	options['config'] = 'Release'
-	options['cpu'] = 'x64'
-	options['num_threads'] = 4
-	options['print_help'] = False
+	parser = argparse.ArgumentParser(add_help=False)
 
-	for i in range(1, len(sys.argv)):
-		value = sys.argv[i]
-		value_upper = value.upper()
+	actions = parser.add_argument_group(title='Actions', description='If no action is specified, on Windows, OS X, and Linux the solution/make files are generated.  Multiple actions can be used simultaneously.')
+	actions.add_argument('-build', action='store_true')
+	actions.add_argument('-clean', action='store_true')
+	actions.add_argument('-unit_test', action='store_true')
 
-		if value == '-build':
-			options['build'] = True
+	target = parser.add_argument_group(title='Target')
+	target.add_argument('-compiler', choices=['vs2015', 'vs2017', 'android', 'clang4', 'clang5', 'clang6', 'gcc5', 'gcc6', 'gcc7', 'gcc8', 'osx', 'ios'], help='Defaults to the host system\'s default compiler')
+	target.add_argument('-config', choices=['Debug', 'Release'], type=str.capitalize)
+	target.add_argument('-cpu', choices=['x86', 'x64'], help='Only supported for Windows, OS X, and Linux; defaults to the host system\'s architecture')
 
-		if value == '-clean':
-			options['clean'] = True
+	misc = parser.add_argument_group(title='Miscellaneous')
+	misc.add_argument('-avx', dest='use_avx', action='store_true', help='Compile using AVX instructions on Windows, OS X, and Linux')
+	misc.add_argument('-nosimd', dest='use_simd', action='store_false', help='Compile without SIMD instructions')
+	misc.add_argument('-num_threads', help='No. to use while compiling and regressing')
+	misc.add_argument('-tests_matching', help='Only run tests whose names match this regex')
+	misc.add_argument('-help', action='help', help='Display this usage information')
 
-		if value == '-unit_test':
-			options['unit_test'] = True
+	parser.set_defaults(build=False, clean=False, unit_test=False, compiler=None, config='Release', cpu='x64', use_avx=False, use_simd=True, num_threads=4, tests_matching='')
 
-		if value == '-help':
-			options['print_help'] = True
-
-		if value == '-avx':
-			options['use_avx'] = True
-
-		if value == '-nosimd':
-			options['use_simd'] = False
-
-		# TODO: Refactor to use the form: -compiler=vs2015
-		if value == '-vs2015':
-			options['compiler'] = 'vs2015'
-
-		if value == '-vs2017':
-			options['compiler'] = 'vs2017'
-
-		if value == '-android':
-			options['compiler'] = 'android'
-
-		if value == '-clang4':
-			options['compiler'] = 'clang4'
-
-		if value == '-clang5':
-			options['compiler'] = 'clang5'
-
-		if value == '-clang6':
-			options['compiler'] = 'clang6'
-
-		if value == '-gcc5':
-			options['compiler'] = 'gcc5'
-
-		if value == '-gcc6':
-			options['compiler'] = 'gcc6'
-
-		if value == '-gcc7':
-			options['compiler'] = 'gcc7'
-
-		if value == '-gcc8':
-			options['compiler'] = 'gcc8'
-
-		if value == '-osx':
-			options['compiler'] = 'osx'
-
-		if value == '-ios':
-			options['compiler'] = 'ios'
-
-		# TODO: Refactor to use the form: -config=Release
-		if value_upper == '-DEBUG':
-			options['config'] = 'Debug'
-
-		if value_upper == '-RELEASE':
-			options['config'] = 'Release'
-
-		# TODO: Refactor to use the form: -cpu=x86
-		if value == '-x86':
-			options['cpu'] = 'x86'
-
-		if value == '-x64':
-			options['cpu'] = 'x64'
+	args = parser.parse_args()
 
 	# Sanitize and validate our options
-	if options['use_avx'] and not options['use_simd']:
+	if args.use_avx and not args.use_simd:
 		print('SIMD is explicitly disabled, AVX will not be used')
-		options['use_avx'] = False
+		args.use_avx = False
 
-	if options['compiler'] == 'android':
-		options['cpu'] = 'armv7-a'
+	if args.compiler == 'android':
+		args.cpu = 'armv7-a'
 
 		if not platform.system() == 'Windows':
 			print('Android is only supported on Windows')
 			sys.exit(1)
 
-		if options['use_avx']:
+		if args.use_avx:
 			print('AVX is not supported on Android')
 			sys.exit(1)
 
-		if options['unit_test']:
+		if args.unit_test:
 			print('Unit tests cannot run from the command line on Android')
 			sys.exit(1)
 
-	if options['compiler'] == 'ios':
-		options['cpu'] = 'arm64'
+	if args.compiler == 'ios':
+		args.cpu = 'arm64'
 
 		if not platform.system() == 'Darwin':
 			print('iOS is only supported on OS X')
 			sys.exit(1)
 
-		if options['use_avx']:
+		if args.use_avx:
 			print('AVX is not supported on iOS')
 			sys.exit(1)
 
-		if options['unit_test']:
+		if args.unit_test:
 			print('Unit tests cannot run from the command line on iOS')
 			sys.exit(1)
 
-	return options
+	return args
 
 def get_cmake_exes():
 	if platform.system() == 'Windows':
@@ -169,9 +108,9 @@ def get_toolchain(compiler):
 	# No toolchain
 	return None
 
-def set_compiler_env(compiler, options):
+def set_compiler_env(compiler, args):
 	if platform.system() == 'Linux':
-		os.environ['MAKEFLAGS'] = '-j{}'.format(options['num_threads'])
+		os.environ['MAKEFLAGS'] = '-j{}'.format(args.num_threads)
 		if compiler == 'clang4':
 			os.environ['CC'] = 'clang-4.0'
 			os.environ['CXX'] = 'clang++-4.0'
@@ -198,23 +137,23 @@ def set_compiler_env(compiler, options):
 			print('See help with: python make.py -help')
 			sys.exit(1)
 
-def do_generate_solution(cmake_exe, build_dir, cmake_script_dir, options):
-	compiler = options['compiler']
-	cpu = options['cpu']
-	config = options['config']
+def do_generate_solution(cmake_exe, build_dir, cmake_script_dir, args):
+	compiler = args.compiler
+	cpu = args.cpu
+	config = args.config
 
 	if not compiler == None:
-		set_compiler_env(compiler, options)
+		set_compiler_env(compiler, args)
 
 	extra_switches = ['--no-warn-unused-cli']
 	if not platform.system() == 'Windows':
 		extra_switches.append('-DCPU_INSTRUCTION_SET:STRING={}'.format(cpu))
 
-	if options['use_avx']:
+	if args.use_avx:
 		print('Enabling AVX usage')
 		extra_switches.append('-DUSE_AVX_INSTRUCTIONS:BOOL=true')
 
-	if not options['use_simd']:
+	if not args.use_simd:
 		print('Disabling SIMD instruction usage')
 		extra_switches.append('-DUSE_SIMD_INSTRUCTIONS:BOOL=false')
 
@@ -239,18 +178,18 @@ def do_generate_solution(cmake_exe, build_dir, cmake_script_dir, options):
 	if result != 0:
 		sys.exit(result)
 
-def do_build(cmake_exe, options):
-	config = options['config']
+def do_build(cmake_exe, args):
+	config = args.config
 
 	print('Building ...')
 	cmake_cmd = '"{}" --build .'.format(cmake_exe)
 	if platform.system() == 'Windows':
-		if options['compiler'] == 'android':
+		if args.compiler == 'android':
 			cmake_cmd += ' --config {}'.format(config)
 		else:
 			cmake_cmd += ' --config {} --target INSTALL'.format(config)
 	elif platform.system() == 'Darwin':
-		if options['compiler'] == 'ios':
+		if args.compiler == 'ios':
 			cmake_cmd += ' --config {}'.format(config)
 		else:
 			cmake_cmd += ' --config {} --target install'.format(config)
@@ -261,70 +200,29 @@ def do_build(cmake_exe, options):
 	if result != 0:
 		sys.exit(result)
 
-def do_tests(ctest_exe, options):
-	config = options['config']
+def do_tests(ctest_exe, args):
+	config = args.config
 
 	print('Running unit tests ...')
 	ctest_cmd = '"{}" --output-on-failure'.format(ctest_exe)
+
 	if platform.system() == 'Windows' or platform.system() == 'Darwin':
 		ctest_cmd += ' -C {}'.format(config)
+
+	if args.tests_matching:
+		ctest_cmd += ' --tests-regex {}'.format(args.tests_matching)
 
 	result = subprocess.call(ctest_cmd, shell=True)
 	if result != 0:
 		sys.exit(result)
 
-def print_help():
-	print('Usage: python make.py [actions] [cpu arch] [compiler] [config] [misc]')
-	print()
-	print('Actions:')
-	print('  If no action is specified, on Windows, OS X, and Linux the solution/make files are generated.')
-	print('  Multiple actions can be used simultaneously.')
-	print('  -build: Builds the solution.')
-	print('  -clean: Cleans the build directory.')
-	print('  -unit_test: Runs the unit tests.')
-	print()
-	print('CPU Architecture:')
-	print('  Only supported for Windows, OS X, and Linux. Defaults to the host system architecture.')
-	print('  Only a single architecture argument must be used.')
-	print('  -x86: Builds an x86 executable.')
-	print('  -x64: Builds an x64 executable.')
-	print()
-	print('Compiler:')
-	print('  Defaults to the host system\'s default compiler.')
-	print('  Only a single compiler argument must be used.')
-	print('  -vs2015: Uses Visual Studio 2015.')
-	print('  -vs2017: Uses Visual Studio 2017.')
-	print('  -osx: Uses X Code for OS X.')
-	print('  -gcc5: Uses GCC 5.')
-	print('  -gcc6: Uses GCC 6.')
-	print('  -gcc7: Uses GCC 7.')
-	print('  -gcc8: Uses GCC 8.')
-	print('  -clang4: Uses clang 4.')
-	print('  -clang5: Uses clang 5.')
-	print('  -clang6: Uses clang 6.')
-	print('  -android: Uses NVIDIA CodeWorks.')
-	print('  -ios: Uses X Code for iOS.')
-	print()
-	print('Config:')
-	print('  Defaults to Release.')
-	print('  Only a single config argument mus tbe used.')
-	print('  -debug: Uses the Debug configuration to build and test.')
-	print('  -release: Uses the Release configuration to build and test.')
-	print()
-	print('Miscelanous:')
-	print('  -avx: On Windows, OS X, and Linux AVX support will be enabled.')
-	print('  -help: Prints this help message.')
-
 if __name__ == "__main__":
-	options = parse_argv()
-	if options['print_help']:
-		print_help()
-		sys.exit(1)
+	args = parse_argv()
 
 	cmake_exe, ctest_exe = get_cmake_exes()
-	compiler = options['compiler']
-	cpu = options['cpu']
-	config = options['config']
+	compiler = args.compiler
+	cpu = args.cpu
+	config = args.config
 
 	# Set the RTM_CMAKE_HOME environment variable to point to CMake
 	# otherwise we assume it is already in the user PATH
@@ -336,7 +234,7 @@ if __name__ == "__main__":
 	build_dir = os.path.join(os.getcwd(), 'build')
 	cmake_script_dir = os.path.join(os.getcwd(), 'cmake')
 
-	if options['clean'] and os.path.exists(build_dir):
+	if args.clean and os.path.exists(build_dir):
 		print('Cleaning previous build ...')
 		shutil.rmtree(build_dir)
 
@@ -350,12 +248,12 @@ if __name__ == "__main__":
 	if not compiler == None:
 		print('Using compiler: {}'.format(compiler))
 
-	do_generate_solution(cmake_exe, build_dir, cmake_script_dir, options)
+	do_generate_solution(cmake_exe, build_dir, cmake_script_dir, args)
 
-	if options['build']:
-		do_build(cmake_exe, options)
+	if args.build:
+		do_build(cmake_exe, args)
 
-	if options['unit_test']:
-		do_tests(ctest_exe, options)
+	if args.unit_test:
+		do_tests(ctest_exe, args)
 
 	sys.exit(0)
