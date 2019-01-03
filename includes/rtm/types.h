@@ -346,6 +346,54 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	class anglef;
 	class angled;
+
+
+	//////////////////////////////////////////////////////////////////////////
+	// Various unaligned types suitable for interop. with GPUs, etc.
+	//////////////////////////////////////////////////////////////////////////
+
+
+	struct float2f
+	{
+		float x;
+		float y;
+	};
+
+	struct float3f
+	{
+		float x;
+		float y;
+		float z;
+	};
+
+	struct float4f
+	{
+		float x;
+		float y;
+		float z;
+		float w;
+	};
+
+	struct float2d
+	{
+		double x;
+		double y;
+	};
+
+	struct float3d
+	{
+		double x;
+		double y;
+		double z;
+	};
+
+	struct float4d
+	{
+		double x;
+		double y;
+		double z;
+		double w;
+	};
 }
 
 // Always include the register passing typedefs
