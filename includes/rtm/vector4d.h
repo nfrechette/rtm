@@ -43,19 +43,57 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	// Loads an unaligned vector4 from memory.
 	//////////////////////////////////////////////////////////////////////////
-	inline vector4d vector_unaligned_load(const double* input) RTM_NO_EXCEPT
+	inline vector4d vector_load(const double* input) RTM_NO_EXCEPT
 	{
-		RTM_ASSERT(rtm_impl::is_aligned_to(input, 4), "Invalid alignment");
 		return vector_set(input[0], input[1], input[2], input[3]);
 	}
 
 	//////////////////////////////////////////////////////////////////////////
-	// Loads an unaligned vector3 from memory and sets the resulting [w] component to 0.0.
+	// Loads an unaligned vector1 from memory and leaves the [yzw] components undefined.
 	//////////////////////////////////////////////////////////////////////////
-	inline vector4d vector_unaligned_load3(const double* input) RTM_NO_EXCEPT
+	inline vector4d vector_load1(const double* input) RTM_NO_EXCEPT
 	{
-		RTM_ASSERT(rtm_impl::is_aligned_to(input, 4), "Invalid alignment");
+		return vector_set(input[0]);
+	}
+
+	//////////////////////////////////////////////////////////////////////////
+	// Loads an unaligned vector2 from memory and leaves the [zw] components undefined.
+	//////////////////////////////////////////////////////////////////////////
+	inline vector4d vector_load2(const double* input) RTM_NO_EXCEPT
+	{
+		return vector_set(input[0], input[1], 0.0, 0.0);
+	}
+
+	//////////////////////////////////////////////////////////////////////////
+	// Loads an unaligned vector3 from memory and leaves the [w] component undefined.
+	//////////////////////////////////////////////////////////////////////////
+	inline vector4d vector_load3(const double* input) RTM_NO_EXCEPT
+	{
 		return vector_set(input[0], input[1], input[2], 0.0);
+	}
+
+	//////////////////////////////////////////////////////////////////////////
+	// Loads an unaligned vector4 from memory.
+	//////////////////////////////////////////////////////////////////////////
+	inline vector4d vector_load(const float4d* input) RTM_NO_EXCEPT
+	{
+		return vector_set(input->x, input->y, input->z, input->w);
+	}
+
+	//////////////////////////////////////////////////////////////////////////
+	// Loads an unaligned vector2 from memory and leaves the [zw] components undefined.
+	//////////////////////////////////////////////////////////////////////////
+	inline vector4d vector_load2(const float2d* input) RTM_NO_EXCEPT
+	{
+		return vector_set(input->x, input->y, 0.0, 0.0);
+	}
+
+	//////////////////////////////////////////////////////////////////////////
+	// Loads an unaligned vector3 from memory and leaves the [w] component undefined.
+	//////////////////////////////////////////////////////////////////////////
+	inline vector4d vector_load3(const float3d* input) RTM_NO_EXCEPT
+	{
+		return vector_set(input->x, input->y, input->z, 0.0);
 	}
 
 	//////////////////////////////////////////////////////////////////////////
@@ -178,9 +216,8 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	// Writes a vector4 to unaligned memory.
 	//////////////////////////////////////////////////////////////////////////
-	inline void vector_unaligned_write(const vector4d& input, double* output) RTM_NO_EXCEPT
+	inline void vector_store(const vector4d& input, double* output) RTM_NO_EXCEPT
 	{
-		RTM_ASSERT(rtm_impl::is_aligned_to(output, 4), "Invalid alignment");
 		output[0] = vector_get_x(input);
 		output[1] = vector_get_y(input);
 		output[2] = vector_get_z(input);
@@ -188,11 +225,27 @@ namespace rtm
 	}
 
 	//////////////////////////////////////////////////////////////////////////
+	// Writes a vector1 to unaligned memory.
+	//////////////////////////////////////////////////////////////////////////
+	inline void vector_store1(const vector4d& input, double* output) RTM_NO_EXCEPT
+	{
+		output[0] = vector_get_x(input);
+	}
+
+	//////////////////////////////////////////////////////////////////////////
+	// Writes a vector2 to unaligned memory.
+	//////////////////////////////////////////////////////////////////////////
+	inline void vector_store2(const vector4d& input, double* output) RTM_NO_EXCEPT
+	{
+		output[0] = vector_get_x(input);
+		output[1] = vector_get_y(input);
+	}
+
+	//////////////////////////////////////////////////////////////////////////
 	// Writes a vector3 to unaligned memory.
 	//////////////////////////////////////////////////////////////////////////
-	inline void vector_unaligned_write3(const vector4d& input, double* output) RTM_NO_EXCEPT
+	inline void vector_store3(const vector4d& input, double* output) RTM_NO_EXCEPT
 	{
-		RTM_ASSERT(rtm_impl::is_aligned_to(output, 4), "Invalid alignment");
 		output[0] = vector_get_x(input);
 		output[1] = vector_get_y(input);
 		output[2] = vector_get_z(input);
@@ -201,17 +254,63 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	// Writes a vector4 to unaligned memory.
 	//////////////////////////////////////////////////////////////////////////
-	inline void vector_unaligned_write(const vector4d& input, uint8_t* output) RTM_NO_EXCEPT
+	inline void vector_store(const vector4d& input, uint8_t* output) RTM_NO_EXCEPT
 	{
-		memcpy(output, &input, sizeof(vector4d));
+		std::memcpy(output, &input, sizeof(vector4d));
+	}
+
+	//////////////////////////////////////////////////////////////////////////
+	// Writes a vector1 to unaligned memory.
+	//////////////////////////////////////////////////////////////////////////
+	inline void vector_store1(const vector4d& input, uint8_t* output)
+	{
+		std::memcpy(output, &input, sizeof(double) * 1);
+	}
+
+	//////////////////////////////////////////////////////////////////////////
+	// Writes a vector2 to unaligned memory.
+	//////////////////////////////////////////////////////////////////////////
+	inline void vector_store2(const vector4d& input, uint8_t* output)
+	{
+		std::memcpy(output, &input, sizeof(double) * 2);
 	}
 
 	//////////////////////////////////////////////////////////////////////////
 	// Writes a vector3 to unaligned memory.
 	//////////////////////////////////////////////////////////////////////////
-	inline void vector_unaligned_write3(const vector4d& input, uint8_t* output)
+	inline void vector_store3(const vector4d& input, uint8_t* output)
 	{
-		memcpy(output, &input, sizeof(double) * 3);
+		std::memcpy(output, &input, sizeof(double) * 3);
+	}
+
+	//////////////////////////////////////////////////////////////////////////
+	// Writes a vector4 to unaligned memory.
+	//////////////////////////////////////////////////////////////////////////
+	inline void vector_store(const vector4d& input, float4d* output) RTM_NO_EXCEPT
+	{
+		output->x = vector_get_x(input);
+		output->y = vector_get_y(input);
+		output->z = vector_get_z(input);
+		output->w = vector_get_w(input);
+	}
+
+	//////////////////////////////////////////////////////////////////////////
+	// Writes a vector2 to unaligned memory.
+	//////////////////////////////////////////////////////////////////////////
+	inline void vector_store2(const vector4d& input, float2d* output) RTM_NO_EXCEPT
+	{
+		output->x = vector_get_x(input);
+		output->y = vector_get_y(input);
+	}
+
+	//////////////////////////////////////////////////////////////////////////
+	// Writes a vector3 to unaligned memory.
+	//////////////////////////////////////////////////////////////////////////
+	inline void vector_store3(const vector4d& input, float3d* output) RTM_NO_EXCEPT
+	{
+		output->x = vector_get_x(input);
+		output->y = vector_get_y(input);
+		output->z = vector_get_z(input);
 	}
 
 

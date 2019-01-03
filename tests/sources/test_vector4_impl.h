@@ -40,36 +40,6 @@
 
 using namespace rtm;
 
-template<typename Vector4Type>
-inline Vector4Type vector_unaligned_load_raw(const uint8_t* input);
-
-template<>
-inline vector4f vector_unaligned_load_raw<vector4f>(const uint8_t* input)
-{
-	return vector_unaligned_load(input);
-}
-
-template<>
-inline vector4d vector_unaligned_load_raw<vector4d>(const uint8_t* input)
-{
-	return vector_unaligned_load(input);
-}
-
-template<typename Vector4Type>
-inline Vector4Type vector_unaligned_load3_raw(const uint8_t* input);
-
-template<>
-inline vector4f vector_unaligned_load3_raw<vector4f>(const uint8_t* input)
-{
-	return vector_unaligned_load3(input);
-}
-
-template<>
-inline vector4d vector_unaligned_load3_raw<vector4d>(const uint8_t* input)
-{
-	return vector_unaligned_load3(input);
-}
-
 template<typename Vector4Type, typename FloatType>
 inline const FloatType* vector_as_float_ptr_raw(const Vector4Type& input);
 
@@ -134,6 +104,9 @@ void test_vector4_impl(const FloatType threshold)
 	using QuatType = typename float_traits<FloatType>::quat;
 	using Vector4Type = typename float_traits<FloatType>::vector4;
 	using ScalarType = typename float_traits<FloatType>::scalar;
+	using Float2Type = typename float_traits<FloatType>::float2;
+	using Float3Type = typename float_traits<FloatType>::float3;
+	using Float4Type = typename float_traits<FloatType>::float4;
 
 	const Vector4Type zero = vector_zero();
 	const QuatType identity = quat_identity();
@@ -184,24 +157,53 @@ void test_vector4_impl(const FloatType threshold)
 	REQUIRE(vector_get_z(zero) == FloatType(0.0));
 	REQUIRE(vector_get_w(zero) == FloatType(0.0));
 
-	REQUIRE(vector_get_x(vector_unaligned_load(&tmp.values[0])) == tmp.values[0]);
-	REQUIRE(vector_get_y(vector_unaligned_load(&tmp.values[0])) == tmp.values[1]);
-	REQUIRE(vector_get_z(vector_unaligned_load(&tmp.values[0])) == tmp.values[2]);
-	REQUIRE(vector_get_w(vector_unaligned_load(&tmp.values[0])) == tmp.values[3]);
+	REQUIRE(vector_get_x((Vector4Type)vector_load(&tmp.values[0])) == tmp.values[0]);
+	REQUIRE(vector_get_y((Vector4Type)vector_load(&tmp.values[0])) == tmp.values[1]);
+	REQUIRE(vector_get_z((Vector4Type)vector_load(&tmp.values[0])) == tmp.values[2]);
+	REQUIRE(vector_get_w((Vector4Type)vector_load(&tmp.values[0])) == tmp.values[3]);
 
-	REQUIRE(vector_get_x(vector_unaligned_load3(&tmp.values[0])) == tmp.values[0]);
-	REQUIRE(vector_get_y(vector_unaligned_load3(&tmp.values[0])) == tmp.values[1]);
-	REQUIRE(vector_get_z(vector_unaligned_load3(&tmp.values[0])) == tmp.values[2]);
+	REQUIRE(vector_get_x((Vector4Type)vector_load1(&tmp.values[0])) == tmp.values[0]);
+
+	REQUIRE(vector_get_x((Vector4Type)vector_load2(&tmp.values[0])) == tmp.values[0]);
+	REQUIRE(vector_get_y((Vector4Type)vector_load2(&tmp.values[0])) == tmp.values[1]);
+
+	REQUIRE(vector_get_x((Vector4Type)vector_load3(&tmp.values[0])) == tmp.values[0]);
+	REQUIRE(vector_get_y((Vector4Type)vector_load3(&tmp.values[0])) == tmp.values[1]);
+	REQUIRE(vector_get_z((Vector4Type)vector_load3(&tmp.values[0])) == tmp.values[2]);
+
+	Float2Type tmpf2 = { tmp.values[0], tmp.values[1] };
+	Float3Type tmpf3 = { tmp.values[0], tmp.values[1], tmp.values[2] };
+	Float4Type tmpf4 = { tmp.values[0], tmp.values[1], tmp.values[2], tmp.values[3] };
+
+	REQUIRE(vector_get_x((Vector4Type)vector_load2(&tmpf2)) == tmpf2.x);
+	REQUIRE(vector_get_y((Vector4Type)vector_load2(&tmpf2)) == tmpf2.y);
+
+	REQUIRE(vector_get_x((Vector4Type)vector_load3(&tmpf3)) == tmpf3.x);
+	REQUIRE(vector_get_y((Vector4Type)vector_load3(&tmpf3)) == tmpf3.y);
+	REQUIRE(vector_get_z((Vector4Type)vector_load3(&tmpf3)) == tmpf3.z);
+
+	REQUIRE(vector_get_x((Vector4Type)vector_load(&tmpf4)) == tmpf4.x);
+	REQUIRE(vector_get_y((Vector4Type)vector_load(&tmpf4)) == tmpf4.y);
+	REQUIRE(vector_get_z((Vector4Type)vector_load(&tmpf4)) == tmpf4.z);
+	REQUIRE(vector_get_w((Vector4Type)vector_load(&tmpf4)) == tmpf4.w);
 
 	std::memcpy(&buffer[1], &tmp.values[0], sizeof(tmp.values));
-	REQUIRE(vector_get_x(vector_unaligned_load_raw<Vector4Type>(&buffer[1])) == tmp.values[0]);
-	REQUIRE(vector_get_y(vector_unaligned_load_raw<Vector4Type>(&buffer[1])) == tmp.values[1]);
-	REQUIRE(vector_get_z(vector_unaligned_load_raw<Vector4Type>(&buffer[1])) == tmp.values[2]);
-	REQUIRE(vector_get_w(vector_unaligned_load_raw<Vector4Type>(&buffer[1])) == tmp.values[3]);
+	REQUIRE(vector_get_x((Vector4Type)vector_load(&buffer[1])) == tmp.values[0]);
+	REQUIRE(vector_get_y((Vector4Type)vector_load(&buffer[1])) == tmp.values[1]);
+	REQUIRE(vector_get_z((Vector4Type)vector_load(&buffer[1])) == tmp.values[2]);
+	REQUIRE(vector_get_w((Vector4Type)vector_load(&buffer[1])) == tmp.values[3]);
 
-	REQUIRE(vector_get_x(vector_unaligned_load3_raw<Vector4Type>(&buffer[1])) == tmp.values[0]);
-	REQUIRE(vector_get_y(vector_unaligned_load3_raw<Vector4Type>(&buffer[1])) == tmp.values[1]);
-	REQUIRE(vector_get_z(vector_unaligned_load3_raw<Vector4Type>(&buffer[1])) == tmp.values[2]);
+	REQUIRE(vector_get_x((Vector4Type)vector_load1(&buffer[1])) == tmp.values[0]);
+	REQUIRE(vector_get_y((Vector4Type)vector_load1(&buffer[1])) == tmp.values[0]);
+	REQUIRE(vector_get_z((Vector4Type)vector_load1(&buffer[1])) == tmp.values[0]);
+	REQUIRE(vector_get_w((Vector4Type)vector_load1(&buffer[1])) == tmp.values[0]);
+
+	REQUIRE(vector_get_x((Vector4Type)vector_load2(&buffer[1])) == tmp.values[0]);
+	REQUIRE(vector_get_y((Vector4Type)vector_load2(&buffer[1])) == tmp.values[1]);
+
+	REQUIRE(vector_get_x((Vector4Type)vector_load3(&buffer[1])) == tmp.values[0]);
+	REQUIRE(vector_get_y((Vector4Type)vector_load3(&buffer[1])) == tmp.values[1]);
+	REQUIRE(vector_get_z((Vector4Type)vector_load3(&buffer[1])) == tmp.values[2]);
 
 	REQUIRE(vector_get_x(quat_to_vector(identity)) == quat_get_x(identity));
 	REQUIRE(vector_get_y(quat_to_vector(identity)) == quat_get_y(identity));
@@ -228,27 +230,61 @@ void test_vector4_impl(const FloatType threshold)
 	REQUIRE(vector_get_component(vector_set(FloatType(0.0), FloatType(2.34), FloatType(-3.12), FloatType(10000.0)), mix4::c) == FloatType(-3.12));
 	REQUIRE(vector_get_component(vector_set(FloatType(0.0), FloatType(2.34), FloatType(-3.12), FloatType(10000.0)), mix4::d) == FloatType(10000.0));
 
-	REQUIRE((vector_as_float_ptr_raw<Vector4Type, FloatType>(vector_unaligned_load(&tmp.values[0]))[0] == tmp.values[0]));
-	REQUIRE((vector_as_float_ptr_raw<Vector4Type, FloatType>(vector_unaligned_load(&tmp.values[0]))[1] == tmp.values[1]));
-	REQUIRE((vector_as_float_ptr_raw<Vector4Type, FloatType>(vector_unaligned_load(&tmp.values[0]))[2] == tmp.values[2]));
-	REQUIRE((vector_as_float_ptr_raw<Vector4Type, FloatType>(vector_unaligned_load(&tmp.values[0]))[3] == tmp.values[3]));
+	REQUIRE((vector_as_float_ptr_raw<Vector4Type, FloatType>(vector_load(&tmp.values[0]))[0] == tmp.values[0]));
+	REQUIRE((vector_as_float_ptr_raw<Vector4Type, FloatType>(vector_load(&tmp.values[0]))[1] == tmp.values[1]));
+	REQUIRE((vector_as_float_ptr_raw<Vector4Type, FloatType>(vector_load(&tmp.values[0]))[2] == tmp.values[2]));
+	REQUIRE((vector_as_float_ptr_raw<Vector4Type, FloatType>(vector_load(&tmp.values[0]))[3] == tmp.values[3]));
 
-	vector_unaligned_write(test_value0, &tmp.values[0]);
+	vector_store(test_value0, &tmp.values[0]);
 	REQUIRE(vector_get_x(test_value0) == tmp.values[0]);
 	REQUIRE(vector_get_y(test_value0) == tmp.values[1]);
 	REQUIRE(vector_get_z(test_value0) == tmp.values[2]);
 	REQUIRE(vector_get_w(test_value0) == tmp.values[3]);
 
-	vector_unaligned_write3(test_value1, &tmp.values[0]);
+	vector_store1(test_value0, &tmp.values[0]);
+	REQUIRE(vector_get_x(test_value0) == tmp.values[0]);
+
+	vector_store2(test_value0, &tmp.values[0]);
+	REQUIRE(vector_get_x(test_value0) == tmp.values[0]);
+	REQUIRE(vector_get_y(test_value0) == tmp.values[1]);
+
+	vector_store3(test_value1, &tmp.values[0]);
 	REQUIRE(vector_get_x(test_value1) == tmp.values[0]);
 	REQUIRE(vector_get_y(test_value1) == tmp.values[1]);
 	REQUIRE(vector_get_z(test_value1) == tmp.values[2]);
 	REQUIRE(vector_get_w(test_value0) == tmp.values[3]);
 
-	vector_unaligned_write3(test_value1, &buffer[1]);
-	REQUIRE(vector_get_x(test_value1) == vector_get_x(vector_unaligned_load3_raw<Vector4Type>(&buffer[1])));
-	REQUIRE(vector_get_y(test_value1) == vector_get_y(vector_unaligned_load3_raw<Vector4Type>(&buffer[1])));
-	REQUIRE(vector_get_z(test_value1) == vector_get_z(vector_unaligned_load3_raw<Vector4Type>(&buffer[1])));
+	vector_store(test_value1, &buffer[1]);
+	REQUIRE(vector_get_x(test_value1) == vector_get_x((Vector4Type)vector_load(&buffer[1])));
+	REQUIRE(vector_get_y(test_value1) == vector_get_y((Vector4Type)vector_load(&buffer[1])));
+	REQUIRE(vector_get_z(test_value1) == vector_get_z((Vector4Type)vector_load(&buffer[1])));
+	REQUIRE(vector_get_w(test_value1) == vector_get_w((Vector4Type)vector_load(&buffer[1])));
+
+	vector_store1(test_value1, &buffer[1]);
+	REQUIRE(vector_get_x(test_value1) == vector_get_x((Vector4Type)vector_load1(&buffer[1])));
+
+	vector_store2(test_value1, &buffer[1]);
+	REQUIRE(vector_get_x(test_value1) == vector_get_x((Vector4Type)vector_load2(&buffer[1])));
+
+	vector_store3(test_value1, &buffer[1]);
+	REQUIRE(vector_get_x(test_value1) == vector_get_x((Vector4Type)vector_load3(&buffer[1])));
+	REQUIRE(vector_get_y(test_value1) == vector_get_y((Vector4Type)vector_load3(&buffer[1])));
+	REQUIRE(vector_get_z(test_value1) == vector_get_z((Vector4Type)vector_load3(&buffer[1])));
+
+	vector_store(test_value1, &tmpf4);
+	REQUIRE(vector_get_x(test_value1) == tmpf4.x);
+	REQUIRE(vector_get_y(test_value1) == tmpf4.y);
+	REQUIRE(vector_get_z(test_value1) == tmpf4.z);
+	REQUIRE(vector_get_w(test_value1) == tmpf4.w);
+
+	vector_store2(test_value1, &tmpf2);
+	REQUIRE(vector_get_x(test_value1) == tmpf2.x);
+	REQUIRE(vector_get_y(test_value1) == tmpf2.y);
+
+	vector_store3(test_value1, &tmpf3);
+	REQUIRE(vector_get_x(test_value1) == tmpf3.x);
+	REQUIRE(vector_get_y(test_value1) == tmpf3.y);
+	REQUIRE(vector_get_z(test_value1) == tmpf3.z);
 
 	//////////////////////////////////////////////////////////////////////////
 	// Arithmetic

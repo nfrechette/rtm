@@ -253,6 +253,8 @@ namespace rtm
 		//////////////////////////////////////////////////////////////////////////
 		enum class vector_unaligned_loader_width
 		{
+			vec1,
+			vec2,
 			vec3,
 			vec4,
 		};
@@ -266,23 +268,33 @@ namespace rtm
 		template<vector_unaligned_loader_width width>
 		struct vector_unaligned_loader
 		{
-			constexpr explicit vector_unaligned_loader(const uint8_t* ptr_) RTM_NO_EXCEPT : ptr(ptr_) {}
-
 			inline RTM_SIMD_CALL operator vector4d() const RTM_NO_EXCEPT
 			{
 				switch (width)
 				{
+				case vector_unaligned_loader_width::vec1:
+				{
+					double data[1];
+					std::memcpy(&data[0], ptr, sizeof(double) * 1);
+					return vector_set(data[0]);
+				}
+				case vector_unaligned_loader_width::vec2:
+				{
+					double data[2];
+					std::memcpy(&data[0], ptr, sizeof(double) * 2);
+					return vector_set(data[0], data[1], 0.0, 0.0);
+				}
 				case vector_unaligned_loader_width::vec3:
 				{
 					double data[3];
-					memcpy(&data[0], ptr, sizeof(double) * 3);
+					std::memcpy(&data[0], ptr, sizeof(double) * 3);
 					return vector_set(data[0], data[1], data[2], 0.0);
 				}
 				case vector_unaligned_loader_width::vec4:
 				default:
 				{
 					vector4d result;
-					memcpy(&result, ptr, sizeof(vector4d));
+					std::memcpy(&result, ptr, sizeof(vector4d));
 					return result;
 				}
 				}
@@ -292,10 +304,22 @@ namespace rtm
 			{
 				switch (width)
 				{
+				case vector_unaligned_loader_width::vec1:
+				{
+					float data[1];
+					std::memcpy(&data[0], ptr, sizeof(float) * 1);
+					return vector_set(data[0]);
+				}
+				case vector_unaligned_loader_width::vec2:
+				{
+					float data[2];
+					std::memcpy(&data[0], ptr, sizeof(float) * 2);
+					return vector_set(data[0], data[1], 0.0f, 0.0f);
+				}
 				case vector_unaligned_loader_width::vec3:
 				{
 					float data[3];
-					memcpy(&data[0], ptr, sizeof(float) * 3);
+					std::memcpy(&data[0], ptr, sizeof(float) * 3);
 					return vector_set(data[0], data[1], data[2], 0.0f);
 				}
 				case vector_unaligned_loader_width::vec4:
@@ -307,7 +331,7 @@ namespace rtm
 					return vreinterpretq_f32_u8(vld1q_u8(ptr));
 #else
 					vector4f result;
-					memcpy(&result, ptr, sizeof(vector4f));
+					std::memcpy(&result, ptr, sizeof(vector4f));
 					return result;
 #endif
 				}
@@ -327,19 +351,35 @@ namespace rtm
 	}
 
 	//////////////////////////////////////////////////////////////////////////
-	// Loads an unaligned vector4.
+	// Loads an unaligned vector4 from memory.
 	//////////////////////////////////////////////////////////////////////////
-	constexpr rtm_impl::vector_unaligned_loader<rtm_impl::vector_unaligned_loader_width::vec4> RTM_SIMD_CALL vector_unaligned_load(const uint8_t* input) RTM_NO_EXCEPT
+	constexpr rtm_impl::vector_unaligned_loader<rtm_impl::vector_unaligned_loader_width::vec4> RTM_SIMD_CALL vector_load(const uint8_t* input) RTM_NO_EXCEPT
 	{
-		return rtm_impl::vector_unaligned_loader<rtm_impl::vector_unaligned_loader_width::vec4>(input);
+		return rtm_impl::vector_unaligned_loader<rtm_impl::vector_unaligned_loader_width::vec4>{ input };
 	}
 
 	//////////////////////////////////////////////////////////////////////////
-	// Loads an unaligned vector3 and sets the [w] component to 0.0.
+	// Loads an unaligned vector1 from memory and leaves the [yzw] components undefined.
 	//////////////////////////////////////////////////////////////////////////
-	constexpr rtm_impl::vector_unaligned_loader<rtm_impl::vector_unaligned_loader_width::vec3> RTM_SIMD_CALL vector_unaligned_load3(const uint8_t* input) RTM_NO_EXCEPT
+	constexpr rtm_impl::vector_unaligned_loader<rtm_impl::vector_unaligned_loader_width::vec1> RTM_SIMD_CALL vector_load1(const uint8_t* input) RTM_NO_EXCEPT
 	{
-		return rtm_impl::vector_unaligned_loader<rtm_impl::vector_unaligned_loader_width::vec3>(input);
+		return rtm_impl::vector_unaligned_loader<rtm_impl::vector_unaligned_loader_width::vec1>{ input };
+	}
+
+	//////////////////////////////////////////////////////////////////////////
+	// Loads an unaligned vector2 from memory and leaves the [zw] components undefined.
+	//////////////////////////////////////////////////////////////////////////
+	constexpr rtm_impl::vector_unaligned_loader<rtm_impl::vector_unaligned_loader_width::vec2> RTM_SIMD_CALL vector_load2(const uint8_t* input) RTM_NO_EXCEPT
+	{
+		return rtm_impl::vector_unaligned_loader<rtm_impl::vector_unaligned_loader_width::vec2>{ input };
+	}
+
+	//////////////////////////////////////////////////////////////////////////
+	// Loads an unaligned vector3 from memory and leaves the [w] component undefined.
+	//////////////////////////////////////////////////////////////////////////
+	constexpr rtm_impl::vector_unaligned_loader<rtm_impl::vector_unaligned_loader_width::vec3> RTM_SIMD_CALL vector_load3(const uint8_t* input) RTM_NO_EXCEPT
+	{
+		return rtm_impl::vector_unaligned_loader<rtm_impl::vector_unaligned_loader_width::vec3>{ input };
 	}
 }
 

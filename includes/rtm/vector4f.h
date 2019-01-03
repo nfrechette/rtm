@@ -43,19 +43,75 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	// Loads an unaligned vector4 from memory.
 	//////////////////////////////////////////////////////////////////////////
-	inline vector4f RTM_SIMD_CALL vector_unaligned_load(const float* input) RTM_NO_EXCEPT
+	inline vector4f RTM_SIMD_CALL vector_load(const float* input) RTM_NO_EXCEPT
 	{
-		RTM_ASSERT(rtm_impl::is_aligned(input), "Invalid alignment");
+#if defined(RTM_SSE2_INTRINSICS)
+		return _mm_loadu_ps(input);
+#elif defined(RTM_NEON_INTRINSICS)
+		return vld1q_f32(input);
+#else
 		return vector_set(input[0], input[1], input[2], input[3]);
+#endif
 	}
 
 	//////////////////////////////////////////////////////////////////////////
-	// Loads an unaligned vector3 from memory and sets the resulting [w] component to 0.0.
+	// Loads an unaligned vector1 from memory and leaves the [yzw] components undefined.
 	//////////////////////////////////////////////////////////////////////////
-	inline vector4f RTM_SIMD_CALL vector_unaligned_load3(const float* input) RTM_NO_EXCEPT
+	inline vector4f RTM_SIMD_CALL vector_load1(const float* input) RTM_NO_EXCEPT
 	{
-		RTM_ASSERT(rtm_impl::is_aligned(input), "Invalid alignment");
+#if defined(RTM_SSE2_INTRINSICS)
+		return _mm_load_ps1(input);
+#elif defined(RTM_NEON_INTRINSICS)
+		return vld1q_dup_f32(input);
+#else
+		return vector_set(input[0]);
+#endif
+	}
+
+	//////////////////////////////////////////////////////////////////////////
+	// Loads an unaligned vector2 from memory and leaves the [zw] components undefined.
+	//////////////////////////////////////////////////////////////////////////
+	inline vector4f RTM_SIMD_CALL vector_load2(const float* input) RTM_NO_EXCEPT
+	{
+		return vector_set(input[0], input[1], 0.0f, 0.0f);
+	}
+
+	//////////////////////////////////////////////////////////////////////////
+	// Loads an unaligned vector3 from memory and leaves the [w] component undefined.
+	//////////////////////////////////////////////////////////////////////////
+	inline vector4f RTM_SIMD_CALL vector_load3(const float* input) RTM_NO_EXCEPT
+	{
 		return vector_set(input[0], input[1], input[2], 0.0f);
+	}
+
+	//////////////////////////////////////////////////////////////////////////
+	// Loads an unaligned vector4 from memory.
+	//////////////////////////////////////////////////////////////////////////
+	inline vector4f RTM_SIMD_CALL vector_load(const float4f* input) RTM_NO_EXCEPT
+	{
+#if defined(RTM_SSE2_INTRINSICS)
+		return _mm_loadu_ps(&input->x);
+#elif defined(RTM_NEON_INTRINSICS)
+		return vld1q_f32(&input->x);
+#else
+		return vector_set(input->x, input->y, input->z, input->w);
+#endif
+	}
+
+	//////////////////////////////////////////////////////////////////////////
+	// Loads an unaligned vector2 from memory and leaves the [zw] components undefined.
+	//////////////////////////////////////////////////////////////////////////
+	inline vector4f RTM_SIMD_CALL vector_load2(const float2f* input) RTM_NO_EXCEPT
+	{
+		return vector_set(input->x, input->y, 0.0f, 0.0f);
+	}
+
+	//////////////////////////////////////////////////////////////////////////
+	// Loads an unaligned vector3 from memory and leaves the [w] component undefined.
+	//////////////////////////////////////////////////////////////////////////
+	inline vector4f RTM_SIMD_CALL vector_load3(const float3f* input) RTM_NO_EXCEPT
+	{
+		return vector_set(input->x, input->y, input->z, 0.0f);
 	}
 
 	//////////////////////////////////////////////////////////////////////////
@@ -184,9 +240,8 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	// Writes a vector4 to unaligned memory.
 	//////////////////////////////////////////////////////////////////////////
-	inline void RTM_SIMD_CALL vector_unaligned_write(vector4f_arg0 input, float* output) RTM_NO_EXCEPT
+	inline void RTM_SIMD_CALL vector_store(vector4f_arg0 input, float* output) RTM_NO_EXCEPT
 	{
-		RTM_ASSERT(rtm_impl::is_aligned(output), "Invalid alignment");
 		output[0] = vector_get_x(input);
 		output[1] = vector_get_y(input);
 		output[2] = vector_get_z(input);
@@ -194,11 +249,27 @@ namespace rtm
 	}
 
 	//////////////////////////////////////////////////////////////////////////
+	// Writes a vector1 to unaligned memory.
+	//////////////////////////////////////////////////////////////////////////
+	inline void RTM_SIMD_CALL vector_store1(vector4f_arg0 input, float* output) RTM_NO_EXCEPT
+	{
+		output[0] = vector_get_x(input);
+	}
+
+	//////////////////////////////////////////////////////////////////////////
+	// Writes a vector2 to unaligned memory.
+	//////////////////////////////////////////////////////////////////////////
+	inline void RTM_SIMD_CALL vector_store2(vector4f_arg0 input, float* output) RTM_NO_EXCEPT
+	{
+		output[0] = vector_get_x(input);
+		output[1] = vector_get_y(input);
+	}
+
+	//////////////////////////////////////////////////////////////////////////
 	// Writes a vector3 to unaligned memory.
 	//////////////////////////////////////////////////////////////////////////
-	inline void RTM_SIMD_CALL vector_unaligned_write3(vector4f_arg0 input, float* output) RTM_NO_EXCEPT
+	inline void RTM_SIMD_CALL vector_store3(vector4f_arg0 input, float* output) RTM_NO_EXCEPT
 	{
-		RTM_ASSERT(rtm_impl::is_aligned(output), "Invalid alignment");
 		output[0] = vector_get_x(input);
 		output[1] = vector_get_y(input);
 		output[2] = vector_get_z(input);
@@ -207,17 +278,63 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	// Writes a vector4 to unaligned memory.
 	//////////////////////////////////////////////////////////////////////////
-	inline void RTM_SIMD_CALL vector_unaligned_write(vector4f_arg0 input, uint8_t* output) RTM_NO_EXCEPT
+	inline void RTM_SIMD_CALL vector_store(vector4f_arg0 input, uint8_t* output) RTM_NO_EXCEPT
 	{
-		memcpy(output, &input, sizeof(vector4f));
+		std::memcpy(output, &input, sizeof(vector4f));
+	}
+
+	//////////////////////////////////////////////////////////////////////////
+	// Writes a vector1 to unaligned memory.
+	//////////////////////////////////////////////////////////////////////////
+	inline void RTM_SIMD_CALL vector_store1(vector4f_arg0 input, uint8_t* output) RTM_NO_EXCEPT
+	{
+		std::memcpy(output, &input, sizeof(float) * 1);
+	}
+
+	//////////////////////////////////////////////////////////////////////////
+	// Writes a vector2 to unaligned memory.
+	//////////////////////////////////////////////////////////////////////////
+	inline void RTM_SIMD_CALL vector_store2(vector4f_arg0 input, uint8_t* output) RTM_NO_EXCEPT
+	{
+		std::memcpy(output, &input, sizeof(float) * 2);
 	}
 
 	//////////////////////////////////////////////////////////////////////////
 	// Writes a vector3 to unaligned memory.
 	//////////////////////////////////////////////////////////////////////////
-	inline void RTM_SIMD_CALL vector_unaligned_write3(vector4f_arg0 input, uint8_t* output) RTM_NO_EXCEPT
+	inline void RTM_SIMD_CALL vector_store3(vector4f_arg0 input, uint8_t* output) RTM_NO_EXCEPT
 	{
-		memcpy(output, &input, sizeof(float) * 3);
+		std::memcpy(output, &input, sizeof(float) * 3);
+	}
+
+	//////////////////////////////////////////////////////////////////////////
+	// Writes a vector4 to unaligned memory.
+	//////////////////////////////////////////////////////////////////////////
+	inline void RTM_SIMD_CALL vector_store(vector4f_arg0 input, float4f* output) RTM_NO_EXCEPT
+	{
+		output->x = vector_get_x(input);
+		output->y = vector_get_y(input);
+		output->z = vector_get_z(input);
+		output->w = vector_get_w(input);
+	}
+
+	//////////////////////////////////////////////////////////////////////////
+	// Writes a vector2 to unaligned memory.
+	//////////////////////////////////////////////////////////////////////////
+	inline void RTM_SIMD_CALL vector_store2(vector4f_arg0 input, float2f* output) RTM_NO_EXCEPT
+	{
+		output->x = vector_get_x(input);
+		output->y = vector_get_y(input);
+	}
+
+	//////////////////////////////////////////////////////////////////////////
+	// Writes a vector3 to unaligned memory.
+	//////////////////////////////////////////////////////////////////////////
+	inline void RTM_SIMD_CALL vector_store3(vector4f_arg0 input, float3f* output) RTM_NO_EXCEPT
+	{
+		output->x = vector_get_x(input);
+		output->y = vector_get_y(input);
+		output->z = vector_get_z(input);
 	}
 
 
