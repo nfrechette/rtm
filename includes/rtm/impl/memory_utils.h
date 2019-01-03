@@ -232,7 +232,7 @@ namespace rtm
 		inline DataType unaligned_read(const void* input) RTM_NO_EXCEPT
 		{
 			DataType result;
-			memcpy(&result, input, sizeof(DataType));
+			std::memcpy(&result, input, sizeof(DataType));
 			return result;
 		}
 
@@ -251,7 +251,7 @@ namespace rtm
 		template<typename DataType>
 		inline void unaligned_write(DataType input, void* output) RTM_NO_EXCEPT
 		{
-			memcpy(output, &input, sizeof(DataType));
+			std::memcpy(output, &input, sizeof(DataType));
 		}
 	}
 }
