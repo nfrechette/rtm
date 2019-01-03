@@ -25,6 +25,7 @@
 // SOFTWARE.
 ////////////////////////////////////////////////////////////////////////////////
 
+#include "rtm/impl/compiler_utils.h"
 #include "rtm/impl/error.h"
 
 #include <cstdint>
@@ -40,6 +41,8 @@
 // by anyone only to avoid polluting the rtm namespace. If these become useful enough,
 // they might be moved into their own external dependency.
 //////////////////////////////////////////////////////////////////////////
+
+RTM_IMPL_FILE_PRAGMA_PUSH
 
 namespace rtm
 {
@@ -252,3 +255,5 @@ namespace rtm
 		}
 	}
 }
+
+RTM_IMPL_FILE_PRAGMA_POP

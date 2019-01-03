@@ -27,6 +27,9 @@
 #include "rtm/math.h"
 #include "rtm/vector4f.h"
 #include "rtm/vector4d.h"
+#include "rtm/impl/compiler_utils.h"
+
+RTM_IMPL_FILE_PRAGMA_PUSH
 
 namespace rtm
 {
@@ -282,3 +285,5 @@ namespace rtm
 		return rtm_impl::matrix_caster<matrix_type>(input);
 	}
 }
+
+RTM_IMPL_FILE_PRAGMA_POP

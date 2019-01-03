@@ -26,7 +26,10 @@
 
 #include "rtm/math.h"
 #include "rtm/vector4f.h"
+#include "rtm/impl/compiler_utils.h"
 #include "rtm/impl/matrix_common.h"
+
+RTM_IMPL_FILE_PRAGMA_PUSH
 
 namespace rtm
 {
@@ -199,3 +202,5 @@ namespace rtm
 		return matrix4x4f{ x_axis, y_axis, z_axis, w_axis };
 	}
 }
+
+RTM_IMPL_FILE_PRAGMA_POP

@@ -26,6 +26,9 @@
 
 #include "rtm/math.h"
 #include "rtm/impl/angle_common.h"
+#include "rtm/impl/compiler_utils.h"
+
+RTM_IMPL_FILE_PRAGMA_PUSH
 
 namespace rtm
 {
@@ -84,3 +87,5 @@ namespace rtm
 		return anglef(scalar_deg_to_rad(deg));
 	}
 }
+
+RTM_IMPL_FILE_PRAGMA_POP

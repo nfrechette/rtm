@@ -29,8 +29,11 @@
 #include "rtm/angled.h"
 #include "rtm/scalard.h"
 #include "rtm/vector4d.h"
+#include "rtm/impl/compiler_utils.h"
 #include "rtm/impl/memory_utils.h"
 #include "rtm/impl/quat_common.h"
+
+RTM_IMPL_FILE_PRAGMA_PUSH
 
 namespace rtm
 {
@@ -393,3 +396,5 @@ namespace rtm
 		return positive_w_angle < threshold_angle.as_radians();
 	}
 }
+
+RTM_IMPL_FILE_PRAGMA_POP

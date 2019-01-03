@@ -24,7 +24,10 @@
 // SOFTWARE.
 ////////////////////////////////////////////////////////////////////////////////
 
+#include "rtm/impl/compiler_utils.h"
 #include "rtm/impl/error.h"
+
+RTM_IMPL_FILE_PRAGMA_PUSH
 
 namespace rtm
 {
@@ -66,3 +69,5 @@ namespace rtm
 	constexpr rtm_impl::angle_constant k_inv_pi_180(180.0 / (double)k_pi);				// 180 / PI
 	constexpr rtm_impl::angle_constant k_2_pi(6.283185307179586476925286766559);		// PI * 2
 }
+
+RTM_IMPL_FILE_PRAGMA_POP

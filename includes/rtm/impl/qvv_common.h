@@ -25,6 +25,9 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 #include "rtm/math.h"
+#include "rtm/impl/compiler_utils.h"
+
+RTM_IMPL_FILE_PRAGMA_PUSH
 
 namespace rtm
 {
@@ -93,3 +96,5 @@ namespace rtm
 		return rtm_impl::qvv_constant<rtm_impl::qvv_constants::identity>();
 	}
 }
+
+RTM_IMPL_FILE_PRAGMA_POP

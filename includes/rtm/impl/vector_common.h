@@ -25,9 +25,12 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 #include "rtm/types.h"
+#include "rtm/impl/compiler_utils.h"
 
 #include <cstdint>
 #include <cstring>
+
+RTM_IMPL_FILE_PRAGMA_PUSH
 
 namespace rtm
 {
@@ -339,3 +342,5 @@ namespace rtm
 		return rtm_impl::vector_unaligned_loader<rtm_impl::vector_unaligned_loader_width::vec3>(input);
 	}
 }
+
+RTM_IMPL_FILE_PRAGMA_POP

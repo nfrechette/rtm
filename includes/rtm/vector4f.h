@@ -27,8 +27,11 @@
 
 #include "rtm/math.h"
 #include "rtm/scalarf.h"
+#include "rtm/impl/compiler_utils.h"
 #include "rtm/impl/memory_utils.h"
 #include "rtm/impl/vector_common.h"
+
+RTM_IMPL_FILE_PRAGMA_PUSH
 
 namespace rtm
 {
@@ -1069,3 +1072,5 @@ namespace rtm
 		return vector_select(mask, vector_set(1.0f), vector_set(-1.0f));
 	}
 }
+
+RTM_IMPL_FILE_PRAGMA_POP

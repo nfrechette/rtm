@@ -29,7 +29,10 @@
 #include "rtm/quatf.h"
 #include "rtm/vector4f.h"
 #include "rtm/matrix3x4f.h"
+#include "rtm/impl/compiler_utils.h"
 #include "rtm/impl/qvv_common.h"
+
+RTM_IMPL_FILE_PRAGMA_PUSH
 
 namespace rtm
 {
@@ -138,3 +141,5 @@ namespace rtm
 		return qvv_set(rotation, input.translation, input.scale);
 	}
 }
+
+RTM_IMPL_FILE_PRAGMA_POP

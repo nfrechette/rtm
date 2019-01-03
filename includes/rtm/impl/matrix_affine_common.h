@@ -30,6 +30,9 @@
 #include "rtm/quatf.h"
 #include "rtm/quatd.h"
 #include "rtm/type_traits.h"
+#include "rtm/impl/compiler_utils.h"
+
+RTM_IMPL_FILE_PRAGMA_PUSH
 
 namespace rtm
 {
@@ -290,3 +293,5 @@ namespace rtm
 		return rtm_impl::matrix_from_scale_helper<double>{ scale };
 	}
 }
+
+RTM_IMPL_FILE_PRAGMA_POP

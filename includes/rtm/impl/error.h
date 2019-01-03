@@ -25,6 +25,10 @@
 // SOFTWARE.
 ////////////////////////////////////////////////////////////////////////////////
 
+#include "rtm/impl/compiler_utils.h"
+
+RTM_IMPL_FILE_PRAGMA_PUSH
+
 //////////////////////////////////////////////////////////////////////////
 // This library uses a simple system to handle asserts. Asserts are fatal and must terminate
 // otherwise the behavior is undefined if execution continues.
@@ -167,3 +171,5 @@
 		#define RTM_DEPRECATED(msg)
 	#endif
 #endif
+
+RTM_IMPL_FILE_PRAGMA_POP

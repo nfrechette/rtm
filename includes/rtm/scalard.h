@@ -26,9 +26,12 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 #include "rtm/math.h"
+#include "rtm/impl/compiler_utils.h"
 
 #include <algorithm>
 #include <cmath>
+
+RTM_IMPL_FILE_PRAGMA_PUSH
 
 namespace rtm
 {
@@ -232,3 +235,5 @@ namespace rtm
 		return input_f;
 	}
 }
+
+RTM_IMPL_FILE_PRAGMA_POP
