@@ -282,29 +282,6 @@ static void test_quat_impl(const FloatType threshold)
 		REQUIRE(quat_get_w(quat0) == -quat_get_w(quat1));
 	}
 
-	{
-		QuatType quat0 = quat_set(FloatType(0.39564531008956383), FloatType(0.044254239301713752), FloatType(0.22768840967675355), FloatType(-0.88863059760894492));
-		QuatType quat1 = quat_ensure_positive_w(quat0);
-		QuatType quat2 = quat_ensure_positive_w(quat1);
-
-		REQUIRE(quat_get_x(quat0) == -quat_get_x(quat1));
-		REQUIRE(quat_get_y(quat0) == -quat_get_y(quat1));
-		REQUIRE(quat_get_z(quat0) == -quat_get_z(quat1));
-		REQUIRE(quat_get_w(quat0) == -quat_get_w(quat1));
-
-		REQUIRE(quat_get_x(quat2) == quat_get_x(quat1));
-		REQUIRE(quat_get_y(quat2) == quat_get_y(quat1));
-		REQUIRE(quat_get_z(quat2) == quat_get_z(quat1));
-		REQUIRE(quat_get_w(quat2) == quat_get_w(quat1));
-
-		Vector4Type vec1 = quat_to_vector(quat1);
-		QuatType quat3 = quat_from_positive_w(vec1);
-		REQUIRE(quat_get_x(quat1) == quat_get_x(quat3));
-		REQUIRE(quat_get_y(quat1) == quat_get_y(quat3));
-		REQUIRE(quat_get_z(quat1) == quat_get_z(quat3));
-		REQUIRE(scalar_near_equal(quat_get_w(quat1), quat_get_w(quat3), threshold));
-	}
-
 	//////////////////////////////////////////////////////////////////////////
 	// Conversion to/from axis/angle/euler
 
@@ -383,7 +360,7 @@ static void test_quat_impl(const FloatType threshold)
 	}
 }
 
-TEST_CASE("quat 32 math", "[math][quat]")
+TEST_CASE("quatf math", "[math][quat]")
 {
 	test_quat_impl<float>(1.0e-4f);
 
@@ -395,7 +372,7 @@ TEST_CASE("quat 32 math", "[math][quat]")
 	REQUIRE(scalar_near_equal(quat_get_w(dst), 0.88863059760894492, 1.0e-6));
 }
 
-TEST_CASE("quat 64 math", "[math][quat]")
+TEST_CASE("quatd math", "[math][quat]")
 {
 	test_quat_impl<double>(1.0e-6);
 
