@@ -49,7 +49,12 @@ namespace rtm
 	inline uint64_t RTM_SIMD_CALL mask_get_x(const mask4q& input) RTM_NO_EXCEPT
 	{
 #if defined(RTM_SSE2_INTRINSICS)
+#if defined(_M_X64)
 		return _mm_cvtsi128_si64(_mm_castpd_si128(input.xy));
+#else
+		// Just sign extend on 32bit systems
+		return (uint64_t)_mm_cvtsi128_si32(_mm_castpd_si128(input.xy));
+#endif
 #else
 		return input.x;
 #endif
@@ -61,7 +66,12 @@ namespace rtm
 	inline uint64_t RTM_SIMD_CALL mask_get_y(const mask4q& input) RTM_NO_EXCEPT
 	{
 #if defined(RTM_SSE2_INTRINSICS)
+#if defined(_M_X64)
 		return _mm_cvtsi128_si64(_mm_castpd_si128(_mm_shuffle_pd(input.xy, input.xy, 1)));
+#else
+		// Just sign extend on 32bit systems
+		return (uint64_t)_mm_cvtsi128_si32(_mm_castpd_si128(_mm_shuffle_pd(input.xy, input.xy, 1)));
+#endif
 #else
 		return input.y;
 #endif
@@ -73,7 +83,12 @@ namespace rtm
 	inline uint64_t RTM_SIMD_CALL mask_get_z(const mask4q& input) RTM_NO_EXCEPT
 	{
 #if defined(RTM_SSE2_INTRINSICS)
+#if defined(_M_X64)
 		return _mm_cvtsi128_si64(_mm_castpd_si128(input.zw));
+#else
+		// Just sign extend on 32bit systems
+		return (uint64_t)_mm_cvtsi128_si32(_mm_castpd_si128(input.zw));
+#endif
 #else
 		return input.z;
 #endif
@@ -85,7 +100,12 @@ namespace rtm
 	inline uint64_t RTM_SIMD_CALL mask_get_w(const mask4q& input) RTM_NO_EXCEPT
 	{
 #if defined(RTM_SSE2_INTRINSICS)
+#if defined(_M_X64)
 		return _mm_cvtsi128_si64(_mm_castpd_si128(_mm_shuffle_pd(input.zw, input.zw, 1)));
+#else
+		// Just sign extend on 32bit systems
+		return (uint64_t)_mm_cvtsi128_si32(_mm_castpd_si128(_mm_shuffle_pd(input.zw, input.zw, 1)));
+#endif
 #else
 		return input.w;
 #endif
