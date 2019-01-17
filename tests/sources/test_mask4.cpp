@@ -1,9 +1,7 @@
-#pragma once
-
 ////////////////////////////////////////////////////////////////////////////////
 // The MIT License (MIT)
 //
-// Copyright (c) 2018 Nicholas Frechette & Realtime Math contributors
+// Copyright (c) 2019 Nicholas Frechette & Realtime Math contributors
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -24,53 +22,31 @@
 // SOFTWARE.
 ////////////////////////////////////////////////////////////////////////////////
 
-#include "rtm/types.h"
+#include <catch.hpp>
 
-namespace rtm
+#include <rtm/type_traits.h>
+#include <rtm/mask4i.h>
+#include <rtm/mask4q.h>
+
+using namespace rtm;
+
+template<typename IntType>
+static void test_mask_impl()
 {
-	//////////////////////////////////////////////////////////////////////////
-	// Returns the proper types for a floating point type.
-	//////////////////////////////////////////////////////////////////////////
-	template<typename float_type>
-	struct float_traits {};
-
-	template<>
-	struct float_traits<float>
 	{
-		using mask4 = mask4i;
+		REQUIRE(mask_get_x(mask_set(IntType(0), ~IntType(0), IntType(0), ~IntType(0))) == IntType(0));
+		REQUIRE(mask_get_y(mask_set(IntType(0), ~IntType(0), IntType(0), ~IntType(0))) == ~IntType(0));
+		REQUIRE(mask_get_z(mask_set(IntType(0), ~IntType(0), IntType(0), ~IntType(0))) == IntType(0));
+		REQUIRE(mask_get_w(mask_set(IntType(0), ~IntType(0), IntType(0), ~IntType(0))) == ~IntType(0));
+	}
+}
 
-		using angle = anglef;
-		using scalar = scalarf;
-		using vector4 = vector4f;
-		using quat = quatf;
-		using qvv = qvvf;
+TEST_CASE("mask4i math", "[math][mask]")
+{
+	test_mask_impl<uint32_t>();
+}
 
-		using matrix3x3 = matrix3x3f;
-		using matrix3x4 = matrix3x4f;
-		using matrix4x4 = matrix4x4f;
-
-		using float2 = float2f;
-		using float3 = float3f;
-		using float4 = float4f;
-	};
-
-	template<>
-	struct float_traits<double>
-	{
-		using mask4 = mask4q;
-
-		using angle = angled;
-		using scalar = scalard;
-		using vector4 = vector4d;
-		using quat = quatd;
-		using qvv = qvvd;
-
-		using matrix3x3 = matrix3x3d;
-		using matrix3x4 = matrix3x4d;
-		using matrix4x4 = matrix4x4d;
-
-		using float2 = float2d;
-		using float3 = float3d;
-		using float4 = float4d;
-	};
+TEST_CASE("mask4d math", "[math][mask]")
+{
+	test_mask_impl<uint64_t>();
 }

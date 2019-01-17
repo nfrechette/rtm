@@ -619,42 +619,42 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	// Returns per component ~0 if less than, otherwise 0: lhs < rhs ? ~0 : 0
 	//////////////////////////////////////////////////////////////////////////
-	inline vector4d vector_less_than(const vector4d& lhs, const vector4d& rhs) RTM_NO_EXCEPT
+	inline mask4q vector_less_than(const vector4d& lhs, const vector4d& rhs) RTM_NO_EXCEPT
 	{
 #if defined(RTM_SSE2_INTRINSICS)
 		__m128d xy_lt_pd = _mm_cmplt_pd(lhs.xy, rhs.xy);
 		__m128d zw_lt_pd = _mm_cmplt_pd(lhs.zw, rhs.zw);
-		return vector4d{xy_lt_pd, zw_lt_pd};
+		return mask4q{xy_lt_pd, zw_lt_pd};
 #else
-		return vector4d{rtm_impl::get_mask_value(lhs.x < rhs.x), rtm_impl::get_mask_value(lhs.y < rhs.y), rtm_impl::get_mask_value(lhs.z < rhs.z), rtm_impl::get_mask_value(lhs.w < rhs.w)};
+		return mask4q{rtm_impl::get_mask_value(lhs.x < rhs.x), rtm_impl::get_mask_value(lhs.y < rhs.y), rtm_impl::get_mask_value(lhs.z < rhs.z), rtm_impl::get_mask_value(lhs.w < rhs.w)};
 #endif
 	}
 
 	//////////////////////////////////////////////////////////////////////////
 	// Returns per component ~0 if less equal, otherwise 0: lhs <= rhs ? ~0 : 0
 	//////////////////////////////////////////////////////////////////////////
-	inline vector4d vector_less_equal(const vector4d& lhs, const vector4d& rhs) RTM_NO_EXCEPT
+	inline mask4q vector_less_equal(const vector4d& lhs, const vector4d& rhs) RTM_NO_EXCEPT
 	{
 #if defined(RTM_SSE2_INTRINSICS)
 		__m128d xy_lt_pd = _mm_cmple_pd(lhs.xy, rhs.xy);
 		__m128d zw_lt_pd = _mm_cmple_pd(lhs.zw, rhs.zw);
-		return vector4d{ xy_lt_pd, zw_lt_pd };
+		return mask4q{ xy_lt_pd, zw_lt_pd };
 #else
-		return vector4d{ rtm_impl::get_mask_value(lhs.x <= rhs.x), rtm_impl::get_mask_value(lhs.y <= rhs.y), rtm_impl::get_mask_value(lhs.z <= rhs.z), rtm_impl::get_mask_value(lhs.w <= rhs.w) };
+		return mask4q{ rtm_impl::get_mask_value(lhs.x <= rhs.x), rtm_impl::get_mask_value(lhs.y <= rhs.y), rtm_impl::get_mask_value(lhs.z <= rhs.z), rtm_impl::get_mask_value(lhs.w <= rhs.w) };
 #endif
 	}
 
 	//////////////////////////////////////////////////////////////////////////
 	// Returns per component ~0 if greater equal, otherwise 0: lhs >= rhs ? ~0 : 0
 	//////////////////////////////////////////////////////////////////////////
-	inline vector4d vector_greater_equal(const vector4d& lhs, const vector4d& rhs) RTM_NO_EXCEPT
+	inline mask4q vector_greater_equal(const vector4d& lhs, const vector4d& rhs) RTM_NO_EXCEPT
 	{
 #if defined(RTM_SSE2_INTRINSICS)
 		__m128d xy_ge_pd = _mm_cmpge_pd(lhs.xy, rhs.xy);
 		__m128d zw_ge_pd = _mm_cmpge_pd(lhs.zw, rhs.zw);
-		return vector4d{ xy_ge_pd, zw_ge_pd };
+		return mask4q{ xy_ge_pd, zw_ge_pd };
 #else
-		return vector4d{ rtm_impl::get_mask_value(lhs.x >= rhs.x), rtm_impl::get_mask_value(lhs.y >= rhs.y), rtm_impl::get_mask_value(lhs.z >= rhs.z), rtm_impl::get_mask_value(lhs.w >= rhs.w) };
+		return mask4q{ rtm_impl::get_mask_value(lhs.x >= rhs.x), rtm_impl::get_mask_value(lhs.y >= rhs.y), rtm_impl::get_mask_value(lhs.z >= rhs.z), rtm_impl::get_mask_value(lhs.w >= rhs.w) };
 #endif
 	}
 
@@ -884,7 +884,7 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	// Per component selection depending on the mask: mask != 0 ? if_true : if_false
 	//////////////////////////////////////////////////////////////////////////
-	inline vector4d vector_select(const vector4d& mask, const vector4d& if_true, const vector4d& if_false) RTM_NO_EXCEPT
+	inline vector4d vector_select(const mask4q& mask, const vector4d& if_true, const vector4d& if_false) RTM_NO_EXCEPT
 	{
 #if defined(RTM_SSE2_INTRINSICS)
 		__m128d xy = _mm_or_pd(_mm_andnot_pd(mask.xy, if_false.xy), _mm_and_pd(if_true.xy, mask.xy));
@@ -941,7 +941,7 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	inline vector4d vector_sign(const vector4d& input) RTM_NO_EXCEPT
 	{
-		vector4d mask = vector_greater_equal(input, vector_zero());
+		const mask4q mask = vector_greater_equal(input, vector_zero());
 		return vector_select(mask, vector_set(1.0), vector_set(-1.0));
 	}
 }

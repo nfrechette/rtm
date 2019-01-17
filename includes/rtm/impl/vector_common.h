@@ -165,16 +165,13 @@ namespace rtm
 		//////////////////////////////////////////////////////////////////////////
 		union mask_converter
 		{
-			double dbl;
 			uint64_t u64;
-			float flt[2];
+			uint32_t u32[2];
 
 			constexpr mask_converter(uint64_t value) RTM_NO_EXCEPT : u64(value) {}
-			constexpr mask_converter(double value) RTM_NO_EXCEPT : dbl(value) {}
-			constexpr mask_converter(float value) RTM_NO_EXCEPT : flt{ value, value } {}
 
-			constexpr operator double() const RTM_NO_EXCEPT { return dbl; }
-			constexpr operator float() const RTM_NO_EXCEPT { return flt[0]; }
+			constexpr operator uint32_t() const RTM_NO_EXCEPT { return u32[0]; }
+			constexpr operator uint64_t() const RTM_NO_EXCEPT { return u64; }
 		};
 
 		//////////////////////////////////////////////////////////////////////////
@@ -188,17 +185,17 @@ namespace rtm
 		//////////////////////////////////////////////////////////////////////////
 		// Selects if_false if the SIMD mask value is 0, otherwise if_true.
 		//////////////////////////////////////////////////////////////////////////
-		constexpr double select(double mask, double if_true, double if_false) RTM_NO_EXCEPT
+		constexpr double select(uint64_t mask, double if_true, double if_false) RTM_NO_EXCEPT
 		{
-			return mask_converter(mask).u64 == 0 ? if_false : if_true;
+			return mask == 0 ? if_false : if_true;
 		}
 
 		//////////////////////////////////////////////////////////////////////////
 		// Selects if_false if the SIMD mask value is 0, otherwise if_true.
 		//////////////////////////////////////////////////////////////////////////
-		constexpr float select(float mask, float if_true, float if_false) RTM_NO_EXCEPT
+		constexpr float select(uint32_t mask, float if_true, float if_false) RTM_NO_EXCEPT
 		{
-			return mask_converter(mask).u64 == 0 ? if_false : if_true;
+			return mask == 0 ? if_false : if_true;
 		}
 
 		//////////////////////////////////////////////////////////////////////////

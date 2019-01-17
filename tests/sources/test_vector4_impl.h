@@ -34,6 +34,8 @@
 #include <rtm/vector4d.h>
 #include <rtm/quatf.h>
 #include <rtm/quatd.h>
+#include <rtm/mask4i.h>
+#include <rtm/mask4q.h>
 
 #include <cstring>
 #include <limits>
@@ -434,20 +436,20 @@ void test_vector4_impl(const FloatType threshold)
 	//////////////////////////////////////////////////////////////////////////
 	// Comparisons and masking
 
-	REQUIRE((vector_get_x(vector_less_than(test_value0, test_value1)) != FloatType(0.0)) == (test_value0_flt[0] < test_value1_flt[0]));
-	REQUIRE((vector_get_y(vector_less_than(test_value0, test_value1)) != FloatType(0.0)) == (test_value0_flt[1] < test_value1_flt[1]));
-	REQUIRE((vector_get_z(vector_less_than(test_value0, test_value1)) != FloatType(0.0)) == (test_value0_flt[2] < test_value1_flt[2]));
-	REQUIRE((vector_get_w(vector_less_than(test_value0, test_value1)) != FloatType(0.0)) == (test_value0_flt[3] < test_value1_flt[3]));
+	REQUIRE((mask_get_x(vector_less_than(test_value0, test_value1)) != 0) == (test_value0_flt[0] < test_value1_flt[0]));
+	REQUIRE((mask_get_y(vector_less_than(test_value0, test_value1)) != 0) == (test_value0_flt[1] < test_value1_flt[1]));
+	REQUIRE((mask_get_z(vector_less_than(test_value0, test_value1)) != 0) == (test_value0_flt[2] < test_value1_flt[2]));
+	REQUIRE((mask_get_w(vector_less_than(test_value0, test_value1)) != 0) == (test_value0_flt[3] < test_value1_flt[3]));
 
-	REQUIRE((vector_get_x(vector_less_equal(test_value0, test_value3)) != FloatType(0.0)) == (test_value0_flt[0] <= test_value3_flt[0]));
-	REQUIRE((vector_get_y(vector_less_equal(test_value0, test_value3)) != FloatType(0.0)) == (test_value0_flt[1] <= test_value3_flt[1]));
-	REQUIRE((vector_get_z(vector_less_equal(test_value0, test_value3)) != FloatType(0.0)) == (test_value0_flt[2] <= test_value3_flt[2]));
-	REQUIRE((vector_get_w(vector_less_equal(test_value0, test_value3)) != FloatType(0.0)) == (test_value0_flt[3] <= test_value3_flt[3]));
+	REQUIRE((mask_get_x(vector_less_equal(test_value0, test_value3)) != 0) == (test_value0_flt[0] <= test_value3_flt[0]));
+	REQUIRE((mask_get_y(vector_less_equal(test_value0, test_value3)) != 0) == (test_value0_flt[1] <= test_value3_flt[1]));
+	REQUIRE((mask_get_z(vector_less_equal(test_value0, test_value3)) != 0) == (test_value0_flt[2] <= test_value3_flt[2]));
+	REQUIRE((mask_get_w(vector_less_equal(test_value0, test_value3)) != 0) == (test_value0_flt[3] <= test_value3_flt[3]));
 
-	REQUIRE((vector_get_x(vector_greater_equal(test_value0, test_value1)) != FloatType(0.0)) == (test_value0_flt[0] >= test_value1_flt[0]));
-	REQUIRE((vector_get_y(vector_greater_equal(test_value0, test_value1)) != FloatType(0.0)) == (test_value0_flt[1] >= test_value1_flt[1]));
-	REQUIRE((vector_get_z(vector_greater_equal(test_value0, test_value1)) != FloatType(0.0)) == (test_value0_flt[2] >= test_value1_flt[2]));
-	REQUIRE((vector_get_w(vector_greater_equal(test_value0, test_value1)) != FloatType(0.0)) == (test_value0_flt[3] >= test_value1_flt[3]));
+	REQUIRE((mask_get_x(vector_greater_equal(test_value0, test_value1)) != 0) == (test_value0_flt[0] >= test_value1_flt[0]));
+	REQUIRE((mask_get_y(vector_greater_equal(test_value0, test_value1)) != 0) == (test_value0_flt[1] >= test_value1_flt[1]));
+	REQUIRE((mask_get_z(vector_greater_equal(test_value0, test_value1)) != 0) == (test_value0_flt[2] >= test_value1_flt[2]));
+	REQUIRE((mask_get_w(vector_greater_equal(test_value0, test_value1)) != 0) == (test_value0_flt[3] >= test_value1_flt[3]));
 
 	REQUIRE(vector_all_less_than(zero, vector_set(FloatType(1.0), FloatType(1.0), FloatType(1.0), FloatType(1.0))) == true);
 	REQUIRE(vector_all_less_than(zero, vector_set(FloatType(1.0), FloatType(0.0), FloatType(0.0), FloatType(0.0))) == false);

@@ -67,6 +67,16 @@ namespace rtm
 	using scalarf_arg7 = const scalarf&;
 	using scalarf_argn = const scalarf&;
 
+	using mask4i_arg0 = const mask4i;
+	using mask4i_arg1 = const mask4i;
+	using mask4i_arg2 = const mask4i;
+	using mask4i_arg3 = const mask4i;
+	using mask4i_arg4 = const mask4i;
+	using mask4i_arg5 = const mask4i;
+	using mask4i_arg6 = const mask4i&;
+	using mask4i_arg7 = const mask4i&;
+	using mask4i_argn = const mask4i&;
+
 	// With __vectorcall, vector aggregates are also passed by register and they can use up to 4 registers.
 
 	using qvvf_arg0 = const qvvf;
@@ -117,6 +127,16 @@ namespace rtm
 	using scalarf_arg6 = const scalarf;
 	using scalarf_arg7 = const scalarf;
 	using scalarf_argn = const scalarf;
+
+	using mask4i_arg0 = const mask4i;
+	using mask4i_arg1 = const mask4i;
+	using mask4i_arg2 = const mask4i;
+	using mask4i_arg3 = const mask4i;
+	using mask4i_arg4 = const mask4i;
+	using mask4i_arg5 = const mask4i;
+	using mask4i_arg6 = const mask4i;
+	using mask4i_arg7 = const mask4i;
+	using mask4i_argn = const mask4i&;
 
 	// With ARM64 NEON, vector aggregates are also passed by register but the whole aggregate
 	// must fit in the number of registers available (e.g. we can pass 2x qvvf but not 3x).
@@ -171,6 +191,16 @@ namespace rtm
 	using scalarf_arg7 = const scalarf;
 	using scalarf_argn = const scalarf;
 
+	using mask4i_arg0 = const mask4i;
+	using mask4i_arg1 = const mask4i;
+	using mask4i_arg2 = const mask4i;
+	using mask4i_arg3 = const mask4i;
+	using mask4i_arg4 = const mask4i&;
+	using mask4i_arg5 = const mask4i&;
+	using mask4i_arg6 = const mask4i&;
+	using mask4i_arg7 = const mask4i&;
+	using mask4i_argn = const mask4i&;
+
 	// ARM NEON does not support passing aggregates by register.
 
 	using qvvf_arg0 = const qvvf&;
@@ -222,6 +252,16 @@ namespace rtm
 	using scalarf_arg7 = const scalarf;
 	using scalarf_argn = const scalarf&;
 
+	using mask4i_arg0 = const mask4i;
+	using mask4i_arg1 = const mask4i;
+	using mask4i_arg2 = const mask4i;
+	using mask4i_arg3 = const mask4i;
+	using mask4i_arg4 = const mask4i;
+	using mask4i_arg5 = const mask4i;
+	using mask4i_arg6 = const mask4i;
+	using mask4i_arg7 = const mask4i;
+	using mask4i_argn = const mask4i&;
+
 	// gcc does not appear to support passing and returning aggregates by register
 
 	using qvvf_arg0 = const qvvf&;
@@ -272,6 +312,16 @@ namespace rtm
 	using scalarf_arg6 = const scalarf;
 	using scalarf_arg7 = const scalarf;
 	using scalarf_argn = const scalarf&;
+
+	using mask4i_arg0 = const mask4i;
+	using mask4i_arg1 = const mask4i;
+	using mask4i_arg2 = const mask4i;
+	using mask4i_arg3 = const mask4i;
+	using mask4i_arg4 = const mask4i;
+	using mask4i_arg5 = const mask4i;
+	using mask4i_arg6 = const mask4i;
+	using mask4i_arg7 = const mask4i;
+	using mask4i_argn = const mask4i&;
 
 	// We could pass up to 2 full qvvf types by register and the rotation/translation of
 	// the third but aggregates are not returned by register.
@@ -326,6 +376,16 @@ namespace rtm
 	using scalarf_arg6 = const scalarf;
 	using scalarf_arg7 = const scalarf;
 	using scalarf_argn = const scalarf;
+
+	using mask4i_arg0 = const mask4i&;
+	using mask4i_arg1 = const mask4i&;
+	using mask4i_arg2 = const mask4i&;
+	using mask4i_arg3 = const mask4i&;
+	using mask4i_arg4 = const mask4i&;
+	using mask4i_arg5 = const mask4i&;
+	using mask4i_arg6 = const mask4i&;
+	using mask4i_arg7 = const mask4i&;
+	using mask4i_argn = const mask4i&;
 
 	using qvvf_arg0 = const qvvf&;
 	using qvvf_arg1 = const qvvf&;
