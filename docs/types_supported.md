@@ -48,3 +48,6 @@ An 3x4 affine matrix represents a 3D rotation, 3D translation, and 3D scale. It 
 
 A generic 4x4 matrix. Suitable to represent 3D projection matrices and the likes.
 
+## Unaligned and storage friendly types
+
+When manipulating vectors of various width, it is often desirable to store them as an unaligned sequence of floats with no padding. For example, while a 3D mesh has a number of `float3` vertices, storing and manipulating them as `vector4f` would use 33% more memory. To that end, a number of types are provided to help with this: `float2f, float2d, float3f, float3d, float4f, float4d`. These types have no alignment requirement beyond the natural float/double alignment. Functions such as `vector_load3(const float3f* input)` can load them from memory and return a vector4 of the correct type.
