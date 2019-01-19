@@ -2,6 +2,4 @@
 
 ## 1.0.0
 
-Initial release!
-
-*  TODO
+Initial release migrating and improving the code from the Animation Compression Library.
