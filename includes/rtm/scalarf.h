@@ -66,7 +66,12 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	inline float scalar_floor(float input) RTM_NO_EXCEPT
 	{
+#if defined(RTM_SSE4_INTRINSICS)
+		const __m128 value = _mm_set_ps1(input);
+		return _mm_cvtss_f32(_mm_round_ss(value, value, 0x9));
+#else
 		return std::floor(input);
+#endif
 	}
 
 	//////////////////////////////////////////////////////////////////////////
@@ -76,7 +81,12 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	inline float scalar_ceil(float input) RTM_NO_EXCEPT
 	{
+#if defined(RTM_SSE4_INTRINSICS)
+		const __m128 value = _mm_set_ps1(input);
+		return _mm_cvtss_f32(_mm_round_ss(value, value, 0xA));
+#else
 		return std::ceil(input);
+#endif
 	}
 
 	//////////////////////////////////////////////////////////////////////////
@@ -85,7 +95,11 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	inline float scalar_clamp(float input, float min, float max) RTM_NO_EXCEPT
 	{
+#if defined(RTM_SSE2_INTRINSICS)
+		return _mm_cvtss_f32(_mm_min_ss(_mm_max_ss(_mm_set_ps1(input), _mm_set_ps1(min)), _mm_set_ps1(max)));
+#else
 		return std::min(std::max(input, min), max);
+#endif
 	}
 
 	//////////////////////////////////////////////////////////////////////////
@@ -224,7 +238,11 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	inline float scalar_min(float left, float right) RTM_NO_EXCEPT
 	{
+#if defined(RTM_SSE2_INTRINSICS)
+		return _mm_cvtss_f32(_mm_min_ss(_mm_set_ps1(left), _mm_set_ps1(right)));
+#else
 		return std::min(left, right);
+#endif
 	}
 
 	//////////////////////////////////////////////////////////////////////////
@@ -232,7 +250,11 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	inline float scalar_max(float left, float right) RTM_NO_EXCEPT
 	{
+#if defined(RTM_SSE2_INTRINSICS)
+		return _mm_cvtss_f32(_mm_max_ss(_mm_set_ps1(left), _mm_set_ps1(right)));
+#else
 		return std::max(left, right);
+#endif
 	}
 
 	//////////////////////////////////////////////////////////////////////////

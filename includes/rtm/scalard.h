@@ -66,7 +66,12 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	inline double scalar_floor(double input) RTM_NO_EXCEPT
 	{
+#if defined(RTM_SSE4_INTRINSICS)
+		const __m128d value = _mm_set1_pd(input);
+		return _mm_cvtsd_f64(_mm_round_sd(value, value, 0x9));
+#else
 		return std::floor(input);
+#endif
 	}
 
 	//////////////////////////////////////////////////////////////////////////
@@ -76,7 +81,12 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	inline double scalar_ceil(double input) RTM_NO_EXCEPT
 	{
+#if defined(RTM_SSE4_INTRINSICS)
+		const __m128d value = _mm_set1_pd(input);
+		return _mm_cvtsd_f64(_mm_round_sd(value, value, 0xA));
+#else
 		return std::ceil(input);
+#endif
 	}
 
 	//////////////////////////////////////////////////////////////////////////
@@ -85,7 +95,11 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	inline double scalar_clamp(double input, double min, double max) RTM_NO_EXCEPT
 	{
+#if defined(RTM_SSE2_INTRINSICS)
+		return _mm_cvtsd_f64(_mm_min_sd(_mm_max_sd(_mm_set1_pd(input), _mm_set1_pd(min)), _mm_set1_pd(max)));
+#else
 		return std::min(std::max(input, min), max);
+#endif
 	}
 
 	//////////////////////////////////////////////////////////////////////////
@@ -177,7 +191,11 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	inline double scalar_min(double left, double right) RTM_NO_EXCEPT
 	{
+#if defined(RTM_SSE2_INTRINSICS)
+		return _mm_cvtsd_f64(_mm_min_sd(_mm_set1_pd(left), _mm_set1_pd(right)));
+#else
 		return std::min(left, right);
+#endif
 	}
 
 	//////////////////////////////////////////////////////////////////////////
@@ -185,7 +203,11 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	inline double scalar_max(double left, double right) RTM_NO_EXCEPT
 	{
+#if defined(RTM_SSE2_INTRINSICS)
+		return _mm_cvtsd_f64(_mm_max_sd(_mm_set1_pd(left), _mm_set1_pd(right)));
+#else
 		return std::max(left, right);
+#endif
 	}
 
 	//////////////////////////////////////////////////////////////////////////
