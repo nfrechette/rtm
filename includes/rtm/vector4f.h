@@ -31,6 +31,19 @@
 #include "rtm/impl/memory_utils.h"
 #include "rtm/impl/vector_common.h"
 
+//////////////////////////////////////////////////////////////////////////
+// Initializes statically a vector4.
+//////////////////////////////////////////////////////////////////////////
+#if defined(RTM_NEON_INTRINSICS)
+	#if defined(_MSC_VER)
+		#define RTM_INIT_VECTOR4F(x, y, z, w) { (uint64_t(x) | (uint64_t(y) << 32)), (uint64_t(z) | (uint64_t(w) << 32)) }
+	#else
+		#define RTM_INIT_VECTOR4F(x, y, z, w) { (x), (y), (z), (w) }
+	#endif
+#else
+	#define RTM_INIT_VECTOR4F(x, y, z, w) { (x), (y), (z), (w) }
+#endif
+
 RTM_IMPL_FILE_PRAGMA_PUSH
 
 namespace rtm
@@ -134,7 +147,7 @@ namespace rtm
 #if defined(RTM_SSE2_INTRINSICS)
 		return _mm_shuffle_ps(_mm_cvtpd_ps(input.xy), _mm_cvtpd_ps(input.zw), _MM_SHUFFLE(1, 0, 1, 0));
 #else
-		return vector4f{ float(input.x), float(input.y), float(input.z), float(input.w) };
+		return vector_set(float(input.x), float(input.y), float(input.z), float(input.w));
 #endif
 	}
 
