@@ -31,6 +31,8 @@
 #include "rtm/impl/memory_utils.h"
 #include "rtm/impl/vector_common.h"
 
+RTM_IMPL_FILE_PRAGMA_PUSH
+
 //////////////////////////////////////////////////////////////////////////
 // Initializes statically a vector4.
 //////////////////////////////////////////////////////////////////////////
@@ -43,8 +45,6 @@
 #else
 	#define RTM_INIT_VECTOR4F(x, y, z, w) { (x), (y), (z), (w) }
 #endif
-
-RTM_IMPL_FILE_PRAGMA_PUSH
 
 namespace rtm
 {
