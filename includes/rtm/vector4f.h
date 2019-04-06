@@ -33,19 +33,6 @@
 
 RTM_IMPL_FILE_PRAGMA_PUSH
 
-//////////////////////////////////////////////////////////////////////////
-// Initializes statically a vector4.
-//////////////////////////////////////////////////////////////////////////
-#if defined(RTM_NEON_INTRINSICS)
-	#if defined(_MSC_VER)
-		#define RTM_INIT_VECTOR4F(x, y, z, w) { (uint64_t(x) | (uint64_t(y) << 32)), (uint64_t(z) | (uint64_t(w) << 32)) }
-	#else
-		#define RTM_INIT_VECTOR4F(x, y, z, w) { (x), (y), (z), (w) }
-	#endif
-#else
-	#define RTM_INIT_VECTOR4F(x, y, z, w) { (x), (y), (z), (w) }
-#endif
-
 namespace rtm
 {
 	//////////////////////////////////////////////////////////////////////////
