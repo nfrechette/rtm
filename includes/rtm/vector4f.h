@@ -743,7 +743,9 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	inline vector4f RTM_SIMD_CALL vector_mul_add(vector4f_arg0 v0, vector4f_arg1 v1, vector4f_arg2 v2) RTM_NO_EXCEPT
 	{
-#if defined(RTM_NEON_INTRINSICS)
+#if defined(RTM_NEON64_INTRINSICS)
+		return vfmaq_f32(v2, v0, v1);
+#elif defined(RTM_NEON_INTRINSICS)
 		return vmlaq_f32(v2, v0, v1);
 #else
 		return vector_add(vector_mul(v0, v1), v2);
@@ -755,7 +757,9 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	inline vector4f RTM_SIMD_CALL vector_mul_add(vector4f_arg0 v0, float s1, vector4f_arg2 v2) RTM_NO_EXCEPT
 	{
-#if defined(RTM_NEON_INTRINSICS)
+#if defined(RTM_NEON64_INTRINSICS)
+		return vfmaq_n_f32(v2, v0, s1);
+#elif defined(RTM_NEON_INTRINSICS)
 		return vmlaq_n_f32(v2, v0, s1);
 #else
 		return vector_add(vector_mul(v0, s1), v2);
@@ -768,7 +772,9 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	inline vector4f RTM_SIMD_CALL vector_neg_mul_sub(vector4f_arg0 v0, vector4f_arg1 v1, vector4f_arg2 v2) RTM_NO_EXCEPT
 	{
-#if defined(RTM_NEON_INTRINSICS)
+#if defined(RTM_NEON64_INTRINSICS)
+		return vfmsq_f32(v2, v0, v1);
+#elif defined(RTM_NEON_INTRINSICS)
 		return vmlsq_f32(v2, v0, v1);
 #else
 		return vector_sub(v2, vector_mul(v0, v1));
