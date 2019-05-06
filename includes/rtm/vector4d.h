@@ -602,6 +602,15 @@ namespace rtm
 	}
 
 	//////////////////////////////////////////////////////////////////////////
+	// Per component negative multiplication/subtraction of the three inputs: -((v0 * s1) - v2)
+	// This is mathematically equivalent to: v2 - (v0 * s1)
+	//////////////////////////////////////////////////////////////////////////
+	inline vector4d vector_neg_mul_sub(const vector4d& v0, double s1, const vector4d& v2) RTM_NO_EXCEPT
+	{
+		return vector_sub(v2, vector_mul(v0, s1));
+	}
+
+	//////////////////////////////////////////////////////////////////////////
 	// Per component linear interpolation of the two inputs at the specified alpha.
 	//////////////////////////////////////////////////////////////////////////
 	inline vector4d vector_lerp(const vector4d& start, const vector4d& end, double alpha) RTM_NO_EXCEPT

@@ -782,6 +782,21 @@ namespace rtm
 	}
 
 	//////////////////////////////////////////////////////////////////////////
+	// Per component negative multiplication/subtraction of the three inputs: -((v0 * s1) - v2)
+	// This is mathematically equivalent to: v2 - (v0 * s1)
+	//////////////////////////////////////////////////////////////////////////
+	inline vector4f RTM_SIMD_CALL vector_neg_mul_sub(vector4f_arg0 v0, float s1, vector4f_arg2 v2) RTM_NO_EXCEPT
+	{
+#if defined(RTM_NEON64_INTRINSICS)
+		return vfmsq_n_f32(v2, v0, s1);
+#elif defined(RTM_NEON_INTRINSICS)
+		return vmlsq_n_f32(v2, v0, s1);
+#else
+		return vector_sub(v2, vector_mul(v0, s1));
+#endif
+	}
+
+	//////////////////////////////////////////////////////////////////////////
 	// Per component linear interpolation of the two inputs at the specified alpha.
 	//////////////////////////////////////////////////////////////////////////
 	inline vector4f RTM_SIMD_CALL vector_lerp(vector4f_arg0 start, vector4f_arg1 end, float alpha) RTM_NO_EXCEPT
