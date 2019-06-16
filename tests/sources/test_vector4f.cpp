@@ -42,3 +42,8 @@ TEST_CASE("vector4f math", "[math][vector4]")
 	REQUIRE(scalar_near_equal(vector_get_z(dst), 0.68123521, 1.0e-6));
 	REQUIRE(scalar_near_equal(vector_get_w(dst), -5.9182, 1.0e-6));
 }
+
+TEST_CASE("vector4f vector_mix", "[math][vector4]")
+{
+	test_vector_mix_impl<vector4f, float>(1.0e-6f);
+}
