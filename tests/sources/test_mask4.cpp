@@ -46,7 +46,7 @@ TEST_CASE("mask4i math", "[math][mask]")
 	test_mask_impl<uint32_t>();
 }
 
-TEST_CASE("mask4d math", "[math][mask]")
+TEST_CASE("mask4q math", "[math][mask]")
 {
 	test_mask_impl<uint64_t>();
 }
