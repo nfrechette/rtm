@@ -90,16 +90,6 @@ inline Vector4Type scalar_normalize3(const Vector4Type& input, const Vector4Type
 		return fallback;
 }
 
-template<typename Vector4Type, mix4 comp0, mix4 comp1, mix4 comp2, mix4 comp3>
-inline Vector4Type scalar_mix(const Vector4Type& input0, const Vector4Type& input1)
-{
-	const auto x = rtm_impl::is_mix_xyzw(comp0) ? vector_get_component<comp0>(input0) : vector_get_component<comp0>(input1);
-	const auto y = rtm_impl::is_mix_xyzw(comp1) ? vector_get_component<comp1>(input0) : vector_get_component<comp1>(input1);
-	const auto z = rtm_impl::is_mix_xyzw(comp2) ? vector_get_component<comp2>(input0) : vector_get_component<comp2>(input1);
-	const auto w = rtm_impl::is_mix_xyzw(comp3) ? vector_get_component<comp3>(input0) : vector_get_component<comp3>(input1);
-	return vector_set(x, y, z, w);
-}
-
 template<typename FloatType>
 void test_vector4_impl(const FloatType threshold)
 {
@@ -639,62 +629,77 @@ void test_vector4_impl(const FloatType threshold)
 	REQUIRE(vector_get_w(vector_sign(test_value0)) == scalar_sign(test_value0_flt[3]));
 }
 
-template<typename Vector4Type, typename FloatType, mix4 XArg>
+template<typename Vector4Type, typename FloatType>
 void test_vector_mix_impl(const FloatType threshold)
 {
-#define RTM_TEST_MIX_XYZ(results, input0, input1, comp0, comp1, comp2) \
-	results[(int)comp0][(int)comp1][(int)comp2][(int)mix4::x] = vector_all_near_equal(vector_mix<comp0, comp1, comp2, mix4::x>(input0, input1), scalar_mix<Vector4Type, comp0, comp1, comp2, mix4::x>(input0, input1), threshold); \
-	results[(int)comp0][(int)comp1][(int)comp2][(int)mix4::y] = vector_all_near_equal(vector_mix<comp0, comp1, comp2, mix4::y>(input0, input1), scalar_mix<Vector4Type, comp0, comp1, comp2, mix4::y>(input0, input1), threshold); \
-	results[(int)comp0][(int)comp1][(int)comp2][(int)mix4::z] = vector_all_near_equal(vector_mix<comp0, comp1, comp2, mix4::z>(input0, input1), scalar_mix<Vector4Type, comp0, comp1, comp2, mix4::z>(input0, input1), threshold); \
-	results[(int)comp0][(int)comp1][(int)comp2][(int)mix4::w] = vector_all_near_equal(vector_mix<comp0, comp1, comp2, mix4::w>(input0, input1), scalar_mix<Vector4Type, comp0, comp1, comp2, mix4::w>(input0, input1), threshold); \
-	results[(int)comp0][(int)comp1][(int)comp2][(int)mix4::a] = vector_all_near_equal(vector_mix<comp0, comp1, comp2, mix4::a>(input0, input1), scalar_mix<Vector4Type, comp0, comp1, comp2, mix4::a>(input0, input1), threshold); \
-	results[(int)comp0][(int)comp1][(int)comp2][(int)mix4::b] = vector_all_near_equal(vector_mix<comp0, comp1, comp2, mix4::b>(input0, input1), scalar_mix<Vector4Type, comp0, comp1, comp2, mix4::b>(input0, input1), threshold); \
-	results[(int)comp0][(int)comp1][(int)comp2][(int)mix4::c] = vector_all_near_equal(vector_mix<comp0, comp1, comp2, mix4::c>(input0, input1), scalar_mix<Vector4Type, comp0, comp1, comp2, mix4::c>(input0, input1), threshold); \
-	results[(int)comp0][(int)comp1][(int)comp2][(int)mix4::d] = vector_all_near_equal(vector_mix<comp0, comp1, comp2, mix4::d>(input0, input1), scalar_mix<Vector4Type, comp0, comp1, comp2, mix4::d>(input0, input1), threshold)
-
-#define RTM_TEST_MIX_XY(results, input0, input1, comp0, comp1) \
-	RTM_TEST_MIX_XYZ(results, input0, input1, comp0, comp1, mix4::x); \
-	RTM_TEST_MIX_XYZ(results, input0, input1, comp0, comp1, mix4::y); \
-	RTM_TEST_MIX_XYZ(results, input0, input1, comp0, comp1, mix4::z); \
-	RTM_TEST_MIX_XYZ(results, input0, input1, comp0, comp1, mix4::w); \
-	RTM_TEST_MIX_XYZ(results, input0, input1, comp0, comp1, mix4::a); \
-	RTM_TEST_MIX_XYZ(results, input0, input1, comp0, comp1, mix4::b); \
-	RTM_TEST_MIX_XYZ(results, input0, input1, comp0, comp1, mix4::c); \
-	RTM_TEST_MIX_XYZ(results, input0, input1, comp0, comp1, mix4::d)
-
-#define RTM_TEST_MIX_X(results, input0, input1, comp0) \
-	RTM_TEST_MIX_XY(results, input0, input1, comp0, mix4::x); \
-	RTM_TEST_MIX_XY(results, input0, input1, comp0, mix4::y); \
-	RTM_TEST_MIX_XY(results, input0, input1, comp0, mix4::z); \
-	RTM_TEST_MIX_XY(results, input0, input1, comp0, mix4::w); \
-	RTM_TEST_MIX_XY(results, input0, input1, comp0, mix4::a); \
-	RTM_TEST_MIX_XY(results, input0, input1, comp0, mix4::b); \
-	RTM_TEST_MIX_XY(results, input0, input1, comp0, mix4::c); \
-	RTM_TEST_MIX_XY(results, input0, input1, comp0, mix4::d)
-
-	// This generates 8*8*8*8 = 4096 unit tests... it takes a while to compile and uses a lot of stack space
-	// Disabled by default to reduce the build time
-	bool vector_mix_results[8][8][8][8];
-
 	const FloatType test_value0_flt[4] = { FloatType(2.0), FloatType(9.34), FloatType(-54.12), FloatType(6000.0) };
 	const FloatType test_value1_flt[4] = { FloatType(0.75), FloatType(-4.52), FloatType(44.68), FloatType(-54225.0) };
+
 	const Vector4Type test_value0 = vector_set(test_value0_flt[0], test_value0_flt[1], test_value0_flt[2], test_value0_flt[3]);
 	const Vector4Type test_value1 = vector_set(test_value1_flt[0], test_value1_flt[1], test_value1_flt[2], test_value1_flt[3]);
 
-	RTM_TEST_MIX_X(vector_mix_results, test_value0, test_value1, XArg);
+	Vector4Type results[8 * 8 * 8 * 8];
+	uint32_t index = 0;
 
-	const int comp0 = (int)XArg;
-	for (int comp1 = 0; comp1 < 8; ++comp1)
-	{
-		for (int comp2 = 0; comp2 < 8; ++comp2)
-		{
-			for (int comp3 = 0; comp3 < 8; ++comp3)
-			{
-				INFO("vector_mix<" << comp0 << ", " << comp1 << ", " << comp2 << ", " << comp3 << ">");
-				REQUIRE(vector_mix_results[comp0][comp1][comp2][comp3] == true);
-			}
-		}
-	}
+#define RTM_TEST_MIX_XYZ(comp0, comp1, comp2) \
+	results[index++] = vector_mix<comp0, comp1, comp2, mix4::x>(test_value0, test_value1); \
+	results[index++] = vector_mix<comp0, comp1, comp2, mix4::y>(test_value0, test_value1); \
+	results[index++] = vector_mix<comp0, comp1, comp2, mix4::z>(test_value0, test_value1); \
+	results[index++] = vector_mix<comp0, comp1, comp2, mix4::w>(test_value0, test_value1); \
+	results[index++] = vector_mix<comp0, comp1, comp2, mix4::a>(test_value0, test_value1); \
+	results[index++] = vector_mix<comp0, comp1, comp2, mix4::b>(test_value0, test_value1); \
+	results[index++] = vector_mix<comp0, comp1, comp2, mix4::c>(test_value0, test_value1); \
+	results[index++] = vector_mix<comp0, comp1, comp2, mix4::d>(test_value0, test_value1)
+
+#define RTM_TEST_MIX_XY(comp0, comp1) \
+	RTM_TEST_MIX_XYZ(comp0, comp1, mix4::x); \
+	RTM_TEST_MIX_XYZ(comp0, comp1, mix4::y); \
+	RTM_TEST_MIX_XYZ(comp0, comp1, mix4::z); \
+	RTM_TEST_MIX_XYZ(comp0, comp1, mix4::w); \
+	RTM_TEST_MIX_XYZ(comp0, comp1, mix4::a); \
+	RTM_TEST_MIX_XYZ(comp0, comp1, mix4::b); \
+	RTM_TEST_MIX_XYZ(comp0, comp1, mix4::c); \
+	RTM_TEST_MIX_XYZ(comp0, comp1, mix4::d)
+
+#define RTM_TEST_MIX_X(comp0) \
+	RTM_TEST_MIX_XY(comp0, mix4::x); \
+	RTM_TEST_MIX_XY(comp0, mix4::y); \
+	RTM_TEST_MIX_XY(comp0, mix4::z); \
+	RTM_TEST_MIX_XY(comp0, mix4::w); \
+	RTM_TEST_MIX_XY(comp0, mix4::a); \
+	RTM_TEST_MIX_XY(comp0, mix4::b); \
+	RTM_TEST_MIX_XY(comp0, mix4::c); \
+	RTM_TEST_MIX_XY(comp0, mix4::d)
+
+	// This generates 8*8*8*8 = 4096 unit tests... it takes a while to compile and uses a lot of stack space
+	RTM_TEST_MIX_X(mix4::x);
+	RTM_TEST_MIX_X(mix4::y);
+	RTM_TEST_MIX_X(mix4::z);
+	RTM_TEST_MIX_X(mix4::w);
+	RTM_TEST_MIX_X(mix4::a);
+	RTM_TEST_MIX_X(mix4::b);
+	RTM_TEST_MIX_X(mix4::c);
+	RTM_TEST_MIX_X(mix4::d);
+
+	index = 0;
+
+	for (int comp0 = 0; comp0 < 8; ++comp0)
+		for (int comp1 = 0; comp1 < 8; ++comp1)
+			for (int comp2 = 0; comp2 < 8; ++comp2)
+				for (int comp3 = 0; comp3 < 8; ++comp3)
+				{
+					INFO("vector_mix<" << comp0 << ", " << comp1 << ", " << comp2 << ", " << comp3 << ">");
+
+					const Vector4Type expected = vector_set(
+						rtm_impl::is_mix_xyzw((mix4)comp0) ? test_value0_flt[comp0 - (int)mix4::x] : test_value1_flt[comp0 - (int)mix4::a],
+						rtm_impl::is_mix_xyzw((mix4)comp1) ? test_value0_flt[comp1 - (int)mix4::x] : test_value1_flt[comp1 - (int)mix4::a],
+						rtm_impl::is_mix_xyzw((mix4)comp2) ? test_value0_flt[comp2 - (int)mix4::x] : test_value1_flt[comp2 - (int)mix4::a],
+						rtm_impl::is_mix_xyzw((mix4)comp3) ? test_value0_flt[comp3 - (int)mix4::x] : test_value1_flt[comp3 - (int)mix4::a]);
+
+					REQUIRE(vector_all_near_equal(results[index], expected, threshold));
+
+					++index;
+				}
 
 #undef RTM_TEST_MIX_X
 #undef RTM_TEST_MIX_XY

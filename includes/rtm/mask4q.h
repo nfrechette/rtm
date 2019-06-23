@@ -37,7 +37,16 @@ namespace rtm
 	inline mask4q RTM_SIMD_CALL mask_set(uint64_t x, uint64_t y, uint64_t z, uint64_t w) RTM_NO_EXCEPT
 	{
 #if defined(RTM_SSE2_INTRINSICS)
+#if _MSC_VER >= 1920 && defined(_M_IX86)
+		// _mm_set_epi64x sets both doublewords to the same value when compiled for x86 with Visual Studio 2019 with optimizations turned on.
+		// An alternative instruction avoids this problem.  Note the high and low words are equal because mask components can only equal ~0 or 0.
+		return mask4q{
+			_mm_castsi128_pd(_mm_set_epi32(static_cast<uint32_t>(y), static_cast<uint32_t>(y), static_cast<uint32_t>(x), static_cast<uint32_t>(x))),
+			_mm_castsi128_pd(_mm_set_epi32(static_cast<uint32_t>(w), static_cast<uint32_t>(w), static_cast<uint32_t>(z), static_cast<uint32_t>(z)))
+		};
+#else
 		return mask4q{ _mm_castsi128_pd(_mm_set_epi64x(y, x)), _mm_castsi128_pd(_mm_set_epi64x(w, z)) };
+#endif
 #else
 		return mask4q{ x, y, z, w };
 #endif
