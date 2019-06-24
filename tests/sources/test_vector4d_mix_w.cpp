@@ -25,20 +25,7 @@
 
 #include "test_vector4_impl.h"
 
-TEST_CASE("vector4f math", "[math][vector4]")
+TEST_CASE("vector4d vector_mix<w * * *>", "[math][vector4]")
 {
-#if defined(RTM_NO_INTRINSICS)
-	const float threshold = 1.0e-4f;
-#else
-	const float threshold = 1.0e-5f;
-#endif
-
-	test_vector4_impl<float>(threshold);
-
-	const vector4f src = vector_set(-2.65f, 2.996113f, 0.68123521f, -5.9182f);
-	const vector4d dst = vector_cast(src);
-	REQUIRE(scalar_near_equal(vector_get_x(dst), -2.65, 1.0e-6));
-	REQUIRE(scalar_near_equal(vector_get_y(dst), 2.996113, 1.0e-6));
-	REQUIRE(scalar_near_equal(vector_get_z(dst), 0.68123521, 1.0e-6));
-	REQUIRE(scalar_near_equal(vector_get_w(dst), -5.9182, 1.0e-6));
+	test_vector_mix_impl<vector4d, double, mix4::w>(1.0e-9);
 }

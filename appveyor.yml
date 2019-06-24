@@ -2,12 +2,25 @@ version: 1.0.0.{build}
 
 environment:
   PYTHON: "C:\\Python33-x64"
-  VISUAL_STUDIO: "C:\\Program Files (x86)\\Microsoft Visual Studio"
 
 image:
 - Visual Studio 2015
 - Visual Studio 2017
 - Visual Studio 2019
+
+configuration:
+  - Debug
+  - Release
+
+platform:
+  - x86
+  - x64
+  - arm64
+
+matrix:
+  exclude:
+    - image: Visual Studio 2015
+      platform: arm64
 
 install:
 - cmd: >-
@@ -17,26 +30,14 @@ build_script:
 - cmd: >-
     IF "%APPVEYOR_BUILD_WORKER_IMAGE%"=="Visual Studio 2015" (SET COMPILER=vs2015)
 
-    IF "%APPVEYOR_BUILD_WORKER_IMAGE%"=="Visual Studio 2017" (SET COMPILER=vs2017 && SET ARM64_SUPPORTED=1)
+    IF "%APPVEYOR_BUILD_WORKER_IMAGE%"=="Visual Studio 2017" (SET COMPILER=vs2017)
 
-    IF "%APPVEYOR_BUILD_WORKER_IMAGE%"=="Visual Studio 2019" (SET COMPILER=vs2019 && SET ARM64_SUPPORTED=1)
+    IF "%APPVEYOR_BUILD_WORKER_IMAGE%"=="Visual Studio 2019" (SET COMPILER=vs2019)
 
-    IF "%APPVEYOR_BUILD_WORKER_IMAGE%"=="Visual Studio 2019" "%VISUAL_STUDIO%\\Installer\\vs_installershell.exe" modify --productId Microsoft.VisualStudio.Product.Community --channelId VisualStudio.16.Release --add Microsoft.VisualStudio.Component.VC.Tools.ARM64 --add Microsoft.VisualStudio.Component.VC.Runtimes.ARM64.Spectre --quiet
+    SET UNIT_TEST_FLAG=-unit_test
 
-    %PYTHON%\\python.exe make.py -clean -build -unit_test -compiler %COMPILER% -config Debug -cpu x86
+    IF "%platform%"=="arm64" (SET "UNIT_TEST_FLAG= ")
 
-    %PYTHON%\\python.exe make.py -clean -build -unit_test -compiler %COMPILER% -config Release -cpu x86
+    %PYTHON%\\python.exe make.py -build %UNIT_TEST_FLAG% -compiler %COMPILER% -config %configuration% -cpu %platform% -clean
 
-    %PYTHON%\\python.exe make.py -clean -build -unit_test -compiler %COMPILER% -config Release -cpu x86 -nosimd
-
-    %PYTHON%\\python.exe make.py -clean -build -unit_test -compiler %COMPILER% -config Debug -cpu x64
-
-    %PYTHON%\\python.exe make.py -clean -build -unit_test -compiler %COMPILER% -config Release -cpu x64
-
-    %PYTHON%\\python.exe make.py -clean -build -unit_test -compiler %COMPILER% -config Release -cpu x64 -nosimd
-
-    IF DEFINED ARM64_SUPPORTED %PYTHON%\\python.exe make.py -clean -build -compiler %COMPILER% -config Debug -cpu arm64
-
-    IF DEFINED ARM64_SUPPORTED %PYTHON%\\python.exe make.py -clean -build -compiler %COMPILER% -config Release -cpu arm64
-
-    IF DEFINED ARM64_SUPPORTED %PYTHON%\\python.exe make.py -clean -build -compiler %COMPILER% -config Release -cpu arm64 -nosimd
+    %PYTHON%\\python.exe make.py -build %UNIT_TEST_FLAG% -compiler %COMPILER% -config %configuration% -cpu %platform% -nosimd
