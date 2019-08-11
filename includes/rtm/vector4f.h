@@ -871,6 +871,23 @@ namespace rtm
 	}
 
 	//////////////////////////////////////////////////////////////////////////
+	// Returns true if all 2 components are less than, otherwise false: all(lhs < rhs)
+	//////////////////////////////////////////////////////////////////////////
+	inline bool RTM_SIMD_CALL vector_all_less_than2(vector4f_arg0 lhs, vector4f_arg1 rhs) RTM_NO_EXCEPT
+	{
+#if defined(RTM_SSE2_INTRINSICS)
+		return (_mm_movemask_ps(_mm_cmplt_ps(lhs, rhs)) & 0x3) == 0x3;
+#elif defined(RTM_NEON_INTRINSICS)
+		uint32x4_t mask = vcltq_f32(lhs, rhs);
+		uint8x8x2_t mask_0_8_1_9_2_10_3_11_4_12_5_13_6_14_7_15 = vzip_u8(vget_low_u8(mask), vget_high_u8(mask));
+		uint16x4x2_t mask_0_8_4_12_1_9_5_13_2_10_6_14_3_11_7_15 = vzip_u16(mask_0_8_1_9_2_10_3_11_4_12_5_13_6_14_7_15.val[0], mask_0_8_1_9_2_10_3_11_4_12_5_13_6_14_7_15.val[1]);
+		return (vget_lane_u32(mask_0_8_4_12_1_9_5_13_2_10_6_14_3_11_7_15.val[0], 0) & 0x0000FFFFu) == 0x0000FFFFu;
+#else
+		return lhs.x < rhs.x && lhs.y < rhs.y;
+#endif
+	}
+
+	//////////////////////////////////////////////////////////////////////////
 	// Returns true if all 3 components are less than, otherwise false: all(lhs < rhs)
 	//////////////////////////////////////////////////////////////////////////
 	inline bool RTM_SIMD_CALL vector_all_less_than3(vector4f_arg0 lhs, vector4f_arg1 rhs) RTM_NO_EXCEPT
@@ -901,6 +918,23 @@ namespace rtm
 		return vget_lane_u32(mask_0_8_4_12_1_9_5_13_2_10_6_14_3_11_7_15.val[0], 0) != 0;
 #else
 		return lhs.x < rhs.x || lhs.y < rhs.y || lhs.z < rhs.z || lhs.w < rhs.w;
+#endif
+	}
+
+	//////////////////////////////////////////////////////////////////////////
+	// Returns true if any 2 components are less than, otherwise false: any(lhs < rhs)
+	//////////////////////////////////////////////////////////////////////////
+	inline bool RTM_SIMD_CALL vector_any_less_than2(vector4f_arg0 lhs, vector4f_arg1 rhs) RTM_NO_EXCEPT
+	{
+#if defined(RTM_SSE2_INTRINSICS)
+		return (_mm_movemask_ps(_mm_cmplt_ps(lhs, rhs)) & 0x3) != 0;
+#elif defined(RTM_NEON_INTRINSICS)
+		uint32x4_t mask = vcltq_f32(lhs, rhs);
+		uint8x8x2_t mask_0_8_1_9_2_10_3_11_4_12_5_13_6_14_7_15 = vzip_u8(vget_low_u8(mask), vget_high_u8(mask));
+		uint16x4x2_t mask_0_8_4_12_1_9_5_13_2_10_6_14_3_11_7_15 = vzip_u16(mask_0_8_1_9_2_10_3_11_4_12_5_13_6_14_7_15.val[0], mask_0_8_1_9_2_10_3_11_4_12_5_13_6_14_7_15.val[1]);
+		return (vget_lane_u32(mask_0_8_4_12_1_9_5_13_2_10_6_14_3_11_7_15.val[0], 0) & 0x0000FFFFu) != 0;
+#else
+		return lhs.x < rhs.x || lhs.y < rhs.y;
 #endif
 	}
 
@@ -939,6 +973,23 @@ namespace rtm
 	}
 
 	//////////////////////////////////////////////////////////////////////////
+	// Returns true if all 2 components are less equal, otherwise false: all(lhs <= rhs)
+	//////////////////////////////////////////////////////////////////////////
+	inline bool RTM_SIMD_CALL vector_all_less_equal2(vector4f_arg0 lhs, vector4f_arg1 rhs) RTM_NO_EXCEPT
+	{
+#if defined(RTM_SSE2_INTRINSICS)
+		return (_mm_movemask_ps(_mm_cmple_ps(lhs, rhs)) & 0x3) == 0x3;
+#elif defined(RTM_NEON_INTRINSICS)
+		uint32x4_t mask = vcleq_f32(lhs, rhs);
+		uint8x8x2_t mask_0_8_1_9_2_10_3_11_4_12_5_13_6_14_7_15 = vzip_u8(vget_low_u8(mask), vget_high_u8(mask));
+		uint16x4x2_t mask_0_8_4_12_1_9_5_13_2_10_6_14_3_11_7_15 = vzip_u16(mask_0_8_1_9_2_10_3_11_4_12_5_13_6_14_7_15.val[0], mask_0_8_1_9_2_10_3_11_4_12_5_13_6_14_7_15.val[1]);
+		return (vget_lane_u32(mask_0_8_4_12_1_9_5_13_2_10_6_14_3_11_7_15.val[0], 0) & 0x0000FFFFu) == 0x0000FFFFu;
+#else
+		return lhs.x <= rhs.x && lhs.y <= rhs.y;
+#endif
+	}
+
+	//////////////////////////////////////////////////////////////////////////
 	// Returns true if all 3 components are less equal, otherwise false: all(lhs <= rhs)
 	//////////////////////////////////////////////////////////////////////////
 	inline bool RTM_SIMD_CALL vector_all_less_equal3(vector4f_arg0 lhs, vector4f_arg1 rhs) RTM_NO_EXCEPT
@@ -969,6 +1020,23 @@ namespace rtm
 		return vget_lane_u32(mask_0_8_4_12_1_9_5_13_2_10_6_14_3_11_7_15.val[0], 0) != 0;
 #else
 		return lhs.x <= rhs.x || lhs.y <= rhs.y || lhs.z <= rhs.z || lhs.w <= rhs.w;
+#endif
+	}
+
+	//////////////////////////////////////////////////////////////////////////
+	// Returns true if any 2 components are less equal, otherwise false: any(lhs <= rhs)
+	//////////////////////////////////////////////////////////////////////////
+	inline bool RTM_SIMD_CALL vector_any_less_equal2(vector4f_arg0 lhs, vector4f_arg1 rhs) RTM_NO_EXCEPT
+	{
+#if defined(RTM_SSE2_INTRINSICS)
+		return (_mm_movemask_ps(_mm_cmple_ps(lhs, rhs)) & 0x3) != 0;
+#elif defined(RTM_NEON_INTRINSICS)
+		uint32x4_t mask = vcleq_f32(lhs, rhs);
+		uint8x8x2_t mask_0_8_1_9_2_10_3_11_4_12_5_13_6_14_7_15 = vzip_u8(vget_low_u8(mask), vget_high_u8(mask));
+		uint16x4x2_t mask_0_8_4_12_1_9_5_13_2_10_6_14_3_11_7_15 = vzip_u16(mask_0_8_1_9_2_10_3_11_4_12_5_13_6_14_7_15.val[0], mask_0_8_1_9_2_10_3_11_4_12_5_13_6_14_7_15.val[1]);
+		return (vget_lane_u32(mask_0_8_4_12_1_9_5_13_2_10_6_14_3_11_7_15.val[0], 0) & 0x0000FFFFu) != 0;
+#else
+		return lhs.x <= rhs.x || lhs.y <= rhs.y;
 #endif
 	}
 
@@ -1007,6 +1075,23 @@ namespace rtm
 	}
 
 	//////////////////////////////////////////////////////////////////////////
+	// Returns true if all 2 components are greater equal, otherwise false: all(lhs >= rhs)
+	//////////////////////////////////////////////////////////////////////////
+	inline bool RTM_SIMD_CALL vector_all_greater_equal2(vector4f_arg0 lhs, vector4f_arg1 rhs) RTM_NO_EXCEPT
+	{
+#if defined(RTM_SSE2_INTRINSICS)
+		return (_mm_movemask_ps(_mm_cmpge_ps(lhs, rhs)) & 0x3) == 0x3;
+#elif defined(RTM_NEON_INTRINSICS)
+		uint32x4_t mask = vcgeq_f32(lhs, rhs);
+		uint8x8x2_t mask_0_8_1_9_2_10_3_11_4_12_5_13_6_14_7_15 = vzip_u8(vget_low_u8(mask), vget_high_u8(mask));
+		uint16x4x2_t mask_0_8_4_12_1_9_5_13_2_10_6_14_3_11_7_15 = vzip_u16(mask_0_8_1_9_2_10_3_11_4_12_5_13_6_14_7_15.val[0], mask_0_8_1_9_2_10_3_11_4_12_5_13_6_14_7_15.val[1]);
+		return (vget_lane_u32(mask_0_8_4_12_1_9_5_13_2_10_6_14_3_11_7_15.val[0], 0) & 0x0000FFFFu) == 0x0000FFFFu;
+#else
+		return lhs.x >= rhs.x && lhs.y >= rhs.y;
+#endif
+	}
+
+	//////////////////////////////////////////////////////////////////////////
 	// Returns true if all 3 components are greater equal, otherwise false: all(lhs >= rhs)
 	//////////////////////////////////////////////////////////////////////////
 	inline bool RTM_SIMD_CALL vector_all_greater_equal3(vector4f_arg0 lhs, vector4f_arg1 rhs) RTM_NO_EXCEPT
@@ -1041,6 +1126,23 @@ namespace rtm
 	}
 
 	//////////////////////////////////////////////////////////////////////////
+	// Returns true if any 2 components are greater equal, otherwise false: any(lhs >= rhs)
+	//////////////////////////////////////////////////////////////////////////
+	inline bool RTM_SIMD_CALL vector_any_greater_equal2(vector4f_arg0 lhs, vector4f_arg1 rhs) RTM_NO_EXCEPT
+	{
+#if defined(RTM_SSE2_INTRINSICS)
+		return (_mm_movemask_ps(_mm_cmpge_ps(lhs, rhs)) & 0x3) != 0;
+#elif defined(RTM_NEON_INTRINSICS)
+		uint32x4_t mask = vcgeq_f32(lhs, rhs);
+		uint8x8x2_t mask_0_8_1_9_2_10_3_11_4_12_5_13_6_14_7_15 = vzip_u8(vget_low_u8(mask), vget_high_u8(mask));
+		uint16x4x2_t mask_0_8_4_12_1_9_5_13_2_10_6_14_3_11_7_15 = vzip_u16(mask_0_8_1_9_2_10_3_11_4_12_5_13_6_14_7_15.val[0], mask_0_8_1_9_2_10_3_11_4_12_5_13_6_14_7_15.val[1]);
+		return (vget_lane_u32(mask_0_8_4_12_1_9_5_13_2_10_6_14_3_11_7_15.val[0], 0) & 0x0000FFFFu) != 0;
+#else
+		return lhs.x >= rhs.x || lhs.y >= rhs.y;
+#endif
+	}
+
+	//////////////////////////////////////////////////////////////////////////
 	// Returns true if any 3 components are greater equal, otherwise false: any(lhs >= rhs)
 	//////////////////////////////////////////////////////////////////////////
 	inline bool RTM_SIMD_CALL vector_any_greater_equal3(vector4f_arg0 lhs, vector4f_arg1 rhs) RTM_NO_EXCEPT
@@ -1066,6 +1168,14 @@ namespace rtm
 	}
 
 	//////////////////////////////////////////////////////////////////////////
+	// Returns true if all 2 components are near equal, otherwise false: all(abs(lhs - rhs) < threshold)
+	//////////////////////////////////////////////////////////////////////////
+	inline bool RTM_SIMD_CALL vector_all_near_equal2(vector4f_arg0 lhs, vector4f_arg1 rhs, float threshold = 0.00001f) RTM_NO_EXCEPT
+	{
+		return vector_all_less_equal2(vector_abs(vector_sub(lhs, rhs)), vector_set(threshold));
+	}
+
+	//////////////////////////////////////////////////////////////////////////
 	// Returns true if all 3 components are near equal, otherwise false: all(abs(lhs - rhs) < threshold)
 	//////////////////////////////////////////////////////////////////////////
 	inline bool RTM_SIMD_CALL vector_all_near_equal3(vector4f_arg0 lhs, vector4f_arg1 rhs, float threshold = 0.00001f) RTM_NO_EXCEPT
@@ -1082,6 +1192,14 @@ namespace rtm
 	}
 
 	//////////////////////////////////////////////////////////////////////////
+	// Returns true if any 2 components are near equal, otherwise false: any(abs(lhs - rhs) < threshold)
+	//////////////////////////////////////////////////////////////////////////
+	inline bool RTM_SIMD_CALL vector_any_near_equal2(vector4f_arg0 lhs, vector4f_arg1 rhs, float threshold = 0.00001f) RTM_NO_EXCEPT
+	{
+		return vector_any_less_equal2(vector_abs(vector_sub(lhs, rhs)), vector_set(threshold));
+	}
+
+	//////////////////////////////////////////////////////////////////////////
 	// Returns true if any 3 components are near equal, otherwise false: any(abs(lhs - rhs) < threshold)
 	//////////////////////////////////////////////////////////////////////////
 	inline bool RTM_SIMD_CALL vector_any_near_equal3(vector4f_arg0 lhs, vector4f_arg1 rhs, float threshold = 0.00001f) RTM_NO_EXCEPT
@@ -1095,6 +1213,14 @@ namespace rtm
 	inline bool RTM_SIMD_CALL vector_is_finite(vector4f_arg0 input) RTM_NO_EXCEPT
 	{
 		return scalar_is_finite(vector_get_x(input)) && scalar_is_finite(vector_get_y(input)) && scalar_is_finite(vector_get_z(input)) && scalar_is_finite(vector_get_w(input));
+	}
+
+	//////////////////////////////////////////////////////////////////////////
+	// Returns true if all 2 components are finite (not NaN/Inf), otherwise false: all(finite(input))
+	//////////////////////////////////////////////////////////////////////////
+	inline bool RTM_SIMD_CALL vector_is_finite2(vector4f_arg0 input) RTM_NO_EXCEPT
+	{
+		return scalar_is_finite(vector_get_x(input)) && scalar_is_finite(vector_get_y(input));
 	}
 
 	//////////////////////////////////////////////////////////////////////////

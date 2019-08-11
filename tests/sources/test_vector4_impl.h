@@ -453,6 +453,12 @@ void test_vector4_impl(const FloatType threshold)
 	REQUIRE(vector_all_less_than(zero, vector_set(FloatType(0.0), FloatType(0.0), FloatType(0.0), FloatType(1.0))) == false);
 	REQUIRE(vector_all_less_than(zero, zero) == false);
 
+	REQUIRE(vector_all_less_than2(zero, vector_set(FloatType(1.0), FloatType(1.0), FloatType(1.0), FloatType(0.0))) == true);
+	REQUIRE(vector_all_less_than2(zero, vector_set(FloatType(1.0), FloatType(0.0), FloatType(0.0), FloatType(0.0))) == false);
+	REQUIRE(vector_all_less_than2(zero, vector_set(FloatType(0.0), FloatType(1.0), FloatType(0.0), FloatType(0.0))) == false);
+	REQUIRE(vector_all_less_than2(zero, vector_set(FloatType(0.0), FloatType(0.0), FloatType(1.0), FloatType(0.0))) == false);
+	REQUIRE(vector_all_less_than2(zero, zero) == false);
+
 	REQUIRE(vector_all_less_than3(zero, vector_set(FloatType(1.0), FloatType(1.0), FloatType(1.0), FloatType(0.0))) == true);
 	REQUIRE(vector_all_less_than3(zero, vector_set(FloatType(1.0), FloatType(0.0), FloatType(0.0), FloatType(0.0))) == false);
 	REQUIRE(vector_all_less_than3(zero, vector_set(FloatType(0.0), FloatType(1.0), FloatType(0.0), FloatType(0.0))) == false);
@@ -465,6 +471,12 @@ void test_vector4_impl(const FloatType threshold)
 	REQUIRE(vector_any_less_than(zero, vector_set(FloatType(0.0), FloatType(0.0), FloatType(1.0), FloatType(0.0))) == true);
 	REQUIRE(vector_any_less_than(zero, vector_set(FloatType(0.0), FloatType(0.0), FloatType(0.0), FloatType(1.0))) == true);
 	REQUIRE(vector_any_less_than(zero, zero) == false);
+
+	REQUIRE(vector_any_less_than2(zero, vector_set(FloatType(1.0), FloatType(1.0), FloatType(1.0), FloatType(0.0))) == true);
+	REQUIRE(vector_any_less_than2(zero, vector_set(FloatType(1.0), FloatType(0.0), FloatType(0.0), FloatType(0.0))) == true);
+	REQUIRE(vector_any_less_than2(zero, vector_set(FloatType(0.0), FloatType(1.0), FloatType(0.0), FloatType(0.0))) == true);
+	REQUIRE(vector_any_less_than2(zero, vector_set(FloatType(0.0), FloatType(0.0), FloatType(1.0), FloatType(0.0))) == false);
+	REQUIRE(vector_any_less_than2(zero, zero) == false);
 
 	REQUIRE(vector_any_less_than3(zero, vector_set(FloatType(1.0), FloatType(1.0), FloatType(1.0), FloatType(0.0))) == true);
 	REQUIRE(vector_any_less_than3(zero, vector_set(FloatType(1.0), FloatType(0.0), FloatType(0.0), FloatType(0.0))) == true);
@@ -483,6 +495,15 @@ void test_vector4_impl(const FloatType threshold)
 	REQUIRE(vector_all_less_equal(zero, vector_set(FloatType(0.0), FloatType(0.0), FloatType(0.0), FloatType(-1.0))) == false);
 	REQUIRE(vector_all_less_equal(zero, zero) == true);
 
+	REQUIRE(vector_all_less_equal2(zero, vector_set(FloatType(1.0), FloatType(1.0), FloatType(1.0), FloatType(0.0))) == true);
+	REQUIRE(vector_all_less_equal2(zero, vector_set(FloatType(1.0), FloatType(0.0), FloatType(0.0), FloatType(0.0))) == true);
+	REQUIRE(vector_all_less_equal2(zero, vector_set(FloatType(0.0), FloatType(1.0), FloatType(0.0), FloatType(0.0))) == true);
+	REQUIRE(vector_all_less_equal2(zero, vector_set(FloatType(0.0), FloatType(0.0), FloatType(1.0), FloatType(0.0))) == true);
+	REQUIRE(vector_all_less_equal2(zero, vector_set(FloatType(-1.0), FloatType(0.0), FloatType(0.0), FloatType(0.0))) == false);
+	REQUIRE(vector_all_less_equal2(zero, vector_set(FloatType(0.0), FloatType(-1.0), FloatType(0.0), FloatType(0.0))) == false);
+	REQUIRE(vector_all_less_equal2(zero, vector_set(FloatType(0.0), FloatType(0.0), FloatType(-1.0), FloatType(0.0))) == true);
+	REQUIRE(vector_all_less_equal2(zero, zero) == true);
+
 	REQUIRE(vector_all_less_equal3(zero, vector_set(FloatType(1.0), FloatType(1.0), FloatType(1.0), FloatType(0.0))) == true);
 	REQUIRE(vector_all_less_equal3(zero, vector_set(FloatType(1.0), FloatType(0.0), FloatType(0.0), FloatType(0.0))) == true);
 	REQUIRE(vector_all_less_equal3(zero, vector_set(FloatType(0.0), FloatType(1.0), FloatType(0.0), FloatType(0.0))) == true);
@@ -499,6 +520,13 @@ void test_vector4_impl(const FloatType threshold)
 	REQUIRE(vector_any_less_equal(zero, vector_set(FloatType(-1.0), FloatType(-1.0), FloatType(-1.0), FloatType(1.0))) == true);
 	REQUIRE(vector_any_less_equal(zero, vector_set(FloatType(-1.0), FloatType(-1.0), FloatType(-1.0), FloatType(-1.0))) == false);
 	REQUIRE(vector_any_less_equal(zero, zero) == true);
+
+	REQUIRE(vector_any_less_equal2(zero, vector_set(FloatType(1.0), FloatType(1.0), FloatType(1.0), FloatType(0.0))) == true);
+	REQUIRE(vector_any_less_equal2(zero, vector_set(FloatType(1.0), FloatType(-1.0), FloatType(-1.0), FloatType(0.0))) == true);
+	REQUIRE(vector_any_less_equal2(zero, vector_set(FloatType(-1.0), FloatType(1.0), FloatType(-1.0), FloatType(0.0))) == true);
+	REQUIRE(vector_any_less_equal2(zero, vector_set(FloatType(-1.0), FloatType(-1.0), FloatType(1.0), FloatType(0.0))) == false);
+	REQUIRE(vector_any_less_equal2(zero, vector_set(FloatType(-1.0), FloatType(-1.0), FloatType(-1.0), FloatType(0.0))) == false);
+	REQUIRE(vector_any_less_equal2(zero, zero) == true);
 
 	REQUIRE(vector_any_less_equal3(zero, vector_set(FloatType(1.0), FloatType(1.0), FloatType(1.0), FloatType(0.0))) == true);
 	REQUIRE(vector_any_less_equal3(zero, vector_set(FloatType(1.0), FloatType(-1.0), FloatType(-1.0), FloatType(0.0))) == true);
@@ -518,6 +546,16 @@ void test_vector4_impl(const FloatType threshold)
 	REQUIRE(vector_all_greater_equal(vector_set(FloatType(-1.0), FloatType(-1.0), FloatType(-1.0), FloatType(0.0)), zero) == false);
 	REQUIRE(vector_all_greater_equal(vector_set(FloatType(-1.0), FloatType(-1.0), FloatType(-1.0), FloatType(-1.0)), zero) == false);
 	REQUIRE(vector_all_greater_equal(zero, zero) == true);
+
+	REQUIRE(vector_all_greater_equal2(vector_set(FloatType(1.0), FloatType(1.0), FloatType(1.0), FloatType(0.0)), zero) == true);
+	REQUIRE(vector_all_greater_equal2(vector_set(FloatType(1.0), FloatType(-1.0), FloatType(-1.0), FloatType(0.0)), zero) == false);
+	REQUIRE(vector_all_greater_equal2(vector_set(FloatType(-1.0), FloatType(1.0), FloatType(-1.0), FloatType(0.0)), zero) == false);
+	REQUIRE(vector_all_greater_equal2(vector_set(FloatType(-1.0), FloatType(-1.0), FloatType(1.0), FloatType(0.0)), zero) == false);
+	REQUIRE(vector_all_greater_equal2(vector_set(FloatType(0.0), FloatType(-1.0), FloatType(-1.0), FloatType(0.0)), zero) == false);
+	REQUIRE(vector_all_greater_equal2(vector_set(FloatType(-1.0), FloatType(0.0), FloatType(-1.0), FloatType(0.0)), zero) == false);
+	REQUIRE(vector_all_greater_equal2(vector_set(FloatType(-1.0), FloatType(-1.0), FloatType(0.0), FloatType(0.0)), zero) == false);
+	REQUIRE(vector_all_greater_equal2(vector_set(FloatType(-1.0), FloatType(-1.0), FloatType(-1.0), FloatType(0.0)), zero) == false);
+	REQUIRE(vector_all_greater_equal2(zero, zero) == true);
 
 	REQUIRE(vector_all_greater_equal3(vector_set(FloatType(1.0), FloatType(1.0), FloatType(1.0), FloatType(0.0)), zero) == true);
 	REQUIRE(vector_all_greater_equal3(vector_set(FloatType(1.0), FloatType(-1.0), FloatType(-1.0), FloatType(0.0)), zero) == false);
@@ -541,6 +579,16 @@ void test_vector4_impl(const FloatType threshold)
 	REQUIRE(vector_any_greater_equal(vector_set(FloatType(-1.0), FloatType(-1.0), FloatType(-1.0), FloatType(-1.0)), zero) == false);
 	REQUIRE(vector_any_greater_equal(zero, zero) == true);
 
+	REQUIRE(vector_any_greater_equal2(vector_set(FloatType(1.0), FloatType(1.0), FloatType(1.0), FloatType(0.0)), zero) == true);
+	REQUIRE(vector_any_greater_equal2(vector_set(FloatType(1.0), FloatType(-1.0), FloatType(-1.0), FloatType(0.0)), zero) == true);
+	REQUIRE(vector_any_greater_equal2(vector_set(FloatType(-1.0), FloatType(1.0), FloatType(-1.0), FloatType(0.0)), zero) == true);
+	REQUIRE(vector_any_greater_equal2(vector_set(FloatType(-1.0), FloatType(-1.0), FloatType(1.0), FloatType(0.0)), zero) == false);
+	REQUIRE(vector_any_greater_equal2(vector_set(FloatType(0.0), FloatType(-1.0), FloatType(-1.0), FloatType(0.0)), zero) == true);
+	REQUIRE(vector_any_greater_equal2(vector_set(FloatType(-1.0), FloatType(0.0), FloatType(-1.0), FloatType(0.0)), zero) == true);
+	REQUIRE(vector_any_greater_equal2(vector_set(FloatType(-1.0), FloatType(-1.0), FloatType(0.0), FloatType(0.0)), zero) == false);
+	REQUIRE(vector_any_greater_equal2(vector_set(FloatType(-1.0), FloatType(-1.0), FloatType(-1.0), FloatType(0.0)), zero) == false);
+	REQUIRE(vector_any_greater_equal2(zero, zero) == true);
+
 	REQUIRE(vector_any_greater_equal3(vector_set(FloatType(1.0), FloatType(1.0), FloatType(1.0), FloatType(0.0)), zero) == true);
 	REQUIRE(vector_any_greater_equal3(vector_set(FloatType(1.0), FloatType(-1.0), FloatType(-1.0), FloatType(0.0)), zero) == true);
 	REQUIRE(vector_any_greater_equal3(vector_set(FloatType(-1.0), FloatType(1.0), FloatType(-1.0), FloatType(0.0)), zero) == true);
@@ -555,6 +603,11 @@ void test_vector4_impl(const FloatType threshold)
 	REQUIRE(vector_all_near_equal(zero, vector_set(FloatType(1.0), FloatType(1.0), FloatType(1.0), FloatType(1.0)), FloatType(1.0001)) == true);
 	REQUIRE(vector_all_near_equal(zero, vector_set(FloatType(1.0), FloatType(1.0), FloatType(1.0), FloatType(1.0)), FloatType(1.0)) == true);
 	REQUIRE(vector_all_near_equal(zero, vector_set(FloatType(1.0), FloatType(1.0), FloatType(1.0), FloatType(1.0)), FloatType(0.9999)) == false);
+
+	REQUIRE(vector_all_near_equal2(zero, zero, threshold) == true);
+	REQUIRE(vector_all_near_equal2(zero, vector_set(FloatType(1.0), FloatType(1.0), FloatType(1.0), FloatType(2.0)), FloatType(1.0001)) == true);
+	REQUIRE(vector_all_near_equal2(zero, vector_set(FloatType(1.0), FloatType(1.0), FloatType(1.0), FloatType(2.0)), FloatType(1.0)) == true);
+	REQUIRE(vector_all_near_equal2(zero, vector_set(FloatType(1.0), FloatType(1.0), FloatType(1.0), FloatType(2.0)), FloatType(0.9999)) == false);
 
 	REQUIRE(vector_all_near_equal3(zero, zero, threshold) == true);
 	REQUIRE(vector_all_near_equal3(zero, vector_set(FloatType(1.0), FloatType(1.0), FloatType(1.0), FloatType(2.0)), FloatType(1.0001)) == true);
@@ -571,6 +624,15 @@ void test_vector4_impl(const FloatType threshold)
 	REQUIRE(vector_any_near_equal(zero, vector_set(FloatType(2.0), FloatType(2.0), FloatType(1.0), FloatType(2.0)), FloatType(1.0)) == true);
 	REQUIRE(vector_any_near_equal(zero, vector_set(FloatType(2.0), FloatType(2.0), FloatType(2.0), FloatType(1.0)), FloatType(1.0)) == true);
 	REQUIRE(vector_any_near_equal(zero, vector_set(FloatType(1.0), FloatType(1.0), FloatType(1.0), FloatType(1.0)), FloatType(0.9999)) == false);
+
+	REQUIRE(vector_any_near_equal2(zero, zero, threshold) == true);
+	REQUIRE(vector_any_near_equal2(zero, vector_set(FloatType(1.0), FloatType(2.0), FloatType(2.0), FloatType(2.0)), FloatType(1.0001)) == true);
+	REQUIRE(vector_any_near_equal2(zero, vector_set(FloatType(2.0), FloatType(1.0), FloatType(2.0), FloatType(2.0)), FloatType(1.0001)) == true);
+	REQUIRE(vector_any_near_equal2(zero, vector_set(FloatType(2.0), FloatType(2.0), FloatType(1.0), FloatType(2.0)), FloatType(1.0001)) == false);
+	REQUIRE(vector_any_near_equal2(zero, vector_set(FloatType(1.0), FloatType(2.0), FloatType(2.0), FloatType(2.0)), FloatType(1.0)) == true);
+	REQUIRE(vector_any_near_equal2(zero, vector_set(FloatType(2.0), FloatType(1.0), FloatType(2.0), FloatType(2.0)), FloatType(1.0)) == true);
+	REQUIRE(vector_any_near_equal2(zero, vector_set(FloatType(2.0), FloatType(2.0), FloatType(1.0), FloatType(2.0)), FloatType(1.0)) == false);
+	REQUIRE(vector_any_near_equal2(zero, vector_set(FloatType(1.0), FloatType(1.0), FloatType(1.0), FloatType(2.0)), FloatType(0.9999)) == false);
 
 	REQUIRE(vector_any_near_equal3(zero, zero, threshold) == true);
 	REQUIRE(vector_any_near_equal3(zero, vector_set(FloatType(1.0), FloatType(2.0), FloatType(2.0), FloatType(2.0)), FloatType(1.0001)) == true);
@@ -594,6 +656,18 @@ void test_vector4_impl(const FloatType threshold)
 	REQUIRE(vector_is_finite(vector_set(FloatType(1.0), FloatType(nan), FloatType(1.0), FloatType(1.0))) == false);
 	REQUIRE(vector_is_finite(vector_set(FloatType(1.0), FloatType(1.0), FloatType(nan), FloatType(1.0))) == false);
 	REQUIRE(vector_is_finite(vector_set(FloatType(1.0), FloatType(1.0), FloatType(1.0), FloatType(nan))) == false);
+
+	REQUIRE(vector_is_finite2(zero) == true);
+	REQUIRE(vector_is_finite2(vector_set(inf, inf, inf, inf)) == false);
+	REQUIRE(vector_is_finite2(vector_set(inf, FloatType(1.0), FloatType(1.0), FloatType(1.0))) == false);
+	REQUIRE(vector_is_finite2(vector_set(FloatType(1.0), FloatType(inf), FloatType(1.0), FloatType(1.0))) == false);
+	REQUIRE(vector_is_finite2(vector_set(FloatType(1.0), FloatType(1.0), FloatType(inf), FloatType(1.0))) == true);
+	REQUIRE(vector_is_finite2(vector_set(FloatType(1.0), FloatType(1.0), FloatType(1.0), FloatType(inf))) == true);
+	REQUIRE(vector_is_finite2(vector_set(nan, nan, nan, nan)) == false);
+	REQUIRE(vector_is_finite2(vector_set(nan, FloatType(1.0), FloatType(1.0), FloatType(1.0))) == false);
+	REQUIRE(vector_is_finite2(vector_set(FloatType(1.0), FloatType(nan), FloatType(1.0), FloatType(1.0))) == false);
+	REQUIRE(vector_is_finite2(vector_set(FloatType(1.0), FloatType(1.0), FloatType(nan), FloatType(1.0))) == true);
+	REQUIRE(vector_is_finite2(vector_set(FloatType(1.0), FloatType(1.0), FloatType(1.0), FloatType(nan))) == true);
 
 	REQUIRE(vector_is_finite3(zero) == true);
 	REQUIRE(vector_is_finite3(vector_set(inf, inf, inf, inf)) == false);
