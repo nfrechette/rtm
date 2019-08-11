@@ -30,23 +30,32 @@
 
 using namespace rtm;
 
-template<typename IntType>
+template<typename MaskType, typename IntType>
 static void test_mask_impl()
 {
 	{
-		REQUIRE(mask_get_x(mask_set(IntType(0), ~IntType(0), IntType(0), ~IntType(0))) == IntType(0));
-		REQUIRE(mask_get_y(mask_set(IntType(0), ~IntType(0), IntType(0), ~IntType(0))) == ~IntType(0));
-		REQUIRE(mask_get_z(mask_set(IntType(0), ~IntType(0), IntType(0), ~IntType(0))) == IntType(0));
-		REQUIRE(mask_get_w(mask_set(IntType(0), ~IntType(0), IntType(0), ~IntType(0))) == ~IntType(0));
+		const MaskType mask = mask_set(IntType(0), ~IntType(0), IntType(0), ~IntType(0));
+		REQUIRE(mask_get_x(mask) == IntType(0));
+		REQUIRE(mask_get_y(mask) == ~IntType(0));
+		REQUIRE(mask_get_z(mask) == IntType(0));
+		REQUIRE(mask_get_w(mask) == ~IntType(0));
+	}
+
+	{
+		const MaskType mask = mask_set(false, true, false, true);
+		REQUIRE(mask_get_x(mask) == IntType(0));
+		REQUIRE(mask_get_y(mask) == ~IntType(0));
+		REQUIRE(mask_get_z(mask) == IntType(0));
+		REQUIRE(mask_get_w(mask) == ~IntType(0));
 	}
 }
 
 TEST_CASE("mask4i math", "[math][mask]")
 {
-	test_mask_impl<uint32_t>();
+	test_mask_impl<mask4i, uint32_t>();
 }
 
-TEST_CASE("mask4d math", "[math][mask]")
+TEST_CASE("mask4q math", "[math][mask]")
 {
-	test_mask_impl<uint64_t>();
+	test_mask_impl<mask4q, uint64_t>();
 }
