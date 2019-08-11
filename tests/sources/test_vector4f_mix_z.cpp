@@ -23,7 +23,7 @@
 // SOFTWARE.
 ////////////////////////////////////////////////////////////////////////////////
 
-#include "test_vector4_impl.h"
+#include "test_vector4_mix_impl.h"
 
 TEST_CASE("vector4f vector_mix<z * * *>", "[math][vector4]")
 {
