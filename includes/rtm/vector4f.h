@@ -1209,6 +1209,22 @@ namespace rtm
 		const mask4i mask = vector_greater_equal(input, vector_zero());
 		return vector_select(mask, vector_set(1.0f), vector_set(-1.0f));
 	}
+
+	//////////////////////////////////////////////////////////////////////////
+	// Returns per component the rounded input using a symmetric algorithm.
+	// symmetric_round(1.5) = 2.0
+	// symmetric_round(1.2) = 1.0
+	// symmetric_round(-1.5) = -2.0
+	// symmetric_round(-1.2) = -1.0
+	//////////////////////////////////////////////////////////////////////////
+	inline vector4f RTM_SIMD_CALL vector_symmetric_round(vector4f_arg0 input) RTM_NO_EXCEPT
+	{
+		const vector4f half = vector_set(0.5f);
+		const vector4f floored = vector_floor(vector_add(input, half));
+		const vector4f ceiled = vector_ceil(vector_sub(input, half));
+		const mask4i is_greater_equal = vector_greater_equal(input, vector_zero());
+		return vector_select(is_greater_equal, floored, ceiled);
+	}
 }
 
 RTM_IMPL_FILE_PRAGMA_POP
