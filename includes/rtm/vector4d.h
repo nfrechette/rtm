@@ -682,6 +682,19 @@ namespace rtm
 	}
 
 	//////////////////////////////////////////////////////////////////////////
+	// Returns true if all 2 components are less than, otherwise false: all(lhs < rhs)
+	//////////////////////////////////////////////////////////////////////////
+	inline bool vector_all_less_than2(const vector4d& lhs, const vector4d& rhs) RTM_NO_EXCEPT
+	{
+#if defined(RTM_SSE2_INTRINSICS)
+		__m128d xy_lt_pd = _mm_cmplt_pd(lhs.xy, rhs.xy);
+		return _mm_movemask_pd(xy_lt_pd) == 3;
+#else
+		return lhs.x < rhs.x && lhs.y < rhs.y;
+#endif
+	}
+
+	//////////////////////////////////////////////////////////////////////////
 	// Returns true if all 3 components are less than, otherwise false: all(lhs < rhs)
 	//////////////////////////////////////////////////////////////////////////
 	inline bool vector_all_less_than3(const vector4d& lhs, const vector4d& rhs) RTM_NO_EXCEPT
@@ -706,6 +719,19 @@ namespace rtm
 		return (_mm_movemask_pd(xy_lt_pd) | _mm_movemask_pd(zw_lt_pd)) != 0;
 #else
 		return lhs.x < rhs.x || lhs.y < rhs.y || lhs.z < rhs.z || lhs.w < rhs.w;
+#endif
+	}
+
+	//////////////////////////////////////////////////////////////////////////
+	// Returns true if any 2 components are less than, otherwise false: any(lhs < rhs)
+	//////////////////////////////////////////////////////////////////////////
+	inline bool vector_any_less_than2(const vector4d& lhs, const vector4d& rhs) RTM_NO_EXCEPT
+	{
+#if defined(RTM_SSE2_INTRINSICS)
+		__m128d xy_lt_pd = _mm_cmplt_pd(lhs.xy, rhs.xy);
+		return _mm_movemask_pd(xy_lt_pd) != 0;
+#else
+		return lhs.x < rhs.x || lhs.y < rhs.y;
 #endif
 	}
 
@@ -738,6 +764,19 @@ namespace rtm
 	}
 
 	//////////////////////////////////////////////////////////////////////////
+	// Returns true if all 2 components are less equal, otherwise false: all(lhs <= rhs)
+	//////////////////////////////////////////////////////////////////////////
+	inline bool vector_all_less_equal2(const vector4d& lhs, const vector4d& rhs) RTM_NO_EXCEPT
+	{
+#if defined(RTM_SSE2_INTRINSICS)
+		__m128d xy_le_pd = _mm_cmple_pd(lhs.xy, rhs.xy);
+		return _mm_movemask_pd(xy_le_pd) == 3;
+#else
+		return lhs.x <= rhs.x && lhs.y <= rhs.y;
+#endif
+	}
+
+	//////////////////////////////////////////////////////////////////////////
 	// Returns true if all 3 components are less equal, otherwise false: all(lhs <= rhs)
 	//////////////////////////////////////////////////////////////////////////
 	inline bool vector_all_less_equal3(const vector4d& lhs, const vector4d& rhs) RTM_NO_EXCEPT
@@ -762,6 +801,19 @@ namespace rtm
 		return (_mm_movemask_pd(xy_le_pd) | _mm_movemask_pd(zw_le_pd)) != 0;
 #else
 		return lhs.x <= rhs.x || lhs.y <= rhs.y || lhs.z <= rhs.z || lhs.w <= rhs.w;
+#endif
+	}
+
+	//////////////////////////////////////////////////////////////////////////
+	// Returns true if any 2 components are less equal, otherwise false: any(lhs <= rhs)
+	//////////////////////////////////////////////////////////////////////////
+	inline bool vector_any_less_equal2(const vector4d& lhs, const vector4d& rhs) RTM_NO_EXCEPT
+	{
+#if defined(RTM_SSE2_INTRINSICS)
+		__m128d xy_le_pd = _mm_cmple_pd(lhs.xy, rhs.xy);
+		return _mm_movemask_pd(xy_le_pd) != 0;
+#else
+		return lhs.x <= rhs.x || lhs.y <= rhs.y;
 #endif
 	}
 
@@ -794,6 +846,19 @@ namespace rtm
 	}
 
 	//////////////////////////////////////////////////////////////////////////
+	// Returns true if all 2 components are greater equal, otherwise false: all(lhs >= rhs)
+	//////////////////////////////////////////////////////////////////////////
+	inline bool vector_all_greater_equal2(const vector4d& lhs, const vector4d& rhs) RTM_NO_EXCEPT
+	{
+#if defined(RTM_SSE2_INTRINSICS)
+		__m128d xy_ge_pd = _mm_cmpge_pd(lhs.xy, rhs.xy);
+		return _mm_movemask_pd(xy_ge_pd) == 3;
+#else
+		return lhs.x >= rhs.x && lhs.y >= rhs.y;
+#endif
+	}
+
+	//////////////////////////////////////////////////////////////////////////
 	// Returns true if all 3 components are greater equal, otherwise false: all(lhs >= rhs)
 	//////////////////////////////////////////////////////////////////////////
 	inline bool vector_all_greater_equal3(const vector4d& lhs, const vector4d& rhs) RTM_NO_EXCEPT
@@ -822,6 +887,19 @@ namespace rtm
 	}
 
 	//////////////////////////////////////////////////////////////////////////
+	// Returns true if any 2 components are greater equal, otherwise false: any(lhs >= rhs)
+	//////////////////////////////////////////////////////////////////////////
+	inline bool vector_any_greater_equal2(const vector4d& lhs, const vector4d& rhs) RTM_NO_EXCEPT
+	{
+#if defined(RTM_SSE2_INTRINSICS)
+		__m128d xy_ge_pd = _mm_cmpge_pd(lhs.xy, rhs.xy);
+		return _mm_movemask_pd(xy_ge_pd) != 0;
+#else
+		return lhs.x >= rhs.x || lhs.y >= rhs.y;
+#endif
+	}
+
+	//////////////////////////////////////////////////////////////////////////
 	// Returns true if any 3 components are greater equal, otherwise false: any(lhs >= rhs)
 	//////////////////////////////////////////////////////////////////////////
 	inline bool vector_any_greater_equal3(const vector4d& lhs, const vector4d& rhs) RTM_NO_EXCEPT
@@ -844,6 +922,14 @@ namespace rtm
 	}
 
 	//////////////////////////////////////////////////////////////////////////
+	// Returns true if all 2 components are near equal, otherwise false: all(abs(lhs - rhs) < threshold)
+	//////////////////////////////////////////////////////////////////////////
+	inline bool vector_all_near_equal2(const vector4d& lhs, const vector4d& rhs, double threshold = 0.00001) RTM_NO_EXCEPT
+	{
+		return vector_all_less_equal2(vector_abs(vector_sub(lhs, rhs)), vector_set(threshold));
+	}
+
+	//////////////////////////////////////////////////////////////////////////
 	// Returns true if all 3 components are near equal, otherwise false: all(abs(lhs - rhs) < threshold)
 	//////////////////////////////////////////////////////////////////////////
 	inline bool vector_all_near_equal3(const vector4d& lhs, const vector4d& rhs, double threshold = 0.00001) RTM_NO_EXCEPT
@@ -860,6 +946,14 @@ namespace rtm
 	}
 
 	//////////////////////////////////////////////////////////////////////////
+	// Returns true if any 2 components are near equal, otherwise false: any(abs(lhs - rhs) < threshold)
+	//////////////////////////////////////////////////////////////////////////
+	inline bool vector_any_near_equal2(const vector4d& lhs, const vector4d& rhs, double threshold = 0.00001) RTM_NO_EXCEPT
+	{
+		return vector_any_less_equal2(vector_abs(vector_sub(lhs, rhs)), vector_set(threshold));
+	}
+
+	//////////////////////////////////////////////////////////////////////////
 	// Returns true if any 3 components are near equal, otherwise false: any(abs(lhs - rhs) < threshold)
 	//////////////////////////////////////////////////////////////////////////
 	inline bool vector_any_near_equal3(const vector4d& lhs, const vector4d& rhs, double threshold = 0.00001) RTM_NO_EXCEPT
@@ -873,6 +967,14 @@ namespace rtm
 	inline bool vector_is_finite(const vector4d& input) RTM_NO_EXCEPT
 	{
 		return scalar_is_finite(vector_get_x(input)) && scalar_is_finite(vector_get_y(input)) && scalar_is_finite(vector_get_z(input)) && scalar_is_finite(vector_get_w(input));
+	}
+
+	//////////////////////////////////////////////////////////////////////////
+	// Returns true if all 2 components are finite (not NaN/Inf), otherwise false: all(finite(input))
+	//////////////////////////////////////////////////////////////////////////
+	inline bool vector_is_finite2(const vector4d& input) RTM_NO_EXCEPT
+	{
+		return scalar_is_finite(vector_get_x(input)) && scalar_is_finite(vector_get_y(input));
 	}
 
 	//////////////////////////////////////////////////////////////////////////
