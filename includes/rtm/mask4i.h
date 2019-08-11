@@ -26,13 +26,14 @@
 
 #include "rtm/math.h"
 #include "rtm/impl/compiler_utils.h"
+#include "rtm/impl/mask_common.h"
 
 RTM_IMPL_FILE_PRAGMA_PUSH
 
 namespace rtm
 {
 	//////////////////////////////////////////////////////////////////////////
-	// Creates a mask4i from all 4 components.
+	// Creates a mask4i from all 4 integer components.
 	//////////////////////////////////////////////////////////////////////////
 	inline mask4i RTM_SIMD_CALL mask_set(uint32_t x, uint32_t y, uint32_t z, uint32_t w) RTM_NO_EXCEPT
 	{
