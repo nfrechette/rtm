@@ -417,7 +417,7 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	inline bool RTM_SIMD_CALL scalar_is_equal(scalarf_arg0 lhs, scalarf_arg1 rhs) RTM_NO_EXCEPT
 	{
-		return _mm_comieq_ss(lhs, rhs);
+		return static_cast<bool>(_mm_comieq_ss(lhs, rhs));	// Guaranteed to be 0 or 1 by the intrinsic documentation
 	}
 
 	//////////////////////////////////////////////////////////////////////////
@@ -425,7 +425,7 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	inline bool RTM_SIMD_CALL scalar_is_lower(scalarf_arg0 lhs, scalarf_arg1 rhs) RTM_NO_EXCEPT
 	{
-		return _mm_comilt_ss(lhs, rhs);
+		return static_cast<bool>(_mm_comilt_ss(lhs, rhs));	// Guaranteed to be 0 or 1 by the intrinsic documentation
 	}
 
 	//////////////////////////////////////////////////////////////////////////
