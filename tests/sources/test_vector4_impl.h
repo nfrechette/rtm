@@ -278,6 +278,13 @@ void test_vector4_impl(const FloatType threshold)
 	REQUIRE(vector_get_y(test_value1) == tmpf3.y);
 	REQUIRE(vector_get_z(test_value1) == tmpf3.z);
 
+	REQUIRE(vector_get_min_component(test_value0) == vector_get_z(test_value0));
+	REQUIRE(vector_get_min_component(test_value3) == vector_get_y(test_value3));
+	REQUIRE(vector_get_max_component(test_value0) == vector_get_w(test_value0));
+	REQUIRE(scalar_is_equal(vector_get_min_component(test_value0), (ScalarType)vector_as_scalar(vector_dup_z(test_value0))));
+	REQUIRE(scalar_is_equal(vector_get_min_component(test_value3), (ScalarType)vector_as_scalar(vector_dup_y(test_value3))));
+	REQUIRE(scalar_is_equal(vector_get_max_component(test_value0), (ScalarType)vector_as_scalar(vector_dup_w(test_value0))));
+
 	REQUIRE(vector_as_scalar(test_value1) == vector_get_x(test_value1));
 	REQUIRE(scalar_is_equal(vector_as_scalar(test_value1), scalar_set(vector_get_x(test_value1))));
 

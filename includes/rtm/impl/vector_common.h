@@ -393,6 +393,140 @@ namespace rtm
 
 			vector4d value;
 		};
+
+		//////////////////////////////////////////////////////////////////////////
+		// This is a helper struct to allow a single consistent API between
+		// various vector types when the semantics are identical but the return
+		// type differs. Implicit coercion is used to return the desired value
+		// at the call site.
+		//////////////////////////////////////////////////////////////////////////
+		struct vector4f_get_min_component
+		{
+			inline RTM_SIMD_CALL operator float() const RTM_NO_EXCEPT
+			{
+#if defined(RTM_SSE2_INTRINSICS)
+				__m128 zwzw = _mm_movehl_ps(value, value);
+				__m128 xz_yw_zz_ww = _mm_min_ps(value, zwzw);
+				__m128 yw_yw_yw_yw = _mm_shuffle_ps(xz_yw_zz_ww, xz_yw_zz_ww, _MM_SHUFFLE(1, 1, 1, 1));
+				return _mm_cvtss_f32(_mm_min_ps(xz_yw_zz_ww, yw_yw_yw_yw));
+#elif defined(RTM_NEON_INTRINSICS)
+				float32x2_t xy_zw = vpmin_f32(vget_low_f32(value), vget_high_f32(value));
+				return vget_lane_f32(vpmin_f32(xy_zw, xy_zw), 0);
+#else
+				return scalar_min(scalar_min(value.x, value.y), scalar_min(value.z, value.w));
+#endif
+			}
+
+#if defined(RTM_SSE2_INTRINSICS)
+			inline RTM_SIMD_CALL operator scalarf() const RTM_NO_EXCEPT
+			{
+				__m128 zwzw = _mm_movehl_ps(value, value);
+				__m128 xz_yw_zz_ww = _mm_min_ps(value, zwzw);
+				__m128 yw_yw_yw_yw = _mm_shuffle_ps(xz_yw_zz_ww, xz_yw_zz_ww, _MM_SHUFFLE(1, 1, 1, 1));
+				return _mm_min_ps(xz_yw_zz_ww, yw_yw_yw_yw);
+			}
+#endif
+
+			vector4f value;
+		};
+
+		//////////////////////////////////////////////////////////////////////////
+		// This is a helper struct to allow a single consistent API between
+		// various vector types when the semantics are identical but the return
+		// type differs. Implicit coercion is used to return the desired value
+		// at the call site.
+		//////////////////////////////////////////////////////////////////////////
+		struct vector4f_get_max_component
+		{
+			inline RTM_SIMD_CALL operator float() const RTM_NO_EXCEPT
+			{
+#if defined(RTM_SSE2_INTRINSICS)
+				__m128 zwzw = _mm_movehl_ps(value, value);
+				__m128 xz_yw_zz_ww = _mm_max_ps(value, zwzw);
+				__m128 yw_yw_yw_yw = _mm_shuffle_ps(xz_yw_zz_ww, xz_yw_zz_ww, _MM_SHUFFLE(1, 1, 1, 1));
+				return _mm_cvtss_f32(_mm_max_ps(xz_yw_zz_ww, yw_yw_yw_yw));
+#elif defined(RTM_NEON_INTRINSICS)
+				float32x2_t xy_zw = vpmax_f32(vget_low_f32(value), vget_high_f32(value));
+				return vget_lane_f32(vpmax_f32(xy_zw, xy_zw), 0);
+#else
+				return scalar_max(scalar_max(value.x, value.y), scalar_max(value.z, value.w));
+#endif
+			}
+
+#if defined(RTM_SSE2_INTRINSICS)
+			inline RTM_SIMD_CALL operator scalarf() const RTM_NO_EXCEPT
+			{
+				__m128 zwzw = _mm_movehl_ps(value, value);
+				__m128 xz_yw_zz_ww = _mm_max_ps(value, zwzw);
+				__m128 yw_yw_yw_yw = _mm_shuffle_ps(xz_yw_zz_ww, xz_yw_zz_ww, _MM_SHUFFLE(1, 1, 1, 1));
+				return _mm_max_ps(xz_yw_zz_ww, yw_yw_yw_yw);
+			}
+#endif
+
+			vector4f value;
+		};
+
+		//////////////////////////////////////////////////////////////////////////
+		// This is a helper struct to allow a single consistent API between
+		// various vector types when the semantics are identical but the return
+		// type differs. Implicit coercion is used to return the desired value
+		// at the call site.
+		//////////////////////////////////////////////////////////////////////////
+		struct vector4d_get_min_component
+		{
+			inline RTM_SIMD_CALL operator double() const RTM_NO_EXCEPT
+			{
+#if defined(RTM_SSE2_INTRINSICS)
+				__m128d xz_yw = _mm_min_pd(value.xy, value.zw);
+				__m128d yw_yw = _mm_shuffle_pd(xz_yw, xz_yw, 1);
+				return _mm_cvtsd_f64(_mm_min_pd(xz_yw, yw_yw));
+#else
+				return scalar_min(scalar_min(value.x, value.y), scalar_min(value.z, value.w));
+#endif
+			}
+
+#if defined(RTM_SSE2_INTRINSICS)
+			inline RTM_SIMD_CALL operator scalard() const RTM_NO_EXCEPT
+			{
+				__m128d xz_yw = _mm_min_pd(value.xy, value.zw);
+				__m128d yw_yw = _mm_shuffle_pd(xz_yw, xz_yw, 1);
+				return _mm_min_pd(xz_yw, yw_yw);
+			}
+#endif
+
+			vector4d value;
+		};
+
+		//////////////////////////////////////////////////////////////////////////
+		// This is a helper struct to allow a single consistent API between
+		// various vector types when the semantics are identical but the return
+		// type differs. Implicit coercion is used to return the desired value
+		// at the call site.
+		//////////////////////////////////////////////////////////////////////////
+		struct vector4d_get_max_component
+		{
+			inline RTM_SIMD_CALL operator double() const RTM_NO_EXCEPT
+			{
+#if defined(RTM_SSE2_INTRINSICS)
+				__m128d xz_yw = _mm_max_pd(value.xy, value.zw);
+				__m128d yw_yw = _mm_shuffle_pd(xz_yw, xz_yw, 1);
+				return _mm_cvtsd_f64(_mm_max_pd(xz_yw, yw_yw));
+#else
+				return scalar_max(scalar_max(value.x, value.y), scalar_max(value.z, value.w));
+#endif
+			}
+
+#if defined(RTM_SSE2_INTRINSICS)
+			inline RTM_SIMD_CALL operator scalard() const RTM_NO_EXCEPT
+			{
+				__m128d xz_yw = _mm_max_pd(value.xy, value.zw);
+				__m128d yw_yw = _mm_shuffle_pd(xz_yw, xz_yw, 1);
+				return _mm_max_pd(xz_yw, yw_yw);
+			}
+#endif
+
+			vector4d value;
+		};
 	}
 
 	//////////////////////////////////////////////////////////////////////////
