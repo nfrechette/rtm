@@ -190,6 +190,14 @@ namespace rtm
 	}
 
 	//////////////////////////////////////////////////////////////////////////
+	// Returns the linear interpolation of the two inputs at the specified alpha.
+	//////////////////////////////////////////////////////////////////////////
+	inline float scalar_lerp(float start, float end, float alpha) RTM_NO_EXCEPT
+	{
+		return ((end - start) * alpha) + start;
+	}
+
+	//////////////////////////////////////////////////////////////////////////
 	// Returns the sine of the input angle.
 	//////////////////////////////////////////////////////////////////////////
 	inline float scalar_sin(float angle) RTM_NO_EXCEPT
@@ -354,6 +362,14 @@ namespace rtm
 	inline scalarf RTM_SIMD_CALL scalar_mul_add(scalarf_arg0 s0, scalarf_arg1 s1, scalarf_arg2 s2) RTM_NO_EXCEPT
 	{
 		return _mm_add_ss(_mm_mul_ss(s0, s1), s2);
+	}
+
+	//////////////////////////////////////////////////////////////////////////
+	// Returns the linear interpolation of the two inputs at the specified alpha.
+	//////////////////////////////////////////////////////////////////////////
+	inline scalarf RTM_SIMD_CALL scalar_lerp(scalarf_arg0 start, scalarf_arg1 end, float alpha) RTM_NO_EXCEPT
+	{
+		return scalar_mul_add(scalar_sub(end, start), scalar_set(alpha), start);
 	}
 
 	//////////////////////////////////////////////////////////////////////////
