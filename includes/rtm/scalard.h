@@ -370,7 +370,7 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	inline bool RTM_SIMD_CALL scalar_is_equal(scalard lhs, scalard rhs) RTM_NO_EXCEPT
 	{
-		return static_cast<bool>(_mm_comieq_sd(lhs, rhs));	// Guaranteed to be 0 or 1 by the intrinsic documentation
+		return _mm_comieq_sd(lhs, rhs) != 0;
 	}
 
 	//////////////////////////////////////////////////////////////////////////
@@ -378,7 +378,7 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	inline bool RTM_SIMD_CALL scalar_is_lower(scalard lhs, scalard rhs) RTM_NO_EXCEPT
 	{
-		return static_cast<bool>(_mm_comilt_sd(lhs, rhs));	// Guaranteed to be 0 or 1 by the intrinsic documentation
+		return _mm_comilt_sd(lhs, rhs) != 0;
 	}
 
 	//////////////////////////////////////////////////////////////////////////
