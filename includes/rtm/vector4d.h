@@ -206,6 +206,22 @@ namespace rtm
 	}
 
 	//////////////////////////////////////////////////////////////////////////
+	// Returns the smallest component in the input vector as a scalar.
+	//////////////////////////////////////////////////////////////////////////
+	constexpr rtm_impl::vector4d_get_min_component vector_get_min_component(const vector4d& input) RTM_NO_EXCEPT
+	{
+		return rtm_impl::vector4d_get_min_component{ input };
+	}
+
+	//////////////////////////////////////////////////////////////////////////
+	// Returns the largest component in the input vector as a scalar.
+	//////////////////////////////////////////////////////////////////////////
+	constexpr rtm_impl::vector4d_get_max_component vector_get_max_component(const vector4d& input) RTM_NO_EXCEPT
+	{
+		return rtm_impl::vector4d_get_max_component{ input };
+	}
+
+	//////////////////////////////////////////////////////////////////////////
 	// Returns a floating point pointer to the vector4 data.
 	//////////////////////////////////////////////////////////////////////////
 	inline const double* vector_to_pointer(const vector4d& input) RTM_NO_EXCEPT
