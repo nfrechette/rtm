@@ -35,7 +35,7 @@ namespace rtm
 	{
 		//////////////////////////////////////////////////////////////////////////
 		// This is a helper struct to allow a single consistent API between
-		// various vector types when the semantics are identical but the return
+		// various scalar types when the semantics are identical but the return
 		// type differs. Implicit coercion is used to return the desired value
 		// at the call site.
 		//////////////////////////////////////////////////////////////////////////
@@ -56,6 +56,12 @@ namespace rtm
 			const float* ptr;
 		};
 
+		//////////////////////////////////////////////////////////////////////////
+		// This is a helper struct to allow a single consistent API between
+		// various scalar types when the semantics are identical but the return
+		// type differs. Implicit coercion is used to return the desired value
+		// at the call site.
+		//////////////////////////////////////////////////////////////////////////
 		struct scalar_loaderd
 		{
 			constexpr RTM_SIMD_CALL operator double() const RTM_NO_EXCEPT
