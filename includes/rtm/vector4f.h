@@ -894,10 +894,8 @@ namespace rtm
 #if defined(RTM_SSE2_INTRINSICS)
 		return (_mm_movemask_ps(_mm_cmplt_ps(lhs, rhs)) & 0x3) == 0x3;
 #elif defined(RTM_NEON_INTRINSICS)
-		uint32x4_t mask = vcltq_f32(lhs, rhs);
-		uint8x8x2_t mask_0_8_1_9_2_10_3_11_4_12_5_13_6_14_7_15 = vzip_u8(vget_low_u8(mask), vget_high_u8(mask));
-		uint16x4x2_t mask_0_8_4_12_1_9_5_13_2_10_6_14_3_11_7_15 = vzip_u16(mask_0_8_1_9_2_10_3_11_4_12_5_13_6_14_7_15.val[0], mask_0_8_1_9_2_10_3_11_4_12_5_13_6_14_7_15.val[1]);
-		return (vget_lane_u32(mask_0_8_4_12_1_9_5_13_2_10_6_14_3_11_7_15.val[0], 0) & 0x0000FFFFu) == 0x0000FFFFu;
+		uint32x2_t mask = vclt_f32(vget_low_f32(lhs), vget_low_f32(rhs));
+		return vget_lane_u64(mask, 0) == 0xFFFFFFFFFFFFFFFFu;
 #else
 		return lhs.x < rhs.x && lhs.y < rhs.y;
 #endif
@@ -945,10 +943,8 @@ namespace rtm
 #if defined(RTM_SSE2_INTRINSICS)
 		return (_mm_movemask_ps(_mm_cmplt_ps(lhs, rhs)) & 0x3) != 0;
 #elif defined(RTM_NEON_INTRINSICS)
-		uint32x4_t mask = vcltq_f32(lhs, rhs);
-		uint8x8x2_t mask_0_8_1_9_2_10_3_11_4_12_5_13_6_14_7_15 = vzip_u8(vget_low_u8(mask), vget_high_u8(mask));
-		uint16x4x2_t mask_0_8_4_12_1_9_5_13_2_10_6_14_3_11_7_15 = vzip_u16(mask_0_8_1_9_2_10_3_11_4_12_5_13_6_14_7_15.val[0], mask_0_8_1_9_2_10_3_11_4_12_5_13_6_14_7_15.val[1]);
-		return (vget_lane_u32(mask_0_8_4_12_1_9_5_13_2_10_6_14_3_11_7_15.val[0], 0) & 0x0000FFFFu) != 0;
+		uint32x2_t mask = vclt_f32(vget_low_f32(lhs), vget_low_f32(rhs));
+		return vget_lane_u64(mask, 0) != 0;
 #else
 		return lhs.x < rhs.x || lhs.y < rhs.y;
 #endif
@@ -996,10 +992,8 @@ namespace rtm
 #if defined(RTM_SSE2_INTRINSICS)
 		return (_mm_movemask_ps(_mm_cmple_ps(lhs, rhs)) & 0x3) == 0x3;
 #elif defined(RTM_NEON_INTRINSICS)
-		uint32x4_t mask = vcleq_f32(lhs, rhs);
-		uint8x8x2_t mask_0_8_1_9_2_10_3_11_4_12_5_13_6_14_7_15 = vzip_u8(vget_low_u8(mask), vget_high_u8(mask));
-		uint16x4x2_t mask_0_8_4_12_1_9_5_13_2_10_6_14_3_11_7_15 = vzip_u16(mask_0_8_1_9_2_10_3_11_4_12_5_13_6_14_7_15.val[0], mask_0_8_1_9_2_10_3_11_4_12_5_13_6_14_7_15.val[1]);
-		return (vget_lane_u32(mask_0_8_4_12_1_9_5_13_2_10_6_14_3_11_7_15.val[0], 0) & 0x0000FFFFu) == 0x0000FFFFu;
+		uint32x2_t mask = vcle_f32(vget_low_f32(lhs), vget_low_f32(rhs));
+		return vget_lane_u64(mask, 0) == 0xFFFFFFFFFFFFFFFFu;
 #else
 		return lhs.x <= rhs.x && lhs.y <= rhs.y;
 #endif
@@ -1047,10 +1041,8 @@ namespace rtm
 #if defined(RTM_SSE2_INTRINSICS)
 		return (_mm_movemask_ps(_mm_cmple_ps(lhs, rhs)) & 0x3) != 0;
 #elif defined(RTM_NEON_INTRINSICS)
-		uint32x4_t mask = vcleq_f32(lhs, rhs);
-		uint8x8x2_t mask_0_8_1_9_2_10_3_11_4_12_5_13_6_14_7_15 = vzip_u8(vget_low_u8(mask), vget_high_u8(mask));
-		uint16x4x2_t mask_0_8_4_12_1_9_5_13_2_10_6_14_3_11_7_15 = vzip_u16(mask_0_8_1_9_2_10_3_11_4_12_5_13_6_14_7_15.val[0], mask_0_8_1_9_2_10_3_11_4_12_5_13_6_14_7_15.val[1]);
-		return (vget_lane_u32(mask_0_8_4_12_1_9_5_13_2_10_6_14_3_11_7_15.val[0], 0) & 0x0000FFFFu) != 0;
+		uint32x2_t mask = vcle_f32(vget_low_f32(lhs), vget_low_f32(rhs));
+		return vget_lane_u64(mask, 0) != 0;
 #else
 		return lhs.x <= rhs.x || lhs.y <= rhs.y;
 #endif
@@ -1098,10 +1090,8 @@ namespace rtm
 #if defined(RTM_SSE2_INTRINSICS)
 		return (_mm_movemask_ps(_mm_cmpge_ps(lhs, rhs)) & 0x3) == 0x3;
 #elif defined(RTM_NEON_INTRINSICS)
-		uint32x4_t mask = vcgeq_f32(lhs, rhs);
-		uint8x8x2_t mask_0_8_1_9_2_10_3_11_4_12_5_13_6_14_7_15 = vzip_u8(vget_low_u8(mask), vget_high_u8(mask));
-		uint16x4x2_t mask_0_8_4_12_1_9_5_13_2_10_6_14_3_11_7_15 = vzip_u16(mask_0_8_1_9_2_10_3_11_4_12_5_13_6_14_7_15.val[0], mask_0_8_1_9_2_10_3_11_4_12_5_13_6_14_7_15.val[1]);
-		return (vget_lane_u32(mask_0_8_4_12_1_9_5_13_2_10_6_14_3_11_7_15.val[0], 0) & 0x0000FFFFu) == 0x0000FFFFu;
+		uint32x2_t mask = vcge_f32(vget_low_f32(lhs), vget_low_f32(rhs));
+		return vget_lane_u64(mask, 0) == 0xFFFFFFFFFFFFFFFFu;
 #else
 		return lhs.x >= rhs.x && lhs.y >= rhs.y;
 #endif
@@ -1149,10 +1139,8 @@ namespace rtm
 #if defined(RTM_SSE2_INTRINSICS)
 		return (_mm_movemask_ps(_mm_cmpge_ps(lhs, rhs)) & 0x3) != 0;
 #elif defined(RTM_NEON_INTRINSICS)
-		uint32x4_t mask = vcgeq_f32(lhs, rhs);
-		uint8x8x2_t mask_0_8_1_9_2_10_3_11_4_12_5_13_6_14_7_15 = vzip_u8(vget_low_u8(mask), vget_high_u8(mask));
-		uint16x4x2_t mask_0_8_4_12_1_9_5_13_2_10_6_14_3_11_7_15 = vzip_u16(mask_0_8_1_9_2_10_3_11_4_12_5_13_6_14_7_15.val[0], mask_0_8_1_9_2_10_3_11_4_12_5_13_6_14_7_15.val[1]);
-		return (vget_lane_u32(mask_0_8_4_12_1_9_5_13_2_10_6_14_3_11_7_15.val[0], 0) & 0x0000FFFFu) != 0;
+		uint32x2_t mask = vcge_f32(vget_low_f32(lhs), vget_low_f32(rhs));
+		return vget_lane_u64(mask, 0) != 0;
 #else
 		return lhs.x >= rhs.x || lhs.y >= rhs.y;
 #endif
