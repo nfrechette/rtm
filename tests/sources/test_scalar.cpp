@@ -39,6 +39,10 @@ static void test_scalar_impl(const FloatType threshold)
 {
 	REQUIRE(scalar_cast(scalar_set(FloatType(0.2345))) == FloatType(0.2345));
 
+	const FloatType value = FloatType(0.2345);
+	REQUIRE(scalar_is_equal(scalar_load(&value), scalar_set(value)));
+	REQUIRE(scalar_load(&value) == FloatType(0.2345));
+
 	REQUIRE(scalar_floor(FloatType(0.0)) == FloatType(0.0));
 	REQUIRE(scalar_floor(FloatType(0.5)) == FloatType(0.0));
 	REQUIRE(scalar_floor(FloatType(2.5)) == FloatType(2.0));
@@ -63,6 +67,22 @@ static void test_scalar_impl(const FloatType threshold)
 	REQUIRE(scalar_abs(FloatType(2.0)) == FloatType(2.0));
 	REQUIRE(scalar_abs(FloatType(-2.0)) == FloatType(2.0));
 
+	REQUIRE(scalar_is_equal(scalar_abs(scalar_set(FloatType(0.0))), scalar_set(FloatType(0.0))));
+	REQUIRE(scalar_is_equal(scalar_abs(scalar_set(FloatType(2.0))), scalar_set(FloatType(2.0))));
+	REQUIRE(scalar_is_equal(scalar_abs(scalar_set(FloatType(-2.0))), scalar_set(FloatType(2.0))));
+
+	REQUIRE(scalar_is_equal(FloatType(1.123), FloatType(1.123)) == true);
+	REQUIRE(scalar_is_equal(FloatType(1.123), FloatType(1.124)) == false);
+	REQUIRE(scalar_is_equal(scalar_set(FloatType(1.123)), scalar_set(FloatType(1.123))) == true);
+	REQUIRE(scalar_is_equal(scalar_set(FloatType(1.123)), scalar_set(FloatType(1.124))) == false);
+
+	REQUIRE(scalar_is_lower(FloatType(1.123), FloatType(1.123)) == false);
+	REQUIRE(scalar_is_lower(FloatType(1.123), FloatType(1.124)) == true);
+	REQUIRE(scalar_is_lower(FloatType(1.124), FloatType(1.123)) == false);
+	REQUIRE(scalar_is_lower(scalar_set(FloatType(1.123)), scalar_set(FloatType(1.123))) == false);
+	REQUIRE(scalar_is_lower(scalar_set(FloatType(1.123)), scalar_set(FloatType(1.124))) == true);
+	REQUIRE(scalar_is_lower(scalar_set(FloatType(1.124)), scalar_set(FloatType(1.123))) == false);
+
 	REQUIRE(scalar_near_equal(FloatType(1.0), FloatType(1.0), FloatType(0.00001)) == true);
 	REQUIRE(scalar_near_equal(FloatType(1.0), FloatType(1.000001), FloatType(0.00001)) == true);
 	REQUIRE(scalar_near_equal(FloatType(1.0), FloatType(0.999999), FloatType(0.00001)) == true);
@@ -85,6 +105,14 @@ static void test_scalar_impl(const FloatType threshold)
 	REQUIRE(scalar_near_equal(scalar_cast(scalar_reciprocal(scalar_set(FloatType(32.5)))), FloatType(1.0 / 32.5), threshold));
 	REQUIRE(scalar_near_equal(scalar_cast(scalar_reciprocal(scalar_set(FloatType(-0.5)))), FloatType(1.0 / -0.5), threshold));
 	REQUIRE(scalar_near_equal(scalar_cast(scalar_reciprocal(scalar_set(FloatType(-32.5)))), FloatType(1.0 / -32.5), threshold));
+
+	REQUIRE(scalar_near_equal(scalar_sub(FloatType(-0.5), FloatType(1.0)), FloatType(-0.5) - FloatType(1.0), threshold));
+	REQUIRE(scalar_near_equal(scalar_sub(FloatType(1.0), FloatType(-0.5)), FloatType(1.0) - FloatType(-0.5), threshold));
+	REQUIRE(scalar_near_equal(scalar_sub(FloatType(1.0), FloatType(1.0)), FloatType(1.0) - FloatType(1.0), threshold));
+
+	REQUIRE(scalar_near_equal(scalar_cast(scalar_sub(scalar_set(FloatType(-0.5)), scalar_set(FloatType(1.0)))), FloatType(-0.5) - FloatType(1.0), threshold));
+	REQUIRE(scalar_near_equal(scalar_cast(scalar_sub(scalar_set(FloatType(1.0)), scalar_set(FloatType(-0.5)))), FloatType(1.0) - FloatType(-0.5), threshold));
+	REQUIRE(scalar_near_equal(scalar_cast(scalar_sub(scalar_set(FloatType(1.0)), scalar_set(FloatType(1.0)))), FloatType(1.0) - FloatType(1.0), threshold));
 
 	const FloatType angles[] = { FloatType(0.0), k_pi, -k_pi, k_pi_2, -k_pi_2, FloatType(0.5), FloatType(32.5), FloatType(-0.5), FloatType(-32.5) };
 
@@ -121,9 +149,17 @@ static void test_scalar_impl(const FloatType threshold)
 	REQUIRE(scalar_min(FloatType(1.0), FloatType(-0.5)) == FloatType(-0.5));
 	REQUIRE(scalar_min(FloatType(1.0), FloatType(1.0)) == FloatType(1.0));
 
+	REQUIRE(scalar_is_equal(scalar_min(scalar_set(FloatType(-0.5)), scalar_set(FloatType(1.0))), scalar_set(FloatType(-0.5))));
+	REQUIRE(scalar_is_equal(scalar_min(scalar_set(FloatType(1.0)), scalar_set(FloatType(-0.5))), scalar_set(FloatType(-0.5))));
+	REQUIRE(scalar_is_equal(scalar_min(scalar_set(FloatType(1.0)), scalar_set(FloatType(1.0))), scalar_set(FloatType(1.0))));
+
 	REQUIRE(scalar_max(FloatType(-0.5), FloatType(1.0)) == FloatType(1.0));
 	REQUIRE(scalar_max(FloatType(1.0), FloatType(-0.5)) == FloatType(1.0));
 	REQUIRE(scalar_max(FloatType(1.0), FloatType(1.0)) == FloatType(1.0));
+
+	REQUIRE(scalar_is_equal(scalar_max(scalar_set(FloatType(-0.5)), scalar_set(FloatType(1.0))), scalar_set(FloatType(1.0))));
+	REQUIRE(scalar_is_equal(scalar_max(scalar_set(FloatType(1.0)), scalar_set(FloatType(-0.5))), scalar_set(FloatType(1.0))));
+	REQUIRE(scalar_is_equal(scalar_max(scalar_set(FloatType(1.0)), scalar_set(FloatType(1.0))), scalar_set(FloatType(1.0))));
 
 	REQUIRE(scalar_is_finite(FloatType(0.0)) == true);
 	REQUIRE(scalar_is_finite(FloatType(32.0)) == true);
@@ -152,12 +188,12 @@ static void test_scalar_impl(const FloatType threshold)
 	REQUIRE(scalar_near_equal(scalar_fraction(FloatType(0.75)), FloatType(0.75), threshold));
 }
 
-TEST_CASE("scalar 32 math", "[math][scalar]")
+TEST_CASE("scalarf math", "[math][scalar]")
 {
 	test_scalar_impl<float>(1.0e-6f);
 }
 
-TEST_CASE("scalar 64 math", "[math][scalar]")
+TEST_CASE("scalard math", "[math][scalar]")
 {
 	test_scalar_impl<double>(1.0e-9);
 }
