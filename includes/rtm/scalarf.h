@@ -27,6 +27,7 @@
 
 #include "rtm/math.h"
 #include "rtm/impl/compiler_utils.h"
+#include "rtm/impl/scalar_common.h"
 
 #include <algorithm>
 #include <cmath>
@@ -172,24 +173,13 @@ namespace rtm
 #endif
 	}
 
-#if defined(RTM_SSE2_INTRINSICS)
 	//////////////////////////////////////////////////////////////////////////
-	// Returns the reciprocal of the input.
+	// Returns the subtraction of the two scalar inputs.
 	//////////////////////////////////////////////////////////////////////////
-	inline scalarf RTM_SIMD_CALL scalar_reciprocal(scalarf_arg0 input) RTM_NO_EXCEPT
+	inline float scalar_sub(float lhs, float rhs) RTM_NO_EXCEPT
 	{
-		// Perform two passes of Newton-Raphson iteration on the hardware estimate
-		__m128 x0 = _mm_rcp_ss(input);
-
-		// First iteration
-		__m128 x1 = _mm_sub_ss(_mm_add_ss(x0, x0), _mm_mul_ss(input, _mm_mul_ss(x0, x0)));
-
-		// Second iteration
-		__m128 x2 = _mm_sub_ss(_mm_add_ss(x1, x1), _mm_mul_ss(input, _mm_mul_ss(x1, x1)));
-
-		return x2;
+		return lhs - rhs;
 	}
-#endif
 
 	//////////////////////////////////////////////////////////////////////////
 	// Returns the sine of the input angle.
@@ -258,6 +248,22 @@ namespace rtm
 	}
 
 	//////////////////////////////////////////////////////////////////////////
+	// Returns true if both inputs are equal, false otherwise.
+	//////////////////////////////////////////////////////////////////////////
+	inline bool scalar_is_equal(float lhs, float rhs) RTM_NO_EXCEPT
+	{
+		return lhs == rhs;
+	}
+
+	//////////////////////////////////////////////////////////////////////////
+	// Returns true if lhs < rhs, false otherwise.
+	//////////////////////////////////////////////////////////////////////////
+	inline bool scalar_is_lower(float lhs, float rhs) RTM_NO_EXCEPT
+	{
+		return lhs < rhs;
+	}
+
+	//////////////////////////////////////////////////////////////////////////
 	// Returns true if both inputs are nearly equal, false otherwise.
 	//////////////////////////////////////////////////////////////////////////
 	inline bool scalar_near_equal(float lhs, float rhs, float threshold = 0.00001f) RTM_NO_EXCEPT
@@ -303,6 +309,93 @@ namespace rtm
 		RTM_ASSERT(SrcIntegralType(input_f) == input, "Conversion to float would result in truncation");
 		return input_f;
 	}
+
+	//////////////////////////////////////////////////////////////////////////
+	// SSE implementation of scalarf
+	//////////////////////////////////////////////////////////////////////////
+
+#if defined(RTM_SSE2_INTRINSICS)
+	//////////////////////////////////////////////////////////////////////////
+	// Returns the reciprocal of the input.
+	//////////////////////////////////////////////////////////////////////////
+	inline scalarf RTM_SIMD_CALL scalar_reciprocal(scalarf_arg0 input) RTM_NO_EXCEPT
+	{
+		// Perform two passes of Newton-Raphson iteration on the hardware estimate
+		__m128 x0 = _mm_rcp_ss(input);
+
+		// First iteration
+		__m128 x1 = _mm_sub_ss(_mm_add_ss(x0, x0), _mm_mul_ss(input, _mm_mul_ss(x0, x0)));
+
+		// Second iteration
+		__m128 x2 = _mm_sub_ss(_mm_add_ss(x1, x1), _mm_mul_ss(input, _mm_mul_ss(x1, x1)));
+
+		return x2;
+	}
+
+	//////////////////////////////////////////////////////////////////////////
+	// Returns the subtraction of the two scalar inputs.
+	//////////////////////////////////////////////////////////////////////////
+	inline scalarf RTM_SIMD_CALL scalar_sub(scalarf_arg0 lhs, scalarf_arg1 rhs) RTM_NO_EXCEPT
+	{
+		return _mm_sub_ss(lhs, rhs);
+	}
+
+	//////////////////////////////////////////////////////////////////////////
+	// Returns the smallest of the two inputs.
+	//////////////////////////////////////////////////////////////////////////
+	inline scalarf RTM_SIMD_CALL scalar_min(scalarf_arg0 lhs, scalarf_arg1 rhs) RTM_NO_EXCEPT
+	{
+		return _mm_min_ss(lhs, rhs);
+	}
+
+	//////////////////////////////////////////////////////////////////////////
+	// Returns the largest of the two inputs.
+	//////////////////////////////////////////////////////////////////////////
+	inline scalarf RTM_SIMD_CALL scalar_max(scalarf_arg0 lhs, scalarf_arg1 rhs) RTM_NO_EXCEPT
+	{
+		return _mm_max_ss(lhs, rhs);
+	}
+
+	//////////////////////////////////////////////////////////////////////////
+	// Returns the absolute value of the input.
+	//////////////////////////////////////////////////////////////////////////
+	inline scalarf RTM_SIMD_CALL scalar_abs(scalarf_arg0 input) RTM_NO_EXCEPT
+	{
+		return scalar_max(scalar_sub(_mm_setzero_ps(), input), input);
+	}
+
+	//////////////////////////////////////////////////////////////////////////
+	// Returns true if both inputs are equal, false otherwise.
+	//////////////////////////////////////////////////////////////////////////
+	inline bool RTM_SIMD_CALL scalar_is_equal(scalarf_arg0 lhs, scalarf_arg1 rhs) RTM_NO_EXCEPT
+	{
+		return _mm_comieq_ss(lhs, rhs);
+	}
+
+	//////////////////////////////////////////////////////////////////////////
+	// Returns true if lhs < rhs, false otherwise.
+	//////////////////////////////////////////////////////////////////////////
+	inline bool RTM_SIMD_CALL scalar_is_lower(scalarf_arg0 lhs, scalarf_arg1 rhs) RTM_NO_EXCEPT
+	{
+		return _mm_comilt_ss(lhs, rhs);
+	}
+
+	//////////////////////////////////////////////////////////////////////////
+	// Returns true if both inputs are nearly equal, false otherwise.
+	//////////////////////////////////////////////////////////////////////////
+	inline bool scalar_near_equal(scalarf_arg0 lhs, scalarf_arg1 rhs, scalarf_arg2 threshold) RTM_NO_EXCEPT
+	{
+		return scalar_is_lower(scalar_abs(scalar_sub(lhs, rhs)), threshold);
+	}
+
+	//////////////////////////////////////////////////////////////////////////
+	// Returns true if both inputs are nearly equal, false otherwise.
+	//////////////////////////////////////////////////////////////////////////
+	inline bool scalar_near_equal(scalarf_arg0 lhs, scalarf_arg1 rhs) RTM_NO_EXCEPT
+	{
+		return scalar_near_equal(lhs, rhs, scalar_set(0.00001f));
+	}
+#endif
 }
 
 RTM_IMPL_FILE_PRAGMA_POP
