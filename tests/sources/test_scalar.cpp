@@ -43,6 +43,12 @@ static void test_scalar_impl(const FloatType threshold)
 	REQUIRE(scalar_is_equal(scalar_load(&value), scalar_set(value)));
 	REQUIRE(scalar_load(&value) == FloatType(0.2345));
 
+	FloatType tmp = FloatType(0.0);
+	scalar_store(FloatType(16.5), &tmp);
+	REQUIRE(tmp == FloatType(16.5));
+	scalar_store(scalar_set(FloatType(4.5)), &tmp);
+	REQUIRE(tmp == FloatType(4.5));
+
 	REQUIRE(scalar_floor(FloatType(0.0)) == FloatType(0.0));
 	REQUIRE(scalar_floor(FloatType(0.5)) == FloatType(0.0));
 	REQUIRE(scalar_floor(FloatType(2.5)) == FloatType(2.0));
