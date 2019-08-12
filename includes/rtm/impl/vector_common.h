@@ -337,6 +337,62 @@ namespace rtm
 
 			const uint8_t* ptr;
 		};
+
+		//////////////////////////////////////////////////////////////////////////
+		// This is a helper struct to allow a single consistent API between
+		// various vector types when the semantics are identical but the return
+		// type differs. Implicit coercion is used to return the desired value
+		// at the call site.
+		//////////////////////////////////////////////////////////////////////////
+		struct vector4f_to_scalarf
+		{
+			inline RTM_SIMD_CALL operator float() const RTM_NO_EXCEPT
+			{
+#if defined(RTM_SSE2_INTRINSICS)
+				return _mm_cvtss_f32(value);
+#elif defined(RTM_NEON_INTRINSICS)
+				return vgetq_lane_f32(value, 0);
+#else
+				return value.x;
+#endif
+			}
+
+#if defined(RTM_SSE2_INTRINSICS)
+			inline RTM_SIMD_CALL operator scalarf() const RTM_NO_EXCEPT
+			{
+				return value;
+			}
+#endif
+
+			vector4f value;
+		};
+
+		//////////////////////////////////////////////////////////////////////////
+		// This is a helper struct to allow a single consistent API between
+		// various vector types when the semantics are identical but the return
+		// type differs. Implicit coercion is used to return the desired value
+		// at the call site.
+		//////////////////////////////////////////////////////////////////////////
+		struct vector4d_to_scalard
+		{
+			inline RTM_SIMD_CALL operator double() const RTM_NO_EXCEPT
+			{
+#if defined(RTM_SSE2_INTRINSICS)
+				return _mm_cvtsd_f64(value.xy);
+#else
+				return value.x;
+#endif
+			}
+
+#if defined(RTM_SSE2_INTRINSICS)
+			inline RTM_SIMD_CALL operator scalard() const RTM_NO_EXCEPT
+			{
+				return value.xy;
+			}
+#endif
+
+			vector4d value;
+		};
 	}
 
 	//////////////////////////////////////////////////////////////////////////
@@ -377,6 +433,22 @@ namespace rtm
 	constexpr rtm_impl::vector_unaligned_loader<rtm_impl::vector_unaligned_loader_width::vec3> RTM_SIMD_CALL vector_load3(const uint8_t* input) RTM_NO_EXCEPT
 	{
 		return rtm_impl::vector_unaligned_loader<rtm_impl::vector_unaligned_loader_width::vec3>{ input };
+	}
+
+	//////////////////////////////////////////////////////////////////////////
+	// Coerces an vector4 input into a scalar by grabbing the first SIMD lane.
+	//////////////////////////////////////////////////////////////////////////
+	constexpr rtm_impl::vector4f_to_scalarf RTM_SIMD_CALL vector_as_scalar(vector4f_arg0 input) RTM_NO_EXCEPT
+	{
+		return rtm_impl::vector4f_to_scalarf{ input };
+	}
+
+	//////////////////////////////////////////////////////////////////////////
+	// Coerces an vector4 input into a scalar by grabbing the first SIMD lane.
+	//////////////////////////////////////////////////////////////////////////
+	constexpr rtm_impl::vector4d_to_scalard RTM_SIMD_CALL vector_as_scalar(const vector4d& input) RTM_NO_EXCEPT
+	{
+		return rtm_impl::vector4d_to_scalard{ input };
 	}
 }
 
