@@ -133,6 +133,74 @@ namespace rtm
 	}
 
 	//////////////////////////////////////////////////////////////////////////
+	// Sets the quaternion [x] component (real part) and returns the new value.
+	//////////////////////////////////////////////////////////////////////////
+	inline quatf RTM_SIMD_CALL quat_set_x(quatf_arg0 input, float lane_value) RTM_NO_EXCEPT
+	{
+#if defined(RTM_SSE2_INTRINSICS)
+		return _mm_move_ss(input, _mm_set_ss(lane_value));
+#elif defined(RTM_NEON_INTRINSICS)
+		return vsetq_lane_f32(lane_value, input, 0);
+#else
+		return quatf{ lane_value, input.y, input.z, input.w };
+#endif
+	}
+
+	//////////////////////////////////////////////////////////////////////////
+	// Sets the quaternion [y] component (real part) and returns the new value.
+	//////////////////////////////////////////////////////////////////////////
+	inline quatf RTM_SIMD_CALL quat_set_y(quatf_arg0 input, float lane_value) RTM_NO_EXCEPT
+	{
+#if defined(RTM_SSE4_INTRINSICS)
+		return _mm_insert_ps(input, _mm_set_ss(lane_value), 0x10);
+#elif defined(RTM_SSE2_INTRINSICS)
+		const __m128 yxzw = _mm_shuffle_ps(input, input, _MM_SHUFFLE(3, 2, 0, 1));
+		const __m128 vxzw = _mm_move_ss(yxzw, _mm_set_ss(lane_value));
+		return _mm_shuffle_ps(vxzw, vxzw, _MM_SHUFFLE(3, 2, 0, 1));
+#elif defined(RTM_NEON_INTRINSICS)
+		return vsetq_lane_f32(lane_value, input, 1);
+#else
+		return quatf{ input.x, lane_value, input.z, input.w };
+#endif
+	}
+
+	//////////////////////////////////////////////////////////////////////////
+	// Sets the quaternion [z] component (real part) and returns the new value.
+	//////////////////////////////////////////////////////////////////////////
+	inline quatf RTM_SIMD_CALL quat_set_z(quatf_arg0 input, float lane_value) RTM_NO_EXCEPT
+	{
+#if defined(RTM_SSE4_INTRINSICS)
+		return _mm_insert_ps(input, _mm_set_ss(lane_value), 0x20);
+#elif defined(RTM_SSE2_INTRINSICS)
+		const __m128 zyxw = _mm_shuffle_ps(input, input, _MM_SHUFFLE(3, 0, 1, 2));
+		const __m128 vyxw = _mm_move_ss(zyxw, _mm_set_ss(lane_value));
+		return _mm_shuffle_ps(vyxw, vyxw, _MM_SHUFFLE(3, 0, 1, 2));
+#elif defined(RTM_NEON_INTRINSICS)
+		return vsetq_lane_f32(lane_value, input, 2);
+#else
+		return quatf{ input.x, input.y, lane_value, input.w };
+#endif
+	}
+
+	//////////////////////////////////////////////////////////////////////////
+	// Sets the quaternion [w] component (imaginary part) and returns the new value.
+	//////////////////////////////////////////////////////////////////////////
+	inline quatf RTM_SIMD_CALL quat_set_w(quatf_arg0 input, float lane_value) RTM_NO_EXCEPT
+	{
+#if defined(RTM_SSE4_INTRINSICS)
+		return _mm_insert_ps(input, _mm_set_ss(lane_value), 0x30);
+#elif defined(RTM_SSE2_INTRINSICS)
+		const __m128 wyzx = _mm_shuffle_ps(input, input, _MM_SHUFFLE(0, 2, 1, 3));
+		const __m128 vyzx = _mm_move_ss(wyzx, _mm_set_ss(lane_value));
+		return _mm_shuffle_ps(vyzx, vyzx, _MM_SHUFFLE(0, 2, 1, 3));
+#elif defined(RTM_NEON_INTRINSICS)
+		return vsetq_lane_f32(lane_value, input, 3);
+#else
+		return quatf{ input.x, input.y, input.z, lane_value };
+#endif
+	}
+
+	//////////////////////////////////////////////////////////////////////////
 	// Writes a quaternion to unaligned memory.
 	//////////////////////////////////////////////////////////////////////////
 	inline void RTM_SIMD_CALL quat_unaligned_write(quatf_arg0 input, float* output) RTM_NO_EXCEPT

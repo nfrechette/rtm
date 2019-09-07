@@ -222,6 +222,54 @@ namespace rtm
 	}
 
 	//////////////////////////////////////////////////////////////////////////
+	// Sets the vector4 [x] component and returns the new value.
+	//////////////////////////////////////////////////////////////////////////
+	inline vector4d vector_set_x(const vector4d& input, double lane_value) RTM_NO_EXCEPT
+	{
+#if defined(RTM_SSE2_INTRINSICS)
+		return vector4d{ _mm_move_sd(input.xy, _mm_set_sd(lane_value)), input.zw };
+#else
+		return vector4d{ lane_value, input.y, input.z, input.w };
+#endif
+	}
+
+	//////////////////////////////////////////////////////////////////////////
+	// Sets the vector4 [y] component and returns the new value.
+	//////////////////////////////////////////////////////////////////////////
+	inline vector4d vector_set_y(const vector4d& input, double lane_value) RTM_NO_EXCEPT
+	{
+#if defined(RTM_SSE2_INTRINSICS)
+		return vector4d{ _mm_shuffle_pd(input.xy, _mm_set_sd(lane_value), 0), input.zw };
+#else
+		return vector4d{ input.x, lane_value, input.z, input.w };
+#endif
+	}
+
+	//////////////////////////////////////////////////////////////////////////
+	// Sets the vector4 [z] component and returns the new value.
+	//////////////////////////////////////////////////////////////////////////
+	inline vector4d vector_set_z(const vector4d& input, double lane_value) RTM_NO_EXCEPT
+	{
+#if defined(RTM_SSE2_INTRINSICS)
+		return vector4d{ input.xy, _mm_move_sd(input.zw, _mm_set_sd(lane_value)) };
+#else
+		return vector4d{ input.x, input.y, lane_value, input.w };
+#endif
+	}
+
+	//////////////////////////////////////////////////////////////////////////
+	// Sets the vector4 [w] component and returns the new value.
+	//////////////////////////////////////////////////////////////////////////
+	inline vector4d vector_set_w(const vector4d& input, double lane_value) RTM_NO_EXCEPT
+	{
+#if defined(RTM_SSE2_INTRINSICS)
+		return vector4d{ input.xy, _mm_shuffle_pd(input.zw, _mm_set_sd(lane_value), 0) };
+#else
+		return vector4d{ input.x, input.y, input.z, lane_value };
+#endif
+	}
+
+	//////////////////////////////////////////////////////////////////////////
 	// Returns a floating point pointer to the vector4 data.
 	//////////////////////////////////////////////////////////////////////////
 	inline const double* vector_to_pointer(const vector4d& input) RTM_NO_EXCEPT

@@ -126,6 +126,54 @@ namespace rtm
 	}
 
 	//////////////////////////////////////////////////////////////////////////
+	// Sets the quaternion [x] component (real part) and returns the new value.
+	//////////////////////////////////////////////////////////////////////////
+	inline quatd quat_set_x(const quatd& input, double lane_value) RTM_NO_EXCEPT
+	{
+#if defined(RTM_SSE2_INTRINSICS)
+		return quatd{ _mm_move_sd(input.xy, _mm_set_sd(lane_value)), input.zw };
+#else
+		return quatd{ lane_value, input.y, input.z, input.w };
+#endif
+	}
+
+	//////////////////////////////////////////////////////////////////////////
+	// Sets the quaternion [y] component (real part) and returns the new value.
+	//////////////////////////////////////////////////////////////////////////
+	inline quatd quat_set_y(const quatd& input, double lane_value) RTM_NO_EXCEPT
+	{
+#if defined(RTM_SSE2_INTRINSICS)
+		return quatd{ _mm_shuffle_pd(input.xy, _mm_set_sd(lane_value), 0), input.zw };
+#else
+		return quatd{ input.x, lane_value, input.z, input.w };
+#endif
+	}
+
+	//////////////////////////////////////////////////////////////////////////
+	// Sets the quaternion [z] component (real part) and returns the new value.
+	//////////////////////////////////////////////////////////////////////////
+	inline quatd quat_set_z(const quatd& input, double lane_value) RTM_NO_EXCEPT
+	{
+#if defined(RTM_SSE2_INTRINSICS)
+		return quatd{ input.xy, _mm_move_sd(input.zw, _mm_set_sd(lane_value)) };
+#else
+		return quatd{ input.x, input.y, lane_value, input.w };
+#endif
+	}
+
+	//////////////////////////////////////////////////////////////////////////
+	// Sets the quaternion [w] component (imaginary part) and returns the new value.
+	//////////////////////////////////////////////////////////////////////////
+	inline quatd quat_set_w(const quatd& input, double lane_value) RTM_NO_EXCEPT
+	{
+#if defined(RTM_SSE2_INTRINSICS)
+		return quatd{ input.xy, _mm_shuffle_pd(input.zw, _mm_set_sd(lane_value), 0) };
+#else
+		return quatd{ input.x, input.y, input.z, lane_value };
+#endif
+	}
+
+	//////////////////////////////////////////////////////////////////////////
 	// Writes a quaternion to unaligned memory.
 	//////////////////////////////////////////////////////////////////////////
 	inline void quat_unaligned_write(const quatd& input, double* output) RTM_NO_EXCEPT

@@ -285,6 +285,11 @@ void test_vector4_impl(const FloatType threshold)
 	REQUIRE(scalar_is_equal(vector_get_min_component(test_value3), (ScalarType)vector_as_scalar(vector_dup_y(test_value3))));
 	REQUIRE(scalar_is_equal(vector_get_max_component(test_value0), (ScalarType)vector_as_scalar(vector_dup_w(test_value0))));
 
+	REQUIRE(vector_all_near_equal(vector_set_x(zero, FloatType(4.0)), vector_set(FloatType(4.0), FloatType(0.0), FloatType(0.0), FloatType(0.0)), FloatType(0.0)));
+	REQUIRE(vector_all_near_equal(vector_set_y(zero, FloatType(4.0)), vector_set(FloatType(0.0), FloatType(4.0), FloatType(0.0), FloatType(0.0)), FloatType(0.0)));
+	REQUIRE(vector_all_near_equal(vector_set_z(zero, FloatType(4.0)), vector_set(FloatType(0.0), FloatType(0.0), FloatType(4.0), FloatType(0.0)), FloatType(0.0)));
+	REQUIRE(vector_all_near_equal(vector_set_w(zero, FloatType(4.0)), vector_set(FloatType(0.0), FloatType(0.0), FloatType(0.0), FloatType(4.0)), FloatType(0.0)));
+
 	REQUIRE((FloatType)vector_as_scalar(test_value1) == vector_get_x(test_value1));
 	REQUIRE(scalar_is_equal(vector_as_scalar(test_value1), scalar_set(vector_get_x(test_value1))));
 

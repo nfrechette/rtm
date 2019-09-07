@@ -108,6 +108,11 @@ static void test_quat_impl(const FloatType threshold)
 	REQUIRE(quat_get_z(identity) == FloatType(0.0));
 	REQUIRE(quat_get_w(identity) == FloatType(1.0));
 
+	REQUIRE(quat_near_equal(quat_set_x(identity, FloatType(4.0)), quat_set(FloatType(4.0), FloatType(0.0), FloatType(0.0), FloatType(1.0)), FloatType(0.0)));
+	REQUIRE(quat_near_equal(quat_set_y(identity, FloatType(4.0)), quat_set(FloatType(0.0), FloatType(4.0), FloatType(0.0), FloatType(1.0)), FloatType(0.0)));
+	REQUIRE(quat_near_equal(quat_set_z(identity, FloatType(4.0)), quat_set(FloatType(0.0), FloatType(0.0), FloatType(4.0), FloatType(1.0)), FloatType(0.0)));
+	REQUIRE(quat_near_equal(quat_set_w(identity, FloatType(4.0)), quat_set(FloatType(0.0), FloatType(0.0), FloatType(0.0), FloatType(4.0)), FloatType(0.0)));
+
 	{
 		struct alignas(16) Tmp
 		{
