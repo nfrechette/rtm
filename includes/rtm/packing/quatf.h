@@ -39,7 +39,21 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	inline quatf RTM_SIMD_CALL quat_ensure_positive_w(quatf_arg0 input) RTM_NO_EXCEPT
 	{
+#if defined(RTM_SSE2_INTRINSICS)
+		constexpr __m128 sign_bit = { -0.0f, -0.0f, -0.0f, -0.0f };
+		const __m128 input_sign = _mm_and_ps(input, sign_bit);
+		const __m128 bias = _mm_shuffle_ps(input_sign, input_sign, _MM_SHUFFLE(3, 3, 3, 3));
+		return _mm_xor_ps(input, bias);
+#elif defined(RTM_NEON_INTRINSICS)
+		alignas(16) constexpr uint32_t sign_bit_i[4] = { 0x80000000u, 0x80000000u, 0x80000000u, 0x80000000u };
+		const uint32x4_t sign_bit = *reinterpret_cast<const uint32x4_t*>(&sign_bit_i[0]);
+		const uint32x4_t input_u32 = vreinterpretq_u32_f32(input);
+		const uint32x4_t input_sign = vandq_u32(input_u32, sign_bit);
+		const uint32x4_t bias = vmovq_n_f32(vgetq_lane_f32(input_sign, 3));
+		return vreinterpretq_f32_u32(veorq_u32(input_u32, bias));
+#else
 		return quat_get_w(input) >= 0.f ? input : quat_neg(input);
+#endif
 	}
 
 	//////////////////////////////////////////////////////////////////////////
