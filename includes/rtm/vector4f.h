@@ -1315,7 +1315,9 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	inline vector4f RTM_SIMD_CALL vector_select(mask4i_arg0 mask, vector4f_arg1 if_true, vector4f_arg2 if_false) RTM_NO_EXCEPT
 	{
-#if defined(RTM_SSE2_INTRINSICS)
+#if defined(RTM_AVX_INTRINSICS)
+		return _mm_blendv_ps(if_false, if_true, mask);
+#elif defined(RTM_SSE2_INTRINSICS)
 		return _mm_or_ps(_mm_andnot_ps(mask, if_false), _mm_and_ps(if_true, mask));
 #elif defined(RTM_NEON_INTRINSICS)
 		return vbslq_f32(mask, if_true, if_false);
