@@ -572,7 +572,10 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	inline quatf RTM_SIMD_CALL quat_neg(quatf_arg0 input) RTM_NO_EXCEPT
 	{
-#if defined(RTM_NEON_INTRINSICS)
+#if defined(RTM_SSE2_INTRINSICS)
+		constexpr __m128 signs = { -0.0f, -0.0f, -0.0f, -0.0f };
+		return _mm_xor_ps(input, signs);
+#elif defined(RTM_NEON_INTRINSICS)
 		return vnegq_f32(input);
 #else
 		return vector_to_quat(vector_mul(quat_to_vector(input), -1.0f));
