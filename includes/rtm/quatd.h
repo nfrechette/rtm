@@ -321,8 +321,8 @@ namespace rtm
 
 		out_angle = radians(scalar_acos(quat_get_w(input)) * 2.0);
 
-		double scale_sq = scalar_max(1.0 - quat_get_w(input) * quat_get_w(input), 0.0);
-		out_axis = scale_sq >= epsilon_squared ? vector_div(vector_set(quat_get_x(input), quat_get_y(input), quat_get_z(input)), vector_set(scalar_sqrt(scale_sq))) : vector_set(1.0, 0.0, 0.0);
+		const double scale_sq = scalar_max(1.0 - quat_get_w(input) * quat_get_w(input), 0.0);
+		out_axis = scale_sq >= epsilon_squared ? vector_mul(quat_to_vector(input), vector_set(scalar_sqrt_reciprocal(scale_sq))) : vector_set(1.0, 0.0, 0.0);
 	}
 
 	//////////////////////////////////////////////////////////////////////////
@@ -333,8 +333,8 @@ namespace rtm
 		constexpr double epsilon = 1.0e-8;
 		constexpr double epsilon_squared = epsilon * epsilon;
 
-		double scale_sq = scalar_max(1.0 - quat_get_w(input) * quat_get_w(input), 0.0);
-		return scale_sq >= epsilon_squared ? vector_div(vector_set(quat_get_x(input), quat_get_y(input), quat_get_z(input)), vector_set(scalar_sqrt(scale_sq))) : vector_set(1.0, 0.0, 0.0);
+		const double scale_sq = scalar_max(1.0 - quat_get_w(input) * quat_get_w(input), 0.0);
+		return scale_sq >= epsilon_squared ? vector_mul(quat_to_vector(input), vector_set(scalar_sqrt_reciprocal(scale_sq))) : vector_set(1.0, 0.0, 0.0);
 	}
 
 	//////////////////////////////////////////////////////////////////////////
