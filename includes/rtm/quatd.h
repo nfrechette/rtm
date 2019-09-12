@@ -353,7 +353,7 @@ namespace rtm
 		double s, c;
 		scalar_sincos(0.5 * angle.as_radians(), s, c);
 
-		return quat_set(s * vector_get_x(axis), s * vector_get_y(axis), s * vector_get_z(axis), c);
+		return vector_to_quat(vector_set_w(vector_mul(vector_set(s), axis), c));
 	}
 
 	//////////////////////////////////////////////////////////////////////////
