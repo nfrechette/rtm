@@ -1,4 +1,5 @@
 import argparse
+import multiprocessing
 import os
 import platform
 import shutil
@@ -25,8 +26,8 @@ def parse_argv():
 	misc.add_argument('-tests_matching', help='Only run tests whose names match this regex')
 	misc.add_argument('-help', action='help', help='Display this usage information')
 
-	num_threads = os.cpu_count()
-	if platform.system() == 'Linux':
+	num_threads = multiprocessing.cpu_count()
+	if platform.system() == 'Linux' and sys.version_info >= (3, 4):
 		num_threads = len(os.sched_getaffinity(0))
 	if not num_threads or num_threads == 0:
 		num_threads = 4
