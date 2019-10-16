@@ -228,7 +228,7 @@ namespace rtm
 #if defined(RTM_SSE2_INTRINSICS)
 		constexpr __m128 signs = { -0.0f, -0.0f, -0.0f, 0.0f };
 		return _mm_xor_ps(input, signs);
-#elif defined(RTM_NEON_INTRINSICS)
+#elif defined(RTM_NEON64_INTRINSICS)
 		const float32x4_t neg_input = vnegq_f32(input);
 		return vsetq_lane_f32(vgetq_lane_f32(input, 3), neg_input, 3);
 #else
