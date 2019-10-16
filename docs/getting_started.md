@@ -13,6 +13,7 @@ In order to contribute to RTM you will first need to setup your environment.
    Note that if you do not have CMake in your `PATH`, you should define the `RTM_CMAKE_HOME` environment variable to something like `C:\Program Files\CMake`.
 4. Build the IDE solution with: `python make.py -build`
 5. Run the unit tests with: `python make.py -unit_test`
+6. Build and run benchmarks with the `-bench` switch
 
 On all three platforms, *AVX* support can be enabled by using the `-avx` switch.
 
@@ -32,6 +33,8 @@ Note that it is not currently possible to run the unit tests with scripts, you w
 Note that Android builds have never been tested on an emulator and that if you cannot code sign the APK, you will need to change the project ANT settings to use the debug configuration.
 
 *We currently only support NVIDIA CodeWorks. Contributions welcome to also support the NDK natively with CMake*
+
+Note that running the benchmark on Android can be done but it currently involves a number of manual steps.
 
 ### iOS
 

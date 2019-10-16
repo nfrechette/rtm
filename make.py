@@ -13,6 +13,7 @@ def parse_argv():
 	actions.add_argument('-build', action='store_true')
 	actions.add_argument('-clean', action='store_true')
 	actions.add_argument('-unit_test', action='store_true')
+	actions.add_argument('-bench', action='store_true')
 
 	target = parser.add_argument_group(title='Target')
 	target.add_argument('-compiler', choices=['vs2015', 'vs2017', 'vs2019', 'android', 'clang4', 'clang5', 'clang6', 'gcc5', 'gcc6', 'gcc7', 'gcc8', 'osx', 'ios'], help='Defaults to the host system\'s default compiler')
@@ -191,7 +192,10 @@ def do_generate_solution(cmake_exe, build_dir, cmake_script_dir, args):
 		print('Disabling SIMD instruction usage')
 		extra_switches.append('-DUSE_SIMD_INSTRUCTIONS:BOOL=false')
 
-	if not platform.system() == 'Windows' and not platform.system() == 'Darwin':
+	if args.bench:
+		extra_switches.append('-DBUILD_BENCHMARK_EXE:BOOL=true')
+
+	if not platform.system() == 'Windows':
 		extra_switches.append('-DCMAKE_BUILD_TYPE={}'.format(config.upper()))
 
 	toolchain = get_toolchain(compiler)
@@ -255,6 +259,23 @@ def do_tests(ctest_exe, args):
 	if result != 0:
 		sys.exit(result)
 
+def do_bench():
+	if args.compiler == 'ios' or args.compiler == 'android':
+		return	# Not supported on iOS or Android
+
+	print('Running benchmark ...')
+
+	if platform.system() == 'Windows':
+		bench_exe = os.path.join(os.getcwd(), 'bin/rtm_bench.exe')
+	else:
+		bench_exe = os.path.join(os.getcwd(), 'bin/rtm_bench')
+
+	bench_cmd = '{}'.format(bench_exe)
+
+	result = subprocess.call(bench_cmd, shell=True)
+	if result != 0:
+		sys.exit(result)
+
 if __name__ == "__main__":
 	args = parse_argv()
 
@@ -295,5 +316,8 @@ if __name__ == "__main__":
 
 	if args.unit_test:
 		do_tests(ctest_exe, args)
+
+	if args.bench:
+		do_bench()
 
 	sys.exit(0)
