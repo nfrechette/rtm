@@ -134,14 +134,19 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	// Returns the reciprocal square root of the input.
 	//////////////////////////////////////////////////////////////////////////
+#if _MSC_VER >= 1920 && defined(_M_X64) && defined(RTM_SSE2_INTRINSICS) && !defined(RTM_AVX_INTRINSICS)
+	// HACK!!! Visual Studio 2019 has a code generation bug triggered by the code below, disable optimizations for now
+	// Bug only happens with x64 SSE2, not with AVX nor with x86
+	#pragma optimize("", off)
+#endif
 	inline float RTM_SIMD_CALL scalar_sqrt_reciprocal(float input) RTM_NO_EXCEPT
 	{
 #if defined(RTM_SSE2_INTRINSICS)
 		// Perform two passes of Newton-Raphson iteration on the hardware estimate
-		__m128 input_v = _mm_set_ss(input);
-		__m128 half = _mm_set_ss(0.5f);
-		__m128 input_half_v = _mm_mul_ss(input_v, half);
-		__m128 x0 = _mm_rsqrt_ss(input_v);
+		const __m128 input_v = _mm_set_ss(input);
+		const __m128 half = _mm_set_ss(0.5f);
+		const __m128 input_half_v = _mm_mul_ss(input_v, half);
+		const __m128 x0 = _mm_rsqrt_ss(input_v);
 
 		// First iteration
 		__m128 x1 = _mm_mul_ss(x0, x0);
@@ -158,6 +163,10 @@ namespace rtm
 		return 1.0f / scalar_sqrt(input);
 #endif
 	}
+#if _MSC_VER >= 1920 && defined(_M_X64) && defined(RTM_SSE2_INTRINSICS) && !defined(RTM_AVX_INTRINSICS)
+	// HACK!!! See comment above
+	#pragma optimize("", on)
+#endif
 
 	//////////////////////////////////////////////////////////////////////////
 	// Returns the reciprocal of the input.
