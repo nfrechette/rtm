@@ -15,8 +15,8 @@ set(MACOSX_BUNDLE_INFO_STRING "com.rtm.rtm-bench")
 set(MACOSX_BUNDLE_GUI_IDENTIFIER "com.rtm.rtm-bench")
 set(MACOSX_BUNDLE_BUNDLE_NAME "rtm-bench")
 
-include_directories("${PROJECT_SOURCE_DIR}/../../includes")
-include_directories("${PROJECT_SOURCE_DIR}/../../external/benchmark/include")
+include_directories("${PROJECT_SOURCE_DIR}/../../../includes")
+include_directories("${PROJECT_SOURCE_DIR}/../../../external/benchmark/include")
 
 # Grab all of our benchmark source files
 file(GLOB_RECURSE ALL_BENCH_SOURCE_FILES LIST_DIRECTORIES false
