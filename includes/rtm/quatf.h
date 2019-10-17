@@ -306,14 +306,11 @@ namespace rtm
 		float32x2_t r_xy = vget_low_f32(rhs);
 		float32x2_t r_zw = vget_high_f32(rhs);
 
-		float32x4_t r_xxxx = vdupq_lane_f32(r_xy, 0);
-		float32x4_t r_yyyy = vdupq_lane_f32(r_xy, 1);
-		float32x4_t r_zzzz = vdupq_lane_f32(r_zw, 0);
 		float32x4_t lxrw_lyrw_lzrw_lwrw = vmulq_lane_f32(lhs, r_zw, 1);
 
 		float32x4_t l_yxwz = vrev64q_f32(lhs);
 		float32x4_t l_wzyx = vcombine_f32(vget_high_f32(l_yxwz), vget_low_f32(l_yxwz));
-		float32x4_t lwrx_lzrx_lyrx_lxrx = vmulq_f32(r_xxxx, l_wzyx);
+		float32x4_t lwrx_lzrx_lyrx_lxrx = vmulq_lane_f32(l_wzyx, r_xy, 0);
 
 #if defined(RTM_NEON64_INTRINSICS)
 		float32x4_t result0 = vfmaq_f32(lxrw_lyrw_lzrw_lwrw, lwrx_lzrx_lyrx_lxrx, control_wzyx);
@@ -321,8 +318,8 @@ namespace rtm
 		float32x4_t result0 = vmlaq_f32(lxrw_lyrw_lzrw_lwrw, lwrx_lzrx_lyrx_lxrx, control_wzyx);
 #endif
 
-		float32x4_t l_zwxy = vrev64q_u32(l_wzyx);
-		float32x4_t lzry_lwry_lxry_lyry = vmulq_f32(r_yyyy, l_zwxy);
+		float32x4_t l_zwxy = vrev64q_f32(l_wzyx);
+		float32x4_t lzry_lwry_lxry_lyry = vmulq_lane_f32(l_zwxy, r_xy, 1);
 
 #if defined(RTM_NEON64_INTRINSICS)
 		float32x4_t result1 = vfmaq_f32(result0, lzry_lwry_lxry_lyry, control_zwxy);
@@ -330,7 +327,7 @@ namespace rtm
 		float32x4_t result1 = vmlaq_f32(result0, lzry_lwry_lxry_lyry, control_zwxy);
 #endif
 
-		float32x4_t lyrz_lxrz_lwrz_lzrz = vmulq_f32(r_zzzz, l_yxwz);
+		float32x4_t lyrz_lxrz_lwrz_lzrz = vmulq_lane_f32(l_yxwz, r_zw, 0);
 
 #if defined(RTM_NEON64_INTRINSICS)
 		return vfmaq_f32(result1, lyrz_lxrz_lwrz_lzrz, control_yxwz);
