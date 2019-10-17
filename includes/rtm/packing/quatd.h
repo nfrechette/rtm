@@ -53,7 +53,7 @@ namespace rtm
 		// w_squared can be negative either due to rounding or due to quantization imprecision, we take the absolute value
 		// to ensure the resulting quaternion is always normalized with a positive W component
 		double w = scalar_sqrt(scalar_abs(w_squared));
-		return quat_set(vector_get_x(input), vector_get_y(input), vector_get_z(input), w);
+		return quat_set_w(vector_to_quat(input), w);
 	}
 }
 
