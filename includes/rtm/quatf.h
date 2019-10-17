@@ -266,9 +266,9 @@ namespace rtm
 		__m128 zzww = _mm_shuffle_ps(z, w, _MM_SHUFFLE(0, 0, 0, 0));
 		return _mm_shuffle_ps(xxyy, zzww, _MM_SHUFFLE(2, 0, 2, 0));
 #elif defined(RTM_SSE2_INTRINSICS)
-		constexpr __m128 control_wzyx = { 1.0f,-1.0f, 1.0f,-1.0f };
-		constexpr __m128 control_zwxy = { 1.0f, 1.0f,-1.0f,-1.0f };
-		constexpr __m128 control_yxwz = { -1.0f, 1.0f, 1.0f,-1.0f };
+		constexpr __m128 control_wzyx = { 0.0f,-0.0f, 0.0f,-0.0f };
+		constexpr __m128 control_zwxy = { 0.0f, 0.0f,-0.0f,-0.0f };
+		constexpr __m128 control_yxwz = { -0.0f, 0.0f, 0.0f,-0.0f };
 
 		__m128 r_xxxx = _mm_shuffle_ps(rhs, rhs, _MM_SHUFFLE(0, 0, 0, 0));
 		__m128 r_yyyy = _mm_shuffle_ps(rhs, rhs, _MM_SHUFFLE(1, 1, 1, 1));
@@ -281,17 +281,17 @@ namespace rtm
 		__m128 lwrx_lzrx_lyrx_lxrx = _mm_mul_ps(r_xxxx, l_wzyx);
 		__m128 l_zwxy = _mm_shuffle_ps(l_wzyx, l_wzyx,_MM_SHUFFLE(2, 3, 0, 1));
 
-		__m128 lwrx_nlzrx_lyrx_nlxrx = _mm_mul_ps(lwrx_lzrx_lyrx_lxrx, control_wzyx);
+		__m128 lwrx_nlzrx_lyrx_nlxrx = _mm_xor_ps(lwrx_lzrx_lyrx_lxrx, control_wzyx);
 
 		__m128 lzry_lwry_lxry_lyry = _mm_mul_ps(r_yyyy, l_zwxy);
 		__m128 l_yxwz = _mm_shuffle_ps(l_zwxy, l_zwxy,_MM_SHUFFLE(0, 1, 2, 3));
 
-		__m128 lzry_lwry_nlxry_nlyry = _mm_mul_ps(lzry_lwry_lxry_lyry, control_zwxy);
+		__m128 lzry_lwry_nlxry_nlyry = _mm_xor_ps(lzry_lwry_lxry_lyry, control_zwxy);
 
 		__m128 lyrz_lxrz_lwrz_lzrz = _mm_mul_ps(r_zzzz, l_yxwz);
 		__m128 result0 = _mm_add_ps(lxrw_lyrw_lzrw_lwrw, lwrx_nlzrx_lyrx_nlxrx);
 
-		__m128 nlyrz_lxrz_lwrz_wlzrz = _mm_mul_ps(lyrz_lxrz_lwrz_lzrz, control_yxwz);
+		__m128 nlyrz_lxrz_lwrz_wlzrz = _mm_xor_ps(lyrz_lxrz_lwrz_lzrz, control_yxwz);
 		__m128 result1 = _mm_add_ps(lzry_lwry_nlxry_nlyry, nlyrz_lxrz_lwrz_wlzrz);
 		return _mm_add_ps(result0, result1);
 #elif defined(RTM_NEON_INTRINSICS)
