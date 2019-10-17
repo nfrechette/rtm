@@ -232,7 +232,7 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	inline vector4d quat_mul_vector3(const vector4d& vector, const quatd& rotation) RTM_NO_EXCEPT
 	{
-		quatd vector_quat = quat_set(vector_get_x(vector), vector_get_y(vector), vector_get_z(vector), 0.0);
+		quatd vector_quat = quat_set_w(vector_to_quat(vector), 0.0);
 		quatd inv_rotation = quat_conjugate(rotation);
 		return quat_to_vector(quat_mul(quat_mul(inv_rotation, vector_quat), rotation));
 	}
