@@ -122,10 +122,10 @@ static void test_quat_impl(const FloatType threshold)
 		};
 
 		Tmp tmp = { { 0 }, { FloatType(0.0), FloatType(2.34), FloatType(-3.12), FloatType(10000.0) }, {} };
-		REQUIRE(quat_get_x(quat_unaligned_load(&tmp.values[0])) == tmp.values[0]);
-		REQUIRE(quat_get_y(quat_unaligned_load(&tmp.values[0])) == tmp.values[1]);
-		REQUIRE(quat_get_z(quat_unaligned_load(&tmp.values[0])) == tmp.values[2]);
-		REQUIRE(quat_get_w(quat_unaligned_load(&tmp.values[0])) == tmp.values[3]);
+		REQUIRE(quat_get_x(quat_load(&tmp.values[0])) == tmp.values[0]);
+		REQUIRE(quat_get_y(quat_load(&tmp.values[0])) == tmp.values[1]);
+		REQUIRE(quat_get_z(quat_load(&tmp.values[0])) == tmp.values[2]);
+		REQUIRE(quat_get_w(quat_load(&tmp.values[0])) == tmp.values[3]);
 	}
 
 	{
@@ -145,7 +145,7 @@ static void test_quat_impl(const FloatType threshold)
 		};
 
 		Tmp tmp = { { 0 }, { FloatType(0.0), FloatType(2.34), FloatType(-3.12), FloatType(10000.0) }, {} };
-		quat_unaligned_write(quat_set(FloatType(0.0), FloatType(2.34), FloatType(-3.12), FloatType(10000.0)), &tmp.values[0]);
+		quat_store(quat_set(FloatType(0.0), FloatType(2.34), FloatType(-3.12), FloatType(10000.0)), &tmp.values[0]);
 		REQUIRE(tmp.values[0] == FloatType(0.0));
 		REQUIRE(tmp.values[1] == FloatType(2.34));
 		REQUIRE(tmp.values[2] == FloatType(-3.12));

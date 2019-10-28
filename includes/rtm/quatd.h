@@ -46,6 +46,15 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	// Loads an unaligned quaternion from memory.
 	//////////////////////////////////////////////////////////////////////////
+	inline quatd quat_load(const double* input) RTM_NO_EXCEPT
+	{
+		return quat_set(input[0], input[1], input[2], input[3]);
+	}
+
+	//////////////////////////////////////////////////////////////////////////
+	// Loads an unaligned quaternion from memory.
+	//////////////////////////////////////////////////////////////////////////
+	RTM_DEPRECATED("Use quat_load instead, to be removed in v2.0")
 	inline quatd quat_unaligned_load(const double* input) RTM_NO_EXCEPT
 	{
 		return quat_set(input[0], input[1], input[2], input[3]);
@@ -176,9 +185,20 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	// Writes a quaternion to unaligned memory.
 	//////////////////////////////////////////////////////////////////////////
+	inline void quat_store(const quatd& input, double* output) RTM_NO_EXCEPT
+	{
+		output[0] = quat_get_x(input);
+		output[1] = quat_get_y(input);
+		output[2] = quat_get_z(input);
+		output[3] = quat_get_w(input);
+	}
+
+	//////////////////////////////////////////////////////////////////////////
+	// Writes a quaternion to unaligned memory.
+	//////////////////////////////////////////////////////////////////////////
+	RTM_DEPRECATED("Use quat_store instead, to be removed in v2.0")
 	inline void quat_unaligned_write(const quatd& input, double* output) RTM_NO_EXCEPT
 	{
-		RTM_ASSERT(rtm_impl::is_aligned(output), "Invalid alignment");
 		output[0] = quat_get_x(input);
 		output[1] = quat_get_y(input);
 		output[2] = quat_get_z(input);
