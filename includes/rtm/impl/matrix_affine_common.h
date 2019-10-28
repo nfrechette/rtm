@@ -195,7 +195,7 @@ namespace rtm
 					(vector_get_component(matrix_get_axis(x_axis, y_axis, z_axis, zero, axis4(next_best_axis)), mix4(next_next_best_axis)) -
 						vector_get_component(matrix_get_axis(x_axis, y_axis, z_axis, zero, axis4(next_next_best_axis)), mix4(next_best_axis)));
 
-				return quat_normalize(quat_unaligned_load(&quat_values[0]));
+				return quat_normalize(quat_load(&quat_values[0]));
 			}
 		}
 
@@ -256,7 +256,7 @@ namespace rtm
 					(vector_get_component(matrix_get_axis(x_axis, y_axis, z_axis, zero, axis4(next_best_axis)), mix4(next_next_best_axis)) -
 						vector_get_component(matrix_get_axis(x_axis, y_axis, z_axis, zero, axis4(next_next_best_axis)), mix4(next_best_axis)));
 
-				return quat_normalize(quat_unaligned_load(&quat_values[0]));
+				return quat_normalize(quat_load(&quat_values[0]));
 			}
 		}
 	}

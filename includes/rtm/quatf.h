@@ -46,9 +46,23 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	// Loads an unaligned quaternion from memory.
 	//////////////////////////////////////////////////////////////////////////
+	inline quatf RTM_SIMD_CALL quat_load(const float* input) RTM_NO_EXCEPT
+	{
+#if defined(RTM_SSE2_INTRINSICS)
+		return _mm_loadu_ps(input);
+#elif defined(RTM_NEON_INTRINSICS)
+		return vld1q_f32(input);
+#else
+		return quat_set(input[0], input[1], input[2], input[3]);
+#endif
+	}
+
+	//////////////////////////////////////////////////////////////////////////
+	// Loads an unaligned quaternion from memory.
+	//////////////////////////////////////////////////////////////////////////
+	RTM_DEPRECATED("Use quat_load instead, to be removed in v2.0")
 	inline quatf RTM_SIMD_CALL quat_unaligned_load(const float* input) RTM_NO_EXCEPT
 	{
-		RTM_ASSERT(rtm_impl::is_aligned(input), "Invalid alignment");
 		return quat_set(input[0], input[1], input[2], input[3]);
 	}
 
@@ -203,13 +217,25 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	// Writes a quaternion to unaligned memory.
 	//////////////////////////////////////////////////////////////////////////
-	inline void RTM_SIMD_CALL quat_unaligned_write(quatf_arg0 input, float* output) RTM_NO_EXCEPT
+	inline void RTM_SIMD_CALL quat_store(quatf_arg0 input, float* output) RTM_NO_EXCEPT
 	{
-		RTM_ASSERT(rtm_impl::is_aligned(output), "Invalid alignment");
+#if defined(RTM_SSE2_INTRINSICS)
+		_mm_storeu_ps(output, input);
+#else
 		output[0] = quat_get_x(input);
 		output[1] = quat_get_y(input);
 		output[2] = quat_get_z(input);
 		output[3] = quat_get_w(input);
+#endif
+	}
+
+	//////////////////////////////////////////////////////////////////////////
+	// Writes a quaternion to unaligned memory.
+	//////////////////////////////////////////////////////////////////////////
+	RTM_DEPRECATED("Use quat_store instead, to be removed in v2.0")
+	inline void RTM_SIMD_CALL quat_unaligned_write(quatf_arg0 input, float* output) RTM_NO_EXCEPT
+	{
+		quat_store(input, output);
 	}
 
 
