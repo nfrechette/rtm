@@ -116,7 +116,12 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	inline float scalar_abs(float input) RTM_NO_EXCEPT
 	{
+#if defined(RTM_SSE2_INTRINSICS)
+		constexpr __m128i masks = { 0xFFU, 0xFFU, 0xFFU, 0x7FU, 0xFFU, 0xFFU, 0xFFU, 0x7FU, 0xFFU, 0xFFU, 0xFFU, 0x7FU, 0xFFU, 0xFFU, 0xFFU, 0x7FU };
+		return _mm_cvtss_f32(_mm_and_ps(_mm_set_ps1(input), _mm_castsi128_ps(masks)));
+#else
 		return std::fabs(input);
+#endif
 	}
 
 	//////////////////////////////////////////////////////////////////////////
@@ -418,7 +423,8 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	inline scalarf RTM_SIMD_CALL scalar_abs(scalarf_arg0 input) RTM_NO_EXCEPT
 	{
-		return scalar_max(scalar_sub(_mm_setzero_ps(), input), input);
+		constexpr __m128i masks = { 0xFFU, 0xFFU, 0xFFU, 0x7FU, 0xFFU, 0xFFU, 0xFFU, 0x7FU, 0xFFU, 0xFFU, 0xFFU, 0x7FU, 0xFFU, 0xFFU, 0xFFU, 0x7FU };
+		return _mm_and_ps(input, _mm_castsi128_ps(masks));
 	}
 
 	//////////////////////////////////////////////////////////////////////////

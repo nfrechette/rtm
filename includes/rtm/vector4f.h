@@ -552,7 +552,8 @@ namespace rtm
 	inline vector4f RTM_SIMD_CALL vector_abs(vector4f_arg0 input) RTM_NO_EXCEPT
 	{
 #if defined(RTM_SSE2_INTRINSICS)
-		return vector_max(vector_sub(_mm_setzero_ps(), input), input);
+		constexpr __m128i masks = { 0xFFU, 0xFFU, 0xFFU, 0x7FU, 0xFFU, 0xFFU, 0xFFU, 0x7FU, 0xFFU, 0xFFU, 0xFFU, 0x7FU, 0xFFU, 0xFFU, 0xFFU, 0x7FU };
+		return _mm_and_ps(input, _mm_castsi128_ps(masks));
 #elif defined(RTM_NEON_INTRINSICS)
 		return vabsq_f32(input);
 #else
