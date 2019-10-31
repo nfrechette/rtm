@@ -120,12 +120,20 @@ static void test_qvv_impl(const TransformType& identity, const FloatType thresho
 
 	{
 		Vector4Type x_axis = vector_set(FloatType(1.0), FloatType(0.0), FloatType(0.0));
-		Vector4Type test_scale = vector_set(FloatType(1.2));
+		Vector4Type test_scale1 = vector_set(FloatType(1.2));
+		Vector4Type test_scale2 = vector_set(FloatType(-1.2));
 
 		QuatType rotation_around_z = quat_from_euler(degrees(FloatType(0.0)), degrees(FloatType(90.0)), degrees(FloatType(0.0)));
-		TransformType transform_a = qvv_set(rotation_around_z, x_axis, test_scale);
+		TransformType transform_a = qvv_set(rotation_around_z, x_axis, test_scale1);
 		TransformType transform_b = qvv_inverse(transform_a);
 		TransformType transform_ab = qvv_mul(transform_a, transform_b);
+		REQUIRE(quat_near_equal(identity.rotation, transform_ab.rotation, threshold));
+		REQUIRE(vector_all_near_equal3(identity.translation, transform_ab.translation, threshold));
+		REQUIRE(vector_all_near_equal3(identity.scale, transform_ab.scale, threshold));
+
+		transform_a = qvv_set(rotation_around_z, x_axis, test_scale2);
+		transform_b = qvv_inverse(transform_a);
+		transform_ab = qvv_mul(transform_a, transform_b);
 		REQUIRE(quat_near_equal(identity.rotation, transform_ab.rotation, threshold));
 		REQUIRE(vector_all_near_equal3(identity.translation, transform_ab.translation, threshold));
 		REQUIRE(vector_all_near_equal3(identity.scale, transform_ab.scale, threshold));
