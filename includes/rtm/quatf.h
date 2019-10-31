@@ -254,9 +254,10 @@ namespace rtm
 #if defined(RTM_SSE2_INTRINSICS)
 		constexpr __m128 signs = { -0.0f, -0.0f, -0.0f, 0.0f };
 		return _mm_xor_ps(input, signs);
-#elif defined(RTM_NEON64_INTRINSICS)
-		const float32x4_t neg_input = vnegq_f32(input);
-		return vsetq_lane_f32(vgetq_lane_f32(input, 3), neg_input, 3);
+#elif defined(RTM_NEON_INTRINSICS)
+		alignas(16) constexpr uint32_t signs_u[4] = { 0x80000000U, 0x80000000U, 0x80000000U, 0 };
+		const uint32x4_t signs = *reinterpret_cast<const uint32x4_t*>(&signs_u[0]);
+		return vreinterpretq_f32_u32(veorq_u32(vreinterpretq_u32_f32(input), signs));
 #else
 		return quat_set(-quat_get_x(input), -quat_get_y(input), -quat_get_z(input), quat_get_w(input));
 #endif
