@@ -41,7 +41,11 @@ inline vector4f RTM_SIMD_CALL vector_abs_sse2_maxsub(vector4f_arg0 input) RTM_NO
 
 inline vector4f RTM_SIMD_CALL vector_abs_sse2_and(vector4f_arg0 input) RTM_NO_EXCEPT
 {
+#if defined(_MSC_VER)
 	constexpr __m128i masks = { 0xFFU, 0xFFU, 0xFFU, 0x7FU, 0xFFU, 0xFFU, 0xFFU, 0x7FU, 0xFFU, 0xFFU, 0xFFU, 0x7FU, 0xFFU, 0xFFU, 0xFFU, 0x7FU };
+#else
+	constexpr __m128i masks = { 0x7FFFFFFF7FFFFFFFULL, 0x7FFFFFFF7FFFFFFFULL };
+#endif
 	return _mm_and_ps(input, _mm_castsi128_ps(masks));
 }
 #endif
