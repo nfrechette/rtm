@@ -36,7 +36,11 @@ inline float RTM_SIMD_CALL scalar_abs_scalar(float input) RTM_NO_EXCEPT
 #if defined(RTM_SSE2_INTRINSICS)
 inline float RTM_SIMD_CALL vector_abs_sse2_and(float input) RTM_NO_EXCEPT
 {
+#if defined(_MSC_VER)
 	constexpr __m128i masks = { 0xFFU, 0xFFU, 0xFFU, 0x7FU, 0xFFU, 0xFFU, 0xFFU, 0x7FU, 0xFFU, 0xFFU, 0xFFU, 0x7FU, 0xFFU, 0xFFU, 0xFFU, 0x7FU };
+#else
+	constexpr __m128i masks = { 0x7FFFFFFF7FFFFFFFULL, 0x7FFFFFFF7FFFFFFFULL };
+#endif
 	return _mm_cvtss_f32(_mm_and_ps(_mm_set_ps1(input), _mm_castsi128_ps(masks)));
 }
 #endif
