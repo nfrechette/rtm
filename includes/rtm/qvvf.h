@@ -63,10 +63,19 @@ namespace rtm
 			matrix3x4f result_mtx = matrix_mul(lhs_mtx, rhs_mtx);
 			result_mtx = matrix_remove_scale(result_mtx);
 
+#if defined(RTM_SSE2_INTRINSICS)
+			constexpr __m128 signs = { -0.0f, -0.0f, -0.0f, -0.0f };
+			const __m128 sign_bits = _mm_and_ps(scale, signs);	// Mask out the sign bit
+
+			result_mtx.x_axis = _mm_xor_ps(result_mtx.x_axis, _mm_shuffle_ps(sign_bits, sign_bits, _MM_SHUFFLE(0, 0, 0, 0)));
+			result_mtx.y_axis = _mm_xor_ps(result_mtx.y_axis, _mm_shuffle_ps(sign_bits, sign_bits, _MM_SHUFFLE(1, 1, 1, 1)));
+			result_mtx.z_axis = _mm_xor_ps(result_mtx.z_axis, _mm_shuffle_ps(sign_bits, sign_bits, _MM_SHUFFLE(2, 2, 2, 2)));
+#else
 			const vector4f sign = vector_sign(scale);
 			result_mtx.x_axis = vector_mul(result_mtx.x_axis, vector_dup_x(sign));
 			result_mtx.y_axis = vector_mul(result_mtx.y_axis, vector_dup_y(sign));
 			result_mtx.z_axis = vector_mul(result_mtx.z_axis, vector_dup_z(sign));
+#endif
 
 			const quatf rotation = quat_from_matrix(result_mtx);
 			const vector4f translation = result_mtx.w_axis;
