@@ -30,6 +30,11 @@
 //////////////////////////////////////////////////////////////////////////
 
 #if !defined(RTM_NO_INTRINSICS)
+	#if defined(__AVX2__)
+		#define RTM_AVX2_INTRINSICS
+		#define RTM_FMA_INTRINSICS
+	#endif
+
 	#if defined(__AVX__)
 		#define RTM_AVX_INTRINSICS
 		#define RTM_SSE4_INTRINSICS
