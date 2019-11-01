@@ -22,6 +22,7 @@ def parse_argv():
 
 	misc = parser.add_argument_group(title='Miscellaneous')
 	misc.add_argument('-avx', dest='use_avx', action='store_true', help='Compile using AVX instructions on Windows, OS X, and Linux')
+	misc.add_argument('-avx2', dest='use_avx2', action='store_true', help='Compile using AVX2 instructions on Windows, OS X, and Linux')
 	misc.add_argument('-nosimd', dest='use_simd', action='store_false', help='Compile without SIMD instructions')
 	misc.add_argument('-num_threads', help='No. to use while compiling and regressing')
 	misc.add_argument('-tests_matching', help='Only run tests whose names match this regex')
@@ -38,9 +39,10 @@ def parse_argv():
 	args = parser.parse_args()
 
 	# Sanitize and validate our options
-	if args.use_avx and not args.use_simd:
-		print('SIMD is explicitly disabled, AVX will not be used')
+	if (args.use_avx or args.use_avx2) and not args.use_simd:
+		print('SIMD is explicitly disabled, AVX and AVX2 will not be used')
 		args.use_avx = False
+		args.use_avx2 = False
 
 	if args.compiler == 'android':
 		args.cpu = 'armv7-a'
@@ -49,8 +51,8 @@ def parse_argv():
 			print('Android is only supported on Windows')
 			sys.exit(1)
 
-		if args.use_avx:
-			print('AVX is not supported on Android')
+		if args.use_avx or args.use_avx2:
+			print('AVX and AVX2 are not supported on Android')
 			sys.exit(1)
 
 		if args.unit_test:
@@ -64,8 +66,8 @@ def parse_argv():
 			print('iOS is only supported on OS X')
 			sys.exit(1)
 
-		if args.use_avx:
-			print('AVX is not supported on iOS')
+		if args.use_avx or args.use_avx2:
+			print('AVX and AVX2 are not supported on iOS')
 			sys.exit(1)
 
 		if args.unit_test:
@@ -187,6 +189,10 @@ def do_generate_solution(cmake_exe, build_dir, cmake_script_dir, args):
 	if args.use_avx:
 		print('Enabling AVX usage')
 		extra_switches.append('-DUSE_AVX_INSTRUCTIONS:BOOL=true')
+
+	if args.use_avx2:
+		print('Enabling AVX2 usage')
+		extra_switches.append('-DUSE_AVX2_INSTRUCTIONS:BOOL=true')
 
 	if not args.use_simd:
 		print('Disabling SIMD instruction usage')

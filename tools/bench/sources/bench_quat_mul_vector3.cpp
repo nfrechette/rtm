@@ -35,6 +35,59 @@ inline vector4f RTM_SIMD_CALL quat_mul_vector3_ref(vector4f_arg0 vector, quatf_a
 	return quat_to_vector(quat_mul(quat_mul(inv_rotation, vector_quat), rotation));
 }
 
+#if defined(RTM_FMA_INTRINSICS)
+inline vector4f RTM_SIMD_CALL quat_mul_vector3_fma(vector4f_arg0 vector, quatf_arg1 rotation) RTM_NO_EXCEPT
+{
+	const __m128 inv_rotation = quat_conjugate(rotation);
+
+	// Normally when we multiply our inverse rotation quaternion with the input vector as a quaternion with W = 0.0.
+	// As a result, we can strip the whole part that uses W saving a few instructions.
+	// Because we have the rotation and its inverse, we also can use them to avoid flipping the signs
+	// when lining up our SIMD additions. For the first quaternion multiplication, we can avoid 3 XORs by
+	// doing 2 shuffles instead. The same trick can also be used with the second quaternion multiplication.
+	// We also don't care about the result W lane but it comes for free.
+
+	// temp = quat_mul(inv_rotation, vector_quat)
+	__m128 temp;
+	{
+		const __m128 rotation_tmp0 = _mm_shuffle_ps(rotation, inv_rotation, _MM_SHUFFLE(3, 0, 2, 1));		// r.y, r.z, -r.x, -r.w
+		const __m128 rotation_tmp1 = _mm_shuffle_ps(rotation, inv_rotation, _MM_SHUFFLE(3, 1, 2, 0));		// r.x, r.z, -r.y, -r.w
+
+		const __m128 v_xxxx = _mm_shuffle_ps(vector, vector, _MM_SHUFFLE(0, 0, 0, 0));
+		const __m128 v_yyyy = _mm_shuffle_ps(vector, vector, _MM_SHUFFLE(1, 1, 1, 1));
+		const __m128 v_zzzz = _mm_shuffle_ps(vector, vector, _MM_SHUFFLE(2, 2, 2, 2));
+
+		const __m128 rotation_tmp2 = _mm_shuffle_ps(rotation_tmp0, rotation_tmp1, _MM_SHUFFLE(0, 2, 1, 3));	// -r.w, r.z, -r.y, r.x
+		const __m128 lwrx_lzrx_lyrx_lxrx = _mm_mul_ps(v_xxxx, rotation_tmp2);
+
+		const __m128 rotation_tmp3 = _mm_shuffle_ps(inv_rotation, rotation, _MM_SHUFFLE(1, 0, 3, 2));		// -r.z, -r.w, r.x, r.y
+		const __m128 rotation_tmp4 = _mm_shuffle_ps(rotation_tmp0, rotation_tmp1, _MM_SHUFFLE(1, 3, 2, 0));	// r.y, -r.x, -r.w, r.z
+
+		temp = _mm_fmadd_ps(v_zzzz, rotation_tmp4, _mm_fmadd_ps(v_yyyy, rotation_tmp3, lwrx_lzrx_lyrx_lxrx));
+	}
+
+	// result = quat_mul(temp, rotation)
+	{
+		const __m128 rotation_tmp0 = _mm_shuffle_ps(rotation, inv_rotation, _MM_SHUFFLE(2, 0, 2, 0));		// r.x, r.z, -r.x, -r.z
+
+		__m128 r_xxxx = _mm_shuffle_ps(rotation_tmp0, rotation_tmp0, _MM_SHUFFLE(2, 0, 2, 0));				// r.x, -r.x, r.x, -r.x
+		__m128 r_yyyy = _mm_shuffle_ps(rotation, inv_rotation, _MM_SHUFFLE(1, 1, 1, 1));					// r.y, r.y, -r.y, -r.y
+		__m128 r_zzzz = _mm_shuffle_ps(rotation_tmp0, rotation_tmp0, _MM_SHUFFLE(3, 1, 1, 3));				// -r.z, r.z, r.z, -r.z
+		__m128 r_wwww = _mm_shuffle_ps(rotation, rotation, _MM_SHUFFLE(3, 3, 3, 3));						// r.w, r.w, r.w, r.w
+
+		__m128 lxrw_lyrw_lzrw_lwrw = _mm_mul_ps(r_wwww, temp);
+
+		__m128 t_wzyx = _mm_shuffle_ps(temp, temp, _MM_SHUFFLE(0, 1, 2, 3));
+		__m128 t_zwxy = _mm_shuffle_ps(t_wzyx, t_wzyx, _MM_SHUFFLE(2, 3, 0, 1));
+		__m128 t_yxwz = _mm_shuffle_ps(t_zwxy, t_zwxy, _MM_SHUFFLE(0, 1, 2, 3));
+
+		__m128 result0 = _mm_fmadd_ps(r_xxxx, t_wzyx, lxrw_lyrw_lzrw_lwrw);
+		__m128 result1 = _mm_fmadd_ps(r_yyyy, t_zwxy, result0);
+		return _mm_fmadd_ps(r_zzzz, t_yxwz, result1);
+	}
+}
+#endif
+
 #if defined(RTM_SSE2_INTRINSICS)
 inline vector4f RTM_SIMD_CALL quat_mul_vector3_sse2(vector4f_arg0 vector, quatf_arg1 rotation) RTM_NO_EXCEPT
 {
@@ -293,6 +346,19 @@ static void bm_quat_mul_vector3_ref(benchmark::State& state)
 }
 
 BENCHMARK(bm_quat_mul_vector3_ref);
+
+#if defined(RTM_FMA_INTRINSICS)
+static void bm_quat_mul_vector3_fma(benchmark::State& state)
+{
+	vector4f v0 = vector_set(12.0f, 32.0f, -2.0f);
+	quatf q0 = quat_identity();
+
+	for (auto _ : state)
+		benchmark::DoNotOptimize(v0 = quat_mul_vector3_fma(q0, v0));
+}
+
+BENCHMARK(bm_quat_mul_vector3_fma);
+#endif
 
 #if defined(RTM_SSE2_INTRINSICS)
 static void bm_quat_mul_vector3_sse2(benchmark::State& state)

@@ -48,6 +48,65 @@ inline quatf RTM_SIMD_CALL quat_mul_scalar(quatf_arg0 lhs, quatf_arg1 rhs) RTM_N
 	return quat_set(x, y, z, w);
 }
 
+#if defined(RTM_FMA_INTRINSICS)
+inline quatf RTM_SIMD_CALL quat_mul_fma_mul(quatf_arg0 lhs, quatf_arg1 rhs) RTM_NO_EXCEPT
+{
+	constexpr __m128 control_wzyx = { 1.0f,-1.0f, 1.0f,-1.0f };
+	constexpr __m128 control_zwxy = { 1.0f, 1.0f,-1.0f,-1.0f };
+	constexpr __m128 control_yxwz = { -1.0f, 1.0f, 1.0f,-1.0f };
+
+	const __m128 r_xxxx = _mm_shuffle_ps(rhs, rhs, _MM_SHUFFLE(0, 0, 0, 0));
+	const __m128 r_yyyy = _mm_shuffle_ps(rhs, rhs, _MM_SHUFFLE(1, 1, 1, 1));
+	const __m128 r_zzzz = _mm_shuffle_ps(rhs, rhs, _MM_SHUFFLE(2, 2, 2, 2));
+	const __m128 r_wwww = _mm_shuffle_ps(rhs, rhs, _MM_SHUFFLE(3, 3, 3, 3));
+
+	const __m128 lxrw_lyrw_lzrw_lwrw = _mm_mul_ps(r_wwww, lhs);
+	const __m128 l_wzyx = _mm_shuffle_ps(lhs, lhs, _MM_SHUFFLE(0, 1, 2, 3));
+
+	const __m128 lwrx_lzrx_lyrx_lxrx = _mm_mul_ps(r_xxxx, l_wzyx);
+	const __m128 l_zwxy = _mm_shuffle_ps(l_wzyx, l_wzyx, _MM_SHUFFLE(2, 3, 0, 1));
+
+	const __m128 lzry_lwry_lxry_lyry = _mm_mul_ps(r_yyyy, l_zwxy);
+	const __m128 l_yxwz = _mm_shuffle_ps(l_zwxy, l_zwxy, _MM_SHUFFLE(0, 1, 2, 3));
+
+	const __m128 lyrz_lxrz_lwrz_lzrz = _mm_mul_ps(r_zzzz, l_yxwz);
+	const __m128 result0 = _mm_fmadd_ps(lwrx_lzrx_lyrx_lxrx, control_wzyx, lxrw_lyrw_lzrw_lwrw);
+	const __m128 result1 = _mm_fmadd_ps(lzry_lwry_lxry_lyry, control_zwxy, result0);
+	return _mm_fmadd_ps(lyrz_lxrz_lwrz_lzrz, control_yxwz, result1);
+}
+
+inline quatf RTM_SIMD_CALL quat_mul_fma_xor(quatf_arg0 lhs, quatf_arg1 rhs) RTM_NO_EXCEPT
+{
+	constexpr __m128 control_wzyx = { 0.0f,-0.0f, 0.0f,-0.0f };
+	constexpr __m128 control_zwxy = { 0.0f, 0.0f,-0.0f,-0.0f };
+	constexpr __m128 control_yxwz = { -0.0f, 0.0f, 0.0f,-0.0f };
+
+	const __m128 r_xxxx = _mm_shuffle_ps(rhs, rhs, _MM_SHUFFLE(0, 0, 0, 0));
+	const __m128 r_yyyy = _mm_shuffle_ps(rhs, rhs, _MM_SHUFFLE(1, 1, 1, 1));
+	const __m128 r_zzzz = _mm_shuffle_ps(rhs, rhs, _MM_SHUFFLE(2, 2, 2, 2));
+	const __m128 r_wwww = _mm_shuffle_ps(rhs, rhs, _MM_SHUFFLE(3, 3, 3, 3));
+
+	const __m128 l_wzyx = _mm_shuffle_ps(lhs, lhs, _MM_SHUFFLE(0, 1, 2, 3));
+
+	const __m128 lwrx_lzrx_lyrx_lxrx = _mm_mul_ps(r_xxxx, l_wzyx);
+	const __m128 l_zwxy = _mm_shuffle_ps(l_wzyx, l_wzyx, _MM_SHUFFLE(2, 3, 0, 1));
+
+	const __m128 lwrx_nlzrx_lyrx_nlxrx = _mm_xor_ps(lwrx_lzrx_lyrx_lxrx, control_wzyx);
+
+	const __m128 lzry_lwry_lxry_lyry = _mm_mul_ps(r_yyyy, l_zwxy);
+	const __m128 l_yxwz = _mm_shuffle_ps(l_zwxy, l_zwxy, _MM_SHUFFLE(0, 1, 2, 3));
+
+	const __m128 lzry_lwry_nlxry_nlyry = _mm_xor_ps(lzry_lwry_lxry_lyry, control_zwxy);
+
+	const __m128 lyrz_lxrz_lwrz_lzrz = _mm_mul_ps(r_zzzz, l_yxwz);
+	const __m128 result0 = _mm_fmadd_ps(r_wwww, lhs, lwrx_nlzrx_lyrx_nlxrx);
+
+	const __m128 nlyrz_lxrz_lwrz_wlzrz = _mm_xor_ps(lyrz_lxrz_lwrz_lzrz, control_yxwz);
+	const __m128 result1 = _mm_add_ps(lzry_lwry_nlxry_nlyry, nlyrz_lxrz_lwrz_wlzrz);
+	return _mm_add_ps(result0, result1);
+}
+#endif
+
 #if defined(RTM_SSE2_INTRINSICS)
 inline quatf RTM_SIMD_CALL quat_mul_sse_mul(quatf_arg0 lhs, quatf_arg1 rhs) RTM_NO_EXCEPT
 {
@@ -221,6 +280,28 @@ static void bm_quat_mul_scalar(benchmark::State& state)
 }
 
 BENCHMARK(bm_quat_mul_scalar);
+
+#if defined(RTM_FMA_INTRINSICS)
+static void bm_quat_mul_fma_mul(benchmark::State& state)
+{
+	quatf q0 = quat_identity();
+
+	for (auto _ : state)
+		benchmark::DoNotOptimize(q0 = quat_mul_fma_mul(q0, q0));
+}
+
+BENCHMARK(bm_quat_mul_fma_mul);
+
+static void bm_quat_mul_fma_xor(benchmark::State& state)
+{
+	quatf q0 = quat_identity();
+
+	for (auto _ : state)
+		benchmark::DoNotOptimize(q0 = quat_mul_fma_xor(q0, q0));
+}
+
+BENCHMARK(bm_quat_mul_fma_xor);
+#endif
 
 #if defined(RTM_SSE2_INTRINSICS)
 static void bm_quat_mul_sse_mul(benchmark::State& state)
