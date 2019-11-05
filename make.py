@@ -34,7 +34,7 @@ def parse_argv():
 	if not num_threads or num_threads == 0:
 		num_threads = 4
 
-	parser.set_defaults(build=False, clean=False, unit_test=False, compiler=None, config='Release', cpu='x64', use_avx=False, use_simd=True, num_threads=num_threads, tests_matching='')
+	parser.set_defaults(build=False, clean=False, unit_test=False, compiler=None, config='Release', cpu='x64', use_avx=False, use_avx2=False, use_simd=True, num_threads=num_threads, tests_matching='')
 
 	args = parser.parse_args()
 
