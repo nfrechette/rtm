@@ -153,7 +153,7 @@ namespace rtm
 #if defined(RTM_SSE2_INTRINSICS)
 		// Perform two passes of Newton-Raphson iteration on the hardware estimate
 		const __m128 input_v = _mm_set_ss(input);
-		const __m128 half = _mm_set_ss(0.5f);
+		const __m128 half = _mm_set_ss(0.5F);
 		const __m128 input_half_v = _mm_mul_ss(input_v, half);
 		const __m128 x0 = _mm_rsqrt_ss(input_v);
 
@@ -169,7 +169,7 @@ namespace rtm
 
 		return _mm_cvtss_f32(x2);
 #else
-		return 1.0f / scalar_sqrt(input);
+		return 1.0F / scalar_sqrt(input);
 #endif
 	}
 #if _MSC_VER >= 1920 && defined(_M_X64) && defined(RTM_SSE2_INTRINSICS) && !defined(RTM_AVX_INTRINSICS)
@@ -308,7 +308,7 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	// Returns true if both inputs are nearly equal, false otherwise.
 	//////////////////////////////////////////////////////////////////////////
-	inline bool scalar_near_equal(float lhs, float rhs, float threshold = 0.00001f) RTM_NO_EXCEPT
+	inline bool scalar_near_equal(float lhs, float rhs, float threshold = 0.00001F) RTM_NO_EXCEPT
 	{
 		return scalar_abs(lhs - rhs) < threshold;
 	}
@@ -330,7 +330,7 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	inline float scalar_symmetric_round(float input) RTM_NO_EXCEPT
 	{
-		return input >= 0.0f ? scalar_floor(input + 0.5f) : scalar_ceil(input - 0.5f);
+		return input >= 0.0F ? scalar_floor(input + 0.5F) : scalar_ceil(input - 0.5F);
 	}
 
 	//////////////////////////////////////////////////////////////////////////
@@ -464,7 +464,7 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	inline bool scalar_near_equal(scalarf_arg0 lhs, scalarf_arg1 rhs) RTM_NO_EXCEPT
 	{
-		return scalar_near_equal(lhs, rhs, scalar_set(0.00001f));
+		return scalar_near_equal(lhs, rhs, scalar_set(0.00001F));
 	}
 #endif
 }

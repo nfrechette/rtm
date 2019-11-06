@@ -63,7 +63,7 @@ namespace rtm
 	inline vector4f RTM_SIMD_CALL vector_set(float x, float y, float z) RTM_NO_EXCEPT
 	{
 #if defined(RTM_SSE2_INTRINSICS)
-		return _mm_set_ps(0.0f, z, y, x);
+		return _mm_set_ps(0.0F, z, y, x);
 #elif defined(RTM_NEON_INTRINSICS)
 #if 1
 		float32x2_t V0 = vcreate_f32(((uint64_t)*(const uint32_t*)&x) | ((uint64_t)(*(const uint32_t*)&y) << 32));
@@ -170,7 +170,7 @@ namespace rtm
 			uint64_t u64;
 			uint32_t u32[2];
 
-			constexpr mask_converter(uint64_t value) RTM_NO_EXCEPT : u64(value) {}
+			explicit constexpr mask_converter(uint64_t value) RTM_NO_EXCEPT : u64(value) {}
 
 			constexpr operator uint32_t() const RTM_NO_EXCEPT { return u32[0]; }
 			constexpr operator uint64_t() const RTM_NO_EXCEPT { return u64; }
@@ -181,7 +181,7 @@ namespace rtm
 		//////////////////////////////////////////////////////////////////////////
 		constexpr mask_converter get_mask_value(bool is_true) RTM_NO_EXCEPT
 		{
-			return mask_converter(is_true ? uint64_t(0xFFFFFFFFFFFFFFFFull) : uint64_t(0));
+			return mask_converter(is_true ? uint64_t(0xFFFFFFFFFFFFFFFFULL) : uint64_t(0));
 		}
 
 		//////////////////////////////////////////////////////////////////////////
@@ -201,49 +201,30 @@ namespace rtm
 		}
 
 		//////////////////////////////////////////////////////////////////////////
-		// Various vector constants
-		//////////////////////////////////////////////////////////////////////////
-		enum class vector_constants
-		{
-			zero
-		};
-
-		//////////////////////////////////////////////////////////////////////////
 		// This is a helper struct to allow a single consistent API between
 		// various vector types when the semantics are identical but the return
 		// type differs. Implicit coercion is used to return the desired value
 		// at the call site.
 		//////////////////////////////////////////////////////////////////////////
-		template<vector_constants constant>
-		struct vector_constant
+		struct vector_zero_impl
 		{
 			inline RTM_SIMD_CALL operator vector4d() const RTM_NO_EXCEPT
 			{
-				switch (constant)
-				{
-				case vector_constants::zero:
-				default:
 #if defined(RTM_SSE2_INTRINSICS)
-					const __m128d zero_pd = _mm_setzero_pd();
-					return vector4d{ zero_pd, zero_pd };
+				const __m128d zero_pd = _mm_setzero_pd();
+				return vector4d{ zero_pd, zero_pd };
 #else
-					return vector_set(0.0);
+				return vector_set(0.0);
 #endif
-				}
 			}
 
 			inline RTM_SIMD_CALL operator vector4f() const RTM_NO_EXCEPT
 			{
-				switch (constant)
-				{
-				case vector_constants::zero:
-				default:
 #if defined(RTM_SSE2_INTRINSICS)
-					return _mm_setzero_ps();
+				return _mm_setzero_ps();
 #else
-					return vector_set(0.0f);
+				return vector_set(0.0F);
 #endif
-				}
 			}
 		};
 
@@ -313,13 +294,13 @@ namespace rtm
 				{
 					float data[2];
 					std::memcpy(&data[0], ptr, sizeof(float) * 2);
-					return vector_set(data[0], data[1], 0.0f, 0.0f);
+					return vector_set(data[0], data[1], 0.0F, 0.0F);
 				}
 				case vector_unaligned_loader_width::vec3:
 				{
 					float data[3];
 					std::memcpy(&data[0], ptr, sizeof(float) * 3);
-					return vector_set(data[0], data[1], data[2], 0.0f);
+					return vector_set(data[0], data[1], data[2], 0.0F);
 				}
 				case vector_unaligned_loader_width::vec4:
 				default:
@@ -534,9 +515,9 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	// Returns a vector consisting of all zeros.
 	//////////////////////////////////////////////////////////////////////////
-	constexpr rtm_impl::vector_constant<rtm_impl::vector_constants::zero> RTM_SIMD_CALL vector_zero() RTM_NO_EXCEPT
+	constexpr rtm_impl::vector_zero_impl RTM_SIMD_CALL vector_zero() RTM_NO_EXCEPT
 	{
-		return rtm_impl::vector_constant<rtm_impl::vector_constants::zero>();
+		return rtm_impl::vector_zero_impl();
 	}
 
 	//////////////////////////////////////////////////////////////////////////

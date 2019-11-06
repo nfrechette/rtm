@@ -161,28 +161,28 @@ static void test_matrix_impl(const FloatType threshold)
 
 TEST_CASE("matrix3x3f math", "[math][matrix3x3]")
 {
-	test_matrix_impl<float>(1.0e-4f);
+	test_matrix_impl<float>(1.0E-4F);
 
 	{
-		quatf rotation_around_z = quat_from_euler(degrees(0.0f), degrees(90.0f), degrees(0.0f));
+		quatf rotation_around_z = quat_from_euler(degrees(0.0F), degrees(90.0F), degrees(0.0F));
 		matrix3x3f src = matrix_from_quat(rotation_around_z);
 		matrix3x3d dst = matrix_cast(src);
-		REQUIRE(vector_all_near_equal3(vector_cast(src.x_axis), dst.x_axis, 1.0e-4));
-		REQUIRE(vector_all_near_equal3(vector_cast(src.y_axis), dst.y_axis, 1.0e-4));
-		REQUIRE(vector_all_near_equal3(vector_cast(src.z_axis), dst.z_axis, 1.0e-4));
+		REQUIRE(vector_all_near_equal3(vector_cast(src.x_axis), dst.x_axis, 1.0E-4));
+		REQUIRE(vector_all_near_equal3(vector_cast(src.y_axis), dst.y_axis, 1.0E-4));
+		REQUIRE(vector_all_near_equal3(vector_cast(src.z_axis), dst.z_axis, 1.0E-4));
 	}
 }
 
 TEST_CASE("matrix3x3d math", "[math][matrix3x3]")
 {
-	test_matrix_impl<double>(1.0e-4);
+	test_matrix_impl<double>(1.0E-4);
 
 	{
 		quatd rotation_around_z = quat_from_euler(degrees(0.0), degrees(90.0), degrees(0.0));
 		matrix3x3d src = matrix_from_quat(rotation_around_z);
 		matrix3x3f dst = matrix_cast(src);
-		REQUIRE(vector_all_near_equal3(vector_cast(src.x_axis), dst.x_axis, 1.0e-4f));
-		REQUIRE(vector_all_near_equal3(vector_cast(src.y_axis), dst.y_axis, 1.0e-4f));
-		REQUIRE(vector_all_near_equal3(vector_cast(src.z_axis), dst.z_axis, 1.0e-4f));
+		REQUIRE(vector_all_near_equal3(vector_cast(src.x_axis), dst.x_axis, 1.0E-4F));
+		REQUIRE(vector_all_near_equal3(vector_cast(src.y_axis), dst.y_axis, 1.0E-4F));
+		REQUIRE(vector_all_near_equal3(vector_cast(src.z_axis), dst.z_axis, 1.0E-4F));
 	}
 }

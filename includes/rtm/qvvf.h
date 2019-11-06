@@ -64,7 +64,7 @@ namespace rtm
 			result_mtx = matrix_remove_scale(result_mtx);
 
 #if defined(RTM_SSE2_INTRINSICS)
-			constexpr __m128 signs = { -0.0f, -0.0f, -0.0f, -0.0f };
+			constexpr __m128 signs = { -0.0F, -0.0F, -0.0F, -0.0F };
 			const __m128 sign_bits = _mm_and_ps(scale, signs);	// Mask out the sign bit
 
 			result_mtx.x_axis = _mm_xor_ps(result_mtx.x_axis, _mm_shuffle_ps(sign_bits, sign_bits, _MM_SHUFFLE(0, 0, 0, 0)));
@@ -98,7 +98,7 @@ namespace rtm
 	{
 		const quatf rotation = quat_mul(lhs.rotation, rhs.rotation);
 		const vector4f translation = vector_add(quat_mul_vector3(lhs.translation, rhs.rotation), rhs.translation);
-		return qvv_set(rotation, translation, vector_set(1.0f));
+		return qvv_set(rotation, translation, vector_set(1.0F));
 	}
 
 	//////////////////////////////////////////////////////////////////////////
@@ -138,7 +138,7 @@ namespace rtm
 	{
 		const quatf inv_rotation = quat_conjugate(input.rotation);
 		const vector4f inv_translation = vector_neg(quat_mul_vector3(input.translation, inv_rotation));
-		return qvv_set(inv_rotation, inv_translation, vector_set(1.0f));
+		return qvv_set(inv_rotation, inv_translation, vector_set(1.0F));
 	}
 
 	//////////////////////////////////////////////////////////////////////////

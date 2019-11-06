@@ -151,15 +151,15 @@ namespace rtm
 			}
 
 			const float mtx_trace = vector_get_x(x_axis) + vector_get_y(y_axis) + vector_get_z(z_axis);
-			if (mtx_trace > 0.0f)
+			if (mtx_trace > 0.0F)
 			{
-				const float inv_trace = scalar_sqrt_reciprocal(mtx_trace + 1.0f);
-				const float half_inv_trace = inv_trace * 0.5f;
+				const float inv_trace = scalar_sqrt_reciprocal(mtx_trace + 1.0F);
+				const float half_inv_trace = inv_trace * 0.5F;
 
 				const float x = (vector_get_z(y_axis) - vector_get_y(z_axis)) * half_inv_trace;
 				const float y = (vector_get_x(z_axis) - vector_get_z(x_axis)) * half_inv_trace;
 				const float z = (vector_get_y(x_axis) - vector_get_x(y_axis)) * half_inv_trace;
-				const float w = scalar_reciprocal(inv_trace) * 0.5f;
+				const float w = scalar_reciprocal(inv_trace) * 0.5F;
 
 				return quat_normalize(quat_set(x, y, z, w));
 			}
@@ -175,16 +175,16 @@ namespace rtm
 				const int8_t next_best_axis = (best_axis + 1) % 3;
 				const int8_t next_next_best_axis = (next_best_axis + 1) % 3;
 
-				const float mtx_pseudo_trace = 1.0f +
+				const float mtx_pseudo_trace = 1.0F +
 					vector_get_component(matrix_get_axis(x_axis, y_axis, z_axis, zero, axis4(best_axis)), mix4(best_axis)) -
 					vector_get_component(matrix_get_axis(x_axis, y_axis, z_axis, zero, axis4(next_best_axis)), mix4(next_best_axis)) -
 					vector_get_component(matrix_get_axis(x_axis, y_axis, z_axis, zero, axis4(next_next_best_axis)), mix4(next_next_best_axis));
 
 				const float inv_pseudo_trace = scalar_sqrt_reciprocal(mtx_pseudo_trace);
-				const float half_inv_pseudo_trace = inv_pseudo_trace * 0.5f;
+				const float half_inv_pseudo_trace = inv_pseudo_trace * 0.5F;
 
 				float quat_values[4];
-				quat_values[best_axis] = scalar_reciprocal(inv_pseudo_trace) * 0.5f;
+				quat_values[best_axis] = scalar_reciprocal(inv_pseudo_trace) * 0.5F;
 				quat_values[next_best_axis] = half_inv_pseudo_trace *
 					(vector_get_component(matrix_get_axis(x_axis, y_axis, z_axis, zero, axis4(best_axis)), mix4(next_best_axis)) +
 						vector_get_component(matrix_get_axis(x_axis, y_axis, z_axis, zero, axis4(next_best_axis)), mix4(best_axis)));

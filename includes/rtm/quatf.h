@@ -252,7 +252,7 @@ namespace rtm
 	inline quatf RTM_SIMD_CALL quat_conjugate(quatf_arg0 input) RTM_NO_EXCEPT
 	{
 #if defined(RTM_SSE2_INTRINSICS)
-		constexpr __m128 signs = { -0.0f, -0.0f, -0.0f, 0.0f };
+		constexpr __m128 signs = { -0.0F, -0.0F, -0.0F, 0.0F };
 		return _mm_xor_ps(input, signs);
 #elif defined(RTM_NEON_INTRINSICS)
 		alignas(16) constexpr uint32_t signs_u[4] = { 0x80000000U, 0x80000000U, 0x80000000U, 0 };
@@ -272,10 +272,10 @@ namespace rtm
 	{
 #if defined(RTM_SSE4_INTRINSICS) && 0
 		// TODO: Profile this, the accuracy is the same as with SSE2, should be binary exact
-		constexpr __m128 signs_x = { 1.0f,  1.0f,  1.0f, -1.0f };
-		constexpr __m128 signs_y = { 1.0f, -1.0f,  1.0f,  1.0f };
-		constexpr __m128 signs_z = { 1.0f,  1.0f, -1.0f,  1.0f };
-		constexpr __m128 signs_w = { 1.0f, -1.0f, -1.0f, -1.0f };
+		constexpr __m128 signs_x = { 1.0F,  1.0F,  1.0F, -1.0F };
+		constexpr __m128 signs_y = { 1.0F, -1.0F,  1.0F,  1.0F };
+		constexpr __m128 signs_z = { 1.0F,  1.0F, -1.0F,  1.0F };
+		constexpr __m128 signs_w = { 1.0F, -1.0F, -1.0F, -1.0F };
 		// x = dot(rhs.wxyz, lhs.xwzy * signs_x)
 		// y = dot(rhs.wxyz, lhs.yzwx * signs_y)
 		// z = dot(rhs.wxyz, lhs.zyxw * signs_z)
@@ -293,9 +293,9 @@ namespace rtm
 		__m128 zzww = _mm_shuffle_ps(z, w, _MM_SHUFFLE(0, 0, 0, 0));
 		return _mm_shuffle_ps(xxyy, zzww, _MM_SHUFFLE(2, 0, 2, 0));
 #elif defined(RTM_SSE2_INTRINSICS)
-		constexpr __m128 control_wzyx = { 0.0f,-0.0f, 0.0f,-0.0f };
-		constexpr __m128 control_zwxy = { 0.0f, 0.0f,-0.0f,-0.0f };
-		constexpr __m128 control_yxwz = { -0.0f, 0.0f, 0.0f,-0.0f };
+		constexpr __m128 control_wzyx = {  0.0F, -0.0F,  0.0F, -0.0F };
+		constexpr __m128 control_zwxy = {  0.0F,  0.0F, -0.0F, -0.0F };
+		constexpr __m128 control_yxwz = { -0.0F,  0.0F,  0.0F, -0.0F };
 
 		const __m128 r_xxxx = _mm_shuffle_ps(rhs, rhs, _MM_SHUFFLE(0, 0, 0, 0));
 		const __m128 r_yyyy = _mm_shuffle_ps(rhs, rhs, _MM_SHUFFLE(1, 1, 1, 1));
@@ -505,7 +505,7 @@ namespace rtm
 
 		// Calculate the reciprocal square root to get the inverse length of our vector
 		// Perform two passes of Newton-Raphson iteration on the hardware estimate
-		__m128 half = _mm_set_ss(0.5f);
+		__m128 half = _mm_set_ss(0.5F);
 		__m128 input_half_v = _mm_mul_ss(dot, half);
 		__m128 x0 = _mm_rsqrt_ss(dot);
 
@@ -526,7 +526,7 @@ namespace rtm
 		return _mm_mul_ps(input, inv_len);
 #elif defined (RTM_NEON_INTRINSICS)
 		// Use sqrt/div/mul to normalize because the sqrt/div are faster than rsqrt
-		float inv_len = 1.0f / scalar_sqrt(vector_length_squared(input));
+		float inv_len = 1.0F / scalar_sqrt(vector_length_squared(input));
 		return vector_mul(input, inv_len);
 #else
 		// Reciprocal is more accurate to normalize with
@@ -569,7 +569,7 @@ namespace rtm
 
 		// Calculate the bias, if the dot product is positive or zero, there is no bias
 		// but if it is negative, we want to flip the 'end' rotation XYZW components
-		__m128 bias = _mm_and_ps(dot, _mm_set_ps1(-0.0f));
+		__m128 bias = _mm_and_ps(dot, _mm_set_ps1(-0.0F));
 
 		// Lerp the rotation after applying the bias
 		__m128 interpolated_rotation = _mm_add_ps(_mm_mul_ps(_mm_sub_ps(_mm_xor_ps(end, bias), start), _mm_set_ps1(alpha)), start);
@@ -588,7 +588,7 @@ namespace rtm
 
 		// Calculate the reciprocal square root to get the inverse length of our vector
 		// Perform two passes of Newton-Raphson iteration on the hardware estimate
-		__m128 half = _mm_set_ss(0.5f);
+		__m128 half = _mm_set_ss(0.5F);
 		__m128 input_half_v = _mm_mul_ss(dot, half);
 		__m128 x0 = _mm_rsqrt_ss(dot);
 
@@ -611,10 +611,10 @@ namespace rtm
 		// On ARM64 with NEON, we load 1.0 once and use it twice which is faster than
 		// using a AND/XOR with the bias (same number of instructions)
 		float dot = vector_dot(start, end);
-		float bias = dot >= 0.0f ? 1.0f : -1.0f;
+		float bias = dot >= 0.0F ? 1.0F : -1.0F;
 		vector4f interpolated_rotation = vector_neg_mul_sub(vector_neg_mul_sub(end, bias, start), alpha, start);
 		// Use sqrt/div/mul to normalize because the sqrt/div are faster than rsqrt
-		float inv_len = 1.0f / scalar_sqrt(vector_length_squared(interpolated_rotation));
+		float inv_len = 1.0F / scalar_sqrt(vector_length_squared(interpolated_rotation));
 		return vector_mul(interpolated_rotation, inv_len);
 #elif defined(RTM_NEON_INTRINSICS)
 		// Calculate the vector4 dot product: dot(start, end)
@@ -644,14 +644,14 @@ namespace rtm
 		float dot = vget_lane_f32(x2y2z2w2, 0);
 
 		// Use sqrt/div/mul to normalize because the sqrt/div are faster than rsqrt
-		float inv_len = 1.0f / scalar_sqrt(dot);
+		float inv_len = 1.0F / scalar_sqrt(dot);
 		return vector_mul(interpolated_rotation, inv_len);
 #else
 		// To ensure we take the shortest path, we apply a bias if the dot product is negative
 		vector4f start_vector = quat_to_vector(start);
 		vector4f end_vector = quat_to_vector(end);
 		float dot = vector_dot(start_vector, end_vector);
-		float bias = dot >= 0.0f ? 1.0f : -1.0f;
+		float bias = dot >= 0.0F ? 1.0F : -1.0F;
 		vector4f interpolated_rotation = vector_neg_mul_sub(vector_neg_mul_sub(end_vector, bias, start_vector), alpha, start_vector);
 		// TODO: Test with this instead: Rotation = (B * Alpha) + (A * (Bias * (1.f - Alpha)));
 		//vector4f value = vector_add(vector_mul(end_vector, alpha), vector_mul(start_vector, bias * (1.0f - alpha)));
@@ -665,12 +665,12 @@ namespace rtm
 	inline quatf RTM_SIMD_CALL quat_neg(quatf_arg0 input) RTM_NO_EXCEPT
 	{
 #if defined(RTM_SSE2_INTRINSICS)
-		constexpr __m128 signs = { -0.0f, -0.0f, -0.0f, -0.0f };
+		constexpr __m128 signs = { -0.0F, -0.0F, -0.0F, -0.0F };
 		return _mm_xor_ps(input, signs);
 #elif defined(RTM_NEON_INTRINSICS)
 		return vnegq_f32(input);
 #else
-		return vector_to_quat(vector_mul(quat_to_vector(input), -1.0f));
+		return vector_to_quat(vector_mul(quat_to_vector(input), -1.0F));
 #endif
 	}
 
@@ -687,13 +687,13 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	inline void RTM_SIMD_CALL quat_to_axis_angle(quatf_arg0 input, vector4f& out_axis, anglef& out_angle) RTM_NO_EXCEPT
 	{
-		constexpr float epsilon = 1.0e-8f;
+		constexpr float epsilon = 1.0E-8F;
 		constexpr float epsilon_squared = epsilon * epsilon;
 
-		out_angle = radians(scalar_acos(quat_get_w(input)) * 2.0f);
+		out_angle = radians(scalar_acos(quat_get_w(input)) * 2.0F);
 
-		const float scale_sq = scalar_max(1.0f - quat_get_w(input) * quat_get_w(input), 0.0f);
-		out_axis = scale_sq >= epsilon_squared ? vector_mul(quat_to_vector(input), vector_set(scalar_sqrt_reciprocal(scale_sq))) : vector_set(1.0f, 0.0f, 0.0f);
+		const float scale_sq = scalar_max(1.0F - quat_get_w(input) * quat_get_w(input), 0.0F);
+		out_axis = scale_sq >= epsilon_squared ? vector_mul(quat_to_vector(input), vector_set(scalar_sqrt_reciprocal(scale_sq))) : vector_set(1.0F, 0.0F, 0.0F);
 	}
 
 	//////////////////////////////////////////////////////////////////////////
@@ -701,11 +701,11 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	inline vector4f RTM_SIMD_CALL quat_get_axis(quatf_arg0 input) RTM_NO_EXCEPT
 	{
-		constexpr float epsilon = 1.0e-8f;
+		constexpr float epsilon = 1.0E-8F;
 		constexpr float epsilon_squared = epsilon * epsilon;
 
-		const float scale_sq = scalar_max(1.0f - quat_get_w(input) * quat_get_w(input), 0.0f);
-		return scale_sq >= epsilon_squared ? vector_mul(quat_to_vector(input), vector_set(scalar_sqrt_reciprocal(scale_sq))) : vector_set(1.0f, 0.0f, 0.0f);
+		const float scale_sq = scalar_max(1.0F - quat_get_w(input) * quat_get_w(input), 0.0F);
+		return scale_sq >= epsilon_squared ? vector_mul(quat_to_vector(input), vector_set(scalar_sqrt_reciprocal(scale_sq))) : vector_set(1.0F, 0.0F, 0.0F);
 	}
 
 	//////////////////////////////////////////////////////////////////////////
@@ -713,7 +713,7 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	inline anglef RTM_SIMD_CALL quat_get_angle(quatf_arg0 input) RTM_NO_EXCEPT
 	{
-		return radians(scalar_acos(quat_get_w(input)) * 2.0f);
+		return radians(scalar_acos(quat_get_w(input)) * 2.0F);
 	}
 
 	//////////////////////////////////////////////////////////////////////////
@@ -721,8 +721,9 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	inline quatf RTM_SIMD_CALL quat_from_axis_angle(vector4f_arg0 axis, anglef angle) RTM_NO_EXCEPT
 	{
-		float s, c;
-		scalar_sincos(0.5f * angle.as_radians(), s, c);
+		float s;
+		float c;
+		scalar_sincos(0.5F * angle.as_radians(), s, c);
 
 		return vector_to_quat(vector_set_w(vector_mul(vector_set(s), axis), c));
 	}
@@ -735,12 +736,16 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	inline quatf RTM_SIMD_CALL quat_from_euler(anglef pitch, anglef yaw, anglef roll) RTM_NO_EXCEPT
 	{
-		float sp, sy, sr;
-		float cp, cy, cr;
+		float sp;
+		float sy;
+		float sr;
+		float cp;
+		float cy;
+		float cr;
 
-		scalar_sincos(pitch.as_radians() * 0.5f, sp, cp);
-		scalar_sincos(yaw.as_radians() * 0.5f, sy, cy);
-		scalar_sincos(roll.as_radians() * 0.5f, sr, cr);
+		scalar_sincos(pitch.as_radians() * 0.5F, sp, cp);
+		scalar_sincos(yaw.as_radians() * 0.5F, sy, cy);
+		scalar_sincos(roll.as_radians() * 0.5F, sr, cr);
 
 		return quat_set(cr * sp * sy - sr * cp * cy,
 			-cr * sp * cy - sr * cp * sy,
@@ -767,16 +772,16 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	// Returns true if the input quaternion is normalized, otherwise false.
 	//////////////////////////////////////////////////////////////////////////
-	inline bool RTM_SIMD_CALL quat_is_normalized(quatf_arg0 input, float threshold = 0.00001f) RTM_NO_EXCEPT
+	inline bool RTM_SIMD_CALL quat_is_normalized(quatf_arg0 input, float threshold = 0.00001F) RTM_NO_EXCEPT
 	{
 		float length_squared = quat_length_squared(input);
-		return scalar_abs(length_squared - 1.0f) < threshold;
+		return scalar_abs(length_squared - 1.0F) < threshold;
 	}
 
 	//////////////////////////////////////////////////////////////////////////
 	// Returns true if the two quaternions are nearly equal component wise, otherwise false.
 	//////////////////////////////////////////////////////////////////////////
-	inline bool RTM_SIMD_CALL quat_near_equal(quatf_arg0 lhs, quatf_arg1 rhs, float threshold = 0.00001f) RTM_NO_EXCEPT
+	inline bool RTM_SIMD_CALL quat_near_equal(quatf_arg0 lhs, quatf_arg1 rhs, float threshold = 0.00001F) RTM_NO_EXCEPT
 	{
 		return vector_all_near_equal(quat_to_vector(lhs), quat_to_vector(rhs), threshold);
 	}
@@ -785,7 +790,7 @@ namespace rtm
 	// Returns true if the input quaternion is nearly equal to the identity quaternion
 	// by comparing its rotation angle.
 	//////////////////////////////////////////////////////////////////////////
-	inline bool RTM_SIMD_CALL quat_near_identity(quatf_arg0 input, anglef threshold_angle = radians(0.00284714461f)) RTM_NO_EXCEPT
+	inline bool RTM_SIMD_CALL quat_near_identity(quatf_arg0 input, anglef threshold_angle = radians(0.00284714461F)) RTM_NO_EXCEPT
 	{
 		// Because of floating point precision, we cannot represent very small rotations.
 		// The closest float to 1.0 that is not 1.0 itself yields:
@@ -800,7 +805,7 @@ namespace rtm
 		// If the quat.w is close to -1.0, the angle will be near 2*PI which is close to
 		// a negative 0 rotation. By forcing quat.w to be positive, we'll end up with
 		// the shortest path.
-		const float positive_w_angle = scalar_acos(scalar_abs(quat_get_w(input))) * 2.0f;
+		const float positive_w_angle = scalar_acos(scalar_abs(quat_get_w(input))) * 2.0F;
 		return positive_w_angle < threshold_angle.as_radians();
 	}
 }

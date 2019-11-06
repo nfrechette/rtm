@@ -41,7 +41,7 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	inline matrix3x4f RTM_SIMD_CALL matrix_from_translation(vector4f_arg0 translation) RTM_NO_EXCEPT
 	{
-		return matrix3x4f{ vector_set(1.0f, 0.0f, 0.0f, 0.0f), vector_set(0.0f, 1.0f, 0.0f, 0.0f), vector_set(0.0f, 0.0f, 1.0f, 0.0f), translation };
+		return matrix3x4f{ vector_set(1.0F, 0.0F, 0.0F, 0.0F), vector_set(0.0F, 1.0F, 0.0F, 0.0F), vector_set(0.0F, 0.0F, 1.0F, 0.0F), translation };
 	}
 
 	//////////////////////////////////////////////////////////////////////////
@@ -64,9 +64,9 @@ namespace rtm
 		const float wy = quat_get_w(quat) * y2;
 		const float wz = quat_get_w(quat) * z2;
 
-		const vector4f x_axis = vector_mul(vector_set(1.0f - (yy + zz), xy + wz, xz - wy, 0.0f), vector_get_x(scale));
-		const vector4f y_axis = vector_mul(vector_set(xy - wz, 1.0f - (xx + zz), yz + wx, 0.0f), vector_get_y(scale));
-		const vector4f z_axis = vector_mul(vector_set(xz + wy, yz - wx, 1.0f - (xx + yy), 0.0f), vector_get_z(scale));
+		const vector4f x_axis = vector_mul(vector_set(1.0F - (yy + zz), xy + wz, xz - wy, 0.0F), vector_get_x(scale));
+		const vector4f y_axis = vector_mul(vector_set(xy - wz, 1.0F - (xx + zz), yz + wx, 0.0F), vector_get_y(scale));
+		const vector4f z_axis = vector_mul(vector_set(xz + wy, yz - wx, 1.0F - (xx + yy), 0.0F), vector_get_z(scale));
 		return matrix3x4f{ x_axis, y_axis, z_axis, translation };
 	}
 

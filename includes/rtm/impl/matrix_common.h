@@ -38,80 +38,41 @@ namespace rtm
 	namespace rtm_impl
 	{
 		//////////////////////////////////////////////////////////////////////////
-		// Various matrix constants
-		//////////////////////////////////////////////////////////////////////////
-		enum class matrix_constants
-		{
-			identity
-		};
-
-		//////////////////////////////////////////////////////////////////////////
 		// This is a helper struct to allow a single consistent API between
 		// various matrix types when the semantics are identical but the return
 		// type differs. Implicit coercion is used to return the desired value
 		// at the call site.
 		//////////////////////////////////////////////////////////////////////////
-		template<matrix_constants constant>
-		struct matrix_constant
+		struct matrix_identity_impl
 		{
 			inline RTM_SIMD_CALL operator matrix3x3d() const RTM_NO_EXCEPT
 			{
-				switch (constant)
-				{
-				case matrix_constants::identity:
-				default:
-					return matrix3x3d{ vector_set(1.0, 0.0, 0.0, 0.0), vector_set(0.0, 1.0, 0.0, 0.0), vector_set(0.0, 0.0, 1.0, 0.0) };
-				}
+				return matrix3x3d{ vector_set(1.0, 0.0, 0.0, 0.0), vector_set(0.0, 1.0, 0.0, 0.0), vector_set(0.0, 0.0, 1.0, 0.0) };
 			}
 
 			inline RTM_SIMD_CALL operator matrix3x3f() const RTM_NO_EXCEPT
 			{
-				switch (constant)
-				{
-				case matrix_constants::identity:
-				default:
-					return matrix3x3f{ vector_set(1.0f, 0.0f, 0.0f, 0.0f), vector_set(0.0f, 1.0f, 0.0f, 0.0f), vector_set(0.0f, 0.0f, 1.0f, 0.0f) };
-				}
+				return matrix3x3f{ vector_set(1.0F, 0.0F, 0.0F, 0.0F), vector_set(0.0F, 1.0F, 0.0F, 0.0F), vector_set(0.0F, 0.0F, 1.0F, 0.0F) };
 			}
 
 			inline RTM_SIMD_CALL operator matrix3x4d() const RTM_NO_EXCEPT
 			{
-				switch (constant)
-				{
-				case matrix_constants::identity:
-				default:
-					return matrix3x4d{ vector_set(1.0, 0.0, 0.0, 0.0), vector_set(0.0, 1.0, 0.0, 0.0), vector_set(0.0, 0.0, 1.0, 0.0), vector_set(0.0, 0.0, 0.0, 1.0) };
-				}
+				return matrix3x4d{ vector_set(1.0, 0.0, 0.0, 0.0), vector_set(0.0, 1.0, 0.0, 0.0), vector_set(0.0, 0.0, 1.0, 0.0), vector_set(0.0, 0.0, 0.0, 1.0) };
 			}
 
 			inline RTM_SIMD_CALL operator matrix3x4f() const RTM_NO_EXCEPT
 			{
-				switch (constant)
-				{
-				case matrix_constants::identity:
-				default:
-					return matrix3x4f{ vector_set(1.0f, 0.0f, 0.0f, 0.0f), vector_set(0.0f, 1.0f, 0.0f, 0.0f), vector_set(0.0f, 0.0f, 1.0f, 0.0f), vector_set(0.0f, 0.0f, 0.0f, 1.0f) };
-				}
+				return matrix3x4f{ vector_set(1.0F, 0.0F, 0.0F, 0.0F), vector_set(0.0F, 1.0F, 0.0F, 0.0F), vector_set(0.0F, 0.0F, 1.0F, 0.0F), vector_set(0.0F, 0.0F, 0.0F, 1.0F) };
 			}
 
 			inline RTM_SIMD_CALL operator matrix4x4d() const RTM_NO_EXCEPT
 			{
-				switch (constant)
-				{
-				case matrix_constants::identity:
-				default:
-					return matrix4x4d{ vector_set(1.0, 0.0, 0.0, 0.0), vector_set(0.0, 1.0, 0.0, 0.0), vector_set(0.0, 0.0, 1.0, 0.0), vector_set(0.0, 0.0, 0.0, 1.0) };
-				}
+				return matrix4x4d{ vector_set(1.0, 0.0, 0.0, 0.0), vector_set(0.0, 1.0, 0.0, 0.0), vector_set(0.0, 0.0, 1.0, 0.0), vector_set(0.0, 0.0, 0.0, 1.0) };
 			}
 
 			inline RTM_SIMD_CALL operator matrix4x4f() const RTM_NO_EXCEPT
 			{
-				switch (constant)
-				{
-				case matrix_constants::identity:
-				default:
-					return matrix4x4f{ vector_set(1.0f, 0.0f, 0.0f, 0.0f), vector_set(0.0f, 1.0f, 0.0f, 0.0f), vector_set(0.0f, 0.0f, 1.0f, 0.0f), vector_set(0.0f, 0.0f, 0.0f, 1.0f) };
-				}
+				return matrix4x4f{ vector_set(1.0F, 0.0F, 0.0F, 0.0F), vector_set(0.0F, 1.0F, 0.0F, 0.0F), vector_set(0.0F, 0.0F, 1.0F, 0.0F), vector_set(0.0F, 0.0F, 0.0F, 1.0F) };
 			}
 		};
 
@@ -199,9 +160,9 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	// Returns the identity matrix.
 	//////////////////////////////////////////////////////////////////////////
-	constexpr rtm_impl::matrix_constant<rtm_impl::matrix_constants::identity> RTM_SIMD_CALL matrix_identity() RTM_NO_EXCEPT
+	constexpr rtm_impl::matrix_identity_impl RTM_SIMD_CALL matrix_identity() RTM_NO_EXCEPT
 	{
-		return rtm_impl::matrix_constant<rtm_impl::matrix_constants::identity>();
+		return rtm_impl::matrix_identity_impl();
 	}
 }
 

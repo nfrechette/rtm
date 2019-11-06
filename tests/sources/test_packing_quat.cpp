@@ -62,10 +62,10 @@ static void test_quat_impl(const FloatType threshold)
 
 TEST_CASE("quatf packing math", "[math][quat][packing]")
 {
-	test_quat_impl<float>(1.0e-4f);
+	test_quat_impl<float>(1.0E-4F);
 }
 
 TEST_CASE("quatd packing math", "[math][quat][packing]")
 {
-	test_quat_impl<double>(1.0e-6);
+	test_quat_impl<double>(1.0E-6);
 }
