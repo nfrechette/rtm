@@ -336,7 +336,7 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	inline void quat_to_axis_angle(const quatd& input, vector4d& out_axis, angled& out_angle) RTM_NO_EXCEPT
 	{
-		constexpr double epsilon = 1.0e-8;
+		constexpr double epsilon = 1.0E-8;
 		constexpr double epsilon_squared = epsilon * epsilon;
 
 		out_angle = radians(scalar_acos(quat_get_w(input)) * 2.0);
@@ -350,7 +350,7 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	inline vector4d quat_get_axis(const quatd& input) RTM_NO_EXCEPT
 	{
-		constexpr double epsilon = 1.0e-8;
+		constexpr double epsilon = 1.0E-8;
 		constexpr double epsilon_squared = epsilon * epsilon;
 
 		const double scale_sq = scalar_max(1.0 - quat_get_w(input) * quat_get_w(input), 0.0);
@@ -370,7 +370,8 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	inline quatd quat_from_axis_angle(const vector4d& axis, angled angle) RTM_NO_EXCEPT
 	{
-		double s, c;
+		double s;
+		double c;
 		scalar_sincos(0.5 * angle.as_radians(), s, c);
 
 		return vector_to_quat(vector_set_w(vector_mul(vector_set(s), axis), c));
@@ -384,8 +385,12 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	inline quatd quat_from_euler(angled pitch, angled yaw, angled roll) RTM_NO_EXCEPT
 	{
-		double sp, sy, sr;
-		double cp, cy, cr;
+		double sp;
+		double sy;
+		double sr;
+		double cp;
+		double cy;
+		double cr;
 
 		scalar_sincos(pitch.as_radians() * 0.5, sp, cp);
 		scalar_sincos(yaw.as_radians() * 0.5, sy, cy);

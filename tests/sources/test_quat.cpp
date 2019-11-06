@@ -367,24 +367,24 @@ static void test_quat_impl(const FloatType threshold)
 
 TEST_CASE("quatf math", "[math][quat]")
 {
-	test_quat_impl<float>(1.0e-4f);
+	test_quat_impl<float>(1.0E-4F);
 
-	const quatf src = quat_set(0.39564531008956383f, 0.044254239301713752f, 0.22768840967675355f, 0.88863059760894492f);
+	const quatf src = quat_set(0.39564531008956383F, 0.044254239301713752F, 0.22768840967675355F, 0.88863059760894492F);
 	const quatd dst = quat_cast(src);
-	REQUIRE(scalar_near_equal(quat_get_x(dst), 0.39564531008956383, 1.0e-6));
-	REQUIRE(scalar_near_equal(quat_get_y(dst), 0.044254239301713752, 1.0e-6));
-	REQUIRE(scalar_near_equal(quat_get_z(dst), 0.22768840967675355, 1.0e-6));
-	REQUIRE(scalar_near_equal(quat_get_w(dst), 0.88863059760894492, 1.0e-6));
+	REQUIRE(scalar_near_equal(quat_get_x(dst), 0.39564531008956383, 1.0E-6));
+	REQUIRE(scalar_near_equal(quat_get_y(dst), 0.044254239301713752, 1.0E-6));
+	REQUIRE(scalar_near_equal(quat_get_z(dst), 0.22768840967675355, 1.0E-6));
+	REQUIRE(scalar_near_equal(quat_get_w(dst), 0.88863059760894492, 1.0E-6));
 }
 
 TEST_CASE("quatd math", "[math][quat]")
 {
-	test_quat_impl<double>(1.0e-6);
+	test_quat_impl<double>(1.0E-6);
 
 	const quatd src = quat_set(0.39564531008956383, 0.044254239301713752, 0.22768840967675355, 0.88863059760894492);
 	const quatf dst = quat_cast(src);
-	REQUIRE(scalar_near_equal(quat_get_x(dst), 0.39564531008956383f, 1.0e-6f));
-	REQUIRE(scalar_near_equal(quat_get_y(dst), 0.044254239301713752f, 1.0e-6f));
-	REQUIRE(scalar_near_equal(quat_get_z(dst), 0.22768840967675355f, 1.0e-6f));
-	REQUIRE(scalar_near_equal(quat_get_w(dst), 0.88863059760894492f, 1.0e-6f));
+	REQUIRE(scalar_near_equal(quat_get_x(dst), 0.39564531008956383F, 1.0E-6F));
+	REQUIRE(scalar_near_equal(quat_get_y(dst), 0.044254239301713752F, 1.0E-6F));
+	REQUIRE(scalar_near_equal(quat_get_z(dst), 0.22768840967675355F, 1.0E-6F));
+	REQUIRE(scalar_near_equal(quat_get_w(dst), 0.88863059760894492F, 1.0E-6F));
 }

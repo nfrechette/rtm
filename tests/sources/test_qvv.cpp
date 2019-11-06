@@ -166,28 +166,28 @@ static void test_qvv_impl(const TransformType& identity, const FloatType thresho
 
 TEST_CASE("qvvf math", "[math][qvv]")
 {
-	test_qvv_impl<qvvf, float>(qvv_identity(), 1.0e-4f);
+	test_qvv_impl<qvvf, float>(qvv_identity(), 1.0E-4F);
 
-	const quatf src_rotation = quat_set(0.39564531008956383f, 0.044254239301713752f, 0.22768840967675355f, 0.88863059760894492f);
-	const vector4f src_translation = vector_set(-2.65f, 2.996113f, 0.68123521f);
-	const vector4f src_scale = vector_set(1.2f, 0.8f, 2.1f);
+	const quatf src_rotation = quat_set(0.39564531008956383F, 0.044254239301713752F, 0.22768840967675355F, 0.88863059760894492F);
+	const vector4f src_translation = vector_set(-2.65F, 2.996113F, 0.68123521F);
+	const vector4f src_scale = vector_set(1.2F, 0.8F, 2.1F);
 	const qvvf src = qvv_set(src_rotation, src_translation, src_scale);
 	const qvvd dst = qvv_cast(src);
-	REQUIRE(quat_near_equal(src.rotation, quat_cast(dst.rotation), 1.0e-6f));
-	REQUIRE(vector_all_near_equal3(src.translation, vector_cast(dst.translation), 1.0e-6f));
-	REQUIRE(vector_all_near_equal3(src.scale, vector_cast(dst.scale), 1.0e-6f));
+	REQUIRE(quat_near_equal(src.rotation, quat_cast(dst.rotation), 1.0E-6F));
+	REQUIRE(vector_all_near_equal3(src.translation, vector_cast(dst.translation), 1.0E-6F));
+	REQUIRE(vector_all_near_equal3(src.scale, vector_cast(dst.scale), 1.0E-6F));
 }
 
 TEST_CASE("qvvd math", "[math][qvv]")
 {
-	test_qvv_impl<qvvd, double>(qvv_identity(), 1.0e-6);
+	test_qvv_impl<qvvd, double>(qvv_identity(), 1.0E-6);
 
 	const quatd src_rotation = quat_set(0.39564531008956383, 0.044254239301713752, 0.22768840967675355, 0.88863059760894492);
 	const vector4d src_translation = vector_set(-2.65, 2.996113, 0.68123521);
 	const vector4d src_scale = vector_set(1.2, 0.8, 2.1);
 	const qvvd src = qvv_set(src_rotation, src_translation, src_scale);
 	const qvvf dst = qvv_cast(src);
-	REQUIRE(quat_near_equal(src.rotation, quat_cast(dst.rotation), 1.0e-6));
-	REQUIRE(vector_all_near_equal3(src.translation, vector_cast(dst.translation), 1.0e-6));
-	REQUIRE(vector_all_near_equal3(src.scale, vector_cast(dst.scale), 1.0e-6));
+	REQUIRE(quat_near_equal(src.rotation, quat_cast(dst.rotation), 1.0E-6));
+	REQUIRE(vector_all_near_equal3(src.translation, vector_cast(dst.translation), 1.0E-6));
+	REQUIRE(vector_all_near_equal3(src.scale, vector_cast(dst.scale), 1.0E-6));
 }

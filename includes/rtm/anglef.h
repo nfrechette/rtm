@@ -54,16 +54,16 @@ namespace rtm
 	class anglef
 	{
 	public:
-		constexpr anglef() RTM_NO_EXCEPT : m_radians(0.0f) {}
+		constexpr anglef() RTM_NO_EXCEPT : m_radians(0.0F) {}
 
 		constexpr anglef operator-() const RTM_NO_EXCEPT { return anglef(-m_radians); }
 
 		constexpr float as_radians() const RTM_NO_EXCEPT { return m_radians; }
 		constexpr float as_degrees() const RTM_NO_EXCEPT { return scalar_rad_to_deg(m_radians); }
 
-	protected:
-		constexpr anglef(float rad) RTM_NO_EXCEPT : m_radians(rad) {}
-		constexpr anglef(rtm_impl::angle_constant angle) RTM_NO_EXCEPT : m_radians(angle) {}
+	private:
+		explicit constexpr anglef(float rad) RTM_NO_EXCEPT : m_radians(rad) {}
+		explicit constexpr anglef(rtm_impl::angle_constant angle) RTM_NO_EXCEPT : m_radians(angle) {}
 
 		float m_radians;
 

@@ -622,7 +622,7 @@ namespace rtm
 	// If the length of the input is below the supplied threshold, the
 	// fall back value is returned instead.
 	//////////////////////////////////////////////////////////////////////////
-	inline vector4d vector_normalize3(const vector4d& input, const vector4d& fallback, double threshold = 1.0e-8) RTM_NO_EXCEPT
+	inline vector4d vector_normalize3(const vector4d& input, const vector4d& fallback, double threshold = 1.0E-8) RTM_NO_EXCEPT
 	{
 		// Reciprocal is more accurate to normalize with
 		const double len_sq = vector_length_squared3(input);

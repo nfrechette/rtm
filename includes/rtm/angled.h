@@ -61,9 +61,9 @@ namespace rtm
 		constexpr double as_radians() const RTM_NO_EXCEPT { return m_radians; }
 		constexpr double as_degrees() const RTM_NO_EXCEPT { return scalar_rad_to_deg(m_radians); }
 
-	protected:
-		constexpr angled(double rad) RTM_NO_EXCEPT : m_radians(rad) {}
-		constexpr angled(rtm_impl::angle_constant angle) RTM_NO_EXCEPT : m_radians(angle) {}
+	private:
+		explicit constexpr angled(double rad) RTM_NO_EXCEPT : m_radians(rad) {}
+		explicit constexpr angled(rtm_impl::angle_constant angle) RTM_NO_EXCEPT : m_radians(angle) {}
 
 		double m_radians;
 

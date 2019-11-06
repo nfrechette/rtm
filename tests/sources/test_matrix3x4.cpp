@@ -228,24 +228,24 @@ static void test_affine_matrix_impl(const FloatType threshold)
 
 TEST_CASE("matrix3x4f math", "[math][matrix3x4]")
 {
-	test_affine_matrix_impl<float>(1.0e-4f);
+	test_affine_matrix_impl<float>(1.0E-4F);
 
 	{
-		quatf rotation_around_z = quat_from_euler(degrees(0.0f), degrees(90.0f), degrees(0.0f));
-		vector4f translation = vector_set(1.0f, 2.0f, 3.0f);
-		vector4f scale = vector_set(4.0f, 5.0f, 6.0f);
+		quatf rotation_around_z = quat_from_euler(degrees(0.0F), degrees(90.0F), degrees(0.0F));
+		vector4f translation = vector_set(1.0F, 2.0F, 3.0F);
+		vector4f scale = vector_set(4.0F, 5.0F, 6.0F);
 		matrix3x4f src = matrix_from_qvv(rotation_around_z, translation, scale);
 		matrix3x4d dst = matrix_cast(src);
-		REQUIRE(vector_all_near_equal3(vector_cast(src.x_axis), dst.x_axis, 1.0e-4));
-		REQUIRE(vector_all_near_equal3(vector_cast(src.y_axis), dst.y_axis, 1.0e-4));
-		REQUIRE(vector_all_near_equal3(vector_cast(src.z_axis), dst.z_axis, 1.0e-4));
-		REQUIRE(vector_all_near_equal3(vector_cast(src.w_axis), dst.w_axis, 1.0e-4));
+		REQUIRE(vector_all_near_equal3(vector_cast(src.x_axis), dst.x_axis, 1.0E-4));
+		REQUIRE(vector_all_near_equal3(vector_cast(src.y_axis), dst.y_axis, 1.0E-4));
+		REQUIRE(vector_all_near_equal3(vector_cast(src.z_axis), dst.z_axis, 1.0E-4));
+		REQUIRE(vector_all_near_equal3(vector_cast(src.w_axis), dst.w_axis, 1.0E-4));
 	}
 }
 
 TEST_CASE("matrix3x4d math", "[math][matrix3x4]")
 {
-	test_affine_matrix_impl<double>(1.0e-4);
+	test_affine_matrix_impl<double>(1.0E-4);
 
 	{
 		quatd rotation_around_z = quat_from_euler(degrees(0.0), degrees(90.0), degrees(0.0));
@@ -253,9 +253,9 @@ TEST_CASE("matrix3x4d math", "[math][matrix3x4]")
 		vector4d scale = vector_set(4.0, 5.0, 6.0);
 		matrix3x4d src = matrix_from_qvv(rotation_around_z, translation, scale);
 		matrix3x4f dst = matrix_cast(src);
-		REQUIRE(vector_all_near_equal3(vector_cast(src.x_axis), dst.x_axis, 1.0e-4f));
-		REQUIRE(vector_all_near_equal3(vector_cast(src.y_axis), dst.y_axis, 1.0e-4f));
-		REQUIRE(vector_all_near_equal3(vector_cast(src.z_axis), dst.z_axis, 1.0e-4f));
-		REQUIRE(vector_all_near_equal3(vector_cast(src.w_axis), dst.w_axis, 1.0e-4f));
+		REQUIRE(vector_all_near_equal3(vector_cast(src.x_axis), dst.x_axis, 1.0E-4F));
+		REQUIRE(vector_all_near_equal3(vector_cast(src.y_axis), dst.y_axis, 1.0E-4F));
+		REQUIRE(vector_all_near_equal3(vector_cast(src.z_axis), dst.z_axis, 1.0E-4F));
+		REQUIRE(vector_all_near_equal3(vector_cast(src.w_axis), dst.w_axis, 1.0E-4F));
 	}
 }

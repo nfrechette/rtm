@@ -58,10 +58,10 @@ static void test_angle_impl(const FloatType threshold)
 
 TEST_CASE("anglef math", "[math][angle]")
 {
-	test_angle_impl<float>(1.0e-6f);
+	test_angle_impl<float>(1.0E-6F);
 }
 
 TEST_CASE("angled math", "[math][angle]")
 {
-	test_angle_impl<double>(1.0e-9);
+	test_angle_impl<double>(1.0E-9);
 }

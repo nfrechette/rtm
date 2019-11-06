@@ -50,40 +50,21 @@ namespace rtm
 	namespace rtm_impl
 	{
 		//////////////////////////////////////////////////////////////////////////
-		// Various QVV transform constants
-		//////////////////////////////////////////////////////////////////////////
-		enum class qvv_constants
-		{
-			identity
-		};
-
-		//////////////////////////////////////////////////////////////////////////
 		// This is a helper struct to allow a single consistent API between
 		// various QVV transform types when the semantics are identical but the return
 		// type differs. Implicit coercion is used to return the desired value
 		// at the call site.
 		//////////////////////////////////////////////////////////////////////////
-		template<qvv_constants constant>
-		struct qvv_constant
+		struct qvv_identity_impl
 		{
 			inline RTM_SIMD_CALL operator qvvd() const RTM_NO_EXCEPT
 			{
-				switch (constant)
-				{
-				case qvv_constants::identity:
-				default:
-					return qvv_set(quat_identity(), vector_zero(), vector_set(1.0));
-				}
+				return qvv_set(quat_identity(), vector_zero(), vector_set(1.0));
 			}
 
 			inline RTM_SIMD_CALL operator qvvf() const RTM_NO_EXCEPT
 			{
-				switch (constant)
-				{
-				case qvv_constants::identity:
-				default:
-					return qvv_set(quat_identity(), vector_zero(), vector_set(1.0f));
-				}
+				return qvv_set(quat_identity(), vector_zero(), vector_set(1.0F));
 			}
 		};
 	}
@@ -91,9 +72,9 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	// Returns the identity QVV transform.
 	//////////////////////////////////////////////////////////////////////////
-	constexpr rtm_impl::qvv_constant<rtm_impl::qvv_constants::identity> RTM_SIMD_CALL qvv_identity() RTM_NO_EXCEPT
+	constexpr rtm_impl::qvv_identity_impl RTM_SIMD_CALL qvv_identity() RTM_NO_EXCEPT
 	{
-		return rtm_impl::qvv_constant<rtm_impl::qvv_constants::identity>();
+		return rtm_impl::qvv_identity_impl();
 	}
 }
 

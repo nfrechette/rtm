@@ -27,12 +27,12 @@
 
 TEST_CASE("vector4d math", "[math][vector4]")
 {
-	test_vector4_impl<double>(1.0e-9);
+	test_vector4_impl<double>(1.0E-9);
 
 	const vector4d src = vector_set(-2.65, 2.996113, 0.68123521, -5.9182);
 	const vector4f dst = vector_cast(src);
-	REQUIRE(scalar_near_equal(vector_get_x(dst), -2.65f, 1.0e-6f));
-	REQUIRE(scalar_near_equal(vector_get_y(dst), 2.996113f, 1.0e-6f));
-	REQUIRE(scalar_near_equal(vector_get_z(dst), 0.68123521f, 1.0e-6f));
-	REQUIRE(scalar_near_equal(vector_get_w(dst), -5.9182f, 1.0e-6f));
+	REQUIRE(scalar_near_equal(vector_get_x(dst), -2.65F, 1.0E-6F));
+	REQUIRE(scalar_near_equal(vector_get_y(dst), 2.996113F, 1.0E-6F));
+	REQUIRE(scalar_near_equal(vector_get_z(dst), 0.68123521F, 1.0E-6F));
+	REQUIRE(scalar_near_equal(vector_get_w(dst), -5.9182F, 1.0E-6F));
 }

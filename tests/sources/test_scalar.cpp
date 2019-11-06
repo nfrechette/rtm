@@ -203,10 +203,10 @@ static void test_scalar_impl(const FloatType threshold)
 
 TEST_CASE("scalarf math", "[math][scalar]")
 {
-	test_scalar_impl<float>(1.0e-6f);
+	test_scalar_impl<float>(1.0E-6F);
 }
 
 TEST_CASE("scalard math", "[math][scalar]")
 {
-	test_scalar_impl<double>(1.0e-9);
+	test_scalar_impl<double>(1.0E-9);
 }

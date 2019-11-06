@@ -67,40 +67,21 @@ namespace rtm
 	namespace rtm_impl
 	{
 		//////////////////////////////////////////////////////////////////////////
-		// Various quaternion constants
-		//////////////////////////////////////////////////////////////////////////
-		enum class quat_constants
-		{
-			identity
-		};
-
-		//////////////////////////////////////////////////////////////////////////
 		// This is a helper struct to allow a single consistent API between
 		// various quaternion types when the semantics are identical but the return
 		// type differs. Implicit coercion is used to return the desired value
 		// at the call site.
 		//////////////////////////////////////////////////////////////////////////
-		template<quat_constants constant>
-		struct quat_constant
+		struct quat_identity_impl
 		{
 			inline RTM_SIMD_CALL operator quatd() const RTM_NO_EXCEPT
 			{
-				switch (constant)
-				{
-				case quat_constants::identity:
-				default:
-					return quat_set(0.0, 0.0, 0.0, 1.0);
-				}
+				return quat_set(0.0, 0.0, 0.0, 1.0);
 			}
 
 			inline RTM_SIMD_CALL operator quatf() const RTM_NO_EXCEPT
 			{
-				switch (constant)
-				{
-				case quat_constants::identity:
-				default:
-					return quat_set(0.0f, 0.0f, 0.0f, 1.0f);
-				}
+				return quat_set(0.0F, 0.0F, 0.0F, 1.0F);
 			}
 		};
 	}
@@ -108,9 +89,9 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	// Returns the identity quaternion.
 	//////////////////////////////////////////////////////////////////////////
-	constexpr rtm_impl::quat_constant<rtm_impl::quat_constants::identity> RTM_SIMD_CALL quat_identity() RTM_NO_EXCEPT
+	constexpr rtm_impl::quat_identity_impl RTM_SIMD_CALL quat_identity() RTM_NO_EXCEPT
 	{
-		return rtm_impl::quat_constant<rtm_impl::quat_constants::identity>();
+		return rtm_impl::quat_identity_impl();
 	}
 }
 
