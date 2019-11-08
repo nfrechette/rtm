@@ -46,7 +46,7 @@ namespace rtm
 				
 
 #if defined(RTM_SSE2_INTRINSICS)
-#if _MSC_VER >= 1920 && defined(_M_IX86)
+#if defined(_MSC_VER) && _MSC_VER >= 1920 && defined(_M_IX86)
 				// _mm_set_epi64x sets both doublewords to the same value when compiled for x86 with Visual Studio 2019 with optimizations turned on.
 				// An alternative instruction avoids this problem.  Note the high and low words are equal because mask components can only equal ~0 or 0.
 				const uint32_t x_mask = x ? 0xFFFFFFFFU : 0;
