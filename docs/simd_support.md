@@ -4,7 +4,7 @@
 
 Various versions of SSE are supported: SSE2, SSE3, SSE4, AVX, AVX2, and FMA.
 
-*Note that even when FMA is enabled, its intrinsics are not used because they are slower.*
+*Note that even when FMA is enabled, its intrinsics are not used because they appear slower on at least Haswell and Ryzen.*
 
 ## ARM
 

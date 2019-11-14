@@ -15,7 +15,7 @@ In order to contribute to RTM you will first need to setup your environment.
 5. Run the unit tests with: `python make.py -unit_test`
 6. Build and run benchmarks with the `-bench` switch
 
-On all three platforms, *AVX* support can be enabled by using the `-avx` switch.
+On all three platforms, *AVX* support can be enabled by using the `-avx` switch and *AVX2* with `-avx2`. Intrinsic usage can be turned off with `-nosimd`.
 
 ### Windows ARM64
 
