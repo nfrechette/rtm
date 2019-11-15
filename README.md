@@ -7,7 +7,9 @@
 
 # Realtime Math
 
-This library is geared towards realtime applications that require their math to be as fast as possible. Much care was taken to maximize inlining opportunities and for code generation to be optimal when a function isn't inlined by passing values in registers whenever possible.
+This library is geared towards realtime applications that require their math to be as fast as possible. Much care was taken to maximize inlining opportunities and for code generation to be optimal when a function isn't inlined by passing values in registers whenever possible. It contains 3D and 4D arithmetic commonly used in video games and realtime applications.
+
+It offers an alternative to [GLM](https://github.com/g-truc/glm) and [DirectX Math](https://github.com/Microsoft/DirectXMath). See [here](https://nfrechette.github.io/2019/01/19/introducing_realtime_math/) for a comparison with similar libraries.
 
 ## Philosophy
 
