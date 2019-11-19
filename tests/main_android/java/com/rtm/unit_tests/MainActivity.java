@@ -1,4 +1,4 @@
-package com.rtm;
+package com.rtm.unit_tests;
 
 import android.app.Activity;
 import android.widget.TextView;

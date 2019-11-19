@@ -31,7 +31,7 @@ file(GLOB_RECURSE ALL_MAIN_SOURCE_FILES LIST_DIRECTORIES false
 create_source_groups("${ALL_MAIN_SOURCE_FILES}" ${PROJECT_SOURCE_DIR})
 
 # Add resource files
-set(JAVA_FILES java/com/rtm/MainActivity.java)
+set(JAVA_FILES java/com/rtm/benchmark/MainActivity.java)
 set(RESOURCE_FILES res/values/strings.xml)
 set(ANDROID_FILES AndroidManifest.xml)
 
