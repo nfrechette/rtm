@@ -68,7 +68,7 @@ private:
 	char buffer[bufsize];
 };
 
-extern "C" jint Java_com_rtm_MainActivity_runBenchmark(JNIEnv* env, jobject caller)
+extern "C" jint Java_com_rtm_benchmark_MainActivity_runBenchmark(JNIEnv* env, jobject caller)
 {
 	std::cout.rdbuf(new androidbuf());
 
