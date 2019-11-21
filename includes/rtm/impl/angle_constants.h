@@ -41,33 +41,67 @@ namespace rtm
 		//////////////////////////////////////////////////////////////////////////
 		struct angle_constant
 		{
-			explicit constexpr angle_constant(double dbl_) RTM_NO_EXCEPT : flt(float(dbl_)), dbl(dbl_) {}
-			constexpr angle_constant(float flt_, double dbl_) RTM_NO_EXCEPT : flt(flt_), dbl(dbl_) {}
+			constexpr angle_constant operator-() const RTM_NO_EXCEPT { return angle_constant{ -dbl }; }
 
-			constexpr angle_constant operator-() const RTM_NO_EXCEPT { return angle_constant(-flt, -dbl); }
-
-			constexpr operator float() const RTM_NO_EXCEPT { return flt; }
-			constexpr operator double() const RTM_NO_EXCEPT { return dbl; }
-
-			// Angle in radians as a float and double
-			float flt;
+			// Angle in radians as a double
 			double dbl;
-
-			friend anglef;
-			friend angled;
 		};
 	}
 
 	//////////////////////////////////////////////////////////////////////////
-	// Various constants in radians
+	// Add two angle constants.
+	//////////////////////////////////////////////////////////////////////////
+	constexpr rtm_impl::angle_constant operator+(rtm_impl::angle_constant lhs, rtm_impl::angle_constant rhs) RTM_NO_EXCEPT
+	{
+		return rtm_impl::angle_constant{ lhs.dbl + rhs.dbl };
+	}
+
+	//////////////////////////////////////////////////////////////////////////
+	// Various constants
 	//////////////////////////////////////////////////////////////////////////
 
-	constexpr rtm_impl::angle_constant k_pi(3.14159265358979323846);					// PI
-	constexpr rtm_impl::angle_constant k_pi_2(1.57079632679489661923);					// PI / 2
-	constexpr rtm_impl::angle_constant k_pi_4(0.785398163397448309616);					// PI / 4
-	constexpr rtm_impl::angle_constant k_pi_180((double)k_pi / 180.0);					// PI / 180
-	constexpr rtm_impl::angle_constant k_inv_pi_180(180.0 / (double)k_pi);				// 180 / PI
-	constexpr rtm_impl::angle_constant k_2_pi(6.283185307179586476925286766559);		// PI * 2
+	namespace constants
+	{
+		//////////////////////////////////////////////////////////////////////////
+		// PI
+		//////////////////////////////////////////////////////////////////////////
+		constexpr rtm_impl::angle_constant pi() RTM_NO_EXCEPT
+		{
+			return rtm_impl::angle_constant{ 3.141592653589793238462643383279502884 };
+		}
+
+		//////////////////////////////////////////////////////////////////////////
+		// PI / 2
+		//////////////////////////////////////////////////////////////////////////
+		constexpr rtm_impl::angle_constant half_pi() RTM_NO_EXCEPT
+		{
+			return rtm_impl::angle_constant{ 1.570796326794896619231321691639751442 };
+		}
+
+		//////////////////////////////////////////////////////////////////////////
+		// PI * 2
+		//////////////////////////////////////////////////////////////////////////
+		constexpr rtm_impl::angle_constant two_pi() RTM_NO_EXCEPT
+		{
+			return rtm_impl::angle_constant{ 6.283185307179586476925286766559005768 };
+		}
+
+		//////////////////////////////////////////////////////////////////////////
+		// PI / 180
+		//////////////////////////////////////////////////////////////////////////
+		constexpr rtm_impl::angle_constant pi_div_one_eighty() RTM_NO_EXCEPT
+		{
+			return rtm_impl::angle_constant{ pi().dbl / 180.0 };
+		}
+
+		//////////////////////////////////////////////////////////////////////////
+		// 180 / PI
+		//////////////////////////////////////////////////////////////////////////
+		constexpr rtm_impl::angle_constant one_eighty_div_pi() RTM_NO_EXCEPT
+		{
+			return rtm_impl::angle_constant{ 180.0 / pi().dbl };
+		}
+	}
 }
 
 RTM_IMPL_FILE_PRAGMA_POP

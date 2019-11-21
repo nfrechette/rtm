@@ -29,6 +29,7 @@
 #include <rtm/angled.h>
 #include <rtm/scalarf.h>
 #include <rtm/scalard.h>
+#include <rtm/type_traits.h>
 
 #include <limits>
 
@@ -127,7 +128,12 @@ static void test_scalar_impl(const FloatType threshold)
 	REQUIRE(scalar_near_equal(scalar_lerp(values[0], values[1], values[2]), ((values[1] - values[0]) * values[2]) + values[0], threshold));
 	REQUIRE(scalar_near_equal(scalar_cast(scalar_lerp(scalar_set(values[0]), scalar_set(values[1]), values[2])), ((values[1] - values[0]) * values[2]) + values[0], threshold));
 
-	const FloatType angles[] = { FloatType(0.0), k_pi, -k_pi, k_pi_2, -k_pi_2, FloatType(0.5), FloatType(32.5), FloatType(-0.5), FloatType(-32.5) };
+	using AngleType = typename float_traits<FloatType>::angle;
+
+	const AngleType half_pi = constants::half_pi();
+	const AngleType pi = constants::pi();
+
+	const FloatType angles[] = { FloatType(0.0), pi.as_radians(), -pi.as_radians(), half_pi.as_radians(), -half_pi.as_radians(), FloatType(0.5), FloatType(32.5), FloatType(-0.5), FloatType(-32.5) };
 
 	for (const FloatType angle : angles)
 	{

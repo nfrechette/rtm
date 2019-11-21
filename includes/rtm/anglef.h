@@ -25,7 +25,7 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 #include "rtm/math.h"
-#include "rtm/impl/angle_common.h"
+#include <rtm/impl/angle_constants.h>
 #include "rtm/impl/compiler_utils.h"
 
 RTM_IMPL_FILE_PRAGMA_PUSH
@@ -37,7 +37,7 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	constexpr float scalar_deg_to_rad(float deg) RTM_NO_EXCEPT
 	{
-		return deg * (float)k_pi_180;
+		return deg * float(constants::pi_div_one_eighty().dbl);
 	}
 
 	//////////////////////////////////////////////////////////////////////////
@@ -45,7 +45,7 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	constexpr float scalar_rad_to_deg(float rad) RTM_NO_EXCEPT
 	{
-		return rad * (float)k_inv_pi_180;
+		return rad * float(constants::one_eighty_div_pi().dbl);
 	}
 
 	//////////////////////////////////////////////////////////////////////////
@@ -55,6 +55,7 @@ namespace rtm
 	{
 	public:
 		constexpr anglef() RTM_NO_EXCEPT : m_radians(0.0F) {}
+		constexpr anglef(rtm_impl::angle_constant value) RTM_NO_EXCEPT : m_radians(float(value.dbl)) {}
 
 		constexpr anglef operator-() const RTM_NO_EXCEPT { return anglef(-m_radians); }
 
@@ -63,7 +64,6 @@ namespace rtm
 
 	private:
 		explicit constexpr anglef(float rad) RTM_NO_EXCEPT : m_radians(rad) {}
-		explicit constexpr anglef(rtm_impl::angle_constant angle) RTM_NO_EXCEPT : m_radians(angle) {}
 
 		float m_radians;
 
@@ -86,6 +86,78 @@ namespace rtm
 	{
 		return anglef(scalar_deg_to_rad(deg));
 	}
+}
+
+//////////////////////////////////////////////////////////////////////////
+// Divide a constant by an angle.
+//////////////////////////////////////////////////////////////////////////
+constexpr rtm::anglef operator/(float lhs, rtm::anglef rhs) RTM_NO_EXCEPT
+{
+	return rtm::radians(lhs / rhs.as_radians());
+}
+
+//////////////////////////////////////////////////////////////////////////
+// Divide an angle by a constant.
+//////////////////////////////////////////////////////////////////////////
+constexpr rtm::anglef operator/(rtm::anglef lhs, float rhs) RTM_NO_EXCEPT
+{
+	return rtm::radians(lhs.as_radians() / rhs);
+}
+
+//////////////////////////////////////////////////////////////////////////
+// Divide a constant by an angle constant.
+//////////////////////////////////////////////////////////////////////////
+constexpr rtm::anglef operator/(float lhs, rtm::rtm_impl::angle_constant rhs) RTM_NO_EXCEPT
+{
+	return rtm::radians(lhs / float(rhs.dbl));
+}
+
+//////////////////////////////////////////////////////////////////////////
+// Divide an angle constant by a constant.
+//////////////////////////////////////////////////////////////////////////
+constexpr rtm::anglef operator/(rtm::rtm_impl::angle_constant lhs, float rhs) RTM_NO_EXCEPT
+{
+	return rtm::radians(float(lhs.dbl) / rhs);
+}
+
+//////////////////////////////////////////////////////////////////////////
+// Multiply a constant by an angle.
+//////////////////////////////////////////////////////////////////////////
+constexpr rtm::anglef operator*(float lhs, rtm::anglef rhs) RTM_NO_EXCEPT
+{
+	return rtm::radians(lhs * rhs.as_radians());
+}
+
+//////////////////////////////////////////////////////////////////////////
+// Multiply an angle by a constant.
+//////////////////////////////////////////////////////////////////////////
+constexpr rtm::anglef operator*(rtm::anglef lhs, float rhs) RTM_NO_EXCEPT
+{
+	return rtm::radians(lhs.as_radians() * rhs);
+}
+
+//////////////////////////////////////////////////////////////////////////
+// Multiply a constant by an angle constant.
+//////////////////////////////////////////////////////////////////////////
+constexpr rtm::anglef operator*(float lhs, rtm::rtm_impl::angle_constant rhs) RTM_NO_EXCEPT
+{
+	return rtm::radians(lhs * float(rhs.dbl));
+}
+
+//////////////////////////////////////////////////////////////////////////
+// Multiply an angle constant by a constant.
+//////////////////////////////////////////////////////////////////////////
+constexpr rtm::anglef operator*(rtm::rtm_impl::angle_constant lhs, float rhs) RTM_NO_EXCEPT
+{
+	return rtm::radians(float(lhs.dbl) * rhs);
+}
+
+//////////////////////////////////////////////////////////////////////////
+// Add two angles.
+//////////////////////////////////////////////////////////////////////////
+constexpr rtm::anglef operator+(rtm::anglef lhs, rtm::anglef rhs) RTM_NO_EXCEPT
+{
+	return rtm::radians(lhs.as_radians() + rhs.as_radians());
 }
 
 RTM_IMPL_FILE_PRAGMA_POP
