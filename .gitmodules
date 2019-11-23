@@ -3,4 +3,4 @@
 	url = https://github.com/catchorg/Catch2
 [submodule "external/benchmark"]
 	path = external/benchmark
-	url = https://github.com/google/benchmark.git
+	url = https://github.com/google/benchmark
