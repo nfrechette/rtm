@@ -43,29 +43,13 @@ namespace rtm
 		{
 			inline RTM_SIMD_CALL operator mask4q() const RTM_NO_EXCEPT
 			{
-				
-
 #if defined(RTM_SSE2_INTRINSICS)
-#if defined(_MSC_VER) && _MSC_VER >= 1920 && defined(_M_IX86)
-				// _mm_set_epi64x sets both doublewords to the same value when compiled for x86 with Visual Studio 2019 with optimizations turned on.
-				// An alternative instruction avoids this problem.  Note the high and low words are equal because mask components can only equal ~0 or 0.
-				const uint32_t x_mask = x ? 0xFFFFFFFFU : 0;
-				const uint32_t y_mask = y ? 0xFFFFFFFFU : 0;
-				const uint32_t z_mask = z ? 0xFFFFFFFFU : 0;
-				const uint32_t w_mask = w ? 0xFFFFFFFFU : 0;
-
-				return mask4q{
-					_mm_castsi128_pd(_mm_set_epi32(y_mask, y_mask, x_mask, x_mask)),
-					_mm_castsi128_pd(_mm_set_epi32(w_mask, w_mask, z_mask, z_mask))
-				};
-#else
 				const uint64_t x_mask = x ? 0xFFFFFFFFFFFFFFFFULL : 0;
 				const uint64_t y_mask = y ? 0xFFFFFFFFFFFFFFFFULL : 0;
 				const uint64_t z_mask = z ? 0xFFFFFFFFFFFFFFFFULL : 0;
 				const uint64_t w_mask = w ? 0xFFFFFFFFFFFFFFFFULL : 0;
 
 				return mask4q{ _mm_castsi128_pd(_mm_set_epi64x(y_mask, x_mask)), _mm_castsi128_pd(_mm_set_epi64x(w_mask, z_mask)) };
-#endif
 #else
 				const uint64_t x_mask = x ? 0xFFFFFFFFFFFFFFFFULL : 0;
 				const uint64_t y_mask = y ? 0xFFFFFFFFFFFFFFFFULL : 0;
