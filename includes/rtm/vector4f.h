@@ -727,32 +727,63 @@ namespace rtm
 #endif
 	}
 
+	namespace rtm_impl
+	{
+		//////////////////////////////////////////////////////////////////////////
+		// This is a helper struct to allow a single consistent API between
+		// various vector types when the semantics are identical but the return
+		// type differs. Implicit coercion is used to return the desired value
+		// at the call site.
+		//////////////////////////////////////////////////////////////////////////
+		struct vector4f_vector_dot3
+		{
+			inline RTM_SIMD_CALL operator float() const RTM_NO_EXCEPT
+			{
+#if defined(RTM_SSE4_INTRINSICS) && 0
+				// SSE4 dot product instruction isn't precise enough
+				return _mm_cvtss_f32(_mm_dp_ps(lhs, rhs, 0x7F));
+#elif defined(RTM_SSE2_INTRINSICS)
+				__m128 x2_y2_z2_w2 = _mm_mul_ps(lhs, rhs);
+				__m128 y2_0_0_0 = _mm_shuffle_ps(x2_y2_z2_w2, x2_y2_z2_w2, _MM_SHUFFLE(0, 0, 0, 1));
+				__m128 x2y2_0_0_0 = _mm_add_ss(x2_y2_z2_w2, y2_0_0_0);
+				__m128 z2_0_0_0 = _mm_shuffle_ps(x2_y2_z2_w2, x2_y2_z2_w2, _MM_SHUFFLE(0, 0, 0, 2));
+				__m128 x2y2z2_0_0_0 = _mm_add_ss(x2y2_0_0_0, z2_0_0_0);
+				return _mm_cvtss_f32(x2y2z2_0_0_0);
+#elif defined(RTM_NEON_INTRINSICS)
+				float32x4_t x2_y2_z2_w2 = vmulq_f32(lhs, rhs);
+				float32x2_t x2_y2 = vget_low_f32(x2_y2_z2_w2);
+				float32x2_t z2_w2 = vget_high_f32(x2_y2_z2_w2);
+				float32x2_t x2y2_x2y2 = vpadd_f32(x2_y2, x2_y2);
+				float32x2_t z2_z2 = vdup_lane_f32(z2_w2, 0);
+				float32x2_t x2y2z2_x2y2z2 = vadd_f32(x2y2_x2y2, z2_z2);
+				return vget_lane_f32(x2y2z2_x2y2z2, 0);
+#else
+				return (vector_get_x(lhs) * vector_get_x(rhs)) + (vector_get_y(lhs) * vector_get_y(rhs)) + (vector_get_z(lhs) * vector_get_z(rhs));
+#endif
+			}
+
+#if defined(RTM_SSE2_INTRINSICS)
+			inline RTM_SIMD_CALL operator scalarf() const RTM_NO_EXCEPT
+			{
+				__m128 x2_y2_z2_w2 = _mm_mul_ps(lhs, rhs);
+				__m128 y2_0_0_0 = _mm_shuffle_ps(x2_y2_z2_w2, x2_y2_z2_w2, _MM_SHUFFLE(0, 0, 0, 1));
+				__m128 x2y2_0_0_0 = _mm_add_ss(x2_y2_z2_w2, y2_0_0_0);
+				__m128 z2_0_0_0 = _mm_shuffle_ps(x2_y2_z2_w2, x2_y2_z2_w2, _MM_SHUFFLE(0, 0, 0, 2));
+				return _mm_add_ss(x2y2_0_0_0, z2_0_0_0);
+			}
+#endif
+
+			vector4f lhs;
+			vector4f rhs;
+		};
+	}
+
 	//////////////////////////////////////////////////////////////////////////
 	// 3D dot product: lhs . rhs
 	//////////////////////////////////////////////////////////////////////////
-	inline float RTM_SIMD_CALL vector_dot3(vector4f_arg0 lhs, vector4f_arg1 rhs) RTM_NO_EXCEPT
+	constexpr rtm_impl::vector4f_vector_dot3 RTM_SIMD_CALL vector_dot3(vector4f_arg0 lhs, vector4f_arg1 rhs) RTM_NO_EXCEPT
 	{
-#if defined(RTM_SSE4_INTRINSICS) && 0
-		// SSE4 dot product instruction isn't precise enough
-		return _mm_cvtss_f32(_mm_dp_ps(lhs, rhs, 0x7F));
-#elif defined(RTM_SSE2_INTRINSICS)
-		__m128 x2_y2_z2_w2 = _mm_mul_ps(lhs, rhs);
-		__m128 y2_0_0_0 = _mm_shuffle_ps(x2_y2_z2_w2, x2_y2_z2_w2, _MM_SHUFFLE(0, 0, 0, 1));
-		__m128 x2y2_0_0_0 = _mm_add_ss(x2_y2_z2_w2, y2_0_0_0);
-		__m128 z2_0_0_0 = _mm_shuffle_ps(x2_y2_z2_w2, x2_y2_z2_w2, _MM_SHUFFLE(0, 0, 0, 2));
-		__m128 x2y2z2_0_0_0 = _mm_add_ss(x2y2_0_0_0, z2_0_0_0);
-		return _mm_cvtss_f32(x2y2z2_0_0_0);
-#elif defined(RTM_NEON_INTRINSICS)
-		float32x4_t x2_y2_z2_w2 = vmulq_f32(lhs, rhs);
-		float32x2_t x2_y2 = vget_low_f32(x2_y2_z2_w2);
-		float32x2_t z2_w2 = vget_high_f32(x2_y2_z2_w2);
-		float32x2_t x2y2_x2y2 = vpadd_f32(x2_y2, x2_y2);
-		float32x2_t z2_z2 = vdup_lane_f32(z2_w2, 0);
-		float32x2_t x2y2z2_x2y2z2 = vadd_f32(x2y2_x2y2, z2_z2);
-		return vget_lane_f32(x2y2z2_x2y2z2, 0);
-#else
-		return (vector_get_x(lhs) * vector_get_x(rhs)) + (vector_get_y(lhs) * vector_get_y(rhs)) + (vector_get_z(lhs) * vector_get_z(rhs));
-#endif
+		return rtm_impl::vector4f_vector_dot3{ lhs, rhs };
 	}
 
 	//////////////////////////////////////////////////////////////////////////
@@ -766,9 +797,9 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	// Returns the squared length/norm of the vector3.
 	//////////////////////////////////////////////////////////////////////////
-	inline float RTM_SIMD_CALL vector_length_squared3(vector4f_arg0 input) RTM_NO_EXCEPT
+	constexpr rtm_impl::vector4f_vector_dot3 RTM_SIMD_CALL vector_length_squared3(vector4f_arg0 input) RTM_NO_EXCEPT
 	{
-		return vector_dot3(input, input);
+		return rtm_impl::vector4f_vector_dot3{ input, input };
 	}
 
 	//////////////////////////////////////////////////////////////////////////
@@ -779,12 +810,40 @@ namespace rtm
 		return scalar_sqrt(vector_length_squared(input));
 	}
 
+	namespace rtm_impl
+	{
+		//////////////////////////////////////////////////////////////////////////
+		// This is a helper struct to allow a single consistent API between
+		// various vector types when the semantics are identical but the return
+		// type differs. Implicit coercion is used to return the desired value
+		// at the call site.
+		//////////////////////////////////////////////////////////////////////////
+		struct vector4f_vector_length3
+		{
+			inline RTM_SIMD_CALL operator float() const RTM_NO_EXCEPT
+			{
+				const scalarf len_sq = vector_length_squared3(input);
+				return scalar_cast(scalar_sqrt(len_sq));
+			}
+
+#if defined(RTM_SSE2_INTRINSICS)
+			inline RTM_SIMD_CALL operator scalarf() const RTM_NO_EXCEPT
+			{
+				const scalarf len_sq = vector_length_squared3(input);
+				return scalar_sqrt(len_sq);
+			}
+#endif
+
+			vector4f input;
+		};
+	}
+
 	//////////////////////////////////////////////////////////////////////////
 	// Returns the length/norm of the vector3.
 	//////////////////////////////////////////////////////////////////////////
-	inline float RTM_SIMD_CALL vector_length3(vector4f_arg0 input) RTM_NO_EXCEPT
+	constexpr rtm_impl::vector4f_vector_length3 RTM_SIMD_CALL vector_length3(vector4f_arg0 input) RTM_NO_EXCEPT
 	{
-		return scalar_sqrt(vector_length_squared3(input));
+		return rtm_impl::vector4f_vector_length3{ input };
 	}
 
 	//////////////////////////////////////////////////////////////////////////
@@ -806,9 +865,10 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	// Returns the distance between two 3D points.
 	//////////////////////////////////////////////////////////////////////////
-	inline float RTM_SIMD_CALL vector_distance3(vector4f_arg0 lhs, vector4f_arg1 rhs) RTM_NO_EXCEPT
+	inline rtm_impl::vector4f_vector_length3 RTM_SIMD_CALL vector_distance3(vector4f_arg0 lhs, vector4f_arg1 rhs) RTM_NO_EXCEPT
 	{
-		return vector_length3(vector_sub(rhs, lhs));
+		const vector4f difference = vector_sub(lhs, rhs);
+		return rtm_impl::vector4f_vector_length3{ difference };
 	}
 
 	//////////////////////////////////////////////////////////////////////////
