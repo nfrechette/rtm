@@ -41,22 +41,22 @@ static void test_quat_impl(const FloatType threshold)
 		QuatType quat1 = quat_ensure_positive_w(quat0);
 		QuatType quat2 = quat_ensure_positive_w(quat1);
 
-		REQUIRE(quat_get_x(quat0) == -quat_get_x(quat1));
-		REQUIRE(quat_get_y(quat0) == -quat_get_y(quat1));
-		REQUIRE(quat_get_z(quat0) == -quat_get_z(quat1));
-		REQUIRE(quat_get_w(quat0) == -quat_get_w(quat1));
+		CHECK(quat_get_x(quat0) == -quat_get_x(quat1));
+		CHECK(quat_get_y(quat0) == -quat_get_y(quat1));
+		CHECK(quat_get_z(quat0) == -quat_get_z(quat1));
+		CHECK(quat_get_w(quat0) == -quat_get_w(quat1));
 
-		REQUIRE(quat_get_x(quat2) == quat_get_x(quat1));
-		REQUIRE(quat_get_y(quat2) == quat_get_y(quat1));
-		REQUIRE(quat_get_z(quat2) == quat_get_z(quat1));
-		REQUIRE(quat_get_w(quat2) == quat_get_w(quat1));
+		CHECK(quat_get_x(quat2) == quat_get_x(quat1));
+		CHECK(quat_get_y(quat2) == quat_get_y(quat1));
+		CHECK(quat_get_z(quat2) == quat_get_z(quat1));
+		CHECK(quat_get_w(quat2) == quat_get_w(quat1));
 
 		Vector4Type vec1 = quat_to_vector(quat1);
 		QuatType quat3 = quat_from_positive_w(vec1);
-		REQUIRE(quat_get_x(quat1) == quat_get_x(quat3));
-		REQUIRE(quat_get_y(quat1) == quat_get_y(quat3));
-		REQUIRE(quat_get_z(quat1) == quat_get_z(quat3));
-		REQUIRE(scalar_near_equal(quat_get_w(quat1), quat_get_w(quat3), threshold));
+		CHECK(quat_get_x(quat1) == quat_get_x(quat3));
+		CHECK(quat_get_y(quat1) == quat_get_y(quat3));
+		CHECK(quat_get_z(quat1) == quat_get_z(quat3));
+		CHECK(scalar_near_equal(quat_get_w(quat1), quat_get_w(quat3), threshold));
 	}
 }
 

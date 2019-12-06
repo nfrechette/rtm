@@ -37,8 +37,8 @@ TEST_CASE("vector4f math", "[math][vector4]")
 
 	const vector4f src = vector_set(-2.65F, 2.996113F, 0.68123521F, -5.9182F);
 	const vector4d dst = vector_cast(src);
-	REQUIRE(scalar_near_equal(vector_get_x(dst), -2.65, 1.0E-6));
-	REQUIRE(scalar_near_equal(vector_get_y(dst), 2.996113, 1.0E-6));
-	REQUIRE(scalar_near_equal(vector_get_z(dst), 0.68123521, 1.0E-6));
-	REQUIRE(scalar_near_equal(vector_get_w(dst), -5.9182, 1.0E-6));
+	CHECK(scalar_near_equal(vector_get_x(dst), -2.65, 1.0E-6));
+	CHECK(scalar_near_equal(vector_get_y(dst), 2.996113, 1.0E-6));
+	CHECK(scalar_near_equal(vector_get_z(dst), 0.68123521, 1.0E-6));
+	CHECK(scalar_near_equal(vector_get_w(dst), -5.9182, 1.0E-6));
 }

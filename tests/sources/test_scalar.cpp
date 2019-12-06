@@ -38,117 +38,117 @@ using namespace rtm;
 template<typename FloatType>
 static void test_scalar_impl(const FloatType threshold)
 {
-	REQUIRE(scalar_cast(scalar_set(FloatType(0.2345))) == FloatType(0.2345));
+	CHECK(scalar_cast(scalar_set(FloatType(0.2345))) == FloatType(0.2345));
 
 	const FloatType value = FloatType(0.2345);
-	REQUIRE(scalar_is_equal(scalar_load(&value), scalar_set(value)));
-	REQUIRE(scalar_load(&value) == FloatType(0.2345));
+	CHECK(scalar_is_equal(scalar_load(&value), scalar_set(value)));
+	CHECK(scalar_load(&value) == FloatType(0.2345));
 
 	FloatType tmp = FloatType(0.0);
 	scalar_store(FloatType(16.5), &tmp);
-	REQUIRE(tmp == FloatType(16.5));
+	CHECK(tmp == FloatType(16.5));
 	scalar_store(scalar_set(FloatType(4.5)), &tmp);
-	REQUIRE(tmp == FloatType(4.5));
+	CHECK(tmp == FloatType(4.5));
 
-	REQUIRE(scalar_floor(FloatType(0.0)) == FloatType(0.0));
-	REQUIRE(scalar_floor(FloatType(0.5)) == FloatType(0.0));
-	REQUIRE(scalar_floor(FloatType(2.5)) == FloatType(2.0));
-	REQUIRE(scalar_floor(FloatType(3.0)) == FloatType(3.0));
-	REQUIRE(scalar_floor(FloatType(-0.5)) == FloatType(-1.0));
-	REQUIRE(scalar_floor(FloatType(-2.5)) == FloatType(-3.0));
-	REQUIRE(scalar_floor(FloatType(-3.0)) == FloatType(-3.0));
+	CHECK(scalar_floor(FloatType(0.0)) == FloatType(0.0));
+	CHECK(scalar_floor(FloatType(0.5)) == FloatType(0.0));
+	CHECK(scalar_floor(FloatType(2.5)) == FloatType(2.0));
+	CHECK(scalar_floor(FloatType(3.0)) == FloatType(3.0));
+	CHECK(scalar_floor(FloatType(-0.5)) == FloatType(-1.0));
+	CHECK(scalar_floor(FloatType(-2.5)) == FloatType(-3.0));
+	CHECK(scalar_floor(FloatType(-3.0)) == FloatType(-3.0));
 
-	REQUIRE(scalar_ceil(FloatType(0.0)) == FloatType(0.0));
-	REQUIRE(scalar_ceil(FloatType(0.5)) == FloatType(1.0));
-	REQUIRE(scalar_ceil(FloatType(2.5)) == FloatType(3.0));
-	REQUIRE(scalar_ceil(FloatType(3.0)) == FloatType(3.0));
-	REQUIRE(scalar_ceil(FloatType(-0.5)) == FloatType(0.0));
-	REQUIRE(scalar_ceil(FloatType(-2.5)) == FloatType(-2.0));
-	REQUIRE(scalar_ceil(FloatType(-3.0)) == FloatType(-3.0));
+	CHECK(scalar_ceil(FloatType(0.0)) == FloatType(0.0));
+	CHECK(scalar_ceil(FloatType(0.5)) == FloatType(1.0));
+	CHECK(scalar_ceil(FloatType(2.5)) == FloatType(3.0));
+	CHECK(scalar_ceil(FloatType(3.0)) == FloatType(3.0));
+	CHECK(scalar_ceil(FloatType(-0.5)) == FloatType(0.0));
+	CHECK(scalar_ceil(FloatType(-2.5)) == FloatType(-2.0));
+	CHECK(scalar_ceil(FloatType(-3.0)) == FloatType(-3.0));
 
-	REQUIRE(scalar_clamp(FloatType(0.5), FloatType(0.0), FloatType(1.0)) == FloatType(0.5));
-	REQUIRE(scalar_clamp(FloatType(-0.5), FloatType(0.0), FloatType(1.0)) == FloatType(0.0));
-	REQUIRE(scalar_clamp(FloatType(1.5), FloatType(0.0), FloatType(1.0)) == FloatType(1.0));
+	CHECK(scalar_clamp(FloatType(0.5), FloatType(0.0), FloatType(1.0)) == FloatType(0.5));
+	CHECK(scalar_clamp(FloatType(-0.5), FloatType(0.0), FloatType(1.0)) == FloatType(0.0));
+	CHECK(scalar_clamp(FloatType(1.5), FloatType(0.0), FloatType(1.0)) == FloatType(1.0));
 
-	REQUIRE(scalar_abs(FloatType(0.0)) == FloatType(0.0));
-	REQUIRE(scalar_abs(FloatType(2.0)) == FloatType(2.0));
-	REQUIRE(scalar_abs(FloatType(-2.0)) == FloatType(2.0));
+	CHECK(scalar_abs(FloatType(0.0)) == FloatType(0.0));
+	CHECK(scalar_abs(FloatType(2.0)) == FloatType(2.0));
+	CHECK(scalar_abs(FloatType(-2.0)) == FloatType(2.0));
 
-	REQUIRE(scalar_is_equal(scalar_abs(scalar_set(FloatType(0.0))), scalar_set(FloatType(0.0))));
-	REQUIRE(scalar_is_equal(scalar_abs(scalar_set(FloatType(2.0))), scalar_set(FloatType(2.0))));
-	REQUIRE(scalar_is_equal(scalar_abs(scalar_set(FloatType(-2.0))), scalar_set(FloatType(2.0))));
+	CHECK(scalar_is_equal(scalar_abs(scalar_set(FloatType(0.0))), scalar_set(FloatType(0.0))));
+	CHECK(scalar_is_equal(scalar_abs(scalar_set(FloatType(2.0))), scalar_set(FloatType(2.0))));
+	CHECK(scalar_is_equal(scalar_abs(scalar_set(FloatType(-2.0))), scalar_set(FloatType(2.0))));
 
-	REQUIRE(scalar_is_equal(FloatType(1.123), FloatType(1.123)) == true);
-	REQUIRE(scalar_is_equal(FloatType(1.123), FloatType(1.124)) == false);
-	REQUIRE(scalar_is_equal(scalar_set(FloatType(1.123)), scalar_set(FloatType(1.123))) == true);
-	REQUIRE(scalar_is_equal(scalar_set(FloatType(1.123)), scalar_set(FloatType(1.124))) == false);
+	CHECK(scalar_is_equal(FloatType(1.123), FloatType(1.123)) == true);
+	CHECK(scalar_is_equal(FloatType(1.123), FloatType(1.124)) == false);
+	CHECK(scalar_is_equal(scalar_set(FloatType(1.123)), scalar_set(FloatType(1.123))) == true);
+	CHECK(scalar_is_equal(scalar_set(FloatType(1.123)), scalar_set(FloatType(1.124))) == false);
 
-	REQUIRE(scalar_near_equal(FloatType(1.0), FloatType(1.0), FloatType(0.00001)) == true);
-	REQUIRE(scalar_near_equal(FloatType(1.0), FloatType(1.000001), FloatType(0.00001)) == true);
-	REQUIRE(scalar_near_equal(FloatType(1.0), FloatType(0.999999), FloatType(0.00001)) == true);
-	REQUIRE(scalar_near_equal(FloatType(1.0), FloatType(1.001), FloatType(0.00001)) == false);
-	REQUIRE(scalar_near_equal(FloatType(1.0), FloatType(0.999), FloatType(0.00001)) == false);
+	CHECK(scalar_near_equal(FloatType(1.0), FloatType(1.0), FloatType(0.00001)) == true);
+	CHECK(scalar_near_equal(FloatType(1.0), FloatType(1.000001), FloatType(0.00001)) == true);
+	CHECK(scalar_near_equal(FloatType(1.0), FloatType(0.999999), FloatType(0.00001)) == true);
+	CHECK(scalar_near_equal(FloatType(1.0), FloatType(1.001), FloatType(0.00001)) == false);
+	CHECK(scalar_near_equal(FloatType(1.0), FloatType(0.999), FloatType(0.00001)) == false);
 
-	REQUIRE(scalar_sqrt(FloatType(0.0)) == FloatType(0.0));
-	REQUIRE(scalar_near_equal(scalar_sqrt(FloatType(0.5)), std::sqrt(FloatType(0.5)), threshold));
-	REQUIRE(scalar_near_equal(scalar_sqrt(FloatType(32.5)), std::sqrt(FloatType(32.5)), threshold));
-	REQUIRE(scalar_is_equal(scalar_sqrt(FloatType(32.5)), scalar_cast(scalar_sqrt(scalar_set(FloatType(32.5))))));
+	CHECK(scalar_sqrt(FloatType(0.0)) == FloatType(0.0));
+	CHECK(scalar_near_equal(scalar_sqrt(FloatType(0.5)), std::sqrt(FloatType(0.5)), threshold));
+	CHECK(scalar_near_equal(scalar_sqrt(FloatType(32.5)), std::sqrt(FloatType(32.5)), threshold));
+	CHECK(scalar_is_equal(scalar_sqrt(FloatType(32.5)), scalar_cast(scalar_sqrt(scalar_set(FloatType(32.5))))));
 
-	REQUIRE(scalar_is_lower(FloatType(1.123), FloatType(1.123)) == false);
-	REQUIRE(scalar_is_lower(FloatType(1.123), FloatType(1.124)) == true);
-	REQUIRE(scalar_is_lower(FloatType(1.124), FloatType(1.123)) == false);
-	REQUIRE(scalar_is_lower(scalar_set(FloatType(1.123)), scalar_set(FloatType(1.123))) == false);
-	REQUIRE(scalar_is_lower(scalar_set(FloatType(1.123)), scalar_set(FloatType(1.124))) == true);
-	REQUIRE(scalar_is_lower(scalar_set(FloatType(1.124)), scalar_set(FloatType(1.123))) == false);
+	CHECK(scalar_is_lower(FloatType(1.123), FloatType(1.123)) == false);
+	CHECK(scalar_is_lower(FloatType(1.123), FloatType(1.124)) == true);
+	CHECK(scalar_is_lower(FloatType(1.124), FloatType(1.123)) == false);
+	CHECK(scalar_is_lower(scalar_set(FloatType(1.123)), scalar_set(FloatType(1.123))) == false);
+	CHECK(scalar_is_lower(scalar_set(FloatType(1.123)), scalar_set(FloatType(1.124))) == true);
+	CHECK(scalar_is_lower(scalar_set(FloatType(1.124)), scalar_set(FloatType(1.123))) == false);
 
-	REQUIRE(scalar_is_lower_equal(FloatType(1.123), FloatType(1.123)) == true);
-	REQUIRE(scalar_is_lower_equal(FloatType(1.123), FloatType(1.124)) == true);
-	REQUIRE(scalar_is_lower_equal(FloatType(1.124), FloatType(1.123)) == false);
-	REQUIRE(scalar_is_lower_equal(scalar_set(FloatType(1.123)), scalar_set(FloatType(1.123))) == true);
-	REQUIRE(scalar_is_lower_equal(scalar_set(FloatType(1.123)), scalar_set(FloatType(1.124))) == true);
-	REQUIRE(scalar_is_lower_equal(scalar_set(FloatType(1.124)), scalar_set(FloatType(1.123))) == false);
+	CHECK(scalar_is_lower_equal(FloatType(1.123), FloatType(1.123)) == true);
+	CHECK(scalar_is_lower_equal(FloatType(1.123), FloatType(1.124)) == true);
+	CHECK(scalar_is_lower_equal(FloatType(1.124), FloatType(1.123)) == false);
+	CHECK(scalar_is_lower_equal(scalar_set(FloatType(1.123)), scalar_set(FloatType(1.123))) == true);
+	CHECK(scalar_is_lower_equal(scalar_set(FloatType(1.123)), scalar_set(FloatType(1.124))) == true);
+	CHECK(scalar_is_lower_equal(scalar_set(FloatType(1.124)), scalar_set(FloatType(1.123))) == false);
 
-	REQUIRE(scalar_is_greater(FloatType(1.123), FloatType(1.123)) == false);
-	REQUIRE(scalar_is_greater(FloatType(1.123), FloatType(1.124)) == false);
-	REQUIRE(scalar_is_greater(FloatType(1.124), FloatType(1.123)) == true);
-	REQUIRE(scalar_is_greater(scalar_set(FloatType(1.123)), scalar_set(FloatType(1.123))) == false);
-	REQUIRE(scalar_is_greater(scalar_set(FloatType(1.123)), scalar_set(FloatType(1.124))) == false);
-	REQUIRE(scalar_is_greater(scalar_set(FloatType(1.124)), scalar_set(FloatType(1.123))) == true);
+	CHECK(scalar_is_greater(FloatType(1.123), FloatType(1.123)) == false);
+	CHECK(scalar_is_greater(FloatType(1.123), FloatType(1.124)) == false);
+	CHECK(scalar_is_greater(FloatType(1.124), FloatType(1.123)) == true);
+	CHECK(scalar_is_greater(scalar_set(FloatType(1.123)), scalar_set(FloatType(1.123))) == false);
+	CHECK(scalar_is_greater(scalar_set(FloatType(1.123)), scalar_set(FloatType(1.124))) == false);
+	CHECK(scalar_is_greater(scalar_set(FloatType(1.124)), scalar_set(FloatType(1.123))) == true);
 
-	REQUIRE(scalar_is_greater_equal(FloatType(1.123), FloatType(1.123)) == true);
-	REQUIRE(scalar_is_greater_equal(FloatType(1.123), FloatType(1.124)) == false);
-	REQUIRE(scalar_is_greater_equal(FloatType(1.124), FloatType(1.123)) == true);
-	REQUIRE(scalar_is_greater_equal(scalar_set(FloatType(1.123)), scalar_set(FloatType(1.123))) == true);
-	REQUIRE(scalar_is_greater_equal(scalar_set(FloatType(1.123)), scalar_set(FloatType(1.124))) == false);
-	REQUIRE(scalar_is_greater_equal(scalar_set(FloatType(1.124)), scalar_set(FloatType(1.123))) == true);
+	CHECK(scalar_is_greater_equal(FloatType(1.123), FloatType(1.123)) == true);
+	CHECK(scalar_is_greater_equal(FloatType(1.123), FloatType(1.124)) == false);
+	CHECK(scalar_is_greater_equal(FloatType(1.124), FloatType(1.123)) == true);
+	CHECK(scalar_is_greater_equal(scalar_set(FloatType(1.123)), scalar_set(FloatType(1.123))) == true);
+	CHECK(scalar_is_greater_equal(scalar_set(FloatType(1.123)), scalar_set(FloatType(1.124))) == false);
+	CHECK(scalar_is_greater_equal(scalar_set(FloatType(1.124)), scalar_set(FloatType(1.123))) == true);
 
-	REQUIRE(scalar_near_equal(scalar_sqrt_reciprocal(FloatType(0.5)), FloatType(1.0) / std::sqrt(FloatType(0.5)), threshold));
-	REQUIRE(scalar_near_equal(scalar_sqrt_reciprocal(FloatType(32.5)), FloatType(1.0) / std::sqrt(FloatType(32.5)), threshold));
+	CHECK(scalar_near_equal(scalar_sqrt_reciprocal(FloatType(0.5)), FloatType(1.0) / std::sqrt(FloatType(0.5)), threshold));
+	CHECK(scalar_near_equal(scalar_sqrt_reciprocal(FloatType(32.5)), FloatType(1.0) / std::sqrt(FloatType(32.5)), threshold));
 
-	REQUIRE(scalar_near_equal(scalar_reciprocal(FloatType(0.5)), FloatType(1.0 / 0.5), threshold));
-	REQUIRE(scalar_near_equal(scalar_reciprocal(FloatType(32.5)), FloatType(1.0 / 32.5), threshold));
-	REQUIRE(scalar_near_equal(scalar_reciprocal(FloatType(-0.5)), FloatType(1.0 / -0.5), threshold));
-	REQUIRE(scalar_near_equal(scalar_reciprocal(FloatType(-32.5)), FloatType(1.0 / -32.5), threshold));
+	CHECK(scalar_near_equal(scalar_reciprocal(FloatType(0.5)), FloatType(1.0 / 0.5), threshold));
+	CHECK(scalar_near_equal(scalar_reciprocal(FloatType(32.5)), FloatType(1.0 / 32.5), threshold));
+	CHECK(scalar_near_equal(scalar_reciprocal(FloatType(-0.5)), FloatType(1.0 / -0.5), threshold));
+	CHECK(scalar_near_equal(scalar_reciprocal(FloatType(-32.5)), FloatType(1.0 / -32.5), threshold));
 
-	REQUIRE(scalar_near_equal(scalar_cast(scalar_reciprocal(scalar_set(FloatType(0.5)))), FloatType(1.0 / 0.5), threshold));
-	REQUIRE(scalar_near_equal(scalar_cast(scalar_reciprocal(scalar_set(FloatType(32.5)))), FloatType(1.0 / 32.5), threshold));
-	REQUIRE(scalar_near_equal(scalar_cast(scalar_reciprocal(scalar_set(FloatType(-0.5)))), FloatType(1.0 / -0.5), threshold));
-	REQUIRE(scalar_near_equal(scalar_cast(scalar_reciprocal(scalar_set(FloatType(-32.5)))), FloatType(1.0 / -32.5), threshold));
+	CHECK(scalar_near_equal(scalar_cast(scalar_reciprocal(scalar_set(FloatType(0.5)))), FloatType(1.0 / 0.5), threshold));
+	CHECK(scalar_near_equal(scalar_cast(scalar_reciprocal(scalar_set(FloatType(32.5)))), FloatType(1.0 / 32.5), threshold));
+	CHECK(scalar_near_equal(scalar_cast(scalar_reciprocal(scalar_set(FloatType(-0.5)))), FloatType(1.0 / -0.5), threshold));
+	CHECK(scalar_near_equal(scalar_cast(scalar_reciprocal(scalar_set(FloatType(-32.5)))), FloatType(1.0 / -32.5), threshold));
 
-	REQUIRE(scalar_near_equal(scalar_sub(FloatType(-0.5), FloatType(1.0)), FloatType(-0.5) - FloatType(1.0), threshold));
-	REQUIRE(scalar_near_equal(scalar_sub(FloatType(1.0), FloatType(-0.5)), FloatType(1.0) - FloatType(-0.5), threshold));
-	REQUIRE(scalar_near_equal(scalar_sub(FloatType(1.0), FloatType(1.0)), FloatType(1.0) - FloatType(1.0), threshold));
+	CHECK(scalar_near_equal(scalar_sub(FloatType(-0.5), FloatType(1.0)), FloatType(-0.5) - FloatType(1.0), threshold));
+	CHECK(scalar_near_equal(scalar_sub(FloatType(1.0), FloatType(-0.5)), FloatType(1.0) - FloatType(-0.5), threshold));
+	CHECK(scalar_near_equal(scalar_sub(FloatType(1.0), FloatType(1.0)), FloatType(1.0) - FloatType(1.0), threshold));
 
-	REQUIRE(scalar_near_equal(scalar_cast(scalar_sub(scalar_set(FloatType(-0.5)), scalar_set(FloatType(1.0)))), FloatType(-0.5) - FloatType(1.0), threshold));
-	REQUIRE(scalar_near_equal(scalar_cast(scalar_sub(scalar_set(FloatType(1.0)), scalar_set(FloatType(-0.5)))), FloatType(1.0) - FloatType(-0.5), threshold));
-	REQUIRE(scalar_near_equal(scalar_cast(scalar_sub(scalar_set(FloatType(1.0)), scalar_set(FloatType(1.0)))), FloatType(1.0) - FloatType(1.0), threshold));
+	CHECK(scalar_near_equal(scalar_cast(scalar_sub(scalar_set(FloatType(-0.5)), scalar_set(FloatType(1.0)))), FloatType(-0.5) - FloatType(1.0), threshold));
+	CHECK(scalar_near_equal(scalar_cast(scalar_sub(scalar_set(FloatType(1.0)), scalar_set(FloatType(-0.5)))), FloatType(1.0) - FloatType(-0.5), threshold));
+	CHECK(scalar_near_equal(scalar_cast(scalar_sub(scalar_set(FloatType(1.0)), scalar_set(FloatType(1.0)))), FloatType(1.0) - FloatType(1.0), threshold));
 
 	const FloatType values[] = { FloatType(-0.5123), FloatType(1.0341), FloatType(-0.54132) };
-	REQUIRE(scalar_near_equal(scalar_mul_add(values[0], values[1], values[2]), (values[0] * values[1]) + values[2], threshold));
-	REQUIRE(scalar_near_equal(scalar_cast(scalar_mul_add(scalar_set(values[0]), scalar_set(values[1]), scalar_set(values[2]))), (values[0] * values[1]) + values[2], threshold));
+	CHECK(scalar_near_equal(scalar_mul_add(values[0], values[1], values[2]), (values[0] * values[1]) + values[2], threshold));
+	CHECK(scalar_near_equal(scalar_cast(scalar_mul_add(scalar_set(values[0]), scalar_set(values[1]), scalar_set(values[2]))), (values[0] * values[1]) + values[2], threshold));
 
-	REQUIRE(scalar_near_equal(scalar_lerp(values[0], values[1], values[2]), ((values[1] - values[0]) * values[2]) + values[0], threshold));
-	REQUIRE(scalar_near_equal(scalar_cast(scalar_lerp(scalar_set(values[0]), scalar_set(values[1]), values[2])), ((values[1] - values[0]) * values[2]) + values[0], threshold));
+	CHECK(scalar_near_equal(scalar_lerp(values[0], values[1], values[2]), ((values[1] - values[0]) * values[2]) + values[0], threshold));
+	CHECK(scalar_near_equal(scalar_cast(scalar_lerp(scalar_set(values[0]), scalar_set(values[1]), values[2])), ((values[1] - values[0]) * values[2]) + values[0], threshold));
 
 	using AngleType = typename float_traits<FloatType>::angle;
 
@@ -159,74 +159,74 @@ static void test_scalar_impl(const FloatType threshold)
 
 	for (const FloatType angle : angles)
 	{
-		REQUIRE(scalar_near_equal(scalar_sin(angle), std::sin(angle), threshold));
-		REQUIRE(scalar_near_equal(scalar_cos(angle), std::cos(angle), threshold));
+		CHECK(scalar_near_equal(scalar_sin(angle), std::sin(angle), threshold));
+		CHECK(scalar_near_equal(scalar_cos(angle), std::cos(angle), threshold));
 
 		FloatType sin_result;
 		FloatType cos_result;
 		scalar_sincos(angle, sin_result, cos_result);
-		REQUIRE(scalar_near_equal(sin_result, std::sin(angle), threshold));
-		REQUIRE(scalar_near_equal(cos_result, std::cos(angle), threshold));
+		CHECK(scalar_near_equal(sin_result, std::sin(angle), threshold));
+		CHECK(scalar_near_equal(cos_result, std::cos(angle), threshold));
 	}
 
-	REQUIRE(scalar_near_equal(scalar_acos(FloatType(-1.0)), std::acos(FloatType(-1.0)), threshold));
-	REQUIRE(scalar_near_equal(scalar_acos(FloatType(-0.75)), std::acos(FloatType(-0.75)), threshold));
-	REQUIRE(scalar_near_equal(scalar_acos(FloatType(-0.5)), std::acos(FloatType(-0.5)), threshold));
-	REQUIRE(scalar_near_equal(scalar_acos(FloatType(-0.25)), std::acos(-FloatType(0.25)), threshold));
-	REQUIRE(scalar_near_equal(scalar_acos(FloatType(0.0)), std::acos(FloatType(0.0)), threshold));
-	REQUIRE(scalar_near_equal(scalar_acos(FloatType(0.25)), std::acos(FloatType(0.25)), threshold));
-	REQUIRE(scalar_near_equal(scalar_acos(FloatType(0.5)), std::acos(FloatType(0.5)), threshold));
-	REQUIRE(scalar_near_equal(scalar_acos(FloatType(0.75)), std::acos(FloatType(0.75)), threshold));
-	REQUIRE(scalar_near_equal(scalar_acos(FloatType(1.0)), std::acos(FloatType(1.0)), threshold));
+	CHECK(scalar_near_equal(scalar_acos(FloatType(-1.0)), std::acos(FloatType(-1.0)), threshold));
+	CHECK(scalar_near_equal(scalar_acos(FloatType(-0.75)), std::acos(FloatType(-0.75)), threshold));
+	CHECK(scalar_near_equal(scalar_acos(FloatType(-0.5)), std::acos(FloatType(-0.5)), threshold));
+	CHECK(scalar_near_equal(scalar_acos(FloatType(-0.25)), std::acos(-FloatType(0.25)), threshold));
+	CHECK(scalar_near_equal(scalar_acos(FloatType(0.0)), std::acos(FloatType(0.0)), threshold));
+	CHECK(scalar_near_equal(scalar_acos(FloatType(0.25)), std::acos(FloatType(0.25)), threshold));
+	CHECK(scalar_near_equal(scalar_acos(FloatType(0.5)), std::acos(FloatType(0.5)), threshold));
+	CHECK(scalar_near_equal(scalar_acos(FloatType(0.75)), std::acos(FloatType(0.75)), threshold));
+	CHECK(scalar_near_equal(scalar_acos(FloatType(1.0)), std::acos(FloatType(1.0)), threshold));
 
-	REQUIRE(scalar_near_equal(scalar_atan2(FloatType(-2.0), FloatType(-2.0)), std::atan2(FloatType(-2.0), FloatType(-2.0)), threshold));
-	REQUIRE(scalar_near_equal(scalar_atan2(FloatType(-1.0), FloatType(-2.0)), std::atan2(FloatType(-1.0), FloatType(-2.0)), threshold));
-	REQUIRE(scalar_near_equal(scalar_atan2(FloatType(-2.0), FloatType(-1.0)), std::atan2(FloatType(-2.0), FloatType(-1.0)), threshold));
-	REQUIRE(scalar_near_equal(scalar_atan2(FloatType(2.0), FloatType(2.0)), std::atan2(FloatType(2.0), FloatType(2.0)), threshold));
-	REQUIRE(scalar_near_equal(scalar_atan2(FloatType(1.0), FloatType(2.0)), std::atan2(FloatType(1.0), FloatType(2.0)), threshold));
-	REQUIRE(scalar_near_equal(scalar_atan2(FloatType(2.0), FloatType(1.0)), std::atan2(FloatType(2.0), FloatType(1.0)), threshold));
+	CHECK(scalar_near_equal(scalar_atan2(FloatType(-2.0), FloatType(-2.0)), std::atan2(FloatType(-2.0), FloatType(-2.0)), threshold));
+	CHECK(scalar_near_equal(scalar_atan2(FloatType(-1.0), FloatType(-2.0)), std::atan2(FloatType(-1.0), FloatType(-2.0)), threshold));
+	CHECK(scalar_near_equal(scalar_atan2(FloatType(-2.0), FloatType(-1.0)), std::atan2(FloatType(-2.0), FloatType(-1.0)), threshold));
+	CHECK(scalar_near_equal(scalar_atan2(FloatType(2.0), FloatType(2.0)), std::atan2(FloatType(2.0), FloatType(2.0)), threshold));
+	CHECK(scalar_near_equal(scalar_atan2(FloatType(1.0), FloatType(2.0)), std::atan2(FloatType(1.0), FloatType(2.0)), threshold));
+	CHECK(scalar_near_equal(scalar_atan2(FloatType(2.0), FloatType(1.0)), std::atan2(FloatType(2.0), FloatType(1.0)), threshold));
 
-	REQUIRE(scalar_min(FloatType(-0.5), FloatType(1.0)) == FloatType(-0.5));
-	REQUIRE(scalar_min(FloatType(1.0), FloatType(-0.5)) == FloatType(-0.5));
-	REQUIRE(scalar_min(FloatType(1.0), FloatType(1.0)) == FloatType(1.0));
+	CHECK(scalar_min(FloatType(-0.5), FloatType(1.0)) == FloatType(-0.5));
+	CHECK(scalar_min(FloatType(1.0), FloatType(-0.5)) == FloatType(-0.5));
+	CHECK(scalar_min(FloatType(1.0), FloatType(1.0)) == FloatType(1.0));
 
-	REQUIRE(scalar_is_equal(scalar_min(scalar_set(FloatType(-0.5)), scalar_set(FloatType(1.0))), scalar_set(FloatType(-0.5))));
-	REQUIRE(scalar_is_equal(scalar_min(scalar_set(FloatType(1.0)), scalar_set(FloatType(-0.5))), scalar_set(FloatType(-0.5))));
-	REQUIRE(scalar_is_equal(scalar_min(scalar_set(FloatType(1.0)), scalar_set(FloatType(1.0))), scalar_set(FloatType(1.0))));
+	CHECK(scalar_is_equal(scalar_min(scalar_set(FloatType(-0.5)), scalar_set(FloatType(1.0))), scalar_set(FloatType(-0.5))));
+	CHECK(scalar_is_equal(scalar_min(scalar_set(FloatType(1.0)), scalar_set(FloatType(-0.5))), scalar_set(FloatType(-0.5))));
+	CHECK(scalar_is_equal(scalar_min(scalar_set(FloatType(1.0)), scalar_set(FloatType(1.0))), scalar_set(FloatType(1.0))));
 
-	REQUIRE(scalar_max(FloatType(-0.5), FloatType(1.0)) == FloatType(1.0));
-	REQUIRE(scalar_max(FloatType(1.0), FloatType(-0.5)) == FloatType(1.0));
-	REQUIRE(scalar_max(FloatType(1.0), FloatType(1.0)) == FloatType(1.0));
+	CHECK(scalar_max(FloatType(-0.5), FloatType(1.0)) == FloatType(1.0));
+	CHECK(scalar_max(FloatType(1.0), FloatType(-0.5)) == FloatType(1.0));
+	CHECK(scalar_max(FloatType(1.0), FloatType(1.0)) == FloatType(1.0));
 
-	REQUIRE(scalar_is_equal(scalar_max(scalar_set(FloatType(-0.5)), scalar_set(FloatType(1.0))), scalar_set(FloatType(1.0))));
-	REQUIRE(scalar_is_equal(scalar_max(scalar_set(FloatType(1.0)), scalar_set(FloatType(-0.5))), scalar_set(FloatType(1.0))));
-	REQUIRE(scalar_is_equal(scalar_max(scalar_set(FloatType(1.0)), scalar_set(FloatType(1.0))), scalar_set(FloatType(1.0))));
+	CHECK(scalar_is_equal(scalar_max(scalar_set(FloatType(-0.5)), scalar_set(FloatType(1.0))), scalar_set(FloatType(1.0))));
+	CHECK(scalar_is_equal(scalar_max(scalar_set(FloatType(1.0)), scalar_set(FloatType(-0.5))), scalar_set(FloatType(1.0))));
+	CHECK(scalar_is_equal(scalar_max(scalar_set(FloatType(1.0)), scalar_set(FloatType(1.0))), scalar_set(FloatType(1.0))));
 
-	REQUIRE(scalar_is_finite(FloatType(0.0)) == true);
-	REQUIRE(scalar_is_finite(FloatType(32.0)) == true);
-	REQUIRE(scalar_is_finite(FloatType(-32.0)) == true);
-	REQUIRE(scalar_is_finite(std::numeric_limits<FloatType>::infinity()) == false);
-	REQUIRE(scalar_is_finite(std::numeric_limits<FloatType>::quiet_NaN()) == false);
-	REQUIRE(scalar_is_finite(std::numeric_limits<FloatType>::signaling_NaN()) == false);
+	CHECK(scalar_is_finite(FloatType(0.0)) == true);
+	CHECK(scalar_is_finite(FloatType(32.0)) == true);
+	CHECK(scalar_is_finite(FloatType(-32.0)) == true);
+	CHECK(scalar_is_finite(std::numeric_limits<FloatType>::infinity()) == false);
+	CHECK(scalar_is_finite(std::numeric_limits<FloatType>::quiet_NaN()) == false);
+	CHECK(scalar_is_finite(std::numeric_limits<FloatType>::signaling_NaN()) == false);
 
-	REQUIRE(scalar_symmetric_round(FloatType(-1.75)) == FloatType(-2.0));
-	REQUIRE(scalar_symmetric_round(FloatType(-1.5)) == FloatType(-2.0));
-	REQUIRE(scalar_symmetric_round(FloatType(-1.4999)) == FloatType(-1.0));
-	REQUIRE(scalar_symmetric_round(FloatType(-0.5)) == FloatType(-1.0));
-	REQUIRE(scalar_symmetric_round(FloatType(-0.4999)) == FloatType(0.0));
-	REQUIRE(scalar_symmetric_round(FloatType(0.0)) == FloatType(0.0));
-	REQUIRE(scalar_symmetric_round(FloatType(0.4999)) == FloatType(0.0));
-	REQUIRE(scalar_symmetric_round(FloatType(0.5)) == FloatType(1.0));
-	REQUIRE(scalar_symmetric_round(FloatType(1.4999)) == FloatType(1.0));
-	REQUIRE(scalar_symmetric_round(FloatType(1.5)) == FloatType(2.0));
-	REQUIRE(scalar_symmetric_round(FloatType(1.75)) == FloatType(2.0));
+	CHECK(scalar_symmetric_round(FloatType(-1.75)) == FloatType(-2.0));
+	CHECK(scalar_symmetric_round(FloatType(-1.5)) == FloatType(-2.0));
+	CHECK(scalar_symmetric_round(FloatType(-1.4999)) == FloatType(-1.0));
+	CHECK(scalar_symmetric_round(FloatType(-0.5)) == FloatType(-1.0));
+	CHECK(scalar_symmetric_round(FloatType(-0.4999)) == FloatType(0.0));
+	CHECK(scalar_symmetric_round(FloatType(0.0)) == FloatType(0.0));
+	CHECK(scalar_symmetric_round(FloatType(0.4999)) == FloatType(0.0));
+	CHECK(scalar_symmetric_round(FloatType(0.5)) == FloatType(1.0));
+	CHECK(scalar_symmetric_round(FloatType(1.4999)) == FloatType(1.0));
+	CHECK(scalar_symmetric_round(FloatType(1.5)) == FloatType(2.0));
+	CHECK(scalar_symmetric_round(FloatType(1.75)) == FloatType(2.0));
 
-	REQUIRE(scalar_fraction(FloatType(0.0)) == FloatType(0.0));
-	REQUIRE(scalar_fraction(FloatType(1.0)) == FloatType(0.0));
-	REQUIRE(scalar_fraction(FloatType(-1.0)) == FloatType(0.0));
-	REQUIRE(scalar_near_equal(scalar_fraction(FloatType(0.25)), FloatType(0.25), threshold));
-	REQUIRE(scalar_near_equal(scalar_fraction(FloatType(0.5)), FloatType(0.5), threshold));
-	REQUIRE(scalar_near_equal(scalar_fraction(FloatType(0.75)), FloatType(0.75), threshold));
+	CHECK(scalar_fraction(FloatType(0.0)) == FloatType(0.0));
+	CHECK(scalar_fraction(FloatType(1.0)) == FloatType(0.0));
+	CHECK(scalar_fraction(FloatType(-1.0)) == FloatType(0.0));
+	CHECK(scalar_near_equal(scalar_fraction(FloatType(0.25)), FloatType(0.25), threshold));
+	CHECK(scalar_near_equal(scalar_fraction(FloatType(0.5)), FloatType(0.5), threshold));
+	CHECK(scalar_near_equal(scalar_fraction(FloatType(0.75)), FloatType(0.75), threshold));
 }
 
 TEST_CASE("scalarf math", "[math][scalar]")
