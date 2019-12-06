@@ -25,7 +25,22 @@
 
 #include "test_vector4_impl.h"
 
-TEST_CASE("vector4d math", "[math][vector4]")
+TEST_CASE("vector4d math get/set", "[math][vector4]")
+{
+	test_vector4_getset_impl<double>();
+}
+
+TEST_CASE("vector4d math arithmetic", "[math][vector4]")
+{
+	test_vector4_arithmetic_impl<double>(1.0E-9);
+}
+
+TEST_CASE("vector4d math relational", "[math][vector4]")
+{
+	test_vector4_relational_impl<double>(1.0E-9);
+}
+
+TEST_CASE("vector4d math misc", "[math][vector4]")
 {
 	test_vector4_impl<double>(1.0E-9);
 
