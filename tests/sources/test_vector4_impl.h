@@ -392,8 +392,9 @@ void test_vector4_impl(const FloatType threshold)
 	CHECK(scalar_near_equal(vector_get_w(vector_vdot_result), scalar_dot_result, threshold));
 
 	CHECK(scalar_near_equal(scalar_dot<Vector4Type, FloatType>(test_value0, test_value0), vector_length_squared(test_value0), threshold));
+	const FloatType vector_length_squared3_ref = scalar_dot3<Vector4Type, FloatType>(test_value0, test_value0);
 	const FloatType vector_length_squared3_result = vector_length_squared3(test_value0);
-	CHECK(scalar_near_equal(scalar_dot3<Vector4Type, FloatType>(test_value0, test_value0), vector_length_squared3_result, threshold));
+	CHECK(scalar_near_equal(vector_length_squared3_ref, vector_length_squared3_result, threshold));
 	const ScalarType vector_length_squared3_result_scalar = vector_length_squared3(test_value0);
 	CHECK(scalar_is_equal(vector_length_squared3_result, scalar_cast(vector_length_squared3_result_scalar)));
 
