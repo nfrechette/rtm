@@ -379,6 +379,8 @@ void test_vector4_impl(const FloatType threshold)
 	const FloatType scalar_dot3_result = scalar_dot3<Vector4Type, FloatType>(test_value10, test_value11);
 	const FloatType vector_dot3_result = vector_dot3(test_value10, test_value11);
 	REQUIRE(scalar_near_equal(vector_dot3_result, scalar_dot3_result, threshold));
+	const ScalarType vector_dot3_result_scalar = vector_dot3(test_value10, test_value11);
+	REQUIRE(scalar_is_equal(vector_dot3_result, scalar_cast(vector_dot3_result_scalar)));
 
 	const ScalarType vector_sdot_result = vector_dot_as_scalar(test_value10, test_value11);
 	REQUIRE(scalar_near_equal(scalar_cast(vector_sdot_result), scalar_dot_result, threshold));
@@ -390,16 +392,25 @@ void test_vector4_impl(const FloatType threshold)
 	REQUIRE(scalar_near_equal(vector_get_w(vector_vdot_result), scalar_dot_result, threshold));
 
 	REQUIRE(scalar_near_equal(scalar_dot<Vector4Type, FloatType>(test_value0, test_value0), vector_length_squared(test_value0), threshold));
-	REQUIRE(scalar_near_equal(scalar_dot3<Vector4Type, FloatType>(test_value0, test_value0), vector_length_squared3(test_value0), threshold));
+	const FloatType vector_length_squared3_result = vector_length_squared3(test_value0);
+	REQUIRE(scalar_near_equal(scalar_dot3<Vector4Type, FloatType>(test_value0, test_value0), vector_length_squared3_result, threshold));
+	const ScalarType vector_length_squared3_result_scalar = vector_length_squared3(test_value0);
+	REQUIRE(scalar_is_equal(vector_length_squared3_result, scalar_cast(vector_length_squared3_result_scalar)));
 
 	REQUIRE(scalar_near_equal(rtm::scalar_sqrt(scalar_dot<Vector4Type, FloatType>(test_value0, test_value0)), vector_length(test_value0), threshold));
-	REQUIRE(scalar_near_equal(rtm::scalar_sqrt(scalar_dot3<Vector4Type, FloatType>(test_value0, test_value0)), vector_length3(test_value0), threshold));
+	const FloatType vector_length3_result = vector_length3(test_value0);
+	REQUIRE(scalar_near_equal(rtm::scalar_sqrt(scalar_dot3<Vector4Type, FloatType>(test_value0, test_value0)), vector_length3_result, threshold));
+	const ScalarType vector_length3_result_scalar = vector_length3(test_value0);
+	REQUIRE(scalar_is_equal(vector_length3_result, scalar_cast(vector_length3_result_scalar)));
 
 	REQUIRE(scalar_near_equal(rtm::scalar_sqrt_reciprocal(scalar_dot<Vector4Type, FloatType>(test_value0, test_value0)), vector_length_reciprocal(test_value0), threshold));
 	REQUIRE(scalar_near_equal(rtm::scalar_sqrt_reciprocal(scalar_dot3<Vector4Type, FloatType>(test_value0, test_value0)), vector_length_reciprocal3(test_value0), threshold));
 
 	const Vector4Type test_value_diff = vector_sub(test_value0, test_value1);
-	REQUIRE(scalar_near_equal(rtm::scalar_sqrt(scalar_dot3<Vector4Type, FloatType>(test_value_diff, test_value_diff)), vector_distance3(test_value0, test_value1), threshold));
+	const FloatType vector_distance3_result = vector_distance3(test_value0, test_value1);
+	REQUIRE(scalar_near_equal(rtm::scalar_sqrt(scalar_dot3<Vector4Type, FloatType>(test_value_diff, test_value_diff)), vector_distance3_result, threshold));
+	const ScalarType vector_distance3_result_scalar = vector_distance3(test_value0, test_value1);
+	REQUIRE(scalar_is_equal(vector_distance3_result, scalar_cast(vector_distance3_result_scalar)));
 
 	const Vector4Type scalar_normalize3_result = scalar_normalize3<Vector4Type, FloatType>(test_value0, zero, threshold);
 	const Vector4Type vector_normalize3_result = vector_normalize3(test_value0, zero, threshold);

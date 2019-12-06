@@ -553,12 +553,51 @@ namespace rtm
 		return vector_set(vector_dot(lhs, rhs));
 	}
 
+	namespace rtm_impl
+	{
+		//////////////////////////////////////////////////////////////////////////
+		// This is a helper struct to allow a single consistent API between
+		// various vector types when the semantics are identical but the return
+		// type differs. Implicit coercion is used to return the desired value
+		// at the call site.
+		//////////////////////////////////////////////////////////////////////////
+		struct vector4d_vector_dot3
+		{
+			inline RTM_SIMD_CALL operator double() const RTM_NO_EXCEPT
+			{
+#if defined(RTM_SSE2_INTRINSICS)
+				__m128d x2_y2 = _mm_mul_pd(lhs.xy, rhs.xy);
+				__m128d z2_w2 = _mm_mul_pd(lhs.zw, rhs.zw);
+				__m128d y2 = _mm_shuffle_pd(x2_y2, x2_y2, 1);
+				__m128d x2y2 = _mm_add_sd(x2_y2, y2);
+				return _mm_cvtsd_f64(_mm_add_sd(x2y2, z2_w2));
+#else
+				return (vector_get_x(lhs) * vector_get_x(rhs)) + (vector_get_y(lhs) * vector_get_y(rhs)) + (vector_get_z(lhs) * vector_get_z(rhs));
+#endif
+			}
+
+#if defined(RTM_SSE2_INTRINSICS)
+			inline RTM_SIMD_CALL operator scalard() const RTM_NO_EXCEPT
+			{
+				__m128d x2_y2 = _mm_mul_pd(lhs.xy, rhs.xy);
+				__m128d z2_w2 = _mm_mul_pd(lhs.zw, rhs.zw);
+				__m128d y2 = _mm_shuffle_pd(x2_y2, x2_y2, 1);
+				__m128d x2y2 = _mm_add_sd(x2_y2, y2);
+				return _mm_add_sd(x2y2, z2_w2);
+			}
+#endif
+
+			vector4d lhs;
+			vector4d rhs;
+		};
+	}
+
 	//////////////////////////////////////////////////////////////////////////
 	// 3D dot product: lhs . rhs
 	//////////////////////////////////////////////////////////////////////////
-	inline double vector_dot3(const vector4d& lhs, const vector4d& rhs) RTM_NO_EXCEPT
+	constexpr rtm_impl::vector4d_vector_dot3 vector_dot3(const vector4d& lhs, const vector4d& rhs) RTM_NO_EXCEPT
 	{
-		return (vector_get_x(lhs) * vector_get_x(rhs)) + (vector_get_y(lhs) * vector_get_y(rhs)) + (vector_get_z(lhs) * vector_get_z(rhs));
+		return rtm_impl::vector4d_vector_dot3{ lhs, rhs };
 	}
 
 	//////////////////////////////////////////////////////////////////////////
@@ -572,9 +611,9 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	// Returns the squared length/norm of the vector3.
 	//////////////////////////////////////////////////////////////////////////
-	inline double vector_length_squared3(const vector4d& input) RTM_NO_EXCEPT
+	constexpr rtm_impl::vector4d_vector_dot3 vector_length_squared3(const vector4d& input) RTM_NO_EXCEPT
 	{
-		return vector_dot3(input, input);
+		return rtm_impl::vector4d_vector_dot3{ input, input };
 	}
 
 	//////////////////////////////////////////////////////////////////////////
@@ -585,12 +624,40 @@ namespace rtm
 		return scalar_sqrt(vector_length_squared(input));
 	}
 
+	namespace rtm_impl
+	{
+		//////////////////////////////////////////////////////////////////////////
+		// This is a helper struct to allow a single consistent API between
+		// various vector types when the semantics are identical but the return
+		// type differs. Implicit coercion is used to return the desired value
+		// at the call site.
+		//////////////////////////////////////////////////////////////////////////
+		struct vector4d_vector_length3
+		{
+			inline RTM_SIMD_CALL operator double() const RTM_NO_EXCEPT
+			{
+				const scalard len_sq = vector_length_squared3(input);
+				return scalar_cast(scalar_sqrt(len_sq));
+			}
+
+#if defined(RTM_SSE2_INTRINSICS)
+			inline RTM_SIMD_CALL operator scalard() const RTM_NO_EXCEPT
+			{
+				const scalard len_sq = vector_length_squared3(input);
+				return scalar_sqrt(len_sq);
+			}
+#endif
+
+			vector4d input;
+		};
+	}
+
 	//////////////////////////////////////////////////////////////////////////
 	// Returns the length/norm of the vector3.
 	//////////////////////////////////////////////////////////////////////////
-	inline double vector_length3(const vector4d& input) RTM_NO_EXCEPT
+	constexpr rtm_impl::vector4d_vector_length3 vector_length3(const vector4d& input) RTM_NO_EXCEPT
 	{
-		return scalar_sqrt(vector_length_squared3(input));
+		return rtm_impl::vector4d_vector_length3{ input };
 	}
 
 	//////////////////////////////////////////////////////////////////////////
@@ -612,9 +679,10 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	// Returns the distance between two 3D points.
 	//////////////////////////////////////////////////////////////////////////
-	inline double vector_distance3(const vector4d& lhs, const vector4d& rhs) RTM_NO_EXCEPT
+	inline rtm_impl::vector4d_vector_length3 vector_distance3(const vector4d& lhs, const vector4d& rhs) RTM_NO_EXCEPT
 	{
-		return vector_length3(vector_sub(rhs, lhs));
+		const vector4d difference = vector_sub(lhs, rhs);
+		return rtm_impl::vector4d_vector_length3{ difference };
 	}
 
 	//////////////////////////////////////////////////////////////////////////
