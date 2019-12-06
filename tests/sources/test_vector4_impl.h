@@ -91,7 +91,7 @@ inline Vector4Type scalar_normalize3(const Vector4Type& input, const Vector4Type
 }
 
 template<typename FloatType>
-void test_vector4_impl(const FloatType threshold)
+void test_vector4_getset_impl()
 {
 	using QuatType = typename float_traits<FloatType>::quat;
 	using Vector4Type = typename float_traits<FloatType>::vector4;
@@ -115,11 +115,9 @@ void test_vector4_impl(const FloatType threshold)
 
 	const FloatType test_value0_flt[4] = { FloatType(2.0), FloatType(9.34), FloatType(-54.12), FloatType(6000.0) };
 	const FloatType test_value1_flt[4] = { FloatType(0.75), FloatType(-4.52), FloatType(44.68), FloatType(-54225.0) };
-	const FloatType test_value2_flt[4] = { FloatType(-2.65), FloatType(2.996113), FloatType(0.68123521), FloatType(-5.9182) };
 	const FloatType test_value3_flt[4] = { FloatType(2.0), FloatType(-9.34), FloatType(54.12), FloatType(6000.1) };
 	const Vector4Type test_value0 = vector_set(test_value0_flt[0], test_value0_flt[1], test_value0_flt[2], test_value0_flt[3]);
 	const Vector4Type test_value1 = vector_set(test_value1_flt[0], test_value1_flt[1], test_value1_flt[2], test_value1_flt[3]);
-	const Vector4Type test_value2 = vector_set(test_value2_flt[0], test_value2_flt[1], test_value2_flt[2], test_value2_flt[3]);
 	const Vector4Type test_value3 = vector_set(test_value3_flt[0], test_value3_flt[1], test_value3_flt[2], test_value3_flt[3]);
 
 	//////////////////////////////////////////////////////////////////////////
@@ -292,6 +290,22 @@ void test_vector4_impl(const FloatType threshold)
 
 	CHECK((FloatType)vector_as_scalar(test_value1) == vector_get_x(test_value1));
 	CHECK(scalar_is_equal(vector_as_scalar(test_value1), scalar_set(vector_get_x(test_value1))));
+}
+
+template<typename FloatType>
+void test_vector4_arithmetic_impl(const FloatType threshold)
+{
+	using Vector4Type = typename float_traits<FloatType>::vector4;
+	using ScalarType = typename float_traits<FloatType>::scalar;
+
+	const Vector4Type zero = vector_zero();
+
+	const FloatType test_value0_flt[4] = { FloatType(2.0), FloatType(9.34), FloatType(-54.12), FloatType(6000.0) };
+	const FloatType test_value1_flt[4] = { FloatType(0.75), FloatType(-4.52), FloatType(44.68), FloatType(-54225.0) };
+	const FloatType test_value2_flt[4] = { FloatType(-2.65), FloatType(2.996113), FloatType(0.68123521), FloatType(-5.9182) };
+	const Vector4Type test_value0 = vector_set(test_value0_flt[0], test_value0_flt[1], test_value0_flt[2], test_value0_flt[3]);
+	const Vector4Type test_value1 = vector_set(test_value1_flt[0], test_value1_flt[1], test_value1_flt[2], test_value1_flt[3]);
+	const Vector4Type test_value2 = vector_set(test_value2_flt[0], test_value2_flt[1], test_value2_flt[2], test_value2_flt[3]);
 
 	//////////////////////////////////////////////////////////////////////////
 	// Arithmetic
@@ -454,6 +468,21 @@ void test_vector4_impl(const FloatType threshold)
 	CHECK(scalar_near_equal(vector_get_y(vector_neg_mul_sub(test_value10, test_value11_flt[0], test_value2)), (test_value10_flt[1] * -test_value11_flt[0]) + test_value2_flt[1], threshold));
 	CHECK(scalar_near_equal(vector_get_z(vector_neg_mul_sub(test_value10, test_value11_flt[0], test_value2)), (test_value10_flt[2] * -test_value11_flt[0]) + test_value2_flt[2], threshold));
 	CHECK(scalar_near_equal(vector_get_w(vector_neg_mul_sub(test_value10, test_value11_flt[0], test_value2)), (test_value10_flt[3] * -test_value11_flt[0]) + test_value2_flt[3], threshold));
+}
+
+template<typename FloatType>
+void test_vector4_relational_impl(const FloatType threshold)
+{
+	using Vector4Type = typename float_traits<FloatType>::vector4;
+
+	const Vector4Type zero = vector_zero();
+
+	const FloatType test_value0_flt[4] = { FloatType(2.0), FloatType(9.34), FloatType(-54.12), FloatType(6000.0) };
+	const FloatType test_value1_flt[4] = { FloatType(0.75), FloatType(-4.52), FloatType(44.68), FloatType(-54225.0) };
+	const FloatType test_value3_flt[4] = { FloatType(2.0), FloatType(-9.34), FloatType(54.12), FloatType(6000.1) };
+	const Vector4Type test_value0 = vector_set(test_value0_flt[0], test_value0_flt[1], test_value0_flt[2], test_value0_flt[3]);
+	const Vector4Type test_value1 = vector_set(test_value1_flt[0], test_value1_flt[1], test_value1_flt[2], test_value1_flt[3]);
+	const Vector4Type test_value3 = vector_set(test_value3_flt[0], test_value3_flt[1], test_value3_flt[2], test_value3_flt[3]);
 
 	//////////////////////////////////////////////////////////////////////////
 	// Comparisons and masking
@@ -669,6 +698,19 @@ void test_vector4_impl(const FloatType threshold)
 	CHECK(vector_any_near_equal3(zero, vector_set(FloatType(2.0), FloatType(1.0), FloatType(2.0), FloatType(2.0)), FloatType(1.0)) == true);
 	CHECK(vector_any_near_equal3(zero, vector_set(FloatType(2.0), FloatType(2.0), FloatType(1.0), FloatType(2.0)), FloatType(1.0)) == true);
 	CHECK(vector_any_near_equal3(zero, vector_set(FloatType(1.0), FloatType(1.0), FloatType(1.0), FloatType(2.0)), FloatType(0.9999)) == false);
+}
+
+template<typename FloatType>
+void test_vector4_impl(const FloatType threshold)
+{
+	using Vector4Type = typename float_traits<FloatType>::vector4;
+
+	const Vector4Type zero = vector_zero();
+
+	const FloatType test_value0_flt[4] = { FloatType(2.0), FloatType(9.34), FloatType(-54.12), FloatType(6000.0) };
+	const FloatType test_value1_flt[4] = { FloatType(0.75), FloatType(-4.52), FloatType(44.68), FloatType(-54225.0) };
+	const Vector4Type test_value0 = vector_set(test_value0_flt[0], test_value0_flt[1], test_value0_flt[2], test_value0_flt[3]);
+	const Vector4Type test_value1 = vector_set(test_value1_flt[0], test_value1_flt[1], test_value1_flt[2], test_value1_flt[3]);
 
 	const FloatType inf = std::numeric_limits<FloatType>::infinity();
 	const FloatType nan = std::numeric_limits<FloatType>::quiet_NaN();

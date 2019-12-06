@@ -25,7 +25,34 @@
 
 #include "test_vector4_impl.h"
 
-TEST_CASE("vector4f math", "[math][vector4]")
+TEST_CASE("vector4f math get/set", "[math][vector4]")
+{
+	test_vector4_getset_impl<float>();
+}
+
+TEST_CASE("vector4f math arithmetic", "[math][vector4]")
+{
+#if defined(RTM_NO_INTRINSICS)
+	const float threshold = 1.0E-4F;
+#else
+	const float threshold = 1.0E-5F;
+#endif
+
+	test_vector4_arithmetic_impl<float>(threshold);
+}
+
+TEST_CASE("vector4f math relational", "[math][vector4]")
+{
+#if defined(RTM_NO_INTRINSICS)
+	const float threshold = 1.0E-4F;
+#else
+	const float threshold = 1.0E-5F;
+#endif
+
+	test_vector4_relational_impl<float>(threshold);
+}
+
+TEST_CASE("vector4f math misc", "[math][vector4]")
 {
 #if defined(RTM_NO_INTRINSICS)
 	const float threshold = 1.0E-4F;
