@@ -83,13 +83,6 @@ static void test_scalar_impl(const FloatType threshold)
 	REQUIRE(scalar_is_equal(scalar_set(FloatType(1.123)), scalar_set(FloatType(1.123))) == true);
 	REQUIRE(scalar_is_equal(scalar_set(FloatType(1.123)), scalar_set(FloatType(1.124))) == false);
 
-	REQUIRE(scalar_is_lower(FloatType(1.123), FloatType(1.123)) == false);
-	REQUIRE(scalar_is_lower(FloatType(1.123), FloatType(1.124)) == true);
-	REQUIRE(scalar_is_lower(FloatType(1.124), FloatType(1.123)) == false);
-	REQUIRE(scalar_is_lower(scalar_set(FloatType(1.123)), scalar_set(FloatType(1.123))) == false);
-	REQUIRE(scalar_is_lower(scalar_set(FloatType(1.123)), scalar_set(FloatType(1.124))) == true);
-	REQUIRE(scalar_is_lower(scalar_set(FloatType(1.124)), scalar_set(FloatType(1.123))) == false);
-
 	REQUIRE(scalar_near_equal(FloatType(1.0), FloatType(1.0), FloatType(0.00001)) == true);
 	REQUIRE(scalar_near_equal(FloatType(1.0), FloatType(1.000001), FloatType(0.00001)) == true);
 	REQUIRE(scalar_near_equal(FloatType(1.0), FloatType(0.999999), FloatType(0.00001)) == true);
@@ -99,6 +92,35 @@ static void test_scalar_impl(const FloatType threshold)
 	REQUIRE(scalar_sqrt(FloatType(0.0)) == FloatType(0.0));
 	REQUIRE(scalar_near_equal(scalar_sqrt(FloatType(0.5)), std::sqrt(FloatType(0.5)), threshold));
 	REQUIRE(scalar_near_equal(scalar_sqrt(FloatType(32.5)), std::sqrt(FloatType(32.5)), threshold));
+	REQUIRE(scalar_is_equal(scalar_sqrt(FloatType(32.5)), scalar_cast(scalar_sqrt(scalar_set(FloatType(32.5))))));
+
+	REQUIRE(scalar_is_lower(FloatType(1.123), FloatType(1.123)) == false);
+	REQUIRE(scalar_is_lower(FloatType(1.123), FloatType(1.124)) == true);
+	REQUIRE(scalar_is_lower(FloatType(1.124), FloatType(1.123)) == false);
+	REQUIRE(scalar_is_lower(scalar_set(FloatType(1.123)), scalar_set(FloatType(1.123))) == false);
+	REQUIRE(scalar_is_lower(scalar_set(FloatType(1.123)), scalar_set(FloatType(1.124))) == true);
+	REQUIRE(scalar_is_lower(scalar_set(FloatType(1.124)), scalar_set(FloatType(1.123))) == false);
+
+	REQUIRE(scalar_is_lower_equal(FloatType(1.123), FloatType(1.123)) == true);
+	REQUIRE(scalar_is_lower_equal(FloatType(1.123), FloatType(1.124)) == true);
+	REQUIRE(scalar_is_lower_equal(FloatType(1.124), FloatType(1.123)) == false);
+	REQUIRE(scalar_is_lower_equal(scalar_set(FloatType(1.123)), scalar_set(FloatType(1.123))) == true);
+	REQUIRE(scalar_is_lower_equal(scalar_set(FloatType(1.123)), scalar_set(FloatType(1.124))) == true);
+	REQUIRE(scalar_is_lower_equal(scalar_set(FloatType(1.124)), scalar_set(FloatType(1.123))) == false);
+
+	REQUIRE(scalar_is_greater(FloatType(1.123), FloatType(1.123)) == false);
+	REQUIRE(scalar_is_greater(FloatType(1.123), FloatType(1.124)) == false);
+	REQUIRE(scalar_is_greater(FloatType(1.124), FloatType(1.123)) == true);
+	REQUIRE(scalar_is_greater(scalar_set(FloatType(1.123)), scalar_set(FloatType(1.123))) == false);
+	REQUIRE(scalar_is_greater(scalar_set(FloatType(1.123)), scalar_set(FloatType(1.124))) == false);
+	REQUIRE(scalar_is_greater(scalar_set(FloatType(1.124)), scalar_set(FloatType(1.123))) == true);
+
+	REQUIRE(scalar_is_greater_equal(FloatType(1.123), FloatType(1.123)) == true);
+	REQUIRE(scalar_is_greater_equal(FloatType(1.123), FloatType(1.124)) == false);
+	REQUIRE(scalar_is_greater_equal(FloatType(1.124), FloatType(1.123)) == true);
+	REQUIRE(scalar_is_greater_equal(scalar_set(FloatType(1.123)), scalar_set(FloatType(1.123))) == true);
+	REQUIRE(scalar_is_greater_equal(scalar_set(FloatType(1.123)), scalar_set(FloatType(1.124))) == false);
+	REQUIRE(scalar_is_greater_equal(scalar_set(FloatType(1.124)), scalar_set(FloatType(1.123))) == true);
 
 	REQUIRE(scalar_near_equal(scalar_sqrt_reciprocal(FloatType(0.5)), FloatType(1.0) / std::sqrt(FloatType(0.5)), threshold));
 	REQUIRE(scalar_near_equal(scalar_sqrt_reciprocal(FloatType(32.5)), FloatType(1.0) / std::sqrt(FloatType(32.5)), threshold));
