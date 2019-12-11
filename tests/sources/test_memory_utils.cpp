@@ -43,32 +43,32 @@ TEST_CASE("misc tests", "[core][memory]")
 			num_powers_of_two++;
 	}
 
-	REQUIRE(num_powers_of_two == 17);
-	REQUIRE(is_power_of_two(1) == true);
-	REQUIRE(is_power_of_two(2) == true);
-	REQUIRE(is_power_of_two(4) == true);
-	REQUIRE(is_power_of_two(8) == true);
-	REQUIRE(is_power_of_two(16) == true);
-	REQUIRE(is_power_of_two(32) == true);
-	REQUIRE(is_power_of_two(64) == true);
-	REQUIRE(is_power_of_two(128) == true);
-	REQUIRE(is_power_of_two(256) == true);
-	REQUIRE(is_power_of_two(512) == true);
-	REQUIRE(is_power_of_two(1024) == true);
-	REQUIRE(is_power_of_two(2048) == true);
-	REQUIRE(is_power_of_two(4096) == true);
-	REQUIRE(is_power_of_two(8192) == true);
-	REQUIRE(is_power_of_two(16384) == true);
-	REQUIRE(is_power_of_two(32768) == true);
-	REQUIRE(is_power_of_two(65536) == true);
+	CHECK(num_powers_of_two == 17);
+	CHECK(is_power_of_two(1) == true);
+	CHECK(is_power_of_two(2) == true);
+	CHECK(is_power_of_two(4) == true);
+	CHECK(is_power_of_two(8) == true);
+	CHECK(is_power_of_two(16) == true);
+	CHECK(is_power_of_two(32) == true);
+	CHECK(is_power_of_two(64) == true);
+	CHECK(is_power_of_two(128) == true);
+	CHECK(is_power_of_two(256) == true);
+	CHECK(is_power_of_two(512) == true);
+	CHECK(is_power_of_two(1024) == true);
+	CHECK(is_power_of_two(2048) == true);
+	CHECK(is_power_of_two(4096) == true);
+	CHECK(is_power_of_two(8192) == true);
+	CHECK(is_power_of_two(16384) == true);
+	CHECK(is_power_of_two(32768) == true);
+	CHECK(is_power_of_two(65536) == true);
 
-	REQUIRE(is_alignment_valid<int32_t>(0) == false);
-	REQUIRE(is_alignment_valid<int32_t>(4) == true);
-	REQUIRE(is_alignment_valid<int32_t>(8) == true);
-	REQUIRE(is_alignment_valid<int32_t>(2) == false);
-	REQUIRE(is_alignment_valid<int32_t>(5) == false);
-	REQUIRE(is_alignment_valid<int64_t>(8) == true);
-	REQUIRE(is_alignment_valid<int64_t>(16) == true);
+	CHECK(is_alignment_valid<int32_t>(0) == false);
+	CHECK(is_alignment_valid<int32_t>(4) == true);
+	CHECK(is_alignment_valid<int32_t>(8) == true);
+	CHECK(is_alignment_valid<int32_t>(2) == false);
+	CHECK(is_alignment_valid<int32_t>(5) == false);
+	CHECK(is_alignment_valid<int64_t>(8) == true);
+	CHECK(is_alignment_valid<int64_t>(16) == true);
 
 	struct alignas(8) Tmp
 	{
@@ -76,37 +76,37 @@ TEST_CASE("misc tests", "[core][memory]")
 		int32_t value;		// Aligned to 4 bytes
 	};
 	Tmp tmp;
-	REQUIRE(is_aligned_to(&tmp.padding, 8) == true);
-	REQUIRE(is_aligned_to(&tmp.value, 4) == true);
-	REQUIRE(is_aligned_to(&tmp.value, 2) == true);
-	REQUIRE(is_aligned_to(&tmp.value, 1) == true);
-	REQUIRE(is_aligned_to(&tmp.value, 8) == false);
+	CHECK(is_aligned_to(&tmp.padding, 8) == true);
+	CHECK(is_aligned_to(&tmp.value, 4) == true);
+	CHECK(is_aligned_to(&tmp.value, 2) == true);
+	CHECK(is_aligned_to(&tmp.value, 1) == true);
+	CHECK(is_aligned_to(&tmp.value, 8) == false);
 
-	REQUIRE(is_aligned_to(4, 4) == true);
-	REQUIRE(is_aligned_to(4, 2) == true);
-	REQUIRE(is_aligned_to(4, 1) == true);
-	REQUIRE(is_aligned_to(4, 8) == false);
-	REQUIRE(is_aligned_to(6, 4) == false);
-	REQUIRE(is_aligned_to(6, 2) == true);
-	REQUIRE(is_aligned_to(6, 1) == true);
+	CHECK(is_aligned_to(4, 4) == true);
+	CHECK(is_aligned_to(4, 2) == true);
+	CHECK(is_aligned_to(4, 1) == true);
+	CHECK(is_aligned_to(4, 8) == false);
+	CHECK(is_aligned_to(6, 4) == false);
+	CHECK(is_aligned_to(6, 2) == true);
+	CHECK(is_aligned_to(6, 1) == true);
 
-	REQUIRE(is_aligned_to(align_to(5, 4), 4) == true);
-	REQUIRE(align_to(5, 4) == 8);
-	REQUIRE(is_aligned_to(align_to(8, 4), 4) == true);
-	REQUIRE(align_to(8, 4) == 8);
+	CHECK(is_aligned_to(align_to(5, 4), 4) == true);
+	CHECK(align_to(5, 4) == 8);
+	CHECK(is_aligned_to(align_to(8, 4), 4) == true);
+	CHECK(align_to(8, 4) == 8);
 
 	void* ptr = (void*)0x00000000;
-	REQUIRE(align_to(ptr, 4) == (void*)0x00000000);
-	REQUIRE(align_to(ptr, 8) == (void*)0x00000000);
+	CHECK(align_to(ptr, 4) == (void*)0x00000000);
+	CHECK(align_to(ptr, 8) == (void*)0x00000000);
 	ptr = (void*)0x00000001;
-	REQUIRE(align_to(ptr, 4) == (void*)0x00000004);
-	REQUIRE(align_to(ptr, 8) == (void*)0x00000008);
+	CHECK(align_to(ptr, 4) == (void*)0x00000004);
+	CHECK(align_to(ptr, 8) == (void*)0x00000008);
 	ptr = (void*)0x00000004;
-	REQUIRE(align_to(ptr, 4) == (void*)0x00000004);
-	REQUIRE(align_to(ptr, 8) == (void*)0x00000008);
+	CHECK(align_to(ptr, 4) == (void*)0x00000004);
+	CHECK(align_to(ptr, 8) == (void*)0x00000008);
 
 	int32_t array[8];
-	REQUIRE(get_array_size(array) == (sizeof(array) / sizeof(array[0])));
+	CHECK(get_array_size(array) == (sizeof(array) / sizeof(array[0])));
 }
 
 TEST_CASE("raw memory support", "[core][memory]")
@@ -114,7 +114,7 @@ TEST_CASE("raw memory support", "[core][memory]")
 	uint32_t value32 = 0xAB78FE04;
 	uint8_t unaligned_value_buffer[5] = { 0x00, 0x00, 0x00, 0x00, 0x00 };
 	std::memcpy(&unaligned_value_buffer[1], &value32, sizeof(uint32_t));
-	REQUIRE(unaligned_read<uint32_t>(&unaligned_value_buffer[1]) == value32);
+	CHECK(unaligned_read<uint32_t>(&unaligned_value_buffer[1]) == value32);
 }
 
 enum class UnsignedEnum : uint32_t

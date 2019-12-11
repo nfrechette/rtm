@@ -91,7 +91,7 @@ void test_vector_mix_impl(const FloatType threshold)
 					rtm_impl::is_mix_xyzw((mix4)comp2) ? test_value0_flt[comp2 - (int)mix4::x] : test_value1_flt[comp2 - (int)mix4::a],
 					rtm_impl::is_mix_xyzw((mix4)comp3) ? test_value0_flt[comp3 - (int)mix4::x] : test_value1_flt[comp3 - (int)mix4::a]);
 
-				REQUIRE(vector_all_near_equal(expected, results[index], threshold));
+				CHECK(vector_all_near_equal(expected, results[index], threshold));
 
 				++index;
 			}
