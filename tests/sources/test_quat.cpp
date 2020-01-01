@@ -91,6 +91,7 @@ static void test_quat_impl(const FloatType threshold)
 	using QuatType = typename float_traits<FloatType>::quat;
 	using Vector4Type = typename float_traits<FloatType>::vector4;
 	using AngleType = typename float_traits<FloatType>::angle;
+	using Float4Type = typename float_traits<FloatType>::float4;
 
 	const Vector4Type zero = vector_zero();
 	const QuatType identity = quat_identity();
@@ -150,6 +151,17 @@ static void test_quat_impl(const FloatType threshold)
 		CHECK(tmp.values[1] == FloatType(2.34));
 		CHECK(tmp.values[2] == FloatType(-3.12));
 		CHECK(tmp.values[3] == FloatType(10000.0));
+	}
+
+	{
+		QuatType quat = quat_set(FloatType(0.0), FloatType(2.34), FloatType(-3.12), FloatType(10000.0));
+		Float4Type tmpf4 = { FloatType(0.0), FloatType(0.0), FloatType(0.0), FloatType(0.0) };
+
+		quat_store(quat, &tmpf4);
+		CHECK(quat_get_x(quat) == tmpf4.x);
+		CHECK(quat_get_y(quat) == tmpf4.y);
+		CHECK(quat_get_z(quat) == tmpf4.z);
+		CHECK(quat_get_w(quat) == tmpf4.w);
 	}
 
 	//////////////////////////////////////////////////////////////////////////
