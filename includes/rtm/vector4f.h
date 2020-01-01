@@ -400,10 +400,14 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	inline void RTM_SIMD_CALL vector_store(vector4f_arg0 input, float4f* output) RTM_NO_EXCEPT
 	{
+#if defined(RTM_SSE2_INTRINSICS)
+		_mm_storeu_ps(&output->x, input);
+#else
 		output->x = vector_get_x(input);
 		output->y = vector_get_y(input);
 		output->z = vector_get_z(input);
 		output->w = vector_get_w(input);
+#endif
 	}
 
 	//////////////////////////////////////////////////////////////////////////
