@@ -232,6 +232,21 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	// Writes a quaternion to unaligned memory.
 	//////////////////////////////////////////////////////////////////////////
+	inline void RTM_SIMD_CALL quat_store(quatf_arg0 input, float4f* output) RTM_NO_EXCEPT
+	{
+#if defined(RTM_SSE2_INTRINSICS)
+		_mm_storeu_ps(&output->x, input);
+#else
+		output->x = quat_get_x(input);
+		output->y = quat_get_y(input);
+		output->z = quat_get_z(input);
+		output->w = quat_get_w(input);
+#endif
+	}
+
+	//////////////////////////////////////////////////////////////////////////
+	// Writes a quaternion to unaligned memory.
+	//////////////////////////////////////////////////////////////////////////
 	RTM_DEPRECATED("Use quat_store instead, to be removed in v2.0")
 	inline void RTM_SIMD_CALL quat_unaligned_write(quatf_arg0 input, float* output) RTM_NO_EXCEPT
 	{
