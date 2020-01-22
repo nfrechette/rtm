@@ -202,7 +202,7 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	// Returns the subtraction of the two scalar inputs.
 	//////////////////////////////////////////////////////////////////////////
-	inline float scalar_sub(float lhs, float rhs) RTM_NO_EXCEPT
+	constexpr float scalar_sub(float lhs, float rhs) RTM_NO_EXCEPT
 	{
 		return lhs - rhs;
 	}
@@ -210,7 +210,7 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	// Returns the multiplication/addition of the three inputs: s2 + (s0 * s1)
 	//////////////////////////////////////////////////////////////////////////
-	inline float scalar_mul_add(float s0, float s1, float s2) RTM_NO_EXCEPT
+	constexpr float scalar_mul_add(float s0, float s1, float s2) RTM_NO_EXCEPT
 	{
 		return (s0 * s1) + s2;
 	}
@@ -218,7 +218,7 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	// Returns the linear interpolation of the two inputs at the specified alpha.
 	//////////////////////////////////////////////////////////////////////////
-	inline float scalar_lerp(float start, float end, float alpha) RTM_NO_EXCEPT
+	constexpr float scalar_lerp(float start, float end, float alpha) RTM_NO_EXCEPT
 	{
 		return ((end - start) * alpha) + start;
 	}
@@ -292,7 +292,7 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	// Returns true if both inputs are equal, false otherwise.
 	//////////////////////////////////////////////////////////////////////////
-	inline bool scalar_is_equal(float lhs, float rhs) RTM_NO_EXCEPT
+	constexpr bool scalar_is_equal(float lhs, float rhs) RTM_NO_EXCEPT
 	{
 		return lhs == rhs;
 	}
@@ -300,7 +300,7 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	// Returns true if lhs < rhs, false otherwise.
 	//////////////////////////////////////////////////////////////////////////
-	inline bool scalar_is_lower(float lhs, float rhs) RTM_NO_EXCEPT
+	constexpr bool scalar_is_lower(float lhs, float rhs) RTM_NO_EXCEPT
 	{
 		return lhs < rhs;
 	}
@@ -308,7 +308,7 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	// Returns true if lhs <= rhs, false otherwise.
 	//////////////////////////////////////////////////////////////////////////
-	inline bool scalar_is_lower_equal(float lhs, float rhs) RTM_NO_EXCEPT
+	constexpr bool scalar_is_lower_equal(float lhs, float rhs) RTM_NO_EXCEPT
 	{
 		return lhs <= rhs;
 	}
@@ -316,7 +316,7 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	// Returns true if lhs > rhs, false otherwise.
 	//////////////////////////////////////////////////////////////////////////
-	inline bool scalar_is_greater(float lhs, float rhs) RTM_NO_EXCEPT
+	constexpr bool scalar_is_greater(float lhs, float rhs) RTM_NO_EXCEPT
 	{
 		return lhs > rhs;
 	}
@@ -324,7 +324,7 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	// Returns true if lhs >= rhs, false otherwise.
 	//////////////////////////////////////////////////////////////////////////
-	inline bool scalar_is_greater_equal(float lhs, float rhs) RTM_NO_EXCEPT
+	constexpr bool scalar_is_greater_equal(float lhs, float rhs) RTM_NO_EXCEPT
 	{
 		return lhs >= rhs;
 	}
