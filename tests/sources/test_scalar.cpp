@@ -135,6 +135,14 @@ static void test_scalar_impl(const FloatType threshold)
 	CHECK(scalar_near_equal(scalar_cast(scalar_reciprocal(scalar_set(FloatType(-0.5)))), FloatType(1.0 / -0.5), threshold));
 	CHECK(scalar_near_equal(scalar_cast(scalar_reciprocal(scalar_set(FloatType(-32.5)))), FloatType(1.0 / -32.5), threshold));
 
+	CHECK(scalar_near_equal(scalar_add(FloatType(-0.5), FloatType(1.0)), FloatType(-0.5) + FloatType(1.0), threshold));
+	CHECK(scalar_near_equal(scalar_add(FloatType(1.0), FloatType(-0.5)), FloatType(1.0) + FloatType(-0.5), threshold));
+	CHECK(scalar_near_equal(scalar_add(FloatType(1.0), FloatType(1.0)), FloatType(1.0) + FloatType(1.0), threshold));
+
+	CHECK(scalar_near_equal(scalar_cast(scalar_add(scalar_set(FloatType(-0.5)), scalar_set(FloatType(1.0)))), FloatType(-0.5) + FloatType(1.0), threshold));
+	CHECK(scalar_near_equal(scalar_cast(scalar_add(scalar_set(FloatType(1.0)), scalar_set(FloatType(-0.5)))), FloatType(1.0) + FloatType(-0.5), threshold));
+	CHECK(scalar_near_equal(scalar_cast(scalar_add(scalar_set(FloatType(1.0)), scalar_set(FloatType(1.0)))), FloatType(1.0) + FloatType(1.0), threshold));
+
 	CHECK(scalar_near_equal(scalar_sub(FloatType(-0.5), FloatType(1.0)), FloatType(-0.5) - FloatType(1.0), threshold));
 	CHECK(scalar_near_equal(scalar_sub(FloatType(1.0), FloatType(-0.5)), FloatType(1.0) - FloatType(-0.5), threshold));
 	CHECK(scalar_near_equal(scalar_sub(FloatType(1.0), FloatType(1.0)), FloatType(1.0) - FloatType(1.0), threshold));
@@ -142,6 +150,22 @@ static void test_scalar_impl(const FloatType threshold)
 	CHECK(scalar_near_equal(scalar_cast(scalar_sub(scalar_set(FloatType(-0.5)), scalar_set(FloatType(1.0)))), FloatType(-0.5) - FloatType(1.0), threshold));
 	CHECK(scalar_near_equal(scalar_cast(scalar_sub(scalar_set(FloatType(1.0)), scalar_set(FloatType(-0.5)))), FloatType(1.0) - FloatType(-0.5), threshold));
 	CHECK(scalar_near_equal(scalar_cast(scalar_sub(scalar_set(FloatType(1.0)), scalar_set(FloatType(1.0)))), FloatType(1.0) - FloatType(1.0), threshold));
+
+	CHECK(scalar_near_equal(scalar_mul(FloatType(-0.5), FloatType(1.0)), FloatType(-0.5) * FloatType(1.0), threshold));
+	CHECK(scalar_near_equal(scalar_mul(FloatType(1.0), FloatType(-0.5)), FloatType(1.0) * FloatType(-0.5), threshold));
+	CHECK(scalar_near_equal(scalar_mul(FloatType(1.0), FloatType(1.0)), FloatType(1.0) * FloatType(1.0), threshold));
+
+	CHECK(scalar_near_equal(scalar_cast(scalar_mul(scalar_set(FloatType(-0.5)), scalar_set(FloatType(1.0)))), FloatType(-0.5) * FloatType(1.0), threshold));
+	CHECK(scalar_near_equal(scalar_cast(scalar_mul(scalar_set(FloatType(1.0)), scalar_set(FloatType(-0.5)))), FloatType(1.0) * FloatType(-0.5), threshold));
+	CHECK(scalar_near_equal(scalar_cast(scalar_mul(scalar_set(FloatType(1.0)), scalar_set(FloatType(1.0)))), FloatType(1.0) * FloatType(1.0), threshold));
+
+	CHECK(scalar_near_equal(scalar_div(FloatType(-0.5), FloatType(1.0)), FloatType(-0.5) / FloatType(1.0), threshold));
+	CHECK(scalar_near_equal(scalar_div(FloatType(1.0), FloatType(-0.5)), FloatType(1.0) / FloatType(-0.5), threshold));
+	CHECK(scalar_near_equal(scalar_div(FloatType(1.0), FloatType(1.0)), FloatType(1.0) / FloatType(1.0), threshold));
+
+	CHECK(scalar_near_equal(scalar_cast(scalar_div(scalar_set(FloatType(-0.5)), scalar_set(FloatType(1.0)))), FloatType(-0.5) / FloatType(1.0), threshold));
+	CHECK(scalar_near_equal(scalar_cast(scalar_div(scalar_set(FloatType(1.0)), scalar_set(FloatType(-0.5)))), FloatType(1.0) / FloatType(-0.5), threshold));
+	CHECK(scalar_near_equal(scalar_cast(scalar_div(scalar_set(FloatType(1.0)), scalar_set(FloatType(1.0)))), FloatType(1.0) / FloatType(1.0), threshold));
 
 	const FloatType values[] = { FloatType(-0.5123), FloatType(1.0341), FloatType(-0.54132) };
 	CHECK(scalar_near_equal(scalar_mul_add(values[0], values[1], values[2]), (values[0] * values[1]) + values[2], threshold));
