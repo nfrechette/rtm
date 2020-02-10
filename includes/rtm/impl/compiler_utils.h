@@ -30,7 +30,7 @@
 // To do this, every header is wrapped in two macros to push and pop the necessary
 // pragmas.
 //////////////////////////////////////////////////////////////////////////
-#if defined(_MSC_VER)
+#if defined(_MSC_VER) && !defined(__clang__)
 	#define RTM_IMPL_FILE_PRAGMA_PUSH \
 		/* Disable fast math, it can hurt precision for little to no performance gain due to the heavy usage of intrinsics. */ \
 		__pragma(float_control(precise, on, push))
