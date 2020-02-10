@@ -117,7 +117,7 @@ namespace rtm
 	inline float scalar_abs(float input) RTM_NO_EXCEPT
 	{
 #if defined(RTM_SSE2_INTRINSICS)
-#if defined(_MSC_VER)
+#if defined(_MSC_VER) && !defined(__clang__)
 		constexpr __m128i masks = { 0xFFU, 0xFFU, 0xFFU, 0x7FU, 0xFFU, 0xFFU, 0xFFU, 0x7FU, 0xFFU, 0xFFU, 0xFFU, 0x7FU, 0xFFU, 0xFFU, 0xFFU, 0x7FU };
 #else
 		constexpr __m128i masks = { 0x7FFFFFFF7FFFFFFFULL, 0x7FFFFFFF7FFFFFFFULL };
@@ -143,7 +143,7 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	// Returns the reciprocal square root of the input.
 	//////////////////////////////////////////////////////////////////////////
-#if defined(_MSC_VER) && _MSC_VER >= 1920 && defined(_M_X64) && defined(RTM_SSE2_INTRINSICS) && !defined(RTM_AVX_INTRINSICS)
+#if defined(_MSC_VER) && !defined(__clang__) && _MSC_VER >= 1920 && defined(_M_X64) && defined(RTM_SSE2_INTRINSICS) && !defined(RTM_AVX_INTRINSICS)
 	// HACK!!! Visual Studio 2019 has a code generation bug triggered by the code below, disable optimizations for now
 	// Bug only happens with x64 SSE2, not with AVX nor with x86
 	#pragma optimize("", off)
@@ -172,7 +172,7 @@ namespace rtm
 		return 1.0F / scalar_sqrt(input);
 #endif
 	}
-#if defined(_MSC_VER) && _MSC_VER >= 1920 && defined(_M_X64) && defined(RTM_SSE2_INTRINSICS) && !defined(RTM_AVX_INTRINSICS)
+#if defined(_MSC_VER) && !defined(__clang__) && _MSC_VER >= 1920 && defined(_M_X64) && defined(RTM_SSE2_INTRINSICS) && !defined(RTM_AVX_INTRINSICS)
 	// HACK!!! See comment above
 	#pragma optimize("", on)
 #endif
@@ -508,7 +508,7 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	inline scalarf RTM_SIMD_CALL scalar_abs(scalarf_arg0 input) RTM_NO_EXCEPT
 	{
-#if defined(_MSC_VER)
+#if defined(_MSC_VER) && !defined(__clang__)
 		constexpr __m128i masks = { 0xFFU, 0xFFU, 0xFFU, 0x7FU, 0xFFU, 0xFFU, 0xFFU, 0x7FU, 0xFFU, 0xFFU, 0xFFU, 0x7FU, 0xFFU, 0xFFU, 0xFFU, 0x7FU };
 #else
 		constexpr __m128i masks = { 0x7FFFFFFF7FFFFFFFULL, 0x7FFFFFFF7FFFFFFFULL };
