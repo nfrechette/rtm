@@ -18,7 +18,7 @@ IF /i %TOOLCHAIN%==msvc goto :msvc
 IF /i %TOOLCHAIN%==clang goto :clang
 
 echo "Unknown toolchain: %TOOLCHAIN%"
-exit /B
+exit /B 1
 
 :msvc
 IF /i %WORKER_IMAGE%=="Visual Studio 2015" SET COMPILER=vs2015
