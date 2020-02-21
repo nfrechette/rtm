@@ -2,8 +2,6 @@ version: 1.1.0.{build}
 
 environment:
   PYTHON: "C:\\Python36-x64\\python.exe"
-
-environment:
   matrix:
     - toolchain: msvc
     - toolchain: clang
