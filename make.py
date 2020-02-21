@@ -16,7 +16,7 @@ def parse_argv():
 	actions.add_argument('-bench', action='store_true')
 
 	target = parser.add_argument_group(title='Target')
-	target.add_argument('-compiler', choices=['vs2015', 'vs2017', 'vs2019', 'android', 'clang4', 'clang5', 'clang6', 'clang7', 'clang8', 'clang9', 'gcc5', 'gcc6', 'gcc7', 'gcc8', 'gcc9', 'osx', 'ios'], help='Defaults to the host system\'s default compiler')
+	target.add_argument('-compiler', choices=['vs2015', 'vs2017', 'vs2019', 'vs2019-clang', 'android', 'clang4', 'clang5', 'clang6', 'clang7', 'clang8', 'clang9', 'gcc5', 'gcc6', 'gcc7', 'gcc8', 'gcc9', 'osx', 'ios'], help='Defaults to the host system\'s default compiler')
 	target.add_argument('-config', choices=['Debug', 'Release'], type=str.capitalize)
 	target.add_argument('-cpu', choices=['x86', 'x64', 'arm64'], help='Only supported for Windows, OS X, and Linux; defaults to the host system\'s architecture')
 
@@ -112,7 +112,7 @@ def get_generator(compiler, cpu):
 				# VS2017 ARM/ARM64 support only works with cmake 3.13 and up and the architecture must be specified with
 				# the -A cmake switch
 				return 'Visual Studio 15 2017'
-		elif compiler == 'vs2019':
+		elif compiler == 'vs2019' or compiler == 'vs2019-clang':
 			return 'Visual Studio 16 2019'
 		elif compiler == 'android':
 			return 'Visual Studio 14'
@@ -134,7 +134,7 @@ def get_architecture(compiler, cpu):
 		if compiler == 'vs2017':
 			if cpu == 'arm64':
 				return 'ARM64'
-		elif compiler == 'vs2019':
+		elif compiler == 'vs2019' or compiler == 'vs2019-clang':
 			if cpu == 'x86':
 				return 'Win32'
 			else:
@@ -226,6 +226,11 @@ def do_generate_solution(cmake_exe, build_dir, cmake_script_dir, args):
 	if not toolchain == None:
 		extra_switches.append('-DCMAKE_TOOLCHAIN_FILE={}'.format(os.path.join(cmake_script_dir, toolchain)))
 
+	generator_suffix = ''
+	if compiler == 'vs2019-clang':
+		extra_switches.append('-T ClangCL')
+		generator_suffix = 'Clang CL'
+
 	# Generate IDE solution
 	print('Generating build files ...')
 	cmake_cmd = '"{}" .. -DCMAKE_INSTALL_PREFIX="{}" {}'.format(cmake_exe, build_dir, ' '.join(extra_switches))
@@ -233,7 +238,7 @@ def do_generate_solution(cmake_exe, build_dir, cmake_script_dir, args):
 	if cmake_generator == None:
 		print('Using default generator')
 	else:
-		print('Using generator: {}'.format(cmake_generator))
+		print('Using generator: {} {}'.format(cmake_generator, generator_suffix))
 		cmake_cmd += ' -G "{}"'.format(cmake_generator)
 
 	cmake_arch = get_architecture(compiler, cpu)
