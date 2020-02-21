@@ -33,7 +33,7 @@ GOTO :next
 :next
 REM Set our switch if we need to run unit tests
 SET UNIT_TEST_FLAG=-unit_test
-IF /i %PLATFORM%==arm64 SET UNIT_TEST_FLAG=""
+IF /i %PLATFORM%==arm64 SET UNIT_TEST_FLAG=
 
 REM If PYTHON_PATH isn't set, assume it is in PATH
 IF NOT DEFINED PYTHON_PATH SET PYTHON_PATH=python.exe
