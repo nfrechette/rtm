@@ -7,6 +7,12 @@ SET CONFIG=%3
 SET TOOLCHAIN=%4
 SET PYTHON_PATH=%5
 
+echo "Worker image: %WORKER_IMAGE%"
+echo "Platform: %PLATFORM%"
+echo "Config: %CONFIG%"
+echo "Toolchain: %TOOLCHAIN%"
+echo "Python path: %PYTHON_PATH%"
+
 REM Convert the build image and toolchain into our compiler string
 IF /i %TOOLCHAIN%==msvc goto :msvc
 IF /i %TOOLCHAIN%==clang goto :clang
