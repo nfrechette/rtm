@@ -28,13 +28,13 @@
 
 using namespace rtm;
 
-inline float RTM_SIMD_CALL scalar_abs_scalar(float input) RTM_NO_EXCEPT
+RTM_FORCE_NOINLINE float RTM_SIMD_CALL scalar_abs_scalar(float input) RTM_NO_EXCEPT
 {
 	return std::fabs(input);
 }
 
 #if defined(RTM_SSE2_INTRINSICS)
-inline float RTM_SIMD_CALL vector_abs_sse2_and(float input) RTM_NO_EXCEPT
+RTM_FORCE_NOINLINE float RTM_SIMD_CALL vector_abs_sse2_and(float input) RTM_NO_EXCEPT
 {
 #if defined(_MSC_VER)
 	constexpr __m128i masks = { 0xFFU, 0xFFU, 0xFFU, 0x7FU, 0xFFU, 0xFFU, 0xFFU, 0x7FU, 0xFFU, 0xFFU, 0xFFU, 0x7FU, 0xFFU, 0xFFU, 0xFFU, 0x7FU };

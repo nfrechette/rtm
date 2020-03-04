@@ -28,7 +28,7 @@
 
 using namespace rtm;
 
-inline quatf RTM_SIMD_CALL quat_from_positive_w_scalar(vector4f_arg0 input) RTM_NO_EXCEPT
+RTM_FORCE_NOINLINE quatf RTM_SIMD_CALL quat_from_positive_w_scalar(vector4f_arg0 input) RTM_NO_EXCEPT
 {
 	// Operation order is important here, due to rounding, ((1.0 - (X*X)) - Y*Y) - Z*Z is more accurate than 1.0 - dot3(xyz, xyz)
 	float w_squared = ((1.0F - vector_get_x(input) * vector_get_x(input)) - vector_get_y(input) * vector_get_y(input)) - vector_get_z(input) * vector_get_z(input);
@@ -39,7 +39,7 @@ inline quatf RTM_SIMD_CALL quat_from_positive_w_scalar(vector4f_arg0 input) RTM_
 }
 
 #if defined(RTM_SSE4_INTRINSICS)
-inline quatf RTM_SIMD_CALL quat_from_positive_w_sse4_andnot(vector4f_arg0 input) RTM_NO_EXCEPT
+RTM_FORCE_NOINLINE quatf RTM_SIMD_CALL quat_from_positive_w_sse4_andnot(vector4f_arg0 input) RTM_NO_EXCEPT
 {
 	__m128 x2y2z2 = _mm_mul_ps(input, input);
 	__m128 one = _mm_set_ss(1.0F);
@@ -49,7 +49,7 @@ inline quatf RTM_SIMD_CALL quat_from_positive_w_sse4_andnot(vector4f_arg0 input)
 	return _mm_insert_ps(input, w, 0x30);
 }
 
-inline quatf RTM_SIMD_CALL quat_from_positive_w_sse4_and(vector4f_arg0 input) RTM_NO_EXCEPT
+RTM_FORCE_NOINLINE quatf RTM_SIMD_CALL quat_from_positive_w_sse4_and(vector4f_arg0 input) RTM_NO_EXCEPT
 {
 #if defined(_MSC_VER)
 	constexpr __m128i masks = { 0xFFU, 0xFFU, 0xFFU, 0x7FU, 0xFFU, 0xFFU, 0xFFU, 0x7FU, 0xFFU, 0xFFU, 0xFFU, 0x7FU, 0xFFU, 0xFFU, 0xFFU, 0x7FU };
@@ -67,7 +67,7 @@ inline quatf RTM_SIMD_CALL quat_from_positive_w_sse4_and(vector4f_arg0 input) RT
 #endif
 
 #if defined(RTM_SSE2_INTRINSICS)
-inline quatf RTM_SIMD_CALL quat_from_positive_w_sse2_and(vector4f_arg0 input) RTM_NO_EXCEPT
+RTM_FORCE_NOINLINE quatf RTM_SIMD_CALL quat_from_positive_w_sse2_and(vector4f_arg0 input) RTM_NO_EXCEPT
 {
 #if defined(_MSC_VER)
 	constexpr __m128i masks = { 0xFFU, 0xFFU, 0xFFU, 0x7FU, 0xFFU, 0xFFU, 0xFFU, 0x7FU, 0xFFU, 0xFFU, 0xFFU, 0x7FU, 0xFFU, 0xFFU, 0xFFU, 0x7FU };
@@ -85,7 +85,7 @@ inline quatf RTM_SIMD_CALL quat_from_positive_w_sse2_and(vector4f_arg0 input) RT
 	return _mm_shuffle_ps(result_wyzx, result_wyzx, _MM_SHUFFLE(0, 2, 1, 3));
 }
 
-inline quatf RTM_SIMD_CALL quat_from_positive_w_sse2_and2(vector4f_arg0 input) RTM_NO_EXCEPT
+RTM_FORCE_NOINLINE quatf RTM_SIMD_CALL quat_from_positive_w_sse2_and2(vector4f_arg0 input) RTM_NO_EXCEPT
 {
 #if defined(_MSC_VER)
 	constexpr __m128i masks = { 0xFFU, 0xFFU, 0xFFU, 0x7FU, 0xFFU, 0xFFU, 0xFFU, 0x7FU, 0xFFU, 0xFFU, 0xFFU, 0x7FU, 0xFFU, 0xFFU, 0xFFU, 0x7FU };
@@ -104,7 +104,7 @@ inline quatf RTM_SIMD_CALL quat_from_positive_w_sse2_and2(vector4f_arg0 input) R
 #endif
 
 #if defined(RTM_NEON_INTRINSICS)
-inline quatf RTM_SIMD_CALL quat_from_positive_w_neon(vector4f_arg0 input) RTM_NO_EXCEPT
+RTM_FORCE_NOINLINE quatf RTM_SIMD_CALL quat_from_positive_w_neon(vector4f_arg0 input) RTM_NO_EXCEPT
 {
 	float32x4_t x2y2z2 = vmulq_f32(input, input);
 	float w_squared = ((1.0F - vgetq_lane_f32(x2y2z2, 0)) - vgetq_lane_f32(x2y2z2, 1)) - vgetq_lane_f32(x2y2z2, 2);

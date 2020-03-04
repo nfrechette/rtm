@@ -28,12 +28,12 @@
 
 using namespace rtm;
 
-inline quatf RTM_SIMD_CALL quat_conjugate_scalar(quatf_arg0 input) RTM_NO_EXCEPT
+RTM_FORCE_NOINLINE quatf RTM_SIMD_CALL quat_conjugate_scalar(quatf_arg0 input) RTM_NO_EXCEPT
 {
 	return quat_set(-quat_get_x(input), -quat_get_y(input), -quat_get_z(input), quat_get_w(input));
 }
 
-inline quatf RTM_SIMD_CALL quat_conjugate_mul(quatf_arg0 input) RTM_NO_EXCEPT
+RTM_FORCE_NOINLINE quatf RTM_SIMD_CALL quat_conjugate_mul(quatf_arg0 input) RTM_NO_EXCEPT
 {
 #if defined(RTM_SSE2_INTRINSICS)
 	constexpr __m128 signs = { -1.0f, -1.0f, -1.0f, 1.0f };
@@ -48,7 +48,7 @@ inline quatf RTM_SIMD_CALL quat_conjugate_mul(quatf_arg0 input) RTM_NO_EXCEPT
 }
 
 #if defined(RTM_SSE2_INTRINSICS) || defined(RTM_NEON_INTRINSICS)
-inline quatf RTM_SIMD_CALL quat_conjugate_xor(quatf_arg0 input) RTM_NO_EXCEPT
+RTM_FORCE_NOINLINE quatf RTM_SIMD_CALL quat_conjugate_xor(quatf_arg0 input) RTM_NO_EXCEPT
 {
 #if defined(RTM_SSE2_INTRINSICS)
 	constexpr __m128 signs = { -0.0f, -0.0f, -0.0f, 0.0f };
@@ -64,7 +64,7 @@ inline quatf RTM_SIMD_CALL quat_conjugate_xor(quatf_arg0 input) RTM_NO_EXCEPT
 #endif
 
 #if defined(RTM_NEON_INTRINSICS)
-inline quatf RTM_SIMD_CALL quat_conjugate_neg(quatf_arg0 input) RTM_NO_EXCEPT
+RTM_FORCE_NOINLINE quatf RTM_SIMD_CALL quat_conjugate_neg(quatf_arg0 input) RTM_NO_EXCEPT
 {
 	const float32x4_t neg_input = vnegq_f32(input);
 	return vsetq_lane_f32(vgetq_lane_f32(input, 3), neg_input, 3);

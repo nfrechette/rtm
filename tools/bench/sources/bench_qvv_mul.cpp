@@ -28,7 +28,7 @@
 
 using namespace rtm;
 
-inline qvvf RTM_SIMD_CALL qvv_mul_ref(qvvf_arg0 lhs, qvvf_arg1 rhs) RTM_NO_EXCEPT
+RTM_FORCE_NOINLINE qvvf RTM_SIMD_CALL qvv_mul_ref(qvvf_arg0 lhs, qvvf_arg1 rhs) RTM_NO_EXCEPT
 {
 	const vector4f min_scale = vector_min(lhs.scale, rhs.scale);
 	const vector4f scale = vector_mul(lhs.scale, rhs.scale);
@@ -59,7 +59,7 @@ inline qvvf RTM_SIMD_CALL qvv_mul_ref(qvvf_arg0 lhs, qvvf_arg1 rhs) RTM_NO_EXCEP
 }
 
 #if defined(RTM_SSE2_INTRINSICS)
-inline qvvf RTM_SIMD_CALL qvv_mul_sse2(qvvf_arg0 lhs, qvvf_arg1 rhs) RTM_NO_EXCEPT
+RTM_FORCE_NOINLINE qvvf RTM_SIMD_CALL qvv_mul_sse2(qvvf_arg0 lhs, qvvf_arg1 rhs) RTM_NO_EXCEPT
 {
 	const vector4f min_scale = vector_min(lhs.scale, rhs.scale);
 	const vector4f scale = vector_mul(lhs.scale, rhs.scale);
