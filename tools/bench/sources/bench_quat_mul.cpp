@@ -142,6 +142,7 @@ RTM_FORCE_NOINLINE quatf RTM_SIMD_CALL quat_mul_sse_mul(quatf_arg0 lhs, quatf_ar
 }
 
 // Wins on Ryzen 2990X desktop VS2017 x64 AVX
+// Wins on Ryzen 2990X desktop clang9 x64 AVX
 RTM_FORCE_NOINLINE quatf RTM_SIMD_CALL quat_mul_sse_xor(quatf_arg0 lhs, quatf_arg1 rhs) RTM_NO_EXCEPT
 {
 	constexpr __m128 control_wzyx = { 0.0f,-0.0f, 0.0f,-0.0f };

@@ -41,6 +41,7 @@ RTM_FORCE_NOINLINE vector4f RTM_SIMD_CALL vector_abs_sse2_maxsub(vector4f_arg0 i
 
 // Wins on Haswell laptop x64 AVX
 // Wins on Ryzen 2990X desktop VS2017 x64 AVX
+// Wins on Ryzen 2990X desktop clang9 x64 AVX
 RTM_FORCE_NOINLINE vector4f RTM_SIMD_CALL vector_abs_sse2_and(vector4f_arg0 input) RTM_NO_EXCEPT
 {
 #if defined(_MSC_VER)

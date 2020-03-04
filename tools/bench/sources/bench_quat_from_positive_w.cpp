@@ -50,6 +50,7 @@ RTM_FORCE_NOINLINE quatf RTM_SIMD_CALL quat_from_positive_w_sse4_andnot(vector4f
 }
 
 // Wins on Haswell laptop x64 AVX (asm generated is identical to sse4_andnot due to inlining)
+// Wins on Ryzen 2990X desktop clang9 x64 AVX
 RTM_FORCE_NOINLINE quatf RTM_SIMD_CALL quat_from_positive_w_sse4_and(vector4f_arg0 input) RTM_NO_EXCEPT
 {
 #if defined(_MSC_VER)
