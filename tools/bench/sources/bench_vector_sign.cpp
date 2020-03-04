@@ -28,14 +28,14 @@
 
 using namespace rtm;
 
-inline vector4f RTM_SIMD_CALL vector_sign_ref(vector4f_arg0 input) RTM_NO_EXCEPT
+RTM_FORCE_NOINLINE vector4f RTM_SIMD_CALL vector_sign_ref(vector4f_arg0 input) RTM_NO_EXCEPT
 {
 	const mask4i mask = vector_greater_equal(input, vector_zero());
 	return vector_select(mask, vector_set(1.0f), vector_set(-1.0f));
 }
 
 #if defined(RTM_SSE2_INTRINSICS)
-inline vector4f RTM_SIMD_CALL vector_sign_sse2(vector4f_arg0 input) RTM_NO_EXCEPT
+RTM_FORCE_NOINLINE vector4f RTM_SIMD_CALL vector_sign_sse2(vector4f_arg0 input) RTM_NO_EXCEPT
 {
 	constexpr __m128 signs = { -0.0f, -0.0f, -0.0f, -0.0f };
 	constexpr __m128 one = { 1.0f, 1.0f, 1.0f, 1.0f };

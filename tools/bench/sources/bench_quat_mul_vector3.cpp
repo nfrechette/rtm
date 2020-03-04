@@ -28,7 +28,7 @@
 
 using namespace rtm;
 
-inline vector4f RTM_SIMD_CALL quat_mul_vector3_ref(vector4f_arg0 vector, quatf_arg1 rotation) RTM_NO_EXCEPT
+RTM_FORCE_NOINLINE vector4f RTM_SIMD_CALL quat_mul_vector3_ref(vector4f_arg0 vector, quatf_arg1 rotation) RTM_NO_EXCEPT
 {
 	quatf vector_quat = quat_set_w(vector_to_quat(vector), 0.0f);
 	quatf inv_rotation = quat_conjugate(rotation);
@@ -36,7 +36,7 @@ inline vector4f RTM_SIMD_CALL quat_mul_vector3_ref(vector4f_arg0 vector, quatf_a
 }
 
 #if defined(RTM_FMA_INTRINSICS)
-inline vector4f RTM_SIMD_CALL quat_mul_vector3_fma(vector4f_arg0 vector, quatf_arg1 rotation) RTM_NO_EXCEPT
+RTM_FORCE_NOINLINE vector4f RTM_SIMD_CALL quat_mul_vector3_fma(vector4f_arg0 vector, quatf_arg1 rotation) RTM_NO_EXCEPT
 {
 	const __m128 inv_rotation = quat_conjugate(rotation);
 
@@ -89,7 +89,7 @@ inline vector4f RTM_SIMD_CALL quat_mul_vector3_fma(vector4f_arg0 vector, quatf_a
 #endif
 
 #if defined(RTM_SSE2_INTRINSICS)
-inline vector4f RTM_SIMD_CALL quat_mul_vector3_sse2(vector4f_arg0 vector, quatf_arg1 rotation) RTM_NO_EXCEPT
+RTM_FORCE_NOINLINE vector4f RTM_SIMD_CALL quat_mul_vector3_sse2(vector4f_arg0 vector, quatf_arg1 rotation) RTM_NO_EXCEPT
 {
 	const __m128 inv_rotation = quat_conjugate(rotation);
 
@@ -149,10 +149,13 @@ inline vector4f RTM_SIMD_CALL quat_mul_vector3_sse2(vector4f_arg0 vector, quatf_
 }
 #endif
 
-#if defined(RTM_NEON_INTRINSICS)
-inline vector4f RTM_SIMD_CALL quat_mul_vector3_neon_scalar(vector4f_arg0 vector, quatf_arg1 rotation) RTM_NO_EXCEPT
+RTM_FORCE_NOINLINE vector4f RTM_SIMD_CALL quat_mul_vector3_scalar(vector4f_arg0 vector, quatf_arg1 rotation) RTM_NO_EXCEPT
 {
+#if defined(RTM_NEON_INTRINSICS)
 	const float32x4_t n_rotation = vnegq_f32(rotation);
+#else
+	const vector4f n_rotation = quat_conjugate(rotation);
+#endif
 
 	// temp = quat_mul(inv_rotation, vector_quat)
 	float temp_x;
@@ -195,7 +198,8 @@ inline vector4f RTM_SIMD_CALL quat_mul_vector3_neon_scalar(vector4f_arg0 vector,
 	}
 }
 
-inline vector4f RTM_SIMD_CALL quat_mul_vector3_neon64(vector4f_arg0 vector, quatf_arg1 rotation) RTM_NO_EXCEPT
+#if defined(RTM_NEON_INTRINSICS)
+RTM_FORCE_NOINLINE vector4f RTM_SIMD_CALL quat_mul_vector3_neon64(vector4f_arg0 vector, quatf_arg1 rotation) RTM_NO_EXCEPT
 {
 	const float32x4_t n_rotation = vnegq_f32(rotation);
 
@@ -265,7 +269,7 @@ inline vector4f RTM_SIMD_CALL quat_mul_vector3_neon64(vector4f_arg0 vector, quat
 	}
 }
 
-inline vector4f RTM_SIMD_CALL quat_mul_vector3_neon(vector4f_arg0 vector, quatf_arg1 rotation) RTM_NO_EXCEPT
+RTM_FORCE_NOINLINE vector4f RTM_SIMD_CALL quat_mul_vector3_neon(vector4f_arg0 vector, quatf_arg1 rotation) RTM_NO_EXCEPT
 {
 	alignas(16) constexpr float control_wzyx_f[4] = { 1.0f, -1.0f, 1.0f, -1.0f };
 	alignas(16) constexpr float control_zwxy_f[4] = { 1.0f, 1.0f, -1.0f, -1.0f };

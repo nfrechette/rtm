@@ -28,18 +28,18 @@
 
 using namespace rtm;
 
-inline vector4f RTM_SIMD_CALL vector_abs_scalar(vector4f_arg0 input) RTM_NO_EXCEPT
+RTM_FORCE_NOINLINE vector4f RTM_SIMD_CALL vector_abs_scalar(vector4f_arg0 input) RTM_NO_EXCEPT
 {
 	return vector_set(scalar_abs(vector_get_x(input)), scalar_abs(vector_get_y(input)), scalar_abs(vector_get_z(input)), scalar_abs(vector_get_w(input)));
 }
 
 #if defined(RTM_SSE2_INTRINSICS)
-inline vector4f RTM_SIMD_CALL vector_abs_sse2_maxsub(vector4f_arg0 input) RTM_NO_EXCEPT
+RTM_FORCE_NOINLINE vector4f RTM_SIMD_CALL vector_abs_sse2_maxsub(vector4f_arg0 input) RTM_NO_EXCEPT
 {
 	return vector_max(vector_sub(_mm_setzero_ps(), input), input);
 }
 
-inline vector4f RTM_SIMD_CALL vector_abs_sse2_and(vector4f_arg0 input) RTM_NO_EXCEPT
+RTM_FORCE_NOINLINE vector4f RTM_SIMD_CALL vector_abs_sse2_and(vector4f_arg0 input) RTM_NO_EXCEPT
 {
 #if defined(_MSC_VER)
 	constexpr __m128i masks = { 0xFFU, 0xFFU, 0xFFU, 0x7FU, 0xFFU, 0xFFU, 0xFFU, 0x7FU, 0xFFU, 0xFFU, 0xFFU, 0x7FU, 0xFFU, 0xFFU, 0xFFU, 0x7FU };

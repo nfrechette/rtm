@@ -28,7 +28,7 @@
 
 using namespace rtm;
 
-inline quatf RTM_SIMD_CALL quat_mul_scalar(quatf_arg0 lhs, quatf_arg1 rhs) RTM_NO_EXCEPT
+RTM_FORCE_NOINLINE quatf RTM_SIMD_CALL quat_mul_scalar(quatf_arg0 lhs, quatf_arg1 rhs) RTM_NO_EXCEPT
 {
 	const float lhs_x = quat_get_x(lhs);
 	const float lhs_y = quat_get_y(lhs);
@@ -49,7 +49,7 @@ inline quatf RTM_SIMD_CALL quat_mul_scalar(quatf_arg0 lhs, quatf_arg1 rhs) RTM_N
 }
 
 #if defined(RTM_FMA_INTRINSICS)
-inline quatf RTM_SIMD_CALL quat_mul_fma_mul(quatf_arg0 lhs, quatf_arg1 rhs) RTM_NO_EXCEPT
+RTM_FORCE_NOINLINE quatf RTM_SIMD_CALL quat_mul_fma_mul(quatf_arg0 lhs, quatf_arg1 rhs) RTM_NO_EXCEPT
 {
 	constexpr __m128 control_wzyx = { 1.0f,-1.0f, 1.0f,-1.0f };
 	constexpr __m128 control_zwxy = { 1.0f, 1.0f,-1.0f,-1.0f };
@@ -75,7 +75,7 @@ inline quatf RTM_SIMD_CALL quat_mul_fma_mul(quatf_arg0 lhs, quatf_arg1 rhs) RTM_
 	return _mm_fmadd_ps(lyrz_lxrz_lwrz_lzrz, control_yxwz, result1);
 }
 
-inline quatf RTM_SIMD_CALL quat_mul_fma_xor(quatf_arg0 lhs, quatf_arg1 rhs) RTM_NO_EXCEPT
+RTM_FORCE_NOINLINE quatf RTM_SIMD_CALL quat_mul_fma_xor(quatf_arg0 lhs, quatf_arg1 rhs) RTM_NO_EXCEPT
 {
 	constexpr __m128 control_wzyx = { 0.0f,-0.0f, 0.0f,-0.0f };
 	constexpr __m128 control_zwxy = { 0.0f, 0.0f,-0.0f,-0.0f };
@@ -108,7 +108,7 @@ inline quatf RTM_SIMD_CALL quat_mul_fma_xor(quatf_arg0 lhs, quatf_arg1 rhs) RTM_
 #endif
 
 #if defined(RTM_SSE2_INTRINSICS)
-inline quatf RTM_SIMD_CALL quat_mul_sse_mul(quatf_arg0 lhs, quatf_arg1 rhs) RTM_NO_EXCEPT
+RTM_FORCE_NOINLINE quatf RTM_SIMD_CALL quat_mul_sse_mul(quatf_arg0 lhs, quatf_arg1 rhs) RTM_NO_EXCEPT
 {
 	constexpr __m128 control_wzyx = { 1.0f,-1.0f, 1.0f,-1.0f };
 	constexpr __m128 control_zwxy = { 1.0f, 1.0f,-1.0f,-1.0f };
@@ -140,7 +140,7 @@ inline quatf RTM_SIMD_CALL quat_mul_sse_mul(quatf_arg0 lhs, quatf_arg1 rhs) RTM_
 	return _mm_add_ps(result0, result1);
 }
 
-inline quatf RTM_SIMD_CALL quat_mul_sse_xor(quatf_arg0 lhs, quatf_arg1 rhs) RTM_NO_EXCEPT
+RTM_FORCE_NOINLINE quatf RTM_SIMD_CALL quat_mul_sse_xor(quatf_arg0 lhs, quatf_arg1 rhs) RTM_NO_EXCEPT
 {
 	constexpr __m128 control_wzyx = { 0.0f,-0.0f, 0.0f,-0.0f };
 	constexpr __m128 control_zwxy = { 0.0f, 0.0f,-0.0f,-0.0f };
@@ -174,7 +174,7 @@ inline quatf RTM_SIMD_CALL quat_mul_sse_xor(quatf_arg0 lhs, quatf_arg1 rhs) RTM_
 #endif
 
 #if defined(RTM_NEON_INTRINSICS)
-inline quatf RTM_SIMD_CALL quat_mul_neon_mul(quatf_arg0 lhs, quatf_arg1 rhs) RTM_NO_EXCEPT
+RTM_FORCE_NOINLINE quatf RTM_SIMD_CALL quat_mul_neon_mul(quatf_arg0 lhs, quatf_arg1 rhs) RTM_NO_EXCEPT
 {
 	alignas(16) constexpr float control_wzyx_f[4] = { 1.0f, -1.0f, 1.0f, -1.0f };
 	alignas(16) constexpr float control_zwxy_f[4] = { 1.0f, 1.0f, -1.0f, -1.0f };
@@ -208,7 +208,7 @@ inline quatf RTM_SIMD_CALL quat_mul_neon_mul(quatf_arg0 lhs, quatf_arg1 rhs) RTM
 #endif
 }
 
-inline quatf RTM_SIMD_CALL quat_mul_neon_xor(quatf_arg0 lhs, quatf_arg1 rhs) RTM_NO_EXCEPT
+RTM_FORCE_NOINLINE quatf RTM_SIMD_CALL quat_mul_neon_xor(quatf_arg0 lhs, quatf_arg1 rhs) RTM_NO_EXCEPT
 {
 	alignas(16) constexpr uint32x4_t control_wzyx_f[4] = { 0, 0x80000000U, 0, 0x80000000U };
 	alignas(16) constexpr uint32x4_t control_zwxy_f[4] = { 0, 0, 0x80000000U, 0x80000000U };
@@ -239,7 +239,7 @@ inline quatf RTM_SIMD_CALL quat_mul_neon_xor(quatf_arg0 lhs, quatf_arg1 rhs) RTM
 	return vaddq_f32(vreinterpretq_f32_u32(veorq_u32(vreinterpretq_u32_f32(lyrz_lxrz_lwrz_lzrz), control_yxwz)), result1);
 }
 
-inline quatf RTM_SIMD_CALL quat_mul_neon_neg(quatf_arg0 lhs, quatf_arg1 rhs) RTM_NO_EXCEPT
+RTM_FORCE_NOINLINE quatf RTM_SIMD_CALL quat_mul_neon_neg(quatf_arg0 lhs, quatf_arg1 rhs) RTM_NO_EXCEPT
 {
 	const float32x4_t neg_lhs = vnegq_f32(lhs);														// -t.x, -t.y, -t.z, -t.w
 	const float32x4_t t_zwxy = vrev64q_f32(lhs);														// t.z, t.w, t.x, t.y
