@@ -47,9 +47,34 @@ inline vector4f RTM_SIMD_CALL vector_sign_sse2(vector4f_arg0 input) RTM_NO_EXCEP
 static void bm_vector_sign_ref(benchmark::State& state)
 {
 	vector4f v0 = vector_set(-1.0f, 1.0f, -2.0f, -123.134f);
+	vector4f v1 = vector_set(-1.0f, 1.0f, -2.0f, -123.134f);
+	vector4f v2 = vector_set(-1.0f, 1.0f, -2.0f, -123.134f);
+	vector4f v3 = vector_set(-1.0f, 1.0f, -2.0f, -123.134f);
+	vector4f v4 = vector_set(-1.0f, 1.0f, -2.0f, -123.134f);
+	vector4f v5 = vector_set(-1.0f, 1.0f, -2.0f, -123.134f);
+	vector4f v6 = vector_set(-1.0f, 1.0f, -2.0f, -123.134f);
+	vector4f v7 = vector_set(-1.0f, 1.0f, -2.0f, -123.134f);
 
 	for (auto _ : state)
-		benchmark::DoNotOptimize(v0 = vector_sign_ref(v0));
+	{
+		v0 = vector_sign_ref(v0);
+		v1 = vector_sign_ref(v1);
+		v2 = vector_sign_ref(v2);
+		v3 = vector_sign_ref(v3);
+		v4 = vector_sign_ref(v4);
+		v5 = vector_sign_ref(v5);
+		v6 = vector_sign_ref(v6);
+		v7 = vector_sign_ref(v7);
+	}
+
+	benchmark::DoNotOptimize(v0);
+	benchmark::DoNotOptimize(v1);
+	benchmark::DoNotOptimize(v2);
+	benchmark::DoNotOptimize(v3);
+	benchmark::DoNotOptimize(v4);
+	benchmark::DoNotOptimize(v5);
+	benchmark::DoNotOptimize(v6);
+	benchmark::DoNotOptimize(v7);
 }
 
 BENCHMARK(bm_vector_sign_ref);
@@ -58,9 +83,34 @@ BENCHMARK(bm_vector_sign_ref);
 static void bm_vector_sign_sse2(benchmark::State& state)
 {
 	vector4f v0 = vector_set(-1.0f, 1.0f, -2.0f, -123.134f);
+	vector4f v1 = vector_set(-1.0f, 1.0f, -2.0f, -123.134f);
+	vector4f v2 = vector_set(-1.0f, 1.0f, -2.0f, -123.134f);
+	vector4f v3 = vector_set(-1.0f, 1.0f, -2.0f, -123.134f);
+	vector4f v4 = vector_set(-1.0f, 1.0f, -2.0f, -123.134f);
+	vector4f v5 = vector_set(-1.0f, 1.0f, -2.0f, -123.134f);
+	vector4f v6 = vector_set(-1.0f, 1.0f, -2.0f, -123.134f);
+	vector4f v7 = vector_set(-1.0f, 1.0f, -2.0f, -123.134f);
 
 	for (auto _ : state)
-		benchmark::DoNotOptimize(v0 = vector_sign_sse2(v0));
+	{
+		v0 = vector_sign_sse2(v0);
+		v1 = vector_sign_sse2(v1);
+		v2 = vector_sign_sse2(v2);
+		v3 = vector_sign_sse2(v3);
+		v4 = vector_sign_sse2(v4);
+		v5 = vector_sign_sse2(v5);
+		v6 = vector_sign_sse2(v6);
+		v7 = vector_sign_sse2(v7);
+	}
+
+	benchmark::DoNotOptimize(v0);
+	benchmark::DoNotOptimize(v1);
+	benchmark::DoNotOptimize(v2);
+	benchmark::DoNotOptimize(v3);
+	benchmark::DoNotOptimize(v4);
+	benchmark::DoNotOptimize(v5);
+	benchmark::DoNotOptimize(v6);
+	benchmark::DoNotOptimize(v7);
 }
 
 BENCHMARK(bm_vector_sign_sse2);

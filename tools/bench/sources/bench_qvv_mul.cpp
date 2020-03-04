@@ -96,9 +96,19 @@ static void bm_qvv_mul_ref(benchmark::State& state)
 {
 	qvvf t0 = qvv_identity();
 	qvvf t1 = qvv_set(quat_identity(), vector_zero(), vector_set(-1.0f));
+	qvvf t2 = qvv_identity();
+	qvvf t3 = qvv_set(quat_identity(), vector_zero(), vector_set(-1.0f));
 
 	for (auto _ : state)
-		benchmark::DoNotOptimize(t0 = qvv_mul_ref(t0, t1));
+	{
+		t0 = qvv_mul_ref(t0, t1);
+		t2 = qvv_mul_ref(t2, t3);
+	}
+
+	benchmark::DoNotOptimize(t0);
+	benchmark::DoNotOptimize(t1);
+	benchmark::DoNotOptimize(t2);
+	benchmark::DoNotOptimize(t3);
 }
 
 BENCHMARK(bm_qvv_mul_ref);
@@ -108,9 +118,19 @@ static void bm_qvv_mul_sse2(benchmark::State& state)
 {
 	qvvf t0 = qvv_identity();
 	qvvf t1 = qvv_set(quat_identity(), vector_zero(), vector_set(-1.0f));
+	qvvf t2 = qvv_identity();
+	qvvf t3 = qvv_set(quat_identity(), vector_zero(), vector_set(-1.0f));
 
 	for (auto _ : state)
-		benchmark::DoNotOptimize(t0 = qvv_mul_sse2(t0, t1));
+	{
+		t0 = qvv_mul_sse2(t0, t1);
+		t2 = qvv_mul_sse2(t2, t3);
+	}
+
+	benchmark::DoNotOptimize(t0);
+	benchmark::DoNotOptimize(t1);
+	benchmark::DoNotOptimize(t2);
+	benchmark::DoNotOptimize(t3);
 }
 
 BENCHMARK(bm_qvv_mul_sse2);
