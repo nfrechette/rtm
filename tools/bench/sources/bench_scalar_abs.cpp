@@ -39,7 +39,7 @@ RTM_FORCE_NOINLINE float RTM_SIMD_CALL scalar_abs_scalar(float input) RTM_NO_EXC
 
 #if defined(RTM_SSE2_INTRINSICS)
 // Wins on Ryzen 2990X desktop clang9 x64 AVX
-RTM_FORCE_NOINLINE float RTM_SIMD_CALL vector_abs_sse2_and(float input) RTM_NO_EXCEPT
+RTM_FORCE_NOINLINE float RTM_SIMD_CALL scalar_abs_sse2_and(float input) RTM_NO_EXCEPT
 {
 #if defined(_MSC_VER)
 	constexpr __m128i masks = { 0xFFU, 0xFFU, 0xFFU, 0x7FU, 0xFFU, 0xFFU, 0xFFU, 0x7FU, 0xFFU, 0xFFU, 0xFFU, 0x7FU, 0xFFU, 0xFFU, 0xFFU, 0x7FU };
@@ -99,14 +99,14 @@ static void bm_scalar_abs_sse2_and(benchmark::State& state)
 
 	for (auto _ : state)
 	{
-		f0 = vector_abs_sse2_and(f0);
-		f1 = vector_abs_sse2_and(f1);
-		f2 = vector_abs_sse2_and(f2);
-		f3 = vector_abs_sse2_and(f3);
-		f4 = vector_abs_sse2_and(f4);
-		f5 = vector_abs_sse2_and(f5);
-		f6 = vector_abs_sse2_and(f6);
-		f7 = vector_abs_sse2_and(f7);
+		f0 = scalar_abs_sse2_and(f0);
+		f1 = scalar_abs_sse2_and(f1);
+		f2 = scalar_abs_sse2_and(f2);
+		f3 = scalar_abs_sse2_and(f3);
+		f4 = scalar_abs_sse2_and(f4);
+		f5 = scalar_abs_sse2_and(f5);
+		f6 = scalar_abs_sse2_and(f6);
+		f7 = scalar_abs_sse2_and(f7);
 	}
 
 	benchmark::DoNotOptimize(f0);
