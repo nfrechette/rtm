@@ -38,6 +38,8 @@ RTM_FORCE_NOINLINE float RTM_SIMD_CALL scalar_abs_scalar(float input) RTM_NO_EXC
 }
 
 #if defined(RTM_SSE2_INTRINSICS)
+// Wins on Haswell laptop x64 AVX
+// Both impl are about the same.
 // Wins on Ryzen 2990X desktop clang9 x64 AVX
 RTM_FORCE_NOINLINE float RTM_SIMD_CALL scalar_abs_sse2_and(float input) RTM_NO_EXCEPT
 {

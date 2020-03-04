@@ -109,6 +109,7 @@ RTM_FORCE_NOINLINE quatf RTM_SIMD_CALL quat_mul_fma_xor(quatf_arg0 lhs, quatf_ar
 
 #if defined(RTM_SSE2_INTRINSICS)
 // Wins on Haswell laptop x64 AVX
+// It seems that on haswell, xor incurs a domain switch penalty and is slower.
 RTM_FORCE_NOINLINE quatf RTM_SIMD_CALL quat_mul_sse_mul(quatf_arg0 lhs, quatf_arg1 rhs) RTM_NO_EXCEPT
 {
 	constexpr __m128 control_wzyx = { 1.0f,-1.0f, 1.0f,-1.0f };

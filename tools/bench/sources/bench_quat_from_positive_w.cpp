@@ -49,7 +49,6 @@ RTM_FORCE_NOINLINE quatf RTM_SIMD_CALL quat_from_positive_w_sse4_andnot(vector4f
 	return _mm_insert_ps(input, w, 0x30);
 }
 
-// Wins on Haswell laptop x64 AVX (asm generated is identical to sse4_andnot due to inlining)
 // Wins on Ryzen 2990X desktop clang9 x64 AVX
 RTM_FORCE_NOINLINE quatf RTM_SIMD_CALL quat_from_positive_w_sse4_and(vector4f_arg0 input) RTM_NO_EXCEPT
 {
@@ -69,6 +68,8 @@ RTM_FORCE_NOINLINE quatf RTM_SIMD_CALL quat_from_positive_w_sse4_and(vector4f_ar
 #endif
 
 #if defined(RTM_SSE2_INTRINSICS)
+// Wins on Haswell laptop x64 AVX
+// The various variants are almost all the same.
 // Wins on Ryzen 2990X desktop VS2017 x64 AVX
 // By all accounts, quat_from_positive_w_sse4_and should be faster since it uses nearly the same code
 // except that it needs 1 instruction instead of 2 to set the W component. It ends up being dramatically
@@ -112,6 +113,7 @@ RTM_FORCE_NOINLINE quatf RTM_SIMD_CALL quat_from_positive_w_sse2_and2(vector4f_a
 
 #if defined(RTM_NEON_INTRINSICS)
 // Wins on iPad Pro ARM64
+// Same perf as ref
 // Wins on Pixel 3 ARM64
 // Wins on Pixel 3 ARMv7
 RTM_FORCE_NOINLINE quatf RTM_SIMD_CALL quat_from_positive_w_neon(vector4f_arg0 input) RTM_NO_EXCEPT
