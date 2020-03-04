@@ -274,9 +274,22 @@ inline quatf RTM_SIMD_CALL quat_mul_neon_neg(quatf_arg0 lhs, quatf_arg1 rhs) RTM
 static void bm_quat_mul_scalar(benchmark::State& state)
 {
 	quatf q0 = quat_identity();
+	quatf q1 = quat_identity();
+	quatf q2 = quat_identity();
+	quatf q3 = quat_identity();
 
 	for (auto _ : state)
-		benchmark::DoNotOptimize(q0 = quat_mul_scalar(q0, q0));
+	{
+		q0 = quat_mul_scalar(q0, q0);
+		q1 = quat_mul_scalar(q1, q1);
+		q2 = quat_mul_scalar(q2, q2);
+		q3 = quat_mul_scalar(q3, q3);
+	}
+
+	benchmark::DoNotOptimize(q0);
+	benchmark::DoNotOptimize(q1);
+	benchmark::DoNotOptimize(q2);
+	benchmark::DoNotOptimize(q3);
 }
 
 BENCHMARK(bm_quat_mul_scalar);
@@ -285,9 +298,22 @@ BENCHMARK(bm_quat_mul_scalar);
 static void bm_quat_mul_fma_mul(benchmark::State& state)
 {
 	quatf q0 = quat_identity();
+	quatf q1 = quat_identity();
+	quatf q2 = quat_identity();
+	quatf q3 = quat_identity();
 
 	for (auto _ : state)
-		benchmark::DoNotOptimize(q0 = quat_mul_fma_mul(q0, q0));
+	{
+		q0 = quat_mul_fma_mul(q0, q0);
+		q1 = quat_mul_fma_mul(q1, q1);
+		q2 = quat_mul_fma_mul(q2, q2);
+		q3 = quat_mul_fma_mul(q3, q3);
+	}
+
+	benchmark::DoNotOptimize(q0);
+	benchmark::DoNotOptimize(q1);
+	benchmark::DoNotOptimize(q2);
+	benchmark::DoNotOptimize(q3);
 }
 
 BENCHMARK(bm_quat_mul_fma_mul);
@@ -295,9 +321,22 @@ BENCHMARK(bm_quat_mul_fma_mul);
 static void bm_quat_mul_fma_xor(benchmark::State& state)
 {
 	quatf q0 = quat_identity();
+	quatf q1 = quat_identity();
+	quatf q2 = quat_identity();
+	quatf q3 = quat_identity();
 
 	for (auto _ : state)
-		benchmark::DoNotOptimize(q0 = quat_mul_fma_xor(q0, q0));
+	{
+		q0 = quat_mul_fma_xor(q0, q0);
+		q1 = quat_mul_fma_xor(q1, q1);
+		q2 = quat_mul_fma_xor(q2, q2);
+		q3 = quat_mul_fma_xor(q3, q3);
+	}
+
+	benchmark::DoNotOptimize(q0);
+	benchmark::DoNotOptimize(q1);
+	benchmark::DoNotOptimize(q2);
+	benchmark::DoNotOptimize(q3);
 }
 
 BENCHMARK(bm_quat_mul_fma_xor);
@@ -307,9 +346,22 @@ BENCHMARK(bm_quat_mul_fma_xor);
 static void bm_quat_mul_sse_mul(benchmark::State& state)
 {
 	quatf q0 = quat_identity();
+	quatf q1 = quat_identity();
+	quatf q2 = quat_identity();
+	quatf q3 = quat_identity();
 
 	for (auto _ : state)
-		benchmark::DoNotOptimize(q0 = quat_mul_sse_mul(q0, q0));
+	{
+		q0 = quat_mul_sse_mul(q0, q0);
+		q1 = quat_mul_sse_mul(q1, q1);
+		q2 = quat_mul_sse_mul(q2, q2);
+		q3 = quat_mul_sse_mul(q3, q3);
+	}
+
+	benchmark::DoNotOptimize(q0);
+	benchmark::DoNotOptimize(q1);
+	benchmark::DoNotOptimize(q2);
+	benchmark::DoNotOptimize(q3);
 }
 
 BENCHMARK(bm_quat_mul_sse_mul);
@@ -317,9 +369,22 @@ BENCHMARK(bm_quat_mul_sse_mul);
 static void bm_quat_mul_sse_xor(benchmark::State& state)
 {
 	quatf q0 = quat_identity();
+	quatf q1 = quat_identity();
+	quatf q2 = quat_identity();
+	quatf q3 = quat_identity();
 
 	for (auto _ : state)
-		benchmark::DoNotOptimize(q0 = quat_mul_sse_xor(q0, q0));
+	{
+		q0 = quat_mul_sse_xor(q0, q0);
+		q1 = quat_mul_sse_xor(q1, q1);
+		q2 = quat_mul_sse_xor(q2, q2);
+		q3 = quat_mul_sse_xor(q3, q3);
+	}
+
+	benchmark::DoNotOptimize(q0);
+	benchmark::DoNotOptimize(q1);
+	benchmark::DoNotOptimize(q2);
+	benchmark::DoNotOptimize(q3);
 }
 
 BENCHMARK(bm_quat_mul_sse_xor);
@@ -329,9 +394,22 @@ BENCHMARK(bm_quat_mul_sse_xor);
 static void bm_quat_mul_neon_mul(benchmark::State& state)
 {
 	quatf q0 = quat_identity();
+	quatf q1 = quat_identity();
+	quatf q2 = quat_identity();
+	quatf q3 = quat_identity();
 
 	for (auto _ : state)
-		benchmark::DoNotOptimize(q0 = quat_mul_neon_mul(q0, q0));
+	{
+		q0 = quat_mul_neon_mul(q0, q0);
+		q1 = quat_mul_neon_mul(q1, q1);
+		q2 = quat_mul_neon_mul(q2, q2);
+		q3 = quat_mul_neon_mul(q3, q3);
+	}
+
+	benchmark::DoNotOptimize(q0);
+	benchmark::DoNotOptimize(q1);
+	benchmark::DoNotOptimize(q2);
+	benchmark::DoNotOptimize(q3);
 }
 
 BENCHMARK(bm_quat_mul_neon_mul);
@@ -339,9 +417,22 @@ BENCHMARK(bm_quat_mul_neon_mul);
 static void bm_quat_mul_neon_xor(benchmark::State& state)
 {
 	quatf q0 = quat_identity();
+	quatf q1 = quat_identity();
+	quatf q2 = quat_identity();
+	quatf q3 = quat_identity();
 
 	for (auto _ : state)
-		benchmark::DoNotOptimize(q0 = quat_mul_neon_xor(q0, q0));
+	{
+		q0 = quat_mul_neon_xor(q0, q0);
+		q1 = quat_mul_neon_xor(q1, q1);
+		q2 = quat_mul_neon_xor(q2, q2);
+		q3 = quat_mul_neon_xor(q3, q3);
+	}
+
+	benchmark::DoNotOptimize(q0);
+	benchmark::DoNotOptimize(q1);
+	benchmark::DoNotOptimize(q2);
+	benchmark::DoNotOptimize(q3);
 }
 
 BENCHMARK(bm_quat_mul_neon_xor);
@@ -349,9 +440,22 @@ BENCHMARK(bm_quat_mul_neon_xor);
 static void bm_quat_mul_neon_neg(benchmark::State& state)
 {
 	quatf q0 = quat_identity();
+	quatf q1 = quat_identity();
+	quatf q2 = quat_identity();
+	quatf q3 = quat_identity();
 
 	for (auto _ : state)
-		benchmark::DoNotOptimize(q0 = quat_mul_neon_neg(q0, q0));
+	{
+		q0 = quat_mul_neon_neg(q0, q0);
+		q1 = quat_mul_neon_neg(q1, q1);
+		q2 = quat_mul_neon_neg(q2, q2);
+		q3 = quat_mul_neon_neg(q3, q3);
+	}
+
+	benchmark::DoNotOptimize(q0);
+	benchmark::DoNotOptimize(q1);
+	benchmark::DoNotOptimize(q2);
+	benchmark::DoNotOptimize(q3);
 }
 
 BENCHMARK(bm_quat_mul_neon_neg);

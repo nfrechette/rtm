@@ -116,9 +116,22 @@ inline quatf RTM_SIMD_CALL quat_from_positive_w_neon(vector4f_arg0 input) RTM_NO
 static void bm_quat_from_positive_w_scalar(benchmark::State& state)
 {
 	quatf q0 = quat_identity();
+	quatf q1 = quat_identity();
+	quatf q2 = quat_identity();
+	quatf q3 = quat_identity();
 
 	for (auto _ : state)
-		benchmark::DoNotOptimize(q0 = quat_from_positive_w_scalar(q0));
+	{
+		q0 = quat_from_positive_w_scalar(q0);
+		q1 = quat_from_positive_w_scalar(q1);
+		q2 = quat_from_positive_w_scalar(q2);
+		q3 = quat_from_positive_w_scalar(q3);
+	}
+
+	benchmark::DoNotOptimize(q0);
+	benchmark::DoNotOptimize(q1);
+	benchmark::DoNotOptimize(q2);
+	benchmark::DoNotOptimize(q3);
 }
 
 BENCHMARK(bm_quat_from_positive_w_scalar);
@@ -127,9 +140,22 @@ BENCHMARK(bm_quat_from_positive_w_scalar);
 static void bm_quat_from_positive_w_sse4_andnot(benchmark::State& state)
 {
 	quatf q0 = quat_identity();
+	quatf q1 = quat_identity();
+	quatf q2 = quat_identity();
+	quatf q3 = quat_identity();
 
 	for (auto _ : state)
-		benchmark::DoNotOptimize(q0 = quat_from_positive_w_sse4_andnot(q0));
+	{
+		q0 = quat_from_positive_w_sse4_andnot(q0);
+		q1 = quat_from_positive_w_sse4_andnot(q1);
+		q2 = quat_from_positive_w_sse4_andnot(q2);
+		q3 = quat_from_positive_w_sse4_andnot(q3);
+	}
+
+	benchmark::DoNotOptimize(q0);
+	benchmark::DoNotOptimize(q1);
+	benchmark::DoNotOptimize(q2);
+	benchmark::DoNotOptimize(q3);
 }
 
 BENCHMARK(bm_quat_from_positive_w_sse4_andnot);
@@ -137,9 +163,22 @@ BENCHMARK(bm_quat_from_positive_w_sse4_andnot);
 static void bm_quat_from_positive_w_sse4_and(benchmark::State& state)
 {
 	quatf q0 = quat_identity();
+	quatf q1 = quat_identity();
+	quatf q2 = quat_identity();
+	quatf q3 = quat_identity();
 
 	for (auto _ : state)
-		benchmark::DoNotOptimize(q0 = quat_from_positive_w_sse4_and(q0));
+	{
+		q0 = quat_from_positive_w_sse4_and(q0);
+		q1 = quat_from_positive_w_sse4_and(q1);
+		q2 = quat_from_positive_w_sse4_and(q2);
+		q3 = quat_from_positive_w_sse4_and(q3);
+	}
+
+	benchmark::DoNotOptimize(q0);
+	benchmark::DoNotOptimize(q1);
+	benchmark::DoNotOptimize(q2);
+	benchmark::DoNotOptimize(q3);
 }
 
 BENCHMARK(bm_quat_from_positive_w_sse4_and);
@@ -149,9 +188,22 @@ BENCHMARK(bm_quat_from_positive_w_sse4_and);
 static void bm_quat_from_positive_w_sse2_and(benchmark::State& state)
 {
 	quatf q0 = quat_identity();
+	quatf q1 = quat_identity();
+	quatf q2 = quat_identity();
+	quatf q3 = quat_identity();
 
 	for (auto _ : state)
-		benchmark::DoNotOptimize(q0 = quat_from_positive_w_sse2_and(q0));
+	{
+		q0 = quat_from_positive_w_sse2_and(q0);
+		q1 = quat_from_positive_w_sse2_and(q1);
+		q2 = quat_from_positive_w_sse2_and(q2);
+		q3 = quat_from_positive_w_sse2_and(q3);
+	}
+
+	benchmark::DoNotOptimize(q0);
+	benchmark::DoNotOptimize(q1);
+	benchmark::DoNotOptimize(q2);
+	benchmark::DoNotOptimize(q3);
 }
 
 BENCHMARK(bm_quat_from_positive_w_sse2_and);
@@ -159,9 +211,22 @@ BENCHMARK(bm_quat_from_positive_w_sse2_and);
 static void bm_quat_from_positive_w_sse2_and2(benchmark::State& state)
 {
 	quatf q0 = quat_identity();
+	quatf q1 = quat_identity();
+	quatf q2 = quat_identity();
+	quatf q3 = quat_identity();
 
 	for (auto _ : state)
-		benchmark::DoNotOptimize(q0 = quat_from_positive_w_sse2_and2(q0));
+	{
+		q0 = quat_from_positive_w_sse2_and2(q0);
+		q1 = quat_from_positive_w_sse2_and2(q1);
+		q2 = quat_from_positive_w_sse2_and2(q2);
+		q3 = quat_from_positive_w_sse2_and2(q3);
+	}
+
+	benchmark::DoNotOptimize(q0);
+	benchmark::DoNotOptimize(q1);
+	benchmark::DoNotOptimize(q2);
+	benchmark::DoNotOptimize(q3);
 }
 
 BENCHMARK(bm_quat_from_positive_w_sse2_and2);
@@ -171,9 +236,22 @@ BENCHMARK(bm_quat_from_positive_w_sse2_and2);
 static void bm_quat_from_positive_w_neon(benchmark::State& state)
 {
 	quatf q0 = quat_identity();
+	quatf q1 = quat_identity();
+	quatf q2 = quat_identity();
+	quatf q3 = quat_identity();
 
 	for (auto _ : state)
-		benchmark::DoNotOptimize(q0 = quat_from_positive_w_neon(q0));
+	{
+		q0 = quat_from_positive_w_neon(q0);
+		q1 = quat_from_positive_w_neon(q1);
+		q2 = quat_from_positive_w_neon(q2);
+		q3 = quat_from_positive_w_neon(q3);
+	}
+
+	benchmark::DoNotOptimize(q0);
+	benchmark::DoNotOptimize(q1);
+	benchmark::DoNotOptimize(q2);
+	benchmark::DoNotOptimize(q3);
 }
 
 BENCHMARK(bm_quat_from_positive_w_neon);

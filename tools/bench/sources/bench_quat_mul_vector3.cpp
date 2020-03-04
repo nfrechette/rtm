@@ -339,22 +339,93 @@ inline vector4f RTM_SIMD_CALL quat_mul_vector3_neon(vector4f_arg0 vector, quatf_
 static void bm_quat_mul_vector3_ref(benchmark::State& state)
 {
 	vector4f v0 = vector_set(12.0f, 32.0f, -2.0f);
+	vector4f v1 = vector_set(12.0f, 32.0f, -2.0f);
+	vector4f v2 = vector_set(12.0f, 32.0f, -2.0f);
+	vector4f v3 = vector_set(12.0f, 32.0f, -2.0f);
 	quatf q0 = quat_identity();
+	quatf q1 = quat_identity();
+	quatf q2 = quat_identity();
+	quatf q3 = quat_identity();
 
 	for (auto _ : state)
-		benchmark::DoNotOptimize(v0 = quat_mul_vector3_ref(q0, v0));
+	{
+		v0 = quat_mul_vector3_ref(v0, q0);
+		v1 = quat_mul_vector3_ref(v1, q1);
+		v2 = quat_mul_vector3_ref(v2, q2);
+		v3 = quat_mul_vector3_ref(v3, q3);
+	}
+
+	benchmark::DoNotOptimize(q0);
+	benchmark::DoNotOptimize(q1);
+	benchmark::DoNotOptimize(q2);
+	benchmark::DoNotOptimize(q3);
+	benchmark::DoNotOptimize(v0);
+	benchmark::DoNotOptimize(v1);
+	benchmark::DoNotOptimize(v2);
+	benchmark::DoNotOptimize(v3);
 }
 
 BENCHMARK(bm_quat_mul_vector3_ref);
+
+static void bm_quat_mul_vector3_scalar(benchmark::State& state)
+{
+	vector4f v0 = vector_set(12.0f, 32.0f, -2.0f);
+	vector4f v1 = vector_set(12.0f, 32.0f, -2.0f);
+	vector4f v2 = vector_set(12.0f, 32.0f, -2.0f);
+	vector4f v3 = vector_set(12.0f, 32.0f, -2.0f);
+	quatf q0 = quat_identity();
+	quatf q1 = quat_identity();
+	quatf q2 = quat_identity();
+	quatf q3 = quat_identity();
+
+	for (auto _ : state)
+	{
+		v0 = quat_mul_vector3_scalar(v0, q0);
+		v1 = quat_mul_vector3_scalar(v1, q1);
+		v2 = quat_mul_vector3_scalar(v2, q2);
+		v3 = quat_mul_vector3_scalar(v3, q3);
+	}
+
+	benchmark::DoNotOptimize(q0);
+	benchmark::DoNotOptimize(q1);
+	benchmark::DoNotOptimize(q2);
+	benchmark::DoNotOptimize(q3);
+	benchmark::DoNotOptimize(v0);
+	benchmark::DoNotOptimize(v1);
+	benchmark::DoNotOptimize(v2);
+	benchmark::DoNotOptimize(v3);
+}
+
+BENCHMARK(bm_quat_mul_vector3_scalar);
 
 #if defined(RTM_FMA_INTRINSICS)
 static void bm_quat_mul_vector3_fma(benchmark::State& state)
 {
 	vector4f v0 = vector_set(12.0f, 32.0f, -2.0f);
+	vector4f v1 = vector_set(12.0f, 32.0f, -2.0f);
+	vector4f v2 = vector_set(12.0f, 32.0f, -2.0f);
+	vector4f v3 = vector_set(12.0f, 32.0f, -2.0f);
 	quatf q0 = quat_identity();
+	quatf q1 = quat_identity();
+	quatf q2 = quat_identity();
+	quatf q3 = quat_identity();
 
 	for (auto _ : state)
-		benchmark::DoNotOptimize(v0 = quat_mul_vector3_fma(q0, v0));
+	{
+		v0 = quat_mul_vector3_fma(v0, q0);
+		v1 = quat_mul_vector3_fma(v1, q1);
+		v2 = quat_mul_vector3_fma(v2, q2);
+		v3 = quat_mul_vector3_fma(v3, q3);
+	}
+
+	benchmark::DoNotOptimize(q0);
+	benchmark::DoNotOptimize(q1);
+	benchmark::DoNotOptimize(q2);
+	benchmark::DoNotOptimize(q3);
+	benchmark::DoNotOptimize(v0);
+	benchmark::DoNotOptimize(v1);
+	benchmark::DoNotOptimize(v2);
+	benchmark::DoNotOptimize(v3);
 }
 
 BENCHMARK(bm_quat_mul_vector3_fma);
@@ -364,34 +435,63 @@ BENCHMARK(bm_quat_mul_vector3_fma);
 static void bm_quat_mul_vector3_sse2(benchmark::State& state)
 {
 	vector4f v0 = vector_set(12.0f, 32.0f, -2.0f);
+	vector4f v1 = vector_set(12.0f, 32.0f, -2.0f);
+	vector4f v2 = vector_set(12.0f, 32.0f, -2.0f);
+	vector4f v3 = vector_set(12.0f, 32.0f, -2.0f);
 	quatf q0 = quat_identity();
+	quatf q1 = quat_identity();
+	quatf q2 = quat_identity();
+	quatf q3 = quat_identity();
 
 	for (auto _ : state)
-		benchmark::DoNotOptimize(v0 = quat_mul_vector3_sse2(q0, v0));
+	{
+		v0 = quat_mul_vector3_sse2(v0, q0);
+		v1 = quat_mul_vector3_sse2(v1, q1);
+		v2 = quat_mul_vector3_sse2(v2, q2);
+		v3 = quat_mul_vector3_sse2(v3, q3);
+	}
+
+	benchmark::DoNotOptimize(q0);
+	benchmark::DoNotOptimize(q1);
+	benchmark::DoNotOptimize(q2);
+	benchmark::DoNotOptimize(q3);
+	benchmark::DoNotOptimize(v0);
+	benchmark::DoNotOptimize(v1);
+	benchmark::DoNotOptimize(v2);
+	benchmark::DoNotOptimize(v3);
 }
 
 BENCHMARK(bm_quat_mul_vector3_sse2);
 #endif
 
 #if defined(RTM_NEON_INTRINSICS)
-static void bm_quat_mul_vector3_neon_scalar(benchmark::State& state)
-{
-	vector4f v0 = vector_set(12.0f, 32.0f, -2.0f);
-	quatf q0 = quat_identity();
-
-	for (auto _ : state)
-		benchmark::DoNotOptimize(v0 = quat_mul_vector3_neon_scalar(q0, v0));
-}
-
-BENCHMARK(bm_quat_mul_vector3_neon_scalar);
-
 static void bm_quat_mul_vector3_neon64(benchmark::State& state)
 {
 	vector4f v0 = vector_set(12.0f, 32.0f, -2.0f);
+	vector4f v1 = vector_set(12.0f, 32.0f, -2.0f);
+	vector4f v2 = vector_set(12.0f, 32.0f, -2.0f);
+	vector4f v3 = vector_set(12.0f, 32.0f, -2.0f);
 	quatf q0 = quat_identity();
+	quatf q1 = quat_identity();
+	quatf q2 = quat_identity();
+	quatf q3 = quat_identity();
 
 	for (auto _ : state)
-		benchmark::DoNotOptimize(v0 = quat_mul_vector3_neon64(q0, v0));
+	{
+		v0 = quat_mul_vector3_neon64(v0, q0);
+		v1 = quat_mul_vector3_neon64(v1, q1);
+		v2 = quat_mul_vector3_neon64(v2, q2);
+		v3 = quat_mul_vector3_neon64(v3, q3);
+	}
+
+	benchmark::DoNotOptimize(q0);
+	benchmark::DoNotOptimize(q1);
+	benchmark::DoNotOptimize(q2);
+	benchmark::DoNotOptimize(q3);
+	benchmark::DoNotOptimize(v0);
+	benchmark::DoNotOptimize(v1);
+	benchmark::DoNotOptimize(v2);
+	benchmark::DoNotOptimize(v3);
 }
 
 BENCHMARK(bm_quat_mul_vector3_neon64);
@@ -399,10 +499,30 @@ BENCHMARK(bm_quat_mul_vector3_neon64);
 static void bm_quat_mul_vector3_neon(benchmark::State& state)
 {
 	vector4f v0 = vector_set(12.0f, 32.0f, -2.0f);
+	vector4f v1 = vector_set(12.0f, 32.0f, -2.0f);
+	vector4f v2 = vector_set(12.0f, 32.0f, -2.0f);
+	vector4f v3 = vector_set(12.0f, 32.0f, -2.0f);
 	quatf q0 = quat_identity();
+	quatf q1 = quat_identity();
+	quatf q2 = quat_identity();
+	quatf q3 = quat_identity();
 
 	for (auto _ : state)
-		benchmark::DoNotOptimize(v0 = quat_mul_vector3_neon(q0, v0));
+	{
+		v0 = quat_mul_vector3_neon(v0, q0);
+		v1 = quat_mul_vector3_neon(v1, q1);
+		v2 = quat_mul_vector3_neon(v2, q2);
+		v3 = quat_mul_vector3_neon(v3, q3);
+	}
+
+	benchmark::DoNotOptimize(q0);
+	benchmark::DoNotOptimize(q1);
+	benchmark::DoNotOptimize(q2);
+	benchmark::DoNotOptimize(q3);
+	benchmark::DoNotOptimize(v0);
+	benchmark::DoNotOptimize(v1);
+	benchmark::DoNotOptimize(v2);
+	benchmark::DoNotOptimize(v3);
 }
 
 BENCHMARK(bm_quat_mul_vector3_neon);

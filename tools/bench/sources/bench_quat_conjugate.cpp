@@ -74,9 +74,22 @@ inline quatf RTM_SIMD_CALL quat_conjugate_neg(quatf_arg0 input) RTM_NO_EXCEPT
 static void bm_quat_conjugate_scalar(benchmark::State& state)
 {
 	quatf q0 = quat_identity();
+	quatf q1 = quat_identity();
+	quatf q2 = quat_identity();
+	quatf q3 = quat_identity();
 
 	for (auto _ : state)
-		benchmark::DoNotOptimize(q0 = quat_conjugate_scalar(q0));
+	{
+		q0 = quat_conjugate_scalar(q0);
+		q1 = quat_conjugate_scalar(q1);
+		q2 = quat_conjugate_scalar(q2);
+		q3 = quat_conjugate_scalar(q3);
+	}
+
+	benchmark::DoNotOptimize(q0);
+	benchmark::DoNotOptimize(q1);
+	benchmark::DoNotOptimize(q2);
+	benchmark::DoNotOptimize(q3);
 }
 
 BENCHMARK(bm_quat_conjugate_scalar);
@@ -84,9 +97,22 @@ BENCHMARK(bm_quat_conjugate_scalar);
 static void bm_quat_conjugate_mul(benchmark::State& state)
 {
 	quatf q0 = quat_identity();
+	quatf q1 = quat_identity();
+	quatf q2 = quat_identity();
+	quatf q3 = quat_identity();
 
 	for (auto _ : state)
-		benchmark::DoNotOptimize(q0 = quat_conjugate_mul(q0));
+	{
+		q0 = quat_conjugate_mul(q0);
+		q1 = quat_conjugate_mul(q1);
+		q2 = quat_conjugate_mul(q2);
+		q3 = quat_conjugate_mul(q3);
+	}
+
+	benchmark::DoNotOptimize(q0);
+	benchmark::DoNotOptimize(q1);
+	benchmark::DoNotOptimize(q2);
+	benchmark::DoNotOptimize(q3);
 }
 
 BENCHMARK(bm_quat_conjugate_mul);
@@ -95,9 +121,22 @@ BENCHMARK(bm_quat_conjugate_mul);
 static void bm_quat_conjugate_xor(benchmark::State& state)
 {
 	quatf q0 = quat_identity();
+	quatf q1 = quat_identity();
+	quatf q2 = quat_identity();
+	quatf q3 = quat_identity();
 
 	for (auto _ : state)
-		benchmark::DoNotOptimize(q0 = quat_conjugate_xor(q0));
+	{
+		q0 = quat_conjugate_xor(q0);
+		q1 = quat_conjugate_xor(q1);
+		q2 = quat_conjugate_xor(q2);
+		q3 = quat_conjugate_xor(q3);
+	}
+
+	benchmark::DoNotOptimize(q0);
+	benchmark::DoNotOptimize(q1);
+	benchmark::DoNotOptimize(q2);
+	benchmark::DoNotOptimize(q3);
 }
 
 BENCHMARK(bm_quat_conjugate_xor);
@@ -107,9 +146,22 @@ BENCHMARK(bm_quat_conjugate_xor);
 static void bm_quat_conjugate_neg(benchmark::State& state)
 {
 	quatf q0 = quat_identity();
+	quatf q1 = quat_identity();
+	quatf q2 = quat_identity();
+	quatf q3 = quat_identity();
 
 	for (auto _ : state)
-		benchmark::DoNotOptimize(q0 = quat_conjugate_neg(q0));
+	{
+		q0 = quat_conjugate_neg(q0);
+		q1 = quat_conjugate_neg(q1);
+		q2 = quat_conjugate_neg(q2);
+		q3 = quat_conjugate_neg(q3);
+	}
+
+	benchmark::DoNotOptimize(q0);
+	benchmark::DoNotOptimize(q1);
+	benchmark::DoNotOptimize(q2);
+	benchmark::DoNotOptimize(q3);
 }
 
 BENCHMARK(bm_quat_conjugate_neg);
