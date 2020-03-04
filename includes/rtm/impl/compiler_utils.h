@@ -41,3 +41,25 @@
 	#define RTM_IMPL_FILE_PRAGMA_PUSH
 	#define RTM_IMPL_FILE_PRAGMA_POP
 #endif
+
+//////////////////////////////////////////////////////////////////////////
+// Force inline macros for when it is necessary.
+//////////////////////////////////////////////////////////////////////////
+#if defined(_MSC_VER) && !defined(__clang__)
+	#define RTM_FORCE_INLINE __forceinline
+#elif defined(__GNUG__) || defined(__clang__)
+	#define RTM_FORCE_INLINE __attribute__((always_inline)) inline
+#else
+	#define RTM_FORCE_INLINE inline
+#endif
+
+//////////////////////////////////////////////////////////////////////////
+// Force no-inline macros for when it is necessary.
+//////////////////////////////////////////////////////////////////////////
+#if defined(_MSC_VER) && !defined(__clang__)
+	#define RTM_FORCE_NOINLINE __declspec(noinline)
+#elif defined(__GNUG__) || defined(__clang__)
+	#define RTM_FORCE_NOINLINE __attribute__((noinline))
+#else
+	#define RTM_FORCE_NOINLINE
+#endif
