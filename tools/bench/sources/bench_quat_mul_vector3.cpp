@@ -89,6 +89,8 @@ RTM_FORCE_NOINLINE vector4f RTM_SIMD_CALL quat_mul_vector3_fma(vector4f_arg0 vec
 #endif
 
 #if defined(RTM_SSE2_INTRINSICS)
+// Wins on Haswell laptop x64 AVX
+// Wins on Ryzen 2990X desktop VS2017 x64 AVX
 RTM_FORCE_NOINLINE vector4f RTM_SIMD_CALL quat_mul_vector3_sse2(vector4f_arg0 vector, quatf_arg1 rotation) RTM_NO_EXCEPT
 {
 	const __m128 inv_rotation = quat_conjugate(rotation);
@@ -149,6 +151,10 @@ RTM_FORCE_NOINLINE vector4f RTM_SIMD_CALL quat_mul_vector3_sse2(vector4f_arg0 ve
 }
 #endif
 
+// Wins on Pixel 3 ARMv7
+// Wins on Pixel 3 ARM64
+// Scalar is much faster. The zipping impl isn't faster here unlike quat_mul for ARM64, it doesn't reduce the instruction
+// count by as much.
 RTM_FORCE_NOINLINE vector4f RTM_SIMD_CALL quat_mul_vector3_scalar(vector4f_arg0 vector, quatf_arg1 rotation) RTM_NO_EXCEPT
 {
 #if defined(RTM_NEON_INTRINSICS)
@@ -269,6 +275,7 @@ RTM_FORCE_NOINLINE vector4f RTM_SIMD_CALL quat_mul_vector3_neon64(vector4f_arg0 
 	}
 }
 
+// Wins on iPad Pro ARM64
 RTM_FORCE_NOINLINE vector4f RTM_SIMD_CALL quat_mul_vector3_neon(vector4f_arg0 vector, quatf_arg1 rotation) RTM_NO_EXCEPT
 {
 	alignas(16) constexpr float control_wzyx_f[4] = { 1.0f, -1.0f, 1.0f, -1.0f };

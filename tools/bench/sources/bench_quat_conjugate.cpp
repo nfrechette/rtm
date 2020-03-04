@@ -28,6 +28,9 @@
 
 using namespace rtm;
 
+// Wins on Ryzen 2990X desktop VS2017 x64 AVX
+// Very odd but consistent result. mul/xor have about the same performance in this profile
+// but xor should be faster.
 RTM_FORCE_NOINLINE quatf RTM_SIMD_CALL quat_conjugate_scalar(quatf_arg0 input) RTM_NO_EXCEPT
 {
 	return quat_set(-quat_get_x(input), -quat_get_y(input), -quat_get_z(input), quat_get_w(input));
@@ -48,6 +51,10 @@ RTM_FORCE_NOINLINE quatf RTM_SIMD_CALL quat_conjugate_mul(quatf_arg0 input) RTM_
 }
 
 #if defined(RTM_SSE2_INTRINSICS) || defined(RTM_NEON_INTRINSICS)
+// Wins on iPad Pro ARM64
+// Wins on Pixel 3 ARM64
+// mul/XOR/neg all end up taking 3 instructions, all dependent but XOR is fastest.
+// Wins on Haswell laptop x64 AVX
 RTM_FORCE_NOINLINE quatf RTM_SIMD_CALL quat_conjugate_xor(quatf_arg0 input) RTM_NO_EXCEPT
 {
 #if defined(RTM_SSE2_INTRINSICS)
@@ -64,6 +71,8 @@ RTM_FORCE_NOINLINE quatf RTM_SIMD_CALL quat_conjugate_xor(quatf_arg0 input) RTM_
 #endif
 
 #if defined(RTM_NEON_INTRINSICS)
+// Wins on Pixel 3 ARMv7
+// mul/XOR/neg all end up taking 3 instructions, all dependent but neg is fastest.
 RTM_FORCE_NOINLINE quatf RTM_SIMD_CALL quat_conjugate_neg(quatf_arg0 input) RTM_NO_EXCEPT
 {
 	const float32x4_t neg_input = vnegq_f32(input);
