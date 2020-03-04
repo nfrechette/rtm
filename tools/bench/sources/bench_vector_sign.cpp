@@ -28,6 +28,8 @@
 
 using namespace rtm;
 
+// Wins on Ryzen 2990X desktop VS2017 x64 AVX
+// Despite taking 5 instructions unlike sse2 which needs 2, this is consistently faster as well.
 RTM_FORCE_NOINLINE vector4f RTM_SIMD_CALL vector_sign_ref(vector4f_arg0 input) RTM_NO_EXCEPT
 {
 	const mask4i mask = vector_greater_equal(input, vector_zero());
@@ -35,6 +37,7 @@ RTM_FORCE_NOINLINE vector4f RTM_SIMD_CALL vector_sign_ref(vector4f_arg0 input) R
 }
 
 #if defined(RTM_SSE2_INTRINSICS)
+// Wins on Haswell laptop x64 AVX
 RTM_FORCE_NOINLINE vector4f RTM_SIMD_CALL vector_sign_sse2(vector4f_arg0 input) RTM_NO_EXCEPT
 {
 	constexpr __m128 signs = { -0.0f, -0.0f, -0.0f, -0.0f };

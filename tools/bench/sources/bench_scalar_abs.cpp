@@ -28,6 +28,10 @@
 
 using namespace rtm;
 
+// Wins on Ryzen 2990X desktop VS2017 x64 AVX
+// Oddly consistently faster despite the fact that the scalar impl is 3 instructions
+// and converts to/from double while sse2_and is 2 instructions (a needless shuffle + and).
+// It seems the functions are so short that the timing is dominated by something else.
 RTM_FORCE_NOINLINE float RTM_SIMD_CALL scalar_abs_scalar(float input) RTM_NO_EXCEPT
 {
 	return std::fabs(input);

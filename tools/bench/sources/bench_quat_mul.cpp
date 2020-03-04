@@ -108,6 +108,7 @@ RTM_FORCE_NOINLINE quatf RTM_SIMD_CALL quat_mul_fma_xor(quatf_arg0 lhs, quatf_ar
 #endif
 
 #if defined(RTM_SSE2_INTRINSICS)
+// Wins on Haswell laptop x64 AVX
 RTM_FORCE_NOINLINE quatf RTM_SIMD_CALL quat_mul_sse_mul(quatf_arg0 lhs, quatf_arg1 rhs) RTM_NO_EXCEPT
 {
 	constexpr __m128 control_wzyx = { 1.0f,-1.0f, 1.0f,-1.0f };
@@ -140,6 +141,7 @@ RTM_FORCE_NOINLINE quatf RTM_SIMD_CALL quat_mul_sse_mul(quatf_arg0 lhs, quatf_ar
 	return _mm_add_ps(result0, result1);
 }
 
+// Wins on Ryzen 2990X desktop VS2017 x64 AVX
 RTM_FORCE_NOINLINE quatf RTM_SIMD_CALL quat_mul_sse_xor(quatf_arg0 lhs, quatf_arg1 rhs) RTM_NO_EXCEPT
 {
 	constexpr __m128 control_wzyx = { 0.0f,-0.0f, 0.0f,-0.0f };
@@ -174,6 +176,10 @@ RTM_FORCE_NOINLINE quatf RTM_SIMD_CALL quat_mul_sse_xor(quatf_arg0 lhs, quatf_ar
 #endif
 
 #if defined(RTM_NEON_INTRINSICS)
+// Wins on iPad Pro ARM64
+// Wins on Pixel 3 ARM64
+// XOR is slower a bit likely due to pipeline stalls and with ARMV7 the zipping variant doesn't
+// reduce the number of instructions by as much as ARM64.
 RTM_FORCE_NOINLINE quatf RTM_SIMD_CALL quat_mul_neon_mul(quatf_arg0 lhs, quatf_arg1 rhs) RTM_NO_EXCEPT
 {
 	alignas(16) constexpr float control_wzyx_f[4] = { 1.0f, -1.0f, 1.0f, -1.0f };
@@ -239,6 +245,10 @@ RTM_FORCE_NOINLINE quatf RTM_SIMD_CALL quat_mul_neon_xor(quatf_arg0 lhs, quatf_a
 	return vaddq_f32(vreinterpretq_f32_u32(veorq_u32(vreinterpretq_u32_f32(lyrz_lxrz_lwrz_lzrz), control_yxwz)), result1);
 }
 
+// Wins on Pixel 3 ARM64
+// It appears that loading constants is slower than zipping things around.
+// Multiplication is faster than XOR probably because it is fused.
+// This function uses about half the instructions as the scalar impl.
 RTM_FORCE_NOINLINE quatf RTM_SIMD_CALL quat_mul_neon_neg(quatf_arg0 lhs, quatf_arg1 rhs) RTM_NO_EXCEPT
 {
 	const float32x4_t neg_lhs = vnegq_f32(lhs);														// -t.x, -t.y, -t.z, -t.w
