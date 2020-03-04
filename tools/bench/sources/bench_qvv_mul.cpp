@@ -59,6 +59,7 @@ RTM_FORCE_NOINLINE qvvf RTM_SIMD_CALL qvv_mul_ref(qvvf_arg0 lhs, qvvf_arg1 rhs) 
 }
 
 #if defined(RTM_SSE2_INTRINSICS)
+// Wins on Haswell laptop x64 AVX
 // Wins on Ryzen 2990X desktop VS2017 x64 AVX
 // Wins on Ryzen 2990X desktop clang9 x64 AVX
 RTM_FORCE_NOINLINE qvvf RTM_SIMD_CALL qvv_mul_sse2(qvvf_arg0 lhs, qvvf_arg1 rhs) RTM_NO_EXCEPT

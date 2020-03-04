@@ -36,6 +36,8 @@ RTM_FORCE_NOINLINE quatf RTM_SIMD_CALL quat_conjugate_scalar(quatf_arg0 input) R
 	return quat_set(-quat_get_x(input), -quat_get_y(input), -quat_get_z(input), quat_get_w(input));
 }
 
+// Wins on Haswell laptop x64 AVX
+// It seems that on haswell, xor incurs a domain switch penalty and is slower.
 RTM_FORCE_NOINLINE quatf RTM_SIMD_CALL quat_conjugate_mul(quatf_arg0 input) RTM_NO_EXCEPT
 {
 #if defined(RTM_SSE2_INTRINSICS)
@@ -54,7 +56,6 @@ RTM_FORCE_NOINLINE quatf RTM_SIMD_CALL quat_conjugate_mul(quatf_arg0 input) RTM_
 // Wins on iPad Pro ARM64
 // Wins on Pixel 3 ARM64
 // mul/XOR/neg all end up taking 3 instructions, all dependent but XOR is fastest.
-// Wins on Haswell laptop x64 AVX
 // Wins on Ryzen 2990X desktop clang9 x64 AVX
 // Performance is about the same as mul.
 RTM_FORCE_NOINLINE quatf RTM_SIMD_CALL quat_conjugate_xor(quatf_arg0 input) RTM_NO_EXCEPT
