@@ -58,6 +58,8 @@ RTM_FORCE_NOINLINE quatf RTM_SIMD_CALL quat_conjugate_mul(quatf_arg0 input) RTM_
 // mul/XOR/neg all end up taking 3 instructions, all dependent but XOR is fastest.
 // Wins on Ryzen 2990X desktop clang9 x64 AVX
 // Performance is about the same as mul.
+// Wins on Samsung S8 ARM64
+// Same performance as mul/neg
 RTM_FORCE_NOINLINE quatf RTM_SIMD_CALL quat_conjugate_xor(quatf_arg0 input) RTM_NO_EXCEPT
 {
 #if defined(RTM_SSE2_INTRINSICS)
@@ -76,6 +78,8 @@ RTM_FORCE_NOINLINE quatf RTM_SIMD_CALL quat_conjugate_xor(quatf_arg0 input) RTM_
 #if defined(RTM_NEON_INTRINSICS)
 // Wins on Pixel 3 ARMv7
 // mul/XOR/neg all end up taking 3 instructions, all dependent but neg is fastest.
+// Wins on Samsung S8 ARMv7
+// XOR/neg/scalar all have the same performance
 RTM_FORCE_NOINLINE quatf RTM_SIMD_CALL quat_conjugate_neg(quatf_arg0 input) RTM_NO_EXCEPT
 {
 	const float32x4_t neg_input = vnegq_f32(input);

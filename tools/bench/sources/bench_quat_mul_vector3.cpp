@@ -156,6 +156,10 @@ RTM_FORCE_NOINLINE vector4f RTM_SIMD_CALL quat_mul_vector3_sse2(vector4f_arg0 ve
 // Wins on Pixel 3 ARM64
 // Scalar is much faster. The zipping impl isn't faster here unlike quat_mul for ARM64, it doesn't reduce the instruction
 // count by as much.
+// Wins on Samsung S8 ARMv7
+// Dramatically faster
+// Wins on Samsung S8 ARM64
+// Much faster
 RTM_FORCE_NOINLINE vector4f RTM_SIMD_CALL quat_mul_vector3_scalar(vector4f_arg0 vector, quatf_arg1 rotation) RTM_NO_EXCEPT
 {
 #if defined(RTM_NEON_INTRINSICS)

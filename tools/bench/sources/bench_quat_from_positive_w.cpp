@@ -28,6 +28,8 @@
 
 using namespace rtm;
 
+// Wins on Samsung S8 ARMv7
+// Just a bit faster than neon
 RTM_FORCE_NOINLINE quatf RTM_SIMD_CALL quat_from_positive_w_scalar(vector4f_arg0 input) RTM_NO_EXCEPT
 {
 	// Operation order is important here, due to rounding, ((1.0 - (X*X)) - Y*Y) - Z*Z is more accurate than 1.0 - dot3(xyz, xyz)
@@ -116,6 +118,7 @@ RTM_FORCE_NOINLINE quatf RTM_SIMD_CALL quat_from_positive_w_sse2_and2(vector4f_a
 // Same perf as ref
 // Wins on Pixel 3 ARM64
 // Wins on Pixel 3 ARMv7
+// Wins on Samsung S8 ARM64
 RTM_FORCE_NOINLINE quatf RTM_SIMD_CALL quat_from_positive_w_neon(vector4f_arg0 input) RTM_NO_EXCEPT
 {
 	float32x4_t x2y2z2 = vmulq_f32(input, input);
