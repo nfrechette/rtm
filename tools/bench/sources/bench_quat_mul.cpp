@@ -216,6 +216,8 @@ RTM_FORCE_NOINLINE quatf RTM_SIMD_CALL quat_mul_neon_mul(quatf_arg0 lhs, quatf_a
 #endif
 }
 
+// Wins on Samsung S8 ARMv7
+// XOR is a bit faster than scalar
 RTM_FORCE_NOINLINE quatf RTM_SIMD_CALL quat_mul_neon_xor(quatf_arg0 lhs, quatf_arg1 rhs) RTM_NO_EXCEPT
 {
 	alignas(16) constexpr uint32x4_t control_wzyx_f[4] = { 0, 0x80000000U, 0, 0x80000000U };
@@ -251,6 +253,8 @@ RTM_FORCE_NOINLINE quatf RTM_SIMD_CALL quat_mul_neon_xor(quatf_arg0 lhs, quatf_a
 // It appears that loading constants is slower than zipping things around.
 // Multiplication is faster than XOR probably because it is fused.
 // This function uses about half the instructions as the scalar impl.
+// Wins on Samsung S8 ARM64
+// Much faster
 RTM_FORCE_NOINLINE quatf RTM_SIMD_CALL quat_mul_neon_neg(quatf_arg0 lhs, quatf_arg1 rhs) RTM_NO_EXCEPT
 {
 	const float32x4_t neg_lhs = vnegq_f32(lhs);														// -t.x, -t.y, -t.z, -t.w
