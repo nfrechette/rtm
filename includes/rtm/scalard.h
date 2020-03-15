@@ -302,7 +302,7 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	inline bool scalar_near_equal(double lhs, double rhs, double threshold) RTM_NO_EXCEPT
 	{
-		return scalar_abs(lhs - rhs) < threshold;
+		return scalar_abs(lhs - rhs) <= threshold;
 	}
 
 	//////////////////////////////////////////////////////////////////////////
@@ -311,7 +311,7 @@ namespace rtm
 	RTM_DEPRECATED("Always specify a threshold explicitly, to be removed in v2.0")
 	inline bool scalar_near_equal(double lhs, double rhs) RTM_NO_EXCEPT
 	{
-		return scalar_abs(lhs - rhs) < 0.00001;
+		return scalar_abs(lhs - rhs) <= 0.00001;
 	}
 
 	//////////////////////////////////////////////////////////////////////////
@@ -499,7 +499,7 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	inline bool scalar_near_equal(scalard lhs, scalard rhs, scalard threshold) RTM_NO_EXCEPT
 	{
-		return scalar_is_lower(scalar_abs(scalar_sub(lhs, rhs)), threshold);
+		return scalar_is_lower_equal(scalar_abs(scalar_sub(lhs, rhs)), threshold);
 	}
 
 	//////////////////////////////////////////////////////////////////////////
@@ -508,7 +508,7 @@ namespace rtm
 	RTM_DEPRECATED("Always specify a threshold explicitly, to be removed in v2.0")
 	inline bool scalar_near_equal(scalard lhs, scalard rhs) RTM_NO_EXCEPT
 	{
-		return scalar_is_lower(scalar_abs(scalar_sub(lhs, rhs)), scalar_set(0.00001));
+		return scalar_is_lower_equal(scalar_abs(scalar_sub(lhs, rhs)), scalar_set(0.00001));
 	}
 #endif
 }
