@@ -184,6 +184,15 @@ namespace rtm
 	}
 
 	//////////////////////////////////////////////////////////////////////////
+	// Returns the negative multiplication/subtraction of the three inputs: -((s0 * s1) - s2)
+	// This is mathematically equivalent to: s2 - (s0 * s1)
+	//////////////////////////////////////////////////////////////////////////
+	constexpr double scalar_neg_mul_sub(double s0, double s1, double s2) RTM_NO_EXCEPT
+	{
+		return s2 - (s0 * s1);
+	}
+
+	//////////////////////////////////////////////////////////////////////////
 	// Returns the linear interpolation of the two inputs at the specified alpha.
 	//////////////////////////////////////////////////////////////////////////
 	constexpr double scalar_lerp(double start, double end, double alpha) RTM_NO_EXCEPT
@@ -412,6 +421,15 @@ namespace rtm
 	inline scalard RTM_SIMD_CALL scalar_mul_add(scalard s0, scalard s1, scalard s2) RTM_NO_EXCEPT
 	{
 		return _mm_add_sd(_mm_mul_sd(s0, s1), s2);
+	}
+
+	//////////////////////////////////////////////////////////////////////////
+	// Returns the negative multiplication/subtraction of the three inputs: -((s0 * s1) - s2)
+	// This is mathematically equivalent to: s2 - (s0 * s1)
+	//////////////////////////////////////////////////////////////////////////
+	inline scalard RTM_SIMD_CALL scalar_neg_mul_sub(scalard s0, scalard s1, scalard s2) RTM_NO_EXCEPT
+	{
+		return _mm_sub_sd(s2, _mm_mul_sd(s0, s1));
 	}
 
 	//////////////////////////////////////////////////////////////////////////

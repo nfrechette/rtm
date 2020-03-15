@@ -171,6 +171,9 @@ static void test_scalar_impl(const FloatType threshold)
 	CHECK(scalar_near_equal(scalar_mul_add(values[0], values[1], values[2]), (values[0] * values[1]) + values[2], threshold));
 	CHECK(scalar_near_equal(scalar_cast(scalar_mul_add(scalar_set(values[0]), scalar_set(values[1]), scalar_set(values[2]))), (values[0] * values[1]) + values[2], threshold));
 
+	CHECK(scalar_near_equal(scalar_neg_mul_sub(values[0], values[1], values[2]), values[2] - (values[0] * values[1]), threshold));
+	CHECK(scalar_near_equal(scalar_cast(scalar_neg_mul_sub(scalar_set(values[0]), scalar_set(values[1]), scalar_set(values[2]))), values[2] - (values[0] * values[1]), threshold));
+
 	CHECK(scalar_near_equal(scalar_lerp(values[0], values[1], values[2]), ((values[1] - values[0]) * values[2]) + values[0], threshold));
 	CHECK(scalar_near_equal(scalar_cast(scalar_lerp(scalar_set(values[0]), scalar_set(values[1]), values[2])), ((values[1] - values[0]) * values[2]) + values[0], threshold));
 
