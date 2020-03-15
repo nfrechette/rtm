@@ -167,7 +167,7 @@ static void test_scalar_impl(const FloatType threshold)
 	CHECK(scalar_near_equal(scalar_cast(scalar_div(scalar_set(FloatType(1.0)), scalar_set(FloatType(-0.5)))), FloatType(1.0) / FloatType(-0.5), threshold));
 	CHECK(scalar_near_equal(scalar_cast(scalar_div(scalar_set(FloatType(1.0)), scalar_set(FloatType(1.0)))), FloatType(1.0) / FloatType(1.0), threshold));
 
-	const FloatType values[] = { FloatType(-0.5123), FloatType(1.0341), FloatType(-0.54132) };
+	const FloatType values[] = { FloatType(-1.0 / 3.0), FloatType(0.0341), FloatType(-0.54132) };
 	CHECK(scalar_near_equal(scalar_mul_add(values[0], values[1], values[2]), (values[0] * values[1]) + values[2], threshold));
 	CHECK(scalar_near_equal(scalar_cast(scalar_mul_add(scalar_set(values[0]), scalar_set(values[1]), scalar_set(values[2]))), (values[0] * values[1]) + values[2], threshold));
 
@@ -175,7 +175,13 @@ static void test_scalar_impl(const FloatType threshold)
 	CHECK(scalar_near_equal(scalar_cast(scalar_neg_mul_sub(scalar_set(values[0]), scalar_set(values[1]), scalar_set(values[2]))), values[2] - (values[0] * values[1]), threshold));
 
 	CHECK(scalar_near_equal(scalar_lerp(values[0], values[1], values[2]), ((values[1] - values[0]) * values[2]) + values[0], threshold));
-	CHECK(scalar_near_equal(scalar_cast(scalar_lerp(scalar_set(values[0]), scalar_set(values[1]), values[2])), ((values[1] - values[0]) * values[2]) + values[0], threshold));
+	CHECK(scalar_near_equal(scalar_lerp(scalar_set(values[0]), scalar_set(values[1]), scalar_set(values[2])), scalar_set(((values[1] - values[0]) * values[2]) + values[0]), scalar_set(threshold)));
+
+	// Lerp must be stable and return exactly the start when the interpolation alpha is 0.0 and exactly the end when 1.0
+	CHECK(scalar_near_equal(scalar_lerp(values[0], values[1], FloatType(0.0)), values[0], FloatType(0.0)));
+	CHECK(scalar_near_equal(scalar_lerp(values[0], values[1], FloatType(1.0)), values[1], FloatType(0.0)));
+	CHECK(scalar_near_equal(scalar_lerp(scalar_set(values[0]), scalar_set(values[1]), scalar_set(FloatType(0.0))), scalar_set(values[0]), scalar_set(FloatType(0.0))));
+	CHECK(scalar_near_equal(scalar_lerp(scalar_set(values[0]), scalar_set(values[1]), scalar_set(FloatType(1.0))), scalar_set(values[1]), scalar_set(FloatType(0.0))));
 
 	using AngleType = typename float_traits<FloatType>::angle;
 

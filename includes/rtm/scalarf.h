@@ -250,10 +250,15 @@ namespace rtm
 
 	//////////////////////////////////////////////////////////////////////////
 	// Returns the linear interpolation of the two inputs at the specified alpha.
+	// The formula used is: ((1.0 - alpha) * start) + (alpha * end).
+	// Interpolation is stable and will return 'start' when alpha is 0.0 and 'end' when it is 1.0.
+	// This is the same instruction count when FMA is present but it might be slightly slower
+	// due to the extra multiplication compared to: start + (alpha * (end - start)).
 	//////////////////////////////////////////////////////////////////////////
 	constexpr float scalar_lerp(float start, float end, float alpha) RTM_NO_EXCEPT
 	{
-		return ((end - start) * alpha) + start;
+		// ((1.0 - alpha) * start) + (alpha * end) == (start - alpha * start) + (alpha * end)
+		return (start - (alpha * start)) + (alpha * end);
 	}
 
 	//////////////////////////////////////////////////////////////////////////
@@ -499,10 +504,30 @@ namespace rtm
 
 	//////////////////////////////////////////////////////////////////////////
 	// Returns the linear interpolation of the two inputs at the specified alpha.
+	// The formula used is: ((1.0 - alpha) * start) + (alpha * end).
+	// Interpolation is stable and will return 'start' when alpha is 0.0 and 'end' when it is 1.0.
+	// This is the same instruction count when FMA is present but it might be slightly slower
+	// due to the extra multiplication compared to: start + (alpha * (end - start)).
 	//////////////////////////////////////////////////////////////////////////
+	RTM_DEPRECATED("Use a scalarf 'alpha', to be removed in v2.0")
 	inline scalarf RTM_SIMD_CALL scalar_lerp(scalarf_arg0 start, scalarf_arg1 end, float alpha) RTM_NO_EXCEPT
 	{
-		return scalar_mul_add(scalar_sub(end, start), scalar_set(alpha), start);
+		// ((1.0 - alpha) * start) + (alpha * end) == (start - alpha * start) + (alpha * end)
+		const scalarf alpha_ = scalar_set(alpha);
+		return scalar_mul_add(end, alpha_, scalar_neg_mul_sub(start, alpha_, start));
+	}
+
+	//////////////////////////////////////////////////////////////////////////
+	// Returns the linear interpolation of the two inputs at the specified alpha.
+	// The formula used is: ((1.0 - alpha) * start) + (alpha * end).
+	// Interpolation is stable and will return 'start' when alpha is 0.0 and 'end' when it is 1.0.
+	// This is the same instruction count when FMA is present but it might be slightly slower
+	// due to the extra multiplication compared to: start + (alpha * (end - start)).
+	//////////////////////////////////////////////////////////////////////////
+	inline scalarf RTM_SIMD_CALL scalar_lerp(scalarf_arg0 start, scalarf_arg1 end, scalarf_arg2 alpha) RTM_NO_EXCEPT
+	{
+		// ((1.0 - alpha) * start) + (alpha * end) == (start - alpha * start) + (alpha * end)
+		return scalar_mul_add(end, alpha, scalar_neg_mul_sub(start, alpha, start));
 	}
 
 	//////////////////////////////////////////////////////////////////////////
