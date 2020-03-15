@@ -958,10 +958,15 @@ namespace rtm
 
 	//////////////////////////////////////////////////////////////////////////
 	// Per component linear interpolation of the two inputs at the specified alpha.
+	// The formula used is: ((1.0 - alpha) * start) + (alpha * end).
+	// Interpolation is stable and will return 'start' when alpha is 0.0 and 'end' when it is 1.0.
+	// This is the same instruction count when FMA is present but it might be slightly slower
+	// due to the extra multiplication compared to: start + (alpha * (end - start)).
 	//////////////////////////////////////////////////////////////////////////
 	inline vector4f RTM_SIMD_CALL vector_lerp(vector4f_arg0 start, vector4f_arg1 end, float alpha) RTM_NO_EXCEPT
 	{
-		return vector_mul_add(vector_sub(end, start), alpha, start);
+		// ((1.0 - alpha) * start) + (alpha * end) == (start - alpha * start) + (alpha * end)
+		return vector_mul_add(end, alpha, vector_neg_mul_sub(start, alpha, start));
 	}
 
 
