@@ -1051,7 +1051,7 @@ namespace rtm
 	}
 
 	//////////////////////////////////////////////////////////////////////////
-	// Returns true if all 4 components are near equal, otherwise false: all(abs(lhs - rhs) < threshold)
+	// Returns true if all 4 components are near equal, otherwise false: all(abs(lhs - rhs) <= threshold)
 	//////////////////////////////////////////////////////////////////////////
 	inline bool vector_all_near_equal(const vector4d& lhs, const vector4d& rhs, double threshold = 0.00001) RTM_NO_EXCEPT
 	{
@@ -1059,7 +1059,7 @@ namespace rtm
 	}
 
 	//////////////////////////////////////////////////////////////////////////
-	// Returns true if all 2 components are near equal, otherwise false: all(abs(lhs - rhs) < threshold)
+	// Returns true if all 2 components are near equal, otherwise false: all(abs(lhs - rhs) <= threshold)
 	//////////////////////////////////////////////////////////////////////////
 	inline bool vector_all_near_equal2(const vector4d& lhs, const vector4d& rhs, double threshold = 0.00001) RTM_NO_EXCEPT
 	{
@@ -1067,7 +1067,7 @@ namespace rtm
 	}
 
 	//////////////////////////////////////////////////////////////////////////
-	// Returns true if all 3 components are near equal, otherwise false: all(abs(lhs - rhs) < threshold)
+	// Returns true if all 3 components are near equal, otherwise false: all(abs(lhs - rhs) <= threshold)
 	//////////////////////////////////////////////////////////////////////////
 	inline bool vector_all_near_equal3(const vector4d& lhs, const vector4d& rhs, double threshold = 0.00001) RTM_NO_EXCEPT
 	{
@@ -1075,7 +1075,7 @@ namespace rtm
 	}
 
 	//////////////////////////////////////////////////////////////////////////
-	// Returns true if any 4 components are near equal, otherwise false: any(abs(lhs - rhs) < threshold)
+	// Returns true if any 4 components are near equal, otherwise false: any(abs(lhs - rhs) <= threshold)
 	//////////////////////////////////////////////////////////////////////////
 	inline bool vector_any_near_equal(const vector4d& lhs, const vector4d& rhs, double threshold = 0.00001) RTM_NO_EXCEPT
 	{
@@ -1083,7 +1083,7 @@ namespace rtm
 	}
 
 	//////////////////////////////////////////////////////////////////////////
-	// Returns true if any 2 components are near equal, otherwise false: any(abs(lhs - rhs) < threshold)
+	// Returns true if any 2 components are near equal, otherwise false: any(abs(lhs - rhs) <= threshold)
 	//////////////////////////////////////////////////////////////////////////
 	inline bool vector_any_near_equal2(const vector4d& lhs, const vector4d& rhs, double threshold = 0.00001) RTM_NO_EXCEPT
 	{
@@ -1091,7 +1091,7 @@ namespace rtm
 	}
 
 	//////////////////////////////////////////////////////////////////////////
-	// Returns true if any 3 components are near equal, otherwise false: any(abs(lhs - rhs) < threshold)
+	// Returns true if any 3 components are near equal, otherwise false: any(abs(lhs - rhs) <= threshold)
 	//////////////////////////////////////////////////////////////////////////
 	inline bool vector_any_near_equal3(const vector4d& lhs, const vector4d& rhs, double threshold = 0.00001) RTM_NO_EXCEPT
 	{
