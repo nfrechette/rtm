@@ -272,8 +272,8 @@ static void test_quat_impl(const FloatType threshold)
 	}
 
 	{
-		QuatType quat0 = quat_from_euler(degrees(FloatType(30.0)), degrees(FloatType(-45.0)), degrees(FloatType(90.0)));
-		QuatType quat1 = quat_from_euler(degrees(FloatType(45.0)), degrees(FloatType(60.0)), degrees(FloatType(120.0)));
+		QuatType quat0 = quat_normalize(quat_from_euler(degrees(FloatType(30.0)), degrees(FloatType(-45.0)), degrees(FloatType(90.0))));
+		QuatType quat1 = quat_normalize(quat_from_euler(degrees(FloatType(45.0)), degrees(FloatType(60.0)), degrees(FloatType(120.0))));
 
 		QuatType scalar_result = scalar_lerp<QuatType, FloatType>(quat0, quat1, FloatType(0.33));
 
@@ -287,6 +287,11 @@ static void test_quat_impl(const FloatType threshold)
 		CHECK(scalar_near_equal(quat_get_y(quat_lerp(quat0, quat1, FloatType(0.33))), quat_get_y(scalar_result), threshold));
 		CHECK(scalar_near_equal(quat_get_z(quat_lerp(quat0, quat1, FloatType(0.33))), quat_get_z(scalar_result), threshold));
 		CHECK(scalar_near_equal(quat_get_w(quat_lerp(quat0, quat1, FloatType(0.33))), quat_get_w(scalar_result), threshold));
+
+		// Lerp must be stable and return exactly the start when the interpolation alpha is 0.0 and exactly the end when 1.0
+		// When alpha is 0.0, start is always exactly returned but when it is 1.0, the end might be the negated equivalent
+		CHECK(vector_all_near_equal(quat_to_vector(quat_lerp(quat0, quat1, FloatType(0.0))), quat_to_vector(quat0), FloatType(0.0)));
+		CHECK(vector_all_near_equal(quat_to_vector(quat_lerp(quat0, quat1, FloatType(1.0))), quat_to_vector(quat_neg(quat1)), FloatType(0.0)));
 	}
 
 	{

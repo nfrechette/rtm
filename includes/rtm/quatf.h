@@ -552,6 +552,14 @@ namespace rtm
 
 	//////////////////////////////////////////////////////////////////////////
 	// Returns the linear interpolation between start and end for a given alpha value.
+	// The formula used is: ((1.0 - alpha) * start) + (alpha * end).
+	// Interpolation is stable and will return 'start' when 'alpha' is 0.0 and 'end' when it is 1.0.
+	// This is the same instruction count when FMA is present but it might be slightly slower
+	// due to the extra multiplication compared to: start + (alpha * (end - start)).
+	// Note that if 'start' and 'end' are on the opposite ends of the hypersphere, 'end' is negated
+	// before we interpolate. As such, when 'alpha' is 1.0, either 'end' or its negated equivalent
+	// is returned. Furthermore, if 'start' and 'end' aren't exactly normalized, the result might
+	// not match exactly when 'alpha' is 0.0 or 1.0 because we normalize the resulting quaternion.
 	//////////////////////////////////////////////////////////////////////////
 	inline quatf RTM_SIMD_CALL quat_lerp(quatf_arg0 start, quatf_arg1 end, float alpha) RTM_NO_EXCEPT
 	{
@@ -587,7 +595,9 @@ namespace rtm
 		__m128 bias = _mm_and_ps(dot, _mm_set_ps1(-0.0F));
 
 		// Lerp the rotation after applying the bias
-		__m128 interpolated_rotation = _mm_add_ps(_mm_mul_ps(_mm_sub_ps(_mm_xor_ps(end, bias), start), _mm_set_ps1(alpha)), start);
+		// ((1.0 - alpha) * start) + (alpha * (end ^ bias)) == (start - alpha * start) + (alpha * (end ^ bias))
+		__m128 alpha_ = _mm_set_ps1(alpha);
+		__m128 interpolated_rotation = _mm_add_ps(_mm_sub_ps(start, _mm_mul_ps(alpha_, start)), _mm_mul_ps(alpha_, _mm_xor_ps(end, bias)));
 
 		// Now we need to normalize the resulting rotation. We first calculate the
 		// dot product to get the length squared: dot(interpolated_rotation, interpolated_rotation)
@@ -627,7 +637,8 @@ namespace rtm
 		// using a AND/XOR with the bias (same number of instructions)
 		float dot = vector_dot(start, end);
 		float bias = dot >= 0.0F ? 1.0F : -1.0F;
-		vector4f interpolated_rotation = vector_neg_mul_sub(vector_neg_mul_sub(end, bias, start), alpha, start);
+		// ((1.0 - alpha) * start) + (alpha * (end * bias)) == (start - alpha * start) + (alpha * (end * bias))
+		vector4f interpolated_rotation = vector_mul_add(vector_mul(end, bias), alpha, vector_neg_mul_sub(start, alpha, start));
 		// Use sqrt/div/mul to normalize because the sqrt/div are faster than rsqrt
 		float inv_len = 1.0F / scalar_sqrt(vector_length_squared(interpolated_rotation));
 		return vector_mul(interpolated_rotation, inv_len);
@@ -645,8 +656,9 @@ namespace rtm
 		uint32x2_t bias = vand_u32(vreinterpret_u32_f32(x2y2z2w2), vdup_n_u32(0x80000000));
 
 		// Lerp the rotation after applying the bias
+		// ((1.0 - alpha) * start) + (alpha * (end ^ bias)) == (start - alpha * start) + (alpha * (end ^ bias))
 		float32x4_t end_biased = vreinterpretq_f32_u32(veorq_u32(vreinterpretq_u32_f32(end), vcombine_u32(bias, bias)));
-		float32x4_t interpolated_rotation = vmlaq_n_f32(start, vsubq_f32(end_biased, start), alpha);
+		float32x4_t interpolated_rotation = vmlaq_n_f32(vmlsq_n_f32(start, start, alpha), end_biased, alpha);
 
 		// Now we need to normalize the resulting rotation. We first calculate the
 		// dot product to get the length squared: dot(interpolated_rotation, interpolated_rotation)
@@ -667,9 +679,8 @@ namespace rtm
 		vector4f end_vector = quat_to_vector(end);
 		float dot = vector_dot(start_vector, end_vector);
 		float bias = dot >= 0.0F ? 1.0F : -1.0F;
-		vector4f interpolated_rotation = vector_neg_mul_sub(vector_neg_mul_sub(end_vector, bias, start_vector), alpha, start_vector);
-		// TODO: Test with this instead: Rotation = (B * Alpha) + (A * (Bias * (1.f - Alpha)));
-		//vector4f value = vector_add(vector_mul(end_vector, alpha), vector_mul(start_vector, bias * (1.0f - alpha)));
+		// ((1.0 - alpha) * start) + (alpha * (end * bias)) == (start - alpha * start) + (alpha * (end * bias))
+		vector4f interpolated_rotation = vector_mul_add(vector_mul(end_vector, bias), alpha, vector_neg_mul_sub(start_vector, alpha, start_vector));
 		return quat_normalize(vector_to_quat(interpolated_rotation));
 #endif
 	}
