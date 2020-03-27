@@ -49,7 +49,7 @@ namespace rtm
 #if defined(RTM_SSE2_INTRINSICS)
 			inline RTM_SIMD_CALL operator scalarf() const RTM_NO_EXCEPT
 			{
-				return _mm_load1_ps(ptr);
+				return _mm_load_ss(ptr);
 			}
 #endif
 
@@ -72,7 +72,7 @@ namespace rtm
 #if defined(RTM_SSE2_INTRINSICS)
 			inline RTM_SIMD_CALL operator scalard() const RTM_NO_EXCEPT
 			{
-				return _mm_load1_pd(ptr);
+				return _mm_load_sd(ptr);
 			}
 #endif
 

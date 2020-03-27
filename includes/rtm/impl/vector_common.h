@@ -256,7 +256,7 @@ namespace rtm
 				{
 					double data[1];
 					std::memcpy(&data[0], ptr, sizeof(double) * 1);
-					return vector_set(data[0]);
+					return vector_set(data[0], 0.0, 0.0, 0.0);
 				}
 				case vector_unaligned_loader_width::vec2:
 				{
@@ -288,7 +288,7 @@ namespace rtm
 				{
 					float data[1];
 					std::memcpy(&data[0], ptr, sizeof(float) * 1);
-					return vector_set(data[0]);
+					return vector_set(data[0], 0.0F, 0.0F, 0.0F);
 				}
 				case vector_unaligned_loader_width::vec2:
 				{
@@ -529,7 +529,7 @@ namespace rtm
 	}
 
 	//////////////////////////////////////////////////////////////////////////
-	// Loads an unaligned vector1 from memory and leaves the [yzw] components undefined.
+	// Loads an unaligned vector1 from memory and sets the [yzw] components to zero.
 	//////////////////////////////////////////////////////////////////////////
 	constexpr rtm_impl::vector_unaligned_loader<rtm_impl::vector_unaligned_loader_width::vec1> RTM_SIMD_CALL vector_load1(const uint8_t* input) RTM_NO_EXCEPT
 	{
@@ -537,7 +537,7 @@ namespace rtm
 	}
 
 	//////////////////////////////////////////////////////////////////////////
-	// Loads an unaligned vector2 from memory and leaves the [zw] components undefined.
+	// Loads an unaligned vector2 from memory and sets the [zw] components to zero.
 	//////////////////////////////////////////////////////////////////////////
 	constexpr rtm_impl::vector_unaligned_loader<rtm_impl::vector_unaligned_loader_width::vec2> RTM_SIMD_CALL vector_load2(const uint8_t* input) RTM_NO_EXCEPT
 	{
@@ -545,7 +545,7 @@ namespace rtm
 	}
 
 	//////////////////////////////////////////////////////////////////////////
-	// Loads an unaligned vector3 from memory and leaves the [w] component undefined.
+	// Loads an unaligned vector3 from memory and sets the [w] component to zero.
 	//////////////////////////////////////////////////////////////////////////
 	constexpr rtm_impl::vector_unaligned_loader<rtm_impl::vector_unaligned_loader_width::vec3> RTM_SIMD_CALL vector_load3(const uint8_t* input) RTM_NO_EXCEPT
 	{

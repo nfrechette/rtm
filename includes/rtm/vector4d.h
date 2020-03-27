@@ -49,15 +49,15 @@ namespace rtm
 	}
 
 	//////////////////////////////////////////////////////////////////////////
-	// Loads an unaligned vector1 from memory and leaves the [yzw] components undefined.
+	// Loads an unaligned vector1 from memory and sets the [yzw] components to zero.
 	//////////////////////////////////////////////////////////////////////////
 	inline vector4d vector_load1(const double* input) RTM_NO_EXCEPT
 	{
-		return vector_set(input[0]);
+		return vector_set(input[0], 0.0, 0.0, 0.0);
 	}
 
 	//////////////////////////////////////////////////////////////////////////
-	// Loads an unaligned vector2 from memory and leaves the [zw] components undefined.
+	// Loads an unaligned vector2 from memory and sets the [zw] components to zero.
 	//////////////////////////////////////////////////////////////////////////
 	inline vector4d vector_load2(const double* input) RTM_NO_EXCEPT
 	{
@@ -65,7 +65,7 @@ namespace rtm
 	}
 
 	//////////////////////////////////////////////////////////////////////////
-	// Loads an unaligned vector3 from memory and leaves the [w] component undefined.
+	// Loads an unaligned vector3 from memory and sets the [w] component to zero.
 	//////////////////////////////////////////////////////////////////////////
 	inline vector4d vector_load3(const double* input) RTM_NO_EXCEPT
 	{
@@ -81,7 +81,7 @@ namespace rtm
 	}
 
 	//////////////////////////////////////////////////////////////////////////
-	// Loads an unaligned vector2 from memory and leaves the [zw] components undefined.
+	// Loads an unaligned vector2 from memory and sets the [zw] components to zero.
 	//////////////////////////////////////////////////////////////////////////
 	inline vector4d vector_load2(const float2d* input) RTM_NO_EXCEPT
 	{
@@ -89,7 +89,7 @@ namespace rtm
 	}
 
 	//////////////////////////////////////////////////////////////////////////
-	// Loads an unaligned vector3 from memory and leaves the [w] component undefined.
+	// Loads an unaligned vector3 from memory and sets the [w] component to zero.
 	//////////////////////////////////////////////////////////////////////////
 	inline vector4d vector_load3(const float3d* input) RTM_NO_EXCEPT
 	{
