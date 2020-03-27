@@ -152,14 +152,20 @@ void test_vector4_getset_impl()
 	CHECK(vector_get_z((Vector4Type)vector_load(&tmp.values[0])) == tmp.values[2]);
 	CHECK(vector_get_w((Vector4Type)vector_load(&tmp.values[0])) == tmp.values[3]);
 
-	CHECK(vector_get_x((Vector4Type)vector_load1(&tmp.values[0])) == tmp.values[0]);
+	CHECK(vector_get_x((Vector4Type)vector_load1(&tmp.values[1])) == tmp.values[1]);
+	CHECK(vector_get_y((Vector4Type)vector_load1(&tmp.values[1])) == FloatType(0.0));
+	CHECK(vector_get_z((Vector4Type)vector_load1(&tmp.values[1])) == FloatType(0.0));
+	CHECK(vector_get_w((Vector4Type)vector_load1(&tmp.values[1])) == FloatType(0.0));
 
-	CHECK(vector_get_x((Vector4Type)vector_load2(&tmp.values[0])) == tmp.values[0]);
-	CHECK(vector_get_y((Vector4Type)vector_load2(&tmp.values[0])) == tmp.values[1]);
+	CHECK(vector_get_x((Vector4Type)vector_load2(&tmp.values[1])) == tmp.values[1]);
+	CHECK(vector_get_y((Vector4Type)vector_load2(&tmp.values[1])) == tmp.values[2]);
+	CHECK(vector_get_z((Vector4Type)vector_load2(&tmp.values[1])) == FloatType(0.0));
+	CHECK(vector_get_w((Vector4Type)vector_load2(&tmp.values[1])) == FloatType(0.0));
 
-	CHECK(vector_get_x((Vector4Type)vector_load3(&tmp.values[0])) == tmp.values[0]);
-	CHECK(vector_get_y((Vector4Type)vector_load3(&tmp.values[0])) == tmp.values[1]);
-	CHECK(vector_get_z((Vector4Type)vector_load3(&tmp.values[0])) == tmp.values[2]);
+	CHECK(vector_get_x((Vector4Type)vector_load3(&tmp.values[1])) == tmp.values[1]);
+	CHECK(vector_get_y((Vector4Type)vector_load3(&tmp.values[1])) == tmp.values[2]);
+	CHECK(vector_get_z((Vector4Type)vector_load3(&tmp.values[1])) == tmp.values[3]);
+	CHECK(vector_get_w((Vector4Type)vector_load3(&tmp.values[1])) == FloatType(0.0));
 
 	Float2Type tmpf2 = { tmp.values[0], tmp.values[1] };
 	Float3Type tmpf3 = { tmp.values[0], tmp.values[1], tmp.values[2] };
@@ -167,10 +173,13 @@ void test_vector4_getset_impl()
 
 	CHECK(vector_get_x((Vector4Type)vector_load2(&tmpf2)) == tmpf2.x);
 	CHECK(vector_get_y((Vector4Type)vector_load2(&tmpf2)) == tmpf2.y);
+	CHECK(vector_get_z((Vector4Type)vector_load2(&tmpf2)) == FloatType(0.0));
+	CHECK(vector_get_w((Vector4Type)vector_load2(&tmpf2)) == FloatType(0.0));
 
 	CHECK(vector_get_x((Vector4Type)vector_load3(&tmpf3)) == tmpf3.x);
 	CHECK(vector_get_y((Vector4Type)vector_load3(&tmpf3)) == tmpf3.y);
 	CHECK(vector_get_z((Vector4Type)vector_load3(&tmpf3)) == tmpf3.z);
+	CHECK(vector_get_w((Vector4Type)vector_load3(&tmpf3)) == FloatType(0.0));
 
 	CHECK(vector_get_x((Vector4Type)vector_load(&tmpf4)) == tmpf4.x);
 	CHECK(vector_get_y((Vector4Type)vector_load(&tmpf4)) == tmpf4.y);
@@ -183,17 +192,20 @@ void test_vector4_getset_impl()
 	CHECK(vector_get_z((Vector4Type)vector_load(&buffer[1])) == tmp.values[2]);
 	CHECK(vector_get_w((Vector4Type)vector_load(&buffer[1])) == tmp.values[3]);
 
-	CHECK(vector_get_x((Vector4Type)vector_load1(&buffer[1])) == tmp.values[0]);
-	CHECK(vector_get_y((Vector4Type)vector_load1(&buffer[1])) == tmp.values[0]);
-	CHECK(vector_get_z((Vector4Type)vector_load1(&buffer[1])) == tmp.values[0]);
-	CHECK(vector_get_w((Vector4Type)vector_load1(&buffer[1])) == tmp.values[0]);
+	CHECK(vector_get_x((Vector4Type)vector_load1(&buffer[1 + sizeof(FloatType)])) == tmp.values[1]);
+	CHECK(vector_get_y((Vector4Type)vector_load1(&buffer[1 + sizeof(FloatType)])) == FloatType(0.0));
+	CHECK(vector_get_z((Vector4Type)vector_load1(&buffer[1 + sizeof(FloatType)])) == FloatType(0.0));
+	CHECK(vector_get_w((Vector4Type)vector_load1(&buffer[1 + sizeof(FloatType)])) == FloatType(0.0));
 
-	CHECK(vector_get_x((Vector4Type)vector_load2(&buffer[1])) == tmp.values[0]);
-	CHECK(vector_get_y((Vector4Type)vector_load2(&buffer[1])) == tmp.values[1]);
+	CHECK(vector_get_x((Vector4Type)vector_load2(&buffer[1 + sizeof(FloatType)])) == tmp.values[1]);
+	CHECK(vector_get_y((Vector4Type)vector_load2(&buffer[1 + sizeof(FloatType)])) == tmp.values[2]);
+	CHECK(vector_get_z((Vector4Type)vector_load2(&buffer[1 + sizeof(FloatType)])) == FloatType(0.0));
+	CHECK(vector_get_w((Vector4Type)vector_load2(&buffer[1 + sizeof(FloatType)])) == FloatType(0.0));
 
-	CHECK(vector_get_x((Vector4Type)vector_load3(&buffer[1])) == tmp.values[0]);
-	CHECK(vector_get_y((Vector4Type)vector_load3(&buffer[1])) == tmp.values[1]);
-	CHECK(vector_get_z((Vector4Type)vector_load3(&buffer[1])) == tmp.values[2]);
+	CHECK(vector_get_x((Vector4Type)vector_load3(&buffer[1 + sizeof(FloatType)])) == tmp.values[1]);
+	CHECK(vector_get_y((Vector4Type)vector_load3(&buffer[1 + sizeof(FloatType)])) == tmp.values[2]);
+	CHECK(vector_get_z((Vector4Type)vector_load3(&buffer[1 + sizeof(FloatType)])) == tmp.values[3]);
+	CHECK(vector_get_w((Vector4Type)vector_load3(&buffer[1 + sizeof(FloatType)])) == FloatType(0.0));
 
 	CHECK(vector_get_x(quat_to_vector(identity)) == quat_get_x(identity));
 	CHECK(vector_get_y(quat_to_vector(identity)) == quat_get_y(identity));

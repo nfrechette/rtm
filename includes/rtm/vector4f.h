@@ -55,21 +55,21 @@ namespace rtm
 	}
 
 	//////////////////////////////////////////////////////////////////////////
-	// Loads an unaligned vector1 from memory and leaves the [yzw] components undefined.
+	// Loads an unaligned vector1 from memory and sets the [yzw] components to zero.
 	//////////////////////////////////////////////////////////////////////////
 	inline vector4f RTM_SIMD_CALL vector_load1(const float* input) RTM_NO_EXCEPT
 	{
 #if defined(RTM_SSE2_INTRINSICS)
-		return _mm_load_ps1(input);
+		return _mm_load_ss(input);
 #elif defined(RTM_NEON_INTRINSICS)
-		return vld1q_dup_f32(input);
+		return vld1q_lane_f32(input, vdupq_n_f32(0.0F), 0);
 #else
-		return vector_set(input[0]);
+		return vector_set(input[0], 0.0F, 0.0F, 0.0F);
 #endif
 	}
 
 	//////////////////////////////////////////////////////////////////////////
-	// Loads an unaligned vector2 from memory and leaves the [zw] components undefined.
+	// Loads an unaligned vector2 from memory and sets the [zw] components to zero.
 	//////////////////////////////////////////////////////////////////////////
 	inline vector4f RTM_SIMD_CALL vector_load2(const float* input) RTM_NO_EXCEPT
 	{
@@ -77,7 +77,7 @@ namespace rtm
 	}
 
 	//////////////////////////////////////////////////////////////////////////
-	// Loads an unaligned vector3 from memory and leaves the [w] component undefined.
+	// Loads an unaligned vector3 from memory and sets the [w] component to zero.
 	//////////////////////////////////////////////////////////////////////////
 	inline vector4f RTM_SIMD_CALL vector_load3(const float* input) RTM_NO_EXCEPT
 	{
@@ -99,7 +99,7 @@ namespace rtm
 	}
 
 	//////////////////////////////////////////////////////////////////////////
-	// Loads an unaligned vector2 from memory and leaves the [zw] components undefined.
+	// Loads an unaligned vector2 from memory and sets the [zw] components to zero.
 	//////////////////////////////////////////////////////////////////////////
 	inline vector4f RTM_SIMD_CALL vector_load2(const float2f* input) RTM_NO_EXCEPT
 	{
@@ -107,7 +107,7 @@ namespace rtm
 	}
 
 	//////////////////////////////////////////////////////////////////////////
-	// Loads an unaligned vector3 from memory and leaves the [w] component undefined.
+	// Loads an unaligned vector3 from memory and sets the [w] component to zero.
 	//////////////////////////////////////////////////////////////////////////
 	inline vector4f RTM_SIMD_CALL vector_load3(const float3f* input) RTM_NO_EXCEPT
 	{
