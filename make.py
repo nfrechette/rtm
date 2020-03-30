@@ -18,7 +18,7 @@ def parse_argv():
 	target = parser.add_argument_group(title='Target')
 	target.add_argument('-compiler', choices=['vs2015', 'vs2017', 'vs2019', 'vs2019-clang', 'android', 'clang4', 'clang5', 'clang6', 'clang7', 'clang8', 'clang9', 'gcc5', 'gcc6', 'gcc7', 'gcc8', 'gcc9', 'osx', 'ios'], help='Defaults to the host system\'s default compiler')
 	target.add_argument('-config', choices=['Debug', 'Release'], type=str.capitalize)
-	target.add_argument('-cpu', choices=['x86', 'x64', 'arm64'], help='Only supported for Windows, OS X, and Linux; defaults to the host system\'s architecture')
+	target.add_argument('-cpu', choices=['x86', 'x64', 'armv7', 'arm64'], help='Defaults to the host system\'s architecture')
 
 	misc = parser.add_argument_group(title='Miscellaneous')
 	misc.add_argument('-avx', dest='use_avx', action='store_true', help='Compile using AVX instructions on Windows, OS X, and Linux')
@@ -34,7 +34,7 @@ def parse_argv():
 	if not num_threads or num_threads == 0:
 		num_threads = 4
 
-	parser.set_defaults(build=False, clean=False, unit_test=False, compiler=None, config='Release', cpu='x64', use_avx=False, use_avx2=False, use_simd=True, num_threads=num_threads, tests_matching='')
+	parser.set_defaults(build=False, clean=False, unit_test=False, compiler=None, config='Release', cpu=None, use_avx=False, use_avx2=False, use_simd=True, num_threads=num_threads, tests_matching='')
 
 	args = parser.parse_args()
 
@@ -45,7 +45,8 @@ def parse_argv():
 		args.use_avx2 = False
 
 	if args.compiler == 'android':
-		args.cpu = 'armv7-a'
+		if not args.cpu:
+			args.cpu = 'arm64'
 
 		if not platform.system() == 'Windows':
 			print('Android is only supported on Windows')
@@ -55,12 +56,12 @@ def parse_argv():
 			print('AVX and AVX2 are not supported on Android')
 			sys.exit(1)
 
-		if args.unit_test:
-			print('Unit tests cannot run from the command line on Android')
+		if not args.cpu in ['armv7', 'arm64']:
+			print('{} cpu architecture not in supported list [armv7, arm64] for Android'.format(args.cpu))
 			sys.exit(1)
-
-	if args.compiler == 'ios':
-		args.cpu = 'arm64'
+	elif args.compiler == 'ios':
+		if not args.cpu:
+			args.cpu = 'arm64'
 
 		if not platform.system() == 'Darwin':
 			print('iOS is only supported on OS X')
@@ -74,9 +75,20 @@ def parse_argv():
 			print('Unit tests cannot run from the command line on iOS')
 			sys.exit(1)
 
+		if not args.cpu in ['arm64']:
+			print('{} cpu architecture not in supported list [arm64] for iOS'.format(args.cpu))
+			sys.exit(1)
+	else:
+		if not args.cpu:
+			args.cpu = 'x64'
+
 	if args.cpu == 'arm64':
-		if not args.compiler in ['vs2017', 'vs2019', 'ios']:
-			print('ARM64 is only supported with VS2017, VS2019, and iOS')
+		if not args.compiler in ['vs2017', 'vs2019', 'ios', 'android']:
+			print('arm64 is only supported with VS2017, VS2019, Android, and iOS')
+			sys.exit(1)
+	elif args.cpu == 'armv7':
+		if not args.compiler == 'android':
+			print('armv7 is only supported with Android')
 			sys.exit(1)
 
 	if platform.system() == 'Darwin' and args.cpu == 'x86':
@@ -115,7 +127,8 @@ def get_generator(compiler, cpu):
 		elif compiler == 'vs2019' or compiler == 'vs2019-clang':
 			return 'Visual Studio 16 2019'
 		elif compiler == 'android':
-			return 'Visual Studio 14'
+			# For Android, we use the default generator since we don't build with CMake
+			return None
 	elif platform.system() == 'Darwin':
 		if compiler == 'osx' or compiler == 'ios':
 			return 'Xcode'
@@ -143,11 +156,11 @@ def get_architecture(compiler, cpu):
 	# This compiler/cpu pair does not need the architecture switch
 	return None
 
-def get_toolchain(compiler):
+def get_toolchain(compiler, cmake_script_dir):
 	if platform.system() == 'Windows' and compiler == 'android':
-		return 'Toolchain-Android.cmake'
+		return os.path.join(cmake_script_dir, 'Toolchain-Android.cmake')
 	elif platform.system() == 'Darwin' and compiler == 'ios':
-		return 'Toolchain-iOS.cmake'
+		return os.path.join(cmake_script_dir, 'Toolchain-iOS.cmake')
 
 	# No toolchain
 	return None
@@ -198,7 +211,7 @@ def do_generate_solution(cmake_exe, build_dir, cmake_script_dir, args):
 	cpu = args.cpu
 	config = args.config
 
-	if not compiler == None:
+	if compiler:
 		set_compiler_env(compiler, args)
 
 	extra_switches = ['--no-warn-unused-cli']
@@ -222,9 +235,9 @@ def do_generate_solution(cmake_exe, build_dir, cmake_script_dir, args):
 	if not platform.system() == 'Windows':
 		extra_switches.append('-DCMAKE_BUILD_TYPE={}'.format(config.upper()))
 
-	toolchain = get_toolchain(compiler)
-	if not toolchain == None:
-		extra_switches.append('-DCMAKE_TOOLCHAIN_FILE={}'.format(os.path.join(cmake_script_dir, toolchain)))
+	toolchain = get_toolchain(compiler, cmake_script_dir)
+	if toolchain:
+		extra_switches.append('-DCMAKE_TOOLCHAIN_FILE={}'.format(toolchain))
 
 	generator_suffix = ''
 	if compiler == 'vs2019-clang':
@@ -235,7 +248,7 @@ def do_generate_solution(cmake_exe, build_dir, cmake_script_dir, args):
 	print('Generating build files ...')
 	cmake_cmd = '"{}" .. -DCMAKE_INSTALL_PREFIX="{}" {}'.format(cmake_exe, build_dir, ' '.join(extra_switches))
 	cmake_generator = get_generator(compiler, cpu)
-	if cmake_generator == None:
+	if not cmake_generator:
 		print('Using default generator')
 	else:
 		print('Using generator: {} {}'.format(cmake_generator, generator_suffix))
@@ -272,15 +285,39 @@ def do_build(cmake_exe, args):
 	if result != 0:
 		sys.exit(result)
 
-def do_tests(ctest_exe, args):
-	config = args.config
+def do_tests_android(build_dir, args):
+	# Switch our working directory to where we built everything
+	working_dir = os.path.join(build_dir, 'tests', 'main_android')
+	os.chdir(working_dir)
 
-	print('Running unit tests ...')
+	gradlew_exe = os.path.join(working_dir, 'gradlew.bat')
+
+	# We uninstall first and then install
+	if args.config == 'Debug':
+		install_cmd = 'uninstallAll installDebug'
+	elif args.config == 'Release':
+		install_cmd = 'uninstallAll installRelease'
+
+	# Install our app
+	test_cmd = '"{}" {}'.format(gradlew_exe, install_cmd)
+	result = subprocess.call(test_cmd, shell=True)
+	if result != 0:
+		sys.exit(result)
+
+	# Execute through ADB
+	run_cmd = 'adb shell am start -n "com.rtm.unit_tests/com.rtm.unit_tests.MainActivity" -a android.intent.action.MAIN -c android.intent.category.LAUNCHER'
+	result = subprocess.call(run_cmd, shell=True)
+	if result != 0:
+		sys.exit(result)
+
+	# Restore working directory
+	os.chdir(build_dir)
+
+def do_tests_cmake(ctest_exe, args):
 	ctest_cmd = '"{}" --output-on-failure --parallel {}'.format(ctest_exe, args.num_threads)
 
 	if platform.system() == 'Windows' or platform.system() == 'Darwin':
-		ctest_cmd += ' -C {}'.format(config)
-
+		ctest_cmd += ' -C {}'.format(args.config)
 	if args.tests_matching:
 		ctest_cmd += ' --tests-regex {}'.format(args.tests_matching)
 
@@ -288,12 +325,43 @@ def do_tests(ctest_exe, args):
 	if result != 0:
 		sys.exit(result)
 
-def do_bench():
-	if args.compiler == 'ios' or args.compiler == 'android':
-		return	# Not supported on iOS or Android
+def do_tests(build_dir, ctest_exe, args):
+	print('Running unit tests ...')
 
-	print('Running benchmark ...')
+	if args.compiler == 'android':
+		do_tests_android(build_dir, args)
+	else:
+		do_tests_cmake(ctest_exe, args)
 
+def do_bench_android():
+	# Switch our working directory to where we built everything
+	working_dir = os.path.join(build_dir, 'tools', 'bench', 'main_android')
+	os.chdir(working_dir)
+
+	gradlew_exe = os.path.join(working_dir, 'gradlew.bat')
+
+	# We uninstall first and then install
+	if args.config == 'Debug':
+		install_cmd = 'uninstallAll installDebug'
+	elif args.config == 'Release':
+		install_cmd = 'uninstallAll installRelease'
+
+	# Install our app
+	test_cmd = '"{}" {}'.format(gradlew_exe, install_cmd)
+	result = subprocess.call(test_cmd, shell=True)
+	if result != 0:
+		sys.exit(result)
+
+	# Execute through ADB
+	run_cmd = 'adb shell am start -n "com.rtm.benchmark/com.rtm.benchmark.MainActivity" -a android.intent.action.MAIN -c android.intent.category.LAUNCHER'
+	result = subprocess.call(run_cmd, shell=True)
+	if result != 0:
+		sys.exit(result)
+
+	# Restore working directory
+	os.chdir(build_dir)
+
+def do_bench_native():
 	if platform.system() == 'Windows':
 		bench_exe = os.path.join(os.getcwd(), 'bin/rtm_bench.exe')
 	else:
@@ -305,13 +373,20 @@ def do_bench():
 	if result != 0:
 		sys.exit(result)
 
+def do_bench():
+	if args.compiler == 'ios':
+		return	# Not supported on iOS
+
+	print('Running benchmark ...')
+
+	if args.compiler == 'android':
+		do_bench_android()
+	else:
+		do_bench_native()
+
 if __name__ == "__main__":
 	args = parse_argv()
-
 	cmake_exe, ctest_exe = get_cmake_exes()
-	compiler = args.compiler
-	cpu = args.cpu
-	config = args.config
 
 	# Set the RTM_CMAKE_HOME environment variable to point to CMake
 	# otherwise we assume it is already in the user PATH
@@ -332,10 +407,10 @@ if __name__ == "__main__":
 
 	os.chdir(build_dir)
 
-	print('Using config: {}'.format(config))
-	print('Using cpu: {}'.format(cpu))
-	if not compiler == None:
-		print('Using compiler: {}'.format(compiler))
+	print('Using config: {}'.format(args.config))
+	print('Using cpu: {}'.format(args.cpu))
+	if args.compiler:
+		print('Using compiler: {}'.format(args.compiler))
 	print('Using {} threads'.format(args.num_threads))
 
 	do_generate_solution(cmake_exe, build_dir, cmake_script_dir, args)
@@ -344,7 +419,7 @@ if __name__ == "__main__":
 		do_build(cmake_exe, args)
 
 	if args.unit_test:
-		do_tests(ctest_exe, args)
+		do_tests(build_dir, ctest_exe, args)
 
 	if args.bench:
 		do_bench()

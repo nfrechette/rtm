@@ -41,10 +41,6 @@ enable_testing()
 add_subdirectory("${PROJECT_SOURCE_DIR}/tests")
 
 if(BUILD_BENCHMARK_EXE)
-    # Google Benchmark
-    set(BENCHMARK_ENABLE_TESTING OFF CACHE BOOL "No need to run benchmark's tests" FORCE)
-    add_subdirectory("${PROJECT_SOURCE_DIR}/external/benchmark")
-
-    # Our benchmark executable
-    add_subdirectory("${PROJECT_SOURCE_DIR}/tools/bench")
+	# Our benchmark executable
+	add_subdirectory("${PROJECT_SOURCE_DIR}/tools/bench")
 endif()

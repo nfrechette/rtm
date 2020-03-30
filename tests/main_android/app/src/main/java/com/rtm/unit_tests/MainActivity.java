@@ -5,13 +5,15 @@ import android.widget.TextView;
 import android.os.Bundle;
 
 public class MainActivity extends Activity {
+	static {
+		System.loadLibrary("rtm_unit_tests");
+	}
+
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 
 		TextView resultTextView = new TextView(this);
-
-		System.loadLibrary("rtm_unit_tests");
 
 		int numUnitTestCases = getNumUnitTestCases();
 		int numFailed = runUnitTests();

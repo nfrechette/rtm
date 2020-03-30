@@ -29,13 +29,15 @@ import android.widget.TextView;
 import android.os.Bundle;
 
 public class MainActivity extends Activity {
+	static {
+		System.loadLibrary("rtm_bench");
+	}
+
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 
 		TextView resultTextView = new TextView(this);
-
-		System.loadLibrary("rtm_bench");
 
 		int result = runBenchmark();
 
