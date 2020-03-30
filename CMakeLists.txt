@@ -1,5 +1,5 @@
 cmake_minimum_required (VERSION 3.2)
-project(rtm CXX)
+project(rtm NONE)
 
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${PROJECT_SOURCE_DIR}/cmake")
 
@@ -12,6 +12,11 @@ set(USE_AVX2_INSTRUCTIONS false CACHE BOOL "Use AVX2 instructions")
 set(USE_SIMD_INSTRUCTIONS true CACHE BOOL "Use SIMD instructions")
 set(CPU_INSTRUCTION_SET false CACHE STRING "CPU instruction set")
 set(BUILD_BENCHMARK_EXE false CACHE BOOL "Enable the benchmark projects")
+
+if(CMAKE_CONFIGURATION_TYPES)
+	set(CMAKE_CONFIGURATION_TYPES Debug Release)
+	set(CMAKE_CONFIGURATION_TYPES "${CMAKE_CONFIGURATION_TYPES}" CACHE STRING "Reset the configurations to what we need" FORCE)
+endif()
 
 # Grab all of our include files
 file(GLOB_RECURSE RTM_INCLUDE_FILES LIST_DIRECTORIES false
@@ -29,11 +34,7 @@ file(GLOB RTM_ROOT_FILES LIST_DIRECTORIES false
 # Create a dummy target so they show up in the IDE
 add_custom_target(${PROJECT_NAME} SOURCES ${RTM_INCLUDE_FILES} ${RTM_ROOT_FILES})
 
-if(CMAKE_CONFIGURATION_TYPES)
-	set(CMAKE_CONFIGURATION_TYPES Debug Release)
-	set(CMAKE_CONFIGURATION_TYPES "${CMAKE_CONFIGURATION_TYPES}" CACHE STRING "Reset the configurations to what we need" FORCE)
-endif()
-
+# Enable CTest
 enable_testing()
 
 # Add other projects
