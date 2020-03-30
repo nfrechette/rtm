@@ -23,16 +23,9 @@ For *Windows on ARM64*, the steps are identical to *x86 and x64* but you will ne
 
 ### Android
 
-For *Android*, the steps are identical to *Windows, Linux, and OS X* but you also need to install *NVIDIA CodeWorks 1R5* (or higher).
+For *Android*, the steps are identical to *Windows, Linux, and OS X* but you also need to install *Android NDK 21* (or higher). The build uses `gradle` and `-unit_test` as well as `-bench` will deploy and run on the device when executed (make sure that the `adb` executable is in your `PATH` for this to work).
 
-Note that it is not currently possible to run the unit tests with scripts, you will need to run them manually from Visual Studio:
-
-*  Open the Visual Studio solution
-*  Build and run on your device
-
-Note that Android builds have never been tested on an emulator and that if you cannot code sign the APK, you will need to change the project ANT settings to use the debug configuration.
-
-*We currently only support NVIDIA CodeWorks. Contributions welcome to also support the NDK natively with CMake*
+*Android Studio v3.5* can be used to launch and debug. After running *CMake* to build and generate everything, the *Android Studio* projects can be found under the `./build` directory.
 
 Note that running the benchmark on Android can be done but it currently involves a number of manual steps.
 
