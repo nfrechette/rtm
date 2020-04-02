@@ -232,7 +232,7 @@ def do_generate_solution(cmake_exe, build_dir, cmake_script_dir, args):
 	if args.bench:
 		extra_switches.append('-DBUILD_BENCHMARK_EXE:BOOL=true')
 
-	if not platform.system() == 'Windows':
+	if not platform.system() == 'Windows' and not platform.system() == 'Darwin':
 		extra_switches.append('-DCMAKE_BUILD_TYPE={}'.format(config.upper()))
 
 	toolchain = get_toolchain(compiler, cmake_script_dir)
@@ -386,6 +386,7 @@ def do_bench():
 
 if __name__ == "__main__":
 	args = parse_argv()
+
 	cmake_exe, ctest_exe = get_cmake_exes()
 
 	# Set the RTM_CMAKE_HOME environment variable to point to CMake
