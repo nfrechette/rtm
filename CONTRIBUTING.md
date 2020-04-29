@@ -26,4 +26,4 @@ Feature requests are welcome providing that they fit within the project scope. F
 
 A lot of older compilers do not properly support **C++11** and there is no plan to support them. 
 
-If you aren't sure, don't be afraid to reach out by email!
+If you aren't sure, don't be afraid to reach out by email or on discord!
