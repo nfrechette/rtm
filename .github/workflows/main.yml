@@ -30,8 +30,9 @@ jobs:
           key: ${{ runner.os }}-emsdk-build-artifacts-1.39.11
       - name: Build (debug)
         run: python3 make.py -compiler emscripten -config debug -build
-      - name: Unit tests (debug)
-        run: python3 make.py -compiler emscripten -config debug -unit_test
+# Don't run debug unit tests, they are too slow and sometime time out
+#     - name: Unit tests (debug)
+#       run: python3 make.py -compiler emscripten -config debug -unit_test
       - name: Clean
         run: python3 make.py -clean
       - name: Build (release)
