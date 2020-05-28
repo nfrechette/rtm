@@ -69,6 +69,14 @@ static void test_matrix_impl(const FloatType threshold)
 	}
 
 	{
+		QuatType rotation_around_z = quat_from_euler(degrees(FloatType(0.0)), degrees(FloatType(90.0)), degrees(FloatType(0.0)));
+		Matrix3x3Type mtx = matrix_from_rotation(rotation_around_z);
+		CHECK(vector_all_near_equal3(vector_set(FloatType(0.0), FloatType(1.0), FloatType(0.0)), mtx.x_axis, threshold));
+		CHECK(vector_all_near_equal3(vector_set(FloatType(-1.0), FloatType(0.0), FloatType(0.0)), mtx.y_axis, threshold));
+		CHECK(vector_all_near_equal3(vector_set(FloatType(0.0), FloatType(0.0), FloatType(1.0)), mtx.z_axis, threshold));
+	}
+
+	{
 		Matrix3x3Type mtx = matrix_from_scale(vector_set(FloatType(4.0), FloatType(5.0), FloatType(6.0)));
 		CHECK(vector_all_near_equal3(vector_set(FloatType(4.0), FloatType(0.0), FloatType(0.0)), mtx.x_axis, threshold));
 		CHECK(vector_all_near_equal3(vector_set(FloatType(0.0), FloatType(5.0), FloatType(0.0)), mtx.y_axis, threshold));
