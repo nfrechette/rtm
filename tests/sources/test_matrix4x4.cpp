@@ -42,6 +42,7 @@ static void test_matrix_impl(const FloatType threshold)
 	using Matrix4x4Type = typename float_traits<FloatType>::matrix4x4;
 
 	const Matrix4x4Type identity = matrix_identity();
+	const Vector4Type zero = vector_zero();
 
 	{
 		Vector4Type x_axis = vector_set(FloatType(1.0), FloatType(2.0), FloatType(3.0), FloatType(0.0));
@@ -127,6 +128,33 @@ static void test_matrix_impl(const FloatType threshold)
 		CHECK(vector_all_near_equal(vector_set(FloatType(0.0), FloatType(1.0), FloatType(0.0), FloatType(0.0)), result.y_axis, threshold));
 		CHECK(vector_all_near_equal(vector_set(FloatType(0.0), FloatType(0.0), FloatType(1.0), FloatType(0.0)), result.z_axis, threshold));
 		CHECK(vector_all_near_equal(vector_set(FloatType(0.0), FloatType(0.0), FloatType(0.0), FloatType(1.0)), result.w_axis, threshold));
+	}
+
+	{
+		QuatType rotation_around_z = quat_from_euler(degrees(FloatType(0.0)), degrees(FloatType(90.0)), degrees(FloatType(0.0)));
+		Vector4Type translation = vector_set(FloatType(1.0), FloatType(2.0), FloatType(3.0));
+		Vector4Type scale = vector_set(FloatType(4.0), FloatType(5.0), FloatType(6.0));
+		Matrix3x4Type mtx3x4 = matrix_from_qvv(rotation_around_z, translation, scale);
+		mtx3x4.x_axis = vector_set(vector_get_x(mtx3x4.x_axis), vector_get_y(mtx3x4.x_axis), vector_get_z(mtx3x4.x_axis), FloatType(0.0));
+		mtx3x4.y_axis = vector_set(vector_get_x(mtx3x4.y_axis), vector_get_y(mtx3x4.y_axis), vector_get_z(mtx3x4.y_axis), FloatType(0.0));
+		mtx3x4.z_axis = vector_set(vector_get_x(mtx3x4.z_axis), vector_get_y(mtx3x4.z_axis), vector_get_z(mtx3x4.z_axis), FloatType(0.0));
+		mtx3x4.w_axis = vector_set(vector_get_x(mtx3x4.w_axis), vector_get_y(mtx3x4.w_axis), vector_get_z(mtx3x4.w_axis), FloatType(1.0));
+		Matrix4x4Type mtx = matrix_cast(mtx3x4);
+		Matrix4x4Type inv_mtx = matrix_inverse(mtx, mtx);
+		Matrix4x4Type result = matrix_mul(mtx, inv_mtx);
+		CHECK(vector_all_near_equal(vector_set(FloatType(1.0), FloatType(0.0), FloatType(0.0), FloatType(0.0)), result.x_axis, threshold));
+		CHECK(vector_all_near_equal(vector_set(FloatType(0.0), FloatType(1.0), FloatType(0.0), FloatType(0.0)), result.y_axis, threshold));
+		CHECK(vector_all_near_equal(vector_set(FloatType(0.0), FloatType(0.0), FloatType(1.0), FloatType(0.0)), result.z_axis, threshold));
+		CHECK(vector_all_near_equal(vector_set(FloatType(0.0), FloatType(0.0), FloatType(0.0), FloatType(1.0)), result.w_axis, threshold));
+	}
+
+	{
+		Matrix4x4Type mtx = matrix_set(zero, zero, zero, zero);
+		Matrix4x4Type inv_mtx = matrix_inverse(mtx, identity);
+		CHECK(vector_all_near_equal(identity.x_axis, inv_mtx.x_axis, threshold));
+		CHECK(vector_all_near_equal(identity.y_axis, inv_mtx.y_axis, threshold));
+		CHECK(vector_all_near_equal(identity.z_axis, inv_mtx.z_axis, threshold));
+		CHECK(vector_all_near_equal(identity.w_axis, inv_mtx.w_axis, threshold));
 	}
 }
 
