@@ -42,6 +42,7 @@ static void test_matrix_impl(const FloatType threshold)
 	using Matrix3x4Type = typename float_traits<FloatType>::matrix3x4;
 
 	const Matrix3x3Type identity = matrix_identity();
+	const Vector4Type zero = vector_zero();
 
 	{
 		Vector4Type x_axis = vector_set(FloatType(1.0), FloatType(2.0), FloatType(3.0), FloatType(0.0));
@@ -144,6 +145,24 @@ static void test_matrix_impl(const FloatType threshold)
 		CHECK(vector_all_near_equal3(vector_set(FloatType(1.0), FloatType(0.0), FloatType(0.0)), result.x_axis, threshold));
 		CHECK(vector_all_near_equal3(vector_set(FloatType(0.0), FloatType(1.0), FloatType(0.0)), result.y_axis, threshold));
 		CHECK(vector_all_near_equal3(vector_set(FloatType(0.0), FloatType(0.0), FloatType(1.0)), result.z_axis, threshold));
+	}
+
+	{
+		QuatType rotation = quat_from_euler(degrees(FloatType(12.3)), degrees(FloatType(42.8)), degrees(FloatType(33.41)));
+		Matrix3x3Type mtx = matrix_from_quat(rotation);
+		Matrix3x3Type inv_mtx = matrix_inverse(mtx, mtx);
+		Matrix3x3Type result = matrix_mul(mtx, inv_mtx);
+		CHECK(vector_all_near_equal3(vector_set(FloatType(1.0), FloatType(0.0), FloatType(0.0)), result.x_axis, threshold));
+		CHECK(vector_all_near_equal3(vector_set(FloatType(0.0), FloatType(1.0), FloatType(0.0)), result.y_axis, threshold));
+		CHECK(vector_all_near_equal3(vector_set(FloatType(0.0), FloatType(0.0), FloatType(1.0)), result.z_axis, threshold));
+	}
+
+	{
+		Matrix3x3Type mtx = matrix_set(zero, zero, zero);
+		Matrix3x3Type inv_mtx = matrix_inverse(mtx, identity);
+		CHECK(vector_all_near_equal(identity.x_axis, inv_mtx.x_axis, threshold));
+		CHECK(vector_all_near_equal(identity.y_axis, inv_mtx.y_axis, threshold));
+		CHECK(vector_all_near_equal(identity.z_axis, inv_mtx.z_axis, threshold));
 	}
 
 	{
