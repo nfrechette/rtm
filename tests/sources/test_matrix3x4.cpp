@@ -159,7 +159,6 @@ static void test_affine_matrix_impl(const FloatType threshold)
 {
 	using QuatType = typename float_traits<FloatType>::quat;
 	using Vector4Type = typename float_traits<FloatType>::vector4;
-	using QVVType = typename float_traits<FloatType>::qvv;
 	using Matrix3x3Type = typename float_traits<FloatType>::matrix3x3;
 	using Matrix3x4Type = typename float_traits<FloatType>::matrix3x4;
 
