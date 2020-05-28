@@ -34,7 +34,7 @@
 using namespace rtm;
 
 template<typename FloatType>
-static void test_affine_matrix_impl(const FloatType threshold)
+static void test_affine_matrix_setters(const FloatType threshold)
 {
 	using QuatType = typename float_traits<FloatType>::quat;
 	using Vector4Type = typename float_traits<FloatType>::vector4;
@@ -43,7 +43,6 @@ static void test_affine_matrix_impl(const FloatType threshold)
 	using Matrix3x4Type = typename float_traits<FloatType>::matrix3x4;
 
 	const Matrix3x4Type identity = matrix_identity();
-	const Vector4Type zero = vector_zero();
 
 	{
 		Vector4Type x_axis = vector_set(FloatType(1.0), FloatType(2.0), FloatType(3.0), FloatType(0.0));
@@ -153,6 +152,19 @@ static void test_affine_matrix_impl(const FloatType threshold)
 		CHECK(vector_all_near_equal3(matrix_get_axis(mtx2, axis4::z), mtx2.z_axis, threshold));
 		CHECK(vector_all_near_equal3(matrix_get_axis(mtx2, axis4::w), mtx2.w_axis, threshold));
 	}
+}
+
+template<typename FloatType>
+static void test_affine_matrix_impl(const FloatType threshold)
+{
+	using QuatType = typename float_traits<FloatType>::quat;
+	using Vector4Type = typename float_traits<FloatType>::vector4;
+	using QVVType = typename float_traits<FloatType>::qvv;
+	using Matrix3x3Type = typename float_traits<FloatType>::matrix3x3;
+	using Matrix3x4Type = typename float_traits<FloatType>::matrix3x4;
+
+	const Matrix3x4Type identity = matrix_identity();
+	const Vector4Type zero = vector_zero();
 
 	{
 		QuatType rotation_around_z = quat_from_euler(degrees(FloatType(0.0)), degrees(FloatType(90.0)), degrees(FloatType(0.0)));
@@ -270,6 +282,7 @@ static void test_affine_matrix_impl(const FloatType threshold)
 
 TEST_CASE("matrix3x4f math", "[math][matrix3x4]")
 {
+	test_affine_matrix_setters<float>(1.0E-4F);
 	test_affine_matrix_impl<float>(1.0E-4F);
 
 	{
@@ -287,6 +300,7 @@ TEST_CASE("matrix3x4f math", "[math][matrix3x4]")
 
 TEST_CASE("matrix3x4d math", "[math][matrix3x4]")
 {
+	test_affine_matrix_setters<double>(1.0E-4);
 	test_affine_matrix_impl<double>(1.0E-4);
 
 	{
