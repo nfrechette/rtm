@@ -43,6 +43,7 @@ static void test_affine_matrix_impl(const FloatType threshold)
 	using Matrix3x4Type = typename float_traits<FloatType>::matrix3x4;
 
 	const Matrix3x4Type identity = matrix_identity();
+	const Vector4Type zero = vector_zero();
 
 	{
 		Vector4Type x_axis = vector_set(FloatType(1.0), FloatType(2.0), FloatType(3.0), FloatType(0.0));
@@ -198,6 +199,28 @@ static void test_affine_matrix_impl(const FloatType threshold)
 		CHECK(vector_all_near_equal3(vector_set(FloatType(0.0), FloatType(1.0), FloatType(0.0), FloatType(0.0)), result.y_axis, threshold));
 		CHECK(vector_all_near_equal3(vector_set(FloatType(0.0), FloatType(0.0), FloatType(1.0), FloatType(0.0)), result.z_axis, threshold));
 		CHECK(vector_all_near_equal3(vector_set(FloatType(0.0), FloatType(0.0), FloatType(0.0), FloatType(1.0)), result.w_axis, threshold));
+	}
+
+	{
+		QuatType rotation_around_z = quat_from_euler(degrees(FloatType(0.0)), degrees(FloatType(90.0)), degrees(FloatType(0.0)));
+		Vector4Type translation = vector_set(FloatType(1.0), FloatType(2.0), FloatType(3.0));
+		Vector4Type scale = vector_set(FloatType(4.0), FloatType(5.0), FloatType(6.0));
+		Matrix3x4Type mtx = matrix_from_qvv(rotation_around_z, translation, scale);
+		Matrix3x4Type inv_mtx = matrix_inverse(mtx, mtx);
+		Matrix3x4Type result = matrix_mul(mtx, inv_mtx);
+		CHECK(vector_all_near_equal3(vector_set(FloatType(1.0), FloatType(0.0), FloatType(0.0), FloatType(0.0)), result.x_axis, threshold));
+		CHECK(vector_all_near_equal3(vector_set(FloatType(0.0), FloatType(1.0), FloatType(0.0), FloatType(0.0)), result.y_axis, threshold));
+		CHECK(vector_all_near_equal3(vector_set(FloatType(0.0), FloatType(0.0), FloatType(1.0), FloatType(0.0)), result.z_axis, threshold));
+		CHECK(vector_all_near_equal3(vector_set(FloatType(0.0), FloatType(0.0), FloatType(0.0), FloatType(1.0)), result.w_axis, threshold));
+	}
+
+	{
+		Matrix3x4Type mtx = matrix_set(zero, zero, zero, zero);
+		Matrix3x4Type inv_mtx = matrix_inverse(mtx, identity);
+		CHECK(vector_all_near_equal(identity.x_axis, inv_mtx.x_axis, threshold));
+		CHECK(vector_all_near_equal(identity.y_axis, inv_mtx.y_axis, threshold));
+		CHECK(vector_all_near_equal(identity.z_axis, inv_mtx.z_axis, threshold));
+		CHECK(vector_all_near_equal(identity.w_axis, inv_mtx.w_axis, threshold));
 	}
 
 	{
