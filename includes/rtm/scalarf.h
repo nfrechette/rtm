@@ -143,9 +143,11 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	// Returns the reciprocal square root of the input.
 	//////////////////////////////////////////////////////////////////////////
-#if defined(_MSC_VER) && !defined(__clang__) && _MSC_VER >= 1920 && defined(_M_X64) && defined(RTM_SSE2_INTRINSICS) && !defined(RTM_AVX_INTRINSICS)
+#if defined(_MSC_VER) && !defined(__clang__) && _MSC_VER >= 1920 && _MSC_VER < 1925 && defined(_M_X64) && defined(RTM_SSE2_INTRINSICS) && !defined(RTM_AVX_INTRINSICS)
 	// HACK!!! Visual Studio 2019 has a code generation bug triggered by the code below, disable optimizations for now
 	// Bug only happens with x64 SSE2, not with AVX nor with x86
+	// Fixed in 16.5.4, see https://github.com/nfrechette/rtm/issues/35
+	// TODO: Remove this hack sometime in 2022 or later once the fix is old enough that we no longer have to support the hack
 	#pragma optimize("", off)
 #endif
 	inline float RTM_SIMD_CALL scalar_sqrt_reciprocal(float input) RTM_NO_EXCEPT
@@ -172,7 +174,7 @@ namespace rtm
 		return 1.0F / scalar_sqrt(input);
 #endif
 	}
-#if defined(_MSC_VER) && !defined(__clang__) && _MSC_VER >= 1920 && defined(_M_X64) && defined(RTM_SSE2_INTRINSICS) && !defined(RTM_AVX_INTRINSICS)
+#if defined(_MSC_VER) && !defined(__clang__) && _MSC_VER >= 1920 && _MSC_VER < 1925 && defined(_M_X64) && defined(RTM_SSE2_INTRINSICS) && !defined(RTM_AVX_INTRINSICS)
 	// HACK!!! See comment above
 	#pragma optimize("", on)
 #endif
