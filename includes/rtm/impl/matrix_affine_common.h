@@ -115,13 +115,11 @@ namespace rtm
 
 			inline RTM_SIMD_CALL operator matrix3x3() const RTM_NO_EXCEPT
 			{
-				RTM_ASSERT(!vector_any_near_equal3(scale, vector_zero()), "Scale cannot be zero");
 				return matrix3x3{ vector_set(vector_get_x(scale), float_type(0.0), float_type(0.0), float_type(0.0)), vector_set(float_type(0.0), vector_get_y(scale), float_type(0.0), float_type(0.0)), vector_set(float_type(0.0), float_type(0.0), vector_get_z(scale), float_type(0.0)) };
 			}
 
 			inline RTM_SIMD_CALL operator matrix3x4() const RTM_NO_EXCEPT
 			{
-				RTM_ASSERT(!vector_any_near_equal3(scale, vector_zero()), "Scale cannot be zero");
 				return matrix3x4{ vector_set(vector_get_x(scale), float_type(0.0), float_type(0.0), float_type(0.0)), vector_set(float_type(0.0), vector_get_y(scale), float_type(0.0), float_type(0.0)), vector_set(float_type(0.0), float_type(0.0), vector_get_z(scale), float_type(0.0)), vector_zero() };
 			}
 
