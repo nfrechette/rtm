@@ -115,12 +115,20 @@ namespace rtm
 
 			inline RTM_SIMD_CALL operator matrix3x3() const RTM_NO_EXCEPT
 			{
-				return matrix3x3{ vector_set(vector_get_x(scale), float_type(0.0), float_type(0.0), float_type(0.0)), vector_set(float_type(0.0), vector_get_y(scale), float_type(0.0), float_type(0.0)), vector_set(float_type(0.0), float_type(0.0), vector_get_z(scale), float_type(0.0)) };
+				const vector4 zero = vector_zero();
+				const vector4 x_axis = vector_mix<mix4::x, mix4::b, mix4::c, mix4::d>(scale, zero);
+				const vector4 y_axis = vector_mix<mix4::a, mix4::y, mix4::c, mix4::d>(scale, zero);
+				const vector4 z_axis = vector_mix<mix4::a, mix4::b, mix4::z, mix4::d>(scale, zero);
+				return matrix3x3{ x_axis, y_axis, z_axis };
 			}
 
 			inline RTM_SIMD_CALL operator matrix3x4() const RTM_NO_EXCEPT
 			{
-				return matrix3x4{ vector_set(vector_get_x(scale), float_type(0.0), float_type(0.0), float_type(0.0)), vector_set(float_type(0.0), vector_get_y(scale), float_type(0.0), float_type(0.0)), vector_set(float_type(0.0), float_type(0.0), vector_get_z(scale), float_type(0.0)), vector_zero() };
+				const vector4 zero = vector_zero();
+				const vector4 x_axis = vector_mix<mix4::x, mix4::b, mix4::c, mix4::d>(scale, zero);
+				const vector4 y_axis = vector_mix<mix4::a, mix4::y, mix4::c, mix4::d>(scale, zero);
+				const vector4 z_axis = vector_mix<mix4::a, mix4::b, mix4::z, mix4::d>(scale, zero);
+				return matrix3x4{ x_axis, y_axis, z_axis, zero };
 			}
 
 			vector4 scale;
