@@ -37,6 +37,14 @@ RTM_IMPL_FILE_PRAGMA_PUSH
 namespace rtm
 {
 	//////////////////////////////////////////////////////////////////////////
+	// Converts a rotation 3x3 matrix into a 3x4 affine matrix.
+	//////////////////////////////////////////////////////////////////////////
+	inline matrix3x4f RTM_SIMD_CALL matrix_from_rotation(matrix3x3f_arg0 rotation) RTM_NO_EXCEPT
+	{
+		return matrix3x4f{ rotation.x_axis, rotation.y_axis, rotation.z_axis, vector_zero() };
+	}
+
+	//////////////////////////////////////////////////////////////////////////
 	// Converts a translation vector into a 3x4 affine matrix.
 	//////////////////////////////////////////////////////////////////////////
 	inline matrix3x4f RTM_SIMD_CALL matrix_from_translation(vector4f_arg0 translation) RTM_NO_EXCEPT

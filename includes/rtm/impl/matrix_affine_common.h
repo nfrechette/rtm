@@ -284,6 +284,22 @@ namespace rtm
 	}
 
 	//////////////////////////////////////////////////////////////////////////
+	// Converts a rotation quaternion into a 3x3 or 3x4 affine matrix.
+	//////////////////////////////////////////////////////////////////////////
+	constexpr rtm_impl::matrix_from_quat_helper<float> RTM_SIMD_CALL matrix_from_rotation(quatf_arg0 quat) RTM_NO_EXCEPT
+	{
+		return rtm_impl::matrix_from_quat_helper<float>{ quat };
+	}
+
+	//////////////////////////////////////////////////////////////////////////
+	// Converts a rotation quaternion into a 3x3 or 3x4 affine matrix.
+	//////////////////////////////////////////////////////////////////////////
+	constexpr rtm_impl::matrix_from_quat_helper<double> RTM_SIMD_CALL matrix_from_rotation(const quatd& quat) RTM_NO_EXCEPT
+	{
+		return rtm_impl::matrix_from_quat_helper<double>{ quat };
+	}
+
+	//////////////////////////////////////////////////////////////////////////
 	// Converts a 3D scale vector into a 3x3 or 3x4 affine matrix.
 	//////////////////////////////////////////////////////////////////////////
 	constexpr rtm_impl::matrix_from_scale_helper<float> RTM_SIMD_CALL matrix_from_scale(vector4f_arg0 scale) RTM_NO_EXCEPT
