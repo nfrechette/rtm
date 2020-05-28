@@ -877,6 +877,18 @@ namespace rtm
 
 	//////////////////////////////////////////////////////////////////////////
 	// Returns a normalized vector3.
+	// If the length of the input is not finite or zero, the result is undefined.
+	// For a safe alternative, supply a fallback value and a threshold.
+	//////////////////////////////////////////////////////////////////////////
+	inline vector4f RTM_SIMD_CALL vector_normalize3(vector4f_arg0 input) RTM_NO_EXCEPT
+	{
+		// Reciprocal is more accurate to normalize with
+		const float len_sq = vector_length_squared3(input);
+		return vector_mul(input, scalar_sqrt_reciprocal(len_sq));
+	}
+
+	//////////////////////////////////////////////////////////////////////////
+	// Returns a normalized vector3.
 	// If the length of the input is below the supplied threshold, the
 	// fall back value is returned instead.
 	//////////////////////////////////////////////////////////////////////////

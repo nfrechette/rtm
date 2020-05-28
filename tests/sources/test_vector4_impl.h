@@ -440,10 +440,15 @@ void test_vector4_arithmetic_impl(const FloatType threshold)
 	CHECK(scalar_is_equal(vector_distance3_result, scalar_cast(vector_distance3_result_scalar)));
 
 	const Vector4Type scalar_normalize3_result = scalar_normalize3<Vector4Type, FloatType>(test_value0, zero, threshold);
-	const Vector4Type vector_normalize3_result = vector_normalize3(test_value0, zero, threshold);
+	const Vector4Type vector_normalize3_result = vector_normalize3(test_value0);
 	CHECK(scalar_near_equal(vector_get_x(vector_normalize3_result), vector_get_x(scalar_normalize3_result), threshold));
 	CHECK(scalar_near_equal(vector_get_y(vector_normalize3_result), vector_get_y(scalar_normalize3_result), threshold));
 	CHECK(scalar_near_equal(vector_get_z(vector_normalize3_result), vector_get_z(scalar_normalize3_result), threshold));
+
+	const Vector4Type vector_normalize3_result_safe = vector_normalize3(test_value0, zero, threshold);
+	CHECK(scalar_near_equal(vector_get_x(vector_normalize3_result_safe), vector_get_x(scalar_normalize3_result), threshold));
+	CHECK(scalar_near_equal(vector_get_y(vector_normalize3_result_safe), vector_get_y(scalar_normalize3_result), threshold));
+	CHECK(scalar_near_equal(vector_get_z(vector_normalize3_result_safe), vector_get_z(scalar_normalize3_result), threshold));
 
 	const Vector4Type scalar_normalize3_result0 = scalar_normalize3<Vector4Type, FloatType>(zero, zero, threshold);
 	const Vector4Type vector_normalize3_result0 = vector_normalize3(zero, zero, threshold);
