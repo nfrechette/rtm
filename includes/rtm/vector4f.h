@@ -55,7 +55,7 @@ namespace rtm
 	}
 
 	//////////////////////////////////////////////////////////////////////////
-	// Loads an unaligned vector1 from memory and sets the [yzw] components to zero.
+	// Loads an input scalar from memory into the [x] component and sets the [yzw] components to zero.
 	//////////////////////////////////////////////////////////////////////////
 	inline vector4f RTM_SIMD_CALL vector_load1(const float* input) RTM_NO_EXCEPT
 	{
@@ -112,6 +112,22 @@ namespace rtm
 	inline vector4f RTM_SIMD_CALL vector_load3(const float3f* input) RTM_NO_EXCEPT
 	{
 		return vector_set(input->x, input->y, input->z, 0.0F);
+	}
+
+	//////////////////////////////////////////////////////////////////////////
+	// Loads an input scalar from memory into the [xyzw] components.
+	//////////////////////////////////////////////////////////////////////////
+	inline vector4f RTM_SIMD_CALL vector_broadcast(const float* input) RTM_NO_EXCEPT
+	{
+#if defined(RTM_AVX_INTRINSICS)
+		return _mm_broadcast_ss(input);
+#elif defined(RTM_SSE2_INTRINSICS)
+		return _mm_load_ps1(input);
+#elif defined(RTM_NEON_INTRINSICS)
+		return vld1q_dup_f32(input);
+#else
+		return vector_set(*input);
+#endif
 	}
 
 	//////////////////////////////////////////////////////////////////////////
@@ -1487,7 +1503,6 @@ namespace rtm
 	// Replicates the [w] component in all components.
 	//////////////////////////////////////////////////////////////////////////
 	inline vector4f RTM_SIMD_CALL vector_dup_w(vector4f_arg0 input) RTM_NO_EXCEPT { return vector_mix<mix4::w, mix4::w, mix4::w, mix4::w>(input, input); }
-
 
 	//////////////////////////////////////////////////////////////////////////
 	// Miscellaneous
