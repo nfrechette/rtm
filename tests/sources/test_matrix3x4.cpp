@@ -34,6 +34,18 @@
 using namespace rtm;
 
 template<typename FloatType>
+RTM_FORCE_NOINLINE static void test(const FloatType threshold)
+{
+	using QuatType = typename float_traits<FloatType>::quat;
+	using Matrix3x4Type = typename float_traits<FloatType>::matrix3x4;
+
+	QuatType rotation_around_z = quat_from_euler(degrees(FloatType(0.0)), degrees(FloatType(90.0)), degrees(FloatType(0.0)));
+	Matrix3x4Type mtx = matrix_from_quat(rotation_around_z);
+	QuatType rotation = quat_from_matrix(mtx);
+	CHECK(quat_near_equal(rotation_around_z, rotation, threshold));
+}
+
+template<typename FloatType>
 static void test_affine_matrix_impl(const FloatType threshold)
 {
 	using QuatType = typename float_traits<FloatType>::quat;
@@ -154,6 +166,7 @@ static void test_affine_matrix_impl(const FloatType threshold)
 		CHECK(vector_all_near_equal3(matrix_get_axis(mtx2, axis4::w), mtx2.w_axis, threshold));
 	}
 
+	test(threshold);
 	{
 		QuatType rotation_around_z = quat_from_euler(degrees(FloatType(0.0)), degrees(FloatType(90.0)), degrees(FloatType(0.0)));
 		Matrix3x4Type mtx = matrix_from_quat(rotation_around_z);
