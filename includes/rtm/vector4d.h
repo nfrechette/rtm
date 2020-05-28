@@ -102,7 +102,7 @@ namespace rtm
 	inline vector4d vector_broadcast(const double* input) RTM_NO_EXCEPT
 	{
 #if defined(RTM_SSE2_INTRINSICS)
-		const __m128d value = _mm_load_pd1(input);
+		const __m128d value = _mm_load1_pd(input);
 		return vector4d{ value, value };
 #else
 		return vector_set(*input);
