@@ -49,7 +49,7 @@ namespace rtm
 	}
 
 	//////////////////////////////////////////////////////////////////////////
-	// Loads an unaligned vector1 from memory and sets the [yzw] components to zero.
+	// Loads an input scalar from memory into the [x] component and sets the [yzw] components to zero.
 	//////////////////////////////////////////////////////////////////////////
 	inline vector4d vector_load1(const double* input) RTM_NO_EXCEPT
 	{
@@ -94,6 +94,19 @@ namespace rtm
 	inline vector4d vector_load3(const float3d* input) RTM_NO_EXCEPT
 	{
 		return vector_set(input->x, input->y, input->z, 0.0);
+	}
+
+	//////////////////////////////////////////////////////////////////////////
+	// Loads an input scalar from memory into the [xyzw] components.
+	//////////////////////////////////////////////////////////////////////////
+	inline vector4d vector_broadcast(const double* input) RTM_NO_EXCEPT
+	{
+#if defined(RTM_SSE2_INTRINSICS)
+		const __m128d value = _mm_load_pd1(input);
+		return vector4d{ value, value };
+#else
+		return vector_set(*input);
+#endif
 	}
 
 	//////////////////////////////////////////////////////////////////////////

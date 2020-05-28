@@ -207,6 +207,11 @@ void test_vector4_getset_impl()
 	CHECK(vector_get_z((Vector4Type)vector_load3(&buffer[1 + sizeof(FloatType)])) == tmp.values[3]);
 	CHECK(vector_get_w((Vector4Type)vector_load3(&buffer[1 + sizeof(FloatType)])) == FloatType(0.0));
 
+	CHECK(vector_get_x((Vector4Type)vector_broadcast(&tmp.values[0])) == tmp.values[0]);
+	CHECK(vector_get_y((Vector4Type)vector_broadcast(&tmp.values[0])) == tmp.values[0]);
+	CHECK(vector_get_z((Vector4Type)vector_broadcast(&tmp.values[0])) == tmp.values[0]);
+	CHECK(vector_get_w((Vector4Type)vector_broadcast(&tmp.values[0])) == tmp.values[0]);
+
 	CHECK(vector_get_x(quat_to_vector(identity)) == quat_get_x(identity));
 	CHECK(vector_get_y(quat_to_vector(identity)) == quat_get_y(identity));
 	CHECK(vector_get_z(quat_to_vector(identity)) == quat_get_z(identity));
