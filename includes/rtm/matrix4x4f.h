@@ -470,6 +470,15 @@ namespace rtm
 		const vector4f w_axis = vector_mul(vector_set(minor_wx, minor_wy, minor_wz, minor_ww), yw_axis_signs);
 		return matrix4x4f{ x_axis, y_axis, z_axis, w_axis };
 	}
+
+	//////////////////////////////////////////////////////////////////////////
+	// Returns the adjugate of the input matrix.
+	// See: https://en.wikipedia.org/wiki/Adjugate_matrix
+	//////////////////////////////////////////////////////////////////////////
+	inline matrix4x4f RTM_SIMD_CALL matrix_adjugate(matrix4x4f_arg0 input) RTM_NO_EXCEPT
+	{
+		return matrix_transpose(matrix_cofactor(input));
+	}
 }
 
 RTM_IMPL_FILE_PRAGMA_POP

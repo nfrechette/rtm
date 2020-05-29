@@ -353,6 +353,15 @@ namespace rtm
 	}
 
 	//////////////////////////////////////////////////////////////////////////
+	// Returns the adjugate of the input matrix.
+	// See: https://en.wikipedia.org/wiki/Adjugate_matrix
+	//////////////////////////////////////////////////////////////////////////
+	inline matrix3x3f RTM_SIMD_CALL matrix_adjugate(matrix3x3f_arg0 input) RTM_NO_EXCEPT
+	{
+		return matrix_transpose(matrix_cofactor(input));
+	}
+
+	//////////////////////////////////////////////////////////////////////////
 	// Removes the 3D scale from a 3x3 matrix.
 	// Note that if the scaling is 0.0 for a particular axis, the original rotation axis cannot
 	// be recovered trivially and no attempt is done to do so. In theory, we could use the other axes
