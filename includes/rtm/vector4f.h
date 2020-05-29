@@ -763,6 +763,15 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	inline vector4f RTM_SIMD_CALL vector_cross3(vector4f_arg0 lhs, vector4f_arg1 rhs) RTM_NO_EXCEPT
 	{
+#if defined(RTM_SSE2_INTRINSICS)
+		// cross(a, b).zxy = (a * b.yzx) - (a.yzx * b)
+		__m128 lhs_yzx = _mm_shuffle_ps(lhs, lhs, _MM_SHUFFLE(3, 0, 2, 1));
+		__m128 rhs_yzx = _mm_shuffle_ps(rhs, rhs, _MM_SHUFFLE(3, 0, 2, 1));
+		__m128 tmp_zxy = _mm_sub_ps(_mm_mul_ps(lhs, rhs_yzx), _mm_mul_ps(lhs_yzx, rhs));
+
+		// cross(a, b) = ((a * b.yzx) - (a.yzx * b)).yzx
+		return _mm_shuffle_ps(tmp_zxy, tmp_zxy, _MM_SHUFFLE(3, 0, 2, 1));
+#else
 		// cross(a, b) = (a.yzx * b.zxy) - (a.zxy * b.yzx)
 		const float lhs_x = vector_get_x(lhs);
 		const float lhs_y = vector_get_y(lhs);
@@ -771,6 +780,7 @@ namespace rtm
 		const float rhs_y = vector_get_y(rhs);
 		const float rhs_z = vector_get_z(rhs);
 		return vector_set((lhs_y * rhs_z) - (lhs_z * rhs_y), (lhs_z * rhs_x) - (lhs_x * rhs_z), (lhs_x * rhs_y) - (lhs_y * rhs_x));
+#endif
 	}
 
 	//////////////////////////////////////////////////////////////////////////
