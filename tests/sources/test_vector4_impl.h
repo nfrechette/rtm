@@ -146,14 +146,20 @@ void test_vector4_getset_impl()
 	CHECK(scalar_cast(vector_get_z(vector_set(FloatType(0.0), FloatType(2.34), FloatType(-3.12), FloatType(10000.0)))) == FloatType(-3.12));
 	CHECK(scalar_cast(vector_get_w(vector_set(FloatType(0.0), FloatType(2.34), FloatType(-3.12), FloatType(10000.0)))) == FloatType(10000.0));
 
+	CHECK(scalar_cast(vector_get_x(vector_set(scalar_set(FloatType(0.0)), scalar_set(FloatType(2.34)), scalar_set(FloatType(-3.12)), scalar_set(FloatType(10000.0))))) == FloatType(0.0));
+	CHECK(scalar_cast(vector_get_y(vector_set(scalar_set(FloatType(0.0)), scalar_set(FloatType(2.34)), scalar_set(FloatType(-3.12)), scalar_set(FloatType(10000.0))))) == FloatType(2.34));
+	CHECK(scalar_cast(vector_get_z(vector_set(scalar_set(FloatType(0.0)), scalar_set(FloatType(2.34)), scalar_set(FloatType(-3.12)), scalar_set(FloatType(10000.0))))) == FloatType(-3.12));
+	CHECK(scalar_cast(vector_get_w(vector_set(scalar_set(FloatType(0.0)), scalar_set(FloatType(2.34)), scalar_set(FloatType(-3.12)), scalar_set(FloatType(10000.0))))) == FloatType(10000.0));
+
 	CHECK(scalar_cast(vector_get_x(vector_set(FloatType(0.0), FloatType(2.34), FloatType(-3.12)))) == FloatType(0.0));
 	CHECK(scalar_cast(vector_get_y(vector_set(FloatType(0.0), FloatType(2.34), FloatType(-3.12)))) == FloatType(2.34));
 	CHECK(scalar_cast(vector_get_z(vector_set(FloatType(0.0), FloatType(2.34), FloatType(-3.12)))) == FloatType(-3.12));
+	CHECK(scalar_cast(vector_get_w(vector_set(FloatType(0.0), FloatType(2.34), FloatType(-3.12)))) == FloatType(0.0));
 
-	CHECK(scalar_cast(vector_get_x(vector_set(FloatType(-3.12)))) == FloatType(-3.12));
-	CHECK(scalar_cast(vector_get_y(vector_set(FloatType(-3.12)))) == FloatType(-3.12));
-	CHECK(scalar_cast(vector_get_z(vector_set(FloatType(-3.12)))) == FloatType(-3.12));
-	CHECK(scalar_cast(vector_get_w(vector_set(FloatType(-3.12)))) == FloatType(-3.12));
+	CHECK(scalar_cast(vector_get_x(vector_set(scalar_set(FloatType(0.0)), scalar_set(FloatType(2.34)), scalar_set(FloatType(-3.12))))) == FloatType(0.0));
+	CHECK(scalar_cast(vector_get_y(vector_set(scalar_set(FloatType(0.0)), scalar_set(FloatType(2.34)), scalar_set(FloatType(-3.12))))) == FloatType(2.34));
+	CHECK(scalar_cast(vector_get_z(vector_set(scalar_set(FloatType(0.0)), scalar_set(FloatType(2.34)), scalar_set(FloatType(-3.12))))) == FloatType(-3.12));
+	CHECK(scalar_cast(vector_get_w(vector_set(scalar_set(FloatType(0.0)), scalar_set(FloatType(2.34)), scalar_set(FloatType(-3.12))))) == FloatType(0.0));
 
 	CHECK(scalar_cast(vector_get_x(vector_set(FloatType(-3.12)))) == FloatType(-3.12));
 	CHECK(scalar_cast(vector_get_y(vector_set(FloatType(-3.12)))) == FloatType(-3.12));
