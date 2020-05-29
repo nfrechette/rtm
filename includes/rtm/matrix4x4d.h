@@ -367,9 +367,6 @@ namespace rtm
 		c6 = vector_neg_mul_sub(v03, v13, c6);
 
 		vector4d x_axis = vector_mix<mix4::x, mix4::b, mix4::z, mix4::d>(c0, c1);
-		vector4d y_axis = vector_mix<mix4::x, mix4::b, mix4::z, mix4::d>(c2, c3);
-		vector4d z_axis = vector_mix<mix4::x, mix4::b, mix4::z, mix4::d>(c4, c5);
-		vector4d w_axis = vector_mix<mix4::x, mix4::b, mix4::z, mix4::d>(c6, c7);
 
 		return vector_dot_as_scalar(x_axis, input_transposed.x_axis);
 	}
