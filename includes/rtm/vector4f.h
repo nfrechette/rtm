@@ -216,16 +216,15 @@ namespace rtm
 	template<mix4 component>
 	inline float RTM_SIMD_CALL vector_get_component(vector4f_arg0 input) RTM_NO_EXCEPT
 	{
-		switch (mix4(int(component) % 4))
-		{
-		case mix4::x: return vector_get_x(input);
-		case mix4::y: return vector_get_y(input);
-		case mix4::z: return vector_get_z(input);
-		case mix4::w: return vector_get_w(input);
-		default:
-			RTM_ASSERT(false, "Invalid component");
-			return 0.0F;
-		}
+		const mix4 xyzw = mix4(int(component) % 4);
+		if (rtm_impl::static_condition<xyzw == mix4::x>::test())
+			return vector_get_x(input);
+		else if (rtm_impl::static_condition<xyzw == mix4::y>::test())
+			return vector_get_y(input);
+		else if (rtm_impl::static_condition<xyzw == mix4::z>::test())
+			return vector_get_z(input);
+		else
+			return vector_get_w(input);
 	}
 
 	//////////////////////////////////////////////////////////////////////////
@@ -233,16 +232,15 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	inline float RTM_SIMD_CALL vector_get_component(vector4f_arg0 input, mix4 component) RTM_NO_EXCEPT
 	{
-		switch (mix4(int(component) % 4))
-		{
-		case mix4::x: return vector_get_x(input);
-		case mix4::y: return vector_get_y(input);
-		case mix4::z: return vector_get_z(input);
-		case mix4::w: return vector_get_w(input);
-		default:
-			RTM_ASSERT(false, "Invalid component");
-			return 0.0F;
-		}
+		const mix4 xyzw = mix4(int(component) % 4);
+		if (xyzw == mix4::x)
+			return vector_get_x(input);
+		else if (xyzw == mix4::y)
+			return vector_get_y(input);
+		else if (xyzw == mix4::z)
+			return vector_get_z(input);
+		else
+			return vector_get_w(input);
 	}
 
 	//////////////////////////////////////////////////////////////////////////
