@@ -137,6 +137,11 @@ void test_vector4_getset_impl()
 	CHECK(vector_get_z(vector_set(FloatType(-3.12))) == FloatType(-3.12));
 	CHECK(vector_get_w(vector_set(FloatType(-3.12))) == FloatType(-3.12));
 
+	CHECK(scalar_cast(vector_get_x(vector_set(FloatType(-3.12)))) == FloatType(-3.12));
+	CHECK(scalar_cast(vector_get_y(vector_set(FloatType(-3.12)))) == FloatType(-3.12));
+	CHECK(scalar_cast(vector_get_z(vector_set(FloatType(-3.12)))) == FloatType(-3.12));
+	CHECK(scalar_cast(vector_get_w(vector_set(FloatType(-3.12)))) == FloatType(-3.12));
+
 	CHECK(vector_get_x(vector_set(scalar_set(FloatType(-3.12)))) == FloatType(-3.12));
 	CHECK(vector_get_y(vector_set(scalar_set(FloatType(-3.12)))) == FloatType(-3.12));
 	CHECK(vector_get_z(vector_set(scalar_set(FloatType(-3.12)))) == FloatType(-3.12));

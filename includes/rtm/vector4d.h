@@ -135,52 +135,156 @@ namespace rtm
 #endif
 	}
 
+	namespace rtm_impl
+	{
+		//////////////////////////////////////////////////////////////////////////
+		// This is a helper struct to allow a single consistent API between
+		// various vector types when the semantics are identical but the return
+		// type differs. Implicit coercion is used to return the desired value
+		// at the call site.
+		//////////////////////////////////////////////////////////////////////////
+		struct vector4d_vector_get_x
+		{
+			inline RTM_SIMD_CALL operator double() const RTM_NO_EXCEPT
+			{
+#if defined(RTM_SSE2_INTRINSICS)
+				return _mm_cvtsd_f64(input.xy);
+#else
+				return input.x;
+#endif
+			}
+
+#if defined(RTM_SSE2_INTRINSICS)
+			inline RTM_SIMD_CALL operator scalard() const RTM_NO_EXCEPT
+			{
+				return input.xy;
+			}
+#endif
+
+			vector4d input;
+		};
+	}
+
 	//////////////////////////////////////////////////////////////////////////
 	// Returns the vector4 [x] component.
 	//////////////////////////////////////////////////////////////////////////
-	inline double vector_get_x(const vector4d& input) RTM_NO_EXCEPT
+	constexpr rtm_impl::vector4d_vector_get_x vector_get_x(const vector4d& input) RTM_NO_EXCEPT
 	{
+		return rtm_impl::vector4d_vector_get_x{ input };
+	}
+
+	namespace rtm_impl
+	{
+		//////////////////////////////////////////////////////////////////////////
+		// This is a helper struct to allow a single consistent API between
+		// various vector types when the semantics are identical but the return
+		// type differs. Implicit coercion is used to return the desired value
+		// at the call site.
+		//////////////////////////////////////////////////////////////////////////
+		struct vector4d_vector_get_y
+		{
+			inline RTM_SIMD_CALL operator double() const RTM_NO_EXCEPT
+			{
 #if defined(RTM_SSE2_INTRINSICS)
-		return _mm_cvtsd_f64(input.xy);
+				return _mm_cvtsd_f64(_mm_shuffle_pd(input.xy, input.xy, 1));
 #else
-		return input.x;
+				return input.y;
 #endif
+			}
+
+#if defined(RTM_SSE2_INTRINSICS)
+			inline RTM_SIMD_CALL operator scalard() const RTM_NO_EXCEPT
+			{
+				return _mm_shuffle_pd(input.xy, input.xy, 1);
+			}
+#endif
+
+			vector4d input;
+		};
 	}
 
 	//////////////////////////////////////////////////////////////////////////
 	// Returns the vector4 [y] component.
 	//////////////////////////////////////////////////////////////////////////
-	inline double vector_get_y(const vector4d& input) RTM_NO_EXCEPT
+	constexpr rtm_impl::vector4d_vector_get_y vector_get_y(const vector4d& input) RTM_NO_EXCEPT
 	{
+		return rtm_impl::vector4d_vector_get_y{ input };
+	}
+
+	namespace rtm_impl
+	{
+		//////////////////////////////////////////////////////////////////////////
+		// This is a helper struct to allow a single consistent API between
+		// various vector types when the semantics are identical but the return
+		// type differs. Implicit coercion is used to return the desired value
+		// at the call site.
+		//////////////////////////////////////////////////////////////////////////
+		struct vector4d_vector_get_z
+		{
+			inline RTM_SIMD_CALL operator double() const RTM_NO_EXCEPT
+			{
 #if defined(RTM_SSE2_INTRINSICS)
-		return _mm_cvtsd_f64(_mm_shuffle_pd(input.xy, input.xy, 1));
+				return _mm_cvtsd_f64(input.zw);
 #else
-		return input.y;
+				return input.z;
 #endif
+			}
+
+#if defined(RTM_SSE2_INTRINSICS)
+			inline RTM_SIMD_CALL operator scalard() const RTM_NO_EXCEPT
+			{
+				return input.zw;
+			}
+#endif
+
+			vector4d input;
+		};
 	}
 
 	//////////////////////////////////////////////////////////////////////////
 	// Returns the vector4 [z] component.
 	//////////////////////////////////////////////////////////////////////////
-	inline double vector_get_z(const vector4d& input) RTM_NO_EXCEPT
+	constexpr rtm_impl::vector4d_vector_get_z vector_get_z(const vector4d& input) RTM_NO_EXCEPT
 	{
+		return rtm_impl::vector4d_vector_get_z{ input };
+	}
+
+	namespace rtm_impl
+	{
+		//////////////////////////////////////////////////////////////////////////
+		// This is a helper struct to allow a single consistent API between
+		// various vector types when the semantics are identical but the return
+		// type differs. Implicit coercion is used to return the desired value
+		// at the call site.
+		//////////////////////////////////////////////////////////////////////////
+		struct vector4d_vector_get_w
+		{
+			inline RTM_SIMD_CALL operator double() const RTM_NO_EXCEPT
+			{
 #if defined(RTM_SSE2_INTRINSICS)
-		return _mm_cvtsd_f64(input.zw);
+				return _mm_cvtsd_f64(_mm_shuffle_pd(input.zw, input.zw, 1));
 #else
-		return input.z;
+				return input.w;
 #endif
+			}
+
+#if defined(RTM_SSE2_INTRINSICS)
+			inline RTM_SIMD_CALL operator scalard() const RTM_NO_EXCEPT
+			{
+				return _mm_shuffle_pd(input.zw, input.zw, 1);
+			}
+#endif
+
+			vector4d input;
+		};
 	}
 
 	//////////////////////////////////////////////////////////////////////////
 	// Returns the vector4 [w] component.
 	//////////////////////////////////////////////////////////////////////////
-	inline double vector_get_w(const vector4d& input) RTM_NO_EXCEPT
+	constexpr rtm_impl::vector4d_vector_get_w vector_get_w(const vector4d& input) RTM_NO_EXCEPT
 	{
-#if defined(RTM_SSE2_INTRINSICS)
-		return _mm_cvtsd_f64(_mm_shuffle_pd(input.zw, input.zw, 1));
-#else
-		return input.w;
-#endif
+		return rtm_impl::vector4d_vector_get_w{ input };
 	}
 
 	//////////////////////////////////////////////////////////////////////////
