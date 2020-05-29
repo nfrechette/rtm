@@ -340,6 +340,9 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	// Returns the cofactor matrix of the input 3x3 matrix.
 	// See: https://en.wikipedia.org/wiki/Minor_(linear_algebra)#Cofactor_expansion_of_the_determinant
+	// The proper way to transform a normal by a matrix with non-uniform scale
+	// is to multiply the normal with the cofactor matrix.
+	// See: https://github.com/graphitemaster/normals_revisited
 	//////////////////////////////////////////////////////////////////////////
 	inline matrix3x3f RTM_SIMD_CALL matrix_cofactor(matrix3x3f_arg0 input) RTM_NO_EXCEPT
 	{
