@@ -360,11 +360,8 @@ namespace rtm
 
 		vector4f c1 = vector_neg_mul_sub(v00, v10, c0);
 		c0 = vector_mul_add(v00, v10, c0);
-		vector4f c3 = vector_mul_add(v01, v11, c2);
 		c2 = vector_neg_mul_sub(v01, v11, c2);
-		vector4f c5 = vector_neg_mul_sub(v02, v12, c4);
 		c4 = vector_mul_add(v02, v12, c4);
-		vector4f c7 = vector_mul_add(v03, v13, c6);
 		c6 = vector_neg_mul_sub(v03, v13, c6);
 
 		vector4f x_axis = vector_mix<mix4::x, mix4::b, mix4::z, mix4::d>(c0, c1);
