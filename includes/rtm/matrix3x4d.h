@@ -395,6 +395,33 @@ namespace rtm
 	}
 
 	//////////////////////////////////////////////////////////////////////////
+	// Returns the cofactor matrix of the 3x3 rotation/scale part of the input 3x4 matrix.
+	// See: https://en.wikipedia.org/wiki/Minor_(linear_algebra)#Cofactor_expansion_of_the_determinant
+	//////////////////////////////////////////////////////////////////////////
+	inline matrix3x3d matrix_cofactor(const matrix3x4d& input) RTM_NO_EXCEPT
+	{
+		const scalard minor_xx = matrix_minor(input, axis3::x, axis3::x);
+		const scalard minor_xy = matrix_minor(input, axis3::x, axis3::y);
+		const scalard minor_xz = matrix_minor(input, axis3::x, axis3::z);
+
+		const scalard minor_yx = matrix_minor(input, axis3::y, axis3::x);
+		const scalard minor_yy = matrix_minor(input, axis3::y, axis3::y);
+		const scalard minor_yz = matrix_minor(input, axis3::y, axis3::z);
+
+		const scalard minor_zx = matrix_minor(input, axis3::z, axis3::x);
+		const scalard minor_zy = matrix_minor(input, axis3::z, axis3::y);
+		const scalard minor_zz = matrix_minor(input, axis3::z, axis3::z);
+
+		const vector4d xz_axis_signs = vector_set(1.0, -1.0, 1.0, -1.0);
+		const vector4d yw_axis_signs = vector_set(-1.0, 1.0, -1.0, 1.0);
+
+		const vector4d x_axis = vector_mul(vector_set(minor_xx, minor_xy, minor_xz, minor_xz), xz_axis_signs);
+		const vector4d y_axis = vector_mul(vector_set(minor_yx, minor_yy, minor_yz, minor_yz), yw_axis_signs);
+		const vector4d z_axis = vector_mul(vector_set(minor_zx, minor_zy, minor_zz, minor_zz), xz_axis_signs);
+		return matrix3x3d{ x_axis, y_axis, z_axis };
+	}
+
+	//////////////////////////////////////////////////////////////////////////
 	// Removes the 3D scale from a 3x4 affine matrix.
 	// Note that if the scaling is 0.0 for a particular axis, the original rotation axis cannot
 	// be recovered trivially and no attempt is done to do so. In theory, we could use the other axes

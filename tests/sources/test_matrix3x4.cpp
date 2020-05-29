@@ -273,6 +273,7 @@ static void test_affine_matrix_misc(const FloatType threshold)
 {
 	using QuatType = typename float_traits<FloatType>::quat;
 	using Vector4Type = typename float_traits<FloatType>::vector4;
+	using Matrix3x3Type = typename float_traits<FloatType>::matrix3x3;
 	using Matrix3x4Type = typename float_traits<FloatType>::matrix3x4;
 
 	{
@@ -329,6 +330,35 @@ static void test_affine_matrix_misc(const FloatType threshold)
 		CHECK(scalar_near_equal(det_zy, FloatType(39.085), threshold));
 		FloatType det_zz = scalar_cast(matrix_minor(mtx, axis3::z, axis3::z));
 		CHECK(scalar_near_equal(det_zz, FloatType(41.4168), threshold));
+	}
+
+	{
+		Vector4Type x_axis = vector_set(FloatType(5.62565), FloatType(7.90751), FloatType(4.37048), FloatType(99999.9999));
+		Vector4Type y_axis = vector_set(FloatType(0.36345), FloatType(7.87300), FloatType(7.23000), FloatType(99999.9999));
+		Vector4Type z_axis = vector_set(FloatType(8.06413), FloatType(3.91970), FloatType(8.48928), FloatType(99999.9999));
+		Matrix3x4Type mtx = matrix_set(x_axis, y_axis, z_axis, x_axis);
+		Matrix3x3Type cof = matrix_cofactor(mtx);
+
+		FloatType cof_xx = scalar_cast(vector_get_x(cof.x_axis));
+		CHECK(scalar_near_equal(cof_xx, FloatType(38.4967), threshold));
+		FloatType cof_xy = scalar_cast(vector_get_y(cof.x_axis));
+		CHECK(scalar_near_equal(cof_xy, FloatType(55.2182), threshold));
+		FloatType cof_xz = scalar_cast(vector_get_z(cof.x_axis));
+		CHECK(scalar_near_equal(cof_xz, FloatType(-62.0643), threshold));
+
+		FloatType cof_yx = scalar_cast(vector_get_x(cof.y_axis));
+		CHECK(scalar_near_equal(cof_yx, FloatType(-49.9981), threshold));
+		FloatType cof_yy = scalar_cast(vector_get_y(cof.y_axis));
+		CHECK(scalar_near_equal(cof_yy, FloatType(12.5136), threshold));
+		FloatType cof_yz = scalar_cast(vector_get_z(cof.y_axis));
+		CHECK(scalar_near_equal(cof_yz, FloatType(41.7163), threshold));
+
+		FloatType cof_zx = scalar_cast(vector_get_x(cof.z_axis));
+		CHECK(scalar_near_equal(cof_zx, FloatType(22.7625), threshold));
+		FloatType cof_zy = scalar_cast(vector_get_y(cof.z_axis));
+		CHECK(scalar_near_equal(cof_zy, FloatType(-39.085), threshold));
+		FloatType cof_zz = scalar_cast(vector_get_z(cof.z_axis));
+		CHECK(scalar_near_equal(cof_zz, FloatType(41.4168), threshold));
 	}
 }
 

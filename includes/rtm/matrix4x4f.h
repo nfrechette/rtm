@@ -434,6 +434,42 @@ namespace rtm
 		const matrix3x3f mtx = matrix_set(row0, row1, row2);
 		return matrix_determinant(mtx);
 	}
+
+	//////////////////////////////////////////////////////////////////////////
+	// Returns the cofactor matrix of the input 4x4 matrix.
+	// See: https://en.wikipedia.org/wiki/Minor_(linear_algebra)#Cofactor_expansion_of_the_determinant
+	//////////////////////////////////////////////////////////////////////////
+	inline matrix4x4f RTM_SIMD_CALL matrix_cofactor(matrix4x4f_arg0 input) RTM_NO_EXCEPT
+	{
+		const scalarf minor_xx = matrix_minor(input, axis4::x, axis4::x);
+		const scalarf minor_xy = matrix_minor(input, axis4::x, axis4::y);
+		const scalarf minor_xz = matrix_minor(input, axis4::x, axis4::z);
+		const scalarf minor_xw = matrix_minor(input, axis4::x, axis4::w);
+
+		const scalarf minor_yx = matrix_minor(input, axis4::y, axis4::x);
+		const scalarf minor_yy = matrix_minor(input, axis4::y, axis4::y);
+		const scalarf minor_yz = matrix_minor(input, axis4::y, axis4::z);
+		const scalarf minor_yw = matrix_minor(input, axis4::y, axis4::w);
+
+		const scalarf minor_zx = matrix_minor(input, axis4::z, axis4::x);
+		const scalarf minor_zy = matrix_minor(input, axis4::z, axis4::y);
+		const scalarf minor_zz = matrix_minor(input, axis4::z, axis4::z);
+		const scalarf minor_zw = matrix_minor(input, axis4::z, axis4::w);
+
+		const scalarf minor_wx = matrix_minor(input, axis4::w, axis4::x);
+		const scalarf minor_wy = matrix_minor(input, axis4::w, axis4::y);
+		const scalarf minor_wz = matrix_minor(input, axis4::w, axis4::z);
+		const scalarf minor_ww = matrix_minor(input, axis4::w, axis4::w);
+
+		const vector4f xz_axis_signs = vector_set(1.0F, -1.0F, 1.0F, -1.0F);
+		const vector4f yw_axis_signs = vector_set(-1.0F, 1.0F, -1.0F, 1.0F);
+
+		const vector4f x_axis = vector_mul(vector_set(minor_xx, minor_xy, minor_xz, minor_xw), xz_axis_signs);
+		const vector4f y_axis = vector_mul(vector_set(minor_yx, minor_yy, minor_yz, minor_yw), yw_axis_signs);
+		const vector4f z_axis = vector_mul(vector_set(minor_zx, minor_zy, minor_zz, minor_zw), xz_axis_signs);
+		const vector4f w_axis = vector_mul(vector_set(minor_wx, minor_wy, minor_wz, minor_ww), yw_axis_signs);
+		return matrix4x4f{ x_axis, y_axis, z_axis, w_axis };
+	}
 }
 
 RTM_IMPL_FILE_PRAGMA_POP
