@@ -93,7 +93,10 @@ namespace rtm
 
 	//////////////////////////////////////////////////////////////////////////
 	// Multiplies a 3x3 matrix and a 3D vector.
-	// Multiplication order is as follow: world_position = matrix_mul(local_position, local_to_world)
+	// Multiplication order is as follow: world_position = matrix_mul(local_vector, local_to_world)
+	// Note: The proper way to transform a normal by a matrix with non-uniform scale
+	// is to multiply the normal with the cofactor matrix.
+	// See: https://github.com/graphitemaster/normals_revisited
 	//////////////////////////////////////////////////////////////////////////
 	inline vector4d RTM_SIMD_CALL matrix_mul_vector3(const vector4d& vec3, const matrix3x3d& mtx) RTM_NO_EXCEPT
 	{
@@ -340,7 +343,7 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	// Returns the cofactor matrix of the input 3x3 matrix.
 	// See: https://en.wikipedia.org/wiki/Minor_(linear_algebra)#Cofactor_expansion_of_the_determinant
-	// The proper way to transform a normal by a matrix with non-uniform scale
+	// Note: The proper way to transform a normal by a matrix with non-uniform scale
 	// is to multiply the normal with the cofactor matrix.
 	// See: https://github.com/graphitemaster/normals_revisited
 	//////////////////////////////////////////////////////////////////////////
