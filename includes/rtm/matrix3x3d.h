@@ -37,6 +37,15 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	// Returns the desired 3x3 matrix axis.
 	//////////////////////////////////////////////////////////////////////////
+	constexpr const vector4d& matrix_get_axis(const matrix3x3d& input, axis3 axis) RTM_NO_EXCEPT
+	{
+		return axis == axis3::x ? input.x_axis : (axis == axis3::y ? input.y_axis : input.z_axis);
+	}
+
+	//////////////////////////////////////////////////////////////////////////
+	// Returns the desired 3x3 matrix axis.
+	//////////////////////////////////////////////////////////////////////////
+	RTM_DEPRECATED("Use matrix_get_axis with an axis3 instead, to be removed in v2.0")
 	inline const vector4d& matrix_get_axis(const matrix3x3d& input, axis4 axis) RTM_NO_EXCEPT
 	{
 		switch (axis)
