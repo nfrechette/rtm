@@ -34,15 +34,13 @@
 using namespace rtm;
 
 template<typename FloatType>
-static void test_matrix_impl(const FloatType threshold)
+static void test_matrix3x3_setters(const FloatType threshold)
 {
 	using QuatType = typename float_traits<FloatType>::quat;
 	using Vector4Type = typename float_traits<FloatType>::vector4;
 	using Matrix3x3Type = typename float_traits<FloatType>::matrix3x3;
-	using Matrix3x4Type = typename float_traits<FloatType>::matrix3x4;
 
 	const Matrix3x3Type identity = matrix_identity();
-	const Vector4Type zero = vector_zero();
 
 	{
 		Vector4Type x_axis = vector_set(FloatType(1.0), FloatType(2.0), FloatType(3.0), FloatType(0.0));
@@ -82,13 +80,14 @@ static void test_matrix_impl(const FloatType threshold)
 		CHECK(vector_all_near_equal3(vector_set(FloatType(0.0), FloatType(5.0), FloatType(0.0)), mtx.y_axis, threshold));
 		CHECK(vector_all_near_equal3(vector_set(FloatType(0.0), FloatType(0.0), FloatType(6.0)), mtx.z_axis, threshold));
 	}
+}
 
-	{
-		QuatType rotation_around_z = quat_from_euler(degrees(FloatType(0.0)), degrees(FloatType(90.0)), degrees(FloatType(0.0)));
-		Matrix3x3Type mtx = matrix_from_quat(rotation_around_z);
-		QuatType rotation = quat_from_matrix(mtx);
-		CHECK(quat_near_equal(rotation_around_z, rotation, threshold));
-	}
+template<typename FloatType>
+static void test_matrix3x3_arithmetic(const FloatType threshold)
+{
+	using QuatType = typename float_traits<FloatType>::quat;
+	using Vector4Type = typename float_traits<FloatType>::vector4;
+	using Matrix3x3Type = typename float_traits<FloatType>::matrix3x3;
 
 	{
 		Vector4Type x_axis = vector_set(FloatType(1.0), FloatType(0.0), FloatType(0.0));
@@ -123,6 +122,17 @@ static void test_matrix_impl(const FloatType threshold)
 		CHECK(vector_all_near_equal3(result, vector_set(FloatType(0.0), FloatType(0.0), FloatType(-1.0)), threshold));
 		CHECK(vector_all_near_equal3(result, matrix_mul_vector3(matrix_mul_vector3(y_axis, mtx_b), mtx_a), threshold));
 	}
+}
+
+template<typename FloatType>
+static void test_matrix3x3_transformations(const FloatType threshold)
+{
+	using QuatType = typename float_traits<FloatType>::quat;
+	using Vector4Type = typename float_traits<FloatType>::vector4;
+	using Matrix3x3Type = typename float_traits<FloatType>::matrix3x3;
+
+	const Matrix3x3Type identity = matrix_identity();
+	const Vector4Type zero = vector_zero();
 
 	{
 		Vector4Type x_axis = vector_set(FloatType(1.0), FloatType(2.0), FloatType(3.0), FloatType(0.0));
@@ -172,6 +182,22 @@ static void test_matrix_impl(const FloatType threshold)
 		CHECK(vector_all_near_equal(identity.y_axis, inv_mtx.y_axis, threshold));
 		CHECK(vector_all_near_equal(identity.z_axis, inv_mtx.z_axis, threshold));
 	}
+}
+
+template<typename FloatType>
+static void test_matrix3x3_misc(const FloatType threshold)
+{
+	using QuatType = typename float_traits<FloatType>::quat;
+	using Vector4Type = typename float_traits<FloatType>::vector4;
+	using Matrix3x3Type = typename float_traits<FloatType>::matrix3x3;
+	using Matrix3x4Type = typename float_traits<FloatType>::matrix3x4;
+
+	{
+		QuatType rotation_around_z = quat_from_euler(degrees(FloatType(0.0)), degrees(FloatType(90.0)), degrees(FloatType(0.0)));
+		Matrix3x3Type mtx = matrix_from_quat(rotation_around_z);
+		QuatType rotation = quat_from_matrix(mtx);
+		CHECK(quat_near_equal(rotation_around_z, rotation, threshold));
+	}
 
 	{
 		QuatType rotation_around_z = quat_from_euler(degrees(FloatType(0.0)), degrees(FloatType(90.0)), degrees(FloatType(0.0)));
@@ -188,7 +214,10 @@ static void test_matrix_impl(const FloatType threshold)
 
 TEST_CASE("matrix3x3f math", "[math][matrix3x3]")
 {
-	test_matrix_impl<float>(1.0E-4F);
+	test_matrix3x3_setters<float>(1.0E-4F);
+	test_matrix3x3_arithmetic<float>(1.0E-4F);
+	test_matrix3x3_transformations<float>(1.0E-4F);
+	test_matrix3x3_misc<float>(1.0E-4F);
 
 	{
 		quatf rotation_around_z = quat_from_euler(degrees(0.0F), degrees(90.0F), degrees(0.0F));
@@ -202,7 +231,10 @@ TEST_CASE("matrix3x3f math", "[math][matrix3x3]")
 
 TEST_CASE("matrix3x3d math", "[math][matrix3x3]")
 {
-	test_matrix_impl<double>(1.0E-4);
+	test_matrix3x3_setters<double>(1.0E-4);
+	test_matrix3x3_arithmetic<double>(1.0E-4);
+	test_matrix3x3_transformations<double>(1.0E-4);
+	test_matrix3x3_misc<double>(1.0E-4);
 
 	{
 		quatd rotation_around_z = quat_from_euler(degrees(0.0), degrees(90.0), degrees(0.0));
