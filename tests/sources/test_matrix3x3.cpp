@@ -276,6 +276,35 @@ static void test_matrix3x3_misc(const FloatType threshold)
 		FloatType cof_zz = scalar_cast(vector_get_z(cof.z_axis));
 		CHECK(scalar_near_equal(cof_zz, FloatType(41.4168), threshold));
 	}
+
+	{
+		Vector4Type x_axis = vector_set(FloatType(5.62565), FloatType(7.90751), FloatType(4.37048), FloatType(99999.9999));
+		Vector4Type y_axis = vector_set(FloatType(0.36345), FloatType(7.87300), FloatType(7.23000), FloatType(99999.9999));
+		Vector4Type z_axis = vector_set(FloatType(8.06413), FloatType(3.91970), FloatType(8.48928), FloatType(99999.9999));
+		Matrix3x4Type mtx = matrix_set(x_axis, y_axis, z_axis, x_axis);
+		Matrix3x3Type adj = matrix_adjugate(mtx);
+
+		FloatType adj_xx = scalar_cast(vector_get_x(adj.x_axis));
+		CHECK(scalar_near_equal(adj_xx, FloatType(38.4967), threshold));
+		FloatType adj_xy = scalar_cast(vector_get_y(adj.x_axis));
+		CHECK(scalar_near_equal(adj_xy, FloatType(-49.9981), threshold));
+		FloatType adj_xz = scalar_cast(vector_get_z(adj.x_axis));
+		CHECK(scalar_near_equal(adj_xz, FloatType(22.7625), threshold));
+
+		FloatType adj_yx = scalar_cast(vector_get_x(adj.y_axis));
+		CHECK(scalar_near_equal(adj_yx, FloatType(55.2182), threshold));
+		FloatType adj_yy = scalar_cast(vector_get_y(adj.y_axis));
+		CHECK(scalar_near_equal(adj_yy, FloatType(12.5136), threshold));
+		FloatType adj_yz = scalar_cast(vector_get_z(adj.y_axis));
+		CHECK(scalar_near_equal(adj_yz, FloatType(-39.085), threshold));
+
+		FloatType adj_zx = scalar_cast(vector_get_x(adj.z_axis));
+		CHECK(scalar_near_equal(adj_zx, FloatType(-62.0643), threshold));
+		FloatType adj_zy = scalar_cast(vector_get_y(adj.z_axis));
+		CHECK(scalar_near_equal(adj_zy, FloatType(41.7163), threshold));
+		FloatType adj_zz = scalar_cast(vector_get_z(adj.z_axis));
+		CHECK(scalar_near_equal(adj_zz, FloatType(41.4168), threshold));
+	}
 }
 
 TEST_CASE("matrix3x3f math", "[math][matrix3x3]")

@@ -26,8 +26,9 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 #include "rtm/math.h"
-#include "rtm/vector4d.h"
+#include "rtm/matrix3x3d.h"
 #include "rtm/quatd.h"
+#include "rtm/vector4d.h"
 #include "rtm/impl/compiler_utils.h"
 #include "rtm/impl/matrix_common.h"
 #include "rtm/impl/matrix_affine_common.h"
@@ -407,6 +408,15 @@ namespace rtm
 		const vector4d y_axis = vector_cross3(input.z_axis, input.x_axis);
 		const vector4d z_axis = vector_cross3(input.x_axis, input.y_axis);
 		return matrix3x3d{ x_axis, y_axis, z_axis };
+	}
+
+	//////////////////////////////////////////////////////////////////////////
+	// Returns the adjugate of the input matrix.
+	// See: https://en.wikipedia.org/wiki/Adjugate_matrix
+	//////////////////////////////////////////////////////////////////////////
+	inline matrix3x3d matrix_adjugate(const matrix3x4d& input) RTM_NO_EXCEPT
+	{
+		return matrix_transpose(matrix_cofactor(input));
 	}
 
 	//////////////////////////////////////////////////////////////////////////
