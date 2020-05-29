@@ -153,15 +153,28 @@ namespace rtm
 			if (vector_all_near_equal3(x_axis, zero) || vector_all_near_equal3(y_axis, zero) || vector_all_near_equal3(z_axis, zero))
 				return quat_identity();	// Zero scale not supported, return the identity
 
-			const float mtx_trace = vector_get_x(x_axis) + vector_get_y(y_axis) + vector_get_z(z_axis);
+			const float x_axis_x = vector_get_x(x_axis);
+			const float y_axis_y = vector_get_y(y_axis);
+			const float z_axis_z = vector_get_z(z_axis);
+
+			const float mtx_trace = x_axis_x + y_axis_y + z_axis_z;
 			if (mtx_trace > 0.0F)
 			{
+				const float x_axis_y = vector_get_y(x_axis);
+				const float x_axis_z = vector_get_z(x_axis);
+
+				const float y_axis_x = vector_get_x(y_axis);
+				const float y_axis_z = vector_get_z(y_axis);
+
+				const float z_axis_x = vector_get_x(z_axis);
+				const float z_axis_y = vector_get_y(z_axis);
+
 				const float inv_trace = scalar_sqrt_reciprocal(mtx_trace + 1.0F);
 				const float half_inv_trace = inv_trace * 0.5F;
 
-				const float x = (vector_get_z(y_axis) - vector_get_y(z_axis)) * half_inv_trace;
-				const float y = (vector_get_x(z_axis) - vector_get_z(x_axis)) * half_inv_trace;
-				const float z = (vector_get_y(x_axis) - vector_get_x(y_axis)) * half_inv_trace;
+				const float x = (y_axis_z - z_axis_y) * half_inv_trace;
+				const float y = (z_axis_x - x_axis_z) * half_inv_trace;
+				const float z = (x_axis_y - y_axis_x) * half_inv_trace;
 				const float w = scalar_reciprocal(inv_trace) * 0.5F;
 
 				return quat_normalize(quat_set(x, y, z, w));
@@ -170,9 +183,9 @@ namespace rtm
 			{
 				// Note that axis3::xyz have the same values as mix4::xyz
 				int32_t best_axis = (int32_t)axis4::x;
-				if (vector_get_y(y_axis) > vector_get_x(x_axis))
+				if (y_axis_y > x_axis_x)
 					best_axis = (int32_t)axis4::y;
-				if (vector_get_z(z_axis) > vector_get_component(matrix_get_axis(x_axis, y_axis, z_axis, axis3(best_axis)), mix4(best_axis)))
+				if (z_axis_z > vector_get_component(matrix_get_axis(x_axis, y_axis, z_axis, axis3(best_axis)), mix4(best_axis)))
 					best_axis = (int32_t)axis4::z;
 
 				const int32_t next_best_axis = (best_axis + 1) % 3;
@@ -211,15 +224,28 @@ namespace rtm
 			if (vector_all_near_equal3(x_axis, zero) || vector_all_near_equal3(y_axis, zero) || vector_all_near_equal3(z_axis, zero))
 				return quat_identity();	// Zero scale not supported, return the identity
 
-			const double mtx_trace = vector_get_x(x_axis) + vector_get_y(y_axis) + vector_get_z(z_axis);
+			const double x_axis_x = vector_get_x(x_axis);
+			const double y_axis_y = vector_get_y(y_axis);
+			const double z_axis_z = vector_get_z(z_axis);
+
+			const double mtx_trace = x_axis_x + y_axis_y + z_axis_z;
 			if (mtx_trace > 0.0)
 			{
+				const double x_axis_y = vector_get_y(x_axis);
+				const double x_axis_z = vector_get_z(x_axis);
+
+				const double y_axis_x = vector_get_x(y_axis);
+				const double y_axis_z = vector_get_z(y_axis);
+
+				const double z_axis_x = vector_get_x(z_axis);
+				const double z_axis_y = vector_get_y(z_axis);
+
 				const double inv_trace = scalar_sqrt_reciprocal(mtx_trace + 1.0);
 				const double half_inv_trace = inv_trace * 0.5;
 
-				const double x = (vector_get_z(y_axis) - vector_get_y(z_axis)) * half_inv_trace;
-				const double y = (vector_get_x(z_axis) - vector_get_z(x_axis)) * half_inv_trace;
-				const double z = (vector_get_y(x_axis) - vector_get_x(y_axis)) * half_inv_trace;
+				const double x = (y_axis_z - z_axis_y) * half_inv_trace;
+				const double y = (z_axis_x - x_axis_z) * half_inv_trace;
+				const double z = (x_axis_y - y_axis_x) * half_inv_trace;
 				const double w = scalar_reciprocal(inv_trace) * 0.5;
 
 				return quat_normalize(quat_set(x, y, z, w));
@@ -228,9 +254,9 @@ namespace rtm
 			{
 				// Note that axis3::xyz have the same values as mix4::xyz
 				int32_t best_axis = (int32_t)axis3::x;
-				if (vector_get_y(y_axis) > vector_get_x(x_axis))
+				if (y_axis_y > x_axis_x)
 					best_axis = (int32_t)axis3::y;
-				if (vector_get_z(z_axis) > vector_get_component(matrix_get_axis(x_axis, y_axis, z_axis, axis3(best_axis)), mix4(best_axis)))
+				if (z_axis_z > vector_get_component(matrix_get_axis(x_axis, y_axis, z_axis, axis3(best_axis)), mix4(best_axis)))
 					best_axis = (int32_t)axis3::z;
 
 				const int32_t next_best_axis = (best_axis + 1) % 3;
