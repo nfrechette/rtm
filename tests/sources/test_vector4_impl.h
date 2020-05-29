@@ -57,24 +57,42 @@ inline const double* vector_as_float_ptr_raw<vector4d, double>(const vector4d& i
 	return vector_to_pointer(input);
 }
 
-template<typename Vector4Type>
+template<typename Vector4Type, typename FloatType>
 inline Vector4Type scalar_cross3(const Vector4Type& lhs, const Vector4Type& rhs)
 {
-	return vector_set(vector_get_y(lhs) * vector_get_z(rhs) - vector_get_z(lhs) * vector_get_y(rhs),
-		vector_get_z(lhs) * vector_get_x(rhs) - vector_get_x(lhs) * vector_get_z(rhs),
-		vector_get_x(lhs) * vector_get_y(rhs) - vector_get_y(lhs) * vector_get_x(rhs));
+	const FloatType lhs_x = vector_get_x(lhs);
+	const FloatType lhs_y = vector_get_y(lhs);
+	const FloatType lhs_z = vector_get_z(lhs);
+	const FloatType rhs_x = vector_get_x(rhs);
+	const FloatType rhs_y = vector_get_y(rhs);
+	const FloatType rhs_z = vector_get_z(rhs);
+	return vector_set((lhs_y * rhs_z) - (lhs_z * rhs_y), (lhs_z * rhs_x) - (lhs_x * rhs_z), (lhs_x * rhs_y) - (lhs_y * rhs_x));
 }
 
 template<typename Vector4Type, typename FloatType>
 inline FloatType scalar_dot(const Vector4Type& lhs, const Vector4Type& rhs)
 {
-	return (vector_get_x(lhs) * vector_get_x(rhs)) + (vector_get_y(lhs) * vector_get_y(rhs)) + (vector_get_z(lhs) * vector_get_z(rhs)) + (vector_get_w(lhs) * vector_get_w(rhs));
+	const FloatType lhs_x = vector_get_x(lhs);
+	const FloatType lhs_y = vector_get_y(lhs);
+	const FloatType lhs_z = vector_get_z(lhs);
+	const FloatType lhs_w = vector_get_w(lhs);
+	const FloatType rhs_x = vector_get_x(rhs);
+	const FloatType rhs_y = vector_get_y(rhs);
+	const FloatType rhs_z = vector_get_z(rhs);
+	const FloatType rhs_w = vector_get_w(rhs);
+	return (lhs_x * rhs_x) + (lhs_y * rhs_y) + (lhs_z * rhs_z) + (lhs_w * rhs_w);
 }
 
 template<typename Vector4Type, typename FloatType>
 inline FloatType scalar_dot3(const Vector4Type& lhs, const Vector4Type& rhs)
 {
-	return (vector_get_x(lhs) * vector_get_x(rhs)) + (vector_get_y(lhs) * vector_get_y(rhs)) + (vector_get_z(lhs) * vector_get_z(rhs));
+	const FloatType lhs_x = vector_get_x(lhs);
+	const FloatType lhs_y = vector_get_y(lhs);
+	const FloatType lhs_z = vector_get_z(lhs);
+	const FloatType rhs_x = vector_get_x(rhs);
+	const FloatType rhs_y = vector_get_y(rhs);
+	const FloatType rhs_z = vector_get_z(rhs);
+	return (lhs_x * rhs_x) + (lhs_y * rhs_y) + (lhs_z * rhs_z);
 }
 
 template<typename Vector4Type, typename FloatType>
@@ -398,7 +416,7 @@ void test_vector4_arithmetic_impl(const FloatType threshold)
 	CHECK(scalar_near_equal(vector_get_z(vector_ceil(test_value0)), scalar_ceil(test_value0_flt[2]), threshold));
 	CHECK(scalar_near_equal(vector_get_w(vector_ceil(test_value0)), scalar_ceil(test_value0_flt[3]), threshold));
 
-	const Vector4Type scalar_cross3_result = scalar_cross3<Vector4Type>(test_value0, test_value1);
+	const Vector4Type scalar_cross3_result = scalar_cross3<Vector4Type, FloatType>(test_value0, test_value1);
 	const Vector4Type vector_cross3_result = vector_cross3(test_value0, test_value1);
 	CHECK(scalar_near_equal(vector_get_x(vector_cross3_result), vector_get_x(scalar_cross3_result), threshold));
 	CHECK(scalar_near_equal(vector_get_y(vector_cross3_result), vector_get_y(scalar_cross3_result), threshold));
