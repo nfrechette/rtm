@@ -194,6 +194,40 @@ static void test_affine_matrix_arithmetic(const FloatType threshold)
 		CHECK(vector_all_near_equal3(result, vector_set(FloatType(0.0), FloatType(0.0), FloatType(-1.0)), threshold));
 		CHECK(vector_all_near_equal3(result, matrix_mul_point3(matrix_mul_point3(y_axis, mtx_b), mtx_a), threshold));
 	}
+
+	{
+		Vector4Type x_axis = vector_set(FloatType(1.0), FloatType(0.0), FloatType(0.0));
+		Vector4Type y_axis = vector_set(FloatType(0.0), FloatType(1.0), FloatType(0.0));
+
+		QuatType rotation_around_z = quat_from_euler(degrees(FloatType(0.0)), degrees(FloatType(90.0)), degrees(FloatType(0.0)));
+		Matrix3x4Type mtx_a = matrix_from_qvv(rotation_around_z, x_axis, vector_set(FloatType(1.0)));
+		Vector4Type result = matrix_mul_vector3(x_axis, mtx_a);
+		CHECK(vector_all_near_equal3(result, vector_set(FloatType(0.0), FloatType(1.0), FloatType(0.0)), threshold));
+		result = matrix_mul_vector3(y_axis, mtx_a);
+		CHECK(vector_all_near_equal3(result, vector_set(FloatType(-1.0), FloatType(0.0), FloatType(0.0)), threshold));
+
+		QuatType rotation_around_x = quat_from_euler(degrees(FloatType(0.0)), degrees(FloatType(0.0)), degrees(FloatType(90.0)));
+		Matrix3x4Type mtx_b = matrix_from_qvv(rotation_around_x, y_axis, vector_set(FloatType(1.0)));
+		result = matrix_mul_vector3(x_axis, mtx_b);
+		CHECK(vector_all_near_equal3(result, vector_set(FloatType(1.0), FloatType(0.0), FloatType(0.0)), threshold));
+		result = matrix_mul_vector3(y_axis, mtx_b);
+		CHECK(vector_all_near_equal3(result, vector_set(FloatType(0.0), FloatType(0.0), FloatType(-1.0)), threshold));
+
+		Matrix3x4Type mtx_ab = matrix_mul(mtx_a, mtx_b);
+		Matrix3x4Type mtx_ba = matrix_mul(mtx_b, mtx_a);
+		result = matrix_mul_vector3(x_axis, mtx_ab);
+		CHECK(vector_all_near_equal3(result, vector_set(FloatType(0.0), FloatType(0.0), FloatType(-1.0)), threshold));
+		CHECK(vector_all_near_equal3(result, matrix_mul_vector3(matrix_mul_vector3(x_axis, mtx_a), mtx_b), threshold));
+		result = matrix_mul_vector3(y_axis, mtx_ab);
+		CHECK(vector_all_near_equal3(result, vector_set(FloatType(-1.0), FloatType(0.0), FloatType(0.0)), threshold));
+		CHECK(vector_all_near_equal3(result, matrix_mul_vector3(matrix_mul_vector3(y_axis, mtx_a), mtx_b), threshold));
+		result = matrix_mul_vector3(x_axis, mtx_ba);
+		CHECK(vector_all_near_equal3(result, vector_set(FloatType(0.0), FloatType(1.0), FloatType(0.0)), threshold));
+		CHECK(vector_all_near_equal3(result, matrix_mul_vector3(matrix_mul_vector3(x_axis, mtx_b), mtx_a), threshold));
+		result = matrix_mul_vector3(y_axis, mtx_ba);
+		CHECK(vector_all_near_equal3(result, vector_set(FloatType(0.0), FloatType(0.0), FloatType(-1.0)), threshold));
+		CHECK(vector_all_near_equal3(result, matrix_mul_vector3(matrix_mul_vector3(y_axis, mtx_b), mtx_a), threshold));
+	}
 }
 
 template<typename FloatType>
