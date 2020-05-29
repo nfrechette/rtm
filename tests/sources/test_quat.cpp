@@ -131,10 +131,10 @@ static void test_quat_impl(const FloatType threshold)
 
 	{
 		const Vector4Type vec = vector_set(FloatType(0.0), FloatType(2.34), FloatType(-3.12), FloatType(10000.0));
-		CHECK(quat_get_x(vector_to_quat(vec)) == vector_get_x(vec));
-		CHECK(quat_get_y(vector_to_quat(vec)) == vector_get_y(vec));
-		CHECK(quat_get_z(vector_to_quat(vec)) == vector_get_z(vec));
-		CHECK(quat_get_w(vector_to_quat(vec)) == vector_get_w(vec));
+		CHECK(quat_get_x(vector_to_quat(vec)) == scalar_cast(vector_get_x(vec)));
+		CHECK(quat_get_y(vector_to_quat(vec)) == scalar_cast(vector_get_y(vec)));
+		CHECK(quat_get_z(vector_to_quat(vec)) == scalar_cast(vector_get_z(vec)));
+		CHECK(quat_get_w(vector_to_quat(vec)) == scalar_cast(vector_get_w(vec)));
 	}
 
 	{
