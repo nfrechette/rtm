@@ -343,24 +343,9 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	inline matrix3x3d matrix_cofactor(const matrix3x3d& input) RTM_NO_EXCEPT
 	{
-		const scalard minor_xx = matrix_minor(input, axis3::x, axis3::x);
-		const scalard minor_xy = matrix_minor(input, axis3::x, axis3::y);
-		const scalard minor_xz = matrix_minor(input, axis3::x, axis3::z);
-
-		const scalard minor_yx = matrix_minor(input, axis3::y, axis3::x);
-		const scalard minor_yy = matrix_minor(input, axis3::y, axis3::y);
-		const scalard minor_yz = matrix_minor(input, axis3::y, axis3::z);
-
-		const scalard minor_zx = matrix_minor(input, axis3::z, axis3::x);
-		const scalard minor_zy = matrix_minor(input, axis3::z, axis3::y);
-		const scalard minor_zz = matrix_minor(input, axis3::z, axis3::z);
-
-		const vector4d xz_axis_signs = vector_set(1.0, -1.0, 1.0, -1.0);
-		const vector4d yw_axis_signs = vector_set(-1.0, 1.0, -1.0, 1.0);
-
-		const vector4d x_axis = vector_mul(vector_set(minor_xx, minor_xy, minor_xz, minor_xz), xz_axis_signs);
-		const vector4d y_axis = vector_mul(vector_set(minor_yx, minor_yy, minor_yz, minor_yz), yw_axis_signs);
-		const vector4d z_axis = vector_mul(vector_set(minor_zx, minor_zy, minor_zz, minor_zz), xz_axis_signs);
+		const vector4d x_axis = vector_cross3(input.y_axis, input.z_axis);
+		const vector4d y_axis = vector_cross3(input.z_axis, input.x_axis);
+		const vector4d z_axis = vector_cross3(input.x_axis, input.y_axis);
 		return matrix3x3d{ x_axis, y_axis, z_axis };
 	}
 
