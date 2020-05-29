@@ -94,6 +94,26 @@ namespace rtm
 
 #if defined(RTM_SSE2_INTRINSICS)
 	//////////////////////////////////////////////////////////////////////////
+	// Creates a vector4 from all 4 components.
+	//////////////////////////////////////////////////////////////////////////
+	inline vector4f RTM_SIMD_CALL vector_set(scalarf_arg0 x, scalarf_arg1 y, scalarf_arg2 z, scalarf_arg3 w) RTM_NO_EXCEPT
+	{
+		const __m128 xy = _mm_unpacklo_ps(x, y);
+		const __m128 zw = _mm_unpacklo_ps(z, w);
+		return _mm_shuffle_ps(xy, zw, _MM_SHUFFLE(1, 0, 1, 0));
+	}
+
+	//////////////////////////////////////////////////////////////////////////
+	// Creates a vector4 from the [xyz] components and sets [w] to 0.0.
+	//////////////////////////////////////////////////////////////////////////
+	inline vector4f RTM_SIMD_CALL vector_set(scalarf_arg0 x, scalarf_arg1 y, scalarf_arg2 z) RTM_NO_EXCEPT
+	{
+		const __m128 xy = _mm_unpacklo_ps(x, y);
+		const __m128 zw = _mm_unpacklo_ps(z, _mm_setzero_ps());
+		return _mm_shuffle_ps(xy, zw, _MM_SHUFFLE(1, 0, 1, 0));
+	}
+
+	//////////////////////////////////////////////////////////////////////////
 	// Creates a vector4 from a single value for all 4 components.
 	//////////////////////////////////////////////////////////////////////////
 	inline vector4f RTM_SIMD_CALL vector_set(scalarf_arg0 xyzw) RTM_NO_EXCEPT
@@ -140,6 +160,26 @@ namespace rtm
 	}
 
 #if defined(RTM_SSE2_INTRINSICS)
+	//////////////////////////////////////////////////////////////////////////
+	// Creates a vector4 from all 4 components.
+	//////////////////////////////////////////////////////////////////////////
+	inline vector4d RTM_SIMD_CALL vector_set(scalard x, scalard y, scalard z, scalard w) RTM_NO_EXCEPT
+	{
+		const __m128d xy = _mm_unpacklo_pd(x, y);
+		const __m128d zw = _mm_unpacklo_pd(z, w);
+		return vector4d{ xy, zw };
+	}
+
+	//////////////////////////////////////////////////////////////////////////
+	// Creates a vector4 from the [xyz] components and sets [w] to 0.0.
+	//////////////////////////////////////////////////////////////////////////
+	inline vector4d RTM_SIMD_CALL vector_set(scalard x, scalard y, scalard z) RTM_NO_EXCEPT
+	{
+		const __m128d xy = _mm_unpacklo_pd(x, y);
+		const __m128d zw = _mm_unpacklo_pd(z, _mm_setzero_pd());
+		return vector4d{ xy, zw };
+	}
+
 	//////////////////////////////////////////////////////////////////////////
 	// Creates a vector4 from a single value for all 4 components.
 	//////////////////////////////////////////////////////////////////////////
