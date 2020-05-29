@@ -152,6 +152,24 @@ namespace rtm
 	}
 
 	//////////////////////////////////////////////////////////////////////////
+	// Multiplies a 3x4 affine matrix and a 3D vector.
+	// Multiplication order is as follow: world_position = matrix_mul(local_vector, local_to_world)
+	// Note: The proper way to transform a normal by an affine matrix with non-uniform scale
+	// is to multiply the normal with the cofactor matrix of the 3x3 rotation/scale part.
+	// See: https://github.com/graphitemaster/normals_revisited
+	//////////////////////////////////////////////////////////////////////////
+	inline vector4f RTM_SIMD_CALL matrix_mul_vector3(vector4f_arg0 vec3, matrix3x4f_arg0 mtx) RTM_NO_EXCEPT
+	{
+		vector4f tmp;
+
+		tmp = vector_mul(vector_dup_x(vec3), mtx.x_axis);
+		tmp = vector_mul_add(vector_dup_y(vec3), mtx.y_axis, tmp);
+		tmp = vector_mul_add(vector_dup_z(vec3), mtx.z_axis, tmp);
+
+		return tmp;
+	}
+
+	//////////////////////////////////////////////////////////////////////////
 	// Transposes a 3x4 affine matrix.
 	// Note: This transposes the upper 3x3 rotation/scale part of the matrix
 	// and it discards the translation. This is because a transposed 4x4 affine
