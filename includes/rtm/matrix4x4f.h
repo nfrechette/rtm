@@ -36,18 +36,9 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	// Returns the desired 4x4 matrix axis.
 	//////////////////////////////////////////////////////////////////////////
-	inline vector4f RTM_SIMD_CALL matrix_get_axis(matrix4x4f_arg0 input, axis4 axis) RTM_NO_EXCEPT
+	constexpr vector4f RTM_SIMD_CALL matrix_get_axis(matrix4x4f_arg0 input, axis4 axis) RTM_NO_EXCEPT
 	{
-		switch (axis)
-		{
-		case axis4::x: return input.x_axis;
-		case axis4::y: return input.y_axis;
-		case axis4::z: return input.z_axis;
-		case axis4::w: return input.w_axis;
-		default:
-			RTM_ASSERT(false, "Invalid matrix axis");
-			return input.x_axis;
-		}
+		return axis == axis4::x ? input.x_axis : (axis == axis4::y ? input.y_axis : (axis == axis4::z ? input.z_axis : input.w_axis));
 	}
 
 	//////////////////////////////////////////////////////////////////////////
