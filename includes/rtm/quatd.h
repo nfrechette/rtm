@@ -259,7 +259,7 @@ namespace rtm
 
 	//////////////////////////////////////////////////////////////////////////
 	// Multiplies a quaternion and a 3D vector, rotating it.
-	// Multiplication order is as follow: world_position = quat_mul_vector3(local_position, local_to_world)
+	// Multiplication order is as follow: world_position = quat_mul_vector3(local_vector, local_to_world)
 	//////////////////////////////////////////////////////////////////////////
 	inline vector4d quat_mul_vector3(const vector4d& vector, const quatd& rotation) RTM_NO_EXCEPT
 	{
