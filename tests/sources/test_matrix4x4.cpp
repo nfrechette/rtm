@@ -34,15 +34,12 @@
 using namespace rtm;
 
 template<typename FloatType>
-static void test_matrix_impl(const FloatType threshold)
+static void test_matrix4x4_setters(const FloatType threshold)
 {
-	using QuatType = typename float_traits<FloatType>::quat;
 	using Vector4Type = typename float_traits<FloatType>::vector4;
-	using Matrix3x4Type = typename float_traits<FloatType>::matrix3x4;
 	using Matrix4x4Type = typename float_traits<FloatType>::matrix4x4;
 
 	const Matrix4x4Type identity = matrix_identity();
-	const Vector4Type zero = vector_zero();
 
 	{
 		Vector4Type x_axis = vector_set(FloatType(1.0), FloatType(2.0), FloatType(3.0), FloatType(0.0));
@@ -62,6 +59,15 @@ static void test_matrix_impl(const FloatType threshold)
 		CHECK(vector_all_near_equal(vector_set(FloatType(0.0), FloatType(0.0), FloatType(1.0), FloatType(0.0)), identity.z_axis, threshold));
 		CHECK(vector_all_near_equal(vector_set(FloatType(0.0), FloatType(0.0), FloatType(0.0), FloatType(1.0)), identity.w_axis, threshold));
 	}
+}
+
+template<typename FloatType>
+static void test_matrix4x4_arithmetic(const FloatType threshold)
+{
+	using QuatType = typename float_traits<FloatType>::quat;
+	using Vector4Type = typename float_traits<FloatType>::vector4;
+	using Matrix3x4Type = typename float_traits<FloatType>::matrix3x4;
+	using Matrix4x4Type = typename float_traits<FloatType>::matrix4x4;
 
 	{
 		Vector4Type x_axis = vector_set(FloatType(1.0), FloatType(0.0), FloatType(0.0));
@@ -98,6 +104,18 @@ static void test_matrix_impl(const FloatType threshold)
 		CHECK(vector_all_near_equal3(result, vector_set(FloatType(0.0), FloatType(0.0), FloatType(-1.0), FloatType(0.0)), threshold));
 		CHECK(vector_all_near_equal3(result, matrix_mul_vector(matrix_mul_vector(y_axis, mtx_b), mtx_a), threshold));
 	}
+}
+
+template<typename FloatType>
+static void test_matrix4x4_transformations(const FloatType threshold)
+{
+	using QuatType = typename float_traits<FloatType>::quat;
+	using Vector4Type = typename float_traits<FloatType>::vector4;
+	using Matrix3x4Type = typename float_traits<FloatType>::matrix3x4;
+	using Matrix4x4Type = typename float_traits<FloatType>::matrix4x4;
+
+	const Matrix4x4Type identity = matrix_identity();
+	const Vector4Type zero = vector_zero();
 
 	{
 		Vector4Type x_axis = vector_set(FloatType(1.0), FloatType(2.0), FloatType(3.0), FloatType(0.0));
@@ -160,7 +178,9 @@ static void test_matrix_impl(const FloatType threshold)
 
 TEST_CASE("matrix4x4f math", "[math][matrix4x4]")
 {
-	test_matrix_impl<float>(1.0E-4F);
+	test_matrix4x4_setters<float>(1.0E-4F);
+	test_matrix4x4_arithmetic<float>(1.0E-4F);
+	test_matrix4x4_transformations<float>(1.0E-4F);
 
 	{
 		quatf rotation_around_z = quat_from_euler(degrees(0.0F), degrees(90.0F), degrees(0.0F));
@@ -178,7 +198,9 @@ TEST_CASE("matrix4x4f math", "[math][matrix4x4]")
 
 TEST_CASE("matrix4x4d math", "[math][matrix4x4]")
 {
-	test_matrix_impl<double>(1.0E-4);
+	test_matrix4x4_setters<double>(1.0E-4);
+	test_matrix4x4_arithmetic<double>(1.0E-4);
+	test_matrix4x4_transformations<double>(1.0E-4);
 
 	{
 		quatd rotation_around_z = quat_from_euler(degrees(0.0), degrees(90.0), degrees(0.0));
