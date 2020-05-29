@@ -176,11 +176,29 @@ static void test_matrix4x4_transformations(const FloatType threshold)
 	}
 }
 
+template<typename FloatType>
+static void test_matrix4x4_misc(const FloatType threshold)
+{
+	using Vector4Type = typename float_traits<FloatType>::vector4;
+	using Matrix4x4Type = typename float_traits<FloatType>::matrix4x4;
+
+	{
+		Vector4Type x_axis = vector_set(FloatType(1.65424), FloatType(0.22921), FloatType(5.73038), FloatType(4.46541));
+		Vector4Type y_axis = vector_set(FloatType(1.90220), FloatType(0.82590), FloatType(6.61556), FloatType(4.46383));
+		Vector4Type z_axis = vector_set(FloatType(7.36288), FloatType(7.09841), FloatType(0.33519), FloatType(7.43985));
+		Vector4Type w_axis = vector_set(FloatType(4.42391), FloatType(4.03858), FloatType(2.49537), FloatType(0.11255));
+		Matrix4x4Type mtx = matrix_set(x_axis, y_axis, z_axis, w_axis);
+		FloatType det = scalar_cast(matrix_determinant(mtx));
+		CHECK(scalar_near_equal(det, FloatType(120.68779956246105324363), threshold));
+	}
+}
+
 TEST_CASE("matrix4x4f math", "[math][matrix4x4]")
 {
 	test_matrix4x4_setters<float>(1.0E-4F);
 	test_matrix4x4_arithmetic<float>(1.0E-4F);
 	test_matrix4x4_transformations<float>(1.0E-4F);
+	test_matrix4x4_misc<float>(1.0E-4F);
 
 	{
 		quatf rotation_around_z = quat_from_euler(degrees(0.0F), degrees(90.0F), degrees(0.0F));
@@ -201,6 +219,7 @@ TEST_CASE("matrix4x4d math", "[math][matrix4x4]")
 	test_matrix4x4_setters<double>(1.0E-4);
 	test_matrix4x4_arithmetic<double>(1.0E-4);
 	test_matrix4x4_transformations<double>(1.0E-4);
+	test_matrix4x4_misc<double>(1.0E-4);
 
 	{
 		quatd rotation_around_z = quat_from_euler(degrees(0.0), degrees(90.0), degrees(0.0));
