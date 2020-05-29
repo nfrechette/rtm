@@ -206,7 +206,7 @@ namespace rtm
 
 	//////////////////////////////////////////////////////////////////////////
 	// Inverses a 4x4 matrix.
-	// If the input matrix has a determinant below the supplied threshold, the
+	// If the input matrix has a determinant whose absolute value is below the supplied threshold, the
 	// fall back value is returned instead.
 	//////////////////////////////////////////////////////////////////////////
 	inline matrix4x4f RTM_SIMD_CALL matrix_inverse(matrix4x4f_arg0 input, matrix4x4f_arg1 fallback, float threshold = 1.0E-8F) RTM_NO_EXCEPT
@@ -287,7 +287,7 @@ namespace rtm
 		vector4f w_axis = vector_mix<mix4::x, mix4::b, mix4::z, mix4::d>(c6, c7);
 
 		const scalarf det = vector_dot_as_scalar(x_axis, input_transposed.x_axis);
-		if (scalar_cast(det) < threshold)
+		if (scalar_cast(scalar_abs(det)) < threshold)
 			return fallback;
 
 		const vector4f inv_det = vector_set(scalar_reciprocal(det));
