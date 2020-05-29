@@ -639,9 +639,14 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	inline vector4d vector_cross3(const vector4d& lhs, const vector4d& rhs) RTM_NO_EXCEPT
 	{
-		return vector_set(vector_get_y(lhs) * vector_get_z(rhs) - vector_get_z(lhs) * vector_get_y(rhs),
-						  vector_get_z(lhs) * vector_get_x(rhs) - vector_get_x(lhs) * vector_get_z(rhs),
-						  vector_get_x(lhs) * vector_get_y(rhs) - vector_get_y(lhs) * vector_get_x(rhs));
+		// cross(a, b) = (a.yzx * b.zxy) - (a.zxy * b.yzx)
+		const double lhs_x = vector_get_x(lhs);
+		const double lhs_y = vector_get_y(lhs);
+		const double lhs_z = vector_get_z(lhs);
+		const double rhs_x = vector_get_x(rhs);
+		const double rhs_y = vector_get_y(rhs);
+		const double rhs_z = vector_get_z(rhs);
+		return vector_set((lhs_y * rhs_z) - (lhs_z * rhs_y), (lhs_z * rhs_x) - (lhs_x * rhs_z), (lhs_x * rhs_y) - (lhs_y * rhs_x));
 	}
 
 	//////////////////////////////////////////////////////////////////////////
