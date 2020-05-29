@@ -212,7 +212,7 @@ namespace rtm
 		const vector4d o00_o00_o10_o10 = vector_mix<mix4::x, mix4::x, mix4::a, mix4::a>(x_axis, y_axis);
 		const vector4d o00_o10_o20 = vector_mix<mix4::x, mix4::z, mix4::a, mix4::a>(o00_o00_o10_o10, z_axis);
 
-		const double det = vector_dot(o00_o10_o20, input.x_axis);
+		const double det = vector_dot3(o00_o10_o20, input.x_axis);
 		const vector4d inv_det = vector_set(scalar_reciprocal(det));
 
 		x_axis = vector_mul(x_axis, inv_det);
@@ -274,7 +274,7 @@ namespace rtm
 		const vector4d o00_o00_o10_o10 = vector_mix<mix4::x, mix4::x, mix4::a, mix4::a>(x_axis, y_axis);
 		const vector4d o00_o10_o20 = vector_mix<mix4::x, mix4::z, mix4::a, mix4::a>(o00_o00_o10_o10, z_axis);
 
-		const double det = vector_dot(o00_o10_o20, input.x_axis);
+		const double det = vector_dot3(o00_o10_o20, input.x_axis);
 		if (scalar_abs(det) < threshold)
 			return fallback;
 
@@ -336,7 +336,7 @@ namespace rtm
 		const vector4d o00_o00_o10_o10 = vector_mix<mix4::x, mix4::x, mix4::a, mix4::a>(x_axis, y_axis);
 		const vector4d o00_o10_o20 = vector_mix<mix4::x, mix4::z, mix4::a, mix4::a>(o00_o00_o10_o10, z_axis);
 
-		return vector_dot_as_scalar(o00_o10_o20, input.x_axis);
+		return vector_dot3(o00_o10_o20, input.x_axis);
 	}
 
 	//////////////////////////////////////////////////////////////////////////

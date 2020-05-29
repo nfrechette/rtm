@@ -295,9 +295,9 @@ static void test_affine_matrix_misc(const FloatType threshold)
 	}
 
 	{
-		Vector4Type x_axis = vector_set(FloatType(5.62565), FloatType(7.90751), FloatType(4.37048));
-		Vector4Type y_axis = vector_set(FloatType(0.36345), FloatType(7.87300), FloatType(7.23000));
-		Vector4Type z_axis = vector_set(FloatType(8.06413), FloatType(3.91970), FloatType(8.48928));
+		Vector4Type x_axis = vector_set(FloatType(5.62565), FloatType(7.90751), FloatType(4.37048), FloatType(99999.9999));
+		Vector4Type y_axis = vector_set(FloatType(0.36345), FloatType(7.87300), FloatType(7.23000), FloatType(99999.9999));
+		Vector4Type z_axis = vector_set(FloatType(8.06413), FloatType(3.91970), FloatType(8.48928), FloatType(99999.9999));
 		Matrix3x4Type mtx = matrix_set(x_axis, y_axis, z_axis, x_axis);
 		FloatType det = scalar_cast(matrix_determinant(mtx));
 		CHECK(scalar_near_equal(det, FloatType(381.95681179092484), threshold));
