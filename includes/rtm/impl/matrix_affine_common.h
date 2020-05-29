@@ -151,10 +151,7 @@ namespace rtm
 		{
 			const vector4f zero = vector_zero();
 			if (vector_all_near_equal3(x_axis, zero) || vector_all_near_equal3(y_axis, zero) || vector_all_near_equal3(z_axis, zero))
-			{
-				// Zero scale not supported, return the identity
-				return quat_identity();
-			}
+				return quat_identity();	// Zero scale not supported, return the identity
 
 			const float mtx_trace = vector_get_x(x_axis) + vector_get_y(y_axis) + vector_get_z(z_axis);
 			if (mtx_trace > 0.0F)
@@ -212,10 +209,7 @@ namespace rtm
 		{
 			const vector4d zero = vector_zero();
 			if (vector_all_near_equal3(x_axis, zero) || vector_all_near_equal3(y_axis, zero) || vector_all_near_equal3(z_axis, zero))
-			{
-				// Zero scale not supported, return the identity
-				return quat_identity();
-			}
+				return quat_identity();	// Zero scale not supported, return the identity
 
 			const double mtx_trace = vector_get_x(x_axis) + vector_get_y(y_axis) + vector_get_z(z_axis);
 			if (mtx_trace > 0.0)
