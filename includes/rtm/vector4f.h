@@ -763,9 +763,14 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	inline vector4f RTM_SIMD_CALL vector_cross3(vector4f_arg0 lhs, vector4f_arg1 rhs) RTM_NO_EXCEPT
 	{
-		return vector_set(vector_get_y(lhs) * vector_get_z(rhs) - vector_get_z(lhs) * vector_get_y(rhs),
-						  vector_get_z(lhs) * vector_get_x(rhs) - vector_get_x(lhs) * vector_get_z(rhs),
-						  vector_get_x(lhs) * vector_get_y(rhs) - vector_get_y(lhs) * vector_get_x(rhs));
+		// cross(a, b) = (a.yzx * b.zxy) - (a.zxy * b.yzx)
+		const float lhs_x = vector_get_x(lhs);
+		const float lhs_y = vector_get_y(lhs);
+		const float lhs_z = vector_get_z(lhs);
+		const float rhs_x = vector_get_x(rhs);
+		const float rhs_y = vector_get_y(rhs);
+		const float rhs_z = vector_get_z(rhs);
+		return vector_set((lhs_y * rhs_z) - (lhs_z * rhs_y), (lhs_z * rhs_x) - (lhs_x * rhs_z), (lhs_x * rhs_y) - (lhs_y * rhs_x));
 	}
 
 	//////////////////////////////////////////////////////////////////////////
