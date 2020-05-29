@@ -302,6 +302,34 @@ static void test_affine_matrix_misc(const FloatType threshold)
 		FloatType det = scalar_cast(matrix_determinant(mtx));
 		CHECK(scalar_near_equal(det, FloatType(381.95681179092484), threshold));
 	}
+
+	{
+		Vector4Type x_axis = vector_set(FloatType(5.62565), FloatType(7.90751), FloatType(4.37048), FloatType(99999.9999));
+		Vector4Type y_axis = vector_set(FloatType(0.36345), FloatType(7.87300), FloatType(7.23000), FloatType(99999.9999));
+		Vector4Type z_axis = vector_set(FloatType(8.06413), FloatType(3.91970), FloatType(8.48928), FloatType(99999.9999));
+		Matrix3x4Type mtx = matrix_set(x_axis, y_axis, z_axis, x_axis);
+
+		FloatType det_xx = scalar_cast(matrix_minor(mtx, axis3::x, axis3::x));
+		CHECK(scalar_near_equal(det_xx, FloatType(38.4967), threshold));
+		FloatType det_xy = scalar_cast(matrix_minor(mtx, axis3::x, axis3::y));
+		CHECK(scalar_near_equal(det_xy, FloatType(-55.2182), threshold));
+		FloatType det_xz = scalar_cast(matrix_minor(mtx, axis3::x, axis3::z));
+		CHECK(scalar_near_equal(det_xz, FloatType(-62.0643), threshold));
+
+		FloatType det_yx = scalar_cast(matrix_minor(mtx, axis3::y, axis3::x));
+		CHECK(scalar_near_equal(det_yx, FloatType(49.9981), threshold));
+		FloatType det_yy = scalar_cast(matrix_minor(mtx, axis3::y, axis3::y));
+		CHECK(scalar_near_equal(det_yy, FloatType(12.5136), threshold));
+		FloatType det_yz = scalar_cast(matrix_minor(mtx, axis3::y, axis3::z));
+		CHECK(scalar_near_equal(det_yz, FloatType(-41.7163), threshold));
+
+		FloatType det_zx = scalar_cast(matrix_minor(mtx, axis3::z, axis3::x));
+		CHECK(scalar_near_equal(det_zx, FloatType(22.7625), threshold));
+		FloatType det_zy = scalar_cast(matrix_minor(mtx, axis3::z, axis3::y));
+		CHECK(scalar_near_equal(det_zy, FloatType(39.085), threshold));
+		FloatType det_zz = scalar_cast(matrix_minor(mtx, axis3::z, axis3::z));
+		CHECK(scalar_near_equal(det_zz, FloatType(41.4168), threshold));
+	}
 }
 
 TEST_CASE("matrix3x4f math", "[math][matrix3x4]")

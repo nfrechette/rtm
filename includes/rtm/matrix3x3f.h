@@ -283,6 +283,61 @@ namespace rtm
 	}
 
 	//////////////////////////////////////////////////////////////////////////
+	// Returns the minor of the input 3x3 matrix.
+	// See: https://en.wikipedia.org/wiki/Minor_(linear_algebra)
+	// The minor is the determinant of the sub-matrix input when the specified
+	// row and column are removed.
+	//////////////////////////////////////////////////////////////////////////
+	inline scalarf RTM_SIMD_CALL matrix_minor(matrix3x3f_arg0 input, axis3 row, axis3 column) RTM_NO_EXCEPT
+	{
+		// The minor boils down to calculating the determinant of a 2x2 matrix.
+		// det([a, b], [c, d]) = (a * d) - (b * c)
+
+		// Find which two rows we need.
+		vector4f row0;
+		vector4f row1;
+		if (row == axis3::x)
+		{
+			row0 = input.y_axis;
+			row1 = input.z_axis;
+		}
+		else if (row == axis3::y)
+		{
+			row0 = input.x_axis;
+			row1 = input.z_axis;
+		}
+		else
+		{
+			row0 = input.x_axis;
+			row1 = input.y_axis;
+		}
+
+		// Because our input is a 3x3 matrix, there are only a few possibilities for the 2x2 part:
+		// row0 = [x0, y0, z0]
+		// row1 = [x1, y1, z1]
+		// det([x0, y0], [x1, y1]) = (x0 * y1) - (y0 * x1) (z removed)
+		// det([x0, z0], [x1, z1]) = (x0 * z1) - (z0 * x1) (y removed)
+		// det([y0, z0], [y1, z1]) = (y0 * z1) - (z0 * y1) (x removed)
+		// det([column0, column1], [column2, column3]) = (column0 * column3) - (column1 * column2)
+
+		// For performance reasons, we can compute all three determinants at the same time.
+		const vector4f column0 = vector_mix<mix4::x, mix4::x, mix4::y, mix4::y>(row0, row0);
+		const vector4f column1 = vector_mix<mix4::y, mix4::z, mix4::z, mix4::z>(row0, row0);
+		const vector4f column2 = vector_mix<mix4::x, mix4::x, mix4::y, mix4::y>(row1, row1);
+		const vector4f column3 = vector_mix<mix4::y, mix4::z, mix4::z, mix4::z>(row1, row1);
+
+		const vector4f determinants = vector_neg_mul_sub(column1, column2, vector_mul(column0, column3));
+
+		// Extract the one we need
+		if (column == axis3::x)
+			return vector_get_z(determinants);
+		else if (column == axis3::y)
+			return vector_get_y(determinants);
+		else
+			return vector_get_x(determinants);
+	}
+
+	//////////////////////////////////////////////////////////////////////////
 	// Removes the 3D scale from a 3x3 matrix.
 	// Note that if the scaling is 0.0 for a particular axis, the original rotation axis cannot
 	// be recovered trivially and no attempt is done to do so. In theory, we could use the other axes

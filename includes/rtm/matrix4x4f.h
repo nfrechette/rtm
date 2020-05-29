@@ -25,6 +25,7 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 #include "rtm/math.h"
+#include "rtm/matrix3x3f.h"
 #include "rtm/vector4f.h"
 #include "rtm/impl/compiler_utils.h"
 #include "rtm/impl/matrix_common.h"
@@ -369,6 +370,72 @@ namespace rtm
 		vector4f x_axis = vector_mix<mix4::x, mix4::b, mix4::z, mix4::d>(c0, c1);
 
 		return vector_dot_as_scalar(x_axis, input_transposed.x_axis);
+	}
+
+	//////////////////////////////////////////////////////////////////////////
+	// Returns the minor of the input 4x4 matrix.
+	// See: https://en.wikipedia.org/wiki/Minor_(linear_algebra)
+	// The minor is the determinant of the sub-matrix input when the specified
+	// row and column are removed.
+	//////////////////////////////////////////////////////////////////////////
+	inline scalarf RTM_SIMD_CALL matrix_minor(matrix4x4f_arg0 input, axis4 row, axis4 column) RTM_NO_EXCEPT
+	{
+		vector4f row0;
+		vector4f row1;
+		vector4f row2;
+
+		// Find which rows we need.
+		if (row == axis4::x)
+		{
+			row0 = input.y_axis;
+			row1 = input.z_axis;
+			row2 = input.w_axis;
+		}
+		else if (row == axis4::y)
+		{
+			row0 = input.x_axis;
+			row1 = input.z_axis;
+			row2 = input.w_axis;
+		}
+		else if (row == axis4::z)
+		{
+			row0 = input.x_axis;
+			row1 = input.y_axis;
+			row2 = input.w_axis;
+		}
+		else
+		{
+			row0 = input.x_axis;
+			row1 = input.y_axis;
+			row2 = input.z_axis;
+		}
+
+		// Shift our row values into a proper 3x3 matrix
+		if (column == axis4::x)
+		{
+			row0 = vector_mix<mix4::y, mix4::z, mix4::w, mix4::w>(row0, row0);
+			row1 = vector_mix<mix4::y, mix4::z, mix4::w, mix4::w>(row1, row1);
+			row2 = vector_mix<mix4::y, mix4::z, mix4::w, mix4::w>(row2, row2);
+		}
+		else if (column == axis4::y)
+		{
+			row0 = vector_mix<mix4::x, mix4::z, mix4::w, mix4::w>(row0, row0);
+			row1 = vector_mix<mix4::x, mix4::z, mix4::w, mix4::w>(row1, row1);
+			row2 = vector_mix<mix4::x, mix4::z, mix4::w, mix4::w>(row2, row2);
+		}
+		else if (column == axis4::z)
+		{
+			row0 = vector_mix<mix4::x, mix4::y, mix4::w, mix4::w>(row0, row0);
+			row1 = vector_mix<mix4::x, mix4::y, mix4::w, mix4::w>(row1, row1);
+			row2 = vector_mix<mix4::x, mix4::y, mix4::w, mix4::w>(row2, row2);
+		}
+		else
+		{
+			// Already lined up
+		}
+
+		const matrix3x3f mtx = matrix_set(row0, row1, row2);
+		return matrix_determinant(mtx);
 	}
 }
 
