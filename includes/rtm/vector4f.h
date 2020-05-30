@@ -406,6 +406,7 @@ namespace rtm
 
 			vector4f input;
 			mix4 component;
+			int padding[3];
 		};
 	}
 

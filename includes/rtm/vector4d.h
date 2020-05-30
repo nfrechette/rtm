@@ -379,6 +379,7 @@ namespace rtm
 
 			vector4d input;
 			mix4 component;
+			int padding[3];
 		};
 	}
 
