@@ -897,9 +897,9 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	// Returns the squared length/norm of the vector4.
 	//////////////////////////////////////////////////////////////////////////
-	inline double vector_length_squared(const vector4d& input) RTM_NO_EXCEPT
+	constexpr rtm_impl::vector4d_vector_dot vector_length_squared(const vector4d& input) RTM_NO_EXCEPT
 	{
-		return vector_dot(input, input);
+		return rtm_impl::vector4d_vector_dot{ input, input };
 	}
 
 	//////////////////////////////////////////////////////////////////////////
