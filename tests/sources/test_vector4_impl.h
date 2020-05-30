@@ -489,6 +489,7 @@ void test_vector4_arithmetic_impl(const FloatType threshold)
 	CHECK(scalar_near_equal(rtm::scalar_sqrt_reciprocal(scalar_dot<Vector4Type, FloatType>(test_value0, test_value0)), vector_length_reciprocal(test_value0), threshold));
 	CHECK(scalar_near_equal(rtm::scalar_sqrt_reciprocal(scalar_dot<Vector4Type, FloatType>(test_value0, test_value0)), scalar_cast(vector_length_reciprocal(test_value0)), threshold));
 	CHECK(scalar_near_equal(rtm::scalar_sqrt_reciprocal(scalar_dot3<Vector4Type, FloatType>(test_value0, test_value0)), vector_length_reciprocal3(test_value0), threshold));
+	CHECK(scalar_near_equal(rtm::scalar_sqrt_reciprocal(scalar_dot3<Vector4Type, FloatType>(test_value0, test_value0)), scalar_cast(vector_length_reciprocal3(test_value0)), threshold));
 
 	const Vector4Type test_value_diff = vector_sub(test_value0, test_value1);
 	const FloatType vector_distance3_result = vector_distance3(test_value0, test_value1);
