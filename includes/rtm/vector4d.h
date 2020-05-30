@@ -388,7 +388,7 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	constexpr rtm_impl::vector4d_vector_get_component vector_get_component(const vector4d& input, mix4 component) RTM_NO_EXCEPT
 	{
-		return rtm_impl::vector4d_vector_get_component{ input, component };
+		return rtm_impl::vector4d_vector_get_component{ input, component, { 0 } };
 	}
 
 	//////////////////////////////////////////////////////////////////////////

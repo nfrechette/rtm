@@ -415,7 +415,7 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	constexpr rtm_impl::vector4f_vector_get_component RTM_SIMD_CALL vector_get_component(vector4f_arg0 input, mix4 component) RTM_NO_EXCEPT
 	{
-		return rtm_impl::vector4f_vector_get_component{ input, component };
+		return rtm_impl::vector4f_vector_get_component{ input, component, { 0 } };
 	}
 
 	//////////////////////////////////////////////////////////////////////////
