@@ -550,7 +550,7 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	// Returns true if both inputs are nearly equal, otherwise false: abs(lhs - rhs) <= threshold
 	//////////////////////////////////////////////////////////////////////////
-	inline bool scalar_near_equal(scalard lhs, scalard rhs, scalard threshold) RTM_NO_EXCEPT
+	inline bool RTM_SIMD_CALL scalar_near_equal(scalard lhs, scalard rhs, scalard threshold) RTM_NO_EXCEPT
 	{
 		return scalar_is_lower_equal(scalar_abs(scalar_sub(lhs, rhs)), threshold);
 	}
@@ -559,7 +559,7 @@ namespace rtm
 	// Returns true if both inputs are nearly equal, otherwise false: abs(lhs - rhs) <= 0.00001
 	//////////////////////////////////////////////////////////////////////////
 	RTM_DEPRECATED("Always specify a threshold explicitly, to be removed in v2.0")
-	inline bool scalar_near_equal(scalard lhs, scalard rhs) RTM_NO_EXCEPT
+	inline bool RTM_SIMD_CALL scalar_near_equal(scalard lhs, scalard rhs) RTM_NO_EXCEPT
 	{
 		return scalar_is_lower_equal(scalar_abs(scalar_sub(lhs, rhs)), scalar_set(0.00001));
 	}
