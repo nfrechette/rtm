@@ -770,25 +770,69 @@ namespace rtm
 		return vector_set((lhs_y * rhs_z) - (lhs_z * rhs_y), (lhs_z * rhs_x) - (lhs_x * rhs_z), (lhs_x * rhs_y) - (lhs_y * rhs_x));
 	}
 
-	//////////////////////////////////////////////////////////////////////////
-	// 4D dot product: lhs . rhs
-	//////////////////////////////////////////////////////////////////////////
-	inline double vector_dot(const vector4d& lhs, const vector4d& rhs) RTM_NO_EXCEPT
+	namespace rtm_impl
 	{
-		const double lhs_x = vector_get_x(lhs);
-		const double lhs_y = vector_get_y(lhs);
-		const double lhs_z = vector_get_z(lhs);
-		const double lhs_w = vector_get_w(lhs);
-		const double rhs_x = vector_get_x(rhs);
-		const double rhs_y = vector_get_y(rhs);
-		const double rhs_z = vector_get_z(rhs);
-		const double rhs_w = vector_get_w(rhs);
-		return (lhs_x * rhs_x) + (lhs_y * rhs_y) + (lhs_z * rhs_z) + (lhs_w * rhs_w);
+		//////////////////////////////////////////////////////////////////////////
+		// This is a helper struct to allow a single consistent API between
+		// various vector types when the semantics are identical but the return
+		// type differs. Implicit coercion is used to return the desired value
+		// at the call site.
+		//////////////////////////////////////////////////////////////////////////
+		struct vector4d_vector_dot
+		{
+			inline RTM_SIMD_CALL operator double() const RTM_NO_EXCEPT
+			{
+				const scalard lhs_x = vector_get_x(lhs);
+				const scalard lhs_y = vector_get_y(lhs);
+				const scalard lhs_z = vector_get_z(lhs);
+				const scalard lhs_w = vector_get_w(lhs);
+				const scalard rhs_x = vector_get_x(rhs);
+				const scalard rhs_y = vector_get_y(rhs);
+				const scalard rhs_z = vector_get_z(rhs);
+				const scalard rhs_w = vector_get_w(rhs);
+				const scalard xx = scalar_mul(lhs_x, rhs_x);
+				const scalard yy = scalar_mul(lhs_y, rhs_y);
+				const scalard zz = scalar_mul(lhs_z, rhs_z);
+				const scalard ww = scalar_mul(lhs_w, rhs_w);
+				return scalar_cast(scalar_add(scalar_add(xx, yy), scalar_add(zz, ww)));
+			}
+
+#if defined(RTM_SSE2_INTRINSICS)
+			inline RTM_SIMD_CALL operator scalard() const RTM_NO_EXCEPT
+			{
+				const scalard lhs_x = vector_get_x(lhs);
+				const scalard lhs_y = vector_get_y(lhs);
+				const scalard lhs_z = vector_get_z(lhs);
+				const scalard lhs_w = vector_get_w(lhs);
+				const scalard rhs_x = vector_get_x(rhs);
+				const scalard rhs_y = vector_get_y(rhs);
+				const scalard rhs_z = vector_get_z(rhs);
+				const scalard rhs_w = vector_get_w(rhs);
+				const scalard xx = scalar_mul(lhs_x, rhs_x);
+				const scalard yy = scalar_mul(lhs_y, rhs_y);
+				const scalard zz = scalar_mul(lhs_z, rhs_z);
+				const scalard ww = scalar_mul(lhs_w, rhs_w);
+				return scalar_add(scalar_add(xx, yy), scalar_add(zz, ww));
+			}
+#endif
+
+			vector4d lhs;
+			vector4d rhs;
+		};
 	}
 
 	//////////////////////////////////////////////////////////////////////////
 	// 4D dot product: lhs . rhs
 	//////////////////////////////////////////////////////////////////////////
+	constexpr rtm_impl::vector4d_vector_dot vector_dot(const vector4d& lhs, const vector4d& rhs) RTM_NO_EXCEPT
+	{
+		return rtm_impl::vector4d_vector_dot{ lhs, rhs };
+	}
+
+	//////////////////////////////////////////////////////////////////////////
+	// 4D dot product: lhs . rhs
+	//////////////////////////////////////////////////////////////////////////
+	RTM_DEPRECATED("Use vector_dot instead, to be removed in v2.0")
 	inline scalard vector_dot_as_scalar(const vector4d& lhs, const vector4d& rhs) RTM_NO_EXCEPT
 	{
 		return scalar_set(vector_dot(lhs, rhs));

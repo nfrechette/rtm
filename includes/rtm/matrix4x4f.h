@@ -185,8 +185,9 @@ namespace rtm
 		vector4f z_axis = vector_mix<mix4::x, mix4::b, mix4::z, mix4::d>(c4, c5);
 		vector4f w_axis = vector_mix<mix4::x, mix4::b, mix4::z, mix4::d>(c6, c7);
 
-		const scalarf det = vector_dot_as_scalar(x_axis, input_transposed.x_axis);
-		const vector4f inv_det = vector_set(scalar_reciprocal(det));
+		const scalarf det = vector_dot(x_axis, input_transposed.x_axis);
+		const scalarf inv_det_s = scalar_reciprocal(det);
+		const vector4f inv_det = vector_set(inv_det_s);
 
 		x_axis = vector_mul(x_axis, inv_det);
 		y_axis = vector_mul(y_axis, inv_det);
@@ -278,11 +279,12 @@ namespace rtm
 		vector4f z_axis = vector_mix<mix4::x, mix4::b, mix4::z, mix4::d>(c4, c5);
 		vector4f w_axis = vector_mix<mix4::x, mix4::b, mix4::z, mix4::d>(c6, c7);
 
-		const scalarf det = vector_dot_as_scalar(x_axis, input_transposed.x_axis);
+		const scalarf det = vector_dot(x_axis, input_transposed.x_axis);
 		if (scalar_cast(scalar_abs(det)) < threshold)
 			return fallback;
 
-		const vector4f inv_det = vector_set(scalar_reciprocal(det));
+		const scalarf inv_det_s = scalar_reciprocal(det);
+		const vector4f inv_det = vector_set(inv_det_s);
 
 		x_axis = vector_mul(x_axis, inv_det);
 		y_axis = vector_mul(y_axis, inv_det);
@@ -366,7 +368,7 @@ namespace rtm
 
 		vector4f x_axis = vector_mix<mix4::x, mix4::b, mix4::z, mix4::d>(c0, c1);
 
-		return vector_dot_as_scalar(x_axis, input_transposed.x_axis);
+		return vector_dot(x_axis, input_transposed.x_axis);
 	}
 
 	//////////////////////////////////////////////////////////////////////////

@@ -235,8 +235,9 @@ namespace rtm
 		const vector4d o00_o00_o10_o10 = vector_mix<mix4::x, mix4::x, mix4::a, mix4::a>(x_axis, y_axis);
 		const vector4d o00_o10_o20 = vector_mix<mix4::x, mix4::z, mix4::a, mix4::a>(o00_o00_o10_o10, z_axis);
 
-		const double det = vector_dot3(o00_o10_o20, input.x_axis);
-		const vector4d inv_det = vector_set(scalar_reciprocal(det));
+		const scalard det = vector_dot3(o00_o10_o20, input.x_axis);
+		const scalard inv_det_s = scalar_reciprocal(det);
+		const vector4d inv_det = vector_set(inv_det_s);
 
 		x_axis = vector_mul(x_axis, inv_det);
 		y_axis = vector_mul(y_axis, inv_det);
@@ -297,11 +298,12 @@ namespace rtm
 		const vector4d o00_o00_o10_o10 = vector_mix<mix4::x, mix4::x, mix4::a, mix4::a>(x_axis, y_axis);
 		const vector4d o00_o10_o20 = vector_mix<mix4::x, mix4::z, mix4::a, mix4::a>(o00_o00_o10_o10, z_axis);
 
-		const double det = vector_dot3(o00_o10_o20, input.x_axis);
-		if (scalar_abs(det) < threshold)
+		const scalard det = vector_dot3(o00_o10_o20, input.x_axis);
+		if (scalar_cast(scalar_abs(det)) < threshold)
 			return fallback;
 
-		const vector4d inv_det = vector_set(scalar_reciprocal(det));
+		const scalard inv_det_s = scalar_reciprocal(det);
+		const vector4d inv_det = vector_set(inv_det_s);
 
 		x_axis = vector_mul(x_axis, inv_det);
 		y_axis = vector_mul(y_axis, inv_det);
