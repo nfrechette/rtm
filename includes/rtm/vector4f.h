@@ -314,37 +314,107 @@ namespace rtm
 		return rtm_impl::vector4f_vector_get_w{ input };
 	}
 
-	//////////////////////////////////////////////////////////////////////////
-	// Returns the vector4 desired component.
-	//////////////////////////////////////////////////////////////////////////
-	template<mix4 component>
-	inline float RTM_SIMD_CALL vector_get_component(vector4f_arg0 input) RTM_NO_EXCEPT
+	namespace rtm_impl
 	{
-		const mix4 xyzw = mix4(int(component) % 4);
-		if (rtm_impl::static_condition<xyzw == mix4::x>::test())
-			return vector_get_x(input);
-		else if (rtm_impl::static_condition<xyzw == mix4::y>::test())
-			return vector_get_y(input);
-		else if (rtm_impl::static_condition<xyzw == mix4::z>::test())
-			return vector_get_z(input);
-		else
-			return vector_get_w(input);
+		//////////////////////////////////////////////////////////////////////////
+		// This is a helper struct to allow a single consistent API between
+		// various vector types when the semantics are identical but the return
+		// type differs. Implicit coercion is used to return the desired value
+		// at the call site.
+		//////////////////////////////////////////////////////////////////////////
+		template<mix4 component>
+		struct vector4f_vector_get_component_static
+		{
+			inline RTM_SIMD_CALL operator float() const RTM_NO_EXCEPT
+			{
+				const mix4 xyzw = mix4(int(component) % 4);
+				if (rtm_impl::static_condition<xyzw == mix4::x>::test())
+					return vector_get_x(input);
+				else if (rtm_impl::static_condition<xyzw == mix4::y>::test())
+					return vector_get_y(input);
+				else if (rtm_impl::static_condition<xyzw == mix4::z>::test())
+					return vector_get_z(input);
+				else
+					return vector_get_w(input);
+			}
+
+#if defined(RTM_SSE2_INTRINSICS)
+			inline RTM_SIMD_CALL operator scalarf() const RTM_NO_EXCEPT
+			{
+				const mix4 xyzw = mix4(int(component) % 4);
+				if (rtm_impl::static_condition<xyzw == mix4::x>::test())
+					return vector_get_x(input);
+				else if (rtm_impl::static_condition<xyzw == mix4::y>::test())
+					return vector_get_y(input);
+				else if (rtm_impl::static_condition<xyzw == mix4::z>::test())
+					return vector_get_z(input);
+				else
+					return vector_get_w(input);
+			}
+#endif
+
+			vector4f input;
+		};
 	}
 
 	//////////////////////////////////////////////////////////////////////////
 	// Returns the vector4 desired component.
 	//////////////////////////////////////////////////////////////////////////
-	inline float RTM_SIMD_CALL vector_get_component(vector4f_arg0 input, mix4 component) RTM_NO_EXCEPT
+	template<mix4 component>
+	constexpr rtm_impl::vector4f_vector_get_component_static<component> RTM_SIMD_CALL vector_get_component(vector4f_arg0 input) RTM_NO_EXCEPT
 	{
-		const mix4 xyzw = mix4(int(component) % 4);
-		if (xyzw == mix4::x)
-			return vector_get_x(input);
-		else if (xyzw == mix4::y)
-			return vector_get_y(input);
-		else if (xyzw == mix4::z)
-			return vector_get_z(input);
-		else
-			return vector_get_w(input);
+		return rtm_impl::vector4f_vector_get_component_static<component>{ input };
+	}
+
+	namespace rtm_impl
+	{
+		//////////////////////////////////////////////////////////////////////////
+		// This is a helper struct to allow a single consistent API between
+		// various vector types when the semantics are identical but the return
+		// type differs. Implicit coercion is used to return the desired value
+		// at the call site.
+		//////////////////////////////////////////////////////////////////////////
+		struct vector4f_vector_get_component
+		{
+			inline RTM_SIMD_CALL operator float() const RTM_NO_EXCEPT
+			{
+				const mix4 xyzw = mix4(int(component) % 4);
+				if (xyzw == mix4::x)
+					return vector_get_x(input);
+				else if (xyzw == mix4::y)
+					return vector_get_y(input);
+				else if (xyzw == mix4::z)
+					return vector_get_z(input);
+				else
+					return vector_get_w(input);
+			}
+
+#if defined(RTM_SSE2_INTRINSICS)
+			inline RTM_SIMD_CALL operator scalarf() const RTM_NO_EXCEPT
+			{
+				const mix4 xyzw = mix4(int(component) % 4);
+				if (xyzw == mix4::x)
+					return vector_get_x(input);
+				else if (xyzw == mix4::y)
+					return vector_get_y(input);
+				else if (xyzw == mix4::z)
+					return vector_get_z(input);
+				else
+					return vector_get_w(input);
+			}
+#endif
+
+			vector4f input;
+			mix4 component;
+		};
+	}
+
+	//////////////////////////////////////////////////////////////////////////
+	// Returns the vector4 desired component.
+	//////////////////////////////////////////////////////////////////////////
+	constexpr rtm_impl::vector4f_vector_get_component RTM_SIMD_CALL vector_get_component(vector4f_arg0 input, mix4 component) RTM_NO_EXCEPT
+	{
+		return rtm_impl::vector4f_vector_get_component{ input, component };
 	}
 
 	//////////////////////////////////////////////////////////////////////////
