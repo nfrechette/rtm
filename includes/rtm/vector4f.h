@@ -178,7 +178,7 @@ namespace rtm
 #if defined(RTM_SSE2_INTRINSICS)
 			inline RTM_SIMD_CALL operator scalarf() const RTM_NO_EXCEPT
 			{
-				return input;
+				return scalarf{ input };
 			}
 #endif
 
@@ -218,7 +218,7 @@ namespace rtm
 #if defined(RTM_SSE2_INTRINSICS)
 			inline RTM_SIMD_CALL operator scalarf() const RTM_NO_EXCEPT
 			{
-				return _mm_shuffle_ps(input, input, _MM_SHUFFLE(1, 1, 1, 1));
+				return scalarf{ _mm_shuffle_ps(input, input, _MM_SHUFFLE(1, 1, 1, 1)) };
 			}
 #endif
 
@@ -258,7 +258,7 @@ namespace rtm
 #if defined(RTM_SSE2_INTRINSICS)
 			inline RTM_SIMD_CALL operator scalarf() const RTM_NO_EXCEPT
 			{
-				return _mm_shuffle_ps(input, input, _MM_SHUFFLE(2, 2, 2, 2));
+				return scalarf{ _mm_shuffle_ps(input, input, _MM_SHUFFLE(2, 2, 2, 2)) };
 			}
 #endif
 
@@ -298,7 +298,7 @@ namespace rtm
 #if defined(RTM_SSE2_INTRINSICS)
 			inline RTM_SIMD_CALL operator scalarf() const RTM_NO_EXCEPT
 			{
-				return _mm_shuffle_ps(input, input, _MM_SHUFFLE(3, 3, 3, 3));
+				return scalarf{ _mm_shuffle_ps(input, input, _MM_SHUFFLE(3, 3, 3, 3)) };
 			}
 #endif
 
@@ -824,7 +824,7 @@ namespace rtm
 		__m128 x2z2_y2w2_0_0 = _mm_add_ps(x2_y2_z2_w2, z2_w2_0_0);
 		__m128 y2w2_0_0_0 = _mm_shuffle_ps(x2z2_y2w2_0_0, x2z2_y2w2_0_0, _MM_SHUFFLE(0, 0, 0, 1));
 		__m128 x2y2z2w2_0_0_0 = _mm_add_ps(x2z2_y2w2_0_0, y2w2_0_0_0);
-		return x2y2z2w2_0_0_0;
+		return scalarf{ x2y2z2w2_0_0_0 };
 #elif defined(RTM_NEON_INTRINSICS)
 		float32x4_t x2_y2_z2_w2 = vmulq_f32(lhs, rhs);
 		float32x2_t x2_y2 = vget_low_f32(x2_y2_z2_w2);
@@ -906,7 +906,7 @@ namespace rtm
 				__m128 y2_0_0_0 = _mm_shuffle_ps(x2_y2_z2_w2, x2_y2_z2_w2, _MM_SHUFFLE(0, 0, 0, 1));
 				__m128 x2y2_0_0_0 = _mm_add_ss(x2_y2_z2_w2, y2_0_0_0);
 				__m128 z2_0_0_0 = _mm_shuffle_ps(x2_y2_z2_w2, x2_y2_z2_w2, _MM_SHUFFLE(0, 0, 0, 2));
-				return _mm_add_ss(x2y2_0_0_0, z2_0_0_0);
+				return scalarf{ _mm_add_ss(x2y2_0_0_0, z2_0_0_0) };
 			}
 #endif
 

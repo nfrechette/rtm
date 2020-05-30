@@ -42,7 +42,7 @@ namespace rtm
 	inline scalard RTM_SIMD_CALL scalar_set(double xyzw) RTM_NO_EXCEPT
 	{
 #if defined(RTM_SSE2_INTRINSICS)
-		return _mm_set1_pd(xyzw);
+		return scalard{ _mm_set1_pd(xyzw) };
 #else
 		return xyzw;
 #endif
@@ -62,7 +62,7 @@ namespace rtm
 	inline double RTM_SIMD_CALL scalar_cast(scalard input) RTM_NO_EXCEPT
 	{
 #if defined(RTM_SSE2_INTRINSICS)
-		return _mm_cvtsd_f64(input);
+		return _mm_cvtsd_f64(input.value);
 #else
 		return input;
 #endif
@@ -377,7 +377,7 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	inline void RTM_SIMD_CALL scalar_store(scalard input, double* output) RTM_NO_EXCEPT
 	{
-		_mm_store_sd(output, input);
+		_mm_store_sd(output, input.value);
 	}
 
 	//////////////////////////////////////////////////////////////////////////
@@ -385,7 +385,7 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	inline scalard RTM_SIMD_CALL scalar_reciprocal(scalard input) RTM_NO_EXCEPT
 	{
-		return _mm_div_sd(_mm_set1_pd(1.0), input);
+		return scalard{ _mm_div_sd(_mm_set1_pd(1.0), input.value) };
 	}
 
 	//////////////////////////////////////////////////////////////////////////
@@ -393,7 +393,7 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	inline scalard RTM_SIMD_CALL scalar_add(scalard lhs, scalard rhs) RTM_NO_EXCEPT
 	{
-		return _mm_add_sd(lhs, rhs);
+		return scalard{ _mm_add_sd(lhs.value, rhs.value) };
 	}
 
 	//////////////////////////////////////////////////////////////////////////
@@ -401,7 +401,7 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	inline scalard RTM_SIMD_CALL scalar_sub(scalard lhs, scalard rhs) RTM_NO_EXCEPT
 	{
-		return _mm_sub_sd(lhs, rhs);
+		return scalard{ _mm_sub_sd(lhs.value, rhs.value) };
 	}
 
 	//////////////////////////////////////////////////////////////////////////
@@ -409,7 +409,7 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	inline scalard RTM_SIMD_CALL scalar_mul(scalard lhs, scalard rhs) RTM_NO_EXCEPT
 	{
-		return _mm_mul_sd(lhs, rhs);
+		return scalard{ _mm_mul_sd(lhs.value, rhs.value) };
 	}
 
 	//////////////////////////////////////////////////////////////////////////
@@ -417,7 +417,7 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	inline scalard RTM_SIMD_CALL scalar_div(scalard lhs, scalard rhs) RTM_NO_EXCEPT
 	{
-		return _mm_div_sd(lhs, rhs);
+		return scalard{ _mm_div_sd(lhs.value, rhs.value) };
 	}
 
 	//////////////////////////////////////////////////////////////////////////
@@ -425,7 +425,7 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	inline scalard RTM_SIMD_CALL scalar_mul_add(scalard s0, scalard s1, scalard s2) RTM_NO_EXCEPT
 	{
-		return _mm_add_sd(_mm_mul_sd(s0, s1), s2);
+		return scalard{ _mm_add_sd(_mm_mul_sd(s0.value, s1.value), s2.value) };
 	}
 
 	//////////////////////////////////////////////////////////////////////////
@@ -434,7 +434,7 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	inline scalard RTM_SIMD_CALL scalar_neg_mul_sub(scalard s0, scalard s1, scalard s2) RTM_NO_EXCEPT
 	{
-		return _mm_sub_sd(s2, _mm_mul_sd(s0, s1));
+		return scalard{ _mm_sub_sd(s2.value, _mm_mul_sd(s0.value, s1.value)) };
 	}
 
 	//////////////////////////////////////////////////////////////////////////
@@ -470,7 +470,7 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	inline scalard RTM_SIMD_CALL scalar_min(scalard lhs, scalard rhs) RTM_NO_EXCEPT
 	{
-		return _mm_min_sd(lhs, rhs);
+		return scalard{ _mm_min_sd(lhs.value, rhs.value) };
 	}
 
 	//////////////////////////////////////////////////////////////////////////
@@ -478,7 +478,7 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	inline scalard RTM_SIMD_CALL scalar_max(scalard lhs, scalard rhs) RTM_NO_EXCEPT
 	{
-		return _mm_max_sd(lhs, rhs);
+		return scalard{ _mm_max_sd(lhs.value, rhs.value) };
 	}
 
 	//////////////////////////////////////////////////////////////////////////
@@ -486,7 +486,7 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	inline scalard RTM_SIMD_CALL scalar_abs(scalard input) RTM_NO_EXCEPT
 	{
-		return scalar_max(scalar_sub(_mm_setzero_pd(), input), input);
+		return scalard{ _mm_max_sd(_mm_sub_sd(_mm_setzero_pd(), input.value), input.value) };
 	}
 
 	//////////////////////////////////////////////////////////////////////////
@@ -494,7 +494,7 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	inline scalard scalar_sqrt(scalard input) RTM_NO_EXCEPT
 	{
-		return _mm_sqrt_sd(input, input);
+		return scalard{ _mm_sqrt_sd(input.value, input.value) };
 	}
 
 	//////////////////////////////////////////////////////////////////////////
@@ -502,7 +502,7 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	inline bool RTM_SIMD_CALL scalar_is_equal(scalard lhs, scalard rhs) RTM_NO_EXCEPT
 	{
-		return _mm_comieq_sd(lhs, rhs) != 0;
+		return _mm_comieq_sd(lhs.value, rhs.value) != 0;
 	}
 
 	//////////////////////////////////////////////////////////////////////////
@@ -510,7 +510,7 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	inline bool RTM_SIMD_CALL scalar_is_lower(scalard lhs, scalard rhs) RTM_NO_EXCEPT
 	{
-		return _mm_comilt_sd(lhs, rhs) != 0;
+		return _mm_comilt_sd(lhs.value, rhs.value) != 0;
 	}
 
 	//////////////////////////////////////////////////////////////////////////
@@ -518,7 +518,7 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	inline bool RTM_SIMD_CALL scalar_is_lower_equal(scalard lhs, scalard rhs) RTM_NO_EXCEPT
 	{
-		return _mm_comile_sd(lhs, rhs) != 0;
+		return _mm_comile_sd(lhs.value, rhs.value) != 0;
 	}
 
 	//////////////////////////////////////////////////////////////////////////
@@ -526,7 +526,7 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	inline bool RTM_SIMD_CALL scalar_is_greater(scalard lhs, scalard rhs) RTM_NO_EXCEPT
 	{
-		return _mm_comigt_sd(lhs, rhs) != 0;
+		return _mm_comigt_sd(lhs.value, rhs.value) != 0;
 	}
 
 	//////////////////////////////////////////////////////////////////////////
@@ -534,7 +534,7 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	inline bool RTM_SIMD_CALL scalar_is_greater_equal(scalard lhs, scalard rhs) RTM_NO_EXCEPT
 	{
-		return _mm_comige_sd(lhs, rhs) != 0;
+		return _mm_comige_sd(lhs.value, rhs.value) != 0;
 	}
 
 	//////////////////////////////////////////////////////////////////////////

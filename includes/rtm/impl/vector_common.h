@@ -98,8 +98,8 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	inline vector4f RTM_SIMD_CALL vector_set(scalarf_arg0 x, scalarf_arg1 y, scalarf_arg2 z, scalarf_arg3 w) RTM_NO_EXCEPT
 	{
-		const __m128 xy = _mm_unpacklo_ps(x, y);
-		const __m128 zw = _mm_unpacklo_ps(z, w);
+		const __m128 xy = _mm_unpacklo_ps(x.value, y.value);
+		const __m128 zw = _mm_unpacklo_ps(z.value, w.value);
 		return _mm_shuffle_ps(xy, zw, _MM_SHUFFLE(1, 0, 1, 0));
 	}
 
@@ -108,8 +108,8 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	inline vector4f RTM_SIMD_CALL vector_set(scalarf_arg0 x, scalarf_arg1 y, scalarf_arg2 z) RTM_NO_EXCEPT
 	{
-		const __m128 xy = _mm_unpacklo_ps(x, y);
-		const __m128 zw = _mm_unpacklo_ps(z, _mm_setzero_ps());
+		const __m128 xy = _mm_unpacklo_ps(x.value, y.value);
+		const __m128 zw = _mm_unpacklo_ps(z.value, _mm_setzero_ps());
 		return _mm_shuffle_ps(xy, zw, _MM_SHUFFLE(1, 0, 1, 0));
 	}
 
@@ -118,7 +118,7 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	inline vector4f RTM_SIMD_CALL vector_set(scalarf_arg0 xyzw) RTM_NO_EXCEPT
 	{
-		return _mm_shuffle_ps(xyzw, xyzw, _MM_SHUFFLE(0, 0, 0, 0));
+		return _mm_shuffle_ps(xyzw.value, xyzw.value, _MM_SHUFFLE(0, 0, 0, 0));
 	}
 #endif
 
@@ -165,8 +165,8 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	inline vector4d RTM_SIMD_CALL vector_set(scalard x, scalard y, scalard z, scalard w) RTM_NO_EXCEPT
 	{
-		const __m128d xy = _mm_unpacklo_pd(x, y);
-		const __m128d zw = _mm_unpacklo_pd(z, w);
+		const __m128d xy = _mm_unpacklo_pd(x.value, y.value);
+		const __m128d zw = _mm_unpacklo_pd(z.value, w.value);
 		return vector4d{ xy, zw };
 	}
 
@@ -175,8 +175,8 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	inline vector4d RTM_SIMD_CALL vector_set(scalard x, scalard y, scalard z) RTM_NO_EXCEPT
 	{
-		const __m128d xy = _mm_unpacklo_pd(x, y);
-		const __m128d zw = _mm_unpacklo_pd(z, _mm_setzero_pd());
+		const __m128d xy = _mm_unpacklo_pd(x.value, y.value);
+		const __m128d zw = _mm_unpacklo_pd(z.value, _mm_setzero_pd());
 		return vector4d{ xy, zw };
 	}
 
@@ -185,7 +185,7 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	inline vector4d RTM_SIMD_CALL vector_set(scalard xyzw) RTM_NO_EXCEPT
 	{
-		const __m128d xyzw_pd = _mm_shuffle_pd(xyzw, xyzw, 0);
+		const __m128d xyzw_pd = _mm_shuffle_pd(xyzw.value, xyzw.value, 0);
 		return vector4d{ xyzw_pd, xyzw_pd };
 	}
 #endif
@@ -383,7 +383,7 @@ namespace rtm
 #if defined(RTM_SSE2_INTRINSICS)
 			inline RTM_SIMD_CALL operator scalarf() const RTM_NO_EXCEPT
 			{
-				return value;
+				return scalarf{ value };
 			}
 #endif
 
@@ -410,7 +410,7 @@ namespace rtm
 #if defined(RTM_SSE2_INTRINSICS)
 			inline RTM_SIMD_CALL operator scalard() const RTM_NO_EXCEPT
 			{
-				return value.xy;
+				return scalard{ value.xy };
 			}
 #endif
 
@@ -446,7 +446,7 @@ namespace rtm
 				__m128 zwzw = _mm_movehl_ps(value, value);
 				__m128 xz_yw_zz_ww = _mm_min_ps(value, zwzw);
 				__m128 yw_yw_yw_yw = _mm_shuffle_ps(xz_yw_zz_ww, xz_yw_zz_ww, _MM_SHUFFLE(1, 1, 1, 1));
-				return _mm_min_ps(xz_yw_zz_ww, yw_yw_yw_yw);
+				return scalarf{ _mm_min_ps(xz_yw_zz_ww, yw_yw_yw_yw) };
 			}
 #endif
 
@@ -482,7 +482,7 @@ namespace rtm
 				__m128 zwzw = _mm_movehl_ps(value, value);
 				__m128 xz_yw_zz_ww = _mm_max_ps(value, zwzw);
 				__m128 yw_yw_yw_yw = _mm_shuffle_ps(xz_yw_zz_ww, xz_yw_zz_ww, _MM_SHUFFLE(1, 1, 1, 1));
-				return _mm_max_ps(xz_yw_zz_ww, yw_yw_yw_yw);
+				return scalarf{ _mm_max_ps(xz_yw_zz_ww, yw_yw_yw_yw) };
 			}
 #endif
 
@@ -513,7 +513,7 @@ namespace rtm
 			{
 				__m128d xz_yw = _mm_min_pd(value.xy, value.zw);
 				__m128d yw_yw = _mm_shuffle_pd(xz_yw, xz_yw, 1);
-				return _mm_min_pd(xz_yw, yw_yw);
+				return scalard{ _mm_min_pd(xz_yw, yw_yw) };
 			}
 #endif
 
@@ -544,7 +544,7 @@ namespace rtm
 			{
 				__m128d xz_yw = _mm_max_pd(value.xy, value.zw);
 				__m128d yw_yw = _mm_shuffle_pd(xz_yw, xz_yw, 1);
-				return _mm_max_pd(xz_yw, yw_yw);
+				return scalard{ _mm_max_pd(xz_yw, yw_yw) };
 			}
 #endif
 

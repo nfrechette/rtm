@@ -157,7 +157,7 @@ namespace rtm
 #if defined(RTM_SSE2_INTRINSICS)
 			inline RTM_SIMD_CALL operator scalard() const RTM_NO_EXCEPT
 			{
-				return input.xy;
+				return scalard{ input.xy };
 			}
 #endif
 
@@ -195,7 +195,7 @@ namespace rtm
 #if defined(RTM_SSE2_INTRINSICS)
 			inline RTM_SIMD_CALL operator scalard() const RTM_NO_EXCEPT
 			{
-				return _mm_shuffle_pd(input.xy, input.xy, 1);
+				return scalard{ _mm_shuffle_pd(input.xy, input.xy, 1) };
 			}
 #endif
 
@@ -233,7 +233,7 @@ namespace rtm
 #if defined(RTM_SSE2_INTRINSICS)
 			inline RTM_SIMD_CALL operator scalard() const RTM_NO_EXCEPT
 			{
-				return input.zw;
+				return scalard{ input.zw };
 			}
 #endif
 
@@ -271,7 +271,7 @@ namespace rtm
 #if defined(RTM_SSE2_INTRINSICS)
 			inline RTM_SIMD_CALL operator scalard() const RTM_NO_EXCEPT
 			{
-				return _mm_shuffle_pd(input.zw, input.zw, 1);
+				return scalard{ _mm_shuffle_pd(input.zw, input.zw, 1) };
 			}
 #endif
 
@@ -711,7 +711,7 @@ namespace rtm
 				__m128d z2_w2 = _mm_mul_pd(lhs.zw, rhs.zw);
 				__m128d y2 = _mm_shuffle_pd(x2_y2, x2_y2, 1);
 				__m128d x2y2 = _mm_add_sd(x2_y2, y2);
-				return _mm_add_sd(x2y2, z2_w2);
+				return scalard{ _mm_add_sd(x2y2, z2_w2) };
 			}
 #endif
 
