@@ -498,6 +498,16 @@ namespace rtm
 	}
 
 	//////////////////////////////////////////////////////////////////////////
+	// Returns the reciprocal square root of the input.
+	//////////////////////////////////////////////////////////////////////////
+	inline scalard RTM_SIMD_CALL scalar_sqrt_reciprocal(scalard input) RTM_NO_EXCEPT
+	{
+		const __m128d input_sqrt = _mm_sqrt_sd(input.value, input.value);
+		const __m128d result = _mm_div_sd(_mm_set_sd(1.0), input_sqrt);
+		return scalard{ result };
+	}
+
+	//////////////////////////////////////////////////////////////////////////
 	// Returns true if both inputs are equal, false otherwise.
 	//////////////////////////////////////////////////////////////////////////
 	inline bool RTM_SIMD_CALL scalar_is_equal(scalard lhs, scalard rhs) RTM_NO_EXCEPT

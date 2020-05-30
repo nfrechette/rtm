@@ -125,6 +125,9 @@ static void test_scalar_impl(const FloatType threshold)
 	CHECK(scalar_near_equal(scalar_sqrt_reciprocal(FloatType(0.5)), FloatType(1.0) / std::sqrt(FloatType(0.5)), threshold));
 	CHECK(scalar_near_equal(scalar_sqrt_reciprocal(FloatType(32.5)), FloatType(1.0) / std::sqrt(FloatType(32.5)), threshold));
 
+	CHECK(scalar_near_equal(scalar_cast(scalar_sqrt_reciprocal(scalar_set(FloatType(0.5)))), FloatType(1.0) / std::sqrt(FloatType(0.5)), threshold));
+	CHECK(scalar_near_equal(scalar_cast(scalar_sqrt_reciprocal(scalar_set(FloatType(32.5)))), FloatType(1.0) / std::sqrt(FloatType(32.5)), threshold));
+
 	CHECK(scalar_near_equal(scalar_reciprocal(FloatType(0.5)), FloatType(1.0 / 0.5), threshold));
 	CHECK(scalar_near_equal(scalar_reciprocal(FloatType(32.5)), FloatType(1.0 / 32.5), threshold));
 	CHECK(scalar_near_equal(scalar_reciprocal(FloatType(-0.5)), FloatType(1.0 / -0.5), threshold));
