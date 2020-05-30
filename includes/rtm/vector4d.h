@@ -1071,7 +1071,7 @@ namespace rtm
 	inline vector4d vector_normalize3(const vector4d& input) RTM_NO_EXCEPT
 	{
 		// Reciprocal is more accurate to normalize with
-		const double len_sq = vector_length_squared3(input);
+		const scalard len_sq = vector_length_squared3(input);
 		return vector_mul(input, scalar_sqrt_reciprocal(len_sq));
 	}
 
@@ -1083,8 +1083,8 @@ namespace rtm
 	inline vector4d vector_normalize3(const vector4d& input, const vector4d& fallback, double threshold = 1.0E-8) RTM_NO_EXCEPT
 	{
 		// Reciprocal is more accurate to normalize with
-		const double len_sq = vector_length_squared3(input);
-		if (len_sq >= threshold)
+		const scalard len_sq = vector_length_squared3(input);
+		if (scalar_cast(len_sq) >= threshold)
 			return vector_mul(input, scalar_sqrt_reciprocal(len_sq));
 		else
 			return fallback;
