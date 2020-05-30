@@ -392,6 +392,11 @@ void test_vector4_arithmetic_impl(const FloatType threshold)
 	CHECK(scalar_near_equal(vector_get_z(vector_mul(test_value0, FloatType(2.34))), test_value0_flt[2] * FloatType(2.34), threshold));
 	CHECK(scalar_near_equal(vector_get_w(vector_mul(test_value0, FloatType(2.34))), test_value0_flt[3] * FloatType(2.34), threshold));
 
+	CHECK(scalar_near_equal(vector_get_x(vector_mul(test_value0, scalar_set(FloatType(2.34)))), test_value0_flt[0] * FloatType(2.34), threshold));
+	CHECK(scalar_near_equal(vector_get_y(vector_mul(test_value0, scalar_set(FloatType(2.34)))), test_value0_flt[1] * FloatType(2.34), threshold));
+	CHECK(scalar_near_equal(vector_get_z(vector_mul(test_value0, scalar_set(FloatType(2.34)))), test_value0_flt[2] * FloatType(2.34), threshold));
+	CHECK(scalar_near_equal(vector_get_w(vector_mul(test_value0, scalar_set(FloatType(2.34)))), test_value0_flt[3] * FloatType(2.34), threshold));
+
 	CHECK(scalar_near_equal(vector_get_x(vector_div(test_value0, test_value1)), test_value0_flt[0] / test_value1_flt[0], threshold));
 	CHECK(scalar_near_equal(vector_get_y(vector_div(test_value0, test_value1)), test_value0_flt[1] / test_value1_flt[1], threshold));
 	CHECK(scalar_near_equal(vector_get_z(vector_div(test_value0, test_value1)), test_value0_flt[2] / test_value1_flt[2], threshold));

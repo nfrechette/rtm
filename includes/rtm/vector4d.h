@@ -653,6 +653,17 @@ namespace rtm
 		return vector_mul(lhs, vector_set(rhs));
 	}
 
+#if defined(RTM_SSE2_INTRINSICS)
+	//////////////////////////////////////////////////////////////////////////
+	// Per component multiplication of the vector by a scalar: lhs * rhs
+	//////////////////////////////////////////////////////////////////////////
+	inline vector4d vector_mul(const vector4d& lhs, const scalard& rhs) RTM_NO_EXCEPT
+	{
+		const __m128d rhs_xx = _mm_shuffle_pd(rhs.value, rhs.value, 0);
+		return vector4d{ _mm_mul_pd(lhs.xy, rhs_xx), _mm_mul_pd(lhs.zw, rhs_xx) };
+	}
+#endif
+
 	//////////////////////////////////////////////////////////////////////////
 	// Per component division of the two inputs: lhs / rhs
 	//////////////////////////////////////////////////////////////////////////

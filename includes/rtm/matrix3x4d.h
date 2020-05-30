@@ -73,9 +73,13 @@ namespace rtm
 		const double wy = quat_get_w(quat) * y2;
 		const double wz = quat_get_w(quat) * z2;
 
-		const vector4d x_axis = vector_mul(vector_set(1.0 - (yy + zz), xy + wz, xz - wy, 0.0), vector_get_x(scale));
-		const vector4d y_axis = vector_mul(vector_set(xy - wz, 1.0 - (xx + zz), yz + wx, 0.0), vector_get_y(scale));
-		const vector4d z_axis = vector_mul(vector_set(xz + wy, yz - wx, 1.0 - (xx + yy), 0.0), vector_get_z(scale));
+		const scalard scale_x = vector_get_x(scale);
+		const scalard scale_y = vector_get_y(scale);
+		const scalard scale_z = vector_get_z(scale);
+
+		const vector4d x_axis = vector_mul(vector_set(1.0 - (yy + zz), xy + wz, xz - wy, 0.0), scale_x);
+		const vector4d y_axis = vector_mul(vector_set(xy - wz, 1.0 - (xx + zz), yz + wx, 0.0), scale_y);
+		const vector4d z_axis = vector_mul(vector_set(xz + wy, yz - wx, 1.0 - (xx + yy), 0.0), scale_z);
 		return matrix3x4d{ x_axis, y_axis, z_axis, translation };
 	}
 
