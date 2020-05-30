@@ -843,7 +843,8 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	inline vector4d vector_dot_as_vector(const vector4d& lhs, const vector4d& rhs) RTM_NO_EXCEPT
 	{
-		return vector_set(vector_dot(lhs, rhs));
+		const scalard dot = vector_dot(lhs, rhs);
+		return vector_set(dot);
 	}
 
 	namespace rtm_impl
