@@ -418,6 +418,16 @@ namespace rtm
 #endif
 	}
 
+#if defined(RTM_SSE2_INTRINSICS)
+	//////////////////////////////////////////////////////////////////////////
+	// Sets the vector4 [x] component and returns the new value.
+	//////////////////////////////////////////////////////////////////////////
+	inline vector4d vector_set_x(const vector4d& input, const scalard& lane_value) RTM_NO_EXCEPT
+	{
+		return vector4d{ _mm_move_sd(input.xy, lane_value.value), input.zw };
+	}
+#endif
+
 	//////////////////////////////////////////////////////////////////////////
 	// Sets the vector4 [y] component and returns the new value.
 	//////////////////////////////////////////////////////////////////////////
@@ -429,6 +439,16 @@ namespace rtm
 		return vector4d{ input.x, lane_value, input.z, input.w };
 #endif
 	}
+
+#if defined(RTM_SSE2_INTRINSICS)
+	//////////////////////////////////////////////////////////////////////////
+	// Sets the vector4 [y] component and returns the new value.
+	//////////////////////////////////////////////////////////////////////////
+	inline vector4d vector_set_y(const vector4d& input, const scalard& lane_value) RTM_NO_EXCEPT
+	{
+		return vector4d{ _mm_shuffle_pd(input.xy, lane_value.value, 0), input.zw };
+	}
+#endif
 
 	//////////////////////////////////////////////////////////////////////////
 	// Sets the vector4 [z] component and returns the new value.
@@ -442,6 +462,16 @@ namespace rtm
 #endif
 	}
 
+#if defined(RTM_SSE2_INTRINSICS)
+	//////////////////////////////////////////////////////////////////////////
+	// Sets the vector4 [z] component and returns the new value.
+	//////////////////////////////////////////////////////////////////////////
+	inline vector4d vector_set_z(const vector4d& input, const scalard& lane_value) RTM_NO_EXCEPT
+	{
+		return vector4d{ input.xy, _mm_move_sd(input.zw, lane_value.value) };
+	}
+#endif
+
 	//////////////////////////////////////////////////////////////////////////
 	// Sets the vector4 [w] component and returns the new value.
 	//////////////////////////////////////////////////////////////////////////
@@ -453,6 +483,16 @@ namespace rtm
 		return vector4d{ input.x, input.y, input.z, lane_value };
 #endif
 	}
+
+#if defined(RTM_SSE2_INTRINSICS)
+	//////////////////////////////////////////////////////////////////////////
+	// Sets the vector4 [w] component and returns the new value.
+	//////////////////////////////////////////////////////////////////////////
+	inline vector4d vector_set_w(const vector4d& input, const scalard& lane_value) RTM_NO_EXCEPT
+	{
+		return vector4d{ input.xy, _mm_shuffle_pd(input.zw, lane_value.value, 0) };
+	}
+#endif
 
 	//////////////////////////////////////////////////////////////////////////
 	// Returns a floating point pointer to the vector4 data.
