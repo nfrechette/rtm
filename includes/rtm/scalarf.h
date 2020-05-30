@@ -570,6 +570,40 @@ namespace rtm
 	}
 
 	//////////////////////////////////////////////////////////////////////////
+	// Returns the reciprocal square root of the input.
+	//////////////////////////////////////////////////////////////////////////
+#if defined(_MSC_VER) && !defined(__clang__) && _MSC_VER >= 1920 && _MSC_VER < 1925 && defined(_M_X64) && !defined(RTM_AVX_INTRINSICS)
+	// HACK!!! Visual Studio 2019 has a code generation bug triggered by the code below, disable optimizations for now
+	// Bug only happens with x64 SSE2, not with AVX nor with x86
+	// Fixed in 16.5.4, see https://github.com/nfrechette/rtm/issues/35
+	// TODO: Remove this hack sometime in 2022 or later once the fix is old enough that we no longer have to support the hack
+#pragma optimize("", off)
+#endif
+	inline scalarf RTM_SIMD_CALL scalar_sqrt_reciprocal(scalarf_arg0 input) RTM_NO_EXCEPT
+	{
+		// Perform two passes of Newton-Raphson iteration on the hardware estimate
+		const __m128 half = _mm_set_ss(0.5F);
+		const __m128 input_half = _mm_mul_ss(input.value, half);
+		const __m128 x0 = _mm_rsqrt_ss(input.value);
+
+		// First iteration
+		__m128 x1 = _mm_mul_ss(x0, x0);
+		x1 = _mm_sub_ss(half, _mm_mul_ss(input_half, x1));
+		x1 = _mm_add_ss(_mm_mul_ss(x0, x1), x0);
+
+		// Second iteration
+		__m128 x2 = _mm_mul_ss(x1, x1);
+		x2 = _mm_sub_ss(half, _mm_mul_ss(input_half, x2));
+		x2 = _mm_add_ss(_mm_mul_ss(x1, x2), x1);
+
+		return scalarf{ x2 };
+	}
+#if defined(_MSC_VER) && !defined(__clang__) && _MSC_VER >= 1920 && _MSC_VER < 1925 && defined(_M_X64) && !defined(RTM_AVX_INTRINSICS)
+	// HACK!!! See comment above
+#pragma optimize("", on)
+#endif
+
+	//////////////////////////////////////////////////////////////////////////
 	// Returns true if both inputs are equal, false otherwise.
 	//////////////////////////////////////////////////////////////////////////
 	inline bool RTM_SIMD_CALL scalar_is_equal(scalarf_arg0 lhs, scalarf_arg1 rhs) RTM_NO_EXCEPT
