@@ -73,9 +73,9 @@ namespace rtm
 		const float wy = quat_get_w(quat) * y2;
 		const float wz = quat_get_w(quat) * z2;
 
-		const float scale_x = vector_get_x(scale);
-		const float scale_y = vector_get_y(scale);
-		const float scale_z = vector_get_z(scale);
+		const scalarf scale_x = vector_get_x(scale);
+		const scalarf scale_y = vector_get_y(scale);
+		const scalarf scale_z = vector_get_z(scale);
 
 		const vector4f x_axis = vector_mul(vector_set(1.0F - (yy + zz), xy + wz, xz - wy, 0.0F), scale_x);
 		const vector4f y_axis = vector_mul(vector_set(xy - wz, 1.0F - (xx + zz), yz + wx, 0.0F), scale_y);
