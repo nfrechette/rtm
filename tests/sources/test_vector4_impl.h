@@ -480,6 +480,7 @@ void test_vector4_arithmetic_impl(const FloatType threshold)
 	CHECK(scalar_is_equal(vector_length_squared3_result, scalar_cast(vector_length_squared3_result_scalar)));
 
 	CHECK(scalar_near_equal(rtm::scalar_sqrt(scalar_dot<Vector4Type, FloatType>(test_value0, test_value0)), vector_length(test_value0), threshold));
+	CHECK(scalar_near_equal(rtm::scalar_sqrt(scalar_dot<Vector4Type, FloatType>(test_value0, test_value0)), scalar_cast(vector_length(test_value0)), threshold));
 	const FloatType vector_length3_result = vector_length3(test_value0);
 	CHECK(scalar_near_equal(rtm::scalar_sqrt(scalar_dot3<Vector4Type, FloatType>(test_value0, test_value0)), vector_length3_result, threshold));
 	const ScalarType vector_length3_result_scalar = vector_length3(test_value0);
