@@ -492,7 +492,7 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	// Returns the square root of the input.
 	//////////////////////////////////////////////////////////////////////////
-	inline scalard scalar_sqrt(scalard input) RTM_NO_EXCEPT
+	inline scalard RTM_SIMD_CALL scalar_sqrt(scalard input) RTM_NO_EXCEPT
 	{
 		return scalard{ _mm_sqrt_sd(input.value, input.value) };
 	}
