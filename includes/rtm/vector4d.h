@@ -982,12 +982,40 @@ namespace rtm
 		return rtm_impl::vector4d_vector_length3{ input };
 	}
 
+	namespace rtm_impl
+	{
+		//////////////////////////////////////////////////////////////////////////
+		// This is a helper struct to allow a single consistent API between
+		// various vector types when the semantics are identical but the return
+		// type differs. Implicit coercion is used to return the desired value
+		// at the call site.
+		//////////////////////////////////////////////////////////////////////////
+		struct vector4d_vector_length_reciprocal
+		{
+			inline RTM_SIMD_CALL operator double() const RTM_NO_EXCEPT
+			{
+				const scalard len_sq = vector_length_squared(input);
+				return scalar_cast(scalar_sqrt_reciprocal(len_sq));
+			}
+
+#if defined(RTM_SSE2_INTRINSICS)
+			inline RTM_SIMD_CALL operator scalard() const RTM_NO_EXCEPT
+			{
+				const scalard len_sq = vector_length_squared(input);
+				return scalar_sqrt_reciprocal(len_sq);
+			}
+#endif
+
+			vector4d input;
+		};
+	}
+
 	//////////////////////////////////////////////////////////////////////////
 	// Returns the reciprocal length/norm of the vector4.
 	//////////////////////////////////////////////////////////////////////////
-	inline double vector_length_reciprocal(const vector4d& input) RTM_NO_EXCEPT
+	constexpr rtm_impl::vector4d_vector_length_reciprocal vector_length_reciprocal(const vector4d& input) RTM_NO_EXCEPT
 	{
-		return 1.0 / vector_length(input);
+		return rtm_impl::vector4d_vector_length_reciprocal{ input };
 	}
 
 	//////////////////////////////////////////////////////////////////////////
