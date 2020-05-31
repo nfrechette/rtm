@@ -141,110 +141,115 @@ void test_vector4_getset_impl()
 	//////////////////////////////////////////////////////////////////////////
 	// Setters, getters, and casts
 
+	CHECK(FloatType(vector_get_x(vector_set(FloatType(0.0), FloatType(2.34), FloatType(-3.12), FloatType(10000.0)))) == FloatType(0.0));
+	CHECK(FloatType(vector_get_y(vector_set(FloatType(0.0), FloatType(2.34), FloatType(-3.12), FloatType(10000.0)))) == FloatType(2.34));
+	CHECK(FloatType(vector_get_z(vector_set(FloatType(0.0), FloatType(2.34), FloatType(-3.12), FloatType(10000.0)))) == FloatType(-3.12));
+	CHECK(FloatType(vector_get_w(vector_set(FloatType(0.0), FloatType(2.34), FloatType(-3.12), FloatType(10000.0)))) == FloatType(10000.0));
+
 	CHECK(scalar_cast(vector_get_x(vector_set(FloatType(0.0), FloatType(2.34), FloatType(-3.12), FloatType(10000.0)))) == FloatType(0.0));
 	CHECK(scalar_cast(vector_get_y(vector_set(FloatType(0.0), FloatType(2.34), FloatType(-3.12), FloatType(10000.0)))) == FloatType(2.34));
 	CHECK(scalar_cast(vector_get_z(vector_set(FloatType(0.0), FloatType(2.34), FloatType(-3.12), FloatType(10000.0)))) == FloatType(-3.12));
 	CHECK(scalar_cast(vector_get_w(vector_set(FloatType(0.0), FloatType(2.34), FloatType(-3.12), FloatType(10000.0)))) == FloatType(10000.0));
 
-	CHECK(scalar_cast(vector_get_x(vector_set(scalar_set(FloatType(0.0)), scalar_set(FloatType(2.34)), scalar_set(FloatType(-3.12)), scalar_set(FloatType(10000.0))))) == FloatType(0.0));
-	CHECK(scalar_cast(vector_get_y(vector_set(scalar_set(FloatType(0.0)), scalar_set(FloatType(2.34)), scalar_set(FloatType(-3.12)), scalar_set(FloatType(10000.0))))) == FloatType(2.34));
-	CHECK(scalar_cast(vector_get_z(vector_set(scalar_set(FloatType(0.0)), scalar_set(FloatType(2.34)), scalar_set(FloatType(-3.12)), scalar_set(FloatType(10000.0))))) == FloatType(-3.12));
-	CHECK(scalar_cast(vector_get_w(vector_set(scalar_set(FloatType(0.0)), scalar_set(FloatType(2.34)), scalar_set(FloatType(-3.12)), scalar_set(FloatType(10000.0))))) == FloatType(10000.0));
+	CHECK(FloatType(vector_get_x(vector_set(scalar_set(FloatType(0.0)), scalar_set(FloatType(2.34)), scalar_set(FloatType(-3.12)), scalar_set(FloatType(10000.0))))) == FloatType(0.0));
+	CHECK(FloatType(vector_get_y(vector_set(scalar_set(FloatType(0.0)), scalar_set(FloatType(2.34)), scalar_set(FloatType(-3.12)), scalar_set(FloatType(10000.0))))) == FloatType(2.34));
+	CHECK(FloatType(vector_get_z(vector_set(scalar_set(FloatType(0.0)), scalar_set(FloatType(2.34)), scalar_set(FloatType(-3.12)), scalar_set(FloatType(10000.0))))) == FloatType(-3.12));
+	CHECK(FloatType(vector_get_w(vector_set(scalar_set(FloatType(0.0)), scalar_set(FloatType(2.34)), scalar_set(FloatType(-3.12)), scalar_set(FloatType(10000.0))))) == FloatType(10000.0));
 
-	CHECK(scalar_cast(vector_get_x(vector_set(FloatType(0.0), FloatType(2.34), FloatType(-3.12)))) == FloatType(0.0));
-	CHECK(scalar_cast(vector_get_y(vector_set(FloatType(0.0), FloatType(2.34), FloatType(-3.12)))) == FloatType(2.34));
-	CHECK(scalar_cast(vector_get_z(vector_set(FloatType(0.0), FloatType(2.34), FloatType(-3.12)))) == FloatType(-3.12));
-	CHECK(scalar_cast(vector_get_w(vector_set(FloatType(0.0), FloatType(2.34), FloatType(-3.12)))) == FloatType(0.0));
+	CHECK(FloatType(vector_get_x(vector_set(FloatType(0.0), FloatType(2.34), FloatType(-3.12)))) == FloatType(0.0));
+	CHECK(FloatType(vector_get_y(vector_set(FloatType(0.0), FloatType(2.34), FloatType(-3.12)))) == FloatType(2.34));
+	CHECK(FloatType(vector_get_z(vector_set(FloatType(0.0), FloatType(2.34), FloatType(-3.12)))) == FloatType(-3.12));
+	CHECK(FloatType(vector_get_w(vector_set(FloatType(0.0), FloatType(2.34), FloatType(-3.12)))) == FloatType(0.0));
 
-	CHECK(scalar_cast(vector_get_x(vector_set(scalar_set(FloatType(0.0)), scalar_set(FloatType(2.34)), scalar_set(FloatType(-3.12))))) == FloatType(0.0));
-	CHECK(scalar_cast(vector_get_y(vector_set(scalar_set(FloatType(0.0)), scalar_set(FloatType(2.34)), scalar_set(FloatType(-3.12))))) == FloatType(2.34));
-	CHECK(scalar_cast(vector_get_z(vector_set(scalar_set(FloatType(0.0)), scalar_set(FloatType(2.34)), scalar_set(FloatType(-3.12))))) == FloatType(-3.12));
-	CHECK(scalar_cast(vector_get_w(vector_set(scalar_set(FloatType(0.0)), scalar_set(FloatType(2.34)), scalar_set(FloatType(-3.12))))) == FloatType(0.0));
+	CHECK(FloatType(vector_get_x(vector_set(scalar_set(FloatType(0.0)), scalar_set(FloatType(2.34)), scalar_set(FloatType(-3.12))))) == FloatType(0.0));
+	CHECK(FloatType(vector_get_y(vector_set(scalar_set(FloatType(0.0)), scalar_set(FloatType(2.34)), scalar_set(FloatType(-3.12))))) == FloatType(2.34));
+	CHECK(FloatType(vector_get_z(vector_set(scalar_set(FloatType(0.0)), scalar_set(FloatType(2.34)), scalar_set(FloatType(-3.12))))) == FloatType(-3.12));
+	CHECK(FloatType(vector_get_w(vector_set(scalar_set(FloatType(0.0)), scalar_set(FloatType(2.34)), scalar_set(FloatType(-3.12))))) == FloatType(0.0));
 
-	CHECK(scalar_cast(vector_get_x(vector_set(FloatType(-3.12)))) == FloatType(-3.12));
-	CHECK(scalar_cast(vector_get_y(vector_set(FloatType(-3.12)))) == FloatType(-3.12));
-	CHECK(scalar_cast(vector_get_z(vector_set(FloatType(-3.12)))) == FloatType(-3.12));
-	CHECK(scalar_cast(vector_get_w(vector_set(FloatType(-3.12)))) == FloatType(-3.12));
+	CHECK(FloatType(vector_get_x(vector_set(FloatType(-3.12)))) == FloatType(-3.12));
+	CHECK(FloatType(vector_get_y(vector_set(FloatType(-3.12)))) == FloatType(-3.12));
+	CHECK(FloatType(vector_get_z(vector_set(FloatType(-3.12)))) == FloatType(-3.12));
+	CHECK(FloatType(vector_get_w(vector_set(FloatType(-3.12)))) == FloatType(-3.12));
 
-	CHECK(scalar_cast(vector_get_x(vector_set(scalar_set(FloatType(-3.12))))) == FloatType(-3.12));
-	CHECK(scalar_cast(vector_get_y(vector_set(scalar_set(FloatType(-3.12))))) == FloatType(-3.12));
-	CHECK(scalar_cast(vector_get_z(vector_set(scalar_set(FloatType(-3.12))))) == FloatType(-3.12));
-	CHECK(scalar_cast(vector_get_w(vector_set(scalar_set(FloatType(-3.12))))) == FloatType(-3.12));
+	CHECK(FloatType(vector_get_x(vector_set(scalar_set(FloatType(-3.12))))) == FloatType(-3.12));
+	CHECK(FloatType(vector_get_y(vector_set(scalar_set(FloatType(-3.12))))) == FloatType(-3.12));
+	CHECK(FloatType(vector_get_z(vector_set(scalar_set(FloatType(-3.12))))) == FloatType(-3.12));
+	CHECK(FloatType(vector_get_w(vector_set(scalar_set(FloatType(-3.12))))) == FloatType(-3.12));
 
-	CHECK(scalar_cast(vector_get_x(zero)) == FloatType(0.0));
-	CHECK(scalar_cast(vector_get_y(zero)) == FloatType(0.0));
-	CHECK(scalar_cast(vector_get_z(zero)) == FloatType(0.0));
-	CHECK(scalar_cast(vector_get_w(zero)) == FloatType(0.0));
+	CHECK(FloatType(vector_get_x(zero)) == FloatType(0.0));
+	CHECK(FloatType(vector_get_y(zero)) == FloatType(0.0));
+	CHECK(FloatType(vector_get_z(zero)) == FloatType(0.0));
+	CHECK(FloatType(vector_get_w(zero)) == FloatType(0.0));
 
-	CHECK(scalar_cast(vector_get_x((Vector4Type)vector_load(&tmp.values[0]))) == tmp.values[0]);
-	CHECK(scalar_cast(vector_get_y((Vector4Type)vector_load(&tmp.values[0]))) == tmp.values[1]);
-	CHECK(scalar_cast(vector_get_z((Vector4Type)vector_load(&tmp.values[0]))) == tmp.values[2]);
-	CHECK(scalar_cast(vector_get_w((Vector4Type)vector_load(&tmp.values[0]))) == tmp.values[3]);
+	CHECK(FloatType(vector_get_x((Vector4Type)vector_load(&tmp.values[0]))) == tmp.values[0]);
+	CHECK(FloatType(vector_get_y((Vector4Type)vector_load(&tmp.values[0]))) == tmp.values[1]);
+	CHECK(FloatType(vector_get_z((Vector4Type)vector_load(&tmp.values[0]))) == tmp.values[2]);
+	CHECK(FloatType(vector_get_w((Vector4Type)vector_load(&tmp.values[0]))) == tmp.values[3]);
 
-	CHECK(scalar_cast(vector_get_x((Vector4Type)vector_load1(&tmp.values[1]))) == tmp.values[1]);
-	CHECK(scalar_cast(vector_get_y((Vector4Type)vector_load1(&tmp.values[1]))) == FloatType(0.0));
-	CHECK(scalar_cast(vector_get_z((Vector4Type)vector_load1(&tmp.values[1]))) == FloatType(0.0));
-	CHECK(scalar_cast(vector_get_w((Vector4Type)vector_load1(&tmp.values[1]))) == FloatType(0.0));
+	CHECK(FloatType(vector_get_x((Vector4Type)vector_load1(&tmp.values[1]))) == tmp.values[1]);
+	CHECK(FloatType(vector_get_y((Vector4Type)vector_load1(&tmp.values[1]))) == FloatType(0.0));
+	CHECK(FloatType(vector_get_z((Vector4Type)vector_load1(&tmp.values[1]))) == FloatType(0.0));
+	CHECK(FloatType(vector_get_w((Vector4Type)vector_load1(&tmp.values[1]))) == FloatType(0.0));
 
-	CHECK(scalar_cast(vector_get_x((Vector4Type)vector_load2(&tmp.values[1]))) == tmp.values[1]);
-	CHECK(scalar_cast(vector_get_y((Vector4Type)vector_load2(&tmp.values[1]))) == tmp.values[2]);
-	CHECK(scalar_cast(vector_get_z((Vector4Type)vector_load2(&tmp.values[1]))) == FloatType(0.0));
-	CHECK(scalar_cast(vector_get_w((Vector4Type)vector_load2(&tmp.values[1]))) == FloatType(0.0));
+	CHECK(FloatType(vector_get_x((Vector4Type)vector_load2(&tmp.values[1]))) == tmp.values[1]);
+	CHECK(FloatType(vector_get_y((Vector4Type)vector_load2(&tmp.values[1]))) == tmp.values[2]);
+	CHECK(FloatType(vector_get_z((Vector4Type)vector_load2(&tmp.values[1]))) == FloatType(0.0));
+	CHECK(FloatType(vector_get_w((Vector4Type)vector_load2(&tmp.values[1]))) == FloatType(0.0));
 
-	CHECK(scalar_cast(vector_get_x((Vector4Type)vector_load3(&tmp.values[1]))) == tmp.values[1]);
-	CHECK(scalar_cast(vector_get_y((Vector4Type)vector_load3(&tmp.values[1]))) == tmp.values[2]);
-	CHECK(scalar_cast(vector_get_z((Vector4Type)vector_load3(&tmp.values[1]))) == tmp.values[3]);
-	CHECK(scalar_cast(vector_get_w((Vector4Type)vector_load3(&tmp.values[1]))) == FloatType(0.0));
+	CHECK(FloatType(vector_get_x((Vector4Type)vector_load3(&tmp.values[1]))) == tmp.values[1]);
+	CHECK(FloatType(vector_get_y((Vector4Type)vector_load3(&tmp.values[1]))) == tmp.values[2]);
+	CHECK(FloatType(vector_get_z((Vector4Type)vector_load3(&tmp.values[1]))) == tmp.values[3]);
+	CHECK(FloatType(vector_get_w((Vector4Type)vector_load3(&tmp.values[1]))) == FloatType(0.0));
 
 	Float2Type tmpf2 = { tmp.values[0], tmp.values[1] };
 	Float3Type tmpf3 = { tmp.values[0], tmp.values[1], tmp.values[2] };
 	Float4Type tmpf4 = { tmp.values[0], tmp.values[1], tmp.values[2], tmp.values[3] };
 
-	CHECK(scalar_cast(vector_get_x((Vector4Type)vector_load2(&tmpf2))) == tmpf2.x);
-	CHECK(scalar_cast(vector_get_y((Vector4Type)vector_load2(&tmpf2))) == tmpf2.y);
-	CHECK(scalar_cast(vector_get_z((Vector4Type)vector_load2(&tmpf2))) == FloatType(0.0));
-	CHECK(scalar_cast(vector_get_w((Vector4Type)vector_load2(&tmpf2))) == FloatType(0.0));
+	CHECK(FloatType(vector_get_x((Vector4Type)vector_load2(&tmpf2))) == tmpf2.x);
+	CHECK(FloatType(vector_get_y((Vector4Type)vector_load2(&tmpf2))) == tmpf2.y);
+	CHECK(FloatType(vector_get_z((Vector4Type)vector_load2(&tmpf2))) == FloatType(0.0));
+	CHECK(FloatType(vector_get_w((Vector4Type)vector_load2(&tmpf2))) == FloatType(0.0));
 
-	CHECK(scalar_cast(vector_get_x((Vector4Type)vector_load3(&tmpf3))) == tmpf3.x);
-	CHECK(scalar_cast(vector_get_y((Vector4Type)vector_load3(&tmpf3))) == tmpf3.y);
-	CHECK(scalar_cast(vector_get_z((Vector4Type)vector_load3(&tmpf3))) == tmpf3.z);
-	CHECK(scalar_cast(vector_get_w((Vector4Type)vector_load3(&tmpf3))) == FloatType(0.0));
+	CHECK(FloatType(vector_get_x((Vector4Type)vector_load3(&tmpf3))) == tmpf3.x);
+	CHECK(FloatType(vector_get_y((Vector4Type)vector_load3(&tmpf3))) == tmpf3.y);
+	CHECK(FloatType(vector_get_z((Vector4Type)vector_load3(&tmpf3))) == tmpf3.z);
+	CHECK(FloatType(vector_get_w((Vector4Type)vector_load3(&tmpf3))) == FloatType(0.0));
 
-	CHECK(scalar_cast(vector_get_x((Vector4Type)vector_load(&tmpf4))) == tmpf4.x);
-	CHECK(scalar_cast(vector_get_y((Vector4Type)vector_load(&tmpf4))) == tmpf4.y);
-	CHECK(scalar_cast(vector_get_z((Vector4Type)vector_load(&tmpf4))) == tmpf4.z);
-	CHECK(scalar_cast(vector_get_w((Vector4Type)vector_load(&tmpf4))) == tmpf4.w);
+	CHECK(FloatType(vector_get_x((Vector4Type)vector_load(&tmpf4))) == tmpf4.x);
+	CHECK(FloatType(vector_get_y((Vector4Type)vector_load(&tmpf4))) == tmpf4.y);
+	CHECK(FloatType(vector_get_z((Vector4Type)vector_load(&tmpf4))) == tmpf4.z);
+	CHECK(FloatType(vector_get_w((Vector4Type)vector_load(&tmpf4))) == tmpf4.w);
 
 	std::memcpy(&buffer[1], &tmp.values[0], sizeof(tmp.values));
-	CHECK(scalar_cast(vector_get_x((Vector4Type)vector_load(&buffer[1]))) == tmp.values[0]);
-	CHECK(scalar_cast(vector_get_y((Vector4Type)vector_load(&buffer[1]))) == tmp.values[1]);
-	CHECK(scalar_cast(vector_get_z((Vector4Type)vector_load(&buffer[1]))) == tmp.values[2]);
-	CHECK(scalar_cast(vector_get_w((Vector4Type)vector_load(&buffer[1]))) == tmp.values[3]);
+	CHECK(FloatType(vector_get_x((Vector4Type)vector_load(&buffer[1]))) == tmp.values[0]);
+	CHECK(FloatType(vector_get_y((Vector4Type)vector_load(&buffer[1]))) == tmp.values[1]);
+	CHECK(FloatType(vector_get_z((Vector4Type)vector_load(&buffer[1]))) == tmp.values[2]);
+	CHECK(FloatType(vector_get_w((Vector4Type)vector_load(&buffer[1]))) == tmp.values[3]);
 
-	CHECK(scalar_cast(vector_get_x((Vector4Type)vector_load1(&buffer[1 + sizeof(FloatType)]))) == tmp.values[1]);
-	CHECK(scalar_cast(vector_get_y((Vector4Type)vector_load1(&buffer[1 + sizeof(FloatType)]))) == FloatType(0.0));
-	CHECK(scalar_cast(vector_get_z((Vector4Type)vector_load1(&buffer[1 + sizeof(FloatType)]))) == FloatType(0.0));
-	CHECK(scalar_cast(vector_get_w((Vector4Type)vector_load1(&buffer[1 + sizeof(FloatType)]))) == FloatType(0.0));
+	CHECK(FloatType(vector_get_x((Vector4Type)vector_load1(&buffer[1 + sizeof(FloatType)]))) == tmp.values[1]);
+	CHECK(FloatType(vector_get_y((Vector4Type)vector_load1(&buffer[1 + sizeof(FloatType)]))) == FloatType(0.0));
+	CHECK(FloatType(vector_get_z((Vector4Type)vector_load1(&buffer[1 + sizeof(FloatType)]))) == FloatType(0.0));
+	CHECK(FloatType(vector_get_w((Vector4Type)vector_load1(&buffer[1 + sizeof(FloatType)]))) == FloatType(0.0));
 
-	CHECK(scalar_cast(vector_get_x((Vector4Type)vector_load2(&buffer[1 + sizeof(FloatType)]))) == tmp.values[1]);
-	CHECK(scalar_cast(vector_get_y((Vector4Type)vector_load2(&buffer[1 + sizeof(FloatType)]))) == tmp.values[2]);
-	CHECK(scalar_cast(vector_get_z((Vector4Type)vector_load2(&buffer[1 + sizeof(FloatType)]))) == FloatType(0.0));
-	CHECK(scalar_cast(vector_get_w((Vector4Type)vector_load2(&buffer[1 + sizeof(FloatType)]))) == FloatType(0.0));
+	CHECK(FloatType(vector_get_x((Vector4Type)vector_load2(&buffer[1 + sizeof(FloatType)]))) == tmp.values[1]);
+	CHECK(FloatType(vector_get_y((Vector4Type)vector_load2(&buffer[1 + sizeof(FloatType)]))) == tmp.values[2]);
+	CHECK(FloatType(vector_get_z((Vector4Type)vector_load2(&buffer[1 + sizeof(FloatType)]))) == FloatType(0.0));
+	CHECK(FloatType(vector_get_w((Vector4Type)vector_load2(&buffer[1 + sizeof(FloatType)]))) == FloatType(0.0));
 
-	CHECK(scalar_cast(vector_get_x((Vector4Type)vector_load3(&buffer[1 + sizeof(FloatType)]))) == tmp.values[1]);
-	CHECK(scalar_cast(vector_get_y((Vector4Type)vector_load3(&buffer[1 + sizeof(FloatType)]))) == tmp.values[2]);
-	CHECK(scalar_cast(vector_get_z((Vector4Type)vector_load3(&buffer[1 + sizeof(FloatType)]))) == tmp.values[3]);
-	CHECK(scalar_cast(vector_get_w((Vector4Type)vector_load3(&buffer[1 + sizeof(FloatType)]))) == FloatType(0.0));
+	CHECK(FloatType(vector_get_x((Vector4Type)vector_load3(&buffer[1 + sizeof(FloatType)]))) == tmp.values[1]);
+	CHECK(FloatType(vector_get_y((Vector4Type)vector_load3(&buffer[1 + sizeof(FloatType)]))) == tmp.values[2]);
+	CHECK(FloatType(vector_get_z((Vector4Type)vector_load3(&buffer[1 + sizeof(FloatType)]))) == tmp.values[3]);
+	CHECK(FloatType(vector_get_w((Vector4Type)vector_load3(&buffer[1 + sizeof(FloatType)]))) == FloatType(0.0));
 
-	CHECK(scalar_cast(vector_get_x((Vector4Type)vector_broadcast(&tmp.values[0]))) == tmp.values[0]);
-	CHECK(scalar_cast(vector_get_y((Vector4Type)vector_broadcast(&tmp.values[0]))) == tmp.values[0]);
-	CHECK(scalar_cast(vector_get_z((Vector4Type)vector_broadcast(&tmp.values[0]))) == tmp.values[0]);
-	CHECK(scalar_cast(vector_get_w((Vector4Type)vector_broadcast(&tmp.values[0]))) == tmp.values[0]);
+	CHECK(FloatType(vector_get_x((Vector4Type)vector_broadcast(&tmp.values[0]))) == tmp.values[0]);
+	CHECK(FloatType(vector_get_y((Vector4Type)vector_broadcast(&tmp.values[0]))) == tmp.values[0]);
+	CHECK(FloatType(vector_get_z((Vector4Type)vector_broadcast(&tmp.values[0]))) == tmp.values[0]);
+	CHECK(FloatType(vector_get_w((Vector4Type)vector_broadcast(&tmp.values[0]))) == tmp.values[0]);
 
-	CHECK(scalar_cast(vector_get_x(quat_to_vector(identity))) == quat_get_x(identity));
-	CHECK(scalar_cast(vector_get_y(quat_to_vector(identity))) == quat_get_y(identity));
-	CHECK(scalar_cast(vector_get_z(quat_to_vector(identity))) == quat_get_z(identity));
-	CHECK(scalar_cast(vector_get_w(quat_to_vector(identity))) == quat_get_w(identity));
+	CHECK(FloatType(vector_get_x(quat_to_vector(identity))) == FloatType(quat_get_x(identity)));
+	CHECK(FloatType(vector_get_y(quat_to_vector(identity))) == FloatType(quat_get_y(identity)));
+	CHECK(FloatType(vector_get_z(quat_to_vector(identity))) == FloatType(quat_get_z(identity)));
+	CHECK(FloatType(vector_get_w(quat_to_vector(identity))) == FloatType(quat_get_w(identity)));
 
 	CHECK(FloatType(vector_get_component<mix4::x>(vector_set(FloatType(0.0), FloatType(2.34), FloatType(-3.12), FloatType(10000.0)))) == FloatType(0.0));
 	CHECK(FloatType(vector_get_component<mix4::y>(vector_set(FloatType(0.0), FloatType(2.34), FloatType(-3.12), FloatType(10000.0)))) == FloatType(2.34));
@@ -292,59 +297,59 @@ void test_vector4_getset_impl()
 	CHECK((vector_as_float_ptr_raw<Vector4Type, FloatType>(vector_load(&tmp.values[0]))[3] == tmp.values[3]));
 
 	vector_store(test_value0, &tmp.values[0]);
-	CHECK(scalar_cast(vector_get_x(test_value0)) == tmp.values[0]);
-	CHECK(scalar_cast(vector_get_y(test_value0)) == tmp.values[1]);
-	CHECK(scalar_cast(vector_get_z(test_value0)) == tmp.values[2]);
-	CHECK(scalar_cast(vector_get_w(test_value0)) == tmp.values[3]);
+	CHECK(FloatType(vector_get_x(test_value0)) == tmp.values[0]);
+	CHECK(FloatType(vector_get_y(test_value0)) == tmp.values[1]);
+	CHECK(FloatType(vector_get_z(test_value0)) == tmp.values[2]);
+	CHECK(FloatType(vector_get_w(test_value0)) == tmp.values[3]);
 
 	vector_store1(test_value0, &tmp.values[0]);
-	CHECK(scalar_cast(vector_get_x(test_value0)) == tmp.values[0]);
+	CHECK(FloatType(vector_get_x(test_value0)) == tmp.values[0]);
 
 	vector_store2(test_value0, &tmp.values[0]);
-	CHECK(scalar_cast(vector_get_x(test_value0)) == tmp.values[0]);
-	CHECK(scalar_cast(vector_get_y(test_value0)) == tmp.values[1]);
+	CHECK(FloatType(vector_get_x(test_value0)) == tmp.values[0]);
+	CHECK(FloatType(vector_get_y(test_value0)) == tmp.values[1]);
 
 	vector_store3(test_value1, &tmp.values[0]);
-	CHECK(scalar_cast(vector_get_x(test_value1)) == tmp.values[0]);
-	CHECK(scalar_cast(vector_get_y(test_value1)) == tmp.values[1]);
-	CHECK(scalar_cast(vector_get_z(test_value1)) == tmp.values[2]);
-	CHECK(scalar_cast(vector_get_w(test_value0)) == tmp.values[3]);
+	CHECK(FloatType(vector_get_x(test_value1)) == tmp.values[0]);
+	CHECK(FloatType(vector_get_y(test_value1)) == tmp.values[1]);
+	CHECK(FloatType(vector_get_z(test_value1)) == tmp.values[2]);
+	CHECK(FloatType(vector_get_w(test_value0)) == tmp.values[3]);
 
 	vector_store(test_value1, &buffer[1]);
-	CHECK(scalar_cast(vector_get_x(test_value1)) == scalar_cast(vector_get_x((Vector4Type)vector_load(&buffer[1]))));
-	CHECK(scalar_cast(vector_get_y(test_value1)) == scalar_cast(vector_get_y((Vector4Type)vector_load(&buffer[1]))));
-	CHECK(scalar_cast(vector_get_z(test_value1)) == scalar_cast(vector_get_z((Vector4Type)vector_load(&buffer[1]))));
-	CHECK(scalar_cast(vector_get_w(test_value1)) == scalar_cast(vector_get_w((Vector4Type)vector_load(&buffer[1]))));
+	CHECK(FloatType(vector_get_x(test_value1)) == FloatType(vector_get_x((Vector4Type)vector_load(&buffer[1]))));
+	CHECK(FloatType(vector_get_y(test_value1)) == FloatType(vector_get_y((Vector4Type)vector_load(&buffer[1]))));
+	CHECK(FloatType(vector_get_z(test_value1)) == FloatType(vector_get_z((Vector4Type)vector_load(&buffer[1]))));
+	CHECK(FloatType(vector_get_w(test_value1)) == FloatType(vector_get_w((Vector4Type)vector_load(&buffer[1]))));
 
 	vector_store1(test_value1, &buffer[1]);
-	CHECK(scalar_cast(vector_get_x(test_value1)) == scalar_cast(vector_get_x((Vector4Type)vector_load1(&buffer[1]))));
+	CHECK(FloatType(vector_get_x(test_value1)) == FloatType(vector_get_x((Vector4Type)vector_load1(&buffer[1]))));
 
 	vector_store2(test_value1, &buffer[1]);
-	CHECK(scalar_cast(vector_get_x(test_value1)) == scalar_cast(vector_get_x((Vector4Type)vector_load2(&buffer[1]))));
+	CHECK(FloatType(vector_get_x(test_value1)) == FloatType(vector_get_x((Vector4Type)vector_load2(&buffer[1]))));
 
 	vector_store3(test_value1, &buffer[1]);
-	CHECK(scalar_cast(vector_get_x(test_value1)) == scalar_cast(vector_get_x((Vector4Type)vector_load3(&buffer[1]))));
-	CHECK(scalar_cast(vector_get_y(test_value1)) == scalar_cast(vector_get_y((Vector4Type)vector_load3(&buffer[1]))));
-	CHECK(scalar_cast(vector_get_z(test_value1)) == scalar_cast(vector_get_z((Vector4Type)vector_load3(&buffer[1]))));
+	CHECK(FloatType(vector_get_x(test_value1)) == FloatType(vector_get_x((Vector4Type)vector_load3(&buffer[1]))));
+	CHECK(FloatType(vector_get_y(test_value1)) == FloatType(vector_get_y((Vector4Type)vector_load3(&buffer[1]))));
+	CHECK(FloatType(vector_get_z(test_value1)) == FloatType(vector_get_z((Vector4Type)vector_load3(&buffer[1]))));
 
 	vector_store(test_value1, &tmpf4);
-	CHECK(scalar_cast(vector_get_x(test_value1)) == tmpf4.x);
-	CHECK(scalar_cast(vector_get_y(test_value1)) == tmpf4.y);
-	CHECK(scalar_cast(vector_get_z(test_value1)) == tmpf4.z);
-	CHECK(scalar_cast(vector_get_w(test_value1)) == tmpf4.w);
+	CHECK(FloatType(vector_get_x(test_value1)) == tmpf4.x);
+	CHECK(FloatType(vector_get_y(test_value1)) == tmpf4.y);
+	CHECK(FloatType(vector_get_z(test_value1)) == tmpf4.z);
+	CHECK(FloatType(vector_get_w(test_value1)) == tmpf4.w);
 
 	vector_store2(test_value1, &tmpf2);
-	CHECK(scalar_cast(vector_get_x(test_value1)) == tmpf2.x);
-	CHECK(scalar_cast(vector_get_y(test_value1)) == tmpf2.y);
+	CHECK(FloatType(vector_get_x(test_value1)) == tmpf2.x);
+	CHECK(FloatType(vector_get_y(test_value1)) == tmpf2.y);
 
 	vector_store3(test_value1, &tmpf3);
-	CHECK(scalar_cast(vector_get_x(test_value1)) == tmpf3.x);
-	CHECK(scalar_cast(vector_get_y(test_value1)) == tmpf3.y);
-	CHECK(scalar_cast(vector_get_z(test_value1)) == tmpf3.z);
+	CHECK(FloatType(vector_get_x(test_value1)) == tmpf3.x);
+	CHECK(FloatType(vector_get_y(test_value1)) == tmpf3.y);
+	CHECK(FloatType(vector_get_z(test_value1)) == tmpf3.z);
 
-	CHECK((FloatType)vector_get_min_component(test_value0) == scalar_cast(vector_get_z(test_value0)));
-	CHECK((FloatType)vector_get_min_component(test_value3) == scalar_cast(vector_get_y(test_value3)));
-	CHECK((FloatType)vector_get_max_component(test_value0) == scalar_cast(vector_get_w(test_value0)));
+	CHECK((FloatType)vector_get_min_component(test_value0) == FloatType(vector_get_z(test_value0)));
+	CHECK((FloatType)vector_get_min_component(test_value3) == FloatType(vector_get_y(test_value3)));
+	CHECK((FloatType)vector_get_max_component(test_value0) == FloatType(vector_get_w(test_value0)));
 	CHECK(scalar_is_equal(vector_get_min_component(test_value0), (ScalarType)vector_as_scalar(vector_dup_z(test_value0))));
 	CHECK(scalar_is_equal(vector_get_min_component(test_value3), (ScalarType)vector_as_scalar(vector_dup_y(test_value3))));
 	CHECK(scalar_is_equal(vector_get_max_component(test_value0), (ScalarType)vector_as_scalar(vector_dup_w(test_value0))));
@@ -359,7 +364,7 @@ void test_vector4_getset_impl()
 	CHECK(vector_all_near_equal(vector_set_z(zero, scalar_set(FloatType(4.0))), vector_set(FloatType(0.0), FloatType(0.0), FloatType(4.0), FloatType(0.0)), FloatType(0.0)));
 	CHECK(vector_all_near_equal(vector_set_w(zero, scalar_set(FloatType(4.0))), vector_set(FloatType(0.0), FloatType(0.0), FloatType(0.0), FloatType(4.0)), FloatType(0.0)));
 
-	CHECK((FloatType)vector_as_scalar(test_value1) == scalar_cast(vector_get_x(test_value1)));
+	CHECK((FloatType)vector_as_scalar(test_value1) == FloatType(vector_get_x(test_value1)));
 	CHECK(scalar_is_equal(vector_as_scalar(test_value1), scalar_set(vector_get_x(test_value1))));
 }
 
@@ -872,10 +877,10 @@ void test_vector4_impl(const FloatType threshold)
 	// Misc
 
 	auto scalar_sign = [](FloatType value) { return value >= FloatType(0.0) ? FloatType(1.0) : FloatType(-1.0); };
-	CHECK(scalar_cast(vector_get_x(vector_sign(test_value0))) == scalar_sign(test_value0_flt[0]));
-	CHECK(scalar_cast(vector_get_y(vector_sign(test_value0))) == scalar_sign(test_value0_flt[1]));
-	CHECK(scalar_cast(vector_get_z(vector_sign(test_value0))) == scalar_sign(test_value0_flt[2]));
-	CHECK(scalar_cast(vector_get_w(vector_sign(test_value0))) == scalar_sign(test_value0_flt[3]));
+	CHECK(FloatType(vector_get_x(vector_sign(test_value0))) == scalar_sign(test_value0_flt[0]));
+	CHECK(FloatType(vector_get_y(vector_sign(test_value0))) == scalar_sign(test_value0_flt[1]));
+	CHECK(FloatType(vector_get_z(vector_sign(test_value0))) == scalar_sign(test_value0_flt[2]));
+	CHECK(FloatType(vector_get_w(vector_sign(test_value0))) == scalar_sign(test_value0_flt[3]));
 
 	{
 		const Vector4Type input0 = vector_set(FloatType(-1.75), FloatType(-1.5), FloatType(-1.4999), FloatType(-0.5));
@@ -886,17 +891,17 @@ void test_vector4_impl(const FloatType threshold)
 		const Vector4Type result1 = vector_symmetric_round(input1);
 		const Vector4Type result2 = vector_symmetric_round(input2);
 
-		CHECK(scalar_cast(vector_get_x(result0)) == scalar_symmetric_round(vector_get_x(input0)));
-		CHECK(scalar_cast(vector_get_y(result0)) == scalar_symmetric_round(vector_get_y(input0)));
-		CHECK(scalar_cast(vector_get_z(result0)) == scalar_symmetric_round(vector_get_z(input0)));
-		CHECK(scalar_cast(vector_get_w(result0)) == scalar_symmetric_round(vector_get_w(input0)));
-		CHECK(scalar_cast(vector_get_x(result1)) == scalar_symmetric_round(vector_get_x(input1)));
-		CHECK(scalar_cast(vector_get_y(result1)) == scalar_symmetric_round(vector_get_y(input1)));
-		CHECK(scalar_cast(vector_get_z(result1)) == scalar_symmetric_round(vector_get_z(input1)));
-		CHECK(scalar_cast(vector_get_w(result1)) == scalar_symmetric_round(vector_get_w(input1)));
-		CHECK(scalar_cast(vector_get_x(result2)) == scalar_symmetric_round(vector_get_x(input2)));
-		CHECK(scalar_cast(vector_get_y(result2)) == scalar_symmetric_round(vector_get_y(input2)));
-		CHECK(scalar_cast(vector_get_z(result2)) == scalar_symmetric_round(vector_get_z(input2)));
-		CHECK(scalar_cast(vector_get_w(result2)) == scalar_symmetric_round(vector_get_w(input2)));
+		CHECK(FloatType(vector_get_x(result0)) == scalar_symmetric_round(vector_get_x(input0)));
+		CHECK(FloatType(vector_get_y(result0)) == scalar_symmetric_round(vector_get_y(input0)));
+		CHECK(FloatType(vector_get_z(result0)) == scalar_symmetric_round(vector_get_z(input0)));
+		CHECK(FloatType(vector_get_w(result0)) == scalar_symmetric_round(vector_get_w(input0)));
+		CHECK(FloatType(vector_get_x(result1)) == scalar_symmetric_round(vector_get_x(input1)));
+		CHECK(FloatType(vector_get_y(result1)) == scalar_symmetric_round(vector_get_y(input1)));
+		CHECK(FloatType(vector_get_z(result1)) == scalar_symmetric_round(vector_get_z(input1)));
+		CHECK(FloatType(vector_get_w(result1)) == scalar_symmetric_round(vector_get_w(input1)));
+		CHECK(FloatType(vector_get_x(result2)) == scalar_symmetric_round(vector_get_x(input2)));
+		CHECK(FloatType(vector_get_y(result2)) == scalar_symmetric_round(vector_get_y(input2)));
+		CHECK(FloatType(vector_get_z(result2)) == scalar_symmetric_round(vector_get_z(input2)));
+		CHECK(FloatType(vector_get_w(result2)) == scalar_symmetric_round(vector_get_w(input2)));
 	}
 }
