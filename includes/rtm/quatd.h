@@ -474,10 +474,9 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	// Returns the squared length/norm of the quaternion.
 	//////////////////////////////////////////////////////////////////////////
-	inline double quat_length_squared(const quatd& input) RTM_NO_EXCEPT
+	constexpr rtm_impl::quatd_quat_dot quat_length_squared(const quatd& input) RTM_NO_EXCEPT
 	{
-		// TODO: Use dot instruction
-		return (quat_get_x(input) * quat_get_x(input)) + (quat_get_y(input) * quat_get_y(input)) + (quat_get_z(input) * quat_get_z(input)) + (quat_get_w(input) * quat_get_w(input));
+		return rtm_impl::quatd_quat_dot{ input, input };
 	}
 
 	//////////////////////////////////////////////////////////////////////////
@@ -486,7 +485,8 @@ namespace rtm
 	inline double quat_length(const quatd& input) RTM_NO_EXCEPT
 	{
 		// TODO: Use intrinsics to avoid scalar coercion
-		return scalar_sqrt(quat_length_squared(input));
+		const scalard len_sq = quat_length_squared(input);
+		return scalar_cast(scalar_sqrt(len_sq));
 	}
 
 	//////////////////////////////////////////////////////////////////////////

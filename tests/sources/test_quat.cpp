@@ -282,7 +282,8 @@ static void test_quat_impl(const FloatType threshold)
 		QuatType quat = quat_from_euler(degrees(FloatType(30.0)), degrees(FloatType(-45.0)), degrees(FloatType(90.0)));
 		Vector4Type vec = quat_to_vector(quat);
 
-		CHECK(scalar_near_equal(quat_length_squared(quat), vector_length_squared(vec), threshold));
+		CHECK(scalar_near_equal(FloatType(quat_length_squared(quat)), FloatType(vector_length_squared(vec)), threshold));
+		CHECK(scalar_near_equal(scalar_cast(quat_length_squared(quat)), scalar_cast(vector_length_squared(vec)), threshold));
 		CHECK(scalar_near_equal(quat_length(quat), vector_length(vec), threshold));
 		CHECK(scalar_near_equal(quat_length_reciprocal(quat), vector_length_reciprocal(vec), threshold));
 	}

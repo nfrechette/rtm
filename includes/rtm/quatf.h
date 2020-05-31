@@ -697,9 +697,9 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	// Returns the squared length/norm of the quaternion.
 	//////////////////////////////////////////////////////////////////////////
-	inline float RTM_SIMD_CALL quat_length_squared(quatf_arg0 input) RTM_NO_EXCEPT
+	constexpr rtm_impl::quatf_quat_dot RTM_SIMD_CALL quat_length_squared(quatf_arg0 input) RTM_NO_EXCEPT
 	{
-		return vector_length_squared(quat_to_vector(input));
+		return rtm_impl::quatf_quat_dot{ input, input };
 	}
 
 	//////////////////////////////////////////////////////////////////////////
