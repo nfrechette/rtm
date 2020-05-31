@@ -286,7 +286,8 @@ static void test_quat_impl(const FloatType threshold)
 		CHECK(scalar_near_equal(scalar_cast(quat_length_squared(quat)), scalar_cast(vector_length_squared(vec)), threshold));
 		CHECK(scalar_near_equal(FloatType(quat_length(quat)), FloatType(vector_length(vec)), threshold));
 		CHECK(scalar_near_equal(scalar_cast(quat_length(quat)), scalar_cast(vector_length(vec)), threshold));
-		CHECK(scalar_near_equal(quat_length_reciprocal(quat), vector_length_reciprocal(vec), threshold));
+		CHECK(scalar_near_equal(FloatType(quat_length_reciprocal(quat)), FloatType(vector_length_reciprocal(vec)), threshold));
+		CHECK(scalar_near_equal(scalar_cast(quat_length_reciprocal(quat)), scalar_cast(vector_length_reciprocal(vec)), threshold));
 	}
 
 	{

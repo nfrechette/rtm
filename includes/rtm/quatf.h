@@ -738,12 +738,40 @@ namespace rtm
 		return rtm_impl::quatf_quat_length{ input };
 	}
 
+	namespace rtm_impl
+	{
+		//////////////////////////////////////////////////////////////////////////
+		// This is a helper struct to allow a single consistent API between
+		// various vector types when the semantics are identical but the return
+		// type differs. Implicit coercion is used to return the desired value
+		// at the call site.
+		//////////////////////////////////////////////////////////////////////////
+		struct quatf_quat_length_reciprocal
+		{
+			inline RTM_SIMD_CALL operator float() const RTM_NO_EXCEPT
+			{
+				const scalarf len_sq = quat_length_squared(input);
+				return scalar_cast(scalar_sqrt_reciprocal(len_sq));
+			}
+
+#if defined(RTM_SSE2_INTRINSICS)
+			inline RTM_SIMD_CALL operator scalarf() const RTM_NO_EXCEPT
+			{
+				const scalarf len_sq = quat_length_squared(input);
+				return scalar_sqrt_reciprocal(len_sq);
+			}
+#endif
+
+			quatf input;
+		};
+	}
+
 	//////////////////////////////////////////////////////////////////////////
 	// Returns the reciprocal length/norm of the quaternion.
 	//////////////////////////////////////////////////////////////////////////
-	inline float RTM_SIMD_CALL quat_length_reciprocal(quatf_arg0 input) RTM_NO_EXCEPT
+	constexpr rtm_impl::quatf_quat_length_reciprocal RTM_SIMD_CALL quat_length_reciprocal(quatf_arg0 input) RTM_NO_EXCEPT
 	{
-		return vector_length_reciprocal(quat_to_vector(input));
+		return rtm_impl::quatf_quat_length_reciprocal{ input };
 	}
 
 	//////////////////////////////////////////////////////////////////////////
