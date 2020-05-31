@@ -1325,6 +1325,16 @@ namespace rtm
 #endif
 	}
 
+#if defined(RTM_SSE2_INTRINSICS)
+	//////////////////////////////////////////////////////////////////////////
+	// Per component multiplication/addition of the three inputs: v2 + (v0 * s1)
+	//////////////////////////////////////////////////////////////////////////
+	inline vector4f RTM_SIMD_CALL vector_mul_add(vector4f_arg0 v0, scalarf_arg1 s1, vector4f_arg2 v2) RTM_NO_EXCEPT
+	{
+		return vector_add(vector_mul(v0, s1), v2);
+	}
+#endif
+
 	//////////////////////////////////////////////////////////////////////////
 	// Per component negative multiplication/subtraction of the three inputs: -((v0 * v1) - v2)
 	// This is mathematically equivalent to: v2 - (v0 * v1)
