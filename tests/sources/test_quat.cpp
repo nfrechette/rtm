@@ -95,6 +95,7 @@ static void test_quat_impl(const FloatType threshold)
 	using Vector4Type = typename float_traits<FloatType>::vector4;
 	using AngleType = typename float_traits<FloatType>::angle;
 	using Float4Type = typename float_traits<FloatType>::float4;
+	using ScalarType = typename float_traits<FloatType>::scalar;
 
 	const Vector4Type zero = vector_zero();
 	const QuatType identity = quat_identity();
@@ -263,6 +264,18 @@ static void test_quat_impl(const FloatType threshold)
 				CHECK(vector_all_near_equal3(result, result_ref, threshold));
 			}
 		}
+	}
+
+	{
+		const FloatType test_value10_flt[4] = { FloatType(-0.001138), FloatType(0.91623), FloatType(-1.624598), FloatType(0.715671) };
+		const FloatType test_value11_flt[4] = { FloatType(0.1138), FloatType(-0.623), FloatType(1.4598), FloatType(-0.5671) };
+		const QuatType test_value10 = quat_set(test_value10_flt[0], test_value10_flt[1], test_value10_flt[2], test_value10_flt[3]);
+		const QuatType test_value11 = quat_set(test_value11_flt[0], test_value11_flt[1], test_value11_flt[2], test_value11_flt[3]);
+		const FloatType scalar_dot_result = scalar_dot<QuatType, FloatType>(test_value10, test_value11);
+		const FloatType quat_dot_result = quat_dot(test_value10, test_value11);
+		CHECK(scalar_near_equal(quat_dot_result, scalar_dot_result, threshold));
+		const ScalarType quat_sdot_result = quat_dot(test_value10, test_value11);
+		CHECK(scalar_near_equal(scalar_cast(quat_sdot_result), scalar_dot_result, threshold));
 	}
 
 	{
