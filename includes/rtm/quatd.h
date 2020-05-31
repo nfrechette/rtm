@@ -412,6 +412,65 @@ namespace rtm
 		return quat_to_vector(quat_mul(quat_mul(inv_rotation, vector_quat), rotation));
 	}
 
+	namespace rtm_impl
+	{
+		//////////////////////////////////////////////////////////////////////////
+		// This is a helper struct to allow a single consistent API between
+		// various vector types when the semantics are identical but the return
+		// type differs. Implicit coercion is used to return the desired value
+		// at the call site.
+		//////////////////////////////////////////////////////////////////////////
+		struct quatd_quat_dot
+		{
+			inline RTM_SIMD_CALL operator double() const RTM_NO_EXCEPT
+			{
+				const scalard lhs_x = quat_get_x(lhs);
+				const scalard lhs_y = quat_get_y(lhs);
+				const scalard lhs_z = quat_get_z(lhs);
+				const scalard lhs_w = quat_get_w(lhs);
+				const scalard rhs_x = quat_get_x(rhs);
+				const scalard rhs_y = quat_get_y(rhs);
+				const scalard rhs_z = quat_get_z(rhs);
+				const scalard rhs_w = quat_get_w(rhs);
+				const scalard xx = scalar_mul(lhs_x, rhs_x);
+				const scalard yy = scalar_mul(lhs_y, rhs_y);
+				const scalard zz = scalar_mul(lhs_z, rhs_z);
+				const scalard ww = scalar_mul(lhs_w, rhs_w);
+				return scalar_cast(scalar_add(scalar_add(xx, yy), scalar_add(zz, ww)));
+			}
+
+#if defined(RTM_SSE2_INTRINSICS)
+			inline RTM_SIMD_CALL operator scalard() const RTM_NO_EXCEPT
+			{
+				const scalard lhs_x = quat_get_x(lhs);
+				const scalard lhs_y = quat_get_y(lhs);
+				const scalard lhs_z = quat_get_z(lhs);
+				const scalard lhs_w = quat_get_w(lhs);
+				const scalard rhs_x = quat_get_x(rhs);
+				const scalard rhs_y = quat_get_y(rhs);
+				const scalard rhs_z = quat_get_z(rhs);
+				const scalard rhs_w = quat_get_w(rhs);
+				const scalard xx = scalar_mul(lhs_x, rhs_x);
+				const scalard yy = scalar_mul(lhs_y, rhs_y);
+				const scalard zz = scalar_mul(lhs_z, rhs_z);
+				const scalard ww = scalar_mul(lhs_w, rhs_w);
+				return scalar_add(scalar_add(xx, yy), scalar_add(zz, ww));
+			}
+#endif
+
+			quatd lhs;
+			quatd rhs;
+		};
+	}
+
+	//////////////////////////////////////////////////////////////////////////
+	// Quaternion dot product: lhs . rhs
+	//////////////////////////////////////////////////////////////////////////
+	constexpr rtm_impl::quatd_quat_dot quat_dot(const quatd& lhs, const quatd& rhs) RTM_NO_EXCEPT
+	{
+		return rtm_impl::quatd_quat_dot{ lhs, rhs };
+	}
+
 	//////////////////////////////////////////////////////////////////////////
 	// Returns the squared length/norm of the quaternion.
 	//////////////////////////////////////////////////////////////////////////
