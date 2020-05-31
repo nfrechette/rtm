@@ -479,14 +479,40 @@ namespace rtm
 		return rtm_impl::quatd_quat_dot{ input, input };
 	}
 
+	namespace rtm_impl
+	{
+		//////////////////////////////////////////////////////////////////////////
+		// This is a helper struct to allow a single consistent API between
+		// various vector types when the semantics are identical but the return
+		// type differs. Implicit coercion is used to return the desired value
+		// at the call site.
+		//////////////////////////////////////////////////////////////////////////
+		struct quatd_quat_length
+		{
+			inline RTM_SIMD_CALL operator double() const RTM_NO_EXCEPT
+			{
+				const scalard len_sq = quat_length_squared(input);
+				return scalar_cast(scalar_sqrt(len_sq));
+			}
+
+#if defined(RTM_SSE2_INTRINSICS)
+			inline RTM_SIMD_CALL operator scalard() const RTM_NO_EXCEPT
+			{
+				const scalard len_sq = quat_length_squared(input);
+				return scalar_sqrt(len_sq);
+			}
+#endif
+
+			quatd input;
+		};
+	}
+
 	//////////////////////////////////////////////////////////////////////////
 	// Returns the length/norm of the quaternion.
 	//////////////////////////////////////////////////////////////////////////
-	inline double quat_length(const quatd& input) RTM_NO_EXCEPT
+	constexpr rtm_impl::quatd_quat_length quat_length(const quatd& input) RTM_NO_EXCEPT
 	{
-		// TODO: Use intrinsics to avoid scalar coercion
-		const scalard len_sq = quat_length_squared(input);
-		return scalar_cast(scalar_sqrt(len_sq));
+		return rtm_impl::quatd_quat_length{ input };
 	}
 
 	//////////////////////////////////////////////////////////////////////////
