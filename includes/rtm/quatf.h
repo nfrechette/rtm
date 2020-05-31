@@ -264,6 +264,16 @@ namespace rtm
 #endif
 	}
 
+#if defined(RTM_SSE2_INTRINSICS)
+	//////////////////////////////////////////////////////////////////////////
+	// Sets the quaternion [x] component (real part) and returns the new value.
+	//////////////////////////////////////////////////////////////////////////
+	inline quatf RTM_SIMD_CALL quat_set_x(quatf_arg0 input, scalarf_arg1 lane_value) RTM_NO_EXCEPT
+	{
+		return _mm_move_ss(input, lane_value.value);
+	}
+#endif
+
 	//////////////////////////////////////////////////////////////////////////
 	// Sets the quaternion [y] component (real part) and returns the new value.
 	//////////////////////////////////////////////////////////////////////////
@@ -281,6 +291,22 @@ namespace rtm
 		return quatf{ input.x, lane_value, input.z, input.w };
 #endif
 	}
+
+#if defined(RTM_SSE2_INTRINSICS)
+	//////////////////////////////////////////////////////////////////////////
+	// Sets the quaternion [y] component (real part) and returns the new value.
+	//////////////////////////////////////////////////////////////////////////
+	inline quatf RTM_SIMD_CALL quat_set_y(quatf_arg0 input, scalarf_arg1 lane_value) RTM_NO_EXCEPT
+	{
+#if defined(RTM_SSE4_INTRINSICS)
+		return _mm_insert_ps(input, lane_value.value, 0x10);
+#else
+		const __m128 yxzw = _mm_shuffle_ps(input, input, _MM_SHUFFLE(3, 2, 0, 1));
+		const __m128 vxzw = _mm_move_ss(yxzw, lane_value.value);
+		return _mm_shuffle_ps(vxzw, vxzw, _MM_SHUFFLE(3, 2, 0, 1));
+#endif
+	}
+#endif
 
 	//////////////////////////////////////////////////////////////////////////
 	// Sets the quaternion [z] component (real part) and returns the new value.
@@ -300,6 +326,22 @@ namespace rtm
 #endif
 	}
 
+#if defined(RTM_SSE2_INTRINSICS)
+	//////////////////////////////////////////////////////////////////////////
+	// Sets the quaternion [z] component (real part) and returns the new value.
+	//////////////////////////////////////////////////////////////////////////
+	inline quatf RTM_SIMD_CALL quat_set_z(quatf_arg0 input, scalarf_arg1 lane_value) RTM_NO_EXCEPT
+	{
+#if defined(RTM_SSE4_INTRINSICS)
+		return _mm_insert_ps(input, lane_value.value, 0x20);
+#else
+		const __m128 zyxw = _mm_shuffle_ps(input, input, _MM_SHUFFLE(3, 0, 1, 2));
+		const __m128 vyxw = _mm_move_ss(zyxw, lane_value.value);
+		return _mm_shuffle_ps(vyxw, vyxw, _MM_SHUFFLE(3, 0, 1, 2));
+#endif
+	}
+#endif
+
 	//////////////////////////////////////////////////////////////////////////
 	// Sets the quaternion [w] component (imaginary part) and returns the new value.
 	//////////////////////////////////////////////////////////////////////////
@@ -317,6 +359,22 @@ namespace rtm
 		return quatf{ input.x, input.y, input.z, lane_value };
 #endif
 	}
+
+#if defined(RTM_SSE2_INTRINSICS)
+	//////////////////////////////////////////////////////////////////////////
+	// Sets the quaternion [w] component (imaginary part) and returns the new value.
+	//////////////////////////////////////////////////////////////////////////
+	inline quatf RTM_SIMD_CALL quat_set_w(quatf_arg0 input, scalarf_arg1 lane_value) RTM_NO_EXCEPT
+	{
+#if defined(RTM_SSE4_INTRINSICS)
+		return _mm_insert_ps(input, lane_value.value, 0x30);
+#else
+		const __m128 wyzx = _mm_shuffle_ps(input, input, _MM_SHUFFLE(0, 2, 1, 3));
+		const __m128 vyzx = _mm_move_ss(wyzx, lane_value.value);
+		return _mm_shuffle_ps(vyzx, vyzx, _MM_SHUFFLE(0, 2, 1, 3));
+#endif
+	}
+#endif
 
 	//////////////////////////////////////////////////////////////////////////
 	// Writes a quaternion to unaligned memory.
