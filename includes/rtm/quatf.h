@@ -90,60 +90,164 @@ namespace rtm
 #endif
 	}
 
+	namespace rtm_impl
+	{
+		//////////////////////////////////////////////////////////////////////////
+		// This is a helper struct to allow a single consistent API between
+		// various vector types when the semantics are identical but the return
+		// type differs. Implicit coercion is used to return the desired value
+		// at the call site.
+		//////////////////////////////////////////////////////////////////////////
+		struct quatf_quat_get_x
+		{
+			inline RTM_SIMD_CALL operator float() const RTM_NO_EXCEPT
+			{
+#if defined(RTM_SSE2_INTRINSICS)
+				return _mm_cvtss_f32(input);
+#elif defined(RTM_NEON_INTRINSICS)
+				return vgetq_lane_f32(input, 0);
+#else
+				return input.x;
+#endif
+			}
+
+#if defined(RTM_SSE2_INTRINSICS)
+			inline RTM_SIMD_CALL operator scalarf() const RTM_NO_EXCEPT
+			{
+				return scalarf{ input };
+			}
+#endif
+
+			quatf input;
+		};
+	}
+
 	//////////////////////////////////////////////////////////////////////////
 	// Returns the quaternion [x] component (real part).
 	//////////////////////////////////////////////////////////////////////////
-	inline float RTM_SIMD_CALL quat_get_x(quatf_arg0 input) RTM_NO_EXCEPT
+	constexpr rtm_impl::quatf_quat_get_x RTM_SIMD_CALL quat_get_x(quatf_arg0 input) RTM_NO_EXCEPT
 	{
+		return rtm_impl::quatf_quat_get_x{ input };
+	}
+
+	namespace rtm_impl
+	{
+		//////////////////////////////////////////////////////////////////////////
+		// This is a helper struct to allow a single consistent API between
+		// various vector types when the semantics are identical but the return
+		// type differs. Implicit coercion is used to return the desired value
+		// at the call site.
+		//////////////////////////////////////////////////////////////////////////
+		struct quatf_quat_get_y
+		{
+			inline RTM_SIMD_CALL operator float() const RTM_NO_EXCEPT
+			{
 #if defined(RTM_SSE2_INTRINSICS)
-		return _mm_cvtss_f32(input);
+				return _mm_cvtss_f32(_mm_shuffle_ps(input, input, _MM_SHUFFLE(1, 1, 1, 1)));
 #elif defined(RTM_NEON_INTRINSICS)
-		return vgetq_lane_f32(input, 0);
+				return vgetq_lane_f32(input, 1);
 #else
-		return input.x;
+				return input.y;
 #endif
+			}
+
+#if defined(RTM_SSE2_INTRINSICS)
+			inline RTM_SIMD_CALL operator scalarf() const RTM_NO_EXCEPT
+			{
+				return scalarf{ _mm_shuffle_ps(input, input, _MM_SHUFFLE(1, 1, 1, 1)) };
+			}
+#endif
+
+			quatf input;
+		};
 	}
 
 	//////////////////////////////////////////////////////////////////////////
 	// Returns the quaternion [y] component (real part).
 	//////////////////////////////////////////////////////////////////////////
-	inline float RTM_SIMD_CALL quat_get_y(quatf_arg0 input) RTM_NO_EXCEPT
+	constexpr rtm_impl::quatf_quat_get_y RTM_SIMD_CALL quat_get_y(quatf_arg0 input) RTM_NO_EXCEPT
 	{
+		return rtm_impl::quatf_quat_get_y{ input };
+	}
+
+	namespace rtm_impl
+	{
+		//////////////////////////////////////////////////////////////////////////
+		// This is a helper struct to allow a single consistent API between
+		// various vector types when the semantics are identical but the return
+		// type differs. Implicit coercion is used to return the desired value
+		// at the call site.
+		//////////////////////////////////////////////////////////////////////////
+		struct quatf_quat_get_z
+		{
+			inline RTM_SIMD_CALL operator float() const RTM_NO_EXCEPT
+			{
 #if defined(RTM_SSE2_INTRINSICS)
-		return _mm_cvtss_f32(_mm_shuffle_ps(input, input, _MM_SHUFFLE(1, 1, 1, 1)));
+				return _mm_cvtss_f32(_mm_shuffle_ps(input, input, _MM_SHUFFLE(2, 2, 2, 2)));
 #elif defined(RTM_NEON_INTRINSICS)
-		return vgetq_lane_f32(input, 1);
+				return vgetq_lane_f32(input, 2);
 #else
-		return input.y;
+				return input.z;
 #endif
+			}
+
+#if defined(RTM_SSE2_INTRINSICS)
+			inline RTM_SIMD_CALL operator scalarf() const RTM_NO_EXCEPT
+			{
+				return scalarf{ _mm_shuffle_ps(input, input, _MM_SHUFFLE(2, 2, 2, 2)) };
+			}
+#endif
+
+			quatf input;
+		};
 	}
 
 	//////////////////////////////////////////////////////////////////////////
 	// Returns the quaternion [z] component (real part).
 	//////////////////////////////////////////////////////////////////////////
-	inline float RTM_SIMD_CALL quat_get_z(quatf_arg0 input) RTM_NO_EXCEPT
+	constexpr rtm_impl::quatf_quat_get_z RTM_SIMD_CALL quat_get_z(quatf_arg0 input) RTM_NO_EXCEPT
 	{
+		return rtm_impl::quatf_quat_get_z{ input };
+	}
+
+	namespace rtm_impl
+	{
+		//////////////////////////////////////////////////////////////////////////
+		// This is a helper struct to allow a single consistent API between
+		// various vector types when the semantics are identical but the return
+		// type differs. Implicit coercion is used to return the desired value
+		// at the call site.
+		//////////////////////////////////////////////////////////////////////////
+		struct quatf_quat_get_w
+		{
+			inline RTM_SIMD_CALL operator float() const RTM_NO_EXCEPT
+			{
 #if defined(RTM_SSE2_INTRINSICS)
-		return _mm_cvtss_f32(_mm_shuffle_ps(input, input, _MM_SHUFFLE(2, 2, 2, 2)));
+				return _mm_cvtss_f32(_mm_shuffle_ps(input, input, _MM_SHUFFLE(3, 3, 3, 3)));
 #elif defined(RTM_NEON_INTRINSICS)
-		return vgetq_lane_f32(input, 2);
+				return vgetq_lane_f32(input, 3);
 #else
-		return input.z;
+				return input.w;
 #endif
+			}
+
+#if defined(RTM_SSE2_INTRINSICS)
+			inline RTM_SIMD_CALL operator scalarf() const RTM_NO_EXCEPT
+			{
+				return scalarf{ _mm_shuffle_ps(input, input, _MM_SHUFFLE(3, 3, 3, 3)) };
+			}
+#endif
+
+			quatf input;
+		};
 	}
 
 	//////////////////////////////////////////////////////////////////////////
 	// Returns the quaternion [w] component (imaginary part).
 	//////////////////////////////////////////////////////////////////////////
-	inline float RTM_SIMD_CALL quat_get_w(quatf_arg0 input) RTM_NO_EXCEPT
+	constexpr rtm_impl::quatf_quat_get_w RTM_SIMD_CALL quat_get_w(quatf_arg0 input) RTM_NO_EXCEPT
 	{
-#if defined(RTM_SSE2_INTRINSICS)
-		return _mm_cvtss_f32(_mm_shuffle_ps(input, input, _MM_SHUFFLE(3, 3, 3, 3)));
-#elif defined(RTM_NEON_INTRINSICS)
-		return vgetq_lane_f32(input, 3);
-#else
-		return input.w;
-#endif
+		return rtm_impl::quatf_quat_get_w{ input };
 	}
 
 	//////////////////////////////////////////////////////////////////////////
@@ -831,7 +935,8 @@ namespace rtm
 		// If the quat.w is close to -1.0, the angle will be near 2*PI which is close to
 		// a negative 0 rotation. By forcing quat.w to be positive, we'll end up with
 		// the shortest path.
-		const float positive_w_angle = scalar_acos(scalar_abs(quat_get_w(input))) * 2.0F;
+		const scalarf input_w = quat_get_w(input);
+		const float positive_w_angle = scalar_acos(scalar_cast(scalar_abs(input_w))) * 2.0F;
 		return positive_w_angle < threshold_angle.as_radians();
 	}
 }
