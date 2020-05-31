@@ -122,6 +122,11 @@ static void test_quat_impl(const FloatType threshold)
 	CHECK(quat_near_equal(quat_set_z(identity, FloatType(4.0)), quat_set(FloatType(0.0), FloatType(0.0), FloatType(4.0), FloatType(1.0)), FloatType(0.0)));
 	CHECK(quat_near_equal(quat_set_w(identity, FloatType(4.0)), quat_set(FloatType(0.0), FloatType(0.0), FloatType(0.0), FloatType(4.0)), FloatType(0.0)));
 
+	CHECK(quat_near_equal(quat_set_x(identity, scalar_set(FloatType(4.0))), quat_set(FloatType(4.0), FloatType(0.0), FloatType(0.0), FloatType(1.0)), FloatType(0.0)));
+	CHECK(quat_near_equal(quat_set_y(identity, scalar_set(FloatType(4.0))), quat_set(FloatType(0.0), FloatType(4.0), FloatType(0.0), FloatType(1.0)), FloatType(0.0)));
+	CHECK(quat_near_equal(quat_set_z(identity, scalar_set(FloatType(4.0))), quat_set(FloatType(0.0), FloatType(0.0), FloatType(4.0), FloatType(1.0)), FloatType(0.0)));
+	CHECK(quat_near_equal(quat_set_w(identity, scalar_set(FloatType(4.0))), quat_set(FloatType(0.0), FloatType(0.0), FloatType(0.0), FloatType(4.0)), FloatType(0.0)));
+
 	{
 		struct alignas(16) Tmp
 		{
