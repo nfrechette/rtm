@@ -589,6 +589,32 @@ namespace rtm
 		return quat_normalize(vector_to_quat(value));
 	}
 
+#if defined(RTM_SSE2_INTRINSICS)
+	//////////////////////////////////////////////////////////////////////////
+	// Returns the linear interpolation between start and end for a given alpha value.
+	// The formula used is: ((1.0 - alpha) * start) + (alpha * end).
+	// Interpolation is stable and will return 'start' when 'alpha' is 0.0 and 'end' when it is 1.0.
+	// This is the same instruction count when FMA is present but it might be slightly slower
+	// due to the extra multiplication compared to: start + (alpha * (end - start)).
+	// Note that if 'start' and 'end' are on the opposite ends of the hypersphere, 'end' is negated
+	// before we interpolate. As such, when 'alpha' is 1.0, either 'end' or its negated equivalent
+	// is returned. Furthermore, if 'start' and 'end' aren't exactly normalized, the result might
+	// not match exactly when 'alpha' is 0.0 or 1.0 because we normalize the resulting quaternion.
+	//////////////////////////////////////////////////////////////////////////
+	inline quatd quat_lerp(const quatd& start, const quatd& end, const scalard& alpha) RTM_NO_EXCEPT
+	{
+		// To ensure we take the shortest path, we apply a bias if the dot product is negative
+		vector4d start_vector = quat_to_vector(start);
+		vector4d end_vector = quat_to_vector(end);
+		double dot = vector_dot(start_vector, end_vector);
+		double bias = dot >= 0.0 ? 1.0 : -1.0;
+		// ((1.0 - alpha) * start) + (alpha * (end * bias)) == (start - alpha * start) + (alpha * (end * bias))
+		vector4d alpha_v = vector_set(alpha);
+		vector4d value = vector_mul_add(vector_mul(end_vector, bias), alpha_v, vector_neg_mul_sub(start_vector, alpha_v, start_vector));
+		return quat_normalize(vector_to_quat(value));
+	}
+#endif
+
 	//////////////////////////////////////////////////////////////////////////
 	// Returns a component wise negated quaternion.
 	//////////////////////////////////////////////////////////////////////////

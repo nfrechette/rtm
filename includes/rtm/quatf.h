@@ -960,6 +960,91 @@ namespace rtm
 #endif
 	}
 
+#if defined(RTM_SSE2_INTRINSICS)
+	//////////////////////////////////////////////////////////////////////////
+	// Returns the linear interpolation between start and end for a given alpha value.
+	// The formula used is: ((1.0 - alpha) * start) + (alpha * end).
+	// Interpolation is stable and will return 'start' when 'alpha' is 0.0 and 'end' when it is 1.0.
+	// This is the same instruction count when FMA is present but it might be slightly slower
+	// due to the extra multiplication compared to: start + (alpha * (end - start)).
+	// Note that if 'start' and 'end' are on the opposite ends of the hypersphere, 'end' is negated
+	// before we interpolate. As such, when 'alpha' is 1.0, either 'end' or its negated equivalent
+	// is returned. Furthermore, if 'start' and 'end' aren't exactly normalized, the result might
+	// not match exactly when 'alpha' is 0.0 or 1.0 because we normalize the resulting quaternion.
+	//////////////////////////////////////////////////////////////////////////
+	inline quatf RTM_SIMD_CALL quat_lerp(quatf_arg0 start, quatf_arg1 end, scalarf_arg2 alpha) RTM_NO_EXCEPT
+	{
+		// Calculate the vector4 dot product: dot(start, end)
+		__m128 dot;
+#if defined(RTM_SSE4_INTRINSICS)
+		// The dpps instruction isn't as accurate but we don't care here, we only need the sign of the
+		// dot product. If both rotations are on opposite ends of the hypersphere, the result will be
+		// very negative. If we are on the edge, the rotations are nearly opposite but not quite which
+		// means that the linear interpolation here will have terrible accuracy to begin with. It is designed
+		// for interpolating rotations that are reasonably close together. The bias check is mainly necessary
+		// because the W component is often kept positive which flips the sign.
+		// Using the dpps instruction reduces the number of registers that we need and helps the function get
+		// inlined.
+		dot = _mm_dp_ps(start, end, 0xFF);
+#else
+		{
+			__m128 x2_y2_z2_w2 = _mm_mul_ps(start, end);
+			__m128 z2_w2_0_0 = _mm_shuffle_ps(x2_y2_z2_w2, x2_y2_z2_w2, _MM_SHUFFLE(0, 0, 3, 2));
+			__m128 x2z2_y2w2_0_0 = _mm_add_ps(x2_y2_z2_w2, z2_w2_0_0);
+			__m128 y2w2_0_0_0 = _mm_shuffle_ps(x2z2_y2w2_0_0, x2z2_y2w2_0_0, _MM_SHUFFLE(0, 0, 0, 1));
+			__m128 x2y2z2w2_0_0_0 = _mm_add_ps(x2z2_y2w2_0_0, y2w2_0_0_0);
+			// Shuffle the dot product to all SIMD lanes, there is no _mm_and_ss and loading
+			// the constant from memory with the 'and' instruction is faster, it uses fewer registers
+			// and fewer instructions
+			dot = _mm_shuffle_ps(x2y2z2w2_0_0_0, x2y2z2w2_0_0_0, _MM_SHUFFLE(0, 0, 0, 0));
+		}
+#endif
+
+		// Calculate the bias, if the dot product is positive or zero, there is no bias
+		// but if it is negative, we want to flip the 'end' rotation XYZW components
+		__m128 bias = _mm_and_ps(dot, _mm_set_ps1(-0.0F));
+
+		// Lerp the rotation after applying the bias
+		// ((1.0 - alpha) * start) + (alpha * (end ^ bias)) == (start - alpha * start) + (alpha * (end ^ bias))
+		__m128 alpha_ = _mm_shuffle_ps(alpha.value, alpha.value, _MM_SHUFFLE(0, 0, 0, 0));
+		__m128 interpolated_rotation = _mm_add_ps(_mm_sub_ps(start, _mm_mul_ps(alpha_, start)), _mm_mul_ps(alpha_, _mm_xor_ps(end, bias)));
+
+		// Now we need to normalize the resulting rotation. We first calculate the
+		// dot product to get the length squared: dot(interpolated_rotation, interpolated_rotation)
+		__m128 x2_y2_z2_w2 = _mm_mul_ps(interpolated_rotation, interpolated_rotation);
+		__m128 z2_w2_0_0 = _mm_shuffle_ps(x2_y2_z2_w2, x2_y2_z2_w2, _MM_SHUFFLE(0, 0, 3, 2));
+		__m128 x2z2_y2w2_0_0 = _mm_add_ps(x2_y2_z2_w2, z2_w2_0_0);
+		__m128 y2w2_0_0_0 = _mm_shuffle_ps(x2z2_y2w2_0_0, x2z2_y2w2_0_0, _MM_SHUFFLE(0, 0, 0, 1));
+		__m128 x2y2z2w2_0_0_0 = _mm_add_ps(x2z2_y2w2_0_0, y2w2_0_0_0);
+
+		// Keep the dot product result as a scalar within the first lane, it is faster to
+		// calculate the reciprocal square root of a single lane VS all 4 lanes
+		dot = x2y2z2w2_0_0_0;
+
+		// Calculate the reciprocal square root to get the inverse length of our vector
+		// Perform two passes of Newton-Raphson iteration on the hardware estimate
+		__m128 half = _mm_set_ss(0.5F);
+		__m128 input_half_v = _mm_mul_ss(dot, half);
+		__m128 x0 = _mm_rsqrt_ss(dot);
+
+		// First iteration
+		__m128 x1 = _mm_mul_ss(x0, x0);
+		x1 = _mm_sub_ss(half, _mm_mul_ss(input_half_v, x1));
+		x1 = _mm_add_ss(_mm_mul_ss(x0, x1), x0);
+
+		// Second iteration
+		__m128 x2 = _mm_mul_ss(x1, x1);
+		x2 = _mm_sub_ss(half, _mm_mul_ss(input_half_v, x2));
+		x2 = _mm_add_ss(_mm_mul_ss(x1, x2), x1);
+
+		// Broadcast the vector length reciprocal to all 4 lanes in order to multiply it with the vector
+		__m128 inv_len = _mm_shuffle_ps(x2, x2, _MM_SHUFFLE(0, 0, 0, 0));
+
+		// Multiply the rotation by it's inverse length in order to normalize it
+		return _mm_mul_ps(interpolated_rotation, inv_len);
+	}
+#endif
+
 	//////////////////////////////////////////////////////////////////////////
 	// Returns a component wise negated quaternion.
 	//////////////////////////////////////////////////////////////////////////
