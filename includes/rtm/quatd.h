@@ -86,52 +86,156 @@ namespace rtm
 #endif
 	}
 
+	namespace rtm_impl
+	{
+		//////////////////////////////////////////////////////////////////////////
+		// This is a helper struct to allow a single consistent API between
+		// various vector types when the semantics are identical but the return
+		// type differs. Implicit coercion is used to return the desired value
+		// at the call site.
+		//////////////////////////////////////////////////////////////////////////
+		struct quatd_quat_get_x
+		{
+			inline RTM_SIMD_CALL operator double() const RTM_NO_EXCEPT
+			{
+#if defined(RTM_SSE2_INTRINSICS)
+				return _mm_cvtsd_f64(input.xy);
+#else
+				return input.x;
+#endif
+			}
+
+#if defined(RTM_SSE2_INTRINSICS)
+			inline RTM_SIMD_CALL operator scalard() const RTM_NO_EXCEPT
+			{
+				return scalard{ input.xy };
+			}
+#endif
+
+			quatd input;
+		};
+	}
+
 	//////////////////////////////////////////////////////////////////////////
 	// Returns the quaternion [x] component (real part).
 	//////////////////////////////////////////////////////////////////////////
-	inline double quat_get_x(const quatd& input) RTM_NO_EXCEPT
+	constexpr rtm_impl::quatd_quat_get_x quat_get_x(const quatd& input) RTM_NO_EXCEPT
 	{
+		return rtm_impl::quatd_quat_get_x{ input };
+	}
+
+	namespace rtm_impl
+	{
+		//////////////////////////////////////////////////////////////////////////
+		// This is a helper struct to allow a single consistent API between
+		// various vector types when the semantics are identical but the return
+		// type differs. Implicit coercion is used to return the desired value
+		// at the call site.
+		//////////////////////////////////////////////////////////////////////////
+		struct quatd_quat_get_y
+		{
+			inline RTM_SIMD_CALL operator double() const RTM_NO_EXCEPT
+			{
 #if defined(RTM_SSE2_INTRINSICS)
-		return _mm_cvtsd_f64(input.xy);
+				return _mm_cvtsd_f64(_mm_shuffle_pd(input.xy, input.xy, 1));
 #else
-		return input.x;
+				return input.y;
 #endif
+			}
+
+#if defined(RTM_SSE2_INTRINSICS)
+			inline RTM_SIMD_CALL operator scalard() const RTM_NO_EXCEPT
+			{
+				return scalard{ _mm_shuffle_pd(input.xy, input.xy, 1) };
+			}
+#endif
+
+			quatd input;
+		};
 	}
 
 	//////////////////////////////////////////////////////////////////////////
 	// Returns the quaternion [y] component (real part).
 	//////////////////////////////////////////////////////////////////////////
-	inline double quat_get_y(const quatd& input) RTM_NO_EXCEPT
+	constexpr rtm_impl::quatd_quat_get_y quat_get_y(const quatd& input) RTM_NO_EXCEPT
 	{
+		return rtm_impl::quatd_quat_get_y{ input };
+	}
+
+	namespace rtm_impl
+	{
+		//////////////////////////////////////////////////////////////////////////
+		// This is a helper struct to allow a single consistent API between
+		// various vector types when the semantics are identical but the return
+		// type differs. Implicit coercion is used to return the desired value
+		// at the call site.
+		//////////////////////////////////////////////////////////////////////////
+		struct quatd_quat_get_z
+		{
+			inline RTM_SIMD_CALL operator double() const RTM_NO_EXCEPT
+			{
 #if defined(RTM_SSE2_INTRINSICS)
-		return _mm_cvtsd_f64(_mm_shuffle_pd(input.xy, input.xy, 1));
+				return _mm_cvtsd_f64(input.zw);
 #else
-		return input.y;
+				return input.z;
 #endif
+			}
+
+#if defined(RTM_SSE2_INTRINSICS)
+			inline RTM_SIMD_CALL operator scalard() const RTM_NO_EXCEPT
+			{
+				return scalard{ input.zw };
+			}
+#endif
+
+			quatd input;
+		};
 	}
 
 	//////////////////////////////////////////////////////////////////////////
 	// Returns the quaternion [z] component (real part).
 	//////////////////////////////////////////////////////////////////////////
-	inline double quat_get_z(const quatd& input) RTM_NO_EXCEPT
+	constexpr rtm_impl::quatd_quat_get_z quat_get_z(const quatd& input) RTM_NO_EXCEPT
 	{
+		return rtm_impl::quatd_quat_get_z{ input };
+	}
+
+	namespace rtm_impl
+	{
+		//////////////////////////////////////////////////////////////////////////
+		// This is a helper struct to allow a single consistent API between
+		// various vector types when the semantics are identical but the return
+		// type differs. Implicit coercion is used to return the desired value
+		// at the call site.
+		//////////////////////////////////////////////////////////////////////////
+		struct quatd_quat_get_w
+		{
+			inline RTM_SIMD_CALL operator double() const RTM_NO_EXCEPT
+			{
 #if defined(RTM_SSE2_INTRINSICS)
-		return _mm_cvtsd_f64(input.zw);
+				return _mm_cvtsd_f64(_mm_shuffle_pd(input.zw, input.zw, 1));
 #else
-		return input.z;
+				return input.w;
 #endif
+			}
+
+#if defined(RTM_SSE2_INTRINSICS)
+			inline RTM_SIMD_CALL operator scalard() const RTM_NO_EXCEPT
+			{
+				return scalard{ _mm_shuffle_pd(input.zw, input.zw, 1) };
+			}
+#endif
+
+			quatd input;
+		};
 	}
 
 	//////////////////////////////////////////////////////////////////////////
 	// Returns the quaternion [w] component (imaginary part).
 	//////////////////////////////////////////////////////////////////////////
-	inline double quat_get_w(const quatd& input) RTM_NO_EXCEPT
+	constexpr rtm_impl::quatd_quat_get_w quat_get_w(const quatd& input) RTM_NO_EXCEPT
 	{
-#if defined(RTM_SSE2_INTRINSICS)
-		return _mm_cvtsd_f64(_mm_shuffle_pd(input.zw, input.zw, 1));
-#else
-		return input.w;
-#endif
+		return rtm_impl::quatd_quat_get_w{ input };
 	}
 
 	//////////////////////////////////////////////////////////////////////////
@@ -460,7 +564,8 @@ namespace rtm
 	inline bool quat_near_identity(const quatd& input, angled threshold_angle = radians(0.00284714461)) RTM_NO_EXCEPT
 	{
 		// See the quatf version of quat_near_identity for details.
-		const double positive_w_angle = scalar_acos(scalar_abs(quat_get_w(input))) * 2.0;
+		const scalard input_w = quat_get_w(input);
+		const double positive_w_angle = scalar_acos(scalar_cast(scalar_abs(input_w))) * 2.0;
 		return positive_w_angle < threshold_angle.as_radians();
 	}
 }
