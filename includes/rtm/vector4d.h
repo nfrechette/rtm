@@ -817,6 +817,12 @@ namespace rtm
 			}
 #endif
 
+			inline RTM_SIMD_CALL operator vector4d() const RTM_NO_EXCEPT
+			{
+				const scalard dot = *this;
+				return vector_set(dot);
+			}
+
 			vector4d lhs;
 			vector4d rhs;
 		};
@@ -842,6 +848,7 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	// 4D dot product replicated in all components: lhs . rhs
 	//////////////////////////////////////////////////////////////////////////
+	RTM_DEPRECATED("Use vector_dot instead, to be removed in v2.0")
 	inline vector4d vector_dot_as_vector(const vector4d& lhs, const vector4d& rhs) RTM_NO_EXCEPT
 	{
 		const scalard dot = vector_dot(lhs, rhs);
