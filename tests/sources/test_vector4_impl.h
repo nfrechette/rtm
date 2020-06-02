@@ -480,7 +480,7 @@ void test_vector4_arithmetic_impl(const FloatType threshold)
 	const ScalarType vector_sdot_result = vector_dot(test_value10, test_value11);
 	CHECK(scalar_near_equal(scalar_cast(vector_sdot_result), scalar_dot_result, threshold));
 
-	const Vector4Type vector_vdot_result = vector_dot_as_vector(test_value10, test_value11);
+	const Vector4Type vector_vdot_result = vector_dot(test_value10, test_value11);
 	CHECK(scalar_near_equal(vector_get_x(vector_vdot_result), scalar_dot_result, threshold));
 	CHECK(scalar_near_equal(vector_get_y(vector_vdot_result), scalar_dot_result, threshold));
 	CHECK(scalar_near_equal(vector_get_z(vector_vdot_result), scalar_dot_result, threshold));
