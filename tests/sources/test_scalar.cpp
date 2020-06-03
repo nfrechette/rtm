@@ -36,7 +36,7 @@
 using namespace rtm;
 
 template<typename FloatType>
-static void test_scalar_impl(const FloatType threshold)
+static void test_scalar_impl(const FloatType threshold, const FloatType trig_threshold)
 {
 	CHECK(scalar_cast(scalar_set(FloatType(0.2345))) == FloatType(0.2345));
 
@@ -195,32 +195,32 @@ static void test_scalar_impl(const FloatType threshold)
 
 	for (const FloatType angle : angles)
 	{
-		CHECK(scalar_near_equal(scalar_sin(angle), std::sin(angle), threshold));
-		CHECK(scalar_near_equal(scalar_cos(angle), std::cos(angle), threshold));
+		CHECK(scalar_near_equal(scalar_sin(angle), std::sin(angle), trig_threshold));
+		CHECK(scalar_near_equal(scalar_cos(angle), std::cos(angle), trig_threshold));
 
 		FloatType sin_result;
 		FloatType cos_result;
 		scalar_sincos(angle, sin_result, cos_result);
-		CHECK(scalar_near_equal(sin_result, std::sin(angle), threshold));
-		CHECK(scalar_near_equal(cos_result, std::cos(angle), threshold));
+		CHECK(scalar_near_equal(sin_result, std::sin(angle), trig_threshold));
+		CHECK(scalar_near_equal(cos_result, std::cos(angle), trig_threshold));
 	}
 
-	CHECK(scalar_near_equal(scalar_acos(FloatType(-1.0)), std::acos(FloatType(-1.0)), threshold));
-	CHECK(scalar_near_equal(scalar_acos(FloatType(-0.75)), std::acos(FloatType(-0.75)), threshold));
-	CHECK(scalar_near_equal(scalar_acos(FloatType(-0.5)), std::acos(FloatType(-0.5)), threshold));
-	CHECK(scalar_near_equal(scalar_acos(FloatType(-0.25)), std::acos(-FloatType(0.25)), threshold));
-	CHECK(scalar_near_equal(scalar_acos(FloatType(0.0)), std::acos(FloatType(0.0)), threshold));
-	CHECK(scalar_near_equal(scalar_acos(FloatType(0.25)), std::acos(FloatType(0.25)), threshold));
-	CHECK(scalar_near_equal(scalar_acos(FloatType(0.5)), std::acos(FloatType(0.5)), threshold));
-	CHECK(scalar_near_equal(scalar_acos(FloatType(0.75)), std::acos(FloatType(0.75)), threshold));
-	CHECK(scalar_near_equal(scalar_acos(FloatType(1.0)), std::acos(FloatType(1.0)), threshold));
+	CHECK(scalar_near_equal(scalar_acos(FloatType(-1.0)), std::acos(FloatType(-1.0)), trig_threshold));
+	CHECK(scalar_near_equal(scalar_acos(FloatType(-0.75)), std::acos(FloatType(-0.75)), trig_threshold));
+	CHECK(scalar_near_equal(scalar_acos(FloatType(-0.5)), std::acos(FloatType(-0.5)), trig_threshold));
+	CHECK(scalar_near_equal(scalar_acos(FloatType(-0.25)), std::acos(-FloatType(0.25)), trig_threshold));
+	CHECK(scalar_near_equal(scalar_acos(FloatType(0.0)), std::acos(FloatType(0.0)), trig_threshold));
+	CHECK(scalar_near_equal(scalar_acos(FloatType(0.25)), std::acos(FloatType(0.25)), trig_threshold));
+	CHECK(scalar_near_equal(scalar_acos(FloatType(0.5)), std::acos(FloatType(0.5)), trig_threshold));
+	CHECK(scalar_near_equal(scalar_acos(FloatType(0.75)), std::acos(FloatType(0.75)), trig_threshold));
+	CHECK(scalar_near_equal(scalar_acos(FloatType(1.0)), std::acos(FloatType(1.0)), trig_threshold));
 
-	CHECK(scalar_near_equal(scalar_atan2(FloatType(-2.0), FloatType(-2.0)), std::atan2(FloatType(-2.0), FloatType(-2.0)), threshold));
-	CHECK(scalar_near_equal(scalar_atan2(FloatType(-1.0), FloatType(-2.0)), std::atan2(FloatType(-1.0), FloatType(-2.0)), threshold));
-	CHECK(scalar_near_equal(scalar_atan2(FloatType(-2.0), FloatType(-1.0)), std::atan2(FloatType(-2.0), FloatType(-1.0)), threshold));
-	CHECK(scalar_near_equal(scalar_atan2(FloatType(2.0), FloatType(2.0)), std::atan2(FloatType(2.0), FloatType(2.0)), threshold));
-	CHECK(scalar_near_equal(scalar_atan2(FloatType(1.0), FloatType(2.0)), std::atan2(FloatType(1.0), FloatType(2.0)), threshold));
-	CHECK(scalar_near_equal(scalar_atan2(FloatType(2.0), FloatType(1.0)), std::atan2(FloatType(2.0), FloatType(1.0)), threshold));
+	CHECK(scalar_near_equal(scalar_atan2(FloatType(-2.0), FloatType(-2.0)), std::atan2(FloatType(-2.0), FloatType(-2.0)), trig_threshold));
+	CHECK(scalar_near_equal(scalar_atan2(FloatType(-1.0), FloatType(-2.0)), std::atan2(FloatType(-1.0), FloatType(-2.0)), trig_threshold));
+	CHECK(scalar_near_equal(scalar_atan2(FloatType(-2.0), FloatType(-1.0)), std::atan2(FloatType(-2.0), FloatType(-1.0)), trig_threshold));
+	CHECK(scalar_near_equal(scalar_atan2(FloatType(2.0), FloatType(2.0)), std::atan2(FloatType(2.0), FloatType(2.0)), trig_threshold));
+	CHECK(scalar_near_equal(scalar_atan2(FloatType(1.0), FloatType(2.0)), std::atan2(FloatType(1.0), FloatType(2.0)), trig_threshold));
+	CHECK(scalar_near_equal(scalar_atan2(FloatType(2.0), FloatType(1.0)), std::atan2(FloatType(2.0), FloatType(1.0)), trig_threshold));
 
 	CHECK(scalar_min(FloatType(-0.5), FloatType(1.0)) == FloatType(-0.5));
 	CHECK(scalar_min(FloatType(1.0), FloatType(-0.5)) == FloatType(-0.5));
@@ -267,10 +267,10 @@ static void test_scalar_impl(const FloatType threshold)
 
 TEST_CASE("scalarf math", "[math][scalar]")
 {
-	test_scalar_impl<float>(1.0E-6F);
+	test_scalar_impl<float>(1.0E-6F, 1.0E-5F);
 }
 
 TEST_CASE("scalard math", "[math][scalar]")
 {
-	test_scalar_impl<double>(1.0E-9);
+	test_scalar_impl<double>(1.0E-9, 1.0E-9);
 }
