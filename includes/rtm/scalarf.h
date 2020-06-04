@@ -365,6 +365,63 @@ namespace rtm
 	}
 
 	//////////////////////////////////////////////////////////////////////////
+	// Returns the rounded input using banker's rounding (half to even).
+	// scalar_round_bankers(2.5) = 2.0
+	// scalar_round_bankers(1.5) = 2.0
+	// scalar_round_bankers(1.2) = 1.0
+	// scalar_round_bankers(-2.5) = -2.0
+	// scalar_round_bankers(-1.5) = -2.0
+	// scalar_round_bankers(-1.2) = -1.0
+	//////////////////////////////////////////////////////////////////////////
+	inline float scalar_round_bankers(float input) RTM_NO_EXCEPT
+	{
+#if defined(RTM_SSE4_INTRINSICS)
+		__m128 input_s = _mm_set_ps1(input);
+		return _mm_cvtss_f32(_mm_round_ss(input_s, input_s, _MM_FROUND_TO_NEAREST_INT | _MM_FROUND_NO_EXC));
+#elif defined(RTM_SSE2_INTRINSICS)
+#if defined(_MSC_VER) && !defined(__clang__)
+		constexpr __m128i abs_mask = { 0xFFU, 0xFFU, 0xFFU, 0x7FU, 0xFFU, 0xFFU, 0xFFU, 0x7FU, 0xFFU, 0xFFU, 0xFFU, 0x7FU, 0xFFU, 0xFFU, 0xFFU, 0x7FU };
+#else
+		constexpr __m128i abs_mask = { 0x7FFFFFFF7FFFFFFFULL, 0x7FFFFFFF7FFFFFFFULL };
+#endif
+		__m128 input_s = _mm_set_ps1(input);
+
+		const __m128 sign_mask = _mm_set_ps(-0.0F, -0.0F, -0.0F, -0.0F);
+		__m128 sign = _mm_and_ps(input_s, sign_mask);
+
+		// We add the largest integer that a 32 bit floating point number can represent and subtract it afterwards.
+		// This relies on the fact that if we had a fractional part, the new value cannot be represented accurately
+		// and IEEE 754 will perform rounding for us. The default rounding mode is Banker's rounding.
+		// This has the effect of removing the fractional part while simultaneously rounding.
+		// Use the same sign as the input value to make sure we handle positive and negative values.
+		const __m128 largest_fractional_integer = _mm_set_ps1(8388608.0F); // 2^23
+		__m128 truncating_offset = _mm_xor_ps(sign, largest_fractional_integer);
+		__m128 integer_part = _mm_sub_ss(_mm_add_ss(input_s, truncating_offset), truncating_offset);
+
+		// If our input was so large that it had no fractional part, return it unchanged
+		// Otherwise return our integer part
+		__m128 abs_input = _mm_and_ps(input_s, _mm_castsi128_ps(abs_mask));
+		__m128 is_input_large = _mm_cmpge_ss(abs_input, largest_fractional_integer);
+		__m128 result = _mm_or_ps(_mm_and_ps(is_input_large, input_s), _mm_andnot_ps(is_input_large, integer_part));
+
+		return _mm_cvtss_f32(result);
+#else
+		int32_t whole = static_cast<int32_t>(input);
+		float whole_f = static_cast<float>(whole);
+		float remainder = scalar_abs(input - whole_f);
+		if (remainder < 0.5F)
+			return whole_f;
+		if (remainder > 0.5F)
+			return input >= 0.0F ? (whole_f + 1.0F) : (whole_f - 1.0F);
+
+		if ((whole % 2) == 0)
+			return whole_f;
+		else
+			return input >= 0.0F ? (whole_f + 1.0F) : (whole_f - 1.0F);
+#endif
+	}
+
+	//////////////////////////////////////////////////////////////////////////
 	// Returns the fractional part of the input.
 	//////////////////////////////////////////////////////////////////////////
 	inline float scalar_fraction(float value) RTM_NO_EXCEPT
@@ -606,6 +663,49 @@ namespace rtm
 	// HACK!!! See comment above
 #pragma optimize("", on)
 #endif
+
+	//////////////////////////////////////////////////////////////////////////
+	// Returns the rounded input using banker's rounding (half to even).
+	// scalar_round_bankers(2.5) = 2.0
+	// scalar_round_bankers(1.5) = 2.0
+	// scalar_round_bankers(1.2) = 1.0
+	// scalar_round_bankers(-2.5) = -2.0
+	// scalar_round_bankers(-1.5) = -2.0
+	// scalar_round_bankers(-1.2) = -1.0
+	// Note: This function relies on the default floating point rounding mode (banker's rounding).
+	//////////////////////////////////////////////////////////////////////////
+	inline scalarf RTM_SIMD_CALL scalar_round_bankers(scalarf_arg0 input) RTM_NO_EXCEPT
+	{
+#if defined(RTM_SSE4_INTRINSICS)
+		return scalarf{ _mm_cvtss_f32(_mm_round_ss(input.value, input.value, _MM_FROUND_TO_NEAREST_INT | _MM_FROUND_NO_EXC)) };
+#else
+#if defined(_MSC_VER) && !defined(__clang__)
+		constexpr __m128i abs_mask = { 0xFFU, 0xFFU, 0xFFU, 0x7FU, 0xFFU, 0xFFU, 0xFFU, 0x7FU, 0xFFU, 0xFFU, 0xFFU, 0x7FU, 0xFFU, 0xFFU, 0xFFU, 0x7FU };
+#else
+		constexpr __m128i abs_mask = { 0x7FFFFFFF7FFFFFFFULL, 0x7FFFFFFF7FFFFFFFULL };
+#endif
+
+		const __m128 sign_mask = _mm_set_ps(-0.0F, -0.0F, -0.0F, -0.0F);
+		__m128 sign = _mm_and_ps(input.value, sign_mask);
+
+		// We add the largest integer that a 32 bit floating point number can represent and subtract it afterwards.
+		// This relies on the fact that if we had a fractional part, the new value cannot be represented accurately
+		// and IEEE 754 will perform rounding for us. The default rounding mode is Banker's rounding.
+		// This has the effect of removing the fractional part while simultaneously rounding.
+		// Use the same sign as the input value to make sure we handle positive and negative values.
+		const __m128 largest_fractional_integer = _mm_set_ps1(8388608.0F); // 2^23
+		__m128 truncating_offset = _mm_xor_ps(sign, largest_fractional_integer);
+		__m128 integer_part = _mm_sub_ss(_mm_add_ss(input.value, truncating_offset), truncating_offset);
+
+		// If our input was so large that it had no fractional part, return it unchanged
+		// Otherwise return our integer part
+		__m128 abs_input = _mm_and_ps(input.value, _mm_castsi128_ps(abs_mask));
+		__m128 is_input_large = _mm_cmpge_ss(abs_input, largest_fractional_integer);
+		__m128 result = _mm_or_ps(_mm_and_ps(is_input_large, input.value), _mm_andnot_ps(is_input_large, integer_part));
+
+		return scalarf{ result };
+#endif
+	}
 
 	//////////////////////////////////////////////////////////////////////////
 	// Returns true if both inputs are equal, false otherwise.
