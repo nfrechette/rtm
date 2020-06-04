@@ -257,6 +257,34 @@ static void test_scalar_impl(const FloatType threshold, const FloatType trig_thr
 	CHECK(scalar_symmetric_round(FloatType(1.5)) == FloatType(2.0));
 	CHECK(scalar_symmetric_round(FloatType(1.75)) == FloatType(2.0));
 
+	CHECK(scalar_round_bankers(FloatType(-2.5)) == FloatType(-2.0));
+	CHECK(scalar_round_bankers(FloatType(-1.75)) == FloatType(-2.0));
+	CHECK(scalar_round_bankers(FloatType(-1.5)) == FloatType(-2.0));
+	CHECK(scalar_round_bankers(FloatType(-1.4999)) == FloatType(-1.0));
+	CHECK(scalar_round_bankers(FloatType(-0.5)) == FloatType(0.0));
+	CHECK(scalar_round_bankers(FloatType(-0.4999)) == FloatType(0.0));
+	CHECK(scalar_round_bankers(FloatType(0.0)) == FloatType(0.0));
+	CHECK(scalar_round_bankers(FloatType(0.4999)) == FloatType(0.0));
+	CHECK(scalar_round_bankers(FloatType(0.5)) == FloatType(0.0));
+	CHECK(scalar_round_bankers(FloatType(1.4999)) == FloatType(1.0));
+	CHECK(scalar_round_bankers(FloatType(1.5)) == FloatType(2.0));
+	CHECK(scalar_round_bankers(FloatType(1.75)) == FloatType(2.0));
+	CHECK(scalar_round_bankers(FloatType(2.5)) == FloatType(2.0));
+
+	CHECK(scalar_cast(scalar_round_bankers(scalar_set(FloatType(-2.5)))) == FloatType(-2.0));
+	CHECK(scalar_cast(scalar_round_bankers(scalar_set(FloatType(-1.75)))) == FloatType(-2.0));
+	CHECK(scalar_cast(scalar_round_bankers(scalar_set(FloatType(-1.5)))) == FloatType(-2.0));
+	CHECK(scalar_cast(scalar_round_bankers(scalar_set(FloatType(-1.4999)))) == FloatType(-1.0));
+	CHECK(scalar_cast(scalar_round_bankers(scalar_set(FloatType(-0.5)))) == FloatType(0.0));
+	CHECK(scalar_cast(scalar_round_bankers(scalar_set(FloatType(-0.4999)))) == FloatType(0.0));
+	CHECK(scalar_cast(scalar_round_bankers(scalar_set(FloatType(0.0)))) == FloatType(0.0));
+	CHECK(scalar_cast(scalar_round_bankers(scalar_set(FloatType(0.4999)))) == FloatType(0.0));
+	CHECK(scalar_cast(scalar_round_bankers(scalar_set(FloatType(0.5)))) == FloatType(0.0));
+	CHECK(scalar_cast(scalar_round_bankers(scalar_set(FloatType(1.4999)))) == FloatType(1.0));
+	CHECK(scalar_cast(scalar_round_bankers(scalar_set(FloatType(1.5)))) == FloatType(2.0));
+	CHECK(scalar_cast(scalar_round_bankers(scalar_set(FloatType(1.75)))) == FloatType(2.0));
+	CHECK(scalar_cast(scalar_round_bankers(scalar_set(FloatType(2.5)))) == FloatType(2.0));
+
 	CHECK(scalar_fraction(FloatType(0.0)) == FloatType(0.0));
 	CHECK(scalar_fraction(FloatType(1.0)) == FloatType(0.0));
 	CHECK(scalar_fraction(FloatType(-1.0)) == FloatType(0.0));
