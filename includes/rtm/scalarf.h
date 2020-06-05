@@ -202,6 +202,17 @@ namespace rtm
 #endif
 	}
 
+#if defined(RTM_SSE2_INTRINSICS)
+	//////////////////////////////////////////////////////////////////////////
+	// Returns the input if it is within the min/max values otherwise the
+	// exceeded boundary is returned.
+	//////////////////////////////////////////////////////////////////////////
+	inline scalarf RTM_SIMD_CALL scalar_clamp(scalarf_arg0 input, scalarf_arg1 min, scalarf_arg2 max) RTM_NO_EXCEPT
+	{
+		return scalarf{ _mm_min_ss(_mm_max_ss(input.value, min.value), max.value) };
+	}
+#endif
+
 	//////////////////////////////////////////////////////////////////////////
 	// Returns the input if it is within the min/max values otherwise the
 	// exceeded boundary is returned.

@@ -101,6 +101,10 @@ static void test_scalar_impl(const FloatType threshold, const FloatType trig_thr
 	CHECK(scalar_clamp(FloatType(-0.5), FloatType(0.0), FloatType(1.0)) == FloatType(0.0));
 	CHECK(scalar_clamp(FloatType(1.5), FloatType(0.0), FloatType(1.0)) == FloatType(1.0));
 
+	CHECK(scalar_cast(scalar_clamp(scalar_set(FloatType(0.5)), scalar_set(FloatType(0.0)), scalar_set(FloatType(1.0)))) == FloatType(0.5));
+	CHECK(scalar_cast(scalar_clamp(scalar_set(FloatType(-0.5)), scalar_set(FloatType(0.0)), scalar_set(FloatType(1.0)))) == FloatType(0.0));
+	CHECK(scalar_cast(scalar_clamp(scalar_set(FloatType(1.5)), scalar_set(FloatType(0.0)), scalar_set(FloatType(1.0)))) == FloatType(1.0));
+
 	CHECK(scalar_abs(FloatType(0.0)) == FloatType(0.0));
 	CHECK(scalar_abs(FloatType(2.0)) == FloatType(2.0));
 	CHECK(scalar_abs(FloatType(-2.0)) == FloatType(2.0));
