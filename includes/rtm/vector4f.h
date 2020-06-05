@@ -2035,18 +2035,81 @@ namespace rtm
 
 	//////////////////////////////////////////////////////////////////////////
 	// Returns per component the rounded input using a symmetric algorithm.
-	// symmetric_round(1.5) = 2.0
-	// symmetric_round(1.2) = 1.0
-	// symmetric_round(-1.5) = -2.0
-	// symmetric_round(-1.2) = -1.0
+	// vector_round_symmetric(1.5) = 2.0
+	// vector_round_symmetric(1.2) = 1.0
+	// vector_round_symmetric(-1.5) = -2.0
+	// vector_round_symmetric(-1.2) = -1.0
 	//////////////////////////////////////////////////////////////////////////
-	inline vector4f RTM_SIMD_CALL vector_symmetric_round(vector4f_arg0 input) RTM_NO_EXCEPT
+	inline vector4f RTM_SIMD_CALL vector_round_symmetric(vector4f_arg0 input) RTM_NO_EXCEPT
 	{
+		// NaN, +- Infinity, and numbers larger or equal to 2^23 remain unchanged
+		// since they have no fractional part.
+
+#if defined(RTM_SSE4_INTRINSICS)
+		const __m128 sign_mask = _mm_set_ps(-0.0F, -0.0F, -0.0F, -0.0F);
+		__m128 sign = _mm_and_ps(input, sign_mask);
+
+		// For positive values, we add a bias of 0.5.
+		// For negative values, we add a bias of -0.5.
+		__m128 bias = _mm_or_ps(sign, _mm_set_ps1(0.5F));
+		__m128 biased_input = _mm_add_ps(input, bias);
+
+		__m128 floored = _mm_floor_ps(biased_input);
+		__m128 ceiled = _mm_ceil_ps(biased_input);
+		__m128 is_positive = _mm_cmpge_ps(input, _mm_setzero_ps());
+
+		return vector_select(is_positive, floored, ceiled);
+#elif defined(RTM_SSE2_INTRINSICS)
+#if defined(_MSC_VER) && !defined(__clang__)
+		constexpr __m128i abs_mask = { 0xFFU, 0xFFU, 0xFFU, 0x7FU, 0xFFU, 0xFFU, 0xFFU, 0x7FU, 0xFFU, 0xFFU, 0xFFU, 0x7FU, 0xFFU, 0xFFU, 0xFFU, 0x7FU };
+#else
+		constexpr __m128i abs_mask = { 0x7FFFFFFF7FFFFFFFULL, 0x7FFFFFFF7FFFFFFFULL };
+#endif
+		const __m128 fractional_limit = _mm_set_ps1(8388608.0F); // 2^23
+
+		// Build our mask, larger values that have no fractional part, and infinities will be true
+		// Smaller values and NaN will be false
+		__m128 abs_input = _mm_and_ps(input, _mm_castsi128_ps(abs_mask));
+		__m128 is_input_large = _mm_cmpge_ps(abs_input, fractional_limit);
+
+		// Test if our input is NaN with (value != value), it is only true for NaN
+		__m128 is_nan = _mm_cmpneq_ps(input, input);
+
+		// Combine our masks to determine if we should return the original value
+		__m128 use_original_input = _mm_or_ps(is_input_large, is_nan);
+
+		const __m128 sign_mask = _mm_set_ps(-0.0F, -0.0F, -0.0F, -0.0F);
+		__m128 sign = _mm_and_ps(input, sign_mask);
+
+		// For positive values, we add a bias of 0.5.
+		// For negative values, we add a bias of -0.5.
+		__m128 bias = _mm_or_ps(sign, _mm_set_ps1(0.5F));
+		__m128 biased_input = _mm_add_ps(input, bias);
+
+		// Convert to an integer with truncation and back, this rounds towards zero.
+		__m128 integer_part = _mm_cvtepi32_ps(_mm_cvttps_epi32(biased_input));
+
+		return _mm_or_ps(_mm_and_ps(use_original_input, input), _mm_andnot_ps(use_original_input, integer_part));
+#else
 		const vector4f half = vector_set(0.5F);
 		const vector4f floored = vector_floor(vector_add(input, half));
 		const vector4f ceiled = vector_ceil(vector_sub(input, half));
 		const mask4i is_greater_equal = vector_greater_equal(input, vector_zero());
 		return vector_select(is_greater_equal, floored, ceiled);
+#endif
+	}
+
+	//////////////////////////////////////////////////////////////////////////
+	// Returns per component the rounded input using a symmetric algorithm.
+	// vector_symmetric_round(1.5) = 2.0
+	// vector_symmetric_round(1.2) = 1.0
+	// vector_symmetric_round(-1.5) = -2.0
+	// vector_symmetric_round(-1.2) = -1.0
+	//////////////////////////////////////////////////////////////////////////
+	RTM_DEPRECATED("Use vector_round_symmetric instead, to be removed in v2.0")
+	inline vector4f RTM_SIMD_CALL vector_symmetric_round(vector4f_arg0 input) RTM_NO_EXCEPT
+	{
+		return vector_round_symmetric(input);
 	}
 }
 

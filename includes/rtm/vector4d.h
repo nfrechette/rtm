@@ -1738,18 +1738,108 @@ namespace rtm
 
 	//////////////////////////////////////////////////////////////////////////
 	// Returns per component the rounded input using a symmetric algorithm.
-	// symmetric_round(1.5) = 2.0
-	// symmetric_round(1.2) = 1.0
-	// symmetric_round(-1.5) = -2.0
-	// symmetric_round(-1.2) = -1.0
+	// vector_round_symmetric(1.5) = 2.0
+	// vector_round_symmetric(1.2) = 1.0
+	// vector_round_symmetric(-1.5) = -2.0
+	// vector_round_symmetric(-1.2) = -1.0
 	//////////////////////////////////////////////////////////////////////////
-	inline vector4d vector_symmetric_round(const vector4d& input) RTM_NO_EXCEPT
+	inline vector4d vector_round_symmetric(const vector4d& input) RTM_NO_EXCEPT
 	{
+		// NaN, +- Infinity, and numbers larger or equal to 2^23 remain unchanged
+		// since they have no fractional part.
+
+#if defined(RTM_SSE4_INTRINSICS)
+		const __m128d sign_mask = _mm_set_pd(-0.0, -0.0);
+		__m128d sign_xy = _mm_and_pd(input.xy, sign_mask);
+		__m128d sign_zw = _mm_and_pd(input.zw, sign_mask);
+
+		// For positive values, we add a bias of 0.5.
+		// For negative values, we add a bias of -0.5.
+		__m128d half = _mm_set1_pd(0.5);
+		__m128d bias_xy = _mm_or_pd(sign_xy, half);
+		__m128d bias_zw = _mm_or_pd(sign_zw, half);
+		__m128d biased_input_xy = _mm_add_pd(input.xy, bias_xy);
+		__m128d biased_input_zw = _mm_add_pd(input.zw, bias_zw);
+
+		__m128d floored_xy = _mm_floor_pd(biased_input_xy);
+		__m128d floored_zw = _mm_floor_pd(biased_input_zw);
+		__m128d ceiled_xy = _mm_ceil_pd(biased_input_xy);
+		__m128d ceiled_zw = _mm_ceil_pd(biased_input_zw);
+		__m128d zero = _mm_setzero_pd();
+		__m128d is_positive_xy = _mm_cmpge_pd(input.xy, zero);
+		__m128d is_positive_zw = _mm_cmpge_pd(input.zw, zero);
+
+#if defined(RTM_AVX_INTRINSICS)
+		__m128d result_xy = _mm_blendv_pd(ceiled_xy, floored_xy, is_positive_xy);
+		__m128d result_zw = _mm_blendv_pd(ceiled_zw, floored_zw, is_positive_zw);
+#else
+		__m128d result_xy = _mm_or_pd(_mm_and_pd(is_positive_xy, floored_xy), _mm_andnot_pd(is_positive_xy, ceiled_xy));
+		__m128d result_zw = _mm_or_pd(_mm_and_pd(is_positive_zw, floored_zw), _mm_andnot_pd(is_positive_zw, ceiled_zw));
+#endif
+		return vector4d{ result_xy, result_zw };
+#elif defined(RTM_SSE2_INTRINSICS)
+#if defined(_MSC_VER) && !defined(__clang__)
+		constexpr __m128i abs_mask = { 0xFFU, 0xFFU, 0xFFU, 0xFFU, 0xFFU, 0xFFU, 0xFFU, 0x7FU, 0xFFU, 0xFFU, 0xFFU, 0xFFU, 0xFFU, 0xFFU, 0xFFU, 0x7FU };
+#else
+		constexpr __m128i abs_mask = { 0x7FFFFFFFFFFFFFFFULL, 0x7FFFFFFFFFFFFFFFULL };
+#endif
+		const __m128d fractional_limit = _mm_set1_pd(4503599627370496.0); // 2^52
+
+		// Build our mask, larger values that have no fractional part, and infinities will be true
+		// Smaller values and NaN will be false
+		__m128d abs_input_xy = _mm_and_pd(input.xy, _mm_castsi128_pd(abs_mask));
+		__m128d abs_input_zw = _mm_and_pd(input.zw, _mm_castsi128_pd(abs_mask));
+		__m128d is_input_large_xy = _mm_cmpge_pd(abs_input_xy, fractional_limit);
+		__m128d is_input_large_zw = _mm_cmpge_pd(abs_input_zw, fractional_limit);
+
+		// Test if our input is NaN with (value != value), it is only true for NaN
+		__m128d is_nan_xy = _mm_cmpneq_pd(input.xy, input.xy);
+		__m128d is_nan_zw = _mm_cmpneq_pd(input.zw, input.zw);
+
+		// Combine our masks to determine if we should return the original value
+		__m128d use_original_input_xy = _mm_or_pd(is_input_large_xy, is_nan_xy);
+		__m128d use_original_input_zw = _mm_or_pd(is_input_large_zw, is_nan_zw);
+
+		const __m128d sign_mask = _mm_set_pd(-0.0, -0.0);
+		__m128d sign_xy = _mm_and_pd(input.xy, sign_mask);
+		__m128d sign_zw = _mm_and_pd(input.zw, sign_mask);
+
+		// For positive values, we add a bias of 0.5.
+		// For negative values, we add a bias of -0.5.
+		__m128d half = _mm_set1_pd(0.5);
+		__m128d bias_xy = _mm_or_pd(sign_xy, half);
+		__m128d bias_zw = _mm_or_pd(sign_zw, half);
+		__m128d biased_input_xy = _mm_add_pd(input.xy, bias_xy);
+		__m128d biased_input_zw = _mm_add_pd(input.zw, bias_zw);
+
+		// Convert to an integer with truncation and back, this rounds towards zero.
+		__m128d integer_part_xy = _mm_cvtepi32_pd(_mm_cvttpd_epi32(biased_input_xy));
+		__m128d integer_part_zw = _mm_cvtepi32_pd(_mm_cvttpd_epi32(biased_input_zw));
+
+		__m128d result_xy = _mm_or_pd(_mm_and_pd(use_original_input_xy, input.xy), _mm_andnot_pd(use_original_input_xy, integer_part_xy));
+		__m128d result_zw = _mm_or_pd(_mm_and_pd(use_original_input_zw, input.zw), _mm_andnot_pd(use_original_input_zw, integer_part_zw));
+
+		return vector4d{ result_xy, result_zw };
+#else
 		const vector4d half = vector_set(0.5);
 		const vector4d floored = vector_floor(vector_add(input, half));
 		const vector4d ceiled = vector_ceil(vector_sub(input, half));
 		const mask4q is_greater_equal = vector_greater_equal(input, vector_zero());
 		return vector_select(is_greater_equal, floored, ceiled);
+#endif
+	}
+
+	//////////////////////////////////////////////////////////////////////////
+	// Returns per component the rounded input using a symmetric algorithm.
+	// vector_symmetric_round(1.5) = 2.0
+	// vector_symmetric_round(1.2) = 1.0
+	// vector_symmetric_round(-1.5) = -2.0
+	// vector_symmetric_round(-1.2) = -1.0
+	//////////////////////////////////////////////////////////////////////////
+	RTM_DEPRECATED("Use vector_round_symmetric instead, to be removed in v2.0")
+	inline vector4d vector_symmetric_round(const vector4d& input) RTM_NO_EXCEPT
+	{
+		return vector_round_symmetric(input);
 	}
 }
 
