@@ -803,7 +803,7 @@ namespace rtm
 #if defined(RTM_SSE2_INTRINSICS)
 		return scalar_cast(scalar_round_bankers(scalar_set(input)));
 #else
-		if (std::isnan(input))
+		if (!scalar_is_finite(input))
 			return input;
 
 		int64_t whole = static_cast<int64_t>(input);
