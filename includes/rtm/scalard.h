@@ -110,8 +110,8 @@ namespace rtm
 		// Combine our masks to determine if we should return the original value
 		__m128d use_original_input = _mm_or_pd(is_input_large, is_nan);
 
-		// Convert to an integer and back
-		__m128d integer_part = _mm_cvtsi32_sd(input.value, _mm_cvtsd_si32(input.value));
+		// Convert to an integer and back. This does banker's rounding by default
+		__m128d integer_part = _mm_cvtepi32_pd(_mm_cvtpd_epi32(input.value));
 
 		// Test if the returned value is greater than the original.
 		// A negative input will round towards zero and be greater when we need it to be smaller.
@@ -176,8 +176,8 @@ namespace rtm
 		// Combine our masks to determine if we should return the original value
 		__m128d use_original_input = _mm_or_pd(is_input_large, is_nan);
 
-		// Convert to an integer and back
-		__m128d integer_part = _mm_cvtsi32_sd(input.value, _mm_cvtsd_si32(input.value));
+		// Convert to an integer and back. This does banker's rounding by default
+		__m128d integer_part = _mm_cvtepi32_pd(_mm_cvtpd_epi32(input.value));
 
 		// Test if the returned value is smaller than the original.
 		// A positive input will round towards zero and be lower when we need it to be greater.
