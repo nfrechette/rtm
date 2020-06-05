@@ -1035,5 +1035,16 @@ void test_vector4_impl(const FloatType threshold)
 			CHECK(scalar_near_equal(FloatType(vector_get_z(vector_cos(angle_v))), scalar_cos(angle), threshold));
 			CHECK(scalar_near_equal(FloatType(vector_get_w(vector_cos(angle_v))), scalar_cos(angle), threshold));
 		}
+
+		const FloatType angles_atan[] = { FloatType(-10.0), FloatType(-5.0), FloatType(-0.5), FloatType(-0.25), FloatType(0.0), FloatType(0.25), FloatType(0.5), FloatType(0.75), FloatType(81.0) };
+		for (const FloatType angle : angles_atan)
+		{
+			const Vector4Type angle_v = vector_set(angle);
+
+			CHECK(scalar_near_equal(FloatType(vector_get_x(vector_atan(angle_v))), scalar_atan(angle), threshold));
+			CHECK(scalar_near_equal(FloatType(vector_get_y(vector_atan(angle_v))), scalar_atan(angle), threshold));
+			CHECK(scalar_near_equal(FloatType(vector_get_z(vector_atan(angle_v))), scalar_atan(angle), threshold));
+			CHECK(scalar_near_equal(FloatType(vector_get_w(vector_atan(angle_v))), scalar_atan(angle), threshold));
+		}
 	}
 }
