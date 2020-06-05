@@ -63,16 +63,12 @@ namespace rtm
 	inline quatf RTM_SIMD_CALL quat_from_positive_w(vector4f_arg0 input) RTM_NO_EXCEPT
 	{
 #if defined(RTM_SSE2_INTRINSICS)
-#if defined(_MSC_VER) && !defined(__clang__)
-		constexpr __m128i masks = { 0xFFU, 0xFFU, 0xFFU, 0x7FU, 0xFFU, 0xFFU, 0xFFU, 0x7FU, 0xFFU, 0xFFU, 0xFFU, 0x7FU, 0xFFU, 0xFFU, 0xFFU, 0x7FU };
-#else
-		constexpr __m128i masks = { 0x7FFFFFFF7FFFFFFFULL, 0x7FFFFFFF7FFFFFFFULL };
-#endif
+		const __m128i abs_mask = _mm_set_epi32(0x7FFFFFFFULL, 0x7FFFFFFFULL, 0x7FFFFFFFULL, 0x7FFFFFFFULL);
 
 		__m128 x2y2z2 = _mm_mul_ps(input, input);
 		__m128 one = _mm_set_ss(1.0F);
 		__m128 w_squared = _mm_sub_ss(_mm_sub_ss(_mm_sub_ss(one, x2y2z2), _mm_shuffle_ps(x2y2z2, x2y2z2, _MM_SHUFFLE(1, 1, 1, 1))), _mm_shuffle_ps(x2y2z2, x2y2z2, _MM_SHUFFLE(2, 2, 2, 2)));
-		w_squared = _mm_and_ps(w_squared, _mm_castsi128_ps(masks));
+		w_squared = _mm_and_ps(w_squared, _mm_castsi128_ps(abs_mask));
 		__m128 w = _mm_sqrt_ss(w_squared);
 
 #if defined(RTM_SSE4_INTRINSICS)
