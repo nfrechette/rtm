@@ -1936,6 +1936,18 @@ namespace rtm
 		scalard w = scalar_sin(scalard(vector_get_w(input)));
 		return vector_set(x, y, z, w);
 	}
+
+	//////////////////////////////////////////////////////////////////////////
+	// Returns per component the cosine of the input angle.
+	//////////////////////////////////////////////////////////////////////////
+	inline vector4d vector_cos(const vector4d& input) RTM_NO_EXCEPT
+	{
+		scalard x = scalar_cos(scalard(vector_get_x(input)));
+		scalard y = scalar_cos(scalard(vector_get_y(input)));
+		scalard z = scalar_cos(scalard(vector_get_z(input)));
+		scalard w = scalar_cos(scalard(vector_get_w(input)));
+		return vector_set(x, y, z, w);
+	}
 }
 
 RTM_IMPL_FILE_PRAGMA_POP
