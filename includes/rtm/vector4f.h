@@ -1023,7 +1023,8 @@ namespace rtm
 				float32x2_t x2y2z2w2 = vpadd_f32(x2z2_y2w2, x2z2_y2w2);
 				return vcombine_f32(x2y2z2w2, x2y2z2w2);
 #else
-				return vector_set(vector_dot(lhs, rhs));
+				scalarf result = *this;
+				return vector_set(result);
 #endif
 			}
 
