@@ -687,6 +687,71 @@ namespace rtm
 		return std::isfinite(input);
 	}
 
+#if defined(RTM_SSE2_INTRINSICS)
+	//////////////////////////////////////////////////////////////////////////
+	// Returns the rounded input using a symmetric algorithm.
+	// scalar_symmetric_round(1.5) = 2.0
+	// scalar_symmetric_round(1.2) = 1.0
+	// scalar_symmetric_round(-1.5) = -2.0
+	// scalar_symmetric_round(-1.2) = -1.0
+	// Note: This function relies on the default floating point rounding mode (banker's rounding).
+	//////////////////////////////////////////////////////////////////////////
+	inline scalarf RTM_SIMD_CALL scalar_round_symmetric(scalarf_arg0 input) RTM_NO_EXCEPT
+	{
+		// NaN, +- Infinity, and numbers larger or equal to 2^23 remain unchanged
+		// since they have no fractional part.
+
+#if defined(_MSC_VER) && !defined(__clang__)
+		constexpr __m128i abs_mask = { 0xFFU, 0xFFU, 0xFFU, 0x7FU, 0xFFU, 0xFFU, 0xFFU, 0x7FU, 0xFFU, 0xFFU, 0xFFU, 0x7FU, 0xFFU, 0xFFU, 0xFFU, 0x7FU };
+#else
+		constexpr __m128i abs_mask = { 0x7FFFFFFF7FFFFFFFULL, 0x7FFFFFFF7FFFFFFFULL };
+#endif
+		const __m128 fractional_limit = _mm_set_ps1(8388608.0F); // 2^23
+
+		// Build our mask, larger values that have no fractional part, and infinities will be true
+		// Smaller values and NaN will be false
+		__m128 abs_input = _mm_and_ps(input.value, _mm_castsi128_ps(abs_mask));
+		__m128 is_input_large = _mm_cmpge_ss(abs_input, fractional_limit);
+
+		// Test if our input is NaN with (value != value), it is only true for NaN
+		__m128 is_nan = _mm_cmpneq_ss(input.value, input.value);
+
+		// Combine our masks to determine if we should return the original value
+		__m128 use_original_input = _mm_or_ps(is_input_large, is_nan);
+
+		const __m128 sign_mask = _mm_set_ps(-0.0F, -0.0F, -0.0F, -0.0F);
+		__m128 sign = _mm_and_ps(input.value, sign_mask);
+
+		// For positive values, we add a bias of 0.5.
+		// For negative values, we add a bias of -0.5.
+		__m128 bias = _mm_or_ps(sign, _mm_set_ps1(0.5F));
+		__m128 biased_input = _mm_add_ss(input.value, bias);
+
+		// Convert to an integer with truncation and back, this rounds towards zero.
+		__m128 integer_part = _mm_cvtepi32_ps(_mm_cvttps_epi32(biased_input));
+
+		__m128 result = _mm_or_ps(_mm_and_ps(use_original_input, input.value), _mm_andnot_ps(use_original_input, integer_part));
+
+		return scalarf{ result };
+	}
+#endif
+
+	//////////////////////////////////////////////////////////////////////////
+	// Returns the rounded input using a symmetric algorithm.
+	// scalar_round_symmetric(1.5) = 2.0
+	// scalar_round_symmetric(1.2) = 1.0
+	// scalar_round_symmetric(-1.5) = -2.0
+	// scalar_round_symmetric(-1.2) = -1.0
+	//////////////////////////////////////////////////////////////////////////
+	inline float scalar_round_symmetric(float input) RTM_NO_EXCEPT
+	{
+#if defined(RTM_SSE2_INTRINSICS)
+		return scalar_cast(scalar_round_symmetric(scalar_set(input)));
+#else
+		return input >= 0.0F ? scalar_floor(input + 0.5F) : scalar_ceil(input - 0.5F);
+#endif
+	}
+
 	//////////////////////////////////////////////////////////////////////////
 	// Returns the rounded input using a symmetric algorithm.
 	// scalar_symmetric_round(1.5) = 2.0
@@ -694,9 +759,14 @@ namespace rtm
 	// scalar_symmetric_round(-1.5) = -2.0
 	// scalar_symmetric_round(-1.2) = -1.0
 	//////////////////////////////////////////////////////////////////////////
+	RTM_DEPRECATED("Use scalar_round_symmetric instead, to be removed in v2.0")
 	inline float scalar_symmetric_round(float input) RTM_NO_EXCEPT
 	{
+#if defined(RTM_SSE2_INTRINSICS)
+		return scalar_cast(scalar_round_symmetric(scalar_set(input)));
+#else
 		return input >= 0.0F ? scalar_floor(input + 0.5F) : scalar_ceil(input - 0.5F);
+#endif
 	}
 
 #if defined(RTM_SSE2_INTRINSICS)

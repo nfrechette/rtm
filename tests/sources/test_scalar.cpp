@@ -276,17 +276,35 @@ static void test_scalar_impl(const FloatType threshold, const FloatType trig_thr
 	CHECK(scalar_is_finite(std::numeric_limits<FloatType>::quiet_NaN()) == false);
 	CHECK(scalar_is_finite(std::numeric_limits<FloatType>::signaling_NaN()) == false);
 
-	CHECK(scalar_symmetric_round(FloatType(-1.75)) == FloatType(-2.0));
-	CHECK(scalar_symmetric_round(FloatType(-1.5)) == FloatType(-2.0));
-	CHECK(scalar_symmetric_round(FloatType(-1.4999)) == FloatType(-1.0));
-	CHECK(scalar_symmetric_round(FloatType(-0.5)) == FloatType(-1.0));
-	CHECK(scalar_symmetric_round(FloatType(-0.4999)) == FloatType(0.0));
-	CHECK(scalar_symmetric_round(FloatType(0.0)) == FloatType(0.0));
-	CHECK(scalar_symmetric_round(FloatType(0.4999)) == FloatType(0.0));
-	CHECK(scalar_symmetric_round(FloatType(0.5)) == FloatType(1.0));
-	CHECK(scalar_symmetric_round(FloatType(1.4999)) == FloatType(1.0));
-	CHECK(scalar_symmetric_round(FloatType(1.5)) == FloatType(2.0));
-	CHECK(scalar_symmetric_round(FloatType(1.75)) == FloatType(2.0));
+	CHECK(scalar_round_symmetric(FloatType(-1.75)) == FloatType(-2.0));
+	CHECK(scalar_round_symmetric(FloatType(-1.5)) == FloatType(-2.0));
+	CHECK(scalar_round_symmetric(FloatType(-1.4999)) == FloatType(-1.0));
+	CHECK(scalar_round_symmetric(FloatType(-0.5)) == FloatType(-1.0));
+	CHECK(scalar_round_symmetric(FloatType(-0.4999)) == FloatType(0.0));
+	CHECK(scalar_round_symmetric(FloatType(0.0)) == FloatType(0.0));
+	CHECK(scalar_round_symmetric(FloatType(0.4999)) == FloatType(0.0));
+	CHECK(scalar_round_symmetric(FloatType(0.5)) == FloatType(1.0));
+	CHECK(scalar_round_symmetric(FloatType(1.4999)) == FloatType(1.0));
+	CHECK(scalar_round_symmetric(FloatType(1.5)) == FloatType(2.0));
+	CHECK(scalar_round_symmetric(FloatType(1.75)) == FloatType(2.0));
+	CHECK(scalar_round_symmetric(infinity) == FloatType(infinity));
+	CHECK(scalar_round_symmetric(-infinity) == FloatType(-infinity));
+	CHECK(std::isnan(scalar_round_symmetric(nan)));
+
+	CHECK(scalar_cast(scalar_round_symmetric(scalar_set(FloatType(-1.75)))) == FloatType(-2.0));
+	CHECK(scalar_cast(scalar_round_symmetric(scalar_set(FloatType(-1.5)))) == FloatType(-2.0));
+	CHECK(scalar_cast(scalar_round_symmetric(scalar_set(FloatType(-1.4999)))) == FloatType(-1.0));
+	CHECK(scalar_cast(scalar_round_symmetric(scalar_set(FloatType(-0.5)))) == FloatType(-1.0));
+	CHECK(scalar_cast(scalar_round_symmetric(scalar_set(FloatType(-0.4999)))) == FloatType(0.0));
+	CHECK(scalar_cast(scalar_round_symmetric(scalar_set(FloatType(0.0)))) == FloatType(0.0));
+	CHECK(scalar_cast(scalar_round_symmetric(scalar_set(FloatType(0.4999)))) == FloatType(0.0));
+	CHECK(scalar_cast(scalar_round_symmetric(scalar_set(FloatType(0.5)))) == FloatType(1.0));
+	CHECK(scalar_cast(scalar_round_symmetric(scalar_set(FloatType(1.4999)))) == FloatType(1.0));
+	CHECK(scalar_cast(scalar_round_symmetric(scalar_set(FloatType(1.5)))) == FloatType(2.0));
+	CHECK(scalar_cast(scalar_round_symmetric(scalar_set(FloatType(1.75)))) == FloatType(2.0));
+	CHECK(scalar_cast(scalar_round_symmetric(scalar_set(infinity))) == infinity);
+	CHECK(scalar_cast(scalar_round_symmetric(scalar_set(-infinity))) == -infinity);
+	CHECK(std::isnan(scalar_cast(scalar_round_symmetric(scalar_set(nan)))));
 
 	CHECK(scalar_round_bankers(FloatType(-2.5)) == FloatType(-2.0));
 	CHECK(scalar_round_bankers(FloatType(-1.75)) == FloatType(-2.0));
@@ -337,6 +355,16 @@ TEST_CASE("scalarf math", "[math][scalar]")
 	CHECK(scalar_ceil(-1073741824.5F) == -1073741824.0F);
 	CHECK(scalar_cast(scalar_ceil(scalar_set(1073741824.5F))) == 1073741824.0F);
 	CHECK(scalar_cast(scalar_ceil(scalar_set(-1073741824.5F))) == -1073741824.0F);
+
+	CHECK(scalar_round_symmetric(1073741824.5F) == 1073741824.0F);
+	CHECK(scalar_round_symmetric(-1073741824.5F) == -1073741824.0F);
+	CHECK(scalar_cast(scalar_round_symmetric(scalar_set(1073741824.5F))) == 1073741824.0F);
+	CHECK(scalar_cast(scalar_round_symmetric(scalar_set(-1073741824.5F))) == -1073741824.0F);
+
+	CHECK(scalar_round_bankers(1073741824.5F) == 1073741824.0F);
+	CHECK(scalar_round_bankers(-1073741824.5F) == -1073741824.0F);
+	CHECK(scalar_cast(scalar_round_bankers(scalar_set(1073741824.5F))) == 1073741824.0F);
+	CHECK(scalar_cast(scalar_round_bankers(scalar_set(-1073741824.5F))) == -1073741824.0F);
 }
 
 TEST_CASE("scalard math", "[math][scalar]")
@@ -352,4 +380,14 @@ TEST_CASE("scalard math", "[math][scalar]")
 	CHECK(scalar_ceil(-36028797018963968.5) == -36028797018963968.5);
 	CHECK(scalar_cast(scalar_ceil(scalar_set(36028797018963968.5))) == 36028797018963968.5);
 	CHECK(scalar_cast(scalar_ceil(scalar_set(-36028797018963968.5))) == -36028797018963968.5);
+
+	CHECK(scalar_round_symmetric(36028797018963968.5) == 36028797018963968.5);
+	CHECK(scalar_round_symmetric(-36028797018963968.5) == -36028797018963968.5);
+	CHECK(scalar_cast(scalar_round_symmetric(scalar_set(36028797018963968.5))) == 36028797018963968.5);
+	CHECK(scalar_cast(scalar_round_symmetric(scalar_set(-36028797018963968.5))) == -36028797018963968.5);
+
+	CHECK(scalar_round_bankers(36028797018963968.5) == 36028797018963968.5);
+	CHECK(scalar_round_bankers(-36028797018963968.5) == -36028797018963968.5);
+	CHECK(scalar_cast(scalar_round_bankers(scalar_set(36028797018963968.5))) == 36028797018963968.5);
+	CHECK(scalar_cast(scalar_round_bankers(scalar_set(-36028797018963968.5))) == -36028797018963968.5);
 }
