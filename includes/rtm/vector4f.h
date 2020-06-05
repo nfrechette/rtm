@@ -892,6 +892,43 @@ namespace rtm
 	{
 #if defined(RTM_SSE4_INTRINSICS)
 		return _mm_floor_ps(input);
+#elif defined(RTM_SSE2_INTRINSICS)
+		// NaN, +- Infinity, and numbers larger or equal to 2^23 remain unchanged
+		// since they have no fractional part.
+
+#if defined(_MSC_VER) && !defined(__clang__)
+		constexpr __m128i abs_mask = { 0xFFU, 0xFFU, 0xFFU, 0x7FU, 0xFFU, 0xFFU, 0xFFU, 0x7FU, 0xFFU, 0xFFU, 0xFFU, 0x7FU, 0xFFU, 0xFFU, 0xFFU, 0x7FU };
+#else
+		constexpr __m128i abs_mask = { 0x7FFFFFFF7FFFFFFFULL, 0x7FFFFFFF7FFFFFFFULL };
+#endif
+		const __m128 fractional_limit = _mm_set_ps1(8388608.0F); // 2^23
+
+																 // Build our mask, larger values that have no fractional part, and infinities will be true
+																 // Smaller values and NaN will be false
+		__m128 abs_input = _mm_and_ps(input, _mm_castsi128_ps(abs_mask));
+		__m128 is_input_large = _mm_cmpge_ps(abs_input, fractional_limit);
+
+		// Test if our input is NaN with (value != value), it is only true for NaN
+		__m128 is_nan = _mm_cmpneq_ps(input, input);
+
+		// Combine our masks to determine if we should return the original value
+		__m128 use_original_input = _mm_or_ps(is_input_large, is_nan);
+
+		// Convert to an integer and back
+		__m128 integer_part = _mm_cvtepi32_ps(_mm_cvtps_epi32(input));
+
+		// Test if the returned value is greater than the original.
+		// A negative input will round towards zero and be greater when we need it to be smaller.
+		__m128 is_negative = _mm_cmpgt_ps(integer_part, input);
+
+		// Convert our mask to a float, ~0 yields -1.0 since it is a valid signed integer
+		// Positive values will yield a 0.0 bias
+		__m128 bias = _mm_cvtepi32_ps(_mm_castps_si128(is_negative));
+
+		// Add our bias to properly handle negative values
+		integer_part = _mm_add_ps(integer_part, bias);
+
+		return _mm_or_ps(_mm_and_ps(use_original_input, input), _mm_andnot_ps(use_original_input, integer_part));
 #else
 		return vector_set(scalar_floor(vector_get_x(input)), scalar_floor(vector_get_y(input)), scalar_floor(vector_get_z(input)), scalar_floor(vector_get_w(input)));
 #endif

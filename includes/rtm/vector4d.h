@@ -753,7 +753,62 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	inline vector4d vector_floor(const vector4d& input) RTM_NO_EXCEPT
 	{
+#if defined(RTM_SSE4_INTRINSICS)
+		return _mm_floor_pd(input);
+#elif defined(RTM_SSE2_INTRINSICS)
+		// NaN, +- Infinity, and numbers larger or equal to 2^23 remain unchanged
+		// since they have no fractional part.
+
+#if defined(_MSC_VER) && !defined(__clang__)
+		constexpr __m128i abs_mask = { 0xFFU, 0xFFU, 0xFFU, 0xFFU, 0xFFU, 0xFFU, 0xFFU, 0x7FU, 0xFFU, 0xFFU, 0xFFU, 0xFFU, 0xFFU, 0xFFU, 0xFFU, 0x7FU };
+#else
+		constexpr __m128i abs_mask = { 0x7FFFFFFF7FFFFFFFULL, 0x7FFFFFFF7FFFFFFFULL };
+#endif
+		const __m128d fractional_limit = _mm_set1_pd(4503599627370496.0); // 2^52
+
+		// Build our mask, larger values that have no fractional part, and infinities will be true
+		// Smaller values and NaN will be false
+		__m128d abs_input_xy = _mm_and_pd(input.xy, _mm_castsi128_pd(abs_mask));
+		__m128d abs_input_zw = _mm_and_pd(input.zw, _mm_castsi128_pd(abs_mask));
+		__m128d is_input_large_xy = _mm_cmpge_pd(abs_input_xy, fractional_limit);
+		__m128d is_input_large_zw = _mm_cmpge_pd(abs_input_zw, fractional_limit);
+
+		// Test if our input is NaN with (value != value), it is only true for NaN
+		__m128d is_nan_xy = _mm_cmpneq_pd(input.xy, input.xy);
+		__m128d is_nan_zw = _mm_cmpneq_pd(input.zw, input.zw);
+
+		// Combine our masks to determine if we should return the original value
+		__m128d use_original_input_xy = _mm_or_pd(is_input_large_xy, is_nan_xy);
+		__m128d use_original_input_zw = _mm_or_pd(is_input_large_zw, is_nan_zw);
+
+		// Convert to an integer and back
+		__m128d integer_part_xy = _mm_cvtepi32_pd(_mm_cvtpd_epi32(input.xy));
+		__m128d integer_part_zw = _mm_cvtepi32_pd(_mm_cvtpd_epi32(input.zw));
+
+		// Test if the returned value is greater than the original.
+		// A negative input will round towards zero and be greater when we need it to be smaller.
+		__m128d is_negative_xy = _mm_cmpgt_pd(integer_part_xy, input.xy);
+		__m128d is_negative_zw = _mm_cmpgt_pd(integer_part_zw, input.zw);
+
+		// Our mask output is 64 bit wide but to convert to a bias, we need 32 bit integers
+		is_negative_xy = _mm_castps_pd(_mm_shuffle_ps(_mm_castpd_ps(is_negative_xy), _mm_castpd_ps(is_negative_xy), _MM_SHUFFLE(2, 0, 2, 0)));
+		is_negative_zw = _mm_castps_pd(_mm_shuffle_ps(_mm_castpd_ps(is_negative_zw), _mm_castpd_ps(is_negative_zw), _MM_SHUFFLE(2, 0, 2, 0)));
+
+		// Convert our mask to a float, ~0 yields -1.0 since it is a valid signed integer
+		// Positive values will yield a 0.0 bias
+		__m128d bias_xy = _mm_cvtepi32_pd(_mm_castpd_si128(is_negative_xy));
+		__m128d bias_zw = _mm_cvtepi32_pd(_mm_castpd_si128(is_negative_zw));
+
+		// Add our bias to properly handle negative values
+		integer_part_xy = _mm_add_pd(integer_part_xy, bias_xy);
+		integer_part_zw = _mm_add_pd(integer_part_zw, bias_zw);
+
+		__m128d result_xy = _mm_or_pd(_mm_and_pd(use_original_input_xy, input.xy), _mm_andnot_pd(use_original_input_xy, integer_part_xy));
+		__m128d result_zw = _mm_or_pd(_mm_and_pd(use_original_input_zw, input.zw), _mm_andnot_pd(use_original_input_zw, integer_part_zw));
+		return vector4d{ result_xy, result_zw };
+#else
 		return vector_set(scalar_floor(vector_get_x(input)), scalar_floor(vector_get_y(input)), scalar_floor(vector_get_z(input)), scalar_floor(vector_get_w(input)));
+#endif
 	}
 
 	//////////////////////////////////////////////////////////////////////////

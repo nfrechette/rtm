@@ -375,6 +375,8 @@ void test_vector4_arithmetic_impl(const FloatType threshold)
 	using ScalarType = typename float_traits<FloatType>::scalar;
 
 	const Vector4Type zero = vector_zero();
+	const Vector4Type infinity = vector_set(std::numeric_limits<FloatType>::infinity());
+	const Vector4Type nan = vector_set(std::numeric_limits<FloatType>::quiet_NaN());
 
 	const FloatType test_value0_flt[4] = { FloatType(2.0), FloatType(9.34), FloatType(-54.12), FloatType(6000.0) };
 	const FloatType test_value1_flt[4] = { FloatType(0.75), FloatType(-4.52), FloatType(44.68), FloatType(-54225.0) };
@@ -447,10 +449,18 @@ void test_vector4_arithmetic_impl(const FloatType threshold)
 	CHECK(scalar_near_equal(vector_get_z(vector_reciprocal(test_value0)), scalar_reciprocal(test_value0_flt[2]), threshold));
 	CHECK(scalar_near_equal(vector_get_w(vector_reciprocal(test_value0)), scalar_reciprocal(test_value0_flt[3]), threshold));
 
-	CHECK(scalar_near_equal(vector_get_x(vector_floor(test_value0)), scalar_floor(test_value0_flt[0]), threshold));
-	CHECK(scalar_near_equal(vector_get_y(vector_floor(test_value0)), scalar_floor(test_value0_flt[1]), threshold));
-	CHECK(scalar_near_equal(vector_get_z(vector_floor(test_value0)), scalar_floor(test_value0_flt[2]), threshold));
-	CHECK(scalar_near_equal(vector_get_w(vector_floor(test_value0)), scalar_floor(test_value0_flt[3]), threshold));
+	CHECK(vector_get_x(vector_floor(test_value0)) == scalar_floor(test_value0_flt[0]));
+	CHECK(vector_get_y(vector_floor(test_value0)) == scalar_floor(test_value0_flt[1]));
+	CHECK(vector_get_z(vector_floor(test_value0)) == scalar_floor(test_value0_flt[2]));
+	CHECK(vector_get_w(vector_floor(test_value0)) == scalar_floor(test_value0_flt[3]));
+	CHECK(vector_get_x(vector_floor(infinity)) == scalar_floor(FloatType(vector_get_x(infinity))));
+	CHECK(vector_get_y(vector_floor(infinity)) == scalar_floor(FloatType(vector_get_y(infinity))));
+	CHECK(vector_get_z(vector_floor(infinity)) == scalar_floor(FloatType(vector_get_z(infinity))));
+	CHECK(vector_get_w(vector_floor(infinity)) == scalar_floor(FloatType(vector_get_w(infinity))));
+	CHECK(std::isnan(FloatType(vector_get_x(vector_floor(nan)))));
+	CHECK(std::isnan(FloatType(vector_get_y(vector_floor(nan)))));
+	CHECK(std::isnan(FloatType(vector_get_z(vector_floor(nan)))));
+	CHECK(std::isnan(FloatType(vector_get_w(vector_floor(nan)))));
 
 	CHECK(scalar_near_equal(vector_get_x(vector_ceil(test_value0)), scalar_ceil(test_value0_flt[0]), threshold));
 	CHECK(scalar_near_equal(vector_get_y(vector_ceil(test_value0)), scalar_ceil(test_value0_flt[1]), threshold));
