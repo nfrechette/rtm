@@ -487,7 +487,7 @@ namespace rtm
 	inline scalard RTM_SIMD_CALL scalar_floor(scalard input) RTM_NO_EXCEPT
 	{
 #if defined(RTM_SSE4_INTRINSICS)
-		return scalard{ _mm_round_sd(value, value, 0x9) };
+		return scalard{ _mm_round_sd(input.value, input.value, 0x9) };
 #else
 		// NaN, +- Infinity, and numbers larger or equal to 2^23 remain unchanged
 		// since they have no fractional part.
