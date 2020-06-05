@@ -1074,6 +1074,103 @@ namespace rtm
 		return std::acos(value);
 	}
 
+#if defined(RTM_SSE2_INTRINSICS)
+	//////////////////////////////////////////////////////////////////////////
+	// Returns the arc-tangent of the input.
+	// Note that due to the sign ambiguity, atan cannot determine which quadrant
+	// the value resides in. See scalar_atan2.
+	//////////////////////////////////////////////////////////////////////////
+	inline scalarf RTM_SIMD_CALL scalar_atan(scalarf_arg0 value)
+	{
+		// Use a degree 17 minimax approximation polynomial
+		// See: https://stackoverflow.com/a/26825029/1567450
+
+		// Discard our sign, we'll restore it later
+		const __m128i abs_mask = _mm_set_epi32(0x7FFFFFFFULL, 0x7FFFFFFFULL, 0x7FFFFFFFULL, 0x7FFFFFFFULL);
+		__m128 abs_value = _mm_and_ps(value.value, _mm_castsi128_ps(abs_mask));
+
+		// Compute our value
+		__m128 is_larger_than_one = _mm_cmpgt_ss(abs_value, _mm_set_ps1(1.0F));
+		__m128 reciprocal = scalar_reciprocal(scalarf{ abs_value }).value;
+
+#if defined(RTM_AVX_INTRINSICS)
+		__m128 x = _mm_blendv_ps(abs_value, reciprocal, is_larger_than_one);
+#else
+		__m128 x = _mm_or_ps(_mm_andnot_ps(is_larger_than_one, abs_value), _mm_and_ps(reciprocal, is_larger_than_one));
+#endif
+
+		float x_s = _mm_cvtss_f32(x);
+		float x2 = x_s * x_s;
+
+		float result = (x2 * 0.00278569828F) - 0.0158660226F;	// (x2 * 0x3b369043) + 0x3c81f976
+		result = (result * x2) + 0.0424722321F;					// 0x3d2df75d
+		result = (result * x2) - 0.0749753043F;					// 0x3d998ca7
+		result = (result * x2) + 0.106448799F;					// 0x3dda01d4
+		result = (result * x2) - 0.142070308F;					// 0x3e117ae1
+		result = (result * x2) + 0.199934542F;					// 0x3e4cbba4
+		result = (result * x2) - 0.333331466F;					// 0x3eaaaa6c
+
+		result = result * x2;
+		result = (result * x_s) + x_s;
+
+		__m128 result_s = _mm_set_ps1(result);
+		__m128 remapped = _mm_sub_ss(_mm_set_ps1(0.933189452F * 1.68325555F), result_s);
+
+		// pi/2 - result, (0x3f6ee581 * 0x3fd774eb)
+#if defined(RTM_AVX_INTRINSICS)
+		result_s = _mm_blendv_ps(result_s, remapped, is_larger_than_one);
+#else
+		result_s = _mm_or_ps(_mm_andnot_ps(is_larger_than_one, result_s), _mm_and_ps(remapped, is_larger_than_one));
+#endif
+
+		// Keep the original sign
+		result_s = _mm_or_ps(result_s, _mm_and_ps(value.value, _mm_set_ps1(-0.0F)));
+
+		return scalarf{ result_s };
+	}
+#endif
+
+	//////////////////////////////////////////////////////////////////////////
+	// Returns the arc-tangent of the input.
+	// Note that due to the sign ambiguity, atan cannot determine which quadrant
+	// the value resides in. See scalar_atan2.
+	//////////////////////////////////////////////////////////////////////////
+	inline float RTM_SIMD_CALL scalar_atan(float value)
+	{
+#if defined(RTM_SSE2_INTRINSICS)
+		return scalar_cast(scalar_atan(scalar_set(value)));
+#else
+		// Use a degree 17 minimax approximation polynomial
+		// See: https://stackoverflow.com/a/26825029/1567450
+
+		// Discard our sign, we'll restore it later
+		float abs_value = scalar_abs(value);
+
+		// Compute our value
+		float x = abs_value > 1.0F ? scalar_reciprocal(abs_value) : abs_value;
+		float x2 = x * x;
+
+		float result = (x2 * 0.00278569828F) - 0.0158660226F;	// (x2 * 0x3b369043) + 0x3c81f976
+		result = (result * x2) + 0.0424722321F;					// 0x3d2df75d
+		result = (result * x2) - 0.0749753043F;					// 0x3d998ca7
+		result = (result * x2) + 0.106448799F;					// 0x3dda01d4
+		result = (result * x2) - 0.142070308F;					// 0x3e117ae1
+		result = (result * x2) + 0.199934542F;					// 0x3e4cbba4
+		result = (result * x2) - 0.333331466F;					// 0x3eaaaa6c
+
+		result = result * x2;
+		result = (result * x) + x;
+
+		if (abs_value > 1.0f)
+			result = (0.933189452F * 1.68325555F) - result; // pi/2 - result, (0x3f6ee581 * 0x3fd774eb)
+
+		// Keep the original sign
+		result = value >= 0.0F ? result : -result;
+
+		return result;
+#endif
+	}
+
 	//////////////////////////////////////////////////////////////////////////
 	// Returns the arc-tangent of [x/y] using the sign of the arguments to
 	// determine the correct quadrant.

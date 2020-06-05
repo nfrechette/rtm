@@ -242,15 +242,18 @@ static void test_scalar_impl(const FloatType threshold, const FloatType trig_thr
 		CHECK(scalar_near_equal(cos_result, std::cos(angle), trig_threshold));
 	}
 
-	CHECK(scalar_near_equal(scalar_acos(FloatType(-1.0)), std::acos(FloatType(-1.0)), trig_threshold));
-	CHECK(scalar_near_equal(scalar_acos(FloatType(-0.75)), std::acos(FloatType(-0.75)), trig_threshold));
-	CHECK(scalar_near_equal(scalar_acos(FloatType(-0.5)), std::acos(FloatType(-0.5)), trig_threshold));
-	CHECK(scalar_near_equal(scalar_acos(FloatType(-0.25)), std::acos(-FloatType(0.25)), trig_threshold));
-	CHECK(scalar_near_equal(scalar_acos(FloatType(0.0)), std::acos(FloatType(0.0)), trig_threshold));
-	CHECK(scalar_near_equal(scalar_acos(FloatType(0.25)), std::acos(FloatType(0.25)), trig_threshold));
-	CHECK(scalar_near_equal(scalar_acos(FloatType(0.5)), std::acos(FloatType(0.5)), trig_threshold));
-	CHECK(scalar_near_equal(scalar_acos(FloatType(0.75)), std::acos(FloatType(0.75)), trig_threshold));
-	CHECK(scalar_near_equal(scalar_acos(FloatType(1.0)), std::acos(FloatType(1.0)), trig_threshold));
+	const FloatType angles_acos[] = { FloatType(-1.0), FloatType(-0.75), FloatType(-0.5), FloatType(-0.25), FloatType(0.0), FloatType(0.25), FloatType(0.5), FloatType(0.75), FloatType(1.0) };
+	for (const FloatType angle : angles_acos)
+	{
+		CHECK(scalar_near_equal(scalar_acos(angle), std::acos(angle), trig_threshold));
+	}
+
+	const FloatType angles_atan[] = { FloatType(-10.0), FloatType(-5.0), FloatType(-0.5), FloatType(-0.25), FloatType(0.0), FloatType(0.25), FloatType(0.5), FloatType(0.75), FloatType(81.0) };
+	for (const FloatType angle : angles_atan)
+	{
+		CHECK(scalar_near_equal(scalar_atan(angle), std::atan(angle), trig_threshold));
+		CHECK(scalar_near_equal(scalar_cast(scalar_atan(scalar_set(angle))), std::atan(angle), trig_threshold));
+	}
 
 	CHECK(scalar_near_equal(scalar_atan2(FloatType(-2.0), FloatType(-2.0)), std::atan2(FloatType(-2.0), FloatType(-2.0)), trig_threshold));
 	CHECK(scalar_near_equal(scalar_atan2(FloatType(-1.0), FloatType(-2.0)), std::atan2(FloatType(-1.0), FloatType(-2.0)), trig_threshold));
