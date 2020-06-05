@@ -1948,6 +1948,20 @@ namespace rtm
 		scalard w = scalar_cos(scalard(vector_get_w(input)));
 		return vector_set(x, y, z, w);
 	}
+
+	//////////////////////////////////////////////////////////////////////////
+	// Returns per component the arc-tangent of the input.
+	// Note that due to the sign ambiguity, atan cannot determine which quadrant
+	// the value resides in.
+	//////////////////////////////////////////////////////////////////////////
+	inline vector4d vector_atan(const vector4d& input)
+	{
+		scalard x = scalar_atan(scalard(vector_get_x(input)));
+		scalard y = scalar_atan(scalard(vector_get_y(input)));
+		scalard z = scalar_atan(scalard(vector_get_z(input)));
+		scalard w = scalar_atan(scalard(vector_get_w(input)));
+		return vector_set(x, y, z, w);
+	}
 }
 
 RTM_IMPL_FILE_PRAGMA_POP

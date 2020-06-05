@@ -2275,6 +2275,56 @@ namespace rtm
 		return vector_set(x, y, z, w);
 #endif
 	}
+
+	//////////////////////////////////////////////////////////////////////////
+	// Returns per component the arc-tangent of the input.
+	// Note that due to the sign ambiguity, atan cannot determine which quadrant
+	// the value resides in.
+	//////////////////////////////////////////////////////////////////////////
+	inline vector4f RTM_SIMD_CALL vector_atan(vector4f_arg0 input)
+	{
+#if defined(RTM_SSE2_INTRINSICS)
+		// Use a degree 17 minimax approximation polynomial
+		// See: https://stackoverflow.com/a/26825029/1567450
+
+		// Discard our sign, we'll restore it later
+		const __m128i abs_mask = _mm_set_epi32(0x7FFFFFFFULL, 0x7FFFFFFFULL, 0x7FFFFFFFULL, 0x7FFFFFFFULL);
+		__m128 abs_value = _mm_and_ps(input, _mm_castsi128_ps(abs_mask));
+
+		// Compute our value
+		__m128 is_larger_than_one = _mm_cmpgt_ps(abs_value, _mm_set_ps1(1.0F));
+		__m128 reciprocal = vector_reciprocal(abs_value);
+
+		__m128 x = vector_select(is_larger_than_one, reciprocal, abs_value);
+
+		__m128 x2 = _mm_mul_ps(x, x);
+
+		__m128 result = _mm_add_ps(_mm_mul_ps(x2, _mm_set_ps1(0.00278569828F)), _mm_set_ps1(-0.0158660226F));	// (x2 * 0x3b369043) + 0x3c81f976
+		result = _mm_add_ps(_mm_mul_ps(result, x2), _mm_set_ps1(0.0424722321F));					// 0x3d2df75d
+		result = _mm_add_ps(_mm_mul_ps(result, x2), _mm_set_ps1(-0.0749753043F));				// -0x3d998ca7
+		result = _mm_add_ps(_mm_mul_ps(result, x2), _mm_set_ps1(0.106448799F));					// 0x3dda01d4
+		result = _mm_add_ps(_mm_mul_ps(result, x2), _mm_set_ps1(-0.142070308F));					// -0x3e117ae1
+		result = _mm_add_ps(_mm_mul_ps(result, x2), _mm_set_ps1(0.199934542F));					// 0x3e4cbba4
+		result = _mm_add_ps(_mm_mul_ps(result, x2), _mm_set_ps1(-0.333331466F));					// -0x3eaaaa6c
+
+		result = _mm_mul_ps(result, x2);
+		result = _mm_add_ps(_mm_mul_ps(result, x), x);
+
+		__m128 remapped = _mm_sub_ps(_mm_set_ps1(0.933189452F * 1.68325555F), result);
+
+		// pi/2 - result, (0x3f6ee581 * 0x3fd774eb)
+		result = vector_select(is_larger_than_one, remapped, result);
+
+		// Keep the original sign
+		return _mm_or_ps(result, _mm_and_ps(input, _mm_set_ps1(-0.0F)));
+#else
+		scalarf x = scalar_atan(scalarf(vector_get_x(input)));
+		scalarf y = scalar_atan(scalarf(vector_get_y(input)));
+		scalarf z = scalar_atan(scalarf(vector_get_z(input)));
+		scalarf w = scalar_atan(scalarf(vector_get_w(input)));
+		return vector_set(x, y, z, w);
+#endif
+	}
 }
 
 RTM_IMPL_FILE_PRAGMA_POP
