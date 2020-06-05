@@ -971,12 +971,87 @@ namespace rtm
 #endif
 	}
 
+#if defined(RTM_SSE2_INTRINSICS)
 	//////////////////////////////////////////////////////////////////////////
 	// Returns the cosine of the input angle.
 	//////////////////////////////////////////////////////////////////////////
-	inline float scalar_cos(float angle) RTM_NO_EXCEPT
+	inline scalarf RTM_SIMD_CALL scalar_cos(scalarf_arg0 angle) RTM_NO_EXCEPT
 	{
-		return std::cos(angle);
+		// Use a degree 10 minimax approximation polynomial
+		// https://gist.github.com/publik-void/067f7f2fef32dbe5c27d6e215f824c91#cos-rel-error-minimized-degree-10
+
+		// Remap our input in the [-pi, pi] range
+		__m128 quotient = _mm_mul_ss(angle.value, _mm_set_ps1(1.0F / 6.283185307179586476925286766559005768F));
+		quotient = scalar_round_bankers(scalarf{ quotient }).value;
+		quotient = _mm_mul_ss(quotient, _mm_set_ps1(6.283185307179586476925286766559005768F));
+		__m128 x = _mm_sub_ss(angle.value, quotient);
+
+		// Remap our input in the [-pi/2, pi/2] range
+		const __m128 sign_mask = _mm_set_ps(-0.0F, -0.0F, -0.0F, -0.0F);
+		__m128 x_sign = _mm_and_ps(x, sign_mask);
+		__m128 reference = _mm_or_ps(x_sign, _mm_set_ps1(3.141592653589793238462643383279502884F));
+		const __m128 reflection = _mm_sub_ss(reference, x);
+
+		const __m128i abs_mask = _mm_set_epi32(0x7FFFFFFFULL, 0x7FFFFFFFULL, 0x7FFFFFFFULL, 0x7FFFFFFFULL);
+		__m128 x_abs = _mm_and_ps(x, _mm_castsi128_ps(abs_mask));
+		__m128 is_less_equal_than_half_pi = _mm_cmple_ss(x_abs, _mm_set_ps1(1.570796326794896619231321691639751442F));
+
+#if defined(RTM_AVX_INTRINSICS)
+		x = _mm_blendv_ps(reflection, x, is_less_equal_than_half_pi);
+#else
+		x = _mm_or_ps(_mm_andnot_ps(is_less_equal_than_half_pi, reflection), _mm_and_ps(x, is_less_equal_than_half_pi));
+#endif
+
+		// Calculate our value
+		const float x2 = _mm_cvtss_f32(_mm_mul_ss(x, x));
+		float result = (x2 * -2.57924183182520559803981154578763508e-7F) + 0.00002474324689798977846771995314323317F;
+		result = (result * x2) - 0.00138879697151174993540500936074733546F;
+		result = (result * x2) + 0.0416665985274352494970529831079268818F;
+		result = (result * x2) - 0.49999998049253581064488831264724178F;
+		result = (result * x2) + 0.99999999901810067632218592152414676F;
+
+		__m128 result_v = _mm_set_ps1(result);
+		__m128 cosine = _mm_or_ps(result_v, _mm_andnot_ps(is_less_equal_than_half_pi, sign_mask));
+		return scalarf{ cosine };
+	}
+#endif
+
+	//////////////////////////////////////////////////////////////////////////
+	// Returns the cosine of the input angle.
+	//////////////////////////////////////////////////////////////////////////
+	inline float RTM_SIMD_CALL scalar_cos(float angle) RTM_NO_EXCEPT
+	{
+#if defined(RTM_SSE2_INTRINSICS)
+		return scalar_cast(scalar_cos(scalar_set(angle)));
+#else
+		// Use a degree 10 minimax approximation polynomial
+		// https://gist.github.com/publik-void/067f7f2fef32dbe5c27d6e215f824c91#cos-rel-error-minimized-degree-10
+
+		// Remap our input in the [-pi, pi] range
+		float quotient = angle * (1.0F / 6.283185307179586476925286766559005768F);
+		quotient = scalar_round_bankers(quotient);
+		quotient = quotient * 6.283185307179586476925286766559005768F;
+		float x = angle - quotient;
+
+		// Remap our input in the [-pi/2, pi/2] range
+		const float x_sign = x >= 0.0F ? 1.0F : -1.0F;
+		const float reference = x_sign * 3.141592653589793238462643383279502884F;
+		const float reflection = reference - x;
+		const float x_abs = scalar_abs(x);
+		x = x_abs <= 1.570796326794896619231321691639751442F ? x : reflection;
+
+		// Calculate our value
+		const float x2 = x * x;
+		float result = (x2 * -2.57924183182520559803981154578763508e-7F) + 0.00002474324689798977846771995314323317F;
+		result = (result * x2) - 0.00138879697151174993540500936074733546F;
+		result = (result * x2) + 0.0416665985274352494970529831079268818F;
+		result = (result * x2) - 0.49999998049253581064488831264724178F;
+		result = (result * x2) + 0.99999999901810067632218592152414676F;
+		if (x_abs <= 1.570796326794896619231321691639751442F)
+			return result;
+		else
+			return -result;
+#endif
 	}
 
 	//////////////////////////////////////////////////////////////////////////
