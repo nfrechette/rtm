@@ -82,6 +82,20 @@ static void test_scalar_impl(const FloatType threshold, const FloatType trig_thr
 	CHECK(scalar_ceil(FloatType(-0.5)) == FloatType(0.0));
 	CHECK(scalar_ceil(FloatType(-2.5)) == FloatType(-2.0));
 	CHECK(scalar_ceil(FloatType(-3.0)) == FloatType(-3.0));
+	CHECK(scalar_ceil(FloatType(infinity)) == FloatType(infinity));
+	CHECK(scalar_ceil(FloatType(-infinity)) == FloatType(-infinity));
+	CHECK(std::isnan(scalar_ceil(FloatType(nan))));
+
+	CHECK(scalar_cast(scalar_ceil(scalar_set(FloatType(0.0)))) == FloatType(0.0));
+	CHECK(scalar_cast(scalar_ceil(scalar_set(FloatType(0.5)))) == FloatType(1.0));
+	CHECK(scalar_cast(scalar_ceil(scalar_set(FloatType(2.5)))) == FloatType(3.0));
+	CHECK(scalar_cast(scalar_ceil(scalar_set(FloatType(3.0)))) == FloatType(3.0));
+	CHECK(scalar_cast(scalar_ceil(scalar_set(FloatType(-0.5)))) == FloatType(0.0));
+	CHECK(scalar_cast(scalar_ceil(scalar_set(FloatType(-2.5)))) == FloatType(-2.0));
+	CHECK(scalar_cast(scalar_ceil(scalar_set(FloatType(-3.0)))) == FloatType(-3.0));
+	CHECK(scalar_cast(scalar_ceil(scalar_set(FloatType(infinity)))) == FloatType(infinity));
+	CHECK(scalar_cast(scalar_ceil(scalar_set(FloatType(-infinity)))) == FloatType(-infinity));
+	CHECK(std::isnan(scalar_cast(scalar_ceil(scalar_set(FloatType(nan))))));
 
 	CHECK(scalar_clamp(FloatType(0.5), FloatType(0.0), FloatType(1.0)) == FloatType(0.5));
 	CHECK(scalar_clamp(FloatType(-0.5), FloatType(0.0), FloatType(1.0)) == FloatType(0.0));
@@ -318,6 +332,11 @@ TEST_CASE("scalarf math", "[math][scalar]")
 	CHECK(scalar_floor(-1073741824.5F) == -1073741824.0F);
 	CHECK(scalar_cast(scalar_floor(scalar_set(1073741824.5F))) == 1073741824.0F);
 	CHECK(scalar_cast(scalar_floor(scalar_set(-1073741824.5F))) == -1073741824.0F);
+
+	CHECK(scalar_ceil(1073741824.5F) == 1073741824.0F);
+	CHECK(scalar_ceil(-1073741824.5F) == -1073741824.0F);
+	CHECK(scalar_cast(scalar_ceil(scalar_set(1073741824.5F))) == 1073741824.0F);
+	CHECK(scalar_cast(scalar_ceil(scalar_set(-1073741824.5F))) == -1073741824.0F);
 }
 
 TEST_CASE("scalard math", "[math][scalar]")
@@ -328,4 +347,9 @@ TEST_CASE("scalard math", "[math][scalar]")
 	CHECK(scalar_floor(-36028797018963968.5) == -36028797018963968.5);
 	CHECK(scalar_cast(scalar_floor(scalar_set(36028797018963968.5))) == 36028797018963968.5);
 	CHECK(scalar_cast(scalar_floor(scalar_set(-36028797018963968.5))) == -36028797018963968.5);
+
+	CHECK(scalar_ceil(36028797018963968.5) == 36028797018963968.5);
+	CHECK(scalar_ceil(-36028797018963968.5) == -36028797018963968.5);
+	CHECK(scalar_cast(scalar_ceil(scalar_set(36028797018963968.5))) == 36028797018963968.5);
+	CHECK(scalar_cast(scalar_ceil(scalar_set(-36028797018963968.5))) == -36028797018963968.5);
 }
