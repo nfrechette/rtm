@@ -52,8 +52,8 @@ TEST_CASE("vector4d math misc", "[math][vector4]")
 	CHECK(scalar_near_equal(vector_get_w(dst), -5.9182F, 1.0E-6F));
 
 	const vector4d large_values = vector_set(36028797018963968.5, 36028797018963968.5, -36028797018963968.5, -36028797018963968.5);
-	CHECK(vector_get_x(vector_floor(large_values)) == scalar_floor(double(vector_get_x(large_values))));
-	CHECK(vector_get_y(vector_floor(large_values)) == scalar_floor(double(vector_get_y(large_values))));
-	CHECK(vector_get_z(vector_floor(large_values)) == scalar_floor(double(vector_get_z(large_values))));
-	CHECK(vector_get_w(vector_floor(large_values)) == scalar_floor(double(vector_get_w(large_values))));
+	CHECK(double(vector_get_x(vector_floor(large_values))) == scalar_floor(double(vector_get_x(large_values))));
+	CHECK(double(vector_get_y(vector_floor(large_values))) == scalar_floor(double(vector_get_y(large_values))));
+	CHECK(double(vector_get_z(vector_floor(large_values))) == scalar_floor(double(vector_get_z(large_values))));
+	CHECK(double(vector_get_w(vector_floor(large_values))) == scalar_floor(double(vector_get_w(large_values))));
 }

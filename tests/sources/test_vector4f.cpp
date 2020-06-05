@@ -70,8 +70,8 @@ TEST_CASE("vector4f math misc", "[math][vector4]")
 	CHECK(scalar_near_equal(vector_get_w(dst), -5.9182, 1.0E-6));
 
 	const vector4f large_values = vector_set(1073741824.5F, 1073741824.5F, -1073741824.5F, -1073741824.5F);
-	CHECK(vector_get_x(vector_floor(large_values)) == scalar_floor(float(vector_get_x(large_values))));
-	CHECK(vector_get_y(vector_floor(large_values)) == scalar_floor(float(vector_get_y(large_values))));
-	CHECK(vector_get_z(vector_floor(large_values)) == scalar_floor(float(vector_get_z(large_values))));
-	CHECK(vector_get_w(vector_floor(large_values)) == scalar_floor(float(vector_get_w(large_values))));
+	CHECK(float(vector_get_x(vector_floor(large_values))) == scalar_floor(float(vector_get_x(large_values))));
+	CHECK(float(vector_get_y(vector_floor(large_values))) == scalar_floor(float(vector_get_y(large_values))));
+	CHECK(float(vector_get_z(vector_floor(large_values))) == scalar_floor(float(vector_get_z(large_values))));
+	CHECK(float(vector_get_w(vector_floor(large_values))) == scalar_floor(float(vector_get_w(large_values))));
 }

@@ -449,14 +449,14 @@ void test_vector4_arithmetic_impl(const FloatType threshold)
 	CHECK(scalar_near_equal(vector_get_z(vector_reciprocal(test_value0)), scalar_reciprocal(test_value0_flt[2]), threshold));
 	CHECK(scalar_near_equal(vector_get_w(vector_reciprocal(test_value0)), scalar_reciprocal(test_value0_flt[3]), threshold));
 
-	CHECK(vector_get_x(vector_floor(test_value0)) == scalar_floor(test_value0_flt[0]));
-	CHECK(vector_get_y(vector_floor(test_value0)) == scalar_floor(test_value0_flt[1]));
-	CHECK(vector_get_z(vector_floor(test_value0)) == scalar_floor(test_value0_flt[2]));
-	CHECK(vector_get_w(vector_floor(test_value0)) == scalar_floor(test_value0_flt[3]));
-	CHECK(vector_get_x(vector_floor(infinity)) == scalar_floor(FloatType(vector_get_x(infinity))));
-	CHECK(vector_get_y(vector_floor(infinity)) == scalar_floor(FloatType(vector_get_y(infinity))));
-	CHECK(vector_get_z(vector_floor(infinity)) == scalar_floor(FloatType(vector_get_z(infinity))));
-	CHECK(vector_get_w(vector_floor(infinity)) == scalar_floor(FloatType(vector_get_w(infinity))));
+	CHECK(FloatType(vector_get_x(vector_floor(test_value0))) == scalar_floor(test_value0_flt[0]));
+	CHECK(FloatType(vector_get_y(vector_floor(test_value0))) == scalar_floor(test_value0_flt[1]));
+	CHECK(FloatType(vector_get_z(vector_floor(test_value0))) == scalar_floor(test_value0_flt[2]));
+	CHECK(FloatType(vector_get_w(vector_floor(test_value0))) == scalar_floor(test_value0_flt[3]));
+	CHECK(FloatType(vector_get_x(vector_floor(infinity))) == scalar_floor(FloatType(vector_get_x(infinity))));
+	CHECK(FloatType(vector_get_y(vector_floor(infinity))) == scalar_floor(FloatType(vector_get_y(infinity))));
+	CHECK(FloatType(vector_get_z(vector_floor(infinity))) == scalar_floor(FloatType(vector_get_z(infinity))));
+	CHECK(FloatType(vector_get_w(vector_floor(infinity))) == scalar_floor(FloatType(vector_get_w(infinity))));
 	CHECK(std::isnan(FloatType(vector_get_x(vector_floor(nan)))));
 	CHECK(std::isnan(FloatType(vector_get_y(vector_floor(nan)))));
 	CHECK(std::isnan(FloatType(vector_get_z(vector_floor(nan)))));
