@@ -2134,6 +2134,47 @@ namespace rtm
 	{
 		return vector_round_symmetric(input);
 	}
+
+	//////////////////////////////////////////////////////////////////////////
+	// Returns the rounded input using banker's rounding (half to even).
+	// vector_round_bankers(2.5) = 2.0
+	// vector_round_bankers(1.5) = 2.0
+	// vector_round_bankers(1.2) = 1.0
+	// vector_round_bankers(-2.5) = -2.0
+	// vector_round_bankers(-1.5) = -2.0
+	// vector_round_bankers(-1.2) = -1.0
+	//////////////////////////////////////////////////////////////////////////
+	inline vector4f RTM_SIMD_CALL vector_round_bankers(vector4f_arg0 input) RTM_NO_EXCEPT
+	{
+#if defined(RTM_SSE4_INTRINSICS)
+		return _mm_round_ps(input, _MM_FROUND_TO_NEAREST_INT | _MM_FROUND_NO_EXC);
+#elif defined(RTM_SSE2_INTRINSICS)
+		const __m128 sign_mask = _mm_set_ps(-0.0F, -0.0F, -0.0F, -0.0F);
+		__m128 sign = _mm_and_ps(input, sign_mask);
+
+		// We add the largest integer that a 32 bit floating point number can represent and subtract it afterwards.
+		// This relies on the fact that if we had a fractional part, the new value cannot be represented accurately
+		// and IEEE 754 will perform rounding for us. The default rounding mode is Banker's rounding.
+		// This has the effect of removing the fractional part while simultaneously rounding.
+		// Use the same sign as the input value to make sure we handle positive and negative values.
+		const __m128 fractional_limit = _mm_set_ps1(8388608.0F); // 2^23
+		__m128 truncating_offset = _mm_or_ps(sign, fractional_limit);
+		__m128 integer_part = _mm_sub_ps(_mm_add_ps(input, truncating_offset), truncating_offset);
+
+		// If our input was so large that it had no fractional part, return it unchanged
+		// Otherwise return our integer part
+		const __m128i abs_mask = _mm_set_epi32(0x7FFFFFFFULL, 0x7FFFFFFFULL, 0x7FFFFFFFULL, 0x7FFFFFFFULL);
+		__m128 abs_input = _mm_and_ps(input, _mm_castsi128_ps(abs_mask));
+		__m128 is_input_large = _mm_cmpge_ps(abs_input, fractional_limit);
+		return _mm_or_ps(_mm_and_ps(is_input_large, input), _mm_andnot_ps(is_input_large, integer_part));
+#else
+		scalarf x = scalar_round_bankers(scalarf(vector_get_x(input)));
+		scalarf y = scalar_round_bankers(scalarf(vector_get_y(input)));
+		scalarf z = scalar_round_bankers(scalarf(vector_get_z(input)));
+		scalarf w = scalar_round_bankers(scalarf(vector_get_w(input)));
+		return vector_set(x, y, z, w);
+#endif
+	}
 }
 
 RTM_IMPL_FILE_PRAGMA_POP
