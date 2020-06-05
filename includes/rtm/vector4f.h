@@ -2300,12 +2300,12 @@ namespace rtm
 		__m128 x2 = _mm_mul_ps(x, x);
 
 		__m128 result = _mm_add_ps(_mm_mul_ps(x2, _mm_set_ps1(0.00278569828F)), _mm_set_ps1(-0.0158660226F));	// (x2 * 0x3b369043) + 0x3c81f976
-		result = _mm_add_ps(_mm_mul_ps(result, x2), _mm_set_ps1(0.0424722321F));					// 0x3d2df75d
-		result = _mm_add_ps(_mm_mul_ps(result, x2), _mm_set_ps1(-0.0749753043F));				// -0x3d998ca7
-		result = _mm_add_ps(_mm_mul_ps(result, x2), _mm_set_ps1(0.106448799F));					// 0x3dda01d4
-		result = _mm_add_ps(_mm_mul_ps(result, x2), _mm_set_ps1(-0.142070308F));					// -0x3e117ae1
-		result = _mm_add_ps(_mm_mul_ps(result, x2), _mm_set_ps1(0.199934542F));					// 0x3e4cbba4
-		result = _mm_add_ps(_mm_mul_ps(result, x2), _mm_set_ps1(-0.333331466F));					// -0x3eaaaa6c
+		result = _mm_add_ps(_mm_mul_ps(result, x2), _mm_set_ps1(0.0424722321F));								// 0x3d2df75d
+		result = _mm_add_ps(_mm_mul_ps(result, x2), _mm_set_ps1(-0.0749753043F));								// -0x3d998ca7
+		result = _mm_add_ps(_mm_mul_ps(result, x2), _mm_set_ps1(0.106448799F));									// 0x3dda01d4
+		result = _mm_add_ps(_mm_mul_ps(result, x2), _mm_set_ps1(-0.142070308F));								// -0x3e117ae1
+		result = _mm_add_ps(_mm_mul_ps(result, x2), _mm_set_ps1(0.199934542F));									// 0x3e4cbba4
+		result = _mm_add_ps(_mm_mul_ps(result, x2), _mm_set_ps1(-0.333331466F));								// -0x3eaaaa6c
 
 		result = _mm_mul_ps(result, x2);
 		result = _mm_add_ps(_mm_mul_ps(result, x), x);
