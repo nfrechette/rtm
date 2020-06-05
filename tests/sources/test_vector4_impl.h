@@ -457,6 +457,10 @@ void test_vector4_arithmetic_impl(const FloatType threshold)
 	CHECK(FloatType(vector_get_y(vector_floor(infinity))) == scalar_floor(FloatType(vector_get_y(infinity))));
 	CHECK(FloatType(vector_get_z(vector_floor(infinity))) == scalar_floor(FloatType(vector_get_z(infinity))));
 	CHECK(FloatType(vector_get_w(vector_floor(infinity))) == scalar_floor(FloatType(vector_get_w(infinity))));
+	CHECK(FloatType(vector_get_x(vector_floor(vector_neg(infinity)))) == scalar_floor(-FloatType(vector_get_x(infinity))));
+	CHECK(FloatType(vector_get_y(vector_floor(vector_neg(infinity)))) == scalar_floor(-FloatType(vector_get_y(infinity))));
+	CHECK(FloatType(vector_get_z(vector_floor(vector_neg(infinity)))) == scalar_floor(-FloatType(vector_get_z(infinity))));
+	CHECK(FloatType(vector_get_w(vector_floor(vector_neg(infinity)))) == scalar_floor(-FloatType(vector_get_w(infinity))));
 	CHECK(std::isnan(FloatType(vector_get_x(vector_floor(nan)))));
 	CHECK(std::isnan(FloatType(vector_get_y(vector_floor(nan)))));
 	CHECK(std::isnan(FloatType(vector_get_z(vector_floor(nan)))));
@@ -470,6 +474,10 @@ void test_vector4_arithmetic_impl(const FloatType threshold)
 	CHECK(FloatType(vector_get_y(vector_ceil(infinity))) == scalar_ceil(FloatType(vector_get_y(infinity))));
 	CHECK(FloatType(vector_get_z(vector_ceil(infinity))) == scalar_ceil(FloatType(vector_get_z(infinity))));
 	CHECK(FloatType(vector_get_w(vector_ceil(infinity))) == scalar_ceil(FloatType(vector_get_w(infinity))));
+	CHECK(FloatType(vector_get_x(vector_ceil(vector_neg(infinity)))) == scalar_ceil(-FloatType(vector_get_x(infinity))));
+	CHECK(FloatType(vector_get_y(vector_ceil(vector_neg(infinity)))) == scalar_ceil(-FloatType(vector_get_y(infinity))));
+	CHECK(FloatType(vector_get_z(vector_ceil(vector_neg(infinity)))) == scalar_ceil(-FloatType(vector_get_z(infinity))));
+	CHECK(FloatType(vector_get_w(vector_ceil(vector_neg(infinity)))) == scalar_ceil(-FloatType(vector_get_w(infinity))));
 	CHECK(std::isnan(FloatType(vector_get_x(vector_ceil(nan)))));
 	CHECK(std::isnan(FloatType(vector_get_y(vector_ceil(nan)))));
 	CHECK(std::isnan(FloatType(vector_get_z(vector_ceil(nan)))));
