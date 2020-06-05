@@ -336,12 +336,12 @@ namespace rtm
 		// and IEEE 754 will perform rounding for us. The default rounding mode is Banker's rounding.
 		// This has the effect of removing the fractional part while simultaneously rounding.
 		// Use the same sign as the input value to make sure we handle positive and negative values.
-		const __m128d largest_fractional_integer = _mm_set1_pd(4503599627370496.0); // 2^52
-		__m128d truncating_offset = _mm_xor_pd(sign, largest_fractional_integer);
+		const __m128d fractional_limit = _mm_set1_pd(4503599627370496.0); // 2^52
+		__m128d truncating_offset = _mm_or_pd(sign, fractional_limit);
 		__m128d integer_part = _mm_sub_sd(_mm_add_sd(input_s, truncating_offset), truncating_offset);
 
 		__m128d abs_input = _mm_and_pd(input_s, _mm_castsi128_pd(abs_mask));
-		__m128d is_input_large = _mm_cmpge_sd(abs_input, largest_fractional_integer);
+		__m128d is_input_large = _mm_cmpge_sd(abs_input, fractional_limit);
 		__m128d result = _mm_or_pd(_mm_and_pd(is_input_large, input_s), _mm_andnot_pd(is_input_large, integer_part));
 
 		return _mm_cvtsd_f64(result);
@@ -595,12 +595,12 @@ namespace rtm
 		// and IEEE 754 will perform rounding for us. The default rounding mode is Banker's rounding.
 		// This has the effect of removing the fractional part while simultaneously rounding.
 		// Use the same sign as the input value to make sure we handle positive and negative values.
-		const __m128d largest_fractional_integer = _mm_set1_pd(4503599627370496.0); // 2^52
-		__m128d truncating_offset = _mm_xor_pd(sign, largest_fractional_integer);
+		const __m128d fractional_limit = _mm_set1_pd(4503599627370496.0); // 2^52
+		__m128d truncating_offset = _mm_or_pd(sign, fractional_limit);
 		__m128d integer_part = _mm_sub_sd(_mm_add_sd(input.value, truncating_offset), truncating_offset);
 
 		__m128d abs_input = _mm_and_pd(input.value, _mm_castsi128_pd(abs_mask));
-		__m128d is_input_large = _mm_cmpge_sd(abs_input, largest_fractional_integer);
+		__m128d is_input_large = _mm_cmpge_sd(abs_input, fractional_limit);
 		__m128d result = _mm_or_pd(_mm_and_pd(is_input_large, input.value), _mm_andnot_pd(is_input_large, integer_part));
 
 		return scalard{ result };
