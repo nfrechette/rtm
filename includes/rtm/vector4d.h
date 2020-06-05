@@ -1638,7 +1638,25 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	inline bool vector_is_finite(const vector4d& input) RTM_NO_EXCEPT
 	{
+#if defined(RTM_SSE2_INTRINSICS)
+		const __m128i abs_mask = _mm_set_epi64x(0x7FFFFFFFFFFFFFFFULL, 0x7FFFFFFFFFFFFFFFULL);
+		__m128d abs_input_xy = _mm_and_pd(input.xy, _mm_castsi128_pd(abs_mask));
+		__m128d abs_input_zw = _mm_and_pd(input.zw, _mm_castsi128_pd(abs_mask));
+
+		const __m128d infinity = _mm_set1_pd(std::numeric_limits<double>::infinity());
+		__m128d is_infinity_xy = _mm_cmpeq_pd(abs_input_xy, infinity);
+		__m128d is_infinity_zw = _mm_cmpeq_pd(abs_input_zw, infinity);
+
+		__m128d is_nan_xy = _mm_cmpneq_pd(input.xy, input.xy);
+		__m128d is_nan_zw = _mm_cmpneq_pd(input.zw, input.zw);
+
+		__m128d is_not_finite_xy = _mm_or_pd(is_infinity_xy, is_nan_xy);
+		__m128d is_not_finite_zw = _mm_or_pd(is_infinity_zw, is_nan_zw);
+		__m128d is_not_finite = _mm_or_pd(is_not_finite_xy, is_not_finite_zw);
+		return _mm_movemask_pd(is_not_finite) == 0x0;
+#else
 		return scalar_is_finite(vector_get_x(input)) && scalar_is_finite(vector_get_y(input)) && scalar_is_finite(vector_get_z(input)) && scalar_is_finite(vector_get_w(input));
+#endif
 	}
 
 	//////////////////////////////////////////////////////////////////////////
@@ -1646,7 +1664,20 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	inline bool vector_is_finite2(const vector4d& input) RTM_NO_EXCEPT
 	{
+#if defined(RTM_SSE2_INTRINSICS)
+		const __m128i abs_mask = _mm_set_epi64x(0x7FFFFFFFFFFFFFFFULL, 0x7FFFFFFFFFFFFFFFULL);
+		__m128d abs_input_xy = _mm_and_pd(input.xy, _mm_castsi128_pd(abs_mask));
+
+		const __m128d infinity = _mm_set1_pd(std::numeric_limits<double>::infinity());
+		__m128d is_infinity_xy = _mm_cmpeq_pd(abs_input_xy, infinity);
+
+		__m128d is_nan_xy = _mm_cmpneq_pd(input.xy, input.xy);
+
+		__m128d is_not_finite_xy = _mm_or_pd(is_infinity_xy, is_nan_xy);
+		return _mm_movemask_pd(is_not_finite_xy) == 0x0;
+#else
 		return scalar_is_finite(vector_get_x(input)) && scalar_is_finite(vector_get_y(input));
+#endif
 	}
 
 	//////////////////////////////////////////////////////////////////////////
@@ -1654,7 +1685,24 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	inline bool vector_is_finite3(const vector4d& input) RTM_NO_EXCEPT
 	{
+#if defined(RTM_SSE2_INTRINSICS)
+		const __m128i abs_mask = _mm_set_epi64x(0x7FFFFFFFFFFFFFFFULL, 0x7FFFFFFFFFFFFFFFULL);
+		__m128d abs_input_xy = _mm_and_pd(input.xy, _mm_castsi128_pd(abs_mask));
+		__m128d abs_input_zw = _mm_and_pd(input.zw, _mm_castsi128_pd(abs_mask));
+
+		const __m128d infinity = _mm_set1_pd(std::numeric_limits<double>::infinity());
+		__m128d is_infinity_xy = _mm_cmpeq_pd(abs_input_xy, infinity);
+		__m128d is_infinity_zw = _mm_cmpeq_pd(abs_input_zw, infinity);
+
+		__m128d is_nan_xy = _mm_cmpneq_pd(input.xy, input.xy);
+		__m128d is_nan_zw = _mm_cmpneq_pd(input.zw, input.zw);
+
+		__m128d is_not_finite_xy = _mm_or_pd(is_infinity_xy, is_nan_xy);
+		__m128d is_not_finite_zw = _mm_or_pd(is_infinity_zw, is_nan_zw);
+		return _mm_movemask_pd(is_not_finite_xy) == 0 && (_mm_movemask_pd(is_not_finite_zw) & 0x1) == 0;
+#else
 		return scalar_is_finite(vector_get_x(input)) && scalar_is_finite(vector_get_y(input)) && scalar_is_finite(vector_get_z(input));
+#endif
 	}
 
 
