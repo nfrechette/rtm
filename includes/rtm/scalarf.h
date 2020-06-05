@@ -1010,6 +1010,7 @@ namespace rtm
 		result = (result * x2) - 0.49999998049253581064488831264724178F;
 		result = (result * x2) + 0.99999999901810067632218592152414676F;
 
+		// Remap into [-pi, pi]
 		__m128 result_v = _mm_set_ps1(result);
 		__m128 cosine = _mm_or_ps(result_v, _mm_andnot_ps(is_less_equal_than_half_pi, sign_mask));
 		return scalarf{ cosine };
@@ -1047,6 +1048,8 @@ namespace rtm
 		result = (result * x2) + 0.0416665985274352494970529831079268818F;
 		result = (result * x2) - 0.49999998049253581064488831264724178F;
 		result = (result * x2) + 0.99999999901810067632218592152414676F;
+
+		// Remap into [-pi, pi]
 		if (x_abs <= 1.570796326794896619231321691639751442F)
 			return result;
 		else
