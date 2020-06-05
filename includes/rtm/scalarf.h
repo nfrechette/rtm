@@ -92,11 +92,7 @@ namespace rtm
 		// NaN, +- Infinity, and numbers larger or equal to 2^23 remain unchanged
 		// since they have no fractional part.
 
-#if defined(_MSC_VER) && !defined(__clang__)
-		constexpr __m128i abs_mask = { 0xFFU, 0xFFU, 0xFFU, 0x7FU, 0xFFU, 0xFFU, 0xFFU, 0x7FU, 0xFFU, 0xFFU, 0xFFU, 0x7FU, 0xFFU, 0xFFU, 0xFFU, 0x7FU };
-#else
-		constexpr __m128i abs_mask = { 0x7FFFFFFF7FFFFFFFULL, 0x7FFFFFFF7FFFFFFFULL };
-#endif
+		const __m128i abs_mask = _mm_set_epi32(0x7FFFFFFFULL, 0x7FFFFFFFULL, 0x7FFFFFFFULL, 0x7FFFFFFFULL);
 		const __m128 fractional_limit = _mm_set_ps1(8388608.0F); // 2^23
 
 		// Build our mask, larger values that have no fractional part, and infinities will be true
@@ -158,11 +154,7 @@ namespace rtm
 		// NaN, +- Infinity, and numbers larger or equal to 2^23 remain unchanged
 		// since they have no fractional part.
 
-#if defined(_MSC_VER) && !defined(__clang__)
-		constexpr __m128i abs_mask = { 0xFFU, 0xFFU, 0xFFU, 0x7FU, 0xFFU, 0xFFU, 0xFFU, 0x7FU, 0xFFU, 0xFFU, 0xFFU, 0x7FU, 0xFFU, 0xFFU, 0xFFU, 0x7FU };
-#else
-		constexpr __m128i abs_mask = { 0x7FFFFFFF7FFFFFFFULL, 0x7FFFFFFF7FFFFFFFULL };
-#endif
+		const __m128i abs_mask = _mm_set_epi32(0x7FFFFFFFULL, 0x7FFFFFFFULL, 0x7FFFFFFFULL, 0x7FFFFFFFULL);
 		const __m128 fractional_limit = _mm_set_ps1(8388608.0F); // 2^23
 
 		// Build our mask, larger values that have no fractional part, and infinities will be true
@@ -229,12 +221,8 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	inline scalarf RTM_SIMD_CALL scalar_abs(scalarf_arg0 input) RTM_NO_EXCEPT
 	{
-#if defined(_MSC_VER) && !defined(__clang__)
-		constexpr __m128i masks = { 0xFFU, 0xFFU, 0xFFU, 0x7FU, 0xFFU, 0xFFU, 0xFFU, 0x7FU, 0xFFU, 0xFFU, 0xFFU, 0x7FU, 0xFFU, 0xFFU, 0xFFU, 0x7FU };
-#else
-		constexpr __m128i masks = { 0x7FFFFFFF7FFFFFFFULL, 0x7FFFFFFF7FFFFFFFULL };
-#endif
-		return scalarf{ _mm_and_ps(input.value, _mm_castsi128_ps(masks)) };
+		const __m128i abs_mask = _mm_set_epi32(0x7FFFFFFFULL, 0x7FFFFFFFULL, 0x7FFFFFFFULL, 0x7FFFFFFFULL);
+		return scalarf{ _mm_and_ps(input.value, _mm_castsi128_ps(abs_mask)) };
 	}
 #endif
 
@@ -244,12 +232,8 @@ namespace rtm
 	inline float scalar_abs(float input) RTM_NO_EXCEPT
 	{
 #if defined(RTM_SSE2_INTRINSICS)
-#if defined(_MSC_VER) && !defined(__clang__)
-		constexpr __m128i masks = { 0xFFU, 0xFFU, 0xFFU, 0x7FU, 0xFFU, 0xFFU, 0xFFU, 0x7FU, 0xFFU, 0xFFU, 0xFFU, 0x7FU, 0xFFU, 0xFFU, 0xFFU, 0x7FU };
-#else
-		constexpr __m128i masks = { 0x7FFFFFFF7FFFFFFFULL, 0x7FFFFFFF7FFFFFFFULL };
-#endif
-		return _mm_cvtss_f32(_mm_and_ps(_mm_set_ps1(input), _mm_castsi128_ps(masks)));
+		const __m128i abs_mask = _mm_set_epi32(0x7FFFFFFFULL, 0x7FFFFFFFULL, 0x7FFFFFFFULL, 0x7FFFFFFFULL);
+		return _mm_cvtss_f32(_mm_and_ps(_mm_set_ps1(input), _mm_castsi128_ps(abs_mask)));
 #else
 		return std::fabs(input);
 #endif
@@ -721,11 +705,7 @@ namespace rtm
 #endif
 		return scalarf{ result };
 #else
-#if defined(_MSC_VER) && !defined(__clang__)
-		constexpr __m128i abs_mask = { 0xFFU, 0xFFU, 0xFFU, 0x7FU, 0xFFU, 0xFFU, 0xFFU, 0x7FU, 0xFFU, 0xFFU, 0xFFU, 0x7FU, 0xFFU, 0xFFU, 0xFFU, 0x7FU };
-#else
-		constexpr __m128i abs_mask = { 0x7FFFFFFF7FFFFFFFULL, 0x7FFFFFFF7FFFFFFFULL };
-#endif
+		const __m128i abs_mask = _mm_set_epi32(0x7FFFFFFFULL, 0x7FFFFFFFULL, 0x7FFFFFFFULL, 0x7FFFFFFFULL);
 		const __m128 fractional_limit = _mm_set_ps1(8388608.0F); // 2^23
 
 		// Build our mask, larger values that have no fractional part, and infinities will be true
@@ -806,12 +786,6 @@ namespace rtm
 #if defined(RTM_SSE4_INTRINSICS)
 		return scalarf{ _mm_cvtss_f32(_mm_round_ss(input.value, input.value, _MM_FROUND_TO_NEAREST_INT | _MM_FROUND_NO_EXC)) };
 #else
-#if defined(_MSC_VER) && !defined(__clang__)
-		constexpr __m128i abs_mask = { 0xFFU, 0xFFU, 0xFFU, 0x7FU, 0xFFU, 0xFFU, 0xFFU, 0x7FU, 0xFFU, 0xFFU, 0xFFU, 0x7FU, 0xFFU, 0xFFU, 0xFFU, 0x7FU };
-#else
-		constexpr __m128i abs_mask = { 0x7FFFFFFF7FFFFFFFULL, 0x7FFFFFFF7FFFFFFFULL };
-#endif
-
 		const __m128 sign_mask = _mm_set_ps(-0.0F, -0.0F, -0.0F, -0.0F);
 		__m128 sign = _mm_and_ps(input.value, sign_mask);
 
@@ -826,6 +800,7 @@ namespace rtm
 
 		// If our input was so large that it had no fractional part, return it unchanged
 		// Otherwise return our integer part
+		const __m128i abs_mask = _mm_set_epi32(0x7FFFFFFFULL, 0x7FFFFFFFULL, 0x7FFFFFFFULL, 0x7FFFFFFFULL);
 		__m128 abs_input = _mm_and_ps(input.value, _mm_castsi128_ps(abs_mask));
 		__m128 is_input_large = _mm_cmpge_ss(abs_input, fractional_limit);
 		__m128 result = _mm_or_ps(_mm_and_ps(is_input_large, input.value), _mm_andnot_ps(is_input_large, integer_part));

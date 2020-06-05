@@ -54,16 +54,12 @@ RTM_FORCE_NOINLINE quatf RTM_SIMD_CALL quat_from_positive_w_sse4_andnot(vector4f
 // Wins on Ryzen 2990X desktop clang9 x64 AVX
 RTM_FORCE_NOINLINE quatf RTM_SIMD_CALL quat_from_positive_w_sse4_and(vector4f_arg0 input) RTM_NO_EXCEPT
 {
-#if defined(_MSC_VER)
-	constexpr __m128i masks = { 0xFFU, 0xFFU, 0xFFU, 0x7FU, 0xFFU, 0xFFU, 0xFFU, 0x7FU, 0xFFU, 0xFFU, 0xFFU, 0x7FU, 0xFFU, 0xFFU, 0xFFU, 0x7FU };
-#else
-	constexpr __m128i masks = { 0x7FFFFFFF7FFFFFFFULL, 0x7FFFFFFF7FFFFFFFULL };
-#endif
+	const __m128i abs_mask = _mm_set_epi32(0x7FFFFFFFULL, 0x7FFFFFFFULL, 0x7FFFFFFFULL, 0x7FFFFFFFULL);
 
 	__m128 x2y2z2 = _mm_mul_ps(input, input);
 	__m128 one = _mm_set_ss(1.0F);
 	__m128 w_squared = _mm_sub_ss(_mm_sub_ss(_mm_sub_ss(one, x2y2z2), _mm_shuffle_ps(x2y2z2, x2y2z2, _MM_SHUFFLE(1, 1, 1, 1))), _mm_shuffle_ps(x2y2z2, x2y2z2, _MM_SHUFFLE(2, 2, 2, 2)));
-	w_squared = _mm_and_ps(w_squared, _mm_castsi128_ps(masks));
+	w_squared = _mm_and_ps(w_squared, _mm_castsi128_ps(abs_mask));
 	__m128 w = _mm_sqrt_ss(w_squared);
 	return _mm_insert_ps(input, w, 0x30);
 }
@@ -79,16 +75,12 @@ RTM_FORCE_NOINLINE quatf RTM_SIMD_CALL quat_from_positive_w_sse4_and(vector4f_ar
 // register which is unused and doesn't need spilling...
 RTM_FORCE_NOINLINE quatf RTM_SIMD_CALL quat_from_positive_w_sse2_and(vector4f_arg0 input) RTM_NO_EXCEPT
 {
-#if defined(_MSC_VER)
-	constexpr __m128i masks = { 0xFFU, 0xFFU, 0xFFU, 0x7FU, 0xFFU, 0xFFU, 0xFFU, 0x7FU, 0xFFU, 0xFFU, 0xFFU, 0x7FU, 0xFFU, 0xFFU, 0xFFU, 0x7FU };
-#else
-	constexpr __m128i masks = { 0x7FFFFFFF7FFFFFFFULL, 0x7FFFFFFF7FFFFFFFULL };
-#endif
+	const __m128i abs_mask = _mm_set_epi32(0x7FFFFFFFULL, 0x7FFFFFFFULL, 0x7FFFFFFFULL, 0x7FFFFFFFULL);
 
 	__m128 x2y2z2 = _mm_mul_ps(input, input);
 	__m128 one = _mm_set_ss(1.0F);
 	__m128 w_squared = _mm_sub_ss(_mm_sub_ss(_mm_sub_ss(one, x2y2z2), _mm_shuffle_ps(x2y2z2, x2y2z2, _MM_SHUFFLE(1, 1, 1, 1))), _mm_shuffle_ps(x2y2z2, x2y2z2, _MM_SHUFFLE(2, 2, 2, 2)));
-	w_squared = _mm_and_ps(w_squared, _mm_castsi128_ps(masks));
+	w_squared = _mm_and_ps(w_squared, _mm_castsi128_ps(abs_mask));
 	__m128 w = _mm_sqrt_ss(w_squared);
 	__m128 input_wyzx = _mm_shuffle_ps(input, input, _MM_SHUFFLE(0, 2, 1, 3));
 	__m128 result_wyzx = _mm_move_ss(input_wyzx, w);
@@ -97,16 +89,12 @@ RTM_FORCE_NOINLINE quatf RTM_SIMD_CALL quat_from_positive_w_sse2_and(vector4f_ar
 
 RTM_FORCE_NOINLINE quatf RTM_SIMD_CALL quat_from_positive_w_sse2_and2(vector4f_arg0 input) RTM_NO_EXCEPT
 {
-#if defined(_MSC_VER)
-	constexpr __m128i masks = { 0xFFU, 0xFFU, 0xFFU, 0x7FU, 0xFFU, 0xFFU, 0xFFU, 0x7FU, 0xFFU, 0xFFU, 0xFFU, 0x7FU, 0xFFU, 0xFFU, 0xFFU, 0x7FU };
-#else
-	constexpr __m128i masks = { 0x7FFFFFFF7FFFFFFFULL, 0x7FFFFFFF7FFFFFFFULL };
-#endif
+	const __m128i abs_mask = _mm_set_epi32(0x7FFFFFFFULL, 0x7FFFFFFFULL, 0x7FFFFFFFULL, 0x7FFFFFFFULL);
 
 	__m128 x2y2z2 = _mm_mul_ps(input, input);
 	__m128 one = _mm_set_ss(1.0F);
 	__m128 w_squared = _mm_sub_ss(_mm_sub_ss(_mm_sub_ss(one, x2y2z2), _mm_shuffle_ps(x2y2z2, x2y2z2, _MM_SHUFFLE(1, 1, 1, 1))), _mm_shuffle_ps(x2y2z2, x2y2z2, _MM_SHUFFLE(2, 2, 2, 2)));
-	w_squared = _mm_and_ps(w_squared, _mm_castsi128_ps(masks));
+	w_squared = _mm_and_ps(w_squared, _mm_castsi128_ps(abs_mask));
 	__m128 w = _mm_sqrt_ss(w_squared);
 	__m128 zzww = _mm_shuffle_ps(input, w, _MM_SHUFFLE(0, 0, 2, 2));
 	return _mm_shuffle_ps(input, zzww, _MM_SHUFFLE(2, 0, 1, 0));

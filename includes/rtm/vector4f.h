@@ -813,12 +813,8 @@ namespace rtm
 	inline vector4f RTM_SIMD_CALL vector_abs(vector4f_arg0 input) RTM_NO_EXCEPT
 	{
 #if defined(RTM_SSE2_INTRINSICS)
-#if defined(_MSC_VER) && !defined(__clang__)
-		constexpr __m128i masks = { 0xFFU, 0xFFU, 0xFFU, 0x7FU, 0xFFU, 0xFFU, 0xFFU, 0x7FU, 0xFFU, 0xFFU, 0xFFU, 0x7FU, 0xFFU, 0xFFU, 0xFFU, 0x7FU };
-#else
-		constexpr __m128i masks = { 0x7FFFFFFF7FFFFFFFULL, 0x7FFFFFFF7FFFFFFFULL };
-#endif
-		return _mm_and_ps(input, _mm_castsi128_ps(masks));
+		const __m128i abs_mask = _mm_set_epi32(0x7FFFFFFFULL, 0x7FFFFFFFULL, 0x7FFFFFFFULL, 0x7FFFFFFFULL);
+		return _mm_and_ps(input, _mm_castsi128_ps(abs_mask));
 #elif defined(RTM_NEON_INTRINSICS)
 		return vabsq_f32(input);
 #else
@@ -883,11 +879,7 @@ namespace rtm
 		// NaN, +- Infinity, and numbers larger or equal to 2^23 remain unchanged
 		// since they have no fractional part.
 
-#if defined(_MSC_VER) && !defined(__clang__)
-		constexpr __m128i abs_mask = { 0xFFU, 0xFFU, 0xFFU, 0x7FU, 0xFFU, 0xFFU, 0xFFU, 0x7FU, 0xFFU, 0xFFU, 0xFFU, 0x7FU, 0xFFU, 0xFFU, 0xFFU, 0x7FU };
-#else
-		constexpr __m128i abs_mask = { 0x7FFFFFFF7FFFFFFFULL, 0x7FFFFFFF7FFFFFFFULL };
-#endif
+		const __m128i abs_mask = _mm_set_epi32(0x7FFFFFFFULL, 0x7FFFFFFFULL, 0x7FFFFFFFULL, 0x7FFFFFFFULL);
 		const __m128 fractional_limit = _mm_set_ps1(8388608.0F); // 2^23
 
 		// Build our mask, larger values that have no fractional part, and infinities will be true
@@ -933,11 +925,7 @@ namespace rtm
 		// NaN, +- Infinity, and numbers larger or equal to 2^23 remain unchanged
 		// since they have no fractional part.
 
-#if defined(_MSC_VER) && !defined(__clang__)
-		constexpr __m128i abs_mask = { 0xFFU, 0xFFU, 0xFFU, 0x7FU, 0xFFU, 0xFFU, 0xFFU, 0x7FU, 0xFFU, 0xFFU, 0xFFU, 0x7FU, 0xFFU, 0xFFU, 0xFFU, 0x7FU };
-#else
-		constexpr __m128i abs_mask = { 0x7FFFFFFF7FFFFFFFULL, 0x7FFFFFFF7FFFFFFFULL };
-#endif
+		const __m128i abs_mask = _mm_set_epi32(0x7FFFFFFFULL, 0x7FFFFFFFULL, 0x7FFFFFFFULL, 0x7FFFFFFFULL);
 		const __m128 fractional_limit = _mm_set_ps1(8388608.0F); // 2^23
 
 		// Build our mask, larger values that have no fractional part, and infinities will be true
@@ -2060,11 +2048,7 @@ namespace rtm
 
 		return vector_select(is_positive, floored, ceiled);
 #elif defined(RTM_SSE2_INTRINSICS)
-#if defined(_MSC_VER) && !defined(__clang__)
-		constexpr __m128i abs_mask = { 0xFFU, 0xFFU, 0xFFU, 0x7FU, 0xFFU, 0xFFU, 0xFFU, 0x7FU, 0xFFU, 0xFFU, 0xFFU, 0x7FU, 0xFFU, 0xFFU, 0xFFU, 0x7FU };
-#else
-		constexpr __m128i abs_mask = { 0x7FFFFFFF7FFFFFFFULL, 0x7FFFFFFF7FFFFFFFULL };
-#endif
+		const __m128i abs_mask = _mm_set_epi32(0x7FFFFFFFULL, 0x7FFFFFFFULL, 0x7FFFFFFFULL, 0x7FFFFFFFULL);
 		const __m128 fractional_limit = _mm_set_ps1(8388608.0F); // 2^23
 
 		// Build our mask, larger values that have no fractional part, and infinities will be true
