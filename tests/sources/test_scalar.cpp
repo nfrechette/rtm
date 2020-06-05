@@ -231,6 +231,7 @@ static void test_scalar_impl(const FloatType threshold, const FloatType trig_thr
 	for (const FloatType angle : angles)
 	{
 		CHECK(scalar_near_equal(scalar_sin(angle), std::sin(angle), trig_threshold));
+		CHECK(scalar_near_equal(scalar_cast(scalar_sin(scalar_set(angle))), std::sin(angle), trig_threshold));
 		CHECK(scalar_near_equal(scalar_cos(angle), std::cos(angle), trig_threshold));
 
 		FloatType sin_result;

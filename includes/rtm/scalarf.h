@@ -892,12 +892,83 @@ namespace rtm
 	// Trigonometric functions
 	//////////////////////////////////////////////////////////////////////////
 
+#if defined(RTM_SSE2_INTRINSICS)
 	//////////////////////////////////////////////////////////////////////////
 	// Returns the sine of the input angle.
 	//////////////////////////////////////////////////////////////////////////
-	inline float scalar_sin(float angle) RTM_NO_EXCEPT
+	inline scalarf RTM_SIMD_CALL scalar_sin(scalarf_arg0 angle) RTM_NO_EXCEPT
 	{
-		return std::sin(angle);
+		// Use a degree 11 minimax approximation polynomial
+		// See: https://gist.github.com/publik-void/067f7f2fef32dbe5c27d6e215f824c91#sin-rel-error-minimized-degree-11
+
+		// Remap our input in the [-pi, pi] range
+		__m128 quotient = _mm_mul_ss(angle.value, _mm_set_ps1(1.0F / 6.283185307179586476925286766559005768F));
+		quotient = scalar_round_bankers(scalarf{ quotient }).value;
+		quotient = _mm_mul_ss(quotient, _mm_set_ps1(6.283185307179586476925286766559005768F));
+		__m128 x = _mm_sub_ss(angle.value, quotient);
+
+		// Remap our input in the [-pi/2, pi/2] range
+		const __m128 sign_mask = _mm_set_ps(-0.0F, -0.0F, -0.0F, -0.0F);
+		__m128 sign = _mm_and_ps(x, sign_mask);
+		__m128 reference = _mm_or_ps(sign, _mm_set_ps1(3.141592653589793238462643383279502884F));
+		
+		const __m128 reflection = _mm_sub_ss(reference, x);
+		const __m128i abs_mask = _mm_set_epi32(0x7FFFFFFFULL, 0x7FFFFFFFULL, 0x7FFFFFFFULL, 0x7FFFFFFFULL);
+		const __m128 x_abs = _mm_and_ps(x, _mm_castsi128_ps(abs_mask));
+
+		__m128 is_less_equal_than_half_pi = _mm_cmple_ss(x_abs, _mm_set_ps1(1.570796326794896619231321691639751442F));
+
+#if defined(RTM_AVX_INTRINSICS)
+		x = _mm_blendv_ps(reflection, x, is_less_equal_than_half_pi);
+#else
+		x = _mm_or_ps(_mm_andnot_ps(is_less_equal_than_half_pi, reflection), _mm_and_ps(x, is_less_equal_than_half_pi));
+#endif
+
+		// Calculate our value
+		const float x2 = _mm_cvtss_f32(_mm_mul_ss(x, x));
+		float result = (x2 * -2.3868346521031027639830001794722295e-8F) + 2.75239710746326498401791551303359689e-6F;
+		result = (result * x2) - 0.000198408328232619552901560108010257242F;
+		result = (result * x2) + 0.00833333072055773645376566203656709979F;
+		result = (result * x2) - 0.166666666088260696413164261885310067F;
+		result = (result * x2) + 0.99999999997884898600402426033768998F;
+		result = result * _mm_cvtss_f32(x);
+		return scalar_set(result);
+	}
+#endif
+
+	//////////////////////////////////////////////////////////////////////////
+	// Returns the sine of the input angle.
+	//////////////////////////////////////////////////////////////////////////
+	inline float RTM_SIMD_CALL scalar_sin(float angle) RTM_NO_EXCEPT
+	{
+#if defined(RTM_SSE2_INTRINSICS)
+		return scalar_cast(scalar_sin(scalar_set(angle)));
+#else
+		// Use a degree 11 minimax approximation polynomial
+		// See: https://gist.github.com/publik-void/067f7f2fef32dbe5c27d6e215f824c91#sin-rel-error-minimized-degree-11
+
+		// Remap our input in the [-pi, pi] range
+		float quotient = angle * (1.0F / 6.283185307179586476925286766559005768F);
+		quotient = scalar_round_bankers(quotient);
+		quotient = quotient * 6.283185307179586476925286766559005768F;
+		float x = angle - quotient;
+
+		// Remap our input in the [-pi/2, pi/2] range
+		const float reference = x >= 0.0F ? 3.141592653589793238462643383279502884F : -3.141592653589793238462643383279502884F;
+		const float reflection = reference - x;
+		const float x_abs = scalar_abs(x);
+		x = x_abs <= 1.570796326794896619231321691639751442F ? x : reflection;
+
+		// Calculate our value
+		const float x2 = x * x;
+		float result = (x2 * -2.3868346521031027639830001794722295e-8F) + 2.75239710746326498401791551303359689e-6F;
+		result = (result * x2) - 0.000198408328232619552901560108010257242F;
+		result = (result * x2) + 0.00833333072055773645376566203656709979F;
+		result = (result * x2) - 0.166666666088260696413164261885310067F;
+		result = (result * x2) + 0.99999999997884898600402426033768998F;
+		result = result * x;
+		return result;
+#endif
 	}
 
 	//////////////////////////////////////////////////////////////////////////
