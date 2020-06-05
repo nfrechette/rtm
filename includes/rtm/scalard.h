@@ -48,6 +48,16 @@ namespace rtm
 #endif
 	}
 
+#if defined(RTM_SSE2_INTRINSICS)
+	//////////////////////////////////////////////////////////////////////////
+	// Writes a scalar to memory.
+	//////////////////////////////////////////////////////////////////////////
+	inline void RTM_SIMD_CALL scalar_store(scalard input, double* output) RTM_NO_EXCEPT
+	{
+		_mm_store_sd(output, input.value);
+	}
+#endif
+
 	//////////////////////////////////////////////////////////////////////////
 	// Writes a scalar to memory.
 	//////////////////////////////////////////////////////////////////////////
@@ -68,19 +78,17 @@ namespace rtm
 #endif
 	}
 
+#if defined(RTM_SSE2_INTRINSICS)
 	//////////////////////////////////////////////////////////////////////////
 	// Returns the largest integer value not greater than the input.
 	// scalar_floor(1.8) = 1.0
 	// scalar_floor(-1.8) = -2.0
 	//////////////////////////////////////////////////////////////////////////
-	inline double scalar_floor(double input) RTM_NO_EXCEPT
+	inline scalard RTM_SIMD_CALL scalar_floor(scalard input) RTM_NO_EXCEPT
 	{
 #if defined(RTM_SSE4_INTRINSICS)
-		const __m128d value = _mm_set1_pd(input);
-		return _mm_cvtsd_f64(_mm_round_sd(value, value, 0x9));
-#elif defined(RTM_SSE2_INTRINSICS)
-		const __m128d value = _mm_set1_pd(input);
-
+		return scalard{ _mm_round_sd(input.value, input.value, 0x9) };
+#else
 		// NaN, +- Infinity, and numbers larger or equal to 2^23 remain unchanged
 		// since they have no fractional part.
 
@@ -93,21 +101,21 @@ namespace rtm
 
 		// Build our mask, larger values that have no fractional part, and infinities will be true
 		// Smaller values and NaN will be false
-		__m128d abs_input = _mm_and_pd(value, _mm_castsi128_pd(abs_mask));
+		__m128d abs_input = _mm_and_pd(input.value, _mm_castsi128_pd(abs_mask));
 		__m128d is_input_large = _mm_cmpge_sd(abs_input, fractional_limit);
 
 		// Test if our input is NaN with (value != value), it is only true for NaN
-		__m128d is_nan = _mm_cmpneq_sd(value, value);
+		__m128d is_nan = _mm_cmpneq_sd(input.value, input.value);
 
 		// Combine our masks to determine if we should return the original value
 		__m128d use_original_input = _mm_or_pd(is_input_large, is_nan);
 
 		// Convert to an integer and back
-		__m128d integer_part = _mm_cvtsi32_sd(value, _mm_cvtsd_si32(value));
+		__m128d integer_part = _mm_cvtsi32_sd(input.value, _mm_cvtsd_si32(input.value));
 
 		// Test if the returned value is greater than the original.
 		// A negative input will round towards zero and be greater when we need it to be smaller.
-		__m128d is_negative = _mm_cmpgt_sd(integer_part, value);
+		__m128d is_negative = _mm_cmpgt_sd(integer_part, input.value);
 
 		// Convert our mask to a float, ~0 yields -1.0 since it is a valid signed integer
 		// Positive values will yield a 0.0 bias
@@ -116,8 +124,21 @@ namespace rtm
 		// Add our bias to properly handle negative values
 		integer_part = _mm_add_sd(integer_part, bias);
 
-		__m128d result = _mm_or_pd(_mm_and_pd(use_original_input, value), _mm_andnot_pd(use_original_input, integer_part));
-		return _mm_cvtsd_f64(result);
+		__m128d result = _mm_or_pd(_mm_and_pd(use_original_input, input.value), _mm_andnot_pd(use_original_input, integer_part));
+		return scalard{ result };
+#endif
+	}
+#endif
+
+	//////////////////////////////////////////////////////////////////////////
+	// Returns the largest integer value not greater than the input.
+	// scalar_floor(1.8) = 1.0
+	// scalar_floor(-1.8) = -2.0
+	//////////////////////////////////////////////////////////////////////////
+	inline double scalar_floor(double input) RTM_NO_EXCEPT
+	{
+#if defined(RTM_SSE2_INTRINSICS)
+		return scalar_cast(scalar_floor(scalar_set(input)));
 #else
 		return std::floor(input);
 #endif
@@ -151,6 +172,16 @@ namespace rtm
 #endif
 	}
 
+#if defined(RTM_SSE2_INTRINSICS)
+	//////////////////////////////////////////////////////////////////////////
+	// Returns the absolute value of the input.
+	//////////////////////////////////////////////////////////////////////////
+	inline scalard RTM_SIMD_CALL scalar_abs(scalard input) RTM_NO_EXCEPT
+	{
+		return scalard{ _mm_max_sd(_mm_sub_sd(_mm_setzero_pd(), input.value), input.value) };
+	}
+#endif
+
 	//////////////////////////////////////////////////////////////////////////
 	// Returns the absolute value of the input.
 	//////////////////////////////////////////////////////////////////////////
@@ -158,6 +189,16 @@ namespace rtm
 	{
 		return std::fabs(input);
 	}
+
+#if defined(RTM_SSE2_INTRINSICS)
+	//////////////////////////////////////////////////////////////////////////
+	// Returns the square root of the input.
+	//////////////////////////////////////////////////////////////////////////
+	inline scalard RTM_SIMD_CALL scalar_sqrt(scalard input) RTM_NO_EXCEPT
+	{
+		return scalard{ _mm_sqrt_sd(input.value, input.value) };
+	}
+#endif
 
 	//////////////////////////////////////////////////////////////////////////
 	// Returns the square root of the input.
@@ -167,6 +208,18 @@ namespace rtm
 		return std::sqrt(input);
 	}
 
+#if defined(RTM_SSE2_INTRINSICS)
+	//////////////////////////////////////////////////////////////////////////
+	// Returns the reciprocal square root of the input.
+	//////////////////////////////////////////////////////////////////////////
+	inline scalard RTM_SIMD_CALL scalar_sqrt_reciprocal(scalard input) RTM_NO_EXCEPT
+	{
+		const __m128d input_sqrt = _mm_sqrt_sd(input.value, input.value);
+		const __m128d result = _mm_div_sd(_mm_set_sd(1.0), input_sqrt);
+		return scalard{ result };
+	}
+#endif
+
 	//////////////////////////////////////////////////////////////////////////
 	// Returns the reciprocal square root of the input.
 	//////////////////////////////////////////////////////////////////////////
@@ -174,6 +227,16 @@ namespace rtm
 	{
 		return 1.0 / scalar_sqrt(input);
 	}
+
+#if defined(RTM_SSE2_INTRINSICS)
+	//////////////////////////////////////////////////////////////////////////
+	// Returns the reciprocal of the input.
+	//////////////////////////////////////////////////////////////////////////
+	inline scalard RTM_SIMD_CALL scalar_reciprocal(scalard input) RTM_NO_EXCEPT
+	{
+		return scalard{ _mm_div_sd(_mm_set1_pd(1.0), input.value) };
+	}
+#endif
 
 	//////////////////////////////////////////////////////////////////////////
 	// Returns the reciprocal of the input.
@@ -183,6 +246,16 @@ namespace rtm
 		return 1.0 / input;
 	}
 
+#if defined(RTM_SSE2_INTRINSICS)
+	//////////////////////////////////////////////////////////////////////////
+	// Returns the addition of the two scalar inputs.
+	//////////////////////////////////////////////////////////////////////////
+	inline scalard RTM_SIMD_CALL scalar_add(scalard lhs, scalard rhs) RTM_NO_EXCEPT
+	{
+		return scalard{ _mm_add_sd(lhs.value, rhs.value) };
+	}
+#endif
+
 	//////////////////////////////////////////////////////////////////////////
 	// Returns the addition of the two scalar inputs.
 	//////////////////////////////////////////////////////////////////////////
@@ -190,6 +263,16 @@ namespace rtm
 	{
 		return lhs + rhs;
 	}
+
+#if defined(RTM_SSE2_INTRINSICS)
+	//////////////////////////////////////////////////////////////////////////
+	// Returns the subtraction of the two scalar inputs.
+	//////////////////////////////////////////////////////////////////////////
+	inline scalard RTM_SIMD_CALL scalar_sub(scalard lhs, scalard rhs) RTM_NO_EXCEPT
+	{
+		return scalard{ _mm_sub_sd(lhs.value, rhs.value) };
+	}
+#endif
 
 	//////////////////////////////////////////////////////////////////////////
 	// Returns the subtraction of the two scalar inputs.
@@ -199,6 +282,16 @@ namespace rtm
 		return lhs - rhs;
 	}
 
+#if defined(RTM_SSE2_INTRINSICS)
+	//////////////////////////////////////////////////////////////////////////
+	// Returns the multiplication of the two scalar inputs.
+	//////////////////////////////////////////////////////////////////////////
+	inline scalard RTM_SIMD_CALL scalar_mul(scalard lhs, scalard rhs) RTM_NO_EXCEPT
+	{
+		return scalard{ _mm_mul_sd(lhs.value, rhs.value) };
+	}
+#endif
+
 	//////////////////////////////////////////////////////////////////////////
 	// Returns the multiplication of the two scalar inputs.
 	//////////////////////////////////////////////////////////////////////////
@@ -206,6 +299,16 @@ namespace rtm
 	{
 		return lhs * rhs;
 	}
+
+#if defined(RTM_SSE2_INTRINSICS)
+	//////////////////////////////////////////////////////////////////////////
+	// Returns the division of the two scalar inputs.
+	//////////////////////////////////////////////////////////////////////////
+	inline scalard RTM_SIMD_CALL scalar_div(scalard lhs, scalard rhs) RTM_NO_EXCEPT
+	{
+		return scalard{ _mm_div_sd(lhs.value, rhs.value) };
+	}
+#endif
 
 	//////////////////////////////////////////////////////////////////////////
 	// Returns the division of the two scalar inputs.
@@ -215,6 +318,16 @@ namespace rtm
 		return lhs / rhs;
 	}
 
+#if defined(RTM_SSE2_INTRINSICS)
+	//////////////////////////////////////////////////////////////////////////
+	// Returns the multiplication/addition of the three inputs: s2 + (s0 * s1)
+	//////////////////////////////////////////////////////////////////////////
+	inline scalard RTM_SIMD_CALL scalar_mul_add(scalard s0, scalard s1, scalard s2) RTM_NO_EXCEPT
+	{
+		return scalard{ _mm_add_sd(_mm_mul_sd(s0.value, s1.value), s2.value) };
+	}
+#endif
+
 	//////////////////////////////////////////////////////////////////////////
 	// Returns the multiplication/addition of the three inputs: s2 + (s0 * s1)
 	//////////////////////////////////////////////////////////////////////////
@@ -222,6 +335,17 @@ namespace rtm
 	{
 		return (s0 * s1) + s2;
 	}
+
+#if defined(RTM_SSE2_INTRINSICS)
+	//////////////////////////////////////////////////////////////////////////
+	// Returns the negative multiplication/subtraction of the three inputs: -((s0 * s1) - s2)
+	// This is mathematically equivalent to: s2 - (s0 * s1)
+	//////////////////////////////////////////////////////////////////////////
+	inline scalard RTM_SIMD_CALL scalar_neg_mul_sub(scalard s0, scalard s1, scalard s2) RTM_NO_EXCEPT
+	{
+		return scalard{ _mm_sub_sd(s2.value, _mm_mul_sd(s0.value, s1.value)) };
+	}
+#endif
 
 	//////////////////////////////////////////////////////////////////////////
 	// Returns the negative multiplication/subtraction of the three inputs: -((s0 * s1) - s2)
@@ -231,6 +355,36 @@ namespace rtm
 	{
 		return s2 - (s0 * s1);
 	}
+
+#if defined(RTM_SSE2_INTRINSICS)
+	//////////////////////////////////////////////////////////////////////////
+	// Returns the linear interpolation of the two inputs at the specified alpha.
+	// The formula used is: ((1.0 - alpha) * start) + (alpha * end).
+	// Interpolation is stable and will return 'start' when alpha is 0.0 and 'end' when it is 1.0.
+	// This is the same instruction count when FMA is present but it might be slightly slower
+	// due to the extra multiplication compared to: start + (alpha * (end - start)).
+	//////////////////////////////////////////////////////////////////////////
+	RTM_DEPRECATED("Use a scalard 'alpha', to be removed in v2.0")
+	inline scalard RTM_SIMD_CALL scalar_lerp(scalard start, scalard end, double alpha) RTM_NO_EXCEPT
+	{
+		// ((1.0 - alpha) * start) + (alpha * end) == (start - alpha * start) + (alpha * end)
+		const scalard alpha_ = scalar_set(alpha);
+		return scalar_mul_add(end, alpha_, scalar_neg_mul_sub(start, alpha_, start));
+	}
+
+	//////////////////////////////////////////////////////////////////////////
+	// Returns the linear interpolation of the two inputs at the specified alpha.
+	// The formula used is: ((1.0 - alpha) * start) + (alpha * end).
+	// Interpolation is stable and will return 'start' when alpha is 0.0 and 'end' when it is 1.0.
+	// This is the same instruction count when FMA is present but it might be slightly slower
+	// due to the extra multiplication compared to: start + (alpha * (end - start)).
+	//////////////////////////////////////////////////////////////////////////
+	inline scalard RTM_SIMD_CALL scalar_lerp(scalard start, scalard end, scalard alpha) RTM_NO_EXCEPT
+	{
+		// ((1.0 - alpha) * start) + (alpha * end) == (start - alpha * start) + (alpha * end)
+		return scalar_mul_add(end, alpha, scalar_neg_mul_sub(start, alpha, start));
+	}
+#endif
 
 	//////////////////////////////////////////////////////////////////////////
 	// Returns the linear interpolation of the two inputs at the specified alpha.
@@ -245,6 +399,16 @@ namespace rtm
 		return (start - (alpha * start)) + (alpha * end);
 	}
 
+#if defined(RTM_SSE2_INTRINSICS)
+	//////////////////////////////////////////////////////////////////////////
+	// Returns the smallest of the two inputs.
+	//////////////////////////////////////////////////////////////////////////
+	inline scalard RTM_SIMD_CALL scalar_min(scalard lhs, scalard rhs) RTM_NO_EXCEPT
+	{
+		return scalard{ _mm_min_sd(lhs.value, rhs.value) };
+	}
+#endif
+
 	//////////////////////////////////////////////////////////////////////////
 	// Returns the smallest of the two inputs.
 	//////////////////////////////////////////////////////////////////////////
@@ -256,6 +420,16 @@ namespace rtm
 		return std::min(left, right);
 #endif
 	}
+
+#if defined(RTM_SSE2_INTRINSICS)
+	//////////////////////////////////////////////////////////////////////////
+	// Returns the largest of the two inputs.
+	//////////////////////////////////////////////////////////////////////////
+	inline scalard RTM_SIMD_CALL scalar_max(scalard lhs, scalard rhs) RTM_NO_EXCEPT
+	{
+		return scalard{ _mm_max_sd(lhs.value, rhs.value) };
+	}
+#endif
 
 	//////////////////////////////////////////////////////////////////////////
 	// Returns the largest of the two inputs.
@@ -269,6 +443,16 @@ namespace rtm
 #endif
 	}
 
+#if defined(RTM_SSE2_INTRINSICS)
+	//////////////////////////////////////////////////////////////////////////
+	// Returns true if both inputs are equal, false otherwise.
+	//////////////////////////////////////////////////////////////////////////
+	inline bool RTM_SIMD_CALL scalar_is_equal(scalard lhs, scalard rhs) RTM_NO_EXCEPT
+	{
+		return _mm_comieq_sd(lhs.value, rhs.value) != 0;
+	}
+#endif
+
 	//////////////////////////////////////////////////////////////////////////
 	// Returns true if both inputs are equal, false otherwise.
 	//////////////////////////////////////////////////////////////////////////
@@ -276,6 +460,16 @@ namespace rtm
 	{
 		return lhs == rhs;
 	}
+
+#if defined(RTM_SSE2_INTRINSICS)
+	//////////////////////////////////////////////////////////////////////////
+	// Returns true if lhs < rhs, false otherwise.
+	//////////////////////////////////////////////////////////////////////////
+	inline bool RTM_SIMD_CALL scalar_is_lower(scalard lhs, scalard rhs) RTM_NO_EXCEPT
+	{
+		return _mm_comilt_sd(lhs.value, rhs.value) != 0;
+	}
+#endif
 
 	//////////////////////////////////////////////////////////////////////////
 	// Returns true if lhs < rhs, false otherwise.
@@ -285,6 +479,16 @@ namespace rtm
 		return lhs < rhs;
 	}
 
+#if defined(RTM_SSE2_INTRINSICS)
+	//////////////////////////////////////////////////////////////////////////
+	// Returns true if lhs <= rhs, false otherwise.
+	//////////////////////////////////////////////////////////////////////////
+	inline bool RTM_SIMD_CALL scalar_is_lower_equal(scalard lhs, scalard rhs) RTM_NO_EXCEPT
+	{
+		return _mm_comile_sd(lhs.value, rhs.value) != 0;
+	}
+#endif
+
 	//////////////////////////////////////////////////////////////////////////
 	// Returns true if lhs <= rhs, false otherwise.
 	//////////////////////////////////////////////////////////////////////////
@@ -292,6 +496,16 @@ namespace rtm
 	{
 		return lhs <= rhs;
 	}
+
+#if defined(RTM_SSE2_INTRINSICS)
+	//////////////////////////////////////////////////////////////////////////
+	// Returns true if lhs > rhs, false otherwise.
+	//////////////////////////////////////////////////////////////////////////
+	inline bool RTM_SIMD_CALL scalar_is_greater(scalard lhs, scalard rhs) RTM_NO_EXCEPT
+	{
+		return _mm_comigt_sd(lhs.value, rhs.value) != 0;
+	}
+#endif
 
 	//////////////////////////////////////////////////////////////////////////
 	// Returns true if lhs > rhs, false otherwise.
@@ -301,6 +515,16 @@ namespace rtm
 		return lhs > rhs;
 	}
 
+#if defined(RTM_SSE2_INTRINSICS)
+	//////////////////////////////////////////////////////////////////////////
+	// Returns true if lhs >= rhs, false otherwise.
+	//////////////////////////////////////////////////////////////////////////
+	inline bool RTM_SIMD_CALL scalar_is_greater_equal(scalard lhs, scalard rhs) RTM_NO_EXCEPT
+	{
+		return _mm_comige_sd(lhs.value, rhs.value) != 0;
+	}
+#endif
+
 	//////////////////////////////////////////////////////////////////////////
 	// Returns true if lhs >= rhs, false otherwise.
 	//////////////////////////////////////////////////////////////////////////
@@ -308,6 +532,25 @@ namespace rtm
 	{
 		return lhs >= rhs;
 	}
+
+#if defined(RTM_SSE2_INTRINSICS)
+	//////////////////////////////////////////////////////////////////////////
+	// Returns true if both inputs are nearly equal, otherwise false: abs(lhs - rhs) <= threshold
+	//////////////////////////////////////////////////////////////////////////
+	inline bool RTM_SIMD_CALL scalar_near_equal(scalard lhs, scalard rhs, scalard threshold) RTM_NO_EXCEPT
+	{
+		return scalar_is_lower_equal(scalar_abs(scalar_sub(lhs, rhs)), threshold);
+	}
+
+	//////////////////////////////////////////////////////////////////////////
+	// Returns true if both inputs are nearly equal, otherwise false: abs(lhs - rhs) <= 0.00001
+	//////////////////////////////////////////////////////////////////////////
+	RTM_DEPRECATED("Always specify a threshold explicitly, to be removed in v2.0")
+	inline bool RTM_SIMD_CALL scalar_near_equal(scalard lhs, scalard rhs) RTM_NO_EXCEPT
+	{
+		return scalar_is_lower_equal(scalar_abs(scalar_sub(lhs, rhs)), scalar_set(0.00001));
+	}
+#endif
 
 	//////////////////////////////////////////////////////////////////////////
 	// Returns true if both inputs are nearly equal, otherwise false: abs(lhs - rhs) <= threshold
@@ -346,6 +589,49 @@ namespace rtm
 		return input >= 0.0 ? scalar_floor(input + 0.5) : scalar_ceil(input - 0.5);
 	}
 
+#if defined(RTM_SSE2_INTRINSICS)
+	//////////////////////////////////////////////////////////////////////////
+	// Returns the rounded input using banker's rounding (half to even).
+	// scalar_round_bankers(2.5) = 2.0
+	// scalar_round_bankers(1.5) = 2.0
+	// scalar_round_bankers(1.2) = 1.0
+	// scalar_round_bankers(-2.5) = -2.0
+	// scalar_round_bankers(-1.5) = -2.0
+	// scalar_round_bankers(-1.2) = -1.0
+	// Note: This function relies on the default floating point rounding mode (banker's rounding).
+	//////////////////////////////////////////////////////////////////////////
+	inline scalard RTM_SIMD_CALL scalar_round_bankers(scalard input) RTM_NO_EXCEPT
+	{
+#if defined(RTM_SSE4_INTRINSICS)
+		return scalard{ _mm_cvtsd_f64(_mm_round_sd(input.value, input.value, _MM_FROUND_TO_NEAREST_INT | _MM_FROUND_NO_EXC)) };
+#else
+#if defined(_MSC_VER) && !defined(__clang__)
+		constexpr __m128i abs_mask = { 0xFFU, 0xFFU, 0xFFU, 0xFFU, 0xFFU, 0xFFU, 0xFFU, 0x7FU, 0xFFU, 0xFFU, 0xFFU, 0xFFU, 0xFFU, 0xFFU, 0xFFU, 0x7FU };
+#else
+		constexpr __m128i abs_mask = { 0x7FFFFFFFFFFFFFFFULL, 0x7FFFFFFFFFFFFFFFULL };
+#endif
+
+		const __m128d sign_mask = _mm_set_pd(-0.0, -0.0);
+		__m128d sign = _mm_and_pd(input.value, sign_mask);
+
+		// We add the largest integer that a 64 bit floating point number can represent and subtract it afterwards.
+		// This relies on the fact that if we had a fractional part, the new value cannot be represented accurately
+		// and IEEE 754 will perform rounding for us. The default rounding mode is Banker's rounding.
+		// This has the effect of removing the fractional part while simultaneously rounding.
+		// Use the same sign as the input value to make sure we handle positive and negative values.
+		const __m128d fractional_limit = _mm_set1_pd(4503599627370496.0); // 2^52
+		__m128d truncating_offset = _mm_or_pd(sign, fractional_limit);
+		__m128d integer_part = _mm_sub_sd(_mm_add_sd(input.value, truncating_offset), truncating_offset);
+
+		__m128d abs_input = _mm_and_pd(input.value, _mm_castsi128_pd(abs_mask));
+		__m128d is_input_large = _mm_cmpge_sd(abs_input, fractional_limit);
+		__m128d result = _mm_or_pd(_mm_and_pd(is_input_large, input.value), _mm_andnot_pd(is_input_large, integer_part));
+
+		return scalard{ result };
+#endif
+	}
+#endif
+
 	//////////////////////////////////////////////////////////////////////////
 	// Returns the rounded input using banker's rounding (half to even).
 	// scalar_round_bankers(2.5) = 2.0
@@ -357,34 +643,8 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	inline double scalar_round_bankers(double input) RTM_NO_EXCEPT
 	{
-#if defined(RTM_SSE4_INTRINSICS)
-		__m128d input_s = _mm_set1_pd(input);
-		return _mm_cvtsd_f64(_mm_round_sd(input_s, input_s, _MM_FROUND_TO_NEAREST_INT | _MM_FROUND_NO_EXC));
-#elif defined(RTM_SSE2_INTRINSICS)
-#if defined(_MSC_VER) && !defined(__clang__)
-		constexpr __m128i abs_mask = { 0xFFU, 0xFFU, 0xFFU, 0xFFU, 0xFFU, 0xFFU, 0xFFU, 0x7FU, 0xFFU, 0xFFU, 0xFFU, 0xFFU, 0xFFU, 0xFFU, 0xFFU, 0x7FU };
-#else
-		constexpr __m128i abs_mask = { 0x7FFFFFFFFFFFFFFFULL, 0x7FFFFFFFFFFFFFFFULL };
-#endif
-		__m128d input_s = _mm_set1_pd(input);
-
-		const __m128d sign_mask = _mm_set_pd(-0.0, -0.0);
-		__m128d sign = _mm_and_pd(input_s, sign_mask);
-
-		// We add the largest integer that a 64 bit floating point number can represent and subtract it afterwards.
-		// This relies on the fact that if we had a fractional part, the new value cannot be represented accurately
-		// and IEEE 754 will perform rounding for us. The default rounding mode is Banker's rounding.
-		// This has the effect of removing the fractional part while simultaneously rounding.
-		// Use the same sign as the input value to make sure we handle positive and negative values.
-		const __m128d fractional_limit = _mm_set1_pd(4503599627370496.0); // 2^52
-		__m128d truncating_offset = _mm_or_pd(sign, fractional_limit);
-		__m128d integer_part = _mm_sub_sd(_mm_add_sd(input_s, truncating_offset), truncating_offset);
-
-		__m128d abs_input = _mm_and_pd(input_s, _mm_castsi128_pd(abs_mask));
-		__m128d is_input_large = _mm_cmpge_sd(abs_input, fractional_limit);
-		__m128d result = _mm_or_pd(_mm_and_pd(is_input_large, input_s), _mm_andnot_pd(is_input_large, integer_part));
-
-		return _mm_cvtsd_f64(result);
+#if defined(RTM_SSE2_INTRINSICS)
+		return scalar_cast(scalar_round_bankers(scalar_set(input)));
 #else
 		int64_t whole = static_cast<int64_t>(input);
 		double whole_f = static_cast<double>(whole);
@@ -465,295 +725,6 @@ namespace rtm
 	{
 		return std::atan2(x, y);
 	}
-
-	//////////////////////////////////////////////////////////////////////////
-	// SSE implementation of scalard
-	//////////////////////////////////////////////////////////////////////////
-
-#if defined(RTM_SSE2_INTRINSICS)
-	//////////////////////////////////////////////////////////////////////////
-	// Writes a scalar to memory.
-	//////////////////////////////////////////////////////////////////////////
-	inline void RTM_SIMD_CALL scalar_store(scalard input, double* output) RTM_NO_EXCEPT
-	{
-		_mm_store_sd(output, input.value);
-	}
-
-	//////////////////////////////////////////////////////////////////////////
-	// Returns the largest integer value not greater than the input.
-	// scalar_floor(1.8) = 1.0
-	// scalar_floor(-1.8) = -2.0
-	//////////////////////////////////////////////////////////////////////////
-	inline scalard RTM_SIMD_CALL scalar_floor(scalard input) RTM_NO_EXCEPT
-	{
-#if defined(RTM_SSE4_INTRINSICS)
-		return scalard{ _mm_round_sd(input.value, input.value, 0x9) };
-#else
-		// NaN, +- Infinity, and numbers larger or equal to 2^23 remain unchanged
-		// since they have no fractional part.
-
-#if defined(_MSC_VER) && !defined(__clang__)
-		constexpr __m128i abs_mask = { 0xFFU, 0xFFU, 0xFFU, 0xFFU, 0xFFU, 0xFFU, 0xFFU, 0x7FU, 0xFFU, 0xFFU, 0xFFU, 0xFFU, 0xFFU, 0xFFU, 0xFFU, 0x7FU };
-#else
-		constexpr __m128i abs_mask = { 0x7FFFFFFF7FFFFFFFULL, 0x7FFFFFFF7FFFFFFFULL };
-#endif
-		const __m128d fractional_limit = _mm_set1_pd(4503599627370496.0); // 2^52
-
-		// Build our mask, larger values that have no fractional part, and infinities will be true
-		// Smaller values and NaN will be false
-		__m128d abs_input = _mm_and_pd(input.value, _mm_castsi128_pd(abs_mask));
-		__m128d is_input_large = _mm_cmpge_sd(abs_input, fractional_limit);
-
-		// Test if our input is NaN with (value != value), it is only true for NaN
-		__m128d is_nan = _mm_cmpneq_sd(input.value, input.value);
-
-		// Combine our masks to determine if we should return the original value
-		__m128d use_original_input = _mm_or_pd(is_input_large, is_nan);
-
-		// Convert to an integer and back
-		__m128d integer_part = _mm_cvtsi32_sd(input.value, _mm_cvtsd_si32(input.value));
-
-		// Test if the returned value is greater than the original.
-		// A negative input will round towards zero and be greater when we need it to be smaller.
-		__m128d is_negative = _mm_cmpgt_sd(integer_part, input.value);
-
-		// Convert our mask to a float, ~0 yields -1.0 since it is a valid signed integer
-		// Positive values will yield a 0.0 bias
-		__m128d bias = _mm_cvtepi32_pd(_mm_castpd_si128(is_negative));
-
-		// Add our bias to properly handle negative values
-		integer_part = _mm_add_sd(integer_part, bias);
-
-		__m128d result = _mm_or_pd(_mm_and_pd(use_original_input, input.value), _mm_andnot_pd(use_original_input, integer_part));
-		return scalard{ result };
-#endif
-	}
-
-	//////////////////////////////////////////////////////////////////////////
-	// Returns the reciprocal of the input.
-	//////////////////////////////////////////////////////////////////////////
-	inline scalard RTM_SIMD_CALL scalar_reciprocal(scalard input) RTM_NO_EXCEPT
-	{
-		return scalard{ _mm_div_sd(_mm_set1_pd(1.0), input.value) };
-	}
-
-	//////////////////////////////////////////////////////////////////////////
-	// Returns the addition of the two scalar inputs.
-	//////////////////////////////////////////////////////////////////////////
-	inline scalard RTM_SIMD_CALL scalar_add(scalard lhs, scalard rhs) RTM_NO_EXCEPT
-	{
-		return scalard{ _mm_add_sd(lhs.value, rhs.value) };
-	}
-
-	//////////////////////////////////////////////////////////////////////////
-	// Returns the subtraction of the two scalar inputs.
-	//////////////////////////////////////////////////////////////////////////
-	inline scalard RTM_SIMD_CALL scalar_sub(scalard lhs, scalard rhs) RTM_NO_EXCEPT
-	{
-		return scalard{ _mm_sub_sd(lhs.value, rhs.value) };
-	}
-
-	//////////////////////////////////////////////////////////////////////////
-	// Returns the multiplication of the two scalar inputs.
-	//////////////////////////////////////////////////////////////////////////
-	inline scalard RTM_SIMD_CALL scalar_mul(scalard lhs, scalard rhs) RTM_NO_EXCEPT
-	{
-		return scalard{ _mm_mul_sd(lhs.value, rhs.value) };
-	}
-
-	//////////////////////////////////////////////////////////////////////////
-	// Returns the division of the two scalar inputs.
-	//////////////////////////////////////////////////////////////////////////
-	inline scalard RTM_SIMD_CALL scalar_div(scalard lhs, scalard rhs) RTM_NO_EXCEPT
-	{
-		return scalard{ _mm_div_sd(lhs.value, rhs.value) };
-	}
-
-	//////////////////////////////////////////////////////////////////////////
-	// Returns the multiplication/addition of the three inputs: s2 + (s0 * s1)
-	//////////////////////////////////////////////////////////////////////////
-	inline scalard RTM_SIMD_CALL scalar_mul_add(scalard s0, scalard s1, scalard s2) RTM_NO_EXCEPT
-	{
-		return scalard{ _mm_add_sd(_mm_mul_sd(s0.value, s1.value), s2.value) };
-	}
-
-	//////////////////////////////////////////////////////////////////////////
-	// Returns the negative multiplication/subtraction of the three inputs: -((s0 * s1) - s2)
-	// This is mathematically equivalent to: s2 - (s0 * s1)
-	//////////////////////////////////////////////////////////////////////////
-	inline scalard RTM_SIMD_CALL scalar_neg_mul_sub(scalard s0, scalard s1, scalard s2) RTM_NO_EXCEPT
-	{
-		return scalard{ _mm_sub_sd(s2.value, _mm_mul_sd(s0.value, s1.value)) };
-	}
-
-	//////////////////////////////////////////////////////////////////////////
-	// Returns the linear interpolation of the two inputs at the specified alpha.
-	// The formula used is: ((1.0 - alpha) * start) + (alpha * end).
-	// Interpolation is stable and will return 'start' when alpha is 0.0 and 'end' when it is 1.0.
-	// This is the same instruction count when FMA is present but it might be slightly slower
-	// due to the extra multiplication compared to: start + (alpha * (end - start)).
-	//////////////////////////////////////////////////////////////////////////
-	RTM_DEPRECATED("Use a scalard 'alpha', to be removed in v2.0")
-	inline scalard RTM_SIMD_CALL scalar_lerp(scalard start, scalard end, double alpha) RTM_NO_EXCEPT
-	{
-		// ((1.0 - alpha) * start) + (alpha * end) == (start - alpha * start) + (alpha * end)
-		const scalard alpha_ = scalar_set(alpha);
-		return scalar_mul_add(end, alpha_, scalar_neg_mul_sub(start, alpha_, start));
-	}
-
-	//////////////////////////////////////////////////////////////////////////
-	// Returns the linear interpolation of the two inputs at the specified alpha.
-	// The formula used is: ((1.0 - alpha) * start) + (alpha * end).
-	// Interpolation is stable and will return 'start' when alpha is 0.0 and 'end' when it is 1.0.
-	// This is the same instruction count when FMA is present but it might be slightly slower
-	// due to the extra multiplication compared to: start + (alpha * (end - start)).
-	//////////////////////////////////////////////////////////////////////////
-	inline scalard RTM_SIMD_CALL scalar_lerp(scalard start, scalard end, scalard alpha) RTM_NO_EXCEPT
-	{
-		// ((1.0 - alpha) * start) + (alpha * end) == (start - alpha * start) + (alpha * end)
-		return scalar_mul_add(end, alpha, scalar_neg_mul_sub(start, alpha, start));
-	}
-
-	//////////////////////////////////////////////////////////////////////////
-	// Returns the smallest of the two inputs.
-	//////////////////////////////////////////////////////////////////////////
-	inline scalard RTM_SIMD_CALL scalar_min(scalard lhs, scalard rhs) RTM_NO_EXCEPT
-	{
-		return scalard{ _mm_min_sd(lhs.value, rhs.value) };
-	}
-
-	//////////////////////////////////////////////////////////////////////////
-	// Returns the largest of the two inputs.
-	//////////////////////////////////////////////////////////////////////////
-	inline scalard RTM_SIMD_CALL scalar_max(scalard lhs, scalard rhs) RTM_NO_EXCEPT
-	{
-		return scalard{ _mm_max_sd(lhs.value, rhs.value) };
-	}
-
-	//////////////////////////////////////////////////////////////////////////
-	// Returns the absolute value of the input.
-	//////////////////////////////////////////////////////////////////////////
-	inline scalard RTM_SIMD_CALL scalar_abs(scalard input) RTM_NO_EXCEPT
-	{
-		return scalard{ _mm_max_sd(_mm_sub_sd(_mm_setzero_pd(), input.value), input.value) };
-	}
-
-	//////////////////////////////////////////////////////////////////////////
-	// Returns the square root of the input.
-	//////////////////////////////////////////////////////////////////////////
-	inline scalard RTM_SIMD_CALL scalar_sqrt(scalard input) RTM_NO_EXCEPT
-	{
-		return scalard{ _mm_sqrt_sd(input.value, input.value) };
-	}
-
-	//////////////////////////////////////////////////////////////////////////
-	// Returns the reciprocal square root of the input.
-	//////////////////////////////////////////////////////////////////////////
-	inline scalard RTM_SIMD_CALL scalar_sqrt_reciprocal(scalard input) RTM_NO_EXCEPT
-	{
-		const __m128d input_sqrt = _mm_sqrt_sd(input.value, input.value);
-		const __m128d result = _mm_div_sd(_mm_set_sd(1.0), input_sqrt);
-		return scalard{ result };
-	}
-
-	//////////////////////////////////////////////////////////////////////////
-	// Returns the rounded input using banker's rounding (half to even).
-	// scalar_round_bankers(2.5) = 2.0
-	// scalar_round_bankers(1.5) = 2.0
-	// scalar_round_bankers(1.2) = 1.0
-	// scalar_round_bankers(-2.5) = -2.0
-	// scalar_round_bankers(-1.5) = -2.0
-	// scalar_round_bankers(-1.2) = -1.0
-	// Note: This function relies on the default floating point rounding mode (banker's rounding).
-	//////////////////////////////////////////////////////////////////////////
-	inline scalard RTM_SIMD_CALL scalar_round_bankers(scalard input) RTM_NO_EXCEPT
-	{
-#if defined(RTM_SSE4_INTRINSICS)
-		return scalard{ _mm_cvtsd_f64(_mm_round_sd(input.value, input.value, _MM_FROUND_TO_NEAREST_INT | _MM_FROUND_NO_EXC)) };
-#else
-#if defined(_MSC_VER) && !defined(__clang__)
-		constexpr __m128i abs_mask = { 0xFFU, 0xFFU, 0xFFU, 0xFFU, 0xFFU, 0xFFU, 0xFFU, 0x7FU, 0xFFU, 0xFFU, 0xFFU, 0xFFU, 0xFFU, 0xFFU, 0xFFU, 0x7FU };
-#else
-		constexpr __m128i abs_mask = { 0x7FFFFFFFFFFFFFFFULL, 0x7FFFFFFFFFFFFFFFULL };
-#endif
-
-		const __m128d sign_mask = _mm_set_pd(-0.0, -0.0);
-		__m128d sign = _mm_and_pd(input.value, sign_mask);
-
-		// We add the largest integer that a 64 bit floating point number can represent and subtract it afterwards.
-		// This relies on the fact that if we had a fractional part, the new value cannot be represented accurately
-		// and IEEE 754 will perform rounding for us. The default rounding mode is Banker's rounding.
-		// This has the effect of removing the fractional part while simultaneously rounding.
-		// Use the same sign as the input value to make sure we handle positive and negative values.
-		const __m128d fractional_limit = _mm_set1_pd(4503599627370496.0); // 2^52
-		__m128d truncating_offset = _mm_or_pd(sign, fractional_limit);
-		__m128d integer_part = _mm_sub_sd(_mm_add_sd(input.value, truncating_offset), truncating_offset);
-
-		__m128d abs_input = _mm_and_pd(input.value, _mm_castsi128_pd(abs_mask));
-		__m128d is_input_large = _mm_cmpge_sd(abs_input, fractional_limit);
-		__m128d result = _mm_or_pd(_mm_and_pd(is_input_large, input.value), _mm_andnot_pd(is_input_large, integer_part));
-
-		return scalard{ result };
-#endif
-	}
-
-	//////////////////////////////////////////////////////////////////////////
-	// Returns true if both inputs are equal, false otherwise.
-	//////////////////////////////////////////////////////////////////////////
-	inline bool RTM_SIMD_CALL scalar_is_equal(scalard lhs, scalard rhs) RTM_NO_EXCEPT
-	{
-		return _mm_comieq_sd(lhs.value, rhs.value) != 0;
-	}
-
-	//////////////////////////////////////////////////////////////////////////
-	// Returns true if lhs < rhs, false otherwise.
-	//////////////////////////////////////////////////////////////////////////
-	inline bool RTM_SIMD_CALL scalar_is_lower(scalard lhs, scalard rhs) RTM_NO_EXCEPT
-	{
-		return _mm_comilt_sd(lhs.value, rhs.value) != 0;
-	}
-
-	//////////////////////////////////////////////////////////////////////////
-	// Returns true if lhs <= rhs, false otherwise.
-	//////////////////////////////////////////////////////////////////////////
-	inline bool RTM_SIMD_CALL scalar_is_lower_equal(scalard lhs, scalard rhs) RTM_NO_EXCEPT
-	{
-		return _mm_comile_sd(lhs.value, rhs.value) != 0;
-	}
-
-	//////////////////////////////////////////////////////////////////////////
-	// Returns true if lhs > rhs, false otherwise.
-	//////////////////////////////////////////////////////////////////////////
-	inline bool RTM_SIMD_CALL scalar_is_greater(scalard lhs, scalard rhs) RTM_NO_EXCEPT
-	{
-		return _mm_comigt_sd(lhs.value, rhs.value) != 0;
-	}
-
-	//////////////////////////////////////////////////////////////////////////
-	// Returns true if lhs >= rhs, false otherwise.
-	//////////////////////////////////////////////////////////////////////////
-	inline bool RTM_SIMD_CALL scalar_is_greater_equal(scalard lhs, scalard rhs) RTM_NO_EXCEPT
-	{
-		return _mm_comige_sd(lhs.value, rhs.value) != 0;
-	}
-
-	//////////////////////////////////////////////////////////////////////////
-	// Returns true if both inputs are nearly equal, otherwise false: abs(lhs - rhs) <= threshold
-	//////////////////////////////////////////////////////////////////////////
-	inline bool RTM_SIMD_CALL scalar_near_equal(scalard lhs, scalard rhs, scalard threshold) RTM_NO_EXCEPT
-	{
-		return scalar_is_lower_equal(scalar_abs(scalar_sub(lhs, rhs)), threshold);
-	}
-
-	//////////////////////////////////////////////////////////////////////////
-	// Returns true if both inputs are nearly equal, otherwise false: abs(lhs - rhs) <= 0.00001
-	//////////////////////////////////////////////////////////////////////////
-	RTM_DEPRECATED("Always specify a threshold explicitly, to be removed in v2.0")
-	inline bool RTM_SIMD_CALL scalar_near_equal(scalard lhs, scalard rhs) RTM_NO_EXCEPT
-	{
-		return scalar_is_lower_equal(scalar_abs(scalar_sub(lhs, rhs)), scalar_set(0.00001));
-	}
-#endif
 }
 
 RTM_IMPL_FILE_PRAGMA_POP
