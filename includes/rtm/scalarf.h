@@ -394,14 +394,14 @@ namespace rtm
 		// and IEEE 754 will perform rounding for us. The default rounding mode is Banker's rounding.
 		// This has the effect of removing the fractional part while simultaneously rounding.
 		// Use the same sign as the input value to make sure we handle positive and negative values.
-		const __m128 largest_fractional_integer = _mm_set_ps1(8388608.0F); // 2^23
-		__m128 truncating_offset = _mm_xor_ps(sign, largest_fractional_integer);
+		const __m128 fractional_limit = _mm_set_ps1(8388608.0F); // 2^23
+		__m128 truncating_offset = _mm_or_ps(sign, fractional_limit);
 		__m128 integer_part = _mm_sub_ss(_mm_add_ss(input_s, truncating_offset), truncating_offset);
 
 		// If our input was so large that it had no fractional part, return it unchanged
 		// Otherwise return our integer part
 		__m128 abs_input = _mm_and_ps(input_s, _mm_castsi128_ps(abs_mask));
-		__m128 is_input_large = _mm_cmpge_ss(abs_input, largest_fractional_integer);
+		__m128 is_input_large = _mm_cmpge_ss(abs_input, fractional_limit);
 		__m128 result = _mm_or_ps(_mm_and_ps(is_input_large, input_s), _mm_andnot_ps(is_input_large, integer_part));
 
 		return _mm_cvtss_f32(result);
@@ -693,14 +693,14 @@ namespace rtm
 		// and IEEE 754 will perform rounding for us. The default rounding mode is Banker's rounding.
 		// This has the effect of removing the fractional part while simultaneously rounding.
 		// Use the same sign as the input value to make sure we handle positive and negative values.
-		const __m128 largest_fractional_integer = _mm_set_ps1(8388608.0F); // 2^23
-		__m128 truncating_offset = _mm_xor_ps(sign, largest_fractional_integer);
+		const __m128 fractional_limit = _mm_set_ps1(8388608.0F); // 2^23
+		__m128 truncating_offset = _mm_or_ps(sign, fractional_limit);
 		__m128 integer_part = _mm_sub_ss(_mm_add_ss(input.value, truncating_offset), truncating_offset);
 
 		// If our input was so large that it had no fractional part, return it unchanged
 		// Otherwise return our integer part
 		__m128 abs_input = _mm_and_ps(input.value, _mm_castsi128_ps(abs_mask));
-		__m128 is_input_large = _mm_cmpge_ss(abs_input, largest_fractional_integer);
+		__m128 is_input_large = _mm_cmpge_ss(abs_input, fractional_limit);
 		__m128 result = _mm_or_ps(_mm_and_ps(is_input_large, input.value), _mm_andnot_ps(is_input_large, integer_part));
 
 		return scalarf{ result };
