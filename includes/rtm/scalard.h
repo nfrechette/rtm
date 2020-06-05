@@ -95,7 +95,7 @@ namespace rtm
 #if defined(_MSC_VER) && !defined(__clang__)
 		constexpr __m128i abs_mask = { 0xFFU, 0xFFU, 0xFFU, 0xFFU, 0xFFU, 0xFFU, 0xFFU, 0x7FU, 0xFFU, 0xFFU, 0xFFU, 0xFFU, 0xFFU, 0xFFU, 0xFFU, 0x7FU };
 #else
-		constexpr __m128i abs_mask = { 0x7FFFFFFF7FFFFFFFULL, 0x7FFFFFFF7FFFFFFFULL };
+		constexpr __m128i abs_mask = { 0x7FFFFFFFFFFFFFFFULL, 0x7FFFFFFFFFFFFFFFULL };
 #endif
 		const __m128d fractional_limit = _mm_set1_pd(4503599627370496.0); // 2^52
 
@@ -161,7 +161,7 @@ namespace rtm
 #if defined(_MSC_VER) && !defined(__clang__)
 		constexpr __m128i abs_mask = { 0xFFU, 0xFFU, 0xFFU, 0xFFU, 0xFFU, 0xFFU, 0xFFU, 0x7FU, 0xFFU, 0xFFU, 0xFFU, 0xFFU, 0xFFU, 0xFFU, 0xFFU, 0x7FU };
 #else
-		constexpr __m128i abs_mask = { 0x7FFFFFFF7FFFFFFFULL, 0x7FFFFFFF7FFFFFFFULL };
+		constexpr __m128i abs_mask = { 0x7FFFFFFFFFFFFFFFULL, 0x7FFFFFFFFFFFFFFFULL };
 #endif
 		const __m128d fractional_limit = _mm_set1_pd(4503599627370496.0); // 2^52
 
