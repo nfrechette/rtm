@@ -754,7 +754,7 @@ namespace rtm
 	inline vector4d vector_floor(const vector4d& input) RTM_NO_EXCEPT
 	{
 #if defined(RTM_SSE4_INTRINSICS)
-		return _mm_floor_pd(input);
+		return vector4d{ _mm_floor_pd(input.xy), _mm_floor_pd(input.zw) };
 #elif defined(RTM_SSE2_INTRINSICS)
 		// NaN, +- Infinity, and numbers larger or equal to 2^23 remain unchanged
 		// since they have no fractional part.
