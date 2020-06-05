@@ -894,6 +894,28 @@ namespace rtm
 		return std::acos(value);
 	}
 
+#if defined(RTM_SSE2_INTRINSICS)
+	//////////////////////////////////////////////////////////////////////////
+	// Returns the arc-tangent of the input.
+	// Note that due to the sign ambiguity, atan cannot determine which quadrant
+	// the value resides in. See scalar_atan2.
+	//////////////////////////////////////////////////////////////////////////
+	inline scalard RTM_SIMD_CALL scalar_atan(scalard value)
+	{
+		return scalar_set(std::atan(scalar_cast(value)));
+	}
+#endif
+
+	//////////////////////////////////////////////////////////////////////////
+	// Returns the arc-tangent of the input.
+	// Note that due to the sign ambiguity, atan cannot determine which quadrant
+	// the value resides in. See scalar_atan2.
+	//////////////////////////////////////////////////////////////////////////
+	inline double scalar_atan(double value)
+	{
+		return std::atan(value);
+	}
+
 	//////////////////////////////////////////////////////////////////////////
 	// Returns the arc-tangent of [x/y] using the sign of the arguments to
 	// determine the correct quadrant.
