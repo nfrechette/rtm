@@ -56,4 +56,9 @@ TEST_CASE("vector4d math misc", "[math][vector4]")
 	CHECK(double(vector_get_y(vector_floor(large_values))) == scalar_floor(double(vector_get_y(large_values))));
 	CHECK(double(vector_get_z(vector_floor(large_values))) == scalar_floor(double(vector_get_z(large_values))));
 	CHECK(double(vector_get_w(vector_floor(large_values))) == scalar_floor(double(vector_get_w(large_values))));
+
+	CHECK(double(vector_get_x(vector_ceil(large_values))) == scalar_ceil(double(vector_get_x(large_values))));
+	CHECK(double(vector_get_y(vector_ceil(large_values))) == scalar_ceil(double(vector_get_y(large_values))));
+	CHECK(double(vector_get_z(vector_ceil(large_values))) == scalar_ceil(double(vector_get_z(large_values))));
+	CHECK(double(vector_get_w(vector_ceil(large_values))) == scalar_ceil(double(vector_get_w(large_values))));
 }

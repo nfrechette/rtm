@@ -462,10 +462,18 @@ void test_vector4_arithmetic_impl(const FloatType threshold)
 	CHECK(std::isnan(FloatType(vector_get_z(vector_floor(nan)))));
 	CHECK(std::isnan(FloatType(vector_get_w(vector_floor(nan)))));
 
-	CHECK(scalar_near_equal(vector_get_x(vector_ceil(test_value0)), scalar_ceil(test_value0_flt[0]), threshold));
-	CHECK(scalar_near_equal(vector_get_y(vector_ceil(test_value0)), scalar_ceil(test_value0_flt[1]), threshold));
-	CHECK(scalar_near_equal(vector_get_z(vector_ceil(test_value0)), scalar_ceil(test_value0_flt[2]), threshold));
-	CHECK(scalar_near_equal(vector_get_w(vector_ceil(test_value0)), scalar_ceil(test_value0_flt[3]), threshold));
+	CHECK(FloatType(vector_get_x(vector_ceil(test_value0)) == scalar_ceil(test_value0_flt[0])));
+	CHECK(FloatType(vector_get_y(vector_ceil(test_value0)) == scalar_ceil(test_value0_flt[1])));
+	CHECK(FloatType(vector_get_z(vector_ceil(test_value0)) == scalar_ceil(test_value0_flt[2])));
+	CHECK(FloatType(vector_get_w(vector_ceil(test_value0)) == scalar_ceil(test_value0_flt[3])));
+	CHECK(FloatType(vector_get_x(vector_ceil(infinity))) == scalar_ceil(FloatType(vector_get_x(infinity))));
+	CHECK(FloatType(vector_get_y(vector_ceil(infinity))) == scalar_ceil(FloatType(vector_get_y(infinity))));
+	CHECK(FloatType(vector_get_z(vector_ceil(infinity))) == scalar_ceil(FloatType(vector_get_z(infinity))));
+	CHECK(FloatType(vector_get_w(vector_ceil(infinity))) == scalar_ceil(FloatType(vector_get_w(infinity))));
+	CHECK(std::isnan(FloatType(vector_get_x(vector_ceil(nan)))));
+	CHECK(std::isnan(FloatType(vector_get_y(vector_ceil(nan)))));
+	CHECK(std::isnan(FloatType(vector_get_z(vector_ceil(nan)))));
+	CHECK(std::isnan(FloatType(vector_get_w(vector_ceil(nan)))));
 
 	const Vector4Type scalar_cross3_result = scalar_cross3<Vector4Type, FloatType>(test_value0, test_value1);
 	const Vector4Type vector_cross3_result = vector_cross3(test_value0, test_value1);
