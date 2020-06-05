@@ -78,6 +78,46 @@ namespace rtm
 #if defined(RTM_SSE4_INTRINSICS)
 		const __m128d value = _mm_set1_pd(input);
 		return _mm_cvtsd_f64(_mm_round_sd(value, value, 0x9));
+#elif defined(RTM_SSE2_INTRINSICS)
+		const __m128d value = _mm_set1_pd(input);
+
+		// NaN, +- Infinity, and numbers larger or equal to 2^23 remain unchanged
+		// since they have no fractional part.
+
+#if defined(_MSC_VER) && !defined(__clang__)
+		constexpr __m128i abs_mask = { 0xFFU, 0xFFU, 0xFFU, 0xFFU, 0xFFU, 0xFFU, 0xFFU, 0x7FU, 0xFFU, 0xFFU, 0xFFU, 0xFFU, 0xFFU, 0xFFU, 0xFFU, 0x7FU };
+#else
+		constexpr __m128i abs_mask = { 0x7FFFFFFF7FFFFFFFULL, 0x7FFFFFFF7FFFFFFFULL };
+#endif
+		const __m128d fractional_limit = _mm_set1_pd(4503599627370496.0); // 2^52
+
+		// Build our mask, larger values that have no fractional part, and infinities will be true
+		// Smaller values and NaN will be false
+		__m128d abs_input = _mm_and_pd(value, _mm_castsi128_pd(abs_mask));
+		__m128d is_input_large = _mm_cmpge_sd(abs_input, fractional_limit);
+
+		// Test if our input is NaN with (value != value), it is only true for NaN
+		__m128d is_nan = _mm_cmpneq_sd(value, value);
+
+		// Combine our masks to determine if we should return the original value
+		__m128d use_original_input = _mm_or_pd(is_input_large, is_nan);
+
+		// Convert to an integer and back
+		__m128d integer_part = _mm_cvtsi32_sd(value, _mm_cvtsd_si32(value));
+
+		// Test if the returned value is greater than the original.
+		// A negative input will round towards zero and be greater when we need it to be smaller.
+		__m128d is_negative = _mm_cmpgt_sd(integer_part, value);
+
+		// Convert our mask to a float, ~0 yields -1.0 since it is a valid signed integer
+		// Positive values will yield a 0.0 bias
+		__m128d bias = _mm_cvtepi32_pd(_mm_castpd_si128(is_negative));
+
+		// Add our bias to properly handle negative values
+		integer_part = _mm_add_sd(integer_part, bias);
+
+		__m128d result = _mm_or_pd(_mm_and_pd(use_original_input, value), _mm_andnot_pd(use_original_input, integer_part));
+		return _mm_cvtsd_f64(result);
 #else
 		return std::floor(input);
 #endif
@@ -437,6 +477,56 @@ namespace rtm
 	inline void RTM_SIMD_CALL scalar_store(scalard input, double* output) RTM_NO_EXCEPT
 	{
 		_mm_store_sd(output, input.value);
+	}
+
+	//////////////////////////////////////////////////////////////////////////
+	// Returns the largest integer value not greater than the input.
+	// scalar_floor(1.8) = 1.0
+	// scalar_floor(-1.8) = -2.0
+	//////////////////////////////////////////////////////////////////////////
+	inline scalard RTM_SIMD_CALL scalar_floor(scalard input) RTM_NO_EXCEPT
+	{
+#if defined(RTM_SSE4_INTRINSICS)
+		return scalard{ _mm_round_sd(value, value, 0x9) };
+#else
+		// NaN, +- Infinity, and numbers larger or equal to 2^23 remain unchanged
+		// since they have no fractional part.
+
+#if defined(_MSC_VER) && !defined(__clang__)
+		constexpr __m128i abs_mask = { 0xFFU, 0xFFU, 0xFFU, 0xFFU, 0xFFU, 0xFFU, 0xFFU, 0x7FU, 0xFFU, 0xFFU, 0xFFU, 0xFFU, 0xFFU, 0xFFU, 0xFFU, 0x7FU };
+#else
+		constexpr __m128i abs_mask = { 0x7FFFFFFF7FFFFFFFULL, 0x7FFFFFFF7FFFFFFFULL };
+#endif
+		const __m128d fractional_limit = _mm_set1_pd(4503599627370496.0); // 2^52
+
+		// Build our mask, larger values that have no fractional part, and infinities will be true
+		// Smaller values and NaN will be false
+		__m128d abs_input = _mm_and_pd(input.value, _mm_castsi128_pd(abs_mask));
+		__m128d is_input_large = _mm_cmpge_sd(abs_input, fractional_limit);
+
+		// Test if our input is NaN with (value != value), it is only true for NaN
+		__m128d is_nan = _mm_cmpneq_sd(input.value, input.value);
+
+		// Combine our masks to determine if we should return the original value
+		__m128d use_original_input = _mm_or_pd(is_input_large, is_nan);
+
+		// Convert to an integer and back
+		__m128d integer_part = _mm_cvtsi32_sd(input.value, _mm_cvtsd_si32(input.value));
+
+		// Test if the returned value is greater than the original.
+		// A negative input will round towards zero and be greater when we need it to be smaller.
+		__m128d is_negative = _mm_cmpgt_sd(integer_part, input.value);
+
+		// Convert our mask to a float, ~0 yields -1.0 since it is a valid signed integer
+		// Positive values will yield a 0.0 bias
+		__m128d bias = _mm_cvtepi32_pd(_mm_castpd_si128(is_negative));
+
+		// Add our bias to properly handle negative values
+		integer_part = _mm_add_sd(integer_part, bias);
+
+		__m128d result = _mm_or_pd(_mm_and_pd(use_original_input, input.value), _mm_andnot_pd(use_original_input, integer_part));
+		return scalard{ result };
+#endif
 	}
 
 	//////////////////////////////////////////////////////////////////////////
