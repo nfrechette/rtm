@@ -2225,6 +2225,56 @@ namespace rtm
 		return vector_set(x, y, z, w);
 #endif
 	}
+
+	//////////////////////////////////////////////////////////////////////////
+	// Returns per component the cosine of the input angle.
+	//////////////////////////////////////////////////////////////////////////
+	inline vector4f RTM_SIMD_CALL vector_cos(vector4f_arg0 input) RTM_NO_EXCEPT
+	{
+#if defined(RTM_SSE2_INTRINSICS)
+		// Use a degree 10 minimax approximation polynomial
+		// https://gist.github.com/publik-void/067f7f2fef32dbe5c27d6e215f824c91#cos-rel-error-minimized-degree-10
+
+		// Remap our input in the [-pi, pi] range
+		__m128 quotient = _mm_mul_ps(input, _mm_set_ps1(1.0F / 6.283185307179586476925286766559005768F));
+		quotient = vector_round_bankers(quotient);
+		quotient = _mm_mul_ps(quotient, _mm_set_ps1(6.283185307179586476925286766559005768F));
+		__m128 x = _mm_sub_ps(input, quotient);
+
+		// Remap our input in the [-pi/2, pi/2] range
+		const __m128 sign_mask = _mm_set_ps(-0.0F, -0.0F, -0.0F, -0.0F);
+		__m128 x_sign = _mm_and_ps(x, sign_mask);
+		__m128 reference = _mm_or_ps(x_sign, _mm_set_ps1(3.141592653589793238462643383279502884F));
+		const __m128 reflection = _mm_sub_ps(reference, x);
+
+		const __m128i abs_mask = _mm_set_epi32(0x7FFFFFFFULL, 0x7FFFFFFFULL, 0x7FFFFFFFULL, 0x7FFFFFFFULL);
+		__m128 x_abs = _mm_and_ps(x, _mm_castsi128_ps(abs_mask));
+		__m128 is_less_equal_than_half_pi = _mm_cmple_ps(x_abs, _mm_set_ps1(1.570796326794896619231321691639751442F));
+
+#if defined(RTM_AVX_INTRINSICS)
+		x = _mm_blendv_ps(reflection, x, is_less_equal_than_half_pi);
+#else
+		x = _mm_or_ps(_mm_andnot_ps(is_less_equal_than_half_pi, reflection), _mm_and_ps(x, is_less_equal_than_half_pi));
+#endif
+
+		// Calculate our value
+		const __m128 x2 = _mm_mul_ps(x, x);
+		__m128 result = _mm_add_ps(_mm_mul_ps(x2, _mm_set_ps1(-2.57924183182520559803981154578763508e-7F)), _mm_set_ps1(0.00002474324689798977846771995314323317F));
+		result = _mm_add_ps(_mm_mul_ps(result, x2), _mm_set_ps1(-0.00138879697151174993540500936074733546F));
+		result = _mm_add_ps(_mm_mul_ps(result, x2), _mm_set_ps1(0.0416665985274352494970529831079268818F));
+		result = _mm_add_ps(_mm_mul_ps(result, x2), _mm_set_ps1(-0.49999998049253581064488831264724178F));
+		result = _mm_add_ps(_mm_mul_ps(result, x2), _mm_set_ps1(0.99999999901810067632218592152414676F));
+
+		// Remap into [-pi, pi]
+		return _mm_or_ps(result, _mm_andnot_ps(is_less_equal_than_half_pi, sign_mask));
+#else
+		scalarf x = scalar_cos(scalarf(vector_get_x(input)));
+		scalarf y = scalar_cos(scalarf(vector_get_y(input)));
+		scalarf z = scalar_cos(scalarf(vector_get_z(input)));
+		scalarf w = scalar_cos(scalarf(vector_get_w(input)));
+		return vector_set(x, y, z, w);
+#endif
+	}
 }
 
 RTM_IMPL_FILE_PRAGMA_POP

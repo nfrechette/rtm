@@ -1029,6 +1029,11 @@ void test_vector4_impl(const FloatType threshold)
 			CHECK(scalar_near_equal(FloatType(vector_get_y(vector_sin(angle_v))), scalar_sin(angle), threshold));
 			CHECK(scalar_near_equal(FloatType(vector_get_z(vector_sin(angle_v))), scalar_sin(angle), threshold));
 			CHECK(scalar_near_equal(FloatType(vector_get_w(vector_sin(angle_v))), scalar_sin(angle), threshold));
+
+			CHECK(scalar_near_equal(FloatType(vector_get_x(vector_cos(angle_v))), scalar_cos(angle), threshold));
+			CHECK(scalar_near_equal(FloatType(vector_get_y(vector_cos(angle_v))), scalar_cos(angle), threshold));
+			CHECK(scalar_near_equal(FloatType(vector_get_z(vector_cos(angle_v))), scalar_cos(angle), threshold));
+			CHECK(scalar_near_equal(FloatType(vector_get_w(vector_cos(angle_v))), scalar_cos(angle), threshold));
 		}
 	}
 }
