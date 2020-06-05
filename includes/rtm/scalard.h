@@ -803,6 +803,9 @@ namespace rtm
 #if defined(RTM_SSE2_INTRINSICS)
 		return scalar_cast(scalar_round_bankers(scalar_set(input)));
 #else
+		if (std::isnan(input))
+			return input;
+
 		int64_t whole = static_cast<int64_t>(input);
 		double whole_f = static_cast<double>(whole);
 		double remainder = scalar_abs(input - whole_f);
