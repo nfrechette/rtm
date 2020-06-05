@@ -2136,7 +2136,7 @@ namespace rtm
 	}
 
 	//////////////////////////////////////////////////////////////////////////
-	// Returns the rounded input using banker's rounding (half to even).
+	// Returns per component the rounded input using banker's rounding (half to even).
 	// vector_round_bankers(2.5) = 2.0
 	// vector_round_bankers(1.5) = 2.0
 	// vector_round_bankers(1.2) = 1.0
