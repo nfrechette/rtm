@@ -644,6 +644,26 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	inline scalard RTM_SIMD_CALL scalar_round_symmetric(scalard input) RTM_NO_EXCEPT
 	{
+#if defined(RTM_SSE4_INTRINSICS)
+		const __m128d sign_mask = _mm_set_pd(-0.0, -0.0);
+		__m128d sign = _mm_and_pd(input.value, sign_mask);
+
+		// For positive values, we add a bias of 0.5.
+		// For negative values, we add a bias of -0.5.
+		__m128d bias = _mm_or_pd(sign, _mm_set1_pd(0.5));
+		__m128d biased_input = _mm_add_sd(input.value, bias);
+
+		__m128d floored = _mm_floor_sd(biased_input, biased_input);
+		__m128d ceiled = _mm_ceil_sd(biased_input, biased_input);
+		__m128d is_positive = _mm_cmpge_sd(input.value, _mm_setzero_pd());
+
+#if defined(RTM_AVX_INTRINSICS)
+		__m128d result = _mm_blendv_pd(ceiled, floored, is_positive);
+#else
+		__m128d result = _mm_or_pd(_mm_and_pd(is_positive, floored), _mm_andnot_pd(is_positive, ceiled));
+#endif
+		return scalard{ result };
+#else
 		// NaN, +- Infinity, and numbers larger or equal to 2^23 remain unchanged
 		// since they have no fractional part.
 
@@ -679,6 +699,7 @@ namespace rtm
 		__m128d result = _mm_or_pd(_mm_and_pd(use_original_input, input.value), _mm_andnot_pd(use_original_input, integer_part));
 
 		return scalard{ result };
+#endif
 	}
 #endif
 
