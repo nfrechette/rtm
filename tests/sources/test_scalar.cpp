@@ -280,6 +280,13 @@ static void test_scalar_impl(const FloatType threshold, const FloatType trig_thr
 	CHECK(scalar_is_finite(std::numeric_limits<FloatType>::quiet_NaN()) == false);
 	CHECK(scalar_is_finite(std::numeric_limits<FloatType>::signaling_NaN()) == false);
 
+	CHECK(scalar_is_finite(scalar_set(FloatType(0.0))) == true);
+	CHECK(scalar_is_finite(scalar_set(FloatType(32.0))) == true);
+	CHECK(scalar_is_finite(scalar_set(FloatType(-32.0))) == true);
+	CHECK(scalar_is_finite(scalar_set(std::numeric_limits<FloatType>::infinity())) == false);
+	CHECK(scalar_is_finite(scalar_set(std::numeric_limits<FloatType>::quiet_NaN())) == false);
+	CHECK(scalar_is_finite(scalar_set(std::numeric_limits<FloatType>::signaling_NaN())) == false);
+
 	CHECK(scalar_round_symmetric(FloatType(-1.75)) == FloatType(-2.0));
 	CHECK(scalar_round_symmetric(FloatType(-1.5)) == FloatType(-2.0));
 	CHECK(scalar_round_symmetric(FloatType(-1.4999)) == FloatType(-1.0));

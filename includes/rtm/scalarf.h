@@ -674,6 +674,25 @@ namespace rtm
 		return scalar_abs(lhs - rhs) <= 0.00001F;
 	}
 
+#if defined(RTM_SSE2_INTRINSICS)
+	//////////////////////////////////////////////////////////////////////////
+	// Returns true if the input is finite (not NaN or Inf), false otherwise.
+	//////////////////////////////////////////////////////////////////////////
+	inline bool RTM_SIMD_CALL scalar_is_finite(scalarf_arg0 input) RTM_NO_EXCEPT
+	{
+		const __m128i abs_mask = _mm_set_epi32(0x7FFFFFFFULL, 0x7FFFFFFFULL, 0x7FFFFFFFULL, 0x7FFFFFFFULL);
+		__m128 abs_input = _mm_and_ps(input.value, _mm_castsi128_ps(abs_mask));
+
+		const __m128 infinity = _mm_set_ps1(std::numeric_limits<float>::infinity());
+		__m128 is_infinity = _mm_cmpeq_ss(abs_input, infinity);
+
+		__m128 is_nan = _mm_cmpneq_ss(input.value, input.value);
+
+		__m128 is_not_finite = _mm_or_ps(is_infinity, is_nan);
+		return (_mm_movemask_ps(is_not_finite) & 0x1) == 0;
+	}
+#endif
+
 	//////////////////////////////////////////////////////////////////////////
 	// Returns true if the input is finite (not NaN or Inf), false otherwise.
 	//////////////////////////////////////////////////////////////////////////
