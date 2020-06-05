@@ -901,7 +901,7 @@ namespace rtm
 		// Combine our masks to determine if we should return the original value
 		__m128 use_original_input = _mm_or_ps(is_input_large, is_nan);
 
-		// Convert to an integer and back
+		// Convert to an integer and back. This does banker's rounding by default
 		__m128 integer_part = _mm_cvtepi32_ps(_mm_cvtps_epi32(input));
 
 		// Test if the returned value is smaller than the original.
@@ -940,8 +940,8 @@ namespace rtm
 #endif
 		const __m128 fractional_limit = _mm_set_ps1(8388608.0F); // 2^23
 
-																 // Build our mask, larger values that have no fractional part, and infinities will be true
-																 // Smaller values and NaN will be false
+		// Build our mask, larger values that have no fractional part, and infinities will be true
+		// Smaller values and NaN will be false
 		__m128 abs_input = _mm_and_ps(input, _mm_castsi128_ps(abs_mask));
 		__m128 is_input_large = _mm_cmpge_ps(abs_input, fractional_limit);
 
@@ -951,7 +951,7 @@ namespace rtm
 		// Combine our masks to determine if we should return the original value
 		__m128 use_original_input = _mm_or_ps(is_input_large, is_nan);
 
-		// Convert to an integer and back
+		// Convert to an integer and back. This does banker's rounding by default
 		__m128 integer_part = _mm_cvtepi32_ps(_mm_cvtps_epi32(input));
 
 		// Test if the returned value is greater than the original.
