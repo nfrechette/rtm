@@ -38,6 +38,9 @@ using namespace rtm;
 template<typename FloatType>
 static void test_scalar_impl(const FloatType threshold, const FloatType trig_threshold)
 {
+	const FloatType infinity = std::numeric_limits<FloatType>::infinity();
+	const FloatType nan = std::numeric_limits<FloatType>::quiet_NaN();
+
 	CHECK(scalar_cast(scalar_set(FloatType(0.2345))) == FloatType(0.2345));
 
 	const FloatType value = FloatType(0.2345);
@@ -57,6 +60,20 @@ static void test_scalar_impl(const FloatType threshold, const FloatType trig_thr
 	CHECK(scalar_floor(FloatType(-0.5)) == FloatType(-1.0));
 	CHECK(scalar_floor(FloatType(-2.5)) == FloatType(-3.0));
 	CHECK(scalar_floor(FloatType(-3.0)) == FloatType(-3.0));
+	CHECK(scalar_floor(FloatType(infinity)) == FloatType(infinity));
+	CHECK(scalar_floor(FloatType(-infinity)) == FloatType(-infinity));
+	CHECK(std::isnan(scalar_floor(FloatType(nan))));
+
+	CHECK(scalar_cast(scalar_floor(scalar_set(FloatType(0.0)))) == FloatType(0.0));
+	CHECK(scalar_cast(scalar_floor(scalar_set(FloatType(0.5)))) == FloatType(0.0));
+	CHECK(scalar_cast(scalar_floor(scalar_set(FloatType(2.5)))) == FloatType(2.0));
+	CHECK(scalar_cast(scalar_floor(scalar_set(FloatType(3.0)))) == FloatType(3.0));
+	CHECK(scalar_cast(scalar_floor(scalar_set(FloatType(-0.5)))) == FloatType(-1.0));
+	CHECK(scalar_cast(scalar_floor(scalar_set(FloatType(-2.5)))) == FloatType(-3.0));
+	CHECK(scalar_cast(scalar_floor(scalar_set(FloatType(-3.0)))) == FloatType(-3.0));
+	CHECK(scalar_cast(scalar_floor(scalar_set(FloatType(infinity)))) == FloatType(infinity));
+	CHECK(scalar_cast(scalar_floor(scalar_set(FloatType(-infinity)))) == FloatType(-infinity));
+	CHECK(std::isnan(scalar_cast(scalar_floor(scalar_set(FloatType(nan))))));
 
 	CHECK(scalar_ceil(FloatType(0.0)) == FloatType(0.0));
 	CHECK(scalar_ceil(FloatType(0.5)) == FloatType(1.0));
@@ -296,9 +313,19 @@ static void test_scalar_impl(const FloatType threshold, const FloatType trig_thr
 TEST_CASE("scalarf math", "[math][scalar]")
 {
 	test_scalar_impl<float>(1.0E-6F, 1.0E-5F);
+
+	CHECK(scalar_floor(1073741824.5F) == 1073741824.0F);
+	CHECK(scalar_floor(-1073741824.5F) == -1073741824.0F);
+	CHECK(scalar_cast(scalar_floor(scalar_set(1073741824.5F))) == 1073741824.0F);
+	CHECK(scalar_cast(scalar_floor(scalar_set(-1073741824.5F))) == -1073741824.0F);
 }
 
 TEST_CASE("scalard math", "[math][scalar]")
 {
 	test_scalar_impl<double>(1.0E-9, 1.0E-9);
+
+	CHECK(scalar_floor(36028797018963968.5) == 36028797018963968.5);
+	CHECK(scalar_floor(-36028797018963968.5) == -36028797018963968.5);
+	CHECK(scalar_cast(scalar_floor(scalar_set(36028797018963968.5))) == 36028797018963968.5);
+	CHECK(scalar_cast(scalar_floor(scalar_set(-36028797018963968.5))) == -36028797018963968.5);
 }
