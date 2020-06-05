@@ -229,7 +229,12 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	inline scalard RTM_SIMD_CALL scalar_abs(scalard input) RTM_NO_EXCEPT
 	{
-		return scalard{ _mm_max_sd(_mm_sub_sd(_mm_setzero_pd(), input.value), input.value) };
+#if defined(_MSC_VER) && !defined(__clang__)
+		constexpr __m128i abs_mask = { 0xFFU, 0xFFU, 0xFFU, 0xFFU, 0xFFU, 0xFFU, 0xFFU, 0x7FU, 0xFFU, 0xFFU, 0xFFU, 0xFFU, 0xFFU, 0xFFU, 0xFFU, 0x7FU };
+#else
+		constexpr __m128i abs_mask = { 0x7FFFFFFFFFFFFFFFULL, 0x7FFFFFFFFFFFFFFFULL };
+#endif
+		return scalard{ _mm_and_pd(input.value, _mm_castsi128_pd(abs_mask)) };
 	}
 #endif
 
