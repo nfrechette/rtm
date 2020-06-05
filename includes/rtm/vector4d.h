@@ -1877,6 +1877,53 @@ namespace rtm
 	{
 		return vector_round_symmetric(input);
 	}
+
+	//////////////////////////////////////////////////////////////////////////
+	// Returns the rounded input using banker's rounding (half to even).
+	// vector_round_bankers(2.5) = 2.0
+	// vector_round_bankers(1.5) = 2.0
+	// vector_round_bankers(1.2) = 1.0
+	// vector_round_bankers(-2.5) = -2.0
+	// vector_round_bankers(-1.5) = -2.0
+	// vector_round_bankers(-1.2) = -1.0
+	//////////////////////////////////////////////////////////////////////////
+	inline vector4d vector_round_bankers(const vector4d& input) RTM_NO_EXCEPT
+	{
+#if defined(RTM_SSE4_INTRINSICS)
+		return vector4d{ _mm_round_pd(input.xy, _MM_FROUND_TO_NEAREST_INT | _MM_FROUND_NO_EXC), _mm_round_pd(input.zw, _MM_FROUND_TO_NEAREST_INT | _MM_FROUND_NO_EXC) };
+#elif defined(RTM_SSE2_INTRINSICS)
+		const __m128i abs_mask = _mm_set_epi64x(0x7FFFFFFFFFFFFFFFULL, 0x7FFFFFFFFFFFFFFFULL);
+
+		const __m128d sign_mask = _mm_set_pd(-0.0, -0.0);
+		__m128d sign_xy = _mm_and_pd(input.xy, sign_mask);
+		__m128d sign_zw = _mm_and_pd(input.zw, sign_mask);
+
+		// We add the largest integer that a 64 bit floating point number can represent and subtract it afterwards.
+		// This relies on the fact that if we had a fractional part, the new value cannot be represented accurately
+		// and IEEE 754 will perform rounding for us. The default rounding mode is Banker's rounding.
+		// This has the effect of removing the fractional part while simultaneously rounding.
+		// Use the same sign as the input value to make sure we handle positive and negative values.
+		const __m128d fractional_limit = _mm_set1_pd(4503599627370496.0); // 2^52
+		__m128d truncating_offset_xy = _mm_or_pd(sign_xy, fractional_limit);
+		__m128d truncating_offset_zw = _mm_or_pd(sign_zw, fractional_limit);
+		__m128d integer_part_xy = _mm_sub_pd(_mm_add_pd(input.xy, truncating_offset_xy), truncating_offset_xy);
+		__m128d integer_part_zw = _mm_sub_pd(_mm_add_pd(input.zw, truncating_offset_zw), truncating_offset_zw);
+
+		__m128d abs_input_xy = _mm_and_pd(input.xy, _mm_castsi128_pd(abs_mask));
+		__m128d abs_input_zw = _mm_and_pd(input.zw, _mm_castsi128_pd(abs_mask));
+		__m128d is_input_large_xy = _mm_cmpge_pd(abs_input_xy, fractional_limit);
+		__m128d is_input_large_zw = _mm_cmpge_pd(abs_input_zw, fractional_limit);
+		__m128d result_xy = _mm_or_pd(_mm_and_pd(is_input_large_xy, input.xy), _mm_andnot_pd(is_input_large_xy, integer_part_xy));
+		__m128d result_zw = _mm_or_pd(_mm_and_pd(is_input_large_zw, input.zw), _mm_andnot_pd(is_input_large_zw, integer_part_zw));
+		return vector4d{ result_xy, result_zw };
+#else
+		scalard x = scalar_round_bankers(scalard(vector_get_x(input)));
+		scalard y = scalar_round_bankers(scalard(vector_get_y(input)));
+		scalard z = scalar_round_bankers(scalard(vector_get_z(input)));
+		scalard w = scalar_round_bankers(scalard(vector_get_w(input)));
+		return vector_set(x, y, z, w);
+#endif
+	}
 }
 
 RTM_IMPL_FILE_PRAGMA_POP

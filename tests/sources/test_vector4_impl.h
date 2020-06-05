@@ -940,7 +940,7 @@ void test_vector4_impl(const FloatType threshold)
 		CHECK(FloatType(vector_get_y(result2)) == scalar_round_symmetric(FloatType(vector_get_y(input2))));
 		CHECK(FloatType(vector_get_z(result2)) == scalar_round_symmetric(FloatType(vector_get_z(input2))));
 		CHECK(FloatType(vector_get_w(result2)) == scalar_round_symmetric(FloatType(vector_get_w(input2))));
-		
+
 		CHECK(FloatType(vector_get_x(result3)) == scalar_round_symmetric(FloatType(vector_get_x(input3))));
 		CHECK(FloatType(vector_get_y(result3)) == scalar_round_symmetric(FloatType(vector_get_y(input3))));
 		CHECK(FloatType(vector_get_z(result3)) == scalar_round_symmetric(FloatType(vector_get_z(input3))));
@@ -955,5 +955,61 @@ void test_vector4_impl(const FloatType threshold)
 		CHECK(std::isnan(FloatType(vector_get_y(result5))));
 		CHECK(std::isnan(FloatType(vector_get_z(result5))));
 		CHECK(std::isnan(FloatType(vector_get_w(result5))));
+	}
+
+	{
+		const Vector4Type infinity_v = vector_set(std::numeric_limits<FloatType>::infinity());
+		const Vector4Type nan_v = vector_set(std::numeric_limits<FloatType>::quiet_NaN());
+
+		const Vector4Type input0 = vector_set(FloatType(-1.75), FloatType(-1.5), FloatType(-1.4999), FloatType(-0.5));
+		const Vector4Type input1 = vector_set(FloatType(-0.4999), FloatType(0.0), FloatType(0.4999), FloatType(0.5));
+		const Vector4Type input2 = vector_set(FloatType(1.4999), FloatType(1.5), FloatType(1.75), FloatType(0.0));
+		const Vector4Type input3 = infinity_v;
+		const Vector4Type input4 = vector_neg(infinity_v);
+		const Vector4Type input5 = nan_v;
+		const Vector4Type input6 = vector_set(FloatType(2.5), FloatType(-2.5), FloatType(2.75), FloatType(-2.75));
+
+		const Vector4Type result0 = vector_round_bankers(input0);
+		const Vector4Type result1 = vector_round_bankers(input1);
+		const Vector4Type result2 = vector_round_bankers(input2);
+		const Vector4Type result3 = vector_round_bankers(input3);
+		const Vector4Type result4 = vector_round_bankers(input4);
+		const Vector4Type result5 = vector_round_bankers(input5);
+		const Vector4Type result6 = vector_round_bankers(input6);
+
+		CHECK(FloatType(vector_get_x(result0)) == scalar_round_bankers(FloatType(vector_get_x(input0))));
+		CHECK(FloatType(vector_get_y(result0)) == scalar_round_bankers(FloatType(vector_get_y(input0))));
+		CHECK(FloatType(vector_get_z(result0)) == scalar_round_bankers(FloatType(vector_get_z(input0))));
+		CHECK(FloatType(vector_get_w(result0)) == scalar_round_bankers(FloatType(vector_get_w(input0))));
+
+		CHECK(FloatType(vector_get_x(result1)) == scalar_round_bankers(FloatType(vector_get_x(input1))));
+		CHECK(FloatType(vector_get_y(result1)) == scalar_round_bankers(FloatType(vector_get_y(input1))));
+		CHECK(FloatType(vector_get_z(result1)) == scalar_round_bankers(FloatType(vector_get_z(input1))));
+		CHECK(FloatType(vector_get_w(result1)) == scalar_round_bankers(FloatType(vector_get_w(input1))));
+
+		CHECK(FloatType(vector_get_x(result2)) == scalar_round_bankers(FloatType(vector_get_x(input2))));
+		CHECK(FloatType(vector_get_y(result2)) == scalar_round_bankers(FloatType(vector_get_y(input2))));
+		CHECK(FloatType(vector_get_z(result2)) == scalar_round_bankers(FloatType(vector_get_z(input2))));
+		CHECK(FloatType(vector_get_w(result2)) == scalar_round_bankers(FloatType(vector_get_w(input2))));
+
+		CHECK(FloatType(vector_get_x(result3)) == scalar_round_bankers(FloatType(vector_get_x(input3))));
+		CHECK(FloatType(vector_get_y(result3)) == scalar_round_bankers(FloatType(vector_get_y(input3))));
+		CHECK(FloatType(vector_get_z(result3)) == scalar_round_bankers(FloatType(vector_get_z(input3))));
+		CHECK(FloatType(vector_get_w(result3)) == scalar_round_bankers(FloatType(vector_get_w(input3))));
+
+		CHECK(FloatType(vector_get_x(result4)) == scalar_round_bankers(FloatType(vector_get_x(input4))));
+		CHECK(FloatType(vector_get_y(result4)) == scalar_round_bankers(FloatType(vector_get_y(input4))));
+		CHECK(FloatType(vector_get_z(result4)) == scalar_round_bankers(FloatType(vector_get_z(input4))));
+		CHECK(FloatType(vector_get_w(result4)) == scalar_round_bankers(FloatType(vector_get_w(input4))));
+
+		CHECK(std::isnan(FloatType(vector_get_x(result5))));
+		CHECK(std::isnan(FloatType(vector_get_y(result5))));
+		CHECK(std::isnan(FloatType(vector_get_z(result5))));
+		CHECK(std::isnan(FloatType(vector_get_w(result5))));
+
+		CHECK(FloatType(vector_get_x(result6)) == scalar_round_bankers(FloatType(vector_get_x(input6))));
+		CHECK(FloatType(vector_get_y(result6)) == scalar_round_bankers(FloatType(vector_get_y(input6))));
+		CHECK(FloatType(vector_get_z(result6)) == scalar_round_bankers(FloatType(vector_get_z(input6))));
+		CHECK(FloatType(vector_get_w(result6)) == scalar_round_bankers(FloatType(vector_get_w(input6))));
 	}
 }
