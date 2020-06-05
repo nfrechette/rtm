@@ -644,6 +644,9 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	inline scalard RTM_SIMD_CALL scalar_round_symmetric(scalard input) RTM_NO_EXCEPT
 	{
+		// NaN, +- Infinity, and numbers larger or equal to 2^23 remain unchanged
+		// since they have no fractional part.
+
 #if defined(RTM_SSE4_INTRINSICS)
 		const __m128d sign_mask = _mm_set_pd(-0.0, -0.0);
 		__m128d sign = _mm_and_pd(input.value, sign_mask);
@@ -664,9 +667,6 @@ namespace rtm
 #endif
 		return scalard{ result };
 #else
-		// NaN, +- Infinity, and numbers larger or equal to 2^23 remain unchanged
-		// since they have no fractional part.
-
 #if defined(_MSC_VER) && !defined(__clang__)
 		constexpr __m128i abs_mask = { 0xFFU, 0xFFU, 0xFFU, 0xFFU, 0xFFU, 0xFFU, 0xFFU, 0x7FU, 0xFFU, 0xFFU, 0xFFU, 0xFFU, 0xFFU, 0xFFU, 0xFFU, 0x7FU };
 #else
