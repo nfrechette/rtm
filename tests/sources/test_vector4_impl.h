@@ -1012,4 +1012,23 @@ void test_vector4_impl(const FloatType threshold)
 		CHECK(FloatType(vector_get_z(result6)) == scalar_round_bankers(FloatType(vector_get_z(input6))));
 		CHECK(FloatType(vector_get_w(result6)) == scalar_round_bankers(FloatType(vector_get_w(input6))));
 	}
+
+	{
+		using AngleType = typename float_traits<FloatType>::angle;
+
+		const AngleType half_pi = constants::half_pi();
+		const AngleType pi = constants::pi();
+
+		const FloatType angles[] = { FloatType(0.0), pi.as_radians(), -pi.as_radians(), half_pi.as_radians(), -half_pi.as_radians(), FloatType(0.5), FloatType(32.5), FloatType(-0.5), FloatType(-32.5) };
+
+		for (const FloatType angle : angles)
+		{
+			const Vector4Type angle_v = vector_set(angle);
+
+			CHECK(scalar_near_equal(FloatType(vector_get_x(vector_sin(angle_v))), scalar_sin(angle), threshold));
+			CHECK(scalar_near_equal(FloatType(vector_get_y(vector_sin(angle_v))), scalar_sin(angle), threshold));
+			CHECK(scalar_near_equal(FloatType(vector_get_z(vector_sin(angle_v))), scalar_sin(angle), threshold));
+			CHECK(scalar_near_equal(FloatType(vector_get_w(vector_sin(angle_v))), scalar_sin(angle), threshold));
+		}
+	}
 }

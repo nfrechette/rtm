@@ -1924,6 +1924,18 @@ namespace rtm
 		return vector_set(x, y, z, w);
 #endif
 	}
+
+	//////////////////////////////////////////////////////////////////////////
+	// Returns per component the sine of the input angle.
+	//////////////////////////////////////////////////////////////////////////
+	inline vector4d vector_sin(const vector4d& input) RTM_NO_EXCEPT
+	{
+		scalard x = scalar_sin(scalard(vector_get_x(input)));
+		scalard y = scalar_sin(scalard(vector_get_y(input)));
+		scalard z = scalar_sin(scalard(vector_get_z(input)));
+		scalard w = scalar_sin(scalard(vector_get_w(input)));
+		return vector_set(x, y, z, w);
+	}
 }
 
 RTM_IMPL_FILE_PRAGMA_POP
