@@ -46,7 +46,9 @@ TEST_CASE("matrix3x3f math misc", "[math][matrix3x3]")
 	{
 		quatf rotation_around_z = quat_from_euler(degrees(0.0F), degrees(90.0F), degrees(0.0F));
 		matrix3x3f src = matrix_from_quat(rotation_around_z);
-		matrix3x3d dst = matrix_cast(src);
+
+		// Work around clang5 compiler crash by marking this variable as static
+		static matrix3x3d dst = matrix_cast(src);
 		CHECK(vector_all_near_equal3(vector_cast(src.x_axis), dst.x_axis, 1.0E-4));
 		CHECK(vector_all_near_equal3(vector_cast(src.y_axis), dst.y_axis, 1.0E-4));
 		CHECK(vector_all_near_equal3(vector_cast(src.z_axis), dst.z_axis, 1.0E-4));
