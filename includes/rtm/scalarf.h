@@ -902,7 +902,7 @@ namespace rtm
 	inline scalarf RTM_SIMD_CALL scalar_sin(scalarf_arg0 angle) RTM_NO_EXCEPT
 	{
 		// Use a degree 11 minimax approximation polynomial
-		// See: https://gist.github.com/publik-void/067f7f2fef32dbe5c27d6e215f824c91#sin-rel-error-minimized-degree-11
+		// See: GPGPU Programming for Games and Science (David H. Eberly)
 
 		// Remap our input in the [-pi, pi] range
 		__m128 quotient = _mm_mul_ss(angle.value, _mm_set_ps1(1.0F / 6.283185307179586476925286766559005768F));
@@ -929,11 +929,11 @@ namespace rtm
 
 		// Calculate our value
 		const float x2 = _mm_cvtss_f32(_mm_mul_ss(x, x));
-		float result = (x2 * -2.3868346521031027639830001794722295e-8F) + 2.75239710746326498401791551303359689e-6F;
-		result = (result * x2) - 0.000198408328232619552901560108010257242F;
-		result = (result * x2) + 0.00833333072055773645376566203656709979F;
-		result = (result * x2) - 0.166666666088260696413164261885310067F;
-		result = (result * x2) + 0.99999999997884898600402426033768998F;
+		float result = (x2 * -2.3828544692960918e-8F) + 2.7521557770526783e-6F;
+		result = (result * x2) - 1.9840782426250314e-4F;
+		result = (result * x2) + 8.3333303183525942e-3F;
+		result = (result * x2) - 1.6666666601721269e-1F;
+		result = (result * x2) + 1.0F;
 		result = result * _mm_cvtss_f32(x);
 		return scalar_set(result);
 	}
@@ -948,7 +948,7 @@ namespace rtm
 		return scalar_cast(scalar_sin(scalar_set(angle)));
 #else
 		// Use a degree 11 minimax approximation polynomial
-		// See: https://gist.github.com/publik-void/067f7f2fef32dbe5c27d6e215f824c91#sin-rel-error-minimized-degree-11
+		// See: GPGPU Programming for Games and Science (David H. Eberly)
 
 		// Remap our input in the [-pi, pi] range
 		float quotient = angle * (1.0F / 6.283185307179586476925286766559005768F);
@@ -964,11 +964,11 @@ namespace rtm
 
 		// Calculate our value
 		const float x2 = x * x;
-		float result = (x2 * -2.3868346521031027639830001794722295e-8F) + 2.75239710746326498401791551303359689e-6F;
-		result = (result * x2) - 0.000198408328232619552901560108010257242F;
-		result = (result * x2) + 0.00833333072055773645376566203656709979F;
-		result = (result * x2) - 0.166666666088260696413164261885310067F;
-		result = (result * x2) + 0.99999999997884898600402426033768998F;
+		float result = (x2 * -2.3828544692960918e-8F) + 2.7521557770526783e-6F;
+		result = (result * x2) - 1.9840782426250314e-4F;
+		result = (result * x2) + 8.3333303183525942e-3F;
+		result = (result * x2) - 1.6666666601721269e-1F;
+		result = (result * x2) + 1.0F;
 		result = result * x;
 		return result;
 #endif
@@ -981,7 +981,7 @@ namespace rtm
 	inline scalarf RTM_SIMD_CALL scalar_cos(scalarf_arg0 angle) RTM_NO_EXCEPT
 	{
 		// Use a degree 10 minimax approximation polynomial
-		// https://gist.github.com/publik-void/067f7f2fef32dbe5c27d6e215f824c91#cos-rel-error-minimized-degree-10
+		// See: GPGPU Programming for Games and Science (David H. Eberly)
 
 		// Remap our input in the [-pi, pi] range
 		__m128 quotient = _mm_mul_ss(angle.value, _mm_set_ps1(1.0F / 6.283185307179586476925286766559005768F));
@@ -1007,11 +1007,11 @@ namespace rtm
 
 		// Calculate our value
 		const float x2 = _mm_cvtss_f32(_mm_mul_ss(x, x));
-		float result = (x2 * -2.57924183182520559803981154578763508e-7F) + 0.00002474324689798977846771995314323317F;
-		result = (result * x2) - 0.00138879697151174993540500936074733546F;
-		result = (result * x2) + 0.0416665985274352494970529831079268818F;
-		result = (result * x2) - 0.49999998049253581064488831264724178F;
-		result = (result * x2) + 0.99999999901810067632218592152414676F;
+		float result = (x2 * -2.6051615464872668e-7F) + 2.4760495088926859e-5F;
+		result = (result * x2) - 1.3888377661039897e-3F;
+		result = (result * x2) + 4.1666638865338612e-2F;
+		result = (result * x2) - 4.9999999508695869e-1F;
+		result = (result * x2) + 1.0F;
 
 		// Remap into [-pi, pi]
 		__m128 result_v = _mm_set_ps1(result);
@@ -1029,7 +1029,7 @@ namespace rtm
 		return scalar_cast(scalar_cos(scalar_set(angle)));
 #else
 		// Use a degree 10 minimax approximation polynomial
-		// https://gist.github.com/publik-void/067f7f2fef32dbe5c27d6e215f824c91#cos-rel-error-minimized-degree-10
+		// See: GPGPU Programming for Games and Science (David H. Eberly)
 
 		// Remap our input in the [-pi, pi] range
 		float quotient = angle * (1.0F / 6.283185307179586476925286766559005768F);
@@ -1046,11 +1046,11 @@ namespace rtm
 
 		// Calculate our value
 		const float x2 = x * x;
-		float result = (x2 * -2.57924183182520559803981154578763508e-7F) + 0.00002474324689798977846771995314323317F;
-		result = (result * x2) - 0.00138879697151174993540500936074733546F;
-		result = (result * x2) + 0.0416665985274352494970529831079268818F;
-		result = (result * x2) - 0.49999998049253581064488831264724178F;
-		result = (result * x2) + 0.99999999901810067632218592152414676F;
+		float result = (x2 * -2.6051615464872668e-7F) + 2.4760495088926859e-5F;
+		result = (result * x2) - 1.3888377661039897e-3F;
+		result = (result * x2) + 4.1666638865338612e-2F;
+		result = (result * x2) - 4.9999999508695869e-1F;
+		result = (result * x2) + 1.0F;
 
 		// Remap into [-pi, pi]
 		if (x_abs <= 1.570796326794896619231321691639751442F)
@@ -1085,8 +1085,8 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	inline scalarf RTM_SIMD_CALL scalar_atan(scalarf_arg0 value)
 	{
-		// Use a degree 17 minimax approximation polynomial
-		// See: https://stackoverflow.com/a/26825029/1567450
+		// Use a degree 13 minimax approximation polynomial
+		// See: GPGPU Programming for Games and Science (David H. Eberly)
 
 		// Discard our sign, we'll restore it later
 		const __m128i abs_mask = _mm_set_epi32(0x7FFFFFFFULL, 0x7FFFFFFFULL, 0x7FFFFFFFULL, 0x7FFFFFFFULL);
@@ -1105,16 +1105,13 @@ namespace rtm
 		float x_s = _mm_cvtss_f32(x);
 		float x2 = x_s * x_s;
 
-		float result = (x2 * 0.00278569828F) - 0.0158660226F;	// (x2 * 0x3b369043) + 0x3c81f976
-		result = (result * x2) + 0.0424722321F;					// 0x3d2df75d
-		result = (result * x2) - 0.0749753043F;					// 0x3d998ca7
-		result = (result * x2) + 0.106448799F;					// 0x3dda01d4
-		result = (result * x2) - 0.142070308F;					// 0x3e117ae1
-		result = (result * x2) + 0.199934542F;					// 0x3e4cbba4
-		result = (result * x2) - 0.333331466F;					// 0x3eaaaa6c
-
-		result = result * x2;
-		result = (result * x_s) + x_s;
+		float result = (x2 * 7.2128853633444123e-3F) - 3.5059680836411644e-2F;
+		result = (result * x2) + 8.1675882859940430e-2F;
+		result = (result * x2) - 1.3374657325451267e-1F;
+		result = (result * x2) + 1.9856563505717162e-1F;
+		result = (result * x2) - 3.3324998579202170e-1F;
+		result = (result * x2) + 1.0F;
+		result = result * x_s;
 
 		__m128 result_s = _mm_set_ps1(result);
 		__m128 remapped = _mm_sub_ss(_mm_set_ps1(0.933189452F * 1.68325555F), result_s);
@@ -1143,8 +1140,8 @@ namespace rtm
 #if defined(RTM_SSE2_INTRINSICS)
 		return scalar_cast(scalar_atan(scalar_set(value)));
 #else
-		// Use a degree 17 minimax approximation polynomial
-		// See: https://stackoverflow.com/a/26825029/1567450
+		// Use a degree 13 minimax approximation polynomial
+		// See: GPGPU Programming for Games and Science (David H. Eberly)
 
 		// Discard our sign, we'll restore it later
 		float abs_value = scalar_abs(value);
@@ -1153,16 +1150,13 @@ namespace rtm
 		float x = abs_value > 1.0F ? scalar_reciprocal(abs_value) : abs_value;
 		float x2 = x * x;
 
-		float result = (x2 * 0.00278569828F) - 0.0158660226F;	// (x2 * 0x3b369043) + 0x3c81f976
-		result = (result * x2) + 0.0424722321F;					// 0x3d2df75d
-		result = (result * x2) - 0.0749753043F;					// 0x3d998ca7
-		result = (result * x2) + 0.106448799F;					// 0x3dda01d4
-		result = (result * x2) - 0.142070308F;					// 0x3e117ae1
-		result = (result * x2) + 0.199934542F;					// 0x3e4cbba4
-		result = (result * x2) - 0.333331466F;					// 0x3eaaaa6c
-
-		result = result * x2;
-		result = (result * x) + x;
+		float result = (x2 * 7.2128853633444123e-3F) - 3.5059680836411644e-2F;
+		result = (result * x2) + 8.1675882859940430e-2F;
+		result = (result * x2) - 1.3374657325451267e-1F;
+		result = (result * x2) + 1.9856563505717162e-1F;
+		result = (result * x2) - 3.3324998579202170e-1F;
+		result = (result * x2) + 1.0F;
+		result = result * x;
 
 		if (abs_value > 1.0f)
 			result = (0.933189452F * 1.68325555F) - result; // pi/2 - result, (0x3f6ee581 * 0x3fd774eb)

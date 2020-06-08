@@ -2183,7 +2183,7 @@ namespace rtm
 	{
 #if defined(RTM_SSE2_INTRINSICS)
 		// Use a degree 11 minimax approximation polynomial
-		// See: https://gist.github.com/publik-void/067f7f2fef32dbe5c27d6e215f824c91#sin-rel-error-minimized-degree-11
+		// See: GPGPU Programming for Games and Science (David H. Eberly)
 
 		// Remap our input in the [-pi, pi] range
 		__m128 quotient = _mm_mul_ps(input, _mm_set_ps1(1.0F / 6.283185307179586476925286766559005768F));
@@ -2210,11 +2210,11 @@ namespace rtm
 
 		// Calculate our value
 		const __m128 x2 = _mm_mul_ps(x, x);
-		__m128 result = _mm_add_ps(_mm_mul_ps(x2, _mm_set_ps1(-2.3868346521031027639830001794722295e-8F)), _mm_set_ps1(2.75239710746326498401791551303359689e-6F));
-		result = _mm_add_ps(_mm_mul_ps(result, x2), _mm_set_ps1(-0.000198408328232619552901560108010257242F));
-		result = _mm_add_ps(_mm_mul_ps(result, x2), _mm_set_ps1(0.00833333072055773645376566203656709979F));
-		result = _mm_add_ps(_mm_mul_ps(result, x2), _mm_set_ps1(-0.166666666088260696413164261885310067F));
-		result = _mm_add_ps(_mm_mul_ps(result, x2), _mm_set_ps1(0.99999999997884898600402426033768998F));
+		__m128 result = _mm_add_ps(_mm_mul_ps(x2, _mm_set_ps1(-2.3828544692960918e-8F)), _mm_set_ps1(2.7521557770526783e-6F));
+		result = _mm_add_ps(_mm_mul_ps(result, x2), _mm_set_ps1(-1.9840782426250314e-4F));
+		result = _mm_add_ps(_mm_mul_ps(result, x2), _mm_set_ps1(8.3333303183525942e-3F));
+		result = _mm_add_ps(_mm_mul_ps(result, x2), _mm_set_ps1(-1.6666666601721269e-1F));
+		result = _mm_add_ps(_mm_mul_ps(result, x2), _mm_set_ps1(1.0F));
 		result = _mm_mul_ps(result, x);
 		return result;
 #else
@@ -2233,7 +2233,7 @@ namespace rtm
 	{
 #if defined(RTM_SSE2_INTRINSICS)
 		// Use a degree 10 minimax approximation polynomial
-		// https://gist.github.com/publik-void/067f7f2fef32dbe5c27d6e215f824c91#cos-rel-error-minimized-degree-10
+		// See: GPGPU Programming for Games and Science (David H. Eberly)
 
 		// Remap our input in the [-pi, pi] range
 		__m128 quotient = _mm_mul_ps(input, _mm_set_ps1(1.0F / 6.283185307179586476925286766559005768F));
@@ -2259,11 +2259,11 @@ namespace rtm
 
 		// Calculate our value
 		const __m128 x2 = _mm_mul_ps(x, x);
-		__m128 result = _mm_add_ps(_mm_mul_ps(x2, _mm_set_ps1(-2.57924183182520559803981154578763508e-7F)), _mm_set_ps1(0.00002474324689798977846771995314323317F));
-		result = _mm_add_ps(_mm_mul_ps(result, x2), _mm_set_ps1(-0.00138879697151174993540500936074733546F));
-		result = _mm_add_ps(_mm_mul_ps(result, x2), _mm_set_ps1(0.0416665985274352494970529831079268818F));
-		result = _mm_add_ps(_mm_mul_ps(result, x2), _mm_set_ps1(-0.49999998049253581064488831264724178F));
-		result = _mm_add_ps(_mm_mul_ps(result, x2), _mm_set_ps1(0.99999999901810067632218592152414676F));
+		__m128 result = _mm_add_ps(_mm_mul_ps(x2, _mm_set_ps1(-2.6051615464872668e-7F)), _mm_set_ps1(2.4760495088926859e-5F));
+		result = _mm_add_ps(_mm_mul_ps(result, x2), _mm_set_ps1(-1.3888377661039897e-3F));
+		result = _mm_add_ps(_mm_mul_ps(result, x2), _mm_set_ps1(4.1666638865338612e-2F));
+		result = _mm_add_ps(_mm_mul_ps(result, x2), _mm_set_ps1(-4.9999999508695869e-1F));
+		result = _mm_add_ps(_mm_mul_ps(result, x2), _mm_set_ps1(1.0F));
 
 		// Remap into [-pi, pi]
 		return _mm_or_ps(result, _mm_andnot_ps(is_less_equal_than_half_pi, sign_mask));
@@ -2284,8 +2284,8 @@ namespace rtm
 	inline vector4f RTM_SIMD_CALL vector_atan(vector4f_arg0 input)
 	{
 #if defined(RTM_SSE2_INTRINSICS)
-		// Use a degree 17 minimax approximation polynomial
-		// See: https://stackoverflow.com/a/26825029/1567450
+		// Use a degree 13 minimax approximation polynomial
+		// See: GPGPU Programming for Games and Science (David H. Eberly)
 
 		// Discard our sign, we'll restore it later
 		const __m128i abs_mask = _mm_set_epi32(0x7FFFFFFFULL, 0x7FFFFFFFULL, 0x7FFFFFFFULL, 0x7FFFFFFFULL);
@@ -2299,16 +2299,13 @@ namespace rtm
 
 		__m128 x2 = _mm_mul_ps(x, x);
 
-		__m128 result = _mm_add_ps(_mm_mul_ps(x2, _mm_set_ps1(0.00278569828F)), _mm_set_ps1(-0.0158660226F));	// (x2 * 0x3b369043) + 0x3c81f976
-		result = _mm_add_ps(_mm_mul_ps(result, x2), _mm_set_ps1(0.0424722321F));								// 0x3d2df75d
-		result = _mm_add_ps(_mm_mul_ps(result, x2), _mm_set_ps1(-0.0749753043F));								// -0x3d998ca7
-		result = _mm_add_ps(_mm_mul_ps(result, x2), _mm_set_ps1(0.106448799F));									// 0x3dda01d4
-		result = _mm_add_ps(_mm_mul_ps(result, x2), _mm_set_ps1(-0.142070308F));								// -0x3e117ae1
-		result = _mm_add_ps(_mm_mul_ps(result, x2), _mm_set_ps1(0.199934542F));									// 0x3e4cbba4
-		result = _mm_add_ps(_mm_mul_ps(result, x2), _mm_set_ps1(-0.333331466F));								// -0x3eaaaa6c
-
-		result = _mm_mul_ps(result, x2);
-		result = _mm_add_ps(_mm_mul_ps(result, x), x);
+		__m128 result = _mm_add_ps(_mm_mul_ps(x2, _mm_set_ps1(7.2128853633444123e-3F)), _mm_set_ps1(-3.5059680836411644e-2F));
+		result = _mm_add_ps(_mm_mul_ps(result, x2), _mm_set_ps1(8.1675882859940430e-2F));
+		result = _mm_add_ps(_mm_mul_ps(result, x2), _mm_set_ps1(-1.3374657325451267e-1F));
+		result = _mm_add_ps(_mm_mul_ps(result, x2), _mm_set_ps1(1.9856563505717162e-1F));
+		result = _mm_add_ps(_mm_mul_ps(result, x2), _mm_set_ps1(-3.3324998579202170e-1F));
+		result = _mm_add_ps(_mm_mul_ps(result, x2), _mm_set_ps1(1.0F));
+		result = _mm_mul_ps(result, x);
 
 		__m128 remapped = _mm_sub_ps(_mm_set_ps1(0.933189452F * 1.68325555F), result);
 
