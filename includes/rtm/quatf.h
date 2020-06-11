@@ -1109,11 +1109,11 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	inline quatf RTM_SIMD_CALL quat_from_axis_angle(vector4f_arg0 axis, anglef angle) RTM_NO_EXCEPT
 	{
-		float s;
-		float c;
-		scalar_sincos(0.5F * angle.as_radians(), s, c);
+		vector4f sincos_ = scalar_sincos(0.5F * angle.as_radians());
+		vector4f sin_ = vector_dup_x(sincos_);
+		scalarf cos_ = vector_get_y(sincos_);
 
-		return vector_to_quat(vector_set_w(vector_mul(vector_set(s), axis), c));
+		return vector_to_quat(vector_set_w(vector_mul(sin_, axis), cos_));
 	}
 
 	//////////////////////////////////////////////////////////////////////////

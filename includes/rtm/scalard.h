@@ -883,6 +883,33 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	// Returns both sine and cosine of the input angle.
 	//////////////////////////////////////////////////////////////////////////
+	inline vector4d RTM_SIMD_CALL scalar_sincos(scalard angle) RTM_NO_EXCEPT
+	{
+		scalard sin_ = scalar_sin(angle);
+		scalard cos_ = scalar_cos(angle);
+
+#if defined(RTM_SSE2_INTRINSICS)
+		__m128d xy = _mm_unpacklo_pd(sin_.value, cos_.value);
+		return vector4d{ xy, xy };
+#else
+		return vector4d{ sin_, cos_, sin_, cos_ };
+#endif
+	}
+
+	//////////////////////////////////////////////////////////////////////////
+	// Returns both sine and cosine of the input angle.
+	// The result's [x] component contains sin(angle).
+	// The result's [y] component contains cos(angle).
+	// [zw] are undefined.
+	//////////////////////////////////////////////////////////////////////////
+	inline vector4d RTM_SIMD_CALL scalar_sincos(double angle) RTM_NO_EXCEPT
+	{
+		return scalar_sincos(scalar_set(angle));
+	}
+
+	//////////////////////////////////////////////////////////////////////////
+	// Returns both sine and cosine of the input angle.
+	//////////////////////////////////////////////////////////////////////////
 	inline void scalar_sincos(double angle, double& out_sin, double& out_cos) RTM_NO_EXCEPT
 	{
 		out_sin = scalar_sin(angle);
