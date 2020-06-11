@@ -957,7 +957,7 @@ namespace rtm
 		float x = angle - quotient;
 
 		// Remap our input in the [-pi/2, pi/2] range
-		const float reference = x >= 0.0F ? 3.141592653589793238462643383279502884F : -3.141592653589793238462643383279502884F;
+		const float reference = std::copysign(3.141592653589793238462643383279502884F, x);
 		const float reflection = reference - x;
 		const float x_abs = scalar_abs(x);
 		x = x_abs <= 1.570796326794896619231321691639751442F ? x : reflection;
@@ -1038,8 +1038,7 @@ namespace rtm
 		float x = angle - quotient;
 
 		// Remap our input in the [-pi/2, pi/2] range
-		const float x_sign = x >= 0.0F ? 1.0F : -1.0F;
-		const float reference = x_sign * 3.141592653589793238462643383279502884F;
+		const float reference = std::copysign(3.141592653589793238462643383279502884F, x);
 		const float reflection = reference - x;
 		const float x_abs = scalar_abs(x);
 		x = x_abs <= 1.570796326794896619231321691639751442F ? x : reflection;
