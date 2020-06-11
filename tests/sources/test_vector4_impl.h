@@ -1029,10 +1029,12 @@ void test_vector4_impl(const FloatType threshold)
 			const FloatType ref_sin = scalar_sin(angle);
 			const FloatType ref_cos = scalar_cos(angle);
 			const FloatType ref_asin = scalar_asin(ref_sin);
+			const FloatType ref_acos = scalar_acos(ref_cos);
 
 			const Vector4Type rtm_sin = vector_sin(angle_v);
 			const Vector4Type rtm_cos = vector_cos(angle_v);
 			const Vector4Type rtm_asin = vector_asin(rtm_sin);
+			const Vector4Type rtm_acos = vector_acos(rtm_cos);
 
 			CHECK(scalar_near_equal(FloatType(vector_get_x(rtm_sin)), ref_sin, threshold));
 			CHECK(scalar_near_equal(FloatType(vector_get_y(rtm_sin)), ref_sin, threshold));
@@ -1048,6 +1050,11 @@ void test_vector4_impl(const FloatType threshold)
 			CHECK(scalar_near_equal(FloatType(vector_get_y(rtm_cos)), ref_cos, threshold));
 			CHECK(scalar_near_equal(FloatType(vector_get_z(rtm_cos)), ref_cos, threshold));
 			CHECK(scalar_near_equal(FloatType(vector_get_w(rtm_cos)), ref_cos, threshold));
+
+			CHECK(scalar_near_equal(FloatType(vector_get_x(rtm_acos)), ref_acos, threshold));
+			CHECK(scalar_near_equal(FloatType(vector_get_y(rtm_acos)), ref_acos, threshold));
+			CHECK(scalar_near_equal(FloatType(vector_get_z(rtm_acos)), ref_acos, threshold));
+			CHECK(scalar_near_equal(FloatType(vector_get_w(rtm_acos)), ref_acos, threshold));
 		}
 
 		const FloatType angles_atan[] = { FloatType(-10.0), FloatType(-5.0), FloatType(-0.5), FloatType(-0.25), FloatType(0.0), FloatType(0.25), FloatType(0.5), FloatType(0.75), FloatType(81.0) };
