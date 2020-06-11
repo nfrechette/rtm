@@ -1068,6 +1068,84 @@ namespace rtm
 		out_cos = scalar_cos(angle);
 	}
 
+#if defined(RTM_SSE2_INTRINSICS)
+	//////////////////////////////////////////////////////////////////////////
+	// Returns the arc-sine of the input.
+	// Input value must be in the range [-1.0, 1.0].
+	//////////////////////////////////////////////////////////////////////////
+	inline scalarf RTM_SIMD_CALL scalar_asin(scalarf_arg0 value) RTM_NO_EXCEPT
+	{
+		// Use a degree 7 minimax approximation polynomial
+		// See: GPGPU Programming for Games and Science (David H. Eberly)
+
+		// We first calculate our scale: sqrt(1.0 - abs(value))
+		const __m128i abs_mask = _mm_set_epi32(0x7FFFFFFFULL, 0x7FFFFFFFULL, 0x7FFFFFFFULL, 0x7FFFFFFFULL);
+		__m128 abs_value = _mm_and_ps(value.value, _mm_castsi128_ps(abs_mask));
+
+		// Calculate our value
+		const float x = _mm_cvtss_f32(abs_value);
+		float result = (x * -1.2690614339589956e-3F) + 6.7072304676685235e-3F;
+		result = (result * x) - 1.7162031184398074e-2F;
+		result = (result * x) + 3.0961594977611639e-2F;
+		result = (result * x) - 5.0207843052845647e-2F;
+		result = (result * x) + 8.8986946573346160e-2F;
+		result = (result * x) - 2.1459960076929829e-1F;
+		result = (result * x) + 1.5707963267948966F;
+
+		// Scale our result
+		const __m128 scale = _mm_sqrt_ss(_mm_sub_ss(_mm_set_ps1(1.0F), abs_value));
+		result = result * _mm_cvtss_f32(scale);
+
+		// Handle negative values through reflection
+		if (_mm_cvtss_f32(value.value) < 0.0F)
+			result = 3.141592653589793238462643383279502884F - result;
+
+		// Shift our final result
+		const float offset = 1.570796326794896619231321691639751442F;
+		result = offset - result;
+		return scalarf{ _mm_set_ps1(result) };
+	}
+#endif
+
+	//////////////////////////////////////////////////////////////////////////
+	// Returns the arc-sine of the input.
+	// Input value must be in the range [-1.0, 1.0].
+	//////////////////////////////////////////////////////////////////////////
+	inline float scalar_asin(float value) RTM_NO_EXCEPT
+	{
+#if defined(RTM_SSE2_INTRINSICS)
+		return scalar_cast(scalar_asin(scalar_set(value)));
+#else
+		// Use a degree 7 minimax approximation polynomial
+		// See: GPGPU Programming for Games and Science (David H. Eberly)
+
+		// We first calculate our scale: sqrt(1.0 - abs(value))
+		const float abs_value = scalar_abs(value);
+
+		// Calculate our value
+		float result = (abs_value * -1.2690614339589956e-3F) + 6.7072304676685235e-3F;
+		result = (result * abs_value) - 1.7162031184398074e-2F;
+		result = (result * abs_value) + 3.0961594977611639e-2F;
+		result = (result * abs_value) - 5.0207843052845647e-2F;
+		result = (result * abs_value) + 8.8986946573346160e-2F;
+		result = (result * abs_value) - 2.1459960076929829e-1F;
+		result = (result * abs_value) + 1.5707963267948966F;
+
+		// Scale our result
+		const float scale = scalar_sqrt(1.0F - abs_value);
+		result = result * scale;
+
+		// Handle negative values through reflection
+		if (value < 0.0F)
+			result = 3.141592653589793238462643383279502884F - result;
+
+		// Shift our final result
+		const float offset = 1.570796326794896619231321691639751442F;
+		result = offset - result;
+		return result;
+#endif
+	}
+
 	//////////////////////////////////////////////////////////////////////////
 	// Returns the arc-cosine of the input.
 	//////////////////////////////////////////////////////////////////////////
