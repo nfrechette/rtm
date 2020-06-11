@@ -919,13 +919,85 @@ namespace rtm
 		return std::atan(value);
 	}
 
+#if defined(RTM_SSE2_INTRINSICS)
 	//////////////////////////////////////////////////////////////////////////
-	// Returns the arc-tangent of [x/y] using the sign of the arguments to
+	// Returns the arc-tangent of [y/x] using the sign of the arguments to
 	// determine the correct quadrant.
+	// Y represents the proportion of the y-coordinate.
+	// X represents the proportion of the x-coordinate.
 	//////////////////////////////////////////////////////////////////////////
-	inline double scalar_atan2(double x, double y) RTM_NO_EXCEPT
+	inline scalard RTM_SIMD_CALL scalar_atan2(scalard y, scalard x) RTM_NO_EXCEPT
 	{
-		return std::atan2(x, y);
+		// If X == 0.0 and Y != 0.0, we return PI/2 with the sign of Y
+		// If X == 0.0 and Y == 0.0, we return 0.0
+		// If X > 0.0, we return atan(y/x)
+		// If X < 0.0, we return atan(y/x) + sign(Y) * PI
+		// See: https://en.wikipedia.org/wiki/Atan2#Definition_and_computation
+
+		const __m128d zero = _mm_setzero_pd();
+		__m128d is_x_zero = _mm_cmpeq_sd(x.value, zero);
+		__m128d is_y_zero = _mm_cmpeq_sd(y.value, zero);
+		__m128d inputs_are_zero = _mm_and_pd(is_x_zero, is_y_zero);
+
+		__m128d is_x_positive = _mm_cmpgt_sd(x.value, zero);
+
+		const __m128d sign_mask = _mm_set_pd(-0.0, -0.0);
+		__m128d y_sign = _mm_and_pd(y.value, sign_mask);
+
+		// If X == 0.0, our offset is PI/2 otherwise it is PI both with the sign of Y
+		__m128d half_pi = _mm_set1_pd(1.570796326794896619231321691639751442);
+		__m128d pi = _mm_set1_pd(3.141592653589793238462643383279502884);
+		__m128d offset = _mm_or_pd(_mm_and_pd(is_x_zero, half_pi), _mm_andnot_pd(is_x_zero, pi));
+		offset = _mm_or_pd(offset, y_sign);
+
+		// If X > 0.0, our offset is 0.0
+		offset = _mm_andnot_pd(is_x_positive, offset);
+
+		// If X == 0.0 and Y == 0.0, our offset is 0.0
+		offset = _mm_andnot_pd(inputs_are_zero, offset);
+
+		__m128d angle = _mm_div_sd(y.value, x.value);
+		__m128d value = scalar_atan(scalard{ angle }).value;
+
+		// If X == 0.0, our value is 0.0 otherwise it is atan(y/x)
+		value = _mm_or_pd(_mm_and_pd(is_x_zero, zero), _mm_andnot_pd(is_x_zero, value));
+
+		// If X == 0.0 and Y == 0.0, our value is 0.0
+		value = _mm_andnot_pd(inputs_are_zero, value);
+
+		__m128d result = _mm_add_sd(value, offset);
+		return scalard{ result };
+	}
+#endif
+
+	//////////////////////////////////////////////////////////////////////////
+	// Returns the arc-tangent of [y/x] using the sign of the arguments to
+	// determine the correct quadrant.
+	// Y represents the proportion of the y-coordinate.
+	// X represents the proportion of the x-coordinate.
+	//////////////////////////////////////////////////////////////////////////
+	inline double scalar_atan2(double y, double x) RTM_NO_EXCEPT
+	{
+		// If X == 0.0 and Y != 0.0, we return PI/2 with the sign of Y
+		// If X == 0.0 and Y == 0.0, we return 0.0
+		// If X > 0.0, we return atan(y/x)
+		// If X < 0.0, we return atan(y/x) + sign(Y) * PI
+		// See: https://en.wikipedia.org/wiki/Atan2#Definition_and_computation
+
+		if (x == 0.0)
+		{
+			if (y == 0.0)
+				return 0.0;
+
+			return std::copysign(1.570796326794896619231321691639751442, y);
+		}
+
+		double value = scalar_atan(y / x);
+		if (x > 0.0)
+			return value;
+
+		double offset = std::copysign(3.141592653589793238462643383279502884, y);
+		return value + offset;
 	}
 }
 
