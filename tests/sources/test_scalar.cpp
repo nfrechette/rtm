@@ -230,16 +230,22 @@ static void test_scalar_impl(const FloatType threshold, const FloatType trig_thr
 
 	for (const FloatType angle : angles)
 	{
-		CHECK(scalar_near_equal(scalar_sin(angle), std::sin(angle), trig_threshold));
-		CHECK(scalar_near_equal(scalar_cast(scalar_sin(scalar_set(angle))), std::sin(angle), trig_threshold));
-		CHECK(scalar_near_equal(scalar_cos(angle), std::cos(angle), trig_threshold));
-		CHECK(scalar_near_equal(scalar_cast(scalar_cos(scalar_set(angle))), std::cos(angle), trig_threshold));
+		const FloatType ref_sin = std::sin(angle);
+		const FloatType ref_cos = std::cos(angle);
+
+		CHECK(scalar_near_equal(scalar_sin(angle), ref_sin, trig_threshold));
+		CHECK(scalar_near_equal(scalar_cast(scalar_sin(scalar_set(angle))), ref_sin, trig_threshold));
+		CHECK(scalar_near_equal(scalar_cos(angle), ref_cos, trig_threshold));
+		CHECK(scalar_near_equal(scalar_cast(scalar_cos(scalar_set(angle))), ref_cos, trig_threshold));
 
 		FloatType sin_result;
 		FloatType cos_result;
 		scalar_sincos(angle, sin_result, cos_result);
-		CHECK(scalar_near_equal(sin_result, std::sin(angle), trig_threshold));
-		CHECK(scalar_near_equal(cos_result, std::cos(angle), trig_threshold));
+		CHECK(scalar_near_equal(sin_result, ref_sin, trig_threshold));
+		CHECK(scalar_near_equal(cos_result, ref_cos, trig_threshold));
+
+		CHECK(scalar_near_equal(scalar_asin(ref_sin), std::asin(ref_sin), trig_threshold));
+		CHECK(scalar_near_equal(scalar_cast(scalar_asin(scalar_set(ref_sin))), std::asin(ref_sin), trig_threshold));
 	}
 
 	const FloatType angles_acos[] = { FloatType(-1.0), FloatType(-0.75), FloatType(-0.5), FloatType(-0.25), FloatType(0.0), FloatType(0.25), FloatType(0.5), FloatType(0.75), FloatType(1.0) };
