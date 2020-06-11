@@ -1962,6 +1962,21 @@ namespace rtm
 		scalard w = scalar_atan(scalard(vector_get_w(input)));
 		return vector_set(x, y, z, w);
 	}
+
+	//////////////////////////////////////////////////////////////////////////
+	// Returns per component the arc-tangent of [y/x] using the sign of the arguments to
+	// determine the correct quadrant.
+	// Y represents the proportion of the y-coordinate.
+	// X represents the proportion of the x-coordinate.
+	//////////////////////////////////////////////////////////////////////////
+	inline vector4d vector_atan2(const vector4d& y, const vector4d& x) RTM_NO_EXCEPT
+	{
+		scalard x_ = scalar_atan2(scalard(vector_get_x(y)), scalard(vector_get_x(x)));
+		scalard y_ = scalar_atan2(scalard(vector_get_y(y)), scalard(vector_get_y(x)));
+		scalard z_ = scalar_atan2(scalard(vector_get_z(y)), scalard(vector_get_z(x)));
+		scalard w_ = scalar_atan2(scalard(vector_get_w(y)), scalard(vector_get_w(x)));
+		return vector_set(x_, y_, z_, w_);
+	}
 }
 
 RTM_IMPL_FILE_PRAGMA_POP

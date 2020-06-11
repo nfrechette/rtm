@@ -39,6 +39,7 @@
 
 #include <cstring>
 #include <limits>
+#include <utility>
 
 using namespace rtm;
 
@@ -1045,6 +1046,34 @@ void test_vector4_impl(const FloatType threshold)
 			CHECK(scalar_near_equal(FloatType(vector_get_y(vector_atan(angle_v))), scalar_atan(angle), threshold));
 			CHECK(scalar_near_equal(FloatType(vector_get_z(vector_atan(angle_v))), scalar_atan(angle), threshold));
 			CHECK(scalar_near_equal(FloatType(vector_get_w(vector_atan(angle_v))), scalar_atan(angle), threshold));
+		}
+
+		const std::pair<FloatType, FloatType> angles_atan2[] =
+		{
+			{ FloatType(-2.0), FloatType(-2.0) },
+			{ FloatType(-1.0), FloatType(-2.0) },
+			{ FloatType(-2.0), FloatType(-1.0) },
+			{ FloatType(2.0), FloatType(2.0) },
+			{ FloatType(1.0), FloatType(2.0) },
+			{ FloatType(2.0), FloatType(1.0) },
+			{ FloatType(2.0), FloatType(0.0) },
+			{ FloatType(-2.0), FloatType(0.0) },
+			{ FloatType(2.0), FloatType(-0.0) },
+			{ FloatType(-2.0), FloatType(-0.0) },
+			{ FloatType(0.0), FloatType(2.0) },
+			{ FloatType(0.0), FloatType(-2.0) },
+			{ FloatType(-0.0), FloatType(2.0) },
+			{ FloatType(-0.0), FloatType(-2.0) },
+		};
+		for (const std::pair<FloatType, FloatType>& angles_ : angles_atan2)
+		{
+			const Vector4Type angle_y = vector_set(angles_.first);
+			const Vector4Type angle_x = vector_set(angles_.second);
+
+			CHECK(scalar_near_equal(FloatType(vector_get_x(vector_atan2(angle_y, angle_x))), scalar_atan2(angles_.first, angles_.second), threshold));
+			CHECK(scalar_near_equal(FloatType(vector_get_y(vector_atan2(angle_y, angle_x))), scalar_atan2(angles_.first, angles_.second), threshold));
+			CHECK(scalar_near_equal(FloatType(vector_get_z(vector_atan2(angle_y, angle_x))), scalar_atan2(angles_.first, angles_.second), threshold));
+			CHECK(scalar_near_equal(FloatType(vector_get_w(vector_atan2(angle_y, angle_x))), scalar_atan2(angles_.first, angles_.second), threshold));
 		}
 	}
 }
