@@ -1963,6 +1963,19 @@ namespace rtm
 	}
 
 	//////////////////////////////////////////////////////////////////////////
+	// Returns per component the arc-cosine of the input.
+	// Input value must be in the range [-1.0, 1.0].
+	//////////////////////////////////////////////////////////////////////////
+	inline vector4d vector_acos(const vector4d& input) RTM_NO_EXCEPT
+	{
+		scalard x = scalar_acos(scalard(vector_get_x(input)));
+		scalard y = scalar_acos(scalard(vector_get_y(input)));
+		scalard z = scalar_acos(scalard(vector_get_z(input)));
+		scalard w = scalar_acos(scalard(vector_get_w(input)));
+		return vector_set(x, y, z, w);
+	}
+
+	//////////////////////////////////////////////////////////////////////////
 	// Returns per component the arc-tangent of the input.
 	// Note that due to the sign ambiguity, atan cannot determine which quadrant
 	// the value resides in.
