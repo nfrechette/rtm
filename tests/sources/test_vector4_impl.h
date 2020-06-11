@@ -625,6 +625,16 @@ void test_vector4_relational_impl(const FloatType threshold)
 	//////////////////////////////////////////////////////////////////////////
 	// Comparisons and masking
 
+	CHECK((mask_get_x(vector_equal(test_value0, test_value1)) != 0) == (test_value0_flt[0] == test_value1_flt[0]));
+	CHECK((mask_get_y(vector_equal(test_value0, test_value1)) != 0) == (test_value0_flt[1] == test_value1_flt[1]));
+	CHECK((mask_get_z(vector_equal(test_value0, test_value1)) != 0) == (test_value0_flt[2] == test_value1_flt[2]));
+	CHECK((mask_get_w(vector_equal(test_value0, test_value1)) != 0) == (test_value0_flt[3] == test_value1_flt[3]));
+
+	CHECK((mask_get_x(vector_equal(test_value0, test_value0)) != 0) == (test_value0_flt[0] == test_value0_flt[0]));
+	CHECK((mask_get_y(vector_equal(test_value0, test_value0)) != 0) == (test_value0_flt[1] == test_value0_flt[1]));
+	CHECK((mask_get_z(vector_equal(test_value0, test_value0)) != 0) == (test_value0_flt[2] == test_value0_flt[2]));
+	CHECK((mask_get_w(vector_equal(test_value0, test_value0)) != 0) == (test_value0_flt[3] == test_value0_flt[3]));
+
 	CHECK((mask_get_x(vector_less_than(test_value0, test_value1)) != 0) == (test_value0_flt[0] < test_value1_flt[0]));
 	CHECK((mask_get_y(vector_less_than(test_value0, test_value1)) != 0) == (test_value0_flt[1] < test_value1_flt[1]));
 	CHECK((mask_get_z(vector_less_than(test_value0, test_value1)) != 0) == (test_value0_flt[2] < test_value1_flt[2]));
@@ -634,6 +644,11 @@ void test_vector4_relational_impl(const FloatType threshold)
 	CHECK((mask_get_y(vector_less_equal(test_value0, test_value3)) != 0) == (test_value0_flt[1] <= test_value3_flt[1]));
 	CHECK((mask_get_z(vector_less_equal(test_value0, test_value3)) != 0) == (test_value0_flt[2] <= test_value3_flt[2]));
 	CHECK((mask_get_w(vector_less_equal(test_value0, test_value3)) != 0) == (test_value0_flt[3] <= test_value3_flt[3]));
+
+	CHECK((mask_get_x(vector_greater_than(test_value0, test_value1)) != 0) == (test_value0_flt[0] > test_value1_flt[0]));
+	CHECK((mask_get_y(vector_greater_than(test_value0, test_value1)) != 0) == (test_value0_flt[1] > test_value1_flt[1]));
+	CHECK((mask_get_z(vector_greater_than(test_value0, test_value1)) != 0) == (test_value0_flt[2] > test_value1_flt[2]));
+	CHECK((mask_get_w(vector_greater_than(test_value0, test_value1)) != 0) == (test_value0_flt[3] > test_value1_flt[3]));
 
 	CHECK((mask_get_x(vector_greater_equal(test_value0, test_value1)) != 0) == (test_value0_flt[0] >= test_value1_flt[0]));
 	CHECK((mask_get_y(vector_greater_equal(test_value0, test_value1)) != 0) == (test_value0_flt[1] >= test_value1_flt[1]));

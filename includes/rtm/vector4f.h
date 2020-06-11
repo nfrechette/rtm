@@ -1501,6 +1501,20 @@ namespace rtm
 
 
 	//////////////////////////////////////////////////////////////////////////
+	// Returns per component ~0 if equal, otherwise 0: lhs == rhs ? ~0 : 0
+	//////////////////////////////////////////////////////////////////////////
+	inline mask4i RTM_SIMD_CALL vector_equal(vector4f_arg0 lhs, vector4f_arg1 rhs) RTM_NO_EXCEPT
+	{
+#if defined(RTM_SSE2_INTRINSICS)
+		return _mm_cmpeq_ps(lhs, rhs);
+#elif defined(RTM_NEON_INTRINSICS)
+		return vceq_f32(lhs, rhs);
+#else
+		return mask4i{ rtm_impl::get_mask_value(lhs.x == rhs.x), rtm_impl::get_mask_value(lhs.y == rhs.y), rtm_impl::get_mask_value(lhs.z == rhs.z), rtm_impl::get_mask_value(lhs.w == rhs.w) };
+#endif
+	}
+
+	//////////////////////////////////////////////////////////////////////////
 	// Returns per component ~0 if less than, otherwise 0: lhs < rhs ? ~0 : 0
 	//////////////////////////////////////////////////////////////////////////
 	inline mask4i RTM_SIMD_CALL vector_less_than(vector4f_arg0 lhs, vector4f_arg1 rhs) RTM_NO_EXCEPT
@@ -1525,6 +1539,20 @@ namespace rtm
 		return vcleq_f32(lhs, rhs);
 #else
 		return mask4i{ rtm_impl::get_mask_value(lhs.x <= rhs.x), rtm_impl::get_mask_value(lhs.y <= rhs.y), rtm_impl::get_mask_value(lhs.z <= rhs.z), rtm_impl::get_mask_value(lhs.w <= rhs.w) };
+#endif
+	}
+
+	//////////////////////////////////////////////////////////////////////////
+	// Returns per component ~0 if greater than, otherwise 0: lhs > rhs ? ~0 : 0
+	//////////////////////////////////////////////////////////////////////////
+	inline mask4i RTM_SIMD_CALL vector_greater_than(vector4f_arg0 lhs, vector4f_arg1 rhs) RTM_NO_EXCEPT
+	{
+#if defined(RTM_SSE2_INTRINSICS)
+		return _mm_cmpgt_ps(lhs, rhs);
+#elif defined(RTM_NEON_INTRINSICS)
+		return vcgt_f32(lhs, rhs);
+#else
+		return mask4i{ rtm_impl::get_mask_value(lhs.x > rhs.x), rtm_impl::get_mask_value(lhs.y > rhs.y), rtm_impl::get_mask_value(lhs.z > rhs.z), rtm_impl::get_mask_value(lhs.w > rhs.w) };
 #endif
 	}
 
