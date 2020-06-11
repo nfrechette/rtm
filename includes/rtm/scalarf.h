@@ -1146,12 +1146,84 @@ namespace rtm
 #endif
 	}
 
+#if defined(RTM_SSE2_INTRINSICS)
 	//////////////////////////////////////////////////////////////////////////
 	// Returns the arc-cosine of the input.
+	// Input value must be in the range [-1.0, 1.0].
+	//////////////////////////////////////////////////////////////////////////
+	inline scalarf RTM_SIMD_CALL scalar_acos(scalarf_arg0 value) RTM_NO_EXCEPT
+	{
+		// Use the identity: acos(value) + asin(value) = PI/2
+		// This ends up being: acos(value) = PI/2 - asin(value)
+		// Since asin(value) = PI/2 - sqrt(1.0 - polynomial(value))
+		// Our end result is acos(value) = sqrt(1.0 - polynomial(value))
+		// This means we can re-use the same polynomial as asin()
+		// See: GPGPU Programming for Games and Science (David H. Eberly)
+
+		// We first calculate our scale: sqrt(1.0 - abs(value))
+		const __m128i abs_mask = _mm_set_epi32(0x7FFFFFFFULL, 0x7FFFFFFFULL, 0x7FFFFFFFULL, 0x7FFFFFFFULL);
+		__m128 abs_value = _mm_and_ps(value.value, _mm_castsi128_ps(abs_mask));
+
+		// Calculate our value
+		const float x = _mm_cvtss_f32(abs_value);
+		float result = (x * -1.2690614339589956e-3F) + 6.7072304676685235e-3F;
+		result = (result * x) - 1.7162031184398074e-2F;
+		result = (result * x) + 3.0961594977611639e-2F;
+		result = (result * x) - 5.0207843052845647e-2F;
+		result = (result * x) + 8.8986946573346160e-2F;
+		result = (result * x) - 2.1459960076929829e-1F;
+		result = (result * x) + 1.5707963267948966F;
+
+		// Scale our result
+		const __m128 scale = _mm_sqrt_ss(_mm_sub_ss(_mm_set_ps1(1.0F), abs_value));
+		result = result * _mm_cvtss_f32(scale);
+
+		// Handle negative values through reflection
+		if (_mm_cvtss_f32(value.value) < 0.0F)
+			result = 3.141592653589793238462643383279502884F - result;
+
+		return scalarf{ _mm_set_ps1(result) };
+	}
+#endif
+
+	//////////////////////////////////////////////////////////////////////////
+	// Returns the arc-cosine of the input.
+	// Input value must be in the range [-1.0, 1.0].
 	//////////////////////////////////////////////////////////////////////////
 	inline float scalar_acos(float value) RTM_NO_EXCEPT
 	{
-		return std::acos(value);
+#if defined(RTM_SSE2_INTRINSICS)
+		return scalar_cast(scalar_acos(scalar_set(value)));
+#else
+		// Use the identity: acos(value) + asin(value) = PI/2
+		// This ends up being: acos(value) = PI/2 - asin(value)
+		// Since asin(value) = PI/2 - sqrt(1.0 - polynomial(value))
+		// Our end result is acos(value) = sqrt(1.0 - polynomial(value))
+		// This means we can re-use the same polynomial as asin()
+		// See: GPGPU Programming for Games and Science (David H. Eberly)
+
+		// We first calculate our scale: sqrt(1.0 - abs(value))
+		const float abs_value = scalar_abs(value);
+
+		// Calculate our value
+		float result = (abs_value * -1.2690614339589956e-3F) + 6.7072304676685235e-3F;
+		result = (result * abs_value) - 1.7162031184398074e-2F;
+		result = (result * abs_value) + 3.0961594977611639e-2F;
+		result = (result * abs_value) - 5.0207843052845647e-2F;
+		result = (result * abs_value) + 8.8986946573346160e-2F;
+		result = (result * abs_value) - 2.1459960076929829e-1F;
+		result = (result * abs_value) + 1.5707963267948966F;
+
+		// Scale our result
+		const float scale = scalar_sqrt(1.0F - abs_value);
+		result = result * scale;
+
+		// Handle negative values through reflection
+		if (value < 0.0F)
+			result = 3.141592653589793238462643383279502884F - result;
+
+		return result;
+#endif
 	}
 
 #if defined(RTM_SSE2_INTRINSICS)

@@ -1076,7 +1076,8 @@ namespace rtm
 		constexpr float epsilon = 1.0E-8F;
 		constexpr float epsilon_squared = epsilon * epsilon;
 
-		out_angle = radians(scalar_acos(quat_get_w(input)) * 2.0F);
+		const scalarf input_w = quat_get_w(input);
+		out_angle = radians(scalar_cast(scalar_acos(input_w)) * 2.0F);
 
 		const float scale_sq = scalar_max(1.0F - quat_get_w(input) * quat_get_w(input), 0.0F);
 		out_axis = scale_sq >= epsilon_squared ? vector_mul(quat_to_vector(input), vector_set(scalar_sqrt_reciprocal(scale_sq))) : vector_set(1.0F, 0.0F, 0.0F);
@@ -1099,7 +1100,8 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	inline anglef RTM_SIMD_CALL quat_get_angle(quatf_arg0 input) RTM_NO_EXCEPT
 	{
-		return radians(scalar_acos(quat_get_w(input)) * 2.0F);
+		const scalarf input_w = quat_get_w(input);
+		return radians(scalar_cast(scalar_acos(input_w)) * 2.0F);
 	}
 
 	//////////////////////////////////////////////////////////////////////////

@@ -246,6 +246,8 @@ static void test_scalar_impl(const FloatType threshold, const FloatType trig_thr
 
 		CHECK(scalar_near_equal(scalar_asin(ref_sin), std::asin(ref_sin), trig_threshold));
 		CHECK(scalar_near_equal(scalar_cast(scalar_asin(scalar_set(ref_sin))), std::asin(ref_sin), trig_threshold));
+		CHECK(scalar_near_equal(scalar_acos(ref_cos), std::acos(ref_cos), trig_threshold));
+		CHECK(scalar_near_equal(scalar_cast(scalar_acos(scalar_set(ref_cos))), std::acos(ref_cos), trig_threshold));
 	}
 
 	const FloatType angles_acos[] = { FloatType(-1.0), FloatType(-0.75), FloatType(-0.5), FloatType(-0.25), FloatType(0.0), FloatType(0.25), FloatType(0.5), FloatType(0.75), FloatType(1.0) };

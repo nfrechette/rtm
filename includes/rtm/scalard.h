@@ -909,8 +909,20 @@ namespace rtm
 		return std::asin(value);
 	}
 
+#if defined(RTM_SSE2_INTRINSICS)
 	//////////////////////////////////////////////////////////////////////////
 	// Returns the arc-cosine of the input.
+	// Input value must be in the range [-1.0, 1.0].
+	//////////////////////////////////////////////////////////////////////////
+	inline scalard RTM_SIMD_CALL scalar_acos(scalard value) RTM_NO_EXCEPT
+	{
+		return scalar_set(std::acos(scalar_cast(value)));
+	}
+#endif
+
+	//////////////////////////////////////////////////////////////////////////
+	// Returns the arc-cosine of the input.
+	// Input value must be in the range [-1.0, 1.0].
 	//////////////////////////////////////////////////////////////////////////
 	inline double scalar_acos(double value) RTM_NO_EXCEPT
 	{
