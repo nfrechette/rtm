@@ -903,7 +903,7 @@ namespace rtm
 	// Note that due to the sign ambiguity, atan cannot determine which quadrant
 	// the value resides in. See scalar_atan2.
 	//////////////////////////////////////////////////////////////////////////
-	inline scalard RTM_SIMD_CALL scalar_atan(scalard value)
+	inline scalard RTM_SIMD_CALL scalar_atan(scalard value) RTM_NO_EXCEPT
 	{
 		return scalar_set(std::atan(scalar_cast(value)));
 	}
@@ -914,7 +914,7 @@ namespace rtm
 	// Note that due to the sign ambiguity, atan cannot determine which quadrant
 	// the value resides in. See scalar_atan2.
 	//////////////////////////////////////////////////////////////////////////
-	inline double scalar_atan(double value)
+	inline double scalar_atan(double value) RTM_NO_EXCEPT
 	{
 		return std::atan(value);
 	}

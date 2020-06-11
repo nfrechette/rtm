@@ -2281,7 +2281,7 @@ namespace rtm
 	// Note that due to the sign ambiguity, atan cannot determine which quadrant
 	// the value resides in.
 	//////////////////////////////////////////////////////////////////////////
-	inline vector4f RTM_SIMD_CALL vector_atan(vector4f_arg0 input)
+	inline vector4f RTM_SIMD_CALL vector_atan(vector4f_arg0 input) RTM_NO_EXCEPT
 	{
 #if defined(RTM_SSE2_INTRINSICS)
 		// Use a degree 13 minimax approximation polynomial
