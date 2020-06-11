@@ -486,9 +486,10 @@ void test_vector4_arithmetic_impl(const FloatType threshold)
 
 	const Vector4Type scalar_cross3_result = scalar_cross3<Vector4Type, FloatType>(test_value0, test_value1);
 	const Vector4Type vector_cross3_result = vector_cross3(test_value0, test_value1);
-	CHECK(scalar_near_equal(vector_get_x(vector_cross3_result), vector_get_x(scalar_cross3_result), threshold));
-	CHECK(scalar_near_equal(vector_get_y(vector_cross3_result), vector_get_y(scalar_cross3_result), threshold));
-	CHECK(scalar_near_equal(vector_get_z(vector_cross3_result), vector_get_z(scalar_cross3_result), threshold));
+	// We have a strange codegen bug with gcc, use the Catch near equal impl instead
+	CHECK(FloatType(vector_get_x(vector_cross3_result)) == Approx(FloatType(vector_get_x(scalar_cross3_result))).margin(threshold));
+	CHECK(scalar_near_equal(FloatType(vector_get_y(vector_cross3_result)), FloatType(vector_get_y(scalar_cross3_result)), threshold));
+	CHECK(scalar_near_equal(FloatType(vector_get_z(vector_cross3_result)), FloatType(vector_get_z(scalar_cross3_result)), threshold));
 
 	const FloatType test_value10_flt[4] = { FloatType(-0.001138), FloatType(0.91623), FloatType(-1.624598), FloatType(0.715671) };
 	const FloatType test_value11_flt[4] = { FloatType(0.1138), FloatType(-0.623), FloatType(1.4598), FloatType(-0.5671) };
