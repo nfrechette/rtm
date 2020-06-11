@@ -2322,6 +2322,62 @@ namespace rtm
 		return vector_set(x, y, z, w);
 #endif
 	}
+
+	//////////////////////////////////////////////////////////////////////////
+	// Returns per component the arc-tangent of [y/x] using the sign of the arguments to
+	// determine the correct quadrant.
+	// Y represents the proportion of the y-coordinate.
+	// X represents the proportion of the x-coordinate.
+	//////////////////////////////////////////////////////////////////////////
+	inline vector4f RTM_SIMD_CALL vector_atan2(vector4f_arg0 y, vector4f_arg1 x) RTM_NO_EXCEPT
+	{
+#if defined(RTM_SSE2_INTRINSICS)
+		// If X == 0.0 and Y != 0.0, we return PI/2 with the sign of Y
+		// If X == 0.0 and Y == 0.0, we return 0.0
+		// If X > 0.0, we return atan(y/x)
+		// If X < 0.0, we return atan(y/x) + sign(Y) * PI
+		// See: https://en.wikipedia.org/wiki/Atan2#Definition_and_computation
+
+		const __m128 zero = _mm_setzero_ps();
+		__m128 is_x_zero = _mm_cmpeq_ps(x, zero);
+		__m128 is_y_zero = _mm_cmpeq_ps(y, zero);
+		__m128 inputs_are_zero = _mm_and_ps(is_x_zero, is_y_zero);
+
+		__m128 is_x_positive = _mm_cmpgt_ps(x, zero);
+
+		const __m128 sign_mask = _mm_set_ps(-0.0F, -0.0F, -0.0F, -0.0F);
+		__m128 y_sign = _mm_and_ps(y, sign_mask);
+
+		// If X == 0.0, our offset is PI/2 otherwise it is PI both with the sign of Y
+		__m128 half_pi = _mm_set_ps1(1.570796326794896619231321691639751442F);
+		__m128 pi = _mm_set_ps1(3.141592653589793238462643383279502884F);
+		__m128 offset = _mm_or_ps(_mm_and_ps(is_x_zero, half_pi), _mm_andnot_ps(is_x_zero, pi));
+		offset = _mm_or_ps(offset, y_sign);
+
+		// If X > 0.0, our offset is 0.0
+		offset = _mm_andnot_ps(is_x_positive, offset);
+
+		// If X == 0.0 and Y == 0.0, our offset is 0.0
+		offset = _mm_andnot_ps(inputs_are_zero, offset);
+
+		__m128 angle = _mm_div_ps(y, x);
+		__m128 value = vector_atan(angle);
+
+		// If X == 0.0, our value is 0.0 otherwise it is atan(y/x)
+		value = _mm_or_ps(_mm_and_ps(is_x_zero, zero), _mm_andnot_ps(is_x_zero, value));
+
+		// If X == 0.0 and Y == 0.0, our value is 0.0
+		value = _mm_andnot_ps(inputs_are_zero, value);
+
+		return _mm_add_ps(value, offset);
+#else
+		scalarf x_ = scalar_atan2(scalarf(vector_get_x(y)), scalarf(vector_get_x(x)));
+		scalarf y_ = scalar_atan2(scalarf(vector_get_y(y)), scalarf(vector_get_y(x)));
+		scalarf z_ = scalar_atan2(scalarf(vector_get_z(y)), scalarf(vector_get_z(x)));
+		scalarf w_ = scalar_atan2(scalarf(vector_get_w(y)), scalarf(vector_get_w(x)));
+		return vector_set(x_, y_, z_, w_);
+#endif
+	}
 }
 
 RTM_IMPL_FILE_PRAGMA_POP
