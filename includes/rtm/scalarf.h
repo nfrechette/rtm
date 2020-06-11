@@ -1158,7 +1158,7 @@ namespace rtm
 		result = result * x;
 
 		if (abs_value > 1.0f)
-			result = (0.933189452F * 1.68325555F) - result; // pi/2 - result, (0x3f6ee581 * 0x3fd774eb)
+			result = 1.570796326794896619231321691639751442F - result; // pi/2 - result, (0x3f6ee581 * 0x3fd774eb)
 
 		// Keep the original sign
 		result = value >= 0.0F ? result : -result;
