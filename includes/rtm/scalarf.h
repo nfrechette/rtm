@@ -1059,6 +1059,7 @@ namespace rtm
 #endif
 	}
 
+#if defined(RTM_SSE2_INTRINSICS)
 	//////////////////////////////////////////////////////////////////////////
 	// Returns both sine and cosine of the input angle.
 	// The result's [x] component contains sin(angle).
@@ -1070,15 +1071,9 @@ namespace rtm
 		scalarf sin_ = scalar_sin(angle);
 		scalarf cos_ = scalar_cos(angle);
 
-#if defined(RTM_SSE2_INTRINSICS)
 		return _mm_unpacklo_ps(sin_.value, cos_.value);
-#elif defined(RTM_NEON_INTRINSICS)
-		float32x2_t xy = vcreate_f32(((uint64_t)*(const uint32_t*)&sin_) | ((uint64_t)(*(const uint32_t*)&cos_) << 32));
-		return vcombine_f32(xy, xy);
-#else
-		return vector4f{ sin_, cos_, sin_, cos_ };
-#endif
 	}
+#endif
 
 	//////////////////////////////////////////////////////////////////////////
 	// Returns both sine and cosine of the input angle.
@@ -1088,7 +1083,18 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	inline vector4f RTM_SIMD_CALL scalar_sincos(float angle) RTM_NO_EXCEPT
 	{
-		return scalar_sincos(scalar_set(angle));
+		scalarf angle_ = scalar_set(angle);
+		scalarf sin_ = scalar_sin(angle_);
+		scalarf cos_ = scalar_cos(angle_);
+
+#if defined(RTM_SSE2_INTRINSICS)
+		return _mm_unpacklo_ps(sin_.value, cos_.value);
+#elif defined(RTM_NEON_INTRINSICS)
+		float32x2_t xy = vcreate_f32(((uint64_t)*(const uint32_t*)&sin_) | ((uint64_t)(*(const uint32_t*)&cos_) << 32));
+		return vcombine_f32(xy, xy);
+#else
+		return vector4f{ sin_, cos_, sin_, cos_ };
+#endif
 	}
 
 	//////////////////////////////////////////////////////////////////////////

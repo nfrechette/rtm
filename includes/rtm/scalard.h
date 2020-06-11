@@ -880,6 +880,7 @@ namespace rtm
 		return std::cos(angle);
 	}
 
+#if defined(RTM_SSE2_INTRINSICS)
 	//////////////////////////////////////////////////////////////////////////
 	// Returns both sine and cosine of the input angle.
 	//////////////////////////////////////////////////////////////////////////
@@ -888,13 +889,10 @@ namespace rtm
 		scalard sin_ = scalar_sin(angle);
 		scalard cos_ = scalar_cos(angle);
 
-#if defined(RTM_SSE2_INTRINSICS)
 		__m128d xy = _mm_unpacklo_pd(sin_.value, cos_.value);
 		return vector4d{ xy, xy };
-#else
-		return vector4d{ sin_, cos_, sin_, cos_ };
-#endif
 	}
+#endif
 
 	//////////////////////////////////////////////////////////////////////////
 	// Returns both sine and cosine of the input angle.
@@ -904,7 +902,16 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	inline vector4d RTM_SIMD_CALL scalar_sincos(double angle) RTM_NO_EXCEPT
 	{
-		return scalar_sincos(scalar_set(angle));
+		scalard angle_ = scalar_set(angle);
+		scalard sin_ = scalar_sin(angle_);
+		scalard cos_ = scalar_cos(angle_);
+
+#if defined(RTM_SSE2_INTRINSICS)
+		__m128d xy = _mm_unpacklo_pd(sin_.value, cos_.value);
+		return vector4d{ xy, xy };
+#else
+		return vector4d{ sin_, cos_, sin_, cos_ };
+#endif
 	}
 
 	//////////////////////////////////////////////////////////////////////////
