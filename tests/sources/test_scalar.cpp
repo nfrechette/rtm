@@ -229,36 +229,72 @@ static void test_scalar_impl(const FloatType threshold, const FloatType trig_thr
 	const AngleType half_pi = constants::half_pi();
 	const AngleType pi = constants::pi();
 
-	const FloatType angles[] = { FloatType(0.0), pi.as_radians(), -pi.as_radians(), half_pi.as_radians(), -half_pi.as_radians(), FloatType(0.5), FloatType(32.5), FloatType(-0.5), FloatType(-32.5) };
+	const FloatType angles[] =
+	{
+		FloatType(0.0), FloatType(-0.0),
+		pi.as_radians(), -pi.as_radians(),
+		half_pi.as_radians(), -half_pi.as_radians(),
+		half_pi.as_radians() * FloatType(0.5), -half_pi.as_radians() * FloatType(0.5),
+		half_pi.as_radians() * FloatType(0.25), -half_pi.as_radians() * FloatType(0.25),
+		FloatType(0.5), FloatType(-0.5),
+		FloatType(32.5), FloatType(-32.5),
+	};
 
 	for (const FloatType angle : angles)
 	{
-		const FloatType ref_sin = std::sin(angle);
-		const FloatType ref_cos = std::cos(angle);
+		INFO("The angle is " << angle);
 
-		CHECK(scalar_near_equal(scalar_sin(angle), ref_sin, trig_threshold));
-		CHECK(scalar_near_equal(scalar_cast(scalar_sin(scalar_set(angle))), ref_sin, trig_threshold));
-		CHECK(scalar_near_equal(scalar_cos(angle), ref_cos, trig_threshold));
-		CHECK(scalar_near_equal(scalar_cast(scalar_cos(scalar_set(angle))), ref_cos, trig_threshold));
+		{
+			const FloatType ref_sin = std::sin(angle);
+			const FloatType ref_cos = std::cos(angle);
 
-		FloatType sin_result;
-		FloatType cos_result;
-		scalar_sincos(angle, sin_result, cos_result);
-		CHECK(scalar_near_equal(sin_result, ref_sin, trig_threshold));
-		CHECK(scalar_near_equal(cos_result, ref_cos, trig_threshold));
+			INFO("The reference sin(angle) is " << ref_sin);
+			INFO("The reference cos(angle) is " << ref_cos);
 
-		Vector4Type sincos0 = scalar_sincos(angle);
-		CHECK(scalar_near_equal(vector_get_x(sincos0), ref_sin, trig_threshold));
-		CHECK(scalar_near_equal(vector_get_y(sincos0), ref_cos, trig_threshold));
+			CHECK(scalar_near_equal(scalar_sin(angle), ref_sin, trig_threshold));
+			CHECK(scalar_near_equal(scalar_cast(scalar_sin(scalar_set(angle))), ref_sin, trig_threshold));
+			CHECK(scalar_near_equal(scalar_cos(angle), ref_cos, trig_threshold));
+			CHECK(scalar_near_equal(scalar_cast(scalar_cos(scalar_set(angle))), ref_cos, trig_threshold));
 
-		Vector4Type sincos1 = scalar_sincos(scalar_set(angle));
-		CHECK(scalar_near_equal(vector_get_x(sincos1), ref_sin, trig_threshold));
-		CHECK(scalar_near_equal(vector_get_y(sincos1), ref_cos, trig_threshold));
+			FloatType sin_result;
+			FloatType cos_result;
+			scalar_sincos(angle, sin_result, cos_result);
+			CHECK(scalar_near_equal(sin_result, ref_sin, trig_threshold));
+			CHECK(scalar_near_equal(cos_result, ref_cos, trig_threshold));
 
-		CHECK(scalar_near_equal(scalar_asin(ref_sin), std::asin(ref_sin), trig_threshold));
-		CHECK(scalar_near_equal(scalar_cast(scalar_asin(scalar_set(ref_sin))), std::asin(ref_sin), trig_threshold));
-		CHECK(scalar_near_equal(scalar_acos(ref_cos), std::acos(ref_cos), trig_threshold));
-		CHECK(scalar_near_equal(scalar_cast(scalar_acos(scalar_set(ref_cos))), std::acos(ref_cos), trig_threshold));
+			Vector4Type sincos0 = scalar_sincos(angle);
+			CHECK(scalar_near_equal(vector_get_x(sincos0), ref_sin, trig_threshold));
+			CHECK(scalar_near_equal(vector_get_y(sincos0), ref_cos, trig_threshold));
+
+			Vector4Type sincos1 = scalar_sincos(scalar_set(angle));
+			CHECK(scalar_near_equal(vector_get_x(sincos1), ref_sin, trig_threshold));
+			CHECK(scalar_near_equal(vector_get_y(sincos1), ref_cos, trig_threshold));
+
+			CHECK(scalar_near_equal(scalar_asin(ref_sin), std::asin(ref_sin), trig_threshold));
+			CHECK(scalar_near_equal(scalar_cast(scalar_asin(scalar_set(ref_sin))), std::asin(ref_sin), trig_threshold));
+			CHECK(scalar_near_equal(scalar_acos(ref_cos), std::acos(ref_cos), trig_threshold));
+			CHECK(scalar_near_equal(scalar_cast(scalar_acos(scalar_set(ref_cos))), std::acos(ref_cos), trig_threshold));
+		}
+
+		{
+			const FloatType ref_tan = std::tan(angle);
+			const FloatType rtm_tan = scalar_tan(angle);
+
+			INFO("The reference tan(angle) is " << ref_tan);
+			INFO("The RTM tan(angle) is " << rtm_tan);
+
+			// For +-PI/2, we only test that the value is really large or really small
+			if (scalar_abs(angle) == FloatType(half_pi.as_radians()))
+			{
+				CHECK(scalar_is_greater(scalar_abs(rtm_tan), FloatType(1.0e6)));
+				CHECK(scalar_is_greater(scalar_cast(scalar_abs(scalar_tan(scalar_set(angle)))), FloatType(1.0e6)));
+			}
+			else
+			{
+				CHECK(scalar_near_equal(rtm_tan, ref_tan, trig_threshold));
+				CHECK(scalar_near_equal(scalar_cast(scalar_tan(scalar_set(angle))), ref_tan, trig_threshold));
+			}
+		}
 	}
 
 	const FloatType angles_acos[] = { FloatType(-1.0), FloatType(-0.75), FloatType(-0.5), FloatType(-0.25), FloatType(0.0), FloatType(0.25), FloatType(0.5), FloatType(0.75), FloatType(1.0) };
