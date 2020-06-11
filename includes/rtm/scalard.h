@@ -958,6 +958,24 @@ namespace rtm
 
 #if defined(RTM_SSE2_INTRINSICS)
 	//////////////////////////////////////////////////////////////////////////
+	// Returns the tangent of the input angle.
+	//////////////////////////////////////////////////////////////////////////
+	inline scalard RTM_SIMD_CALL scalar_tan(scalard angle) RTM_NO_EXCEPT
+	{
+		return scalar_set(std::tan(scalar_cast(angle)));
+	}
+#endif
+
+	//////////////////////////////////////////////////////////////////////////
+	// Returns the tangent of the input angle.
+	//////////////////////////////////////////////////////////////////////////
+	inline double scalar_tan(double angle) RTM_NO_EXCEPT
+	{
+		return std::tan(angle);
+	}
+
+#if defined(RTM_SSE2_INTRINSICS)
+	//////////////////////////////////////////////////////////////////////////
 	// Returns the arc-tangent of the input.
 	// Note that due to the sign ambiguity, atan cannot determine which quadrant
 	// the value resides in. See scalar_atan2.

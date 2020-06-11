@@ -1260,6 +1260,37 @@ namespace rtm
 
 #if defined(RTM_SSE2_INTRINSICS)
 	//////////////////////////////////////////////////////////////////////////
+	// Returns the tangent of the input angle.
+	//////////////////////////////////////////////////////////////////////////
+	inline scalarf RTM_SIMD_CALL scalar_tan(scalarf_arg0 angle) RTM_NO_EXCEPT
+	{
+		// Use the identity: tan(angle) = sin(angle) / cos(angle)
+		scalarf sin_ = scalar_sin(angle);
+		scalarf cos_ = scalar_cos(angle);
+		if (scalar_cast(cos_) == 0.0F)
+			return scalar_set(std::copysign(std::numeric_limits<float>::infinity(), scalar_cast(angle)));
+
+		return scalar_div(sin_, cos_);
+	}
+#endif
+
+	//////////////////////////////////////////////////////////////////////////
+	// Returns the tangent of the input angle.
+	//////////////////////////////////////////////////////////////////////////
+	inline float scalar_tan(float angle) RTM_NO_EXCEPT
+	{
+		// Use the identity: tan(angle) = sin(angle) / cos(angle)
+		scalarf angle_ = scalar_set(angle);
+		scalarf sin_ = scalar_sin(angle_);
+		scalarf cos_ = scalar_cos(angle_);
+		if (scalar_cast(cos_) == 0.0F)
+			return std::copysign(std::numeric_limits<float>::infinity(), angle);
+
+		return scalar_cast(scalar_div(sin_, cos_));
+	}
+
+#if defined(RTM_SSE2_INTRINSICS)
+	//////////////////////////////////////////////////////////////////////////
 	// Returns the arc-tangent of the input.
 	// Note that due to the sign ambiguity, atan cannot determine which quadrant
 	// the value resides in. See scalar_atan2.
