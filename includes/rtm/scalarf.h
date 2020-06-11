@@ -1083,7 +1083,7 @@ namespace rtm
 	// Note that due to the sign ambiguity, atan cannot determine which quadrant
 	// the value resides in. See scalar_atan2.
 	//////////////////////////////////////////////////////////////////////////
-	inline scalarf RTM_SIMD_CALL scalar_atan(scalarf_arg0 value)
+	inline scalarf RTM_SIMD_CALL scalar_atan(scalarf_arg0 value) RTM_NO_EXCEPT
 	{
 		// Use a degree 13 minimax approximation polynomial
 		// See: GPGPU Programming for Games and Science (David H. Eberly)
@@ -1135,7 +1135,7 @@ namespace rtm
 	// Note that due to the sign ambiguity, atan cannot determine which quadrant
 	// the value resides in. See scalar_atan2.
 	//////////////////////////////////////////////////////////////////////////
-	inline float RTM_SIMD_CALL scalar_atan(float value)
+	inline float RTM_SIMD_CALL scalar_atan(float value) RTM_NO_EXCEPT
 	{
 #if defined(RTM_SSE2_INTRINSICS)
 		return scalar_cast(scalar_atan(scalar_set(value)));
