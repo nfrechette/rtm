@@ -1805,6 +1805,35 @@ namespace rtm
 	}
 
 	//////////////////////////////////////////////////////////////////////////
+	// Returns per component the input with the sign of the control value.
+	//////////////////////////////////////////////////////////////////////////
+	inline vector4d vector_copy_sign(const vector4d& input, const vector4d& control_sign) RTM_NO_EXCEPT
+	{
+#if defined(RTM_SSE2_INTRINSICS)
+		const __m128d sign_bit = _mm_set1_pd(-0.0);
+		__m128d signs_xy = _mm_and_pd(sign_bit, control_sign.xy);
+		__m128d signs_zw = _mm_and_pd(sign_bit, control_sign.zw);
+		__m128d abs_input_xy = _mm_andnot_pd(sign_bit, input.xy);
+		__m128d abs_input_zw = _mm_andnot_pd(sign_bit, input.zw);
+		__m128d xy = _mm_or_pd(abs_input_xy, signs_xy);
+		__m128d zw = _mm_or_pd(abs_input_zw, signs_zw);
+		return vector4d{ xy, zw };
+#else
+		double x = vector_get_x(input);
+		double y = vector_get_y(input);
+		double z = vector_get_z(input);
+		double w = vector_get_w(input);
+
+		double x_sign = vector_get_x(control_sign);
+		double y_sign = vector_get_y(control_sign);
+		double z_sign = vector_get_z(control_sign);
+		double w_sign = vector_get_w(control_sign);
+
+		return vector_set(std::copysign(x, x_sign), std::copysign(y, y_sign), std::copysign(z, z_sign), std::copysign(w, w_sign));
+#endif
+	}
+
+	//////////////////////////////////////////////////////////////////////////
 	// Returns per component the rounded input using a symmetric algorithm.
 	// vector_round_symmetric(1.5) = 2.0
 	// vector_round_symmetric(1.2) = 1.0

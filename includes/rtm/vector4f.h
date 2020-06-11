@@ -2089,6 +2089,31 @@ namespace rtm
 	}
 
 	//////////////////////////////////////////////////////////////////////////
+	// Returns per component the input with the sign of the control value.
+	//////////////////////////////////////////////////////////////////////////
+	inline vector4f RTM_SIMD_CALL vector_copy_sign(vector4f_arg0 input, vector4f_arg1 control_sign) RTM_NO_EXCEPT
+	{
+#if defined(RTM_SSE2_INTRINSICS)
+		const __m128 sign_bit = _mm_set_ps1(-0.0F);
+		__m128 signs = _mm_and_ps(sign_bit, control_sign);
+		__m128 abs_input = _mm_andnot_ps(sign_bit, input);
+		return _mm_or_ps(abs_input, signs);
+#else
+		float x = vector_get_x(input);
+		float y = vector_get_y(input);
+		float z = vector_get_z(input);
+		float w = vector_get_w(input);
+
+		float x_sign = vector_get_x(control_sign);
+		float y_sign = vector_get_y(control_sign);
+		float z_sign = vector_get_z(control_sign);
+		float w_sign = vector_get_w(control_sign);
+
+		return vector_set(std::copysign(x, x_sign), std::copysign(y, y_sign), std::copysign(z, z_sign), std::copysign(w, w_sign));
+#endif
+	}
+
+	//////////////////////////////////////////////////////////////////////////
 	// Returns per component the rounded input using a symmetric algorithm.
 	// vector_round_symmetric(1.5) = 2.0
 	// vector_round_symmetric(1.2) = 1.0
