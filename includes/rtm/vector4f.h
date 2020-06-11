@@ -2227,6 +2227,55 @@ namespace rtm
 	}
 
 	//////////////////////////////////////////////////////////////////////////
+	// Returns per component the arc-sine of the input.
+	// Input value must be in the range [-1.0, 1.0].
+	//////////////////////////////////////////////////////////////////////////
+	inline vector4f RTM_SIMD_CALL vector_asin(vector4f_arg0 input) RTM_NO_EXCEPT
+	{
+#if defined(RTM_SSE2_INTRINSICS)
+		// Use a degree 7 minimax approximation polynomial
+		// See: GPGPU Programming for Games and Science (David H. Eberly)
+
+		// We first calculate our scale: sqrt(1.0 - abs(value))
+		// Use the sign bit to generate our absolute value since we'll re-use that constant
+		const __m128 sign_bit = _mm_set_ps1(-0.0F);
+		__m128 abs_value = _mm_andnot_ps(sign_bit, input);
+
+		// Calculate our value
+		__m128 result = _mm_add_ps(_mm_mul_ps(abs_value, _mm_set_ps1(-1.2690614339589956e-3F)), _mm_set_ps1(6.7072304676685235e-3F));
+		result = _mm_add_ps(_mm_mul_ps(result, abs_value), _mm_set_ps1(-1.7162031184398074e-2F));
+		result = _mm_add_ps(_mm_mul_ps(result, abs_value), _mm_set_ps1(3.0961594977611639e-2F));
+		result = _mm_add_ps(_mm_mul_ps(result, abs_value), _mm_set_ps1(-5.0207843052845647e-2F));
+		result = _mm_add_ps(_mm_mul_ps(result, abs_value), _mm_set_ps1(8.8986946573346160e-2F));
+		result = _mm_add_ps(_mm_mul_ps(result, abs_value), _mm_set_ps1(-2.1459960076929829e-1F));
+		result = _mm_add_ps(_mm_mul_ps(result, abs_value), _mm_set_ps1(1.5707963267948966F));
+
+		// Scale our result
+		__m128 scale = _mm_sqrt_ps(_mm_sub_ps(_mm_set_ps1(1.0F), abs_value));
+		result = _mm_mul_ps(result, scale);
+
+		// Normally the math is as follow:
+		// If input is positive: PI/2 - result
+		// If input is negative: PI/2 - (PI - result) = PI/2 - PI + result = -PI/2 + result
+
+		// As such, the offset is PI/2 and it takes the sign of the input
+		// This allows us to load a single constant from memory directly
+		__m128 input_sign = _mm_and_ps(input, sign_bit);
+		__m128 offset = _mm_or_ps(input_sign, _mm_set_ps1(1.570796326794896619231321691639751442F));
+
+		// And our result has the opposite sign of the input
+		result = _mm_xor_ps(result, _mm_xor_ps(input_sign, sign_bit));
+		return _mm_add_ps(result, offset);
+#else
+		scalarf x = scalar_asin(scalarf(vector_get_x(input)));
+		scalarf y = scalar_asin(scalarf(vector_get_y(input)));
+		scalarf z = scalar_asin(scalarf(vector_get_z(input)));
+		scalarf w = scalar_asin(scalarf(vector_get_w(input)));
+		return vector_set(x, y, z, w);
+#endif
+	}
+
+	//////////////////////////////////////////////////////////////////////////
 	// Returns per component the cosine of the input angle.
 	//////////////////////////////////////////////////////////////////////////
 	inline vector4f RTM_SIMD_CALL vector_cos(vector4f_arg0 input) RTM_NO_EXCEPT
