@@ -1298,6 +1298,20 @@ namespace rtm
 
 
 	//////////////////////////////////////////////////////////////////////////
+	// Returns per component ~0 if equal, otherwise 0: lhs == rhs ? ~0 : 0
+	//////////////////////////////////////////////////////////////////////////
+	inline mask4q vector_equal(const vector4d& lhs, const vector4d& rhs) RTM_NO_EXCEPT
+	{
+#if defined(RTM_SSE2_INTRINSICS)
+		__m128d xy_lt_pd = _mm_cmpeq_pd(lhs.xy, rhs.xy);
+		__m128d zw_lt_pd = _mm_cmpeq_pd(lhs.zw, rhs.zw);
+		return mask4q{ xy_lt_pd, zw_lt_pd };
+#else
+		return mask4q{ rtm_impl::get_mask_value(lhs.x == rhs.x), rtm_impl::get_mask_value(lhs.y == rhs.y), rtm_impl::get_mask_value(lhs.z == rhs.z), rtm_impl::get_mask_value(lhs.w == rhs.w) };
+#endif
+	}
+
+	//////////////////////////////////////////////////////////////////////////
 	// Returns per component ~0 if less than, otherwise 0: lhs < rhs ? ~0 : 0
 	//////////////////////////////////////////////////////////////////////////
 	inline mask4q vector_less_than(const vector4d& lhs, const vector4d& rhs) RTM_NO_EXCEPT
@@ -1322,6 +1336,20 @@ namespace rtm
 		return mask4q{ xy_lt_pd, zw_lt_pd };
 #else
 		return mask4q{ rtm_impl::get_mask_value(lhs.x <= rhs.x), rtm_impl::get_mask_value(lhs.y <= rhs.y), rtm_impl::get_mask_value(lhs.z <= rhs.z), rtm_impl::get_mask_value(lhs.w <= rhs.w) };
+#endif
+	}
+
+	//////////////////////////////////////////////////////////////////////////
+	// Returns per component ~0 if greater than, otherwise 0: lhs > rhs ? ~0 : 0
+	//////////////////////////////////////////////////////////////////////////
+	inline mask4q vector_greater_than(const vector4d& lhs, const vector4d& rhs) RTM_NO_EXCEPT
+	{
+#if defined(RTM_SSE2_INTRINSICS)
+		__m128d xy_ge_pd = _mm_cmpgt_pd(lhs.xy, rhs.xy);
+		__m128d zw_ge_pd = _mm_cmpgt_pd(lhs.zw, rhs.zw);
+		return mask4q{ xy_ge_pd, zw_ge_pd };
+#else
+		return mask4q{ rtm_impl::get_mask_value(lhs.x > rhs.x), rtm_impl::get_mask_value(lhs.y > rhs.y), rtm_impl::get_mask_value(lhs.z > rhs.z), rtm_impl::get_mask_value(lhs.w > rhs.w) };
 #endif
 	}
 
