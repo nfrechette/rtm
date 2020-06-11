@@ -30,6 +30,8 @@
 #include <rtm/scalarf.h>
 #include <rtm/scalard.h>
 #include <rtm/type_traits.h>
+#include <rtm/vector4f.h>
+#include <rtm/vector4d.h>
 
 #include <limits>
 
@@ -222,6 +224,7 @@ static void test_scalar_impl(const FloatType threshold, const FloatType trig_thr
 	CHECK(scalar_near_equal(scalar_lerp(scalar_set(values[0]), scalar_set(values[1]), scalar_set(FloatType(1.0))), scalar_set(values[1]), scalar_set(FloatType(0.0))));
 
 	using AngleType = typename float_traits<FloatType>::angle;
+	using Vector4Type = typename float_traits<FloatType>::vector4;
 
 	const AngleType half_pi = constants::half_pi();
 	const AngleType pi = constants::pi();
@@ -243,6 +246,14 @@ static void test_scalar_impl(const FloatType threshold, const FloatType trig_thr
 		scalar_sincos(angle, sin_result, cos_result);
 		CHECK(scalar_near_equal(sin_result, ref_sin, trig_threshold));
 		CHECK(scalar_near_equal(cos_result, ref_cos, trig_threshold));
+
+		Vector4Type sincos0 = scalar_sincos(angle);
+		CHECK(scalar_near_equal(vector_get_x(sincos0), ref_sin, trig_threshold));
+		CHECK(scalar_near_equal(vector_get_y(sincos0), ref_cos, trig_threshold));
+
+		Vector4Type sincos1 = scalar_sincos(scalar_set(angle));
+		CHECK(scalar_near_equal(vector_get_x(sincos1), ref_sin, trig_threshold));
+		CHECK(scalar_near_equal(vector_get_y(sincos1), ref_cos, trig_threshold));
 
 		CHECK(scalar_near_equal(scalar_asin(ref_sin), std::asin(ref_sin), trig_threshold));
 		CHECK(scalar_near_equal(scalar_cast(scalar_asin(scalar_set(ref_sin))), std::asin(ref_sin), trig_threshold));
