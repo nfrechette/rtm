@@ -1938,6 +1938,19 @@ namespace rtm
 	}
 
 	//////////////////////////////////////////////////////////////////////////
+	// Returns per component the arc-sine of the input.
+	// Input value must be in the range [-1.0, 1.0].
+	//////////////////////////////////////////////////////////////////////////
+	inline vector4d vector_asin(const vector4d& input) RTM_NO_EXCEPT
+	{
+		scalard x = scalar_asin(scalard(vector_get_x(input)));
+		scalard y = scalar_asin(scalard(vector_get_y(input)));
+		scalard z = scalar_asin(scalard(vector_get_z(input)));
+		scalard w = scalar_asin(scalard(vector_get_w(input)));
+		return vector_set(x, y, z, w);
+	}
+
+	//////////////////////////////////////////////////////////////////////////
 	// Returns per component the cosine of the input angle.
 	//////////////////////////////////////////////////////////////////////////
 	inline vector4d vector_cos(const vector4d& input) RTM_NO_EXCEPT
