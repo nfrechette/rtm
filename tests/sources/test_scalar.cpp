@@ -261,6 +261,31 @@ static void test_scalar_impl(const FloatType threshold, const FloatType trig_thr
 	CHECK(scalar_near_equal(scalar_atan2(FloatType(2.0), FloatType(2.0)), std::atan2(FloatType(2.0), FloatType(2.0)), trig_threshold));
 	CHECK(scalar_near_equal(scalar_atan2(FloatType(1.0), FloatType(2.0)), std::atan2(FloatType(1.0), FloatType(2.0)), trig_threshold));
 	CHECK(scalar_near_equal(scalar_atan2(FloatType(2.0), FloatType(1.0)), std::atan2(FloatType(2.0), FloatType(1.0)), trig_threshold));
+	CHECK(scalar_near_equal(scalar_atan2(FloatType(2.0), FloatType(0.0)), std::atan2(FloatType(2.0), FloatType(0.0)), trig_threshold));
+	CHECK(scalar_near_equal(scalar_atan2(FloatType(-2.0), FloatType(0.0)), std::atan2(FloatType(-2.0), FloatType(0.0)), trig_threshold));
+	CHECK(scalar_near_equal(scalar_atan2(FloatType(2.0), FloatType(-0.0)), std::atan2(FloatType(2.0), FloatType(-0.0)), trig_threshold));
+	CHECK(scalar_near_equal(scalar_atan2(FloatType(-2.0), FloatType(-0.0)), std::atan2(FloatType(-2.0), FloatType(-0.0)), trig_threshold));
+	CHECK(scalar_near_equal(scalar_atan2(FloatType(0.0), FloatType(2.0)), std::atan2(FloatType(0.0), FloatType(2.0)), trig_threshold));
+	CHECK(scalar_near_equal(scalar_atan2(FloatType(0.0), FloatType(-2.0)), std::atan2(FloatType(0.0), FloatType(-2.0)), trig_threshold));
+	CHECK(scalar_near_equal(scalar_atan2(FloatType(-0.0), FloatType(2.0)), std::atan2(FloatType(-0.0), FloatType(2.0)), trig_threshold));
+	CHECK(scalar_near_equal(scalar_atan2(FloatType(-0.0), FloatType(-2.0)), std::atan2(FloatType(-0.0), FloatType(-2.0)), trig_threshold));
+	CHECK(scalar_atan2(FloatType(0.0), FloatType(0.0)) == FloatType(0.0));
+
+	CHECK(scalar_near_equal(scalar_cast(scalar_atan2(scalar_set(FloatType(-2.0)), scalar_set(FloatType(-2.0)))), std::atan2(FloatType(-2.0), FloatType(-2.0)), trig_threshold));
+	CHECK(scalar_near_equal(scalar_cast(scalar_atan2(scalar_set(FloatType(-1.0)), scalar_set(FloatType(-2.0)))), std::atan2(FloatType(-1.0), FloatType(-2.0)), trig_threshold));
+	CHECK(scalar_near_equal(scalar_cast(scalar_atan2(scalar_set(FloatType(-2.0)), scalar_set(FloatType(-1.0)))), std::atan2(FloatType(-2.0), FloatType(-1.0)), trig_threshold));
+	CHECK(scalar_near_equal(scalar_cast(scalar_atan2(scalar_set(FloatType(2.0)), scalar_set(FloatType(2.0)))), std::atan2(FloatType(2.0), FloatType(2.0)), trig_threshold));
+	CHECK(scalar_near_equal(scalar_cast(scalar_atan2(scalar_set(FloatType(1.0)), scalar_set(FloatType(2.0)))), std::atan2(FloatType(1.0), FloatType(2.0)), trig_threshold));
+	CHECK(scalar_near_equal(scalar_cast(scalar_atan2(scalar_set(FloatType(2.0)), scalar_set(FloatType(1.0)))), std::atan2(FloatType(2.0), FloatType(1.0)), trig_threshold));
+	CHECK(scalar_near_equal(scalar_cast(scalar_atan2(scalar_set(FloatType(2.0)), scalar_set(FloatType(0.0)))), std::atan2(FloatType(2.0), FloatType(0.0)), trig_threshold));
+	CHECK(scalar_near_equal(scalar_cast(scalar_atan2(scalar_set(FloatType(-2.0)), scalar_set(FloatType(0.0)))), std::atan2(FloatType(-2.0), FloatType(0.0)), trig_threshold));
+	CHECK(scalar_near_equal(scalar_cast(scalar_atan2(scalar_set(FloatType(2.0)), scalar_set(FloatType(-0.0)))), std::atan2(FloatType(2.0), FloatType(-0.0)), trig_threshold));
+	CHECK(scalar_near_equal(scalar_cast(scalar_atan2(scalar_set(FloatType(-2.0)), scalar_set(FloatType(-0.0)))), std::atan2(FloatType(-2.0), FloatType(-0.0)), trig_threshold));
+	CHECK(scalar_near_equal(scalar_cast(scalar_atan2(scalar_set(FloatType(0.0)), scalar_set(FloatType(2.0)))), std::atan2(FloatType(0.0), FloatType(2.0)), trig_threshold));
+	CHECK(scalar_near_equal(scalar_cast(scalar_atan2(scalar_set(FloatType(0.0)), scalar_set(FloatType(-2.0)))), std::atan2(FloatType(0.0), FloatType(-2.0)), trig_threshold));
+	CHECK(scalar_near_equal(scalar_cast(scalar_atan2(scalar_set(FloatType(-0.0)), scalar_set(FloatType(2.0)))), std::atan2(FloatType(-0.0), FloatType(2.0)), trig_threshold));
+	CHECK(scalar_near_equal(scalar_cast(scalar_atan2(scalar_set(FloatType(-0.0)), scalar_set(FloatType(-2.0)))), std::atan2(FloatType(-0.0), FloatType(-2.0)), trig_threshold));
+	CHECK(scalar_cast(scalar_atan2(scalar_set(FloatType(0.0)), scalar_set(FloatType(0.0)))) == FloatType(0.0));
 
 	CHECK(scalar_min(FloatType(-0.5), FloatType(1.0)) == FloatType(-0.5));
 	CHECK(scalar_min(FloatType(1.0), FloatType(-0.5)) == FloatType(-0.5));
