@@ -1295,9 +1295,9 @@ namespace rtm
 		result = result * x_s;
 
 		__m128 result_s = _mm_set_ps1(result);
-		__m128 remapped = _mm_sub_ss(_mm_set_ps1(0.933189452F * 1.68325555F), result_s);
+		__m128 remapped = _mm_sub_ss(_mm_set_ps1(1.570796326794896619231321691639751442F), result_s);
 
-		// pi/2 - result, (0x3f6ee581 * 0x3fd774eb)
+		// pi/2 - result
 #if defined(RTM_AVX_INTRINSICS)
 		result_s = _mm_blendv_ps(result_s, remapped, is_larger_than_one);
 #else
@@ -1340,7 +1340,7 @@ namespace rtm
 		result = result * x;
 
 		if (abs_value > 1.0f)
-			result = 1.570796326794896619231321691639751442F - result; // pi/2 - result, (0x3f6ee581 * 0x3fd774eb)
+			result = 1.570796326794896619231321691639751442F - result; // pi/2 - result
 
 		// Keep the original sign
 		result = value >= 0.0F ? result : -result;
