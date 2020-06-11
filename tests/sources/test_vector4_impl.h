@@ -1044,6 +1044,8 @@ void test_vector4_impl(const FloatType threshold)
 
 		for (const FloatType angle : angles)
 		{
+			INFO("angle: " << angle);
+
 			const Vector4Type angle_v = vector_set(angle);
 
 			const FloatType ref_sin = scalar_sin(angle);
@@ -1055,8 +1057,8 @@ void test_vector4_impl(const FloatType threshold)
 			const Vector4Type rtm_sin = vector_sin(angle_v);
 			const Vector4Type rtm_cos = vector_cos(angle_v);
 			const Vector4Type rtm_tan = vector_tan(angle_v);
-			const Vector4Type rtm_asin = vector_asin(rtm_sin);
-			const Vector4Type rtm_acos = vector_acos(rtm_cos);
+			const Vector4Type rtm_asin = vector_asin(vector_set(ref_sin));
+			const Vector4Type rtm_acos = vector_acos(vector_set(ref_cos));
 
 			CHECK(scalar_near_equal(FloatType(vector_get_x(rtm_sin)), ref_sin, threshold));
 			CHECK(scalar_near_equal(FloatType(vector_get_y(rtm_sin)), ref_sin, threshold));
@@ -1078,10 +1080,18 @@ void test_vector4_impl(const FloatType threshold)
 			CHECK(scalar_near_equal(FloatType(vector_get_z(rtm_acos)), ref_acos, threshold));
 			CHECK(scalar_near_equal(FloatType(vector_get_w(rtm_acos)), ref_acos, threshold));
 
-			CHECK(scalar_near_equal(FloatType(vector_get_x(rtm_tan)), ref_tan, threshold));
-			CHECK(scalar_near_equal(FloatType(vector_get_y(rtm_tan)), ref_tan, threshold));
-			CHECK(scalar_near_equal(FloatType(vector_get_z(rtm_tan)), ref_tan, threshold));
-			CHECK(scalar_near_equal(FloatType(vector_get_w(rtm_tan)), ref_tan, threshold));
+			// For +-PI/2, we only test that the value is really large or really small
+			if (scalar_abs(angle) == half_pi.as_radians())
+			{
+				CHECK(vector_all_greater_equal(vector_abs(rtm_tan), vector_set(FloatType(1.0e6))));
+			}
+			else
+			{
+				CHECK(scalar_near_equal(FloatType(vector_get_x(rtm_tan)), ref_tan, threshold));
+				CHECK(scalar_near_equal(FloatType(vector_get_y(rtm_tan)), ref_tan, threshold));
+				CHECK(scalar_near_equal(FloatType(vector_get_z(rtm_tan)), ref_tan, threshold));
+				CHECK(scalar_near_equal(FloatType(vector_get_w(rtm_tan)), ref_tan, threshold));
+			}
 		}
 
 		const FloatType angles_atan[] = { FloatType(-10.0), FloatType(-5.0), FloatType(-0.5), FloatType(-0.25), FloatType(0.0), FloatType(0.25), FloatType(0.5), FloatType(0.75), FloatType(81.0) };
