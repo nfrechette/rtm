@@ -2432,6 +2432,21 @@ namespace rtm
 	}
 
 	//////////////////////////////////////////////////////////////////////////
+	// Returns per component the tangent of the input angle.
+	//////////////////////////////////////////////////////////////////////////
+	inline vector4f RTM_SIMD_CALL vector_tan(vector4f_arg0 angle) RTM_NO_EXCEPT
+	{
+		// Use the identity: tan(angle) = sin(angle) / cos(angle)
+		vector4f sin_ = vector_sin(angle);
+		vector4f cos_ = vector_cos(angle);
+
+		mask4i is_cos_zero = vector_equal(cos_, vector_zero());
+		vector4f signed_infinity = vector_copy_sign(vector_set(std::numeric_limits<float>::infinity()), angle);
+		vector4f result = vector_div(sin_, cos_);
+		return vector_select(is_cos_zero, signed_infinity, result);
+	}
+
+	//////////////////////////////////////////////////////////////////////////
 	// Returns per component the arc-tangent of the input.
 	// Note that due to the sign ambiguity, atan cannot determine which quadrant
 	// the value resides in.
