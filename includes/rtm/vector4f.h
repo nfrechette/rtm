@@ -1550,7 +1550,7 @@ namespace rtm
 #if defined(RTM_SSE2_INTRINSICS)
 		return _mm_cmpgt_ps(lhs, rhs);
 #elif defined(RTM_NEON_INTRINSICS)
-		return vcgt_f32(lhs, rhs);
+		return vcgtq_f32(lhs, rhs);
 #else
 		return mask4i{ rtm_impl::get_mask_value(lhs.x > rhs.x), rtm_impl::get_mask_value(lhs.y > rhs.y), rtm_impl::get_mask_value(lhs.z > rhs.z), rtm_impl::get_mask_value(lhs.w > rhs.w) };
 #endif
