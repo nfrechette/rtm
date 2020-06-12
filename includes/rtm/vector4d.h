@@ -1532,6 +1532,88 @@ namespace rtm
 	}
 
 	//////////////////////////////////////////////////////////////////////////
+	// Returns true if all 4 components are greater than, otherwise false: all(lhs > rhs)
+	//////////////////////////////////////////////////////////////////////////
+	inline bool vector_all_greater_than(const vector4d& lhs, const vector4d& rhs) RTM_NO_EXCEPT
+	{
+#if defined(RTM_SSE2_INTRINSICS)
+		__m128d xy_ge_pd = _mm_cmpgt_pd(lhs.xy, rhs.xy);
+		__m128d zw_ge_pd = _mm_cmpgt_pd(lhs.zw, rhs.zw);
+		return (_mm_movemask_pd(xy_ge_pd) & _mm_movemask_pd(zw_ge_pd)) == 3;
+#else
+		return lhs.x > rhs.x && lhs.y > rhs.y && lhs.z > rhs.z && lhs.w > rhs.w;
+#endif
+	}
+
+	//////////////////////////////////////////////////////////////////////////
+	// Returns true if all [xy] components are greater than, otherwise false: all(lhs > rhs)
+	//////////////////////////////////////////////////////////////////////////
+	inline bool vector_all_greater_than2(const vector4d& lhs, const vector4d& rhs) RTM_NO_EXCEPT
+	{
+#if defined(RTM_SSE2_INTRINSICS)
+		__m128d xy_ge_pd = _mm_cmpgt_pd(lhs.xy, rhs.xy);
+		return _mm_movemask_pd(xy_ge_pd) == 3;
+#else
+		return lhs.x > rhs.x && lhs.y > rhs.y;
+#endif
+	}
+
+	//////////////////////////////////////////////////////////////////////////
+	// Returns true if all [xyz] components are greater than, otherwise false: all(lhs > rhs)
+	//////////////////////////////////////////////////////////////////////////
+	inline bool vector_all_greater_than3(const vector4d& lhs, const vector4d& rhs) RTM_NO_EXCEPT
+	{
+#if defined(RTM_SSE2_INTRINSICS)
+		__m128d xy_ge_pd = _mm_cmpgt_pd(lhs.xy, rhs.xy);
+		__m128d zw_ge_pd = _mm_cmpgt_pd(lhs.zw, rhs.zw);
+		return _mm_movemask_pd(xy_ge_pd) == 3 && (_mm_movemask_pd(zw_ge_pd) & 1) != 0;
+#else
+		return lhs.x > rhs.x && lhs.y > rhs.y && lhs.z > rhs.z;
+#endif
+	}
+
+	//////////////////////////////////////////////////////////////////////////
+	// Returns true if any 4 components are greater than, otherwise false: any(lhs > rhs)
+	//////////////////////////////////////////////////////////////////////////
+	inline bool vector_any_greater_than(const vector4d& lhs, const vector4d& rhs) RTM_NO_EXCEPT
+	{
+#if defined(RTM_SSE2_INTRINSICS)
+		__m128d xy_ge_pd = _mm_cmpgt_pd(lhs.xy, rhs.xy);
+		__m128d zw_ge_pd = _mm_cmpgt_pd(lhs.zw, rhs.zw);
+		return (_mm_movemask_pd(xy_ge_pd) | _mm_movemask_pd(zw_ge_pd)) != 0;
+#else
+		return lhs.x > rhs.x || lhs.y > rhs.y || lhs.z > rhs.z || lhs.w > rhs.w;
+#endif
+	}
+
+	//////////////////////////////////////////////////////////////////////////
+	// Returns true if any [xy] components are greater than, otherwise false: any(lhs > rhs)
+	//////////////////////////////////////////////////////////////////////////
+	inline bool vector_any_greater_than2(const vector4d& lhs, const vector4d& rhs) RTM_NO_EXCEPT
+	{
+#if defined(RTM_SSE2_INTRINSICS)
+		__m128d xy_ge_pd = _mm_cmpgt_pd(lhs.xy, rhs.xy);
+		return _mm_movemask_pd(xy_ge_pd) != 0;
+#else
+		return lhs.x > rhs.x || lhs.y > rhs.y;
+#endif
+	}
+
+	//////////////////////////////////////////////////////////////////////////
+	// Returns true if any [xyz] components are greater than, otherwise false: any(lhs > rhs)
+	//////////////////////////////////////////////////////////////////////////
+	inline bool vector_any_greater_than3(const vector4d& lhs, const vector4d& rhs) RTM_NO_EXCEPT
+	{
+#if defined(RTM_SSE2_INTRINSICS)
+		__m128d xy_ge_pd = _mm_cmpgt_pd(lhs.xy, rhs.xy);
+		__m128d zw_ge_pd = _mm_cmpgt_pd(lhs.zw, rhs.zw);
+		return _mm_movemask_pd(xy_ge_pd) != 0 || (_mm_movemask_pd(zw_ge_pd) & 1) != 0;
+#else
+		return lhs.x > rhs.x || lhs.y > rhs.y || lhs.z > rhs.z;
+#endif
+	}
+
+	//////////////////////////////////////////////////////////////////////////
 	// Returns true if all 4 components are greater equal, otherwise false: all(lhs >= rhs)
 	//////////////////////////////////////////////////////////////////////////
 	inline bool vector_all_greater_equal(const vector4d& lhs, const vector4d& rhs) RTM_NO_EXCEPT
