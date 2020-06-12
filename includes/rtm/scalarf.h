@@ -277,7 +277,7 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	// Returns the reciprocal square root of the input.
 	//////////////////////////////////////////////////////////////////////////
-	#if defined(_MSC_VER) && !defined(__clang__) && _MSC_VER >= 1920 && _MSC_VER < 1925 && defined(_M_X64) && !defined(RTM_AVX_INTRINSICS)
+	#if defined(RTM_COMPILER_MSVC) && _MSC_VER >= 1920 && _MSC_VER < 1925 && defined(_M_X64) && !defined(RTM_AVX_INTRINSICS)
 		// HACK!!! Visual Studio 2019 has a code generation bug triggered by the code below, disable optimizations for now
 		// Bug only happens with x64 SSE2, not with AVX nor with x86
 		// Fixed in 16.5.4, see https://github.com/nfrechette/rtm/issues/35
@@ -303,7 +303,7 @@ namespace rtm
 
 		return scalarf{ x2 };
 	}
-	#if defined(_MSC_VER) && !defined(__clang__) && _MSC_VER >= 1920 && _MSC_VER < 1925 && defined(_M_X64) && !defined(RTM_AVX_INTRINSICS)
+	#if defined(RTM_COMPILER_MSVC) && _MSC_VER >= 1920 && _MSC_VER < 1925 && defined(_M_X64) && !defined(RTM_AVX_INTRINSICS)
 		// HACK!!! See comment above
 		#pragma optimize("", on)
 	#endif
