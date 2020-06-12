@@ -552,6 +552,15 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	// Returns true if both inputs are equal, false otherwise.
 	//////////////////////////////////////////////////////////////////////////
+	inline bool RTM_SIMD_CALL scalar_equal(scalarf_arg0 lhs, scalarf_arg1 rhs) RTM_NO_EXCEPT
+	{
+		return _mm_comieq_ss(lhs.value, rhs.value) != 0;
+	}
+
+	//////////////////////////////////////////////////////////////////////////
+	// Returns true if both inputs are equal, false otherwise.
+	//////////////////////////////////////////////////////////////////////////
+	RTM_DEPRECATED("Use scalar_equal instead, to be removed in v2.0")
 	inline bool RTM_SIMD_CALL scalar_is_equal(scalarf_arg0 lhs, scalarf_arg1 rhs) RTM_NO_EXCEPT
 	{
 		return _mm_comieq_ss(lhs.value, rhs.value) != 0;
@@ -561,6 +570,15 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	// Returns true if both inputs are equal, false otherwise.
 	//////////////////////////////////////////////////////////////////////////
+	constexpr bool scalar_equal(float lhs, float rhs) RTM_NO_EXCEPT
+	{
+		return lhs == rhs;
+	}
+
+	//////////////////////////////////////////////////////////////////////////
+	// Returns true if both inputs are equal, false otherwise.
+	//////////////////////////////////////////////////////////////////////////
+	RTM_DEPRECATED("Use scalar_equal instead, to be removed in v2.0")
 	constexpr bool scalar_is_equal(float lhs, float rhs) RTM_NO_EXCEPT
 	{
 		return lhs == rhs;
@@ -570,6 +588,15 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	// Returns true if lhs < rhs, false otherwise.
 	//////////////////////////////////////////////////////////////////////////
+	inline bool RTM_SIMD_CALL scalar_lower_than(scalarf_arg0 lhs, scalarf_arg1 rhs) RTM_NO_EXCEPT
+	{
+		return _mm_comilt_ss(lhs.value, rhs.value) != 0;
+	}
+
+	//////////////////////////////////////////////////////////////////////////
+	// Returns true if lhs < rhs, false otherwise.
+	//////////////////////////////////////////////////////////////////////////
+	RTM_DEPRECATED("Use scalar_lower_than instead, to be removed in v2.0")
 	inline bool RTM_SIMD_CALL scalar_is_lower(scalarf_arg0 lhs, scalarf_arg1 rhs) RTM_NO_EXCEPT
 	{
 		return _mm_comilt_ss(lhs.value, rhs.value) != 0;
@@ -579,6 +606,15 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	// Returns true if lhs < rhs, false otherwise.
 	//////////////////////////////////////////////////////////////////////////
+	constexpr bool scalar_lower_than(float lhs, float rhs) RTM_NO_EXCEPT
+	{
+		return lhs < rhs;
+	}
+
+	//////////////////////////////////////////////////////////////////////////
+	// Returns true if lhs < rhs, false otherwise.
+	//////////////////////////////////////////////////////////////////////////
+	RTM_DEPRECATED("Use scalar_lower_than instead, to be removed in v2.0")
 	constexpr bool scalar_is_lower(float lhs, float rhs) RTM_NO_EXCEPT
 	{
 		return lhs < rhs;
@@ -588,6 +624,15 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	// Returns true if lhs <= rhs, false otherwise.
 	//////////////////////////////////////////////////////////////////////////
+	inline bool RTM_SIMD_CALL scalar_lower_equal(scalarf_arg0 lhs, scalarf_arg1 rhs) RTM_NO_EXCEPT
+	{
+		return _mm_comile_ss(lhs.value, rhs.value) != 0;
+	}
+
+	//////////////////////////////////////////////////////////////////////////
+	// Returns true if lhs <= rhs, false otherwise.
+	//////////////////////////////////////////////////////////////////////////
+	RTM_DEPRECATED("Use scalar_lower_equal instead, to be removed in v2.0")
 	inline bool RTM_SIMD_CALL scalar_is_lower_equal(scalarf_arg0 lhs, scalarf_arg1 rhs) RTM_NO_EXCEPT
 	{
 		return _mm_comile_ss(lhs.value, rhs.value) != 0;
@@ -597,6 +642,15 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	// Returns true if lhs <= rhs, false otherwise.
 	//////////////////////////////////////////////////////////////////////////
+	constexpr bool scalar_lower_equal(float lhs, float rhs) RTM_NO_EXCEPT
+	{
+		return lhs <= rhs;
+	}
+
+	//////////////////////////////////////////////////////////////////////////
+	// Returns true if lhs <= rhs, false otherwise.
+	//////////////////////////////////////////////////////////////////////////
+	RTM_DEPRECATED("Use scalar_lower_equal instead, to be removed in v2.0")
 	constexpr bool scalar_is_lower_equal(float lhs, float rhs) RTM_NO_EXCEPT
 	{
 		return lhs <= rhs;
@@ -606,6 +660,15 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	// Returns true if lhs > rhs, false otherwise.
 	//////////////////////////////////////////////////////////////////////////
+	inline bool RTM_SIMD_CALL scalar_greater_than(scalarf_arg0 lhs, scalarf_arg1 rhs) RTM_NO_EXCEPT
+	{
+		return _mm_comigt_ss(lhs.value, rhs.value) != 0;
+	}
+
+	//////////////////////////////////////////////////////////////////////////
+	// Returns true if lhs > rhs, false otherwise.
+	//////////////////////////////////////////////////////////////////////////
+	RTM_DEPRECATED("Use scalar_greater_than instead, to be removed in v2.0")
 	inline bool RTM_SIMD_CALL scalar_is_greater(scalarf_arg0 lhs, scalarf_arg1 rhs) RTM_NO_EXCEPT
 	{
 		return _mm_comigt_ss(lhs.value, rhs.value) != 0;
@@ -615,6 +678,15 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	// Returns true if lhs > rhs, false otherwise.
 	//////////////////////////////////////////////////////////////////////////
+	constexpr bool scalar_greater_than(float lhs, float rhs) RTM_NO_EXCEPT
+	{
+		return lhs > rhs;
+	}
+
+	//////////////////////////////////////////////////////////////////////////
+	// Returns true if lhs > rhs, false otherwise.
+	//////////////////////////////////////////////////////////////////////////
+	RTM_DEPRECATED("Use scalar_greater_than instead, to be removed in v2.0")
 	constexpr bool scalar_is_greater(float lhs, float rhs) RTM_NO_EXCEPT
 	{
 		return lhs > rhs;
@@ -624,6 +696,15 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	// Returns true if lhs >= rhs, false otherwise.
 	//////////////////////////////////////////////////////////////////////////
+	inline bool RTM_SIMD_CALL scalar_greater_equal(scalarf_arg0 lhs, scalarf_arg1 rhs) RTM_NO_EXCEPT
+	{
+		return _mm_comige_ss(lhs.value, rhs.value) != 0;
+	}
+
+	//////////////////////////////////////////////////////////////////////////
+	// Returns true if lhs >= rhs, false otherwise.
+	//////////////////////////////////////////////////////////////////////////
+	RTM_DEPRECATED("Use scalar_greater_equal instead, to be removed in v2.0")
 	inline bool RTM_SIMD_CALL scalar_is_greater_equal(scalarf_arg0 lhs, scalarf_arg1 rhs) RTM_NO_EXCEPT
 	{
 		return _mm_comige_ss(lhs.value, rhs.value) != 0;
@@ -633,6 +714,15 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	// Returns true if lhs >= rhs, false otherwise.
 	//////////////////////////////////////////////////////////////////////////
+	constexpr bool scalar_greater_equal(float lhs, float rhs) RTM_NO_EXCEPT
+	{
+		return lhs >= rhs;
+	}
+
+	//////////////////////////////////////////////////////////////////////////
+	// Returns true if lhs >= rhs, false otherwise.
+	//////////////////////////////////////////////////////////////////////////
+	RTM_DEPRECATED("Use scalar_greater_equal instead, to be removed in v2.0")
 	constexpr bool scalar_is_greater_equal(float lhs, float rhs) RTM_NO_EXCEPT
 	{
 		return lhs >= rhs;
@@ -644,7 +734,7 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	inline bool RTM_SIMD_CALL scalar_near_equal(scalarf_arg0 lhs, scalarf_arg1 rhs, scalarf_arg2 threshold) RTM_NO_EXCEPT
 	{
-		return scalar_is_lower_equal(scalar_abs(scalar_sub(lhs, rhs)), threshold);
+		return scalar_lower_equal(scalar_abs(scalar_sub(lhs, rhs)), threshold);
 	}
 
 	//////////////////////////////////////////////////////////////////////////
@@ -653,7 +743,7 @@ namespace rtm
 	RTM_DEPRECATED("Always specify a threshold explicitly, to be removed in v2.0")
 	inline bool RTM_SIMD_CALL scalar_near_equal(scalarf_arg0 lhs, scalarf_arg1 rhs) RTM_NO_EXCEPT
 	{
-		return scalar_is_lower_equal(scalar_abs(scalar_sub(lhs, rhs)), scalar_set(0.00001F));
+		return scalar_lower_equal(scalar_abs(scalar_sub(lhs, rhs)), scalar_set(0.00001F));
 	}
 #endif
 
