@@ -1508,7 +1508,7 @@ namespace rtm
 #if defined(RTM_SSE2_INTRINSICS)
 		return _mm_cmpeq_ps(lhs, rhs);
 #elif defined(RTM_NEON_INTRINSICS)
-		return vceqq_f32(lhs, rhs);
+		return vreinterpretq_f32_u32(vceqq_f32(lhs, rhs));
 #else
 		return mask4i{ rtm_impl::get_mask_value(lhs.x == rhs.x), rtm_impl::get_mask_value(lhs.y == rhs.y), rtm_impl::get_mask_value(lhs.z == rhs.z), rtm_impl::get_mask_value(lhs.w == rhs.w) };
 #endif
@@ -1522,7 +1522,7 @@ namespace rtm
 #if defined(RTM_SSE2_INTRINSICS)
 		return _mm_cmplt_ps(lhs, rhs);
 #elif defined(RTM_NEON_INTRINSICS)
-		return vcltq_f32(lhs, rhs);
+		return vreinterpretq_f32_u32(vcltq_f32(lhs, rhs));
 #else
 		return mask4i{ rtm_impl::get_mask_value(lhs.x < rhs.x), rtm_impl::get_mask_value(lhs.y < rhs.y), rtm_impl::get_mask_value(lhs.z < rhs.z), rtm_impl::get_mask_value(lhs.w < rhs.w) };
 #endif
@@ -1536,7 +1536,7 @@ namespace rtm
 #if defined(RTM_SSE2_INTRINSICS)
 		return _mm_cmple_ps(lhs, rhs);
 #elif defined(RTM_NEON_INTRINSICS)
-		return vcleq_f32(lhs, rhs);
+		return vreinterpretq_f32_u32(vcleq_f32(lhs, rhs));
 #else
 		return mask4i{ rtm_impl::get_mask_value(lhs.x <= rhs.x), rtm_impl::get_mask_value(lhs.y <= rhs.y), rtm_impl::get_mask_value(lhs.z <= rhs.z), rtm_impl::get_mask_value(lhs.w <= rhs.w) };
 #endif
@@ -1550,7 +1550,7 @@ namespace rtm
 #if defined(RTM_SSE2_INTRINSICS)
 		return _mm_cmpgt_ps(lhs, rhs);
 #elif defined(RTM_NEON_INTRINSICS)
-		return vcgtq_f32(lhs, rhs);
+		return vreinterpretq_f32_u32(vcgtq_f32(lhs, rhs));
 #else
 		return mask4i{ rtm_impl::get_mask_value(lhs.x > rhs.x), rtm_impl::get_mask_value(lhs.y > rhs.y), rtm_impl::get_mask_value(lhs.z > rhs.z), rtm_impl::get_mask_value(lhs.w > rhs.w) };
 #endif
@@ -1564,7 +1564,7 @@ namespace rtm
 #if defined(RTM_SSE2_INTRINSICS)
 		return _mm_cmpge_ps(lhs, rhs);
 #elif defined(RTM_NEON_INTRINSICS)
-		return vcgeq_f32(lhs, rhs);
+		return vreinterpretq_f32_u32(vcgeq_f32(lhs, rhs));
 #else
 		return mask4i{ rtm_impl::get_mask_value(lhs.x >= rhs.x), rtm_impl::get_mask_value(lhs.y >= rhs.y), rtm_impl::get_mask_value(lhs.z >= rhs.z), rtm_impl::get_mask_value(lhs.w >= rhs.w) };
 #endif
@@ -1791,7 +1791,7 @@ namespace rtm
 #if defined(RTM_SSE2_INTRINSICS)
 		return (_mm_movemask_ps(_mm_cmpgt_ps(lhs, rhs)) & 0x3) == 0x3;
 #elif defined(RTM_NEON_INTRINSICS)
-		uint32x2_t mask = vcgtq_f32(vget_low_f32(lhs), vget_low_f32(rhs));
+		uint32x2_t mask = vcgt_f32(vget_low_f32(lhs), vget_low_f32(rhs));
 		return vget_lane_u64(mask, 0) == 0xFFFFFFFFFFFFFFFFULL;
 #else
 		return lhs.x > rhs.x && lhs.y > rhs.y;
@@ -1840,7 +1840,7 @@ namespace rtm
 #if defined(RTM_SSE2_INTRINSICS)
 		return (_mm_movemask_ps(_mm_cmpgt_ps(lhs, rhs)) & 0x3) != 0;
 #elif defined(RTM_NEON_INTRINSICS)
-		uint32x2_t mask = vcgtq_f32(vget_low_f32(lhs), vget_low_f32(rhs));
+		uint32x2_t mask = vcgt_f32(vget_low_f32(lhs), vget_low_f32(rhs));
 		return vget_lane_u64(mask, 0) != 0;
 #else
 		return lhs.x > rhs.x || lhs.y > rhs.y;
