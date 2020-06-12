@@ -67,6 +67,16 @@ namespace rtm
 	using scalarf_arg7 = const scalarf&;
 	using scalarf_argn = const scalarf&;
 
+	using mask4f_arg0 = const mask4f;
+	using mask4f_arg1 = const mask4f;
+	using mask4f_arg2 = const mask4f;
+	using mask4f_arg3 = const mask4f;
+	using mask4f_arg4 = const mask4f;
+	using mask4f_arg5 = const mask4f;
+	using mask4f_arg6 = const mask4f&;
+	using mask4f_arg7 = const mask4f&;
+	using mask4f_argn = const mask4f&;
+
 	using mask4i_arg0 = const mask4i;
 	using mask4i_arg1 = const mask4i;
 	using mask4i_arg2 = const mask4i;
@@ -127,6 +137,16 @@ namespace rtm
 	using scalarf_arg6 = const scalarf;
 	using scalarf_arg7 = const scalarf;
 	using scalarf_argn = const scalarf;
+
+	using mask4f_arg0 = const mask4f;
+	using mask4f_arg1 = const mask4f;
+	using mask4f_arg2 = const mask4f;
+	using mask4f_arg3 = const mask4f;
+	using mask4f_arg4 = const mask4f;
+	using mask4f_arg5 = const mask4f;
+	using mask4f_arg6 = const mask4f;
+	using mask4f_arg7 = const mask4f;
+	using mask4f_argn = const mask4f&;
 
 	using mask4i_arg0 = const mask4i;
 	using mask4i_arg1 = const mask4i;
@@ -191,6 +211,16 @@ namespace rtm
 	using scalarf_arg7 = const scalarf;
 	using scalarf_argn = const scalarf;
 
+	using mask4f_arg0 = const mask4f;
+	using mask4f_arg1 = const mask4f;
+	using mask4f_arg2 = const mask4f;
+	using mask4f_arg3 = const mask4f;
+	using mask4f_arg4 = const mask4f&;
+	using mask4f_arg5 = const mask4f&;
+	using mask4f_arg6 = const mask4f&;
+	using mask4f_arg7 = const mask4f&;
+	using mask4f_argn = const mask4f&;
+
 	using mask4i_arg0 = const mask4i;
 	using mask4i_arg1 = const mask4i;
 	using mask4i_arg2 = const mask4i;
@@ -252,6 +282,16 @@ namespace rtm
 	using scalarf_arg7 = const scalarf;
 	using scalarf_argn = const scalarf&;
 
+	using mask4f_arg0 = const mask4f;
+	using mask4f_arg1 = const mask4f;
+	using mask4f_arg2 = const mask4f;
+	using mask4f_arg3 = const mask4f;
+	using mask4f_arg4 = const mask4f;
+	using mask4f_arg5 = const mask4f;
+	using mask4f_arg6 = const mask4f;
+	using mask4f_arg7 = const mask4f;
+	using mask4f_argn = const mask4f&;
+
 	using mask4i_arg0 = const mask4i;
 	using mask4i_arg1 = const mask4i;
 	using mask4i_arg2 = const mask4i;
@@ -312,6 +352,16 @@ namespace rtm
 	using scalarf_arg6 = const scalarf;
 	using scalarf_arg7 = const scalarf;
 	using scalarf_argn = const scalarf&;
+
+	using mask4f_arg0 = const mask4f;
+	using mask4f_arg1 = const mask4f;
+	using mask4f_arg2 = const mask4f;
+	using mask4f_arg3 = const mask4f;
+	using mask4f_arg4 = const mask4f;
+	using mask4f_arg5 = const mask4f;
+	using mask4f_arg6 = const mask4f;
+	using mask4f_arg7 = const mask4f;
+	using mask4f_argn = const mask4f&;
 
 	using mask4i_arg0 = const mask4i;
 	using mask4i_arg1 = const mask4i;
@@ -376,6 +426,16 @@ namespace rtm
 	using scalarf_arg6 = const scalarf;
 	using scalarf_arg7 = const scalarf;
 	using scalarf_argn = const scalarf;
+
+	using mask4f_arg0 = const mask4f&;
+	using mask4f_arg1 = const mask4f&;
+	using mask4f_arg2 = const mask4f&;
+	using mask4f_arg3 = const mask4f&;
+	using mask4f_arg4 = const mask4f&;
+	using mask4f_arg5 = const mask4f&;
+	using mask4f_arg6 = const mask4f&;
+	using mask4f_arg7 = const mask4f&;
+	using mask4f_argn = const mask4f&;
 
 	using mask4i_arg0 = const mask4i&;
 	using mask4i_arg1 = const mask4i&;

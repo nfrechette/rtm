@@ -25,6 +25,8 @@
 #include <catch.hpp>
 
 #include <rtm/type_traits.h>
+#include <rtm/mask4d.h>
+#include <rtm/mask4f.h>
 #include <rtm/mask4i.h>
 #include <rtm/mask4q.h>
 
@@ -120,6 +122,16 @@ static void test_mask_impl()
 		CHECK(mask_any_true3(mask7) == true);
 		CHECK(mask_any_true3(mask8) == true);
 	}
+}
+
+TEST_CASE("mask4f math", "[math][mask]")
+{
+	test_mask_impl<mask4f, uint32_t>();
+}
+
+TEST_CASE("mask4d math", "[math][mask]")
+{
+	test_mask_impl<mask4d, uint64_t>();
 }
 
 TEST_CASE("mask4i math", "[math][mask]")
