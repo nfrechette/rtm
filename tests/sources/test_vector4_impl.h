@@ -34,8 +34,8 @@
 #include <rtm/vector4d.h>
 #include <rtm/quatf.h>
 #include <rtm/quatd.h>
-#include <rtm/mask4i.h>
-#include <rtm/mask4q.h>
+#include <rtm/mask4f.h>
+#include <rtm/mask4d.h>
 
 #include <cstring>
 #include <limits>

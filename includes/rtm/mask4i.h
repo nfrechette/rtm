@@ -33,30 +33,14 @@ RTM_IMPL_FILE_PRAGMA_PUSH
 namespace rtm
 {
 	//////////////////////////////////////////////////////////////////////////
-	// Creates a mask4i from all 4 integer components.
-	//////////////////////////////////////////////////////////////////////////
-	inline mask4i RTM_SIMD_CALL mask_set(uint32_t x, uint32_t y, uint32_t z, uint32_t w) RTM_NO_EXCEPT
-	{
-#if defined(RTM_SSE2_INTRINSICS)
-		return _mm_castsi128_ps(_mm_set_epi32(w, z, y, x));
-#elif defined(RTM_NEON_INTRINSICS)
-		float32x2_t V0 = vcreate_f32(((uint64_t)x) | ((uint64_t)(y) << 32));
-		float32x2_t V1 = vcreate_f32(((uint64_t)z) | ((uint64_t)(w) << 32));
-		return vcombine_f32(V0, V1);
-#else
-		return mask4i{ x, y, z, w };
-#endif
-	}
-
-	//////////////////////////////////////////////////////////////////////////
 	// Returns the mask4i [x] component.
 	//////////////////////////////////////////////////////////////////////////
 	inline uint32_t RTM_SIMD_CALL mask_get_x(mask4i_arg0 input) RTM_NO_EXCEPT
 	{
 #if defined(RTM_SSE2_INTRINSICS)
-		return _mm_cvtsi128_si32(_mm_castps_si128(input));
+		return _mm_cvtsi128_si32(input);
 #elif defined(RTM_NEON_INTRINSICS)
-		return vgetq_lane_u32(vreinterpretq_u32_f32(input), 0);
+		return vgetq_lane_u32(input, 0);
 #else
 		return input.x;
 #endif
@@ -68,9 +52,9 @@ namespace rtm
 	inline uint32_t RTM_SIMD_CALL mask_get_y(mask4i_arg0 input) RTM_NO_EXCEPT
 	{
 #if defined(RTM_SSE2_INTRINSICS)
-		return _mm_cvtsi128_si32(_mm_castps_si128(_mm_shuffle_ps(input, input, _MM_SHUFFLE(1, 1, 1, 1))));
+		return _mm_cvtsi128_si32(_mm_shuffle_epi32(input, _MM_SHUFFLE(1, 1, 1, 1)));
 #elif defined(RTM_NEON_INTRINSICS)
-		return vgetq_lane_u32(vreinterpretq_u32_f32(input), 1);
+		return vgetq_lane_u32(input, 1);
 #else
 		return input.y;
 #endif
@@ -82,9 +66,9 @@ namespace rtm
 	inline uint32_t RTM_SIMD_CALL mask_get_z(mask4i_arg0 input) RTM_NO_EXCEPT
 	{
 #if defined(RTM_SSE2_INTRINSICS)
-		return _mm_cvtsi128_si32(_mm_castps_si128(_mm_shuffle_ps(input, input, _MM_SHUFFLE(2, 2, 2, 2))));
+		return _mm_cvtsi128_si32(_mm_shuffle_epi32(input, _MM_SHUFFLE(2, 2, 2, 2)));
 #elif defined(RTM_NEON_INTRINSICS)
-		return vgetq_lane_u32(vreinterpretq_u32_f32(input), 2);
+		return vgetq_lane_u32(input, 2);
 #else
 		return input.z;
 #endif
@@ -96,9 +80,9 @@ namespace rtm
 	inline uint32_t RTM_SIMD_CALL mask_get_w(mask4i_arg0 input) RTM_NO_EXCEPT
 	{
 #if defined(RTM_SSE2_INTRINSICS)
-		return _mm_cvtsi128_si32(_mm_castps_si128(_mm_shuffle_ps(input, input, _MM_SHUFFLE(3, 3, 3, 3))));
+		return _mm_cvtsi128_si32(_mm_shuffle_epi32(input, _MM_SHUFFLE(3, 3, 3, 3)));
 #elif defined(RTM_NEON_INTRINSICS)
-		return vgetq_lane_u32(vreinterpretq_u32_f32(input), 3);
+		return vgetq_lane_u32(input, 3);
 #else
 		return input.w;
 #endif
@@ -110,9 +94,9 @@ namespace rtm
 	inline bool RTM_SIMD_CALL mask_all_true(mask4i_arg0 input) RTM_NO_EXCEPT
 	{
 #if defined(RTM_SSE2_INTRINSICS)
-		return _mm_movemask_ps(input) == 0xF;
+		return _mm_movemask_epi8(input) == 0xFFFF;
 #elif defined(RTM_NEON_INTRINSICS)
-		uint32x4_t mask = vreinterpretq_u32_f32(input);
+		uint32x4_t mask = input;
 		uint8x8x2_t mask_0_8_1_9_2_10_3_11_4_12_5_13_6_14_7_15 = vzip_u8(vget_low_u8(mask), vget_high_u8(mask));
 		uint16x4x2_t mask_0_8_4_12_1_9_5_13_2_10_6_14_3_11_7_15 = vzip_u16(mask_0_8_1_9_2_10_3_11_4_12_5_13_6_14_7_15.val[0], mask_0_8_1_9_2_10_3_11_4_12_5_13_6_14_7_15.val[1]);
 		return vget_lane_u32(mask_0_8_4_12_1_9_5_13_2_10_6_14_3_11_7_15.val[0], 0) == 0xFFFFFFFFU;
@@ -127,9 +111,9 @@ namespace rtm
 	inline bool RTM_SIMD_CALL mask_all_true2(mask4i_arg0 input) RTM_NO_EXCEPT
 	{
 #if defined(RTM_SSE2_INTRINSICS)
-		return (_mm_movemask_ps(input) & 0x3) == 0x3;
+		return (_mm_movemask_epi8(input) & 0x00FF) == 0x00FF;
 #elif defined(RTM_NEON_INTRINSICS)
-		return vget_lane_u64(vget_low_u32(vreinterpretq_u32_f32(input)), 0) == 0xFFFFFFFFFFFFFFFFULL;
+		return vget_lane_u64(vget_low_u32(input), 0) == 0xFFFFFFFFFFFFFFFFULL;
 #else
 		return input.x != 0 && input.y != 0;
 #endif
@@ -141,9 +125,9 @@ namespace rtm
 	inline bool RTM_SIMD_CALL mask_all_true3(mask4i_arg0 input) RTM_NO_EXCEPT
 	{
 #if defined(RTM_SSE2_INTRINSICS)
-		return (_mm_movemask_ps(input) & 0x7) == 0x7;
+		return (_mm_movemask_epi8(input) & 0x0FFF) == 0x0FFF;
 #elif defined(RTM_NEON_INTRINSICS)
-		uint32x4_t mask = vreinterpretq_u32_f32(input);
+		uint32x4_t mask = input;
 		uint8x8x2_t mask_0_8_1_9_2_10_3_11_4_12_5_13_6_14_7_15 = vzip_u8(vget_low_u8(mask), vget_high_u8(mask));
 		uint16x4x2_t mask_0_8_4_12_1_9_5_13_2_10_6_14_3_11_7_15 = vzip_u16(mask_0_8_1_9_2_10_3_11_4_12_5_13_6_14_7_15.val[0], mask_0_8_1_9_2_10_3_11_4_12_5_13_6_14_7_15.val[1]);
 		return (vget_lane_u32(mask_0_8_4_12_1_9_5_13_2_10_6_14_3_11_7_15.val[0], 0) & 0x00FFFFFFU) == 0x00FFFFFFU;
@@ -158,9 +142,9 @@ namespace rtm
 	inline bool RTM_SIMD_CALL mask_any_true(mask4i_arg0 input) RTM_NO_EXCEPT
 	{
 #if defined(RTM_SSE2_INTRINSICS)
-		return _mm_movemask_ps(input) != 0;
+		return _mm_movemask_epi8(input) != 0;
 #elif defined(RTM_NEON_INTRINSICS)
-		uint32x4_t mask = vreinterpretq_u32_f32(input);
+		uint32x4_t mask = input;
 		uint8x8x2_t mask_0_8_1_9_2_10_3_11_4_12_5_13_6_14_7_15 = vzip_u8(vget_low_u8(mask), vget_high_u8(mask));
 		uint16x4x2_t mask_0_8_4_12_1_9_5_13_2_10_6_14_3_11_7_15 = vzip_u16(mask_0_8_1_9_2_10_3_11_4_12_5_13_6_14_7_15.val[0], mask_0_8_1_9_2_10_3_11_4_12_5_13_6_14_7_15.val[1]);
 		return vget_lane_u32(mask_0_8_4_12_1_9_5_13_2_10_6_14_3_11_7_15.val[0], 0) != 0;
@@ -175,9 +159,9 @@ namespace rtm
 	inline bool RTM_SIMD_CALL mask_any_true2(mask4i_arg0 input) RTM_NO_EXCEPT
 	{
 #if defined(RTM_SSE2_INTRINSICS)
-		return (_mm_movemask_ps(input) & 0x3) != 0;
+		return (_mm_movemask_epi8(input) & 0x00FF) != 0;
 #elif defined(RTM_NEON_INTRINSICS)
-		return vget_lane_u64(vget_low_u32(vreinterpretq_u32_f32(input)), 0) != 0;
+		return vget_lane_u64(vget_low_u32(input), 0) != 0;
 #else
 		return input.x != 0 || input.y != 0;
 #endif
@@ -189,9 +173,9 @@ namespace rtm
 	inline bool RTM_SIMD_CALL mask_any_true3(mask4i_arg0 input) RTM_NO_EXCEPT
 	{
 #if defined(RTM_SSE2_INTRINSICS)
-		return (_mm_movemask_ps(input) & 0x7) != 0;
+		return (_mm_movemask_epi8(input) & 0x0FFF) != 0;
 #elif defined(RTM_NEON_INTRINSICS)
-		uint32x4_t mask = vreinterpretq_u32_f32(input);
+		uint32x4_t mask = input;
 		uint8x8x2_t mask_0_8_1_9_2_10_3_11_4_12_5_13_6_14_7_15 = vzip_u8(vget_low_u8(mask), vget_high_u8(mask));
 		uint16x4x2_t mask_0_8_4_12_1_9_5_13_2_10_6_14_3_11_7_15 = vzip_u16(mask_0_8_1_9_2_10_3_11_4_12_5_13_6_14_7_15.val[0], mask_0_8_1_9_2_10_3_11_4_12_5_13_6_14_7_15.val[1]);
 		return (vget_lane_u32(mask_0_8_4_12_1_9_5_13_2_10_6_14_3_11_7_15.val[0], 0) & 0x00FFFFFFU) != 0;

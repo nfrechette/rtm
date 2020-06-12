@@ -1503,70 +1503,70 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	// Returns per component ~0 if equal, otherwise 0: lhs == rhs ? ~0 : 0
 	//////////////////////////////////////////////////////////////////////////
-	inline mask4i RTM_SIMD_CALL vector_equal(vector4f_arg0 lhs, vector4f_arg1 rhs) RTM_NO_EXCEPT
+	inline mask4f RTM_SIMD_CALL vector_equal(vector4f_arg0 lhs, vector4f_arg1 rhs) RTM_NO_EXCEPT
 	{
 #if defined(RTM_SSE2_INTRINSICS)
 		return _mm_cmpeq_ps(lhs, rhs);
 #elif defined(RTM_NEON_INTRINSICS)
 		return vreinterpretq_f32_u32(vceqq_f32(lhs, rhs));
 #else
-		return mask4i{ rtm_impl::get_mask_value(lhs.x == rhs.x), rtm_impl::get_mask_value(lhs.y == rhs.y), rtm_impl::get_mask_value(lhs.z == rhs.z), rtm_impl::get_mask_value(lhs.w == rhs.w) };
+		return mask4f{ rtm_impl::get_mask_value(lhs.x == rhs.x), rtm_impl::get_mask_value(lhs.y == rhs.y), rtm_impl::get_mask_value(lhs.z == rhs.z), rtm_impl::get_mask_value(lhs.w == rhs.w) };
 #endif
 	}
 
 	//////////////////////////////////////////////////////////////////////////
 	// Returns per component ~0 if less than, otherwise 0: lhs < rhs ? ~0 : 0
 	//////////////////////////////////////////////////////////////////////////
-	inline mask4i RTM_SIMD_CALL vector_less_than(vector4f_arg0 lhs, vector4f_arg1 rhs) RTM_NO_EXCEPT
+	inline mask4f RTM_SIMD_CALL vector_less_than(vector4f_arg0 lhs, vector4f_arg1 rhs) RTM_NO_EXCEPT
 	{
 #if defined(RTM_SSE2_INTRINSICS)
 		return _mm_cmplt_ps(lhs, rhs);
 #elif defined(RTM_NEON_INTRINSICS)
 		return vreinterpretq_f32_u32(vcltq_f32(lhs, rhs));
 #else
-		return mask4i{ rtm_impl::get_mask_value(lhs.x < rhs.x), rtm_impl::get_mask_value(lhs.y < rhs.y), rtm_impl::get_mask_value(lhs.z < rhs.z), rtm_impl::get_mask_value(lhs.w < rhs.w) };
+		return mask4f{ rtm_impl::get_mask_value(lhs.x < rhs.x), rtm_impl::get_mask_value(lhs.y < rhs.y), rtm_impl::get_mask_value(lhs.z < rhs.z), rtm_impl::get_mask_value(lhs.w < rhs.w) };
 #endif
 	}
 
 	//////////////////////////////////////////////////////////////////////////
 	// Returns per component ~0 if less equal, otherwise 0: lhs <= rhs ? ~0 : 0
 	//////////////////////////////////////////////////////////////////////////
-	inline mask4i RTM_SIMD_CALL vector_less_equal(vector4f_arg0 lhs, vector4f_arg1 rhs) RTM_NO_EXCEPT
+	inline mask4f RTM_SIMD_CALL vector_less_equal(vector4f_arg0 lhs, vector4f_arg1 rhs) RTM_NO_EXCEPT
 	{
 #if defined(RTM_SSE2_INTRINSICS)
 		return _mm_cmple_ps(lhs, rhs);
 #elif defined(RTM_NEON_INTRINSICS)
 		return vreinterpretq_f32_u32(vcleq_f32(lhs, rhs));
 #else
-		return mask4i{ rtm_impl::get_mask_value(lhs.x <= rhs.x), rtm_impl::get_mask_value(lhs.y <= rhs.y), rtm_impl::get_mask_value(lhs.z <= rhs.z), rtm_impl::get_mask_value(lhs.w <= rhs.w) };
+		return mask4f{ rtm_impl::get_mask_value(lhs.x <= rhs.x), rtm_impl::get_mask_value(lhs.y <= rhs.y), rtm_impl::get_mask_value(lhs.z <= rhs.z), rtm_impl::get_mask_value(lhs.w <= rhs.w) };
 #endif
 	}
 
 	//////////////////////////////////////////////////////////////////////////
 	// Returns per component ~0 if greater than, otherwise 0: lhs > rhs ? ~0 : 0
 	//////////////////////////////////////////////////////////////////////////
-	inline mask4i RTM_SIMD_CALL vector_greater_than(vector4f_arg0 lhs, vector4f_arg1 rhs) RTM_NO_EXCEPT
+	inline mask4f RTM_SIMD_CALL vector_greater_than(vector4f_arg0 lhs, vector4f_arg1 rhs) RTM_NO_EXCEPT
 	{
 #if defined(RTM_SSE2_INTRINSICS)
 		return _mm_cmpgt_ps(lhs, rhs);
 #elif defined(RTM_NEON_INTRINSICS)
 		return vreinterpretq_f32_u32(vcgtq_f32(lhs, rhs));
 #else
-		return mask4i{ rtm_impl::get_mask_value(lhs.x > rhs.x), rtm_impl::get_mask_value(lhs.y > rhs.y), rtm_impl::get_mask_value(lhs.z > rhs.z), rtm_impl::get_mask_value(lhs.w > rhs.w) };
+		return mask4f{ rtm_impl::get_mask_value(lhs.x > rhs.x), rtm_impl::get_mask_value(lhs.y > rhs.y), rtm_impl::get_mask_value(lhs.z > rhs.z), rtm_impl::get_mask_value(lhs.w > rhs.w) };
 #endif
 	}
 
 	//////////////////////////////////////////////////////////////////////////
 	// Returns per component ~0 if greater equal, otherwise 0: lhs >= rhs ? ~0 : 0
 	//////////////////////////////////////////////////////////////////////////
-	inline mask4i RTM_SIMD_CALL vector_greater_equal(vector4f_arg0 lhs, vector4f_arg1 rhs) RTM_NO_EXCEPT
+	inline mask4f RTM_SIMD_CALL vector_greater_equal(vector4f_arg0 lhs, vector4f_arg1 rhs) RTM_NO_EXCEPT
 	{
 #if defined(RTM_SSE2_INTRINSICS)
 		return _mm_cmpge_ps(lhs, rhs);
 #elif defined(RTM_NEON_INTRINSICS)
 		return vreinterpretq_f32_u32(vcgeq_f32(lhs, rhs));
 #else
-		return mask4i{ rtm_impl::get_mask_value(lhs.x >= rhs.x), rtm_impl::get_mask_value(lhs.y >= rhs.y), rtm_impl::get_mask_value(lhs.z >= rhs.z), rtm_impl::get_mask_value(lhs.w >= rhs.w) };
+		return mask4f{ rtm_impl::get_mask_value(lhs.x >= rhs.x), rtm_impl::get_mask_value(lhs.y >= rhs.y), rtm_impl::get_mask_value(lhs.z >= rhs.z), rtm_impl::get_mask_value(lhs.w >= rhs.w) };
 #endif
 	}
 
@@ -2083,7 +2083,7 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	// Per component selection depending on the mask: mask != 0 ? if_true : if_false
 	//////////////////////////////////////////////////////////////////////////
-	inline vector4f RTM_SIMD_CALL vector_select(mask4i_arg0 mask, vector4f_arg1 if_true, vector4f_arg2 if_false) RTM_NO_EXCEPT
+	inline vector4f RTM_SIMD_CALL vector_select(mask4f_arg0 mask, vector4f_arg1 if_true, vector4f_arg2 if_false) RTM_NO_EXCEPT
 	{
 #if defined(RTM_AVX_INTRINSICS)
 		return _mm_blendv_ps(if_false, if_true, mask);
@@ -2181,7 +2181,7 @@ namespace rtm
 		const __m128 sign_bits = _mm_and_ps(input, signs);	// Mask out the sign bit
 		return _mm_or_ps(sign_bits, one);					// Copy the sign bit onto +-1.0f
 #else
-		const mask4i mask = vector_greater_equal(input, vector_zero());
+		const mask4f mask = vector_greater_equal(input, vector_zero());
 		return vector_select(mask, vector_set(1.0F), vector_set(-1.0F));
 #endif
 	}
@@ -2268,7 +2268,7 @@ namespace rtm
 		const vector4f half = vector_set(0.5F);
 		const vector4f floored = vector_floor(vector_add(input, half));
 		const vector4f ceiled = vector_ceil(vector_sub(input, half));
-		const mask4i is_greater_equal = vector_greater_equal(input, vector_zero());
+		const mask4f is_greater_equal = vector_greater_equal(input, vector_zero());
 		return vector_select(is_greater_equal, floored, ceiled);
 #endif
 	}
@@ -2538,7 +2538,7 @@ namespace rtm
 		vector4f sin_ = vector_sin(angle);
 		vector4f cos_ = vector_cos(angle);
 
-		mask4i is_cos_zero = vector_equal(cos_, vector_zero());
+		mask4f is_cos_zero = vector_equal(cos_, vector_zero());
 		vector4f signed_infinity = vector_copy_sign(vector_set(std::numeric_limits<float>::infinity()), angle);
 		vector4f result = vector_div(sin_, cos_);
 		return vector_select(is_cos_zero, signed_infinity, result);
