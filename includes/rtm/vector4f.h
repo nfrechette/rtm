@@ -1588,7 +1588,7 @@ namespace rtm
 	}
 
 	//////////////////////////////////////////////////////////////////////////
-	// Returns true if all 2 components are less than, otherwise false: all(lhs < rhs)
+	// Returns true if all [xy] components are less than, otherwise false: all(lhs < rhs)
 	//////////////////////////////////////////////////////////////////////////
 	inline bool RTM_SIMD_CALL vector_all_less_than2(vector4f_arg0 lhs, vector4f_arg1 rhs) RTM_NO_EXCEPT
 	{
@@ -1603,7 +1603,7 @@ namespace rtm
 	}
 
 	//////////////////////////////////////////////////////////////////////////
-	// Returns true if all 3 components are less than, otherwise false: all(lhs < rhs)
+	// Returns true if all [xyz] components are less than, otherwise false: all(lhs < rhs)
 	//////////////////////////////////////////////////////////////////////////
 	inline bool RTM_SIMD_CALL vector_all_less_than3(vector4f_arg0 lhs, vector4f_arg1 rhs) RTM_NO_EXCEPT
 	{
@@ -1637,7 +1637,7 @@ namespace rtm
 	}
 
 	//////////////////////////////////////////////////////////////////////////
-	// Returns true if any 2 components are less than, otherwise false: any(lhs < rhs)
+	// Returns true if any [xy] components are less than, otherwise false: any(lhs < rhs)
 	//////////////////////////////////////////////////////////////////////////
 	inline bool RTM_SIMD_CALL vector_any_less_than2(vector4f_arg0 lhs, vector4f_arg1 rhs) RTM_NO_EXCEPT
 	{
@@ -1652,7 +1652,7 @@ namespace rtm
 	}
 
 	//////////////////////////////////////////////////////////////////////////
-	// Returns true if any 3 components are less than, otherwise false: any(lhs < rhs)
+	// Returns true if any [xyz] components are less than, otherwise false: any(lhs < rhs)
 	//////////////////////////////////////////////////////////////////////////
 	inline bool RTM_SIMD_CALL vector_any_less_than3(vector4f_arg0 lhs, vector4f_arg1 rhs) RTM_NO_EXCEPT
 	{
@@ -1686,7 +1686,7 @@ namespace rtm
 	}
 
 	//////////////////////////////////////////////////////////////////////////
-	// Returns true if all 2 components are less equal, otherwise false: all(lhs <= rhs)
+	// Returns true if all [xy] components are less equal, otherwise false: all(lhs <= rhs)
 	//////////////////////////////////////////////////////////////////////////
 	inline bool RTM_SIMD_CALL vector_all_less_equal2(vector4f_arg0 lhs, vector4f_arg1 rhs) RTM_NO_EXCEPT
 	{
@@ -1701,7 +1701,7 @@ namespace rtm
 	}
 
 	//////////////////////////////////////////////////////////////////////////
-	// Returns true if all 3 components are less equal, otherwise false: all(lhs <= rhs)
+	// Returns true if all [xyz] components are less equal, otherwise false: all(lhs <= rhs)
 	//////////////////////////////////////////////////////////////////////////
 	inline bool RTM_SIMD_CALL vector_all_less_equal3(vector4f_arg0 lhs, vector4f_arg1 rhs) RTM_NO_EXCEPT
 	{
@@ -1735,7 +1735,7 @@ namespace rtm
 	}
 
 	//////////////////////////////////////////////////////////////////////////
-	// Returns true if any 2 components are less equal, otherwise false: any(lhs <= rhs)
+	// Returns true if any [xy] components are less equal, otherwise false: any(lhs <= rhs)
 	//////////////////////////////////////////////////////////////////////////
 	inline bool RTM_SIMD_CALL vector_any_less_equal2(vector4f_arg0 lhs, vector4f_arg1 rhs) RTM_NO_EXCEPT
 	{
@@ -1750,7 +1750,7 @@ namespace rtm
 	}
 
 	//////////////////////////////////////////////////////////////////////////
-	// Returns true if any 3 components are less equal, otherwise false: any(lhs <= rhs)
+	// Returns true if any [xyz] components are less equal, otherwise false: any(lhs <= rhs)
 	//////////////////////////////////////////////////////////////////////////
 	inline bool RTM_SIMD_CALL vector_any_less_equal3(vector4f_arg0 lhs, vector4f_arg1 rhs) RTM_NO_EXCEPT
 	{
@@ -1784,7 +1784,7 @@ namespace rtm
 	}
 
 	//////////////////////////////////////////////////////////////////////////
-	// Returns true if all 2 components are greater equal, otherwise false: all(lhs >= rhs)
+	// Returns true if all [xy] components are greater equal, otherwise false: all(lhs >= rhs)
 	//////////////////////////////////////////////////////////////////////////
 	inline bool RTM_SIMD_CALL vector_all_greater_equal2(vector4f_arg0 lhs, vector4f_arg1 rhs) RTM_NO_EXCEPT
 	{
@@ -1799,7 +1799,7 @@ namespace rtm
 	}
 
 	//////////////////////////////////////////////////////////////////////////
-	// Returns true if all 3 components are greater equal, otherwise false: all(lhs >= rhs)
+	// Returns true if all [xyz] components are greater equal, otherwise false: all(lhs >= rhs)
 	//////////////////////////////////////////////////////////////////////////
 	inline bool RTM_SIMD_CALL vector_all_greater_equal3(vector4f_arg0 lhs, vector4f_arg1 rhs) RTM_NO_EXCEPT
 	{
@@ -1833,7 +1833,7 @@ namespace rtm
 	}
 
 	//////////////////////////////////////////////////////////////////////////
-	// Returns true if any 2 components are greater equal, otherwise false: any(lhs >= rhs)
+	// Returns true if any [xy] components are greater equal, otherwise false: any(lhs >= rhs)
 	//////////////////////////////////////////////////////////////////////////
 	inline bool RTM_SIMD_CALL vector_any_greater_equal2(vector4f_arg0 lhs, vector4f_arg1 rhs) RTM_NO_EXCEPT
 	{
@@ -1848,7 +1848,7 @@ namespace rtm
 	}
 
 	//////////////////////////////////////////////////////////////////////////
-	// Returns true if any 3 components are greater equal, otherwise false: any(lhs >= rhs)
+	// Returns true if any [xyz] components are greater equal, otherwise false: any(lhs >= rhs)
 	//////////////////////////////////////////////////////////////////////////
 	inline bool RTM_SIMD_CALL vector_any_greater_equal3(vector4f_arg0 lhs, vector4f_arg1 rhs) RTM_NO_EXCEPT
 	{
@@ -1873,7 +1873,7 @@ namespace rtm
 	}
 
 	//////////////////////////////////////////////////////////////////////////
-	// Returns true if all 2 components are near equal, otherwise false: all(abs(lhs - rhs) <= threshold)
+	// Returns true if all [xy] components are near equal, otherwise false: all(abs(lhs - rhs) <= threshold)
 	//////////////////////////////////////////////////////////////////////////
 	inline bool RTM_SIMD_CALL vector_all_near_equal2(vector4f_arg0 lhs, vector4f_arg1 rhs, float threshold = 0.00001F) RTM_NO_EXCEPT
 	{
@@ -1881,7 +1881,7 @@ namespace rtm
 	}
 
 	//////////////////////////////////////////////////////////////////////////
-	// Returns true if all 3 components are near equal, otherwise false: all(abs(lhs - rhs) <= threshold)
+	// Returns true if all [xyz] components are near equal, otherwise false: all(abs(lhs - rhs) <= threshold)
 	//////////////////////////////////////////////////////////////////////////
 	inline bool RTM_SIMD_CALL vector_all_near_equal3(vector4f_arg0 lhs, vector4f_arg1 rhs, float threshold = 0.00001F) RTM_NO_EXCEPT
 	{
@@ -1897,7 +1897,7 @@ namespace rtm
 	}
 
 	//////////////////////////////////////////////////////////////////////////
-	// Returns true if any 2 components are near equal, otherwise false: any(abs(lhs - rhs) <= threshold)
+	// Returns true if any [xy] components are near equal, otherwise false: any(abs(lhs - rhs) <= threshold)
 	//////////////////////////////////////////////////////////////////////////
 	inline bool RTM_SIMD_CALL vector_any_near_equal2(vector4f_arg0 lhs, vector4f_arg1 rhs, float threshold = 0.00001F) RTM_NO_EXCEPT
 	{
@@ -1905,7 +1905,7 @@ namespace rtm
 	}
 
 	//////////////////////////////////////////////////////////////////////////
-	// Returns true if any 3 components are near equal, otherwise false: any(abs(lhs - rhs) <= threshold)
+	// Returns true if any [xyz] components are near equal, otherwise false: any(abs(lhs - rhs) <= threshold)
 	//////////////////////////////////////////////////////////////////////////
 	inline bool RTM_SIMD_CALL vector_any_near_equal3(vector4f_arg0 lhs, vector4f_arg1 rhs, float threshold = 0.00001F) RTM_NO_EXCEPT
 	{
@@ -1934,7 +1934,7 @@ namespace rtm
 	}
 
 	//////////////////////////////////////////////////////////////////////////
-	// Returns true if all 2 components are finite (not NaN/Inf), otherwise false: all(finite(input))
+	// Returns true if all [xy] components are finite (not NaN/Inf), otherwise false: all(finite(input))
 	//////////////////////////////////////////////////////////////////////////
 	inline bool RTM_SIMD_CALL vector_is_finite2(vector4f_arg0 input) RTM_NO_EXCEPT
 	{
@@ -1955,7 +1955,7 @@ namespace rtm
 	}
 
 	//////////////////////////////////////////////////////////////////////////
-	// Returns true if all 3 components are finite (not NaN/Inf), otherwise false: all(finite(input))
+	// Returns true if all [xyz] components are finite (not NaN/Inf), otherwise false: all(finite(input))
 	//////////////////////////////////////////////////////////////////////////
 	inline bool RTM_SIMD_CALL vector_is_finite3(vector4f_arg0 input) RTM_NO_EXCEPT
 	{
