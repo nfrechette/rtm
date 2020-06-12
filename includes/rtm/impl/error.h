@@ -170,9 +170,9 @@ RTM_IMPL_FILE_PRAGMA_PUSH
 #endif
 
 #if !defined(RTM_DEPRECATED)
-	#if defined(__GNUC__) || defined(__clang__)
+	#if defined(RTM_COMPILER_GCC) || defined(RTM_COMPILER_CLANG)
 		#define RTM_DEPRECATED(msg) __attribute__((deprecated))
-	#elif defined(_MSC_VER)
+	#elif defined(RTM_COMPILER_MSVC)
 		#define RTM_DEPRECATED(msg) __declspec(deprecated)
 	#else
 		#define RTM_DEPRECATED(msg)
