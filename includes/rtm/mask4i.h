@@ -40,7 +40,7 @@ namespace rtm
 #if defined(RTM_SSE2_INTRINSICS)
 		return _mm_cvtsi128_si32(input);
 #elif defined(RTM_NEON_INTRINSICS)
-		return vgetq_lane_u32(input, 0);
+		return vgetq_lane_u32(RTM_IMPL_MASK4i_GET(input), 0);
 #else
 		return input.x;
 #endif
@@ -54,7 +54,7 @@ namespace rtm
 #if defined(RTM_SSE2_INTRINSICS)
 		return _mm_cvtsi128_si32(_mm_shuffle_epi32(input, _MM_SHUFFLE(1, 1, 1, 1)));
 #elif defined(RTM_NEON_INTRINSICS)
-		return vgetq_lane_u32(input, 1);
+		return vgetq_lane_u32(RTM_IMPL_MASK4i_GET(input), 1);
 #else
 		return input.y;
 #endif
@@ -68,7 +68,7 @@ namespace rtm
 #if defined(RTM_SSE2_INTRINSICS)
 		return _mm_cvtsi128_si32(_mm_shuffle_epi32(input, _MM_SHUFFLE(2, 2, 2, 2)));
 #elif defined(RTM_NEON_INTRINSICS)
-		return vgetq_lane_u32(input, 2);
+		return vgetq_lane_u32(RTM_IMPL_MASK4i_GET(input), 2);
 #else
 		return input.z;
 #endif
@@ -82,7 +82,7 @@ namespace rtm
 #if defined(RTM_SSE2_INTRINSICS)
 		return _mm_cvtsi128_si32(_mm_shuffle_epi32(input, _MM_SHUFFLE(3, 3, 3, 3)));
 #elif defined(RTM_NEON_INTRINSICS)
-		return vgetq_lane_u32(input, 3);
+		return vgetq_lane_u32(RTM_IMPL_MASK4i_GET(input), 3);
 #else
 		return input.w;
 #endif
@@ -96,7 +96,7 @@ namespace rtm
 #if defined(RTM_SSE2_INTRINSICS)
 		return _mm_movemask_epi8(input) == 0xFFFF;
 #elif defined(RTM_NEON_INTRINSICS)
-		uint32x4_t mask = input;
+		uint32x4_t mask = RTM_IMPL_MASK4i_GET(input);
 		uint8x8x2_t mask_0_8_1_9_2_10_3_11_4_12_5_13_6_14_7_15 = vzip_u8(vget_low_u8(mask), vget_high_u8(mask));
 		uint16x4x2_t mask_0_8_4_12_1_9_5_13_2_10_6_14_3_11_7_15 = vzip_u16(mask_0_8_1_9_2_10_3_11_4_12_5_13_6_14_7_15.val[0], mask_0_8_1_9_2_10_3_11_4_12_5_13_6_14_7_15.val[1]);
 		return vget_lane_u32(mask_0_8_4_12_1_9_5_13_2_10_6_14_3_11_7_15.val[0], 0) == 0xFFFFFFFFU;
@@ -113,7 +113,7 @@ namespace rtm
 #if defined(RTM_SSE2_INTRINSICS)
 		return (_mm_movemask_epi8(input) & 0x00FF) == 0x00FF;
 #elif defined(RTM_NEON_INTRINSICS)
-		return vget_lane_u64(vget_low_u32(input), 0) == 0xFFFFFFFFFFFFFFFFULL;
+		return vget_lane_u64(vget_low_u32(RTM_IMPL_MASK4i_GET(input)), 0) == 0xFFFFFFFFFFFFFFFFULL;
 #else
 		return input.x != 0 && input.y != 0;
 #endif
@@ -127,7 +127,7 @@ namespace rtm
 #if defined(RTM_SSE2_INTRINSICS)
 		return (_mm_movemask_epi8(input) & 0x0FFF) == 0x0FFF;
 #elif defined(RTM_NEON_INTRINSICS)
-		uint32x4_t mask = input;
+		uint32x4_t mask = RTM_IMPL_MASK4i_GET(input);
 		uint8x8x2_t mask_0_8_1_9_2_10_3_11_4_12_5_13_6_14_7_15 = vzip_u8(vget_low_u8(mask), vget_high_u8(mask));
 		uint16x4x2_t mask_0_8_4_12_1_9_5_13_2_10_6_14_3_11_7_15 = vzip_u16(mask_0_8_1_9_2_10_3_11_4_12_5_13_6_14_7_15.val[0], mask_0_8_1_9_2_10_3_11_4_12_5_13_6_14_7_15.val[1]);
 		return (vget_lane_u32(mask_0_8_4_12_1_9_5_13_2_10_6_14_3_11_7_15.val[0], 0) & 0x00FFFFFFU) == 0x00FFFFFFU;
@@ -144,7 +144,7 @@ namespace rtm
 #if defined(RTM_SSE2_INTRINSICS)
 		return _mm_movemask_epi8(input) != 0;
 #elif defined(RTM_NEON_INTRINSICS)
-		uint32x4_t mask = input;
+		uint32x4_t mask = RTM_IMPL_MASK4i_GET(input);
 		uint8x8x2_t mask_0_8_1_9_2_10_3_11_4_12_5_13_6_14_7_15 = vzip_u8(vget_low_u8(mask), vget_high_u8(mask));
 		uint16x4x2_t mask_0_8_4_12_1_9_5_13_2_10_6_14_3_11_7_15 = vzip_u16(mask_0_8_1_9_2_10_3_11_4_12_5_13_6_14_7_15.val[0], mask_0_8_1_9_2_10_3_11_4_12_5_13_6_14_7_15.val[1]);
 		return vget_lane_u32(mask_0_8_4_12_1_9_5_13_2_10_6_14_3_11_7_15.val[0], 0) != 0;
@@ -161,7 +161,7 @@ namespace rtm
 #if defined(RTM_SSE2_INTRINSICS)
 		return (_mm_movemask_epi8(input) & 0x00FF) != 0;
 #elif defined(RTM_NEON_INTRINSICS)
-		return vget_lane_u64(vget_low_u32(input), 0) != 0;
+		return vget_lane_u64(vget_low_u32(RTM_IMPL_MASK4i_GET(input)), 0) != 0;
 #else
 		return input.x != 0 || input.y != 0;
 #endif
@@ -175,7 +175,7 @@ namespace rtm
 #if defined(RTM_SSE2_INTRINSICS)
 		return (_mm_movemask_epi8(input) & 0x0FFF) != 0;
 #elif defined(RTM_NEON_INTRINSICS)
-		uint32x4_t mask = input;
+		uint32x4_t mask = RTM_IMPL_MASK4i_GET(input);
 		uint8x8x2_t mask_0_8_1_9_2_10_3_11_4_12_5_13_6_14_7_15 = vzip_u8(vget_low_u8(mask), vget_high_u8(mask));
 		uint16x4x2_t mask_0_8_4_12_1_9_5_13_2_10_6_14_3_11_7_15 = vzip_u16(mask_0_8_1_9_2_10_3_11_4_12_5_13_6_14_7_15.val[0], mask_0_8_1_9_2_10_3_11_4_12_5_13_6_14_7_15.val[1]);
 		return (vget_lane_u32(mask_0_8_4_12_1_9_5_13_2_10_6_14_3_11_7_15.val[0], 0) & 0x00FFFFFFU) != 0;

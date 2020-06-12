@@ -109,7 +109,7 @@ namespace rtm
 #elif defined(RTM_NEON_INTRINSICS)
 				float32x2_t V0 = vcreate_f32(((uint64_t)x_mask) | ((uint64_t)(y_mask) << 32));
 				float32x2_t V1 = vcreate_f32(((uint64_t)z_mask) | ((uint64_t)(w_mask) << 32));
-				return vcombine_f32(V0, V1);
+				return RTM_IMPL_MASK4i_SET(vcombine_f32(V0, V1));
 #else
 				return mask4i{ x_mask, y_mask, z_mask, w_mask };
 #endif
@@ -160,7 +160,7 @@ namespace rtm
 #elif defined(RTM_NEON_INTRINSICS)
 				float32x2_t V0 = vcreate_f32(((uint64_t)x) | ((uint64_t)(y) << 32));
 				float32x2_t V1 = vcreate_f32(((uint64_t)z) | ((uint64_t)(w) << 32));
-				return vcombine_f32(V0, V1);
+				return RTM_IMPL_MASK4i_SET(vcombine_f32(V0, V1));
 #else
 				return mask4i{ x, y, z, w };
 #endif
