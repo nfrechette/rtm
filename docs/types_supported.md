@@ -10,10 +10,6 @@ All types come in various flavors with a corresponding suffix for their width (e
 *  **i** for *int32*
 *  **q** for *int64*
 
-## Angle
-
-A concrete type is implemented to represent angles to reduce confusion with the API and to make debugging easier.
-
 ## Scalar
 
 Both regular *float & double* types are supported for most operations and a special SIMD friendly scalar type as well: *scalarf & scalard*. Different architectures have an easier or harder time working with scalar floating point numbers. For example, older PowerPC processors had to write to memory and reload from it to transfer from one register file into another (e.g convert from a float to a SIMD vector). Modern processors handle this much better but inefficiencies remain, especially with SSE. While it is free to convert a SIMD scalar into a float with *_mm_cvtss_f32(..)* the reverse generally requires the compiler to fill the unused SIMD lanes with known values (either zero or the same). This introduces an extra instruction that isn't always required when only the first lane is used such as with *scalar_sqrt_reciprocal(..)*. By introducing a type for SIMD scalar values, each platform is free to make an optimal choice.

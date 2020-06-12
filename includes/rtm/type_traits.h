@@ -39,7 +39,6 @@ namespace rtm
 	{
 		using mask4 = mask4i;
 
-		using angle = anglef;
 		using scalar = scalarf;
 		using vector4 = vector4f;
 		using quat = quatf;
@@ -59,7 +58,6 @@ namespace rtm
 	{
 		using mask4 = mask4q;
 
-		using angle = angled;
 		using scalar = scalard;
 		using vector4 = vector4d;
 		using quat = quatd;

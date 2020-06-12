@@ -26,6 +26,7 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 #include "rtm/math.h"
+#include "rtm/impl/angle_constants.h"
 #include "rtm/impl/compiler_utils.h"
 #include "rtm/impl/scalar_common.h"
 
@@ -1172,6 +1173,22 @@ namespace rtm
 
 		double offset = std::copysign(3.141592653589793238462643383279502884, y);
 		return value + offset;
+	}
+
+	//////////////////////////////////////////////////////////////////////////
+	// Converts degrees into radians.
+	//////////////////////////////////////////////////////////////////////////
+	constexpr double scalar_deg_to_rad(double deg) RTM_NO_EXCEPT
+	{
+		return deg * constants::pi_div_one_eighty().dbl;
+	}
+
+	//////////////////////////////////////////////////////////////////////////
+	// Converts radians into degrees.
+	//////////////////////////////////////////////////////////////////////////
+	constexpr double scalar_rad_to_deg(double rad) RTM_NO_EXCEPT
+	{
+		return rad * constants::one_eighty_div_pi().dbl;
 	}
 }
 
