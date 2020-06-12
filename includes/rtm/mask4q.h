@@ -59,7 +59,7 @@ namespace rtm
 		return _mm_cvtsi128_si64(_mm_shuffle_epi32(input.xy, _MM_SHUFFLE(3, 2, 3, 2)));
 #else
 		// Just sign extend on 32bit systems
-		return (uint64_t)_mm_cvtsi128_si32(_mm_shuffle_pd(input.xy, input.xy, 1));
+		return (uint64_t)_mm_cvtsi128_si32(_mm_shuffle_epi32(input.xy, _MM_SHUFFLE(3, 2, 3, 2)));
 #endif
 #else
 		return input.y;
@@ -93,7 +93,7 @@ namespace rtm
 		return _mm_cvtsi128_si64(_mm_shuffle_epi32(input.zw, _MM_SHUFFLE(3, 2, 3, 2)));
 #else
 		// Just sign extend on 32bit systems
-		return (uint64_t)_mm_cvtsi128_si32(_mm_shuffle_pd(input.zw, input.zw, 1));
+		return (uint64_t)_mm_cvtsi128_si32(_mm_shuffle_epi32(input.zw, _MM_SHUFFLE(3, 2, 3, 2)));
 #endif
 #else
 		return input.w;
