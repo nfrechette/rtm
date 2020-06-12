@@ -48,6 +48,78 @@ static void test_mask_impl()
 		CHECK(mask_get_z(mask) == IntType(0));
 		CHECK(mask_get_w(mask) == ~IntType(0));
 	}
+
+	{
+		const MaskType mask0 = mask_set(IntType(0), ~IntType(0), IntType(0), ~IntType(0));
+		const MaskType mask1 = mask_set(IntType(0), IntType(0), IntType(0), IntType(0));
+		const MaskType mask2 = mask_set(IntType(0), IntType(0), IntType(0), ~IntType(0));
+		const MaskType mask3 = mask_set(IntType(0), IntType(0), ~IntType(0), ~IntType(0));
+		const MaskType mask4 = mask_set(IntType(0), ~IntType(0), ~IntType(0), ~IntType(0));
+		const MaskType mask5 = mask_set(~IntType(0), ~IntType(0), ~IntType(0), ~IntType(0));
+		const MaskType mask6 = mask_set(~IntType(0), IntType(0), IntType(0), IntType(0));
+		const MaskType mask7 = mask_set(~IntType(0), ~IntType(0), IntType(0), IntType(0));
+		const MaskType mask8 = mask_set(~IntType(0), ~IntType(0), ~IntType(0), IntType(0));
+
+		CHECK(mask_all_true(mask0) == false);
+		CHECK(mask_all_true(mask1) == false);
+		CHECK(mask_all_true(mask2) == false);
+		CHECK(mask_all_true(mask3) == false);
+		CHECK(mask_all_true(mask4) == false);
+		CHECK(mask_all_true(mask5) == true);
+		CHECK(mask_all_true(mask6) == false);
+		CHECK(mask_all_true(mask7) == false);
+		CHECK(mask_all_true(mask8) == false);
+
+		CHECK(mask_all_true2(mask0) == false);
+		CHECK(mask_all_true2(mask1) == false);
+		CHECK(mask_all_true2(mask2) == false);
+		CHECK(mask_all_true2(mask3) == false);
+		CHECK(mask_all_true2(mask4) == false);
+		CHECK(mask_all_true2(mask5) == true);
+		CHECK(mask_all_true2(mask6) == false);
+		CHECK(mask_all_true2(mask7) == true);
+		CHECK(mask_all_true2(mask8) == true);
+
+		CHECK(mask_all_true3(mask0) == false);
+		CHECK(mask_all_true3(mask1) == false);
+		CHECK(mask_all_true3(mask2) == false);
+		CHECK(mask_all_true3(mask3) == false);
+		CHECK(mask_all_true3(mask4) == false);
+		CHECK(mask_all_true3(mask5) == true);
+		CHECK(mask_all_true3(mask6) == false);
+		CHECK(mask_all_true3(mask7) == false);
+		CHECK(mask_all_true3(mask8) == true);
+
+		CHECK(mask_any_true(mask0) == true);
+		CHECK(mask_any_true(mask1) == false);
+		CHECK(mask_any_true(mask2) == true);
+		CHECK(mask_any_true(mask3) == true);
+		CHECK(mask_any_true(mask4) == true);
+		CHECK(mask_any_true(mask5) == true);
+		CHECK(mask_any_true(mask6) == true);
+		CHECK(mask_any_true(mask7) == true);
+		CHECK(mask_any_true(mask8) == true);
+
+		CHECK(mask_any_true2(mask0) == true);
+		CHECK(mask_any_true2(mask1) == false);
+		CHECK(mask_any_true2(mask2) == false);
+		CHECK(mask_any_true2(mask3) == false);
+		CHECK(mask_any_true2(mask4) == true);
+		CHECK(mask_any_true2(mask5) == true);
+		CHECK(mask_any_true2(mask6) == true);
+		CHECK(mask_any_true2(mask7) == true);
+		CHECK(mask_any_true2(mask8) == true);
+
+		CHECK(mask_any_true3(mask0) == true);
+		CHECK(mask_any_true3(mask1) == false);
+		CHECK(mask_any_true3(mask2) == false);
+		CHECK(mask_any_true3(mask3) == true);
+		CHECK(mask_any_true3(mask4) == true);
+		CHECK(mask_any_true3(mask5) == true);
+		CHECK(mask_any_true3(mask6) == true);
+		CHECK(mask_any_true3(mask7) == true);
+		CHECK(mask_any_true3(mask8) == true);
+	}
 }
 
 TEST_CASE("mask4i math", "[math][mask]")

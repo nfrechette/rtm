@@ -111,6 +111,78 @@ namespace rtm
 		return input.w;
 #endif
 	}
+
+	//////////////////////////////////////////////////////////////////////////
+	// Returns true if all 4 components are true, otherwise false: all(input != 0)
+	//////////////////////////////////////////////////////////////////////////
+	inline bool RTM_SIMD_CALL mask_all_true(const mask4q& input) RTM_NO_EXCEPT
+	{
+#if defined(RTM_SSE2_INTRINSICS)
+		return (_mm_movemask_pd(input.xy) & _mm_movemask_pd(input.zw)) == 3;
+#else
+		return input.x != 0 && input.y != 0 && input.z != 0 && input.w != 0;
+#endif
+	}
+
+	//////////////////////////////////////////////////////////////////////////
+	// Returns true if all [xy] components are true, otherwise false: all(input != 0)
+	//////////////////////////////////////////////////////////////////////////
+	inline bool RTM_SIMD_CALL mask_all_true2(const mask4q& input) RTM_NO_EXCEPT
+	{
+#if defined(RTM_SSE2_INTRINSICS)
+		return _mm_movemask_pd(input.xy) == 3;
+#else
+		return input.x != 0 && input.y != 0;
+#endif
+	}
+
+	//////////////////////////////////////////////////////////////////////////
+	// Returns true if all [xyz] components are true, otherwise false: all(input != 0)
+	//////////////////////////////////////////////////////////////////////////
+	inline bool RTM_SIMD_CALL mask_all_true3(const mask4q& input) RTM_NO_EXCEPT
+	{
+#if defined(RTM_SSE2_INTRINSICS)
+		return _mm_movemask_pd(input.xy) == 3 && (_mm_movemask_pd(input.zw) & 1) != 0;
+#else
+		return input.x != 0 && input.y != 0 && input.z != 0;
+#endif
+	}
+
+	//////////////////////////////////////////////////////////////////////////
+	// Returns true if any 4 components are true, otherwise false: any(input != 0)
+	//////////////////////////////////////////////////////////////////////////
+	inline bool RTM_SIMD_CALL mask_any_true(const mask4q& input) RTM_NO_EXCEPT
+	{
+#if defined(RTM_SSE2_INTRINSICS)
+		return (_mm_movemask_pd(input.xy) | _mm_movemask_pd(input.zw)) != 0;
+#else
+		return input.x != 0 || input.y != 0 || input.z != 0 || input.w != 0;
+#endif
+	}
+
+	//////////////////////////////////////////////////////////////////////////
+	// Returns true if any [xy] components are true, otherwise false: any(input != 0)
+	//////////////////////////////////////////////////////////////////////////
+	inline bool RTM_SIMD_CALL mask_any_true2(const mask4q& input) RTM_NO_EXCEPT
+	{
+#if defined(RTM_SSE2_INTRINSICS)
+		return _mm_movemask_pd(input.xy) != 0;
+#else
+		return input.x != 0 || input.y != 0;
+#endif
+	}
+
+	//////////////////////////////////////////////////////////////////////////
+	// Returns true if any [xyz] components are true, otherwise false: any(input != 0)
+	//////////////////////////////////////////////////////////////////////////
+	inline bool RTM_SIMD_CALL mask_any_true3(const mask4q& input) RTM_NO_EXCEPT
+	{
+#if defined(RTM_SSE2_INTRINSICS)
+		return _mm_movemask_pd(input.xy) != 0 || (_mm_movemask_pd(input.zw) & 1) != 0;
+#else
+		return input.x != 0 || input.y != 0 || input.z != 0;
+#endif
+	}
 }
 
 RTM_IMPL_FILE_PRAGMA_POP
