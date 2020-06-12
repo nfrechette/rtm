@@ -44,7 +44,7 @@ TEST_CASE("matrix3x3d math misc", "[math][matrix3x3]")
 	test_matrix3x3_misc<double>(1.0E-4);
 
 	{
-		quatd rotation_around_z = quat_from_euler(degrees(0.0), degrees(90.0), degrees(0.0));
+		quatd rotation_around_z = quat_from_euler(scalar_deg_to_rad(0.0), scalar_deg_to_rad(90.0), scalar_deg_to_rad(0.0));
 		matrix3x3d src = matrix_from_quat(rotation_around_z);
 		matrix3x3f dst = matrix_cast(src);
 		CHECK(vector_all_near_equal3(vector_cast(src.x_axis), dst.x_axis, 1.0E-4F));

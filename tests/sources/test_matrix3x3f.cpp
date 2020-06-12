@@ -44,7 +44,7 @@ TEST_CASE("matrix3x3f math misc", "[math][matrix3x3]")
 	test_matrix3x3_misc<float>(1.0E-4F);
 
 	{
-		quatf rotation_around_z = quat_from_euler(degrees(0.0F), degrees(90.0F), degrees(0.0F));
+		quatf rotation_around_z = quat_from_euler(scalar_deg_to_rad(0.0F), scalar_deg_to_rad(90.0F), scalar_deg_to_rad(0.0F));
 		matrix3x3f src = matrix_from_quat(rotation_around_z);
 
 		// Work around clang5 compiler crash by marking this variable as static

@@ -25,8 +25,6 @@
 
 #include <catch.hpp>
 
-#include <rtm/anglef.h>
-#include <rtm/angled.h>
 #include <rtm/scalarf.h>
 #include <rtm/scalard.h>
 #include <rtm/type_traits.h>
@@ -223,19 +221,18 @@ static void test_scalar_impl(const FloatType threshold, const FloatType trig_thr
 	CHECK(scalar_near_equal(scalar_lerp(scalar_set(values[0]), scalar_set(values[1]), scalar_set(FloatType(0.0))), scalar_set(values[0]), scalar_set(FloatType(0.0))));
 	CHECK(scalar_near_equal(scalar_lerp(scalar_set(values[0]), scalar_set(values[1]), scalar_set(FloatType(1.0))), scalar_set(values[1]), scalar_set(FloatType(0.0))));
 
-	using AngleType = typename float_traits<FloatType>::angle;
 	using Vector4Type = typename float_traits<FloatType>::vector4;
 
-	const AngleType half_pi = constants::half_pi();
-	const AngleType pi = constants::pi();
+	const FloatType half_pi = FloatType(1.570796326794896619231321691639751442);
+	const FloatType pi = FloatType(3.141592653589793238462643383279502884);
 
 	const FloatType angles[] =
 	{
 		FloatType(0.0), FloatType(-0.0),
-		pi.as_radians(), -pi.as_radians(),
-		half_pi.as_radians(), -half_pi.as_radians(),
-		half_pi.as_radians() * FloatType(0.5), -half_pi.as_radians() * FloatType(0.5),
-		half_pi.as_radians() * FloatType(0.25), -half_pi.as_radians() * FloatType(0.25),
+		pi, -pi,
+		half_pi, -half_pi,
+		half_pi * FloatType(0.5), -half_pi * FloatType(0.5),
+		half_pi * FloatType(0.25), -half_pi * FloatType(0.25),
 		FloatType(0.5), FloatType(-0.5),
 		FloatType(32.5), FloatType(-32.5),
 	};
@@ -284,7 +281,7 @@ static void test_scalar_impl(const FloatType threshold, const FloatType trig_thr
 			INFO("The RTM tan(angle) is " << rtm_tan);
 
 			// For +-PI/2, we only test that the value is really large or really small
-			if (scalar_abs(angle) == FloatType(half_pi.as_radians()))
+			if (scalar_abs(angle) == FloatType(half_pi))
 			{
 				CHECK(scalar_greater_than(scalar_abs(rtm_tan), FloatType(1.0e6)));
 				CHECK(scalar_greater_than(scalar_cast(scalar_abs(scalar_tan(scalar_set(angle)))), FloatType(1.0e6)));
@@ -436,6 +433,22 @@ static void test_scalar_impl(const FloatType threshold, const FloatType trig_thr
 	CHECK(scalar_near_equal(scalar_fraction(FloatType(0.25)), FloatType(0.25), threshold));
 	CHECK(scalar_near_equal(scalar_fraction(FloatType(0.5)), FloatType(0.5), threshold));
 	CHECK(scalar_near_equal(scalar_fraction(FloatType(0.75)), FloatType(0.75), threshold));
+
+	CHECK(scalar_deg_to_rad(FloatType(0.0)) == FloatType(0.0));
+	CHECK(scalar_near_equal(scalar_deg_to_rad(FloatType(90.0)), FloatType(1.570796326794896619231321691639751442), threshold));
+	CHECK(scalar_near_equal(scalar_deg_to_rad(FloatType(-90.0)), -FloatType(1.570796326794896619231321691639751442), threshold));
+	CHECK(scalar_near_equal(scalar_deg_to_rad(FloatType(180.0)), FloatType(3.141592653589793238462643383279502884), threshold));
+	CHECK(scalar_near_equal(scalar_deg_to_rad(FloatType(-180.0)), -FloatType(3.141592653589793238462643383279502884), threshold));
+	CHECK(scalar_near_equal(scalar_deg_to_rad(FloatType(360.0)), FloatType(6.283185307179586476925286766559005768), threshold));
+	CHECK(scalar_near_equal(scalar_deg_to_rad(FloatType(-360.0)), -FloatType(6.283185307179586476925286766559005768), threshold));
+
+	CHECK(scalar_rad_to_deg(FloatType(0.0)) == FloatType(0.0));
+	CHECK(scalar_near_equal(scalar_rad_to_deg(FloatType(1.570796326794896619231321691639751442)), FloatType(90.0), threshold));
+	CHECK(scalar_near_equal(scalar_rad_to_deg(-FloatType(1.570796326794896619231321691639751442)), FloatType(-90.0), threshold));
+	CHECK(scalar_near_equal(scalar_rad_to_deg(FloatType(3.141592653589793238462643383279502884)), FloatType(180.0), threshold));
+	CHECK(scalar_near_equal(scalar_rad_to_deg(-FloatType(3.141592653589793238462643383279502884)), FloatType(-180.0), threshold));
+	CHECK(scalar_near_equal(scalar_rad_to_deg(FloatType(6.283185307179586476925286766559005768)), FloatType(360.0), threshold));
+	CHECK(scalar_near_equal(scalar_rad_to_deg(-FloatType(6.283185307179586476925286766559005768)), FloatType(-360.0), threshold));
 }
 
 TEST_CASE("scalarf math", "[math][scalar]")

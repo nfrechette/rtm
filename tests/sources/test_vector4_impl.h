@@ -1100,12 +1100,10 @@ void test_vector4_impl(const FloatType threshold)
 	}
 
 	{
-		using AngleType = typename float_traits<FloatType>::angle;
+		const FloatType half_pi = FloatType(1.570796326794896619231321691639751442);
+		const FloatType pi = FloatType(3.141592653589793238462643383279502884);
 
-		const AngleType half_pi = constants::half_pi();
-		const AngleType pi = constants::pi();
-
-		const FloatType angles[] = { FloatType(0.0), pi.as_radians(), -pi.as_radians(), half_pi.as_radians(), -half_pi.as_radians(), FloatType(0.5), FloatType(32.5), FloatType(-0.5), FloatType(-32.5) };
+		const FloatType angles[] = { FloatType(0.0), pi, -pi, half_pi, -half_pi, FloatType(0.5), FloatType(32.5), FloatType(-0.5), FloatType(-32.5) };
 
 		for (const FloatType angle : angles)
 		{
@@ -1146,7 +1144,7 @@ void test_vector4_impl(const FloatType threshold)
 			CHECK(scalar_near_equal(FloatType(vector_get_w(rtm_acos)), ref_acos, threshold));
 
 			// For +-PI/2, we only test that the value is really large or really small
-			if (scalar_abs(angle) == half_pi.as_radians())
+			if (scalar_abs(angle) == half_pi)
 			{
 				CHECK(vector_all_greater_equal(vector_abs(rtm_tan), vector_set(FloatType(1.0e6))));
 			}
