@@ -127,7 +127,7 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	constexpr rtm_impl::mask4_bool_set RTM_SIMD_CALL mask_set(bool x, bool y, bool z, bool w) RTM_NO_EXCEPT
 	{
-		return rtm_impl::mask4_bool_set{x, y, z, w};
+		return rtm_impl::mask4_bool_set{ x, y, z, w };
 	}
 
 	namespace rtm_impl
