@@ -140,10 +140,31 @@ namespace rtm
 		uint64_t w;
 	};
 
+#if defined(_MSC_VER)
+	// MSVC uses a simple typedef to an identical underlying type for uint32x4_t and float32x4_t
+	// To avoid issues of duplicate symbols, we introduce a concrete type
+
+	//////////////////////////////////////////////////////////////////////////
+	// A 4x32 bit vector comparison mask: ~0 if true, 0 otherwise.
+	//////////////////////////////////////////////////////////////////////////
+	struct alignas(16) mask4i
+	{
+		uint32x4_t value;
+	};
+
+	// Helper macros to simplify usage
+	#define RTM_IMPL_MASK4i_GET(mask) mask.value
+	#define RTM_IMPL_MASK4i_SET(mask) mask4i{ mask }
+#else
 	//////////////////////////////////////////////////////////////////////////
 	// A 4x32 bit vector comparison mask: ~0 if true, 0 otherwise.
 	//////////////////////////////////////////////////////////////////////////
 	using mask4i = uint32x4_t;
+
+	// Helper macros to simplify usage
+	#define RTM_IMPL_MASK4i_GET(mask) mask
+	#define RTM_IMPL_MASK4i_SET(mask) mask
+#endif
 
 	//////////////////////////////////////////////////////////////////////////
 	// A 4x64 bit vector comparison mask: ~0 if true, 0 otherwise.
