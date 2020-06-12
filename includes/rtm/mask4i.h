@@ -103,6 +103,98 @@ namespace rtm
 		return input.w;
 #endif
 	}
+
+	//////////////////////////////////////////////////////////////////////////
+	// Returns true if all 4 components are true, otherwise false: all(input != 0)
+	//////////////////////////////////////////////////////////////////////////
+	inline bool RTM_SIMD_CALL mask_all_true(mask4i_arg0 input) RTM_NO_EXCEPT
+	{
+#if defined(RTM_SSE2_INTRINSICS)
+		return _mm_movemask_ps(input) == 0xF;
+#elif defined(RTM_NEON_INTRINSICS)
+		uint8x8x2_t mask_0_8_1_9_2_10_3_11_4_12_5_13_6_14_7_15 = vzip_u8(vget_low_u8(input), vget_high_u8(input));
+		uint16x4x2_t mask_0_8_4_12_1_9_5_13_2_10_6_14_3_11_7_15 = vzip_u16(mask_0_8_1_9_2_10_3_11_4_12_5_13_6_14_7_15.val[0], mask_0_8_1_9_2_10_3_11_4_12_5_13_6_14_7_15.val[1]);
+		return vget_lane_u32(mask_0_8_4_12_1_9_5_13_2_10_6_14_3_11_7_15.val[0], 0) == 0xFFFFFFFFU;
+#else
+		return input.x != 0 && input.y != 0 && input.z != 0 && input.w != 0;
+#endif
+	}
+
+	//////////////////////////////////////////////////////////////////////////
+	// Returns true if all [xy] components are true, otherwise false: all(input != 0)
+	//////////////////////////////////////////////////////////////////////////
+	inline bool RTM_SIMD_CALL mask_all_true2(mask4i_arg0 input) RTM_NO_EXCEPT
+	{
+#if defined(RTM_SSE2_INTRINSICS)
+		return (_mm_movemask_ps(input) & 0x3) == 0x3;
+#elif defined(RTM_NEON_INTRINSICS)
+		return vget_lane_u64(input, 0) == 0xFFFFFFFFFFFFFFFFULL;
+#else
+		return input.x != 0 && input.y != 0;
+#endif
+	}
+
+	//////////////////////////////////////////////////////////////////////////
+	// Returns true if all [xyz] components are true, otherwise false: all(input != 0)
+	//////////////////////////////////////////////////////////////////////////
+	inline bool RTM_SIMD_CALL mask_all_true3(mask4i_arg0 input) RTM_NO_EXCEPT
+	{
+#if defined(RTM_SSE2_INTRINSICS)
+		return (_mm_movemask_ps(input) & 0x7) == 0x7;
+#elif defined(RTM_NEON_INTRINSICS)
+		uint8x8x2_t mask_0_8_1_9_2_10_3_11_4_12_5_13_6_14_7_15 = vzip_u8(vget_low_u8(input), vget_high_u8(input));
+		uint16x4x2_t mask_0_8_4_12_1_9_5_13_2_10_6_14_3_11_7_15 = vzip_u16(mask_0_8_1_9_2_10_3_11_4_12_5_13_6_14_7_15.val[0], mask_0_8_1_9_2_10_3_11_4_12_5_13_6_14_7_15.val[1]);
+		return (vget_lane_u32(mask_0_8_4_12_1_9_5_13_2_10_6_14_3_11_7_15.val[0], 0) & 0x00FFFFFFU) == 0x00FFFFFFU;
+#else
+		return input.x != 0 && input.y != 0 && input.z != 0;
+#endif
+	}
+
+	//////////////////////////////////////////////////////////////////////////
+	// Returns true if any 4 components are true, otherwise false: any(input != 0)
+	//////////////////////////////////////////////////////////////////////////
+	inline bool RTM_SIMD_CALL mask_any_true(mask4i_arg0 input) RTM_NO_EXCEPT
+	{
+#if defined(RTM_SSE2_INTRINSICS)
+		return _mm_movemask_ps(input) != 0;
+#elif defined(RTM_NEON_INTRINSICS)
+		uint8x8x2_t mask_0_8_1_9_2_10_3_11_4_12_5_13_6_14_7_15 = vzip_u8(vget_low_u8(input), vget_high_u8(input));
+		uint16x4x2_t mask_0_8_4_12_1_9_5_13_2_10_6_14_3_11_7_15 = vzip_u16(mask_0_8_1_9_2_10_3_11_4_12_5_13_6_14_7_15.val[0], mask_0_8_1_9_2_10_3_11_4_12_5_13_6_14_7_15.val[1]);
+		return vget_lane_u32(mask_0_8_4_12_1_9_5_13_2_10_6_14_3_11_7_15.val[0], 0) != 0;
+#else
+		return input.x != 0 || input.y != 0 || input.z != 0 || input.w != 0;
+#endif
+	}
+
+	//////////////////////////////////////////////////////////////////////////
+	// Returns true if any [xy] components are true, otherwise false: any(input != 0)
+	//////////////////////////////////////////////////////////////////////////
+	inline bool RTM_SIMD_CALL mask_any_true2(mask4i_arg0 input) RTM_NO_EXCEPT
+	{
+#if defined(RTM_SSE2_INTRINSICS)
+		return (_mm_movemask_ps(input) & 0x3) != 0;
+#elif defined(RTM_NEON_INTRINSICS)
+		return vget_lane_u64(input, 0) != 0;
+#else
+		return input.x != 0 || input.y != 0;
+#endif
+	}
+
+	//////////////////////////////////////////////////////////////////////////
+	// Returns true if any [xyz] components are true, otherwise false: any(input != 0)
+	//////////////////////////////////////////////////////////////////////////
+	inline bool RTM_SIMD_CALL mask_any_true3(mask4i_arg0 input) RTM_NO_EXCEPT
+	{
+#if defined(RTM_SSE2_INTRINSICS)
+		return (_mm_movemask_ps(input) & 0x7) != 0;
+#elif defined(RTM_NEON_INTRINSICS)
+		uint8x8x2_t mask_0_8_1_9_2_10_3_11_4_12_5_13_6_14_7_15 = vzip_u8(vget_low_u8(input), vget_high_u8(input));
+		uint16x4x2_t mask_0_8_4_12_1_9_5_13_2_10_6_14_3_11_7_15 = vzip_u16(mask_0_8_1_9_2_10_3_11_4_12_5_13_6_14_7_15.val[0], mask_0_8_1_9_2_10_3_11_4_12_5_13_6_14_7_15.val[1]);
+		return (vget_lane_u32(mask_0_8_4_12_1_9_5_13_2_10_6_14_3_11_7_15.val[0], 0) & 0x00FFFFFFU) != 0;
+#else
+		return input.x != 0 || input.y != 0 || input.z != 0;
+#endif
+	}
 }
 
 RTM_IMPL_FILE_PRAGMA_POP
