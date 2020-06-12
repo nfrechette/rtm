@@ -757,15 +757,18 @@ namespace rtm
 #elif defined (RTM_NEON64_INTRINSICS)
 		return vdivq_f32(lhs, rhs);
 #elif defined(RTM_NEON_INTRINSICS)
-		// Perform two passes of Newton-Raphson iteration on the hardware estimate
-		float32x4_t x0 = vrecpeq_f32(rhs);
+		// Use scalar division on ARMv7, slow but accurate
+		float x = vgetq_lane_f32(lhs, 0) / vgetq_lane_f32(rhs, 0);
+		float y = vgetq_lane_f32(lhs, 1) / vgetq_lane_f32(rhs, 1);
+		float z = vgetq_lane_f32(lhs, 2) / vgetq_lane_f32(rhs, 2);
+		float w = vgetq_lane_f32(lhs, 3) / vgetq_lane_f32(rhs, 3);
 
-		// First iteration
-		float32x4_t x1 = vmulq_f32(x0, vrecpsq_f32(x0, rhs));
-
-		// Second iteration
-		float32x4_t x2 = vmulq_f32(x1, vrecpsq_f32(x1, rhs));
-		return vmulq_f32(lhs, x2);
+		float32x4_t result;
+		result = vsetq_lane_f32(x, result, 0);
+		result = vsetq_lane_f32(y, result, 1);
+		result = vsetq_lane_f32(z, result, 2);
+		result = vsetq_lane_f32(w, result, 3);
+		return result;
 #else
 		return vector_set(lhs.x / rhs.x, lhs.y / rhs.y, lhs.z / rhs.z, lhs.w / rhs.w);
 #endif
