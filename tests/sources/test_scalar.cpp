@@ -46,7 +46,7 @@ static void test_scalar_impl(const FloatType threshold, const FloatType trig_thr
 	CHECK(scalar_cast(scalar_set(FloatType(0.2345))) == FloatType(0.2345));
 
 	const FloatType value = FloatType(0.2345);
-	CHECK(scalar_is_equal(scalar_load(&value), scalar_set(value)));
+	CHECK(scalar_equal(scalar_load(&value), scalar_set(value)));
 	CHECK(scalar_load(&value) == FloatType(0.2345));
 
 	FloatType tmp = FloatType(0.0);
@@ -111,14 +111,14 @@ static void test_scalar_impl(const FloatType threshold, const FloatType trig_thr
 	CHECK(scalar_abs(FloatType(2.0)) == FloatType(2.0));
 	CHECK(scalar_abs(FloatType(-2.0)) == FloatType(2.0));
 
-	CHECK(scalar_is_equal(scalar_abs(scalar_set(FloatType(0.0))), scalar_set(FloatType(0.0))));
-	CHECK(scalar_is_equal(scalar_abs(scalar_set(FloatType(2.0))), scalar_set(FloatType(2.0))));
-	CHECK(scalar_is_equal(scalar_abs(scalar_set(FloatType(-2.0))), scalar_set(FloatType(2.0))));
+	CHECK(scalar_equal(scalar_abs(scalar_set(FloatType(0.0))), scalar_set(FloatType(0.0))));
+	CHECK(scalar_equal(scalar_abs(scalar_set(FloatType(2.0))), scalar_set(FloatType(2.0))));
+	CHECK(scalar_equal(scalar_abs(scalar_set(FloatType(-2.0))), scalar_set(FloatType(2.0))));
 
-	CHECK(scalar_is_equal(FloatType(1.123), FloatType(1.123)) == true);
-	CHECK(scalar_is_equal(FloatType(1.123), FloatType(1.124)) == false);
-	CHECK(scalar_is_equal(scalar_set(FloatType(1.123)), scalar_set(FloatType(1.123))) == true);
-	CHECK(scalar_is_equal(scalar_set(FloatType(1.123)), scalar_set(FloatType(1.124))) == false);
+	CHECK(scalar_equal(FloatType(1.123), FloatType(1.123)) == true);
+	CHECK(scalar_equal(FloatType(1.123), FloatType(1.124)) == false);
+	CHECK(scalar_equal(scalar_set(FloatType(1.123)), scalar_set(FloatType(1.123))) == true);
+	CHECK(scalar_equal(scalar_set(FloatType(1.123)), scalar_set(FloatType(1.124))) == false);
 
 	CHECK(scalar_near_equal(FloatType(1.0), FloatType(1.0), FloatType(0.00001)) == true);
 	CHECK(scalar_near_equal(FloatType(1.0), FloatType(1.000001), FloatType(0.00001)) == true);
@@ -129,35 +129,35 @@ static void test_scalar_impl(const FloatType threshold, const FloatType trig_thr
 	CHECK(scalar_sqrt(FloatType(0.0)) == FloatType(0.0));
 	CHECK(scalar_near_equal(scalar_sqrt(FloatType(0.5)), std::sqrt(FloatType(0.5)), threshold));
 	CHECK(scalar_near_equal(scalar_sqrt(FloatType(32.5)), std::sqrt(FloatType(32.5)), threshold));
-	CHECK(scalar_is_equal(scalar_sqrt(FloatType(32.5)), scalar_cast(scalar_sqrt(scalar_set(FloatType(32.5))))));
+	CHECK(scalar_equal(scalar_sqrt(FloatType(32.5)), scalar_cast(scalar_sqrt(scalar_set(FloatType(32.5))))));
 
-	CHECK(scalar_is_lower(FloatType(1.123), FloatType(1.123)) == false);
-	CHECK(scalar_is_lower(FloatType(1.123), FloatType(1.124)) == true);
-	CHECK(scalar_is_lower(FloatType(1.124), FloatType(1.123)) == false);
-	CHECK(scalar_is_lower(scalar_set(FloatType(1.123)), scalar_set(FloatType(1.123))) == false);
-	CHECK(scalar_is_lower(scalar_set(FloatType(1.123)), scalar_set(FloatType(1.124))) == true);
-	CHECK(scalar_is_lower(scalar_set(FloatType(1.124)), scalar_set(FloatType(1.123))) == false);
+	CHECK(scalar_lower_than(FloatType(1.123), FloatType(1.123)) == false);
+	CHECK(scalar_lower_than(FloatType(1.123), FloatType(1.124)) == true);
+	CHECK(scalar_lower_than(FloatType(1.124), FloatType(1.123)) == false);
+	CHECK(scalar_lower_than(scalar_set(FloatType(1.123)), scalar_set(FloatType(1.123))) == false);
+	CHECK(scalar_lower_than(scalar_set(FloatType(1.123)), scalar_set(FloatType(1.124))) == true);
+	CHECK(scalar_lower_than(scalar_set(FloatType(1.124)), scalar_set(FloatType(1.123))) == false);
 
-	CHECK(scalar_is_lower_equal(FloatType(1.123), FloatType(1.123)) == true);
-	CHECK(scalar_is_lower_equal(FloatType(1.123), FloatType(1.124)) == true);
-	CHECK(scalar_is_lower_equal(FloatType(1.124), FloatType(1.123)) == false);
-	CHECK(scalar_is_lower_equal(scalar_set(FloatType(1.123)), scalar_set(FloatType(1.123))) == true);
-	CHECK(scalar_is_lower_equal(scalar_set(FloatType(1.123)), scalar_set(FloatType(1.124))) == true);
-	CHECK(scalar_is_lower_equal(scalar_set(FloatType(1.124)), scalar_set(FloatType(1.123))) == false);
+	CHECK(scalar_lower_equal(FloatType(1.123), FloatType(1.123)) == true);
+	CHECK(scalar_lower_equal(FloatType(1.123), FloatType(1.124)) == true);
+	CHECK(scalar_lower_equal(FloatType(1.124), FloatType(1.123)) == false);
+	CHECK(scalar_lower_equal(scalar_set(FloatType(1.123)), scalar_set(FloatType(1.123))) == true);
+	CHECK(scalar_lower_equal(scalar_set(FloatType(1.123)), scalar_set(FloatType(1.124))) == true);
+	CHECK(scalar_lower_equal(scalar_set(FloatType(1.124)), scalar_set(FloatType(1.123))) == false);
 
-	CHECK(scalar_is_greater(FloatType(1.123), FloatType(1.123)) == false);
-	CHECK(scalar_is_greater(FloatType(1.123), FloatType(1.124)) == false);
-	CHECK(scalar_is_greater(FloatType(1.124), FloatType(1.123)) == true);
-	CHECK(scalar_is_greater(scalar_set(FloatType(1.123)), scalar_set(FloatType(1.123))) == false);
-	CHECK(scalar_is_greater(scalar_set(FloatType(1.123)), scalar_set(FloatType(1.124))) == false);
-	CHECK(scalar_is_greater(scalar_set(FloatType(1.124)), scalar_set(FloatType(1.123))) == true);
+	CHECK(scalar_greater_than(FloatType(1.123), FloatType(1.123)) == false);
+	CHECK(scalar_greater_than(FloatType(1.123), FloatType(1.124)) == false);
+	CHECK(scalar_greater_than(FloatType(1.124), FloatType(1.123)) == true);
+	CHECK(scalar_greater_than(scalar_set(FloatType(1.123)), scalar_set(FloatType(1.123))) == false);
+	CHECK(scalar_greater_than(scalar_set(FloatType(1.123)), scalar_set(FloatType(1.124))) == false);
+	CHECK(scalar_greater_than(scalar_set(FloatType(1.124)), scalar_set(FloatType(1.123))) == true);
 
-	CHECK(scalar_is_greater_equal(FloatType(1.123), FloatType(1.123)) == true);
-	CHECK(scalar_is_greater_equal(FloatType(1.123), FloatType(1.124)) == false);
-	CHECK(scalar_is_greater_equal(FloatType(1.124), FloatType(1.123)) == true);
-	CHECK(scalar_is_greater_equal(scalar_set(FloatType(1.123)), scalar_set(FloatType(1.123))) == true);
-	CHECK(scalar_is_greater_equal(scalar_set(FloatType(1.123)), scalar_set(FloatType(1.124))) == false);
-	CHECK(scalar_is_greater_equal(scalar_set(FloatType(1.124)), scalar_set(FloatType(1.123))) == true);
+	CHECK(scalar_greater_equal(FloatType(1.123), FloatType(1.123)) == true);
+	CHECK(scalar_greater_equal(FloatType(1.123), FloatType(1.124)) == false);
+	CHECK(scalar_greater_equal(FloatType(1.124), FloatType(1.123)) == true);
+	CHECK(scalar_greater_equal(scalar_set(FloatType(1.123)), scalar_set(FloatType(1.123))) == true);
+	CHECK(scalar_greater_equal(scalar_set(FloatType(1.123)), scalar_set(FloatType(1.124))) == false);
+	CHECK(scalar_greater_equal(scalar_set(FloatType(1.124)), scalar_set(FloatType(1.123))) == true);
 
 	CHECK(scalar_near_equal(scalar_sqrt_reciprocal(FloatType(0.5)), FloatType(1.0) / std::sqrt(FloatType(0.5)), threshold));
 	CHECK(scalar_near_equal(scalar_sqrt_reciprocal(FloatType(32.5)), FloatType(1.0) / std::sqrt(FloatType(32.5)), threshold));
@@ -286,8 +286,8 @@ static void test_scalar_impl(const FloatType threshold, const FloatType trig_thr
 			// For +-PI/2, we only test that the value is really large or really small
 			if (scalar_abs(angle) == FloatType(half_pi.as_radians()))
 			{
-				CHECK(scalar_is_greater(scalar_abs(rtm_tan), FloatType(1.0e6)));
-				CHECK(scalar_is_greater(scalar_cast(scalar_abs(scalar_tan(scalar_set(angle)))), FloatType(1.0e6)));
+				CHECK(scalar_greater_than(scalar_abs(rtm_tan), FloatType(1.0e6)));
+				CHECK(scalar_greater_than(scalar_cast(scalar_abs(scalar_tan(scalar_set(angle)))), FloatType(1.0e6)));
 			}
 			else
 			{
@@ -346,17 +346,17 @@ static void test_scalar_impl(const FloatType threshold, const FloatType trig_thr
 	CHECK(scalar_min(FloatType(1.0), FloatType(-0.5)) == FloatType(-0.5));
 	CHECK(scalar_min(FloatType(1.0), FloatType(1.0)) == FloatType(1.0));
 
-	CHECK(scalar_is_equal(scalar_min(scalar_set(FloatType(-0.5)), scalar_set(FloatType(1.0))), scalar_set(FloatType(-0.5))));
-	CHECK(scalar_is_equal(scalar_min(scalar_set(FloatType(1.0)), scalar_set(FloatType(-0.5))), scalar_set(FloatType(-0.5))));
-	CHECK(scalar_is_equal(scalar_min(scalar_set(FloatType(1.0)), scalar_set(FloatType(1.0))), scalar_set(FloatType(1.0))));
+	CHECK(scalar_equal(scalar_min(scalar_set(FloatType(-0.5)), scalar_set(FloatType(1.0))), scalar_set(FloatType(-0.5))));
+	CHECK(scalar_equal(scalar_min(scalar_set(FloatType(1.0)), scalar_set(FloatType(-0.5))), scalar_set(FloatType(-0.5))));
+	CHECK(scalar_equal(scalar_min(scalar_set(FloatType(1.0)), scalar_set(FloatType(1.0))), scalar_set(FloatType(1.0))));
 
 	CHECK(scalar_max(FloatType(-0.5), FloatType(1.0)) == FloatType(1.0));
 	CHECK(scalar_max(FloatType(1.0), FloatType(-0.5)) == FloatType(1.0));
 	CHECK(scalar_max(FloatType(1.0), FloatType(1.0)) == FloatType(1.0));
 
-	CHECK(scalar_is_equal(scalar_max(scalar_set(FloatType(-0.5)), scalar_set(FloatType(1.0))), scalar_set(FloatType(1.0))));
-	CHECK(scalar_is_equal(scalar_max(scalar_set(FloatType(1.0)), scalar_set(FloatType(-0.5))), scalar_set(FloatType(1.0))));
-	CHECK(scalar_is_equal(scalar_max(scalar_set(FloatType(1.0)), scalar_set(FloatType(1.0))), scalar_set(FloatType(1.0))));
+	CHECK(scalar_equal(scalar_max(scalar_set(FloatType(-0.5)), scalar_set(FloatType(1.0))), scalar_set(FloatType(1.0))));
+	CHECK(scalar_equal(scalar_max(scalar_set(FloatType(1.0)), scalar_set(FloatType(-0.5))), scalar_set(FloatType(1.0))));
+	CHECK(scalar_equal(scalar_max(scalar_set(FloatType(1.0)), scalar_set(FloatType(1.0))), scalar_set(FloatType(1.0))));
 
 	CHECK(scalar_is_finite(FloatType(0.0)) == true);
 	CHECK(scalar_is_finite(FloatType(32.0)) == true);
