@@ -1100,8 +1100,8 @@ void test_vector4_impl(const FloatType threshold)
 	}
 
 	{
-		const FloatType half_pi = FloatType(1.570796326794896619231321691639751442);
-		const FloatType pi = FloatType(3.141592653589793238462643383279502884);
+		const FloatType half_pi = FloatType(rtm::constants::half_pi());
+		const FloatType pi = FloatType(rtm::constants::pi());
 
 		const FloatType angles[] = { FloatType(0.0), pi, -pi, half_pi, -half_pi, FloatType(0.5), FloatType(32.5), FloatType(-0.5), FloatType(-32.5) };
 

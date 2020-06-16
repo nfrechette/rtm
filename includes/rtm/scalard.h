@@ -25,8 +25,8 @@
 // SOFTWARE.
 ////////////////////////////////////////////////////////////////////////////////
 
+#include "rtm/constants.h"
 #include "rtm/math.h"
-#include "rtm/impl/angle_constants.h"
 #include "rtm/impl/compiler_utils.h"
 #include "rtm/impl/scalar_common.h"
 
@@ -1120,8 +1120,8 @@ namespace rtm
 		__m128d y_sign = _mm_and_pd(y.value, sign_mask);
 
 		// If X == 0.0, our offset is PI/2 otherwise it is PI both with the sign of Y
-		__m128d half_pi = _mm_set1_pd(1.570796326794896619231321691639751442);
-		__m128d pi = _mm_set1_pd(3.141592653589793238462643383279502884);
+		__m128d half_pi = _mm_set1_pd(rtm::constants::half_pi());
+		__m128d pi = _mm_set1_pd(rtm::constants::pi());
 		__m128d offset = _mm_or_pd(_mm_and_pd(is_x_zero, half_pi), _mm_andnot_pd(is_x_zero, pi));
 		offset = _mm_or_pd(offset, y_sign);
 
@@ -1164,14 +1164,14 @@ namespace rtm
 			if (y == 0.0)
 				return 0.0;
 
-			return std::copysign(1.570796326794896619231321691639751442, y);
+			return std::copysign(rtm::constants::half_pi(), y);
 		}
 
 		double value = scalar_atan(y / x);
 		if (x > 0.0)
 			return value;
 
-		double offset = std::copysign(3.141592653589793238462643383279502884, y);
+		double offset = std::copysign(rtm::constants::pi(), y);
 		return value + offset;
 	}
 
@@ -1180,7 +1180,7 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	constexpr double scalar_deg_to_rad(double deg) RTM_NO_EXCEPT
 	{
-		return deg * constants::pi_div_one_eighty().dbl;
+		return deg * constants::pi_div_one_eighty();
 	}
 
 	//////////////////////////////////////////////////////////////////////////
@@ -1188,7 +1188,7 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	constexpr double scalar_rad_to_deg(double rad) RTM_NO_EXCEPT
 	{
-		return rad * constants::one_eighty_div_pi().dbl;
+		return rad * constants::one_eighty_div_pi();
 	}
 }
 

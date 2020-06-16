@@ -25,8 +25,8 @@
 // SOFTWARE.
 ////////////////////////////////////////////////////////////////////////////////
 
+#include "rtm/constants.h"
 #include "rtm/math.h"
-#include "rtm/impl/angle_constants.h"
 #include "rtm/impl/compiler_utils.h"
 #include "rtm/impl/scalar_common.h"
 
@@ -996,21 +996,21 @@ namespace rtm
 		// See: GPGPU Programming for Games and Science (David H. Eberly)
 
 		// Remap our input in the [-pi, pi] range
-		__m128 quotient = _mm_mul_ss(angle.value, _mm_set_ps1(1.0F / 6.283185307179586476925286766559005768F));
+		__m128 quotient = _mm_mul_ss(angle.value, _mm_set_ps1(rtm::constants::one_div_two_pi()));
 		quotient = scalar_round_bankers(scalarf{ quotient }).value;
-		quotient = _mm_mul_ss(quotient, _mm_set_ps1(6.283185307179586476925286766559005768F));
+		quotient = _mm_mul_ss(quotient, _mm_set_ps1(rtm::constants::two_pi()));
 		__m128 x = _mm_sub_ss(angle.value, quotient);
 
 		// Remap our input in the [-pi/2, pi/2] range
 		const __m128 sign_mask = _mm_set_ps(-0.0F, -0.0F, -0.0F, -0.0F);
 		__m128 sign = _mm_and_ps(x, sign_mask);
-		__m128 reference = _mm_or_ps(sign, _mm_set_ps1(3.141592653589793238462643383279502884F));
+		__m128 reference = _mm_or_ps(sign, _mm_set_ps1(rtm::constants::pi()));
 		
 		const __m128 reflection = _mm_sub_ss(reference, x);
 		const __m128i abs_mask = _mm_set_epi32(0x7FFFFFFFULL, 0x7FFFFFFFULL, 0x7FFFFFFFULL, 0x7FFFFFFFULL);
 		const __m128 x_abs = _mm_and_ps(x, _mm_castsi128_ps(abs_mask));
 
-		__m128 is_less_equal_than_half_pi = _mm_cmple_ss(x_abs, _mm_set_ps1(1.570796326794896619231321691639751442F));
+		__m128 is_less_equal_than_half_pi = _mm_cmple_ss(x_abs, _mm_set_ps1(rtm::constants::half_pi()));
 
 #if defined(RTM_AVX_INTRINSICS)
 		x = _mm_blendv_ps(reflection, x, is_less_equal_than_half_pi);
@@ -1042,16 +1042,16 @@ namespace rtm
 		// See: GPGPU Programming for Games and Science (David H. Eberly)
 
 		// Remap our input in the [-pi, pi] range
-		float quotient = angle * (1.0F / 6.283185307179586476925286766559005768F);
+		float quotient = angle * rtm::constants::one_div_two_pi();
 		quotient = scalar_round_bankers(quotient);
-		quotient = quotient * 6.283185307179586476925286766559005768F;
+		quotient = quotient * rtm::constants::two_pi();
 		float x = angle - quotient;
 
 		// Remap our input in the [-pi/2, pi/2] range
-		const float reference = std::copysign(3.141592653589793238462643383279502884F, x);
+		const float reference = std::copysign(rtm::constants::pi(), x);
 		const float reflection = reference - x;
 		const float x_abs = scalar_abs(x);
-		x = x_abs <= 1.570796326794896619231321691639751442F ? x : reflection;
+		x = x_abs <= rtm::constants::half_pi() ? x : reflection;
 
 		// Calculate our value
 		const float x2 = x * x;
@@ -1075,20 +1075,20 @@ namespace rtm
 		// See: GPGPU Programming for Games and Science (David H. Eberly)
 
 		// Remap our input in the [-pi, pi] range
-		__m128 quotient = _mm_mul_ss(angle.value, _mm_set_ps1(1.0F / 6.283185307179586476925286766559005768F));
+		__m128 quotient = _mm_mul_ss(angle.value, _mm_set_ps1(rtm::constants::one_div_two_pi()));
 		quotient = scalar_round_bankers(scalarf{ quotient }).value;
-		quotient = _mm_mul_ss(quotient, _mm_set_ps1(6.283185307179586476925286766559005768F));
+		quotient = _mm_mul_ss(quotient, _mm_set_ps1(rtm::constants::two_pi()));
 		__m128 x = _mm_sub_ss(angle.value, quotient);
 
 		// Remap our input in the [-pi/2, pi/2] range
 		const __m128 sign_mask = _mm_set_ps(-0.0F, -0.0F, -0.0F, -0.0F);
 		__m128 x_sign = _mm_and_ps(x, sign_mask);
-		__m128 reference = _mm_or_ps(x_sign, _mm_set_ps1(3.141592653589793238462643383279502884F));
+		__m128 reference = _mm_or_ps(x_sign, _mm_set_ps1(rtm::constants::pi()));
 		const __m128 reflection = _mm_sub_ss(reference, x);
 
 		const __m128i abs_mask = _mm_set_epi32(0x7FFFFFFFULL, 0x7FFFFFFFULL, 0x7FFFFFFFULL, 0x7FFFFFFFULL);
 		__m128 x_abs = _mm_and_ps(x, _mm_castsi128_ps(abs_mask));
-		__m128 is_less_equal_than_half_pi = _mm_cmple_ss(x_abs, _mm_set_ps1(1.570796326794896619231321691639751442F));
+		__m128 is_less_equal_than_half_pi = _mm_cmple_ss(x_abs, _mm_set_ps1(rtm::constants::half_pi()));
 
 #if defined(RTM_AVX_INTRINSICS)
 		x = _mm_blendv_ps(reflection, x, is_less_equal_than_half_pi);
@@ -1123,16 +1123,16 @@ namespace rtm
 		// See: GPGPU Programming for Games and Science (David H. Eberly)
 
 		// Remap our input in the [-pi, pi] range
-		float quotient = angle * (1.0F / 6.283185307179586476925286766559005768F);
+		float quotient = angle * rtm::constants::one_div_two_pi();
 		quotient = scalar_round_bankers(quotient);
-		quotient = quotient * 6.283185307179586476925286766559005768F;
+		quotient = quotient * rtm::constants::two_pi();
 		float x = angle - quotient;
 
 		// Remap our input in the [-pi/2, pi/2] range
-		const float reference = std::copysign(3.141592653589793238462643383279502884F, x);
+		const float reference = std::copysign(rtm::constants::pi(), x);
 		const float reflection = reference - x;
 		const float x_abs = scalar_abs(x);
-		x = x_abs <= 1.570796326794896619231321691639751442F ? x : reflection;
+		x = x_abs <= rtm::constants::half_pi() ? x : reflection;
 
 		// Calculate our value
 		const float x2 = x * x;
@@ -1143,7 +1143,7 @@ namespace rtm
 		result = (result * x2) + 1.0F;
 
 		// Remap into [-pi, pi]
-		if (x_abs <= 1.570796326794896619231321691639751442F)
+		if (x_abs <= rtm::constants::half_pi())
 			return result;
 		else
 			return -result;
@@ -1227,10 +1227,10 @@ namespace rtm
 
 		// Handle negative values through reflection
 		if (_mm_cvtss_f32(value.value) < 0.0F)
-			result = 3.141592653589793238462643383279502884F - result;
+			result = rtm::constants::pi() - result;
 
 		// Shift our final result
-		const float offset = 1.570796326794896619231321691639751442F;
+		const float offset = rtm::constants::half_pi();
 		result = offset - result;
 		return scalarf{ _mm_set_ps1(result) };
 	}
@@ -1266,10 +1266,10 @@ namespace rtm
 
 		// Handle negative values through reflection
 		if (value < 0.0F)
-			result = 3.141592653589793238462643383279502884F - result;
+			result = rtm::constants::pi() - result;
 
 		// Shift our final result
-		const float offset = 1.570796326794896619231321691639751442F;
+		const float offset = rtm::constants::half_pi();
 		result = offset - result;
 		return result;
 #endif
@@ -1309,7 +1309,7 @@ namespace rtm
 
 		// Handle negative values through reflection
 		if (_mm_cvtss_f32(value.value) < 0.0F)
-			result = 3.141592653589793238462643383279502884F - result;
+			result = rtm::constants::pi() - result;
 
 		return scalarf{ _mm_set_ps1(result) };
 	}
@@ -1349,7 +1349,7 @@ namespace rtm
 
 		// Handle negative values through reflection
 		if (value < 0.0F)
-			result = 3.141592653589793238462643383279502884F - result;
+			result = rtm::constants::pi() - result;
 
 		return result;
 #endif
@@ -1423,7 +1423,7 @@ namespace rtm
 		result = result * x_s;
 
 		__m128 result_s = _mm_set_ps1(result);
-		__m128 remapped = _mm_sub_ss(_mm_set_ps1(1.570796326794896619231321691639751442F), result_s);
+		__m128 remapped = _mm_sub_ss(_mm_set_ps1(rtm::constants::half_pi()), result_s);
 
 		// pi/2 - result
 #if defined(RTM_AVX_INTRINSICS)
@@ -1468,7 +1468,7 @@ namespace rtm
 		result = result * x;
 
 		if (abs_value > 1.0f)
-			result = 1.570796326794896619231321691639751442F - result; // pi/2 - result
+			result = rtm::constants::half_pi() - result; // pi/2 - result
 
 		// Keep the original sign
 		result = value >= 0.0F ? result : -result;
@@ -1503,8 +1503,8 @@ namespace rtm
 		__m128 y_sign = _mm_and_ps(y.value, sign_mask);
 
 		// If X == 0.0, our offset is PI/2 otherwise it is PI both with the sign of Y
-		__m128 half_pi = _mm_set_ps1(1.570796326794896619231321691639751442F);
-		__m128 pi = _mm_set_ps1(3.141592653589793238462643383279502884F);
+		__m128 half_pi = _mm_set_ps1(rtm::constants::half_pi());
+		__m128 pi = _mm_set_ps1(rtm::constants::pi());
 		__m128 offset = _mm_or_ps(_mm_and_ps(is_x_zero, half_pi), _mm_andnot_ps(is_x_zero, pi));
 		offset = _mm_or_ps(offset, y_sign);
 
@@ -1550,14 +1550,14 @@ namespace rtm
 			if (y == 0.0F)
 				return 0.0F;
 
-			return std::copysign(1.570796326794896619231321691639751442F, y);
+			return std::copysign(rtm::constants::half_pi(), y);
 		}
 
 		float value = scalar_atan(y / x);
 		if (x > 0.0F)
 			return value;
 
-		float offset = std::copysign(3.141592653589793238462643383279502884F, y);
+		float offset = std::copysign(rtm::constants::pi(), y);
 		return value + offset;
 #endif
 	}
@@ -1567,7 +1567,7 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	constexpr float scalar_deg_to_rad(float deg) RTM_NO_EXCEPT
 	{
-		return deg * float(constants::pi_div_one_eighty().dbl);
+		return deg * constants::pi_div_one_eighty();
 	}
 
 	//////////////////////////////////////////////////////////////////////////
@@ -1575,7 +1575,7 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	constexpr float scalar_rad_to_deg(float rad) RTM_NO_EXCEPT
 	{
-		return rad * float(constants::one_eighty_div_pi().dbl);
+		return rad * constants::one_eighty_div_pi();
 	}
 }
 
