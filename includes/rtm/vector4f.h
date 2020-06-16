@@ -2340,21 +2340,21 @@ namespace rtm
 		// See: GPGPU Programming for Games and Science (David H. Eberly)
 
 		// Remap our input in the [-pi, pi] range
-		__m128 quotient = _mm_mul_ps(input, _mm_set_ps1(1.0F / 6.283185307179586476925286766559005768F));
+		__m128 quotient = _mm_mul_ps(input, _mm_set_ps1(rtm::constants::one_div_two_pi()));
 		quotient = vector_round_bankers(quotient);
-		quotient = _mm_mul_ps(quotient, _mm_set_ps1(6.283185307179586476925286766559005768F));
+		quotient = _mm_mul_ps(quotient, _mm_set_ps1(rtm::constants::two_pi()));
 		__m128 x = _mm_sub_ps(input, quotient);
 
 		// Remap our input in the [-pi/2, pi/2] range
 		const __m128 sign_mask = _mm_set_ps(-0.0F, -0.0F, -0.0F, -0.0F);
 		__m128 sign = _mm_and_ps(x, sign_mask);
-		__m128 reference = _mm_or_ps(sign, _mm_set_ps1(3.141592653589793238462643383279502884F));
+		__m128 reference = _mm_or_ps(sign, _mm_set_ps1(rtm::constants::pi()));
 
 		const __m128 reflection = _mm_sub_ps(reference, x);
 		const __m128i abs_mask = _mm_set_epi32(0x7FFFFFFFULL, 0x7FFFFFFFULL, 0x7FFFFFFFULL, 0x7FFFFFFFULL);
 		const __m128 x_abs = _mm_and_ps(x, _mm_castsi128_ps(abs_mask));
 
-		__m128 is_less_equal_than_half_pi = _mm_cmple_ps(x_abs, _mm_set_ps1(1.570796326794896619231321691639751442F));
+		__m128 is_less_equal_than_half_pi = _mm_cmple_ps(x_abs, _mm_set_ps1(rtm::constants::half_pi()));
 
 #if defined(RTM_AVX_INTRINSICS)
 		x = _mm_blendv_ps(reflection, x, is_less_equal_than_half_pi);
@@ -2415,7 +2415,7 @@ namespace rtm
 		// As such, the offset is PI/2 and it takes the sign of the input
 		// This allows us to load a single constant from memory directly
 		__m128 input_sign = _mm_and_ps(input, sign_bit);
-		__m128 offset = _mm_or_ps(input_sign, _mm_set_ps1(1.570796326794896619231321691639751442F));
+		__m128 offset = _mm_or_ps(input_sign, _mm_set_ps1(rtm::constants::half_pi()));
 
 		// And our result has the opposite sign of the input
 		result = _mm_xor_ps(result, _mm_xor_ps(input_sign, sign_bit));
@@ -2439,20 +2439,20 @@ namespace rtm
 		// See: GPGPU Programming for Games and Science (David H. Eberly)
 
 		// Remap our input in the [-pi, pi] range
-		__m128 quotient = _mm_mul_ps(input, _mm_set_ps1(1.0F / 6.283185307179586476925286766559005768F));
+		__m128 quotient = _mm_mul_ps(input, _mm_set_ps1(rtm::constants::one_div_two_pi()));
 		quotient = vector_round_bankers(quotient);
-		quotient = _mm_mul_ps(quotient, _mm_set_ps1(6.283185307179586476925286766559005768F));
+		quotient = _mm_mul_ps(quotient, _mm_set_ps1(rtm::constants::two_pi()));
 		__m128 x = _mm_sub_ps(input, quotient);
 
 		// Remap our input in the [-pi/2, pi/2] range
 		const __m128 sign_mask = _mm_set_ps(-0.0F, -0.0F, -0.0F, -0.0F);
 		__m128 x_sign = _mm_and_ps(x, sign_mask);
-		__m128 reference = _mm_or_ps(x_sign, _mm_set_ps1(3.141592653589793238462643383279502884F));
+		__m128 reference = _mm_or_ps(x_sign, _mm_set_ps1(rtm::constants::pi()));
 		const __m128 reflection = _mm_sub_ps(reference, x);
 
 		const __m128i abs_mask = _mm_set_epi32(0x7FFFFFFFULL, 0x7FFFFFFFULL, 0x7FFFFFFFULL, 0x7FFFFFFFULL);
 		__m128 x_abs = _mm_and_ps(x, _mm_castsi128_ps(abs_mask));
-		__m128 is_less_equal_than_half_pi = _mm_cmple_ps(x_abs, _mm_set_ps1(1.570796326794896619231321691639751442F));
+		__m128 is_less_equal_than_half_pi = _mm_cmple_ps(x_abs, _mm_set_ps1(rtm::constants::half_pi()));
 
 #if defined(RTM_AVX_INTRINSICS)
 		x = _mm_blendv_ps(reflection, x, is_less_equal_than_half_pi);
@@ -2517,7 +2517,7 @@ namespace rtm
 
 		// As such, the offset is 0.0 when the input is positive and PI when negative
 		__m128 is_input_negative = _mm_cmplt_ps(input, _mm_setzero_ps());
-		__m128 offset = _mm_and_ps(is_input_negative, _mm_set_ps1(3.141592653589793238462643383279502884F));
+		__m128 offset = _mm_and_ps(is_input_negative, _mm_set_ps1(rtm::constants::pi()));
 
 		// And our result has the same sign of the input
 		__m128 input_sign = _mm_and_ps(input, sign_bit);
@@ -2620,8 +2620,8 @@ namespace rtm
 		__m128 y_sign = _mm_and_ps(y, sign_mask);
 
 		// If X == 0.0, our offset is PI/2 otherwise it is PI both with the sign of Y
-		__m128 half_pi = _mm_set_ps1(1.570796326794896619231321691639751442F);
-		__m128 pi = _mm_set_ps1(3.141592653589793238462643383279502884F);
+		__m128 half_pi = _mm_set_ps1(rtm::constants::half_pi());
+		__m128 pi = _mm_set_ps1(rtm::constants::pi());
 		__m128 offset = _mm_or_ps(_mm_and_ps(is_x_zero, half_pi), _mm_andnot_ps(is_x_zero, pi));
 		offset = _mm_or_ps(offset, y_sign);
 

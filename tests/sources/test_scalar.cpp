@@ -223,8 +223,8 @@ static void test_scalar_impl(const FloatType threshold, const FloatType trig_thr
 
 	using Vector4Type = typename float_traits<FloatType>::vector4;
 
-	const FloatType half_pi = FloatType(1.570796326794896619231321691639751442);
-	const FloatType pi = FloatType(3.141592653589793238462643383279502884);
+	const FloatType half_pi = FloatType(rtm::constants::half_pi());
+	const FloatType pi = FloatType(rtm::constants::pi());
 
 	const FloatType angles[] =
 	{
@@ -435,20 +435,20 @@ static void test_scalar_impl(const FloatType threshold, const FloatType trig_thr
 	CHECK(scalar_near_equal(scalar_fraction(FloatType(0.75)), FloatType(0.75), threshold));
 
 	CHECK(scalar_deg_to_rad(FloatType(0.0)) == FloatType(0.0));
-	CHECK(scalar_near_equal(scalar_deg_to_rad(FloatType(90.0)), FloatType(1.570796326794896619231321691639751442), threshold));
-	CHECK(scalar_near_equal(scalar_deg_to_rad(FloatType(-90.0)), -FloatType(1.570796326794896619231321691639751442), threshold));
-	CHECK(scalar_near_equal(scalar_deg_to_rad(FloatType(180.0)), FloatType(3.141592653589793238462643383279502884), threshold));
-	CHECK(scalar_near_equal(scalar_deg_to_rad(FloatType(-180.0)), -FloatType(3.141592653589793238462643383279502884), threshold));
-	CHECK(scalar_near_equal(scalar_deg_to_rad(FloatType(360.0)), FloatType(6.283185307179586476925286766559005768), threshold));
-	CHECK(scalar_near_equal(scalar_deg_to_rad(FloatType(-360.0)), -FloatType(6.283185307179586476925286766559005768), threshold));
+	CHECK(scalar_near_equal(scalar_deg_to_rad(FloatType(90.0)), FloatType(rtm::constants::half_pi()), threshold));
+	CHECK(scalar_near_equal(scalar_deg_to_rad(FloatType(-90.0)), FloatType(-rtm::constants::half_pi()), threshold));
+	CHECK(scalar_near_equal(scalar_deg_to_rad(FloatType(180.0)), FloatType(rtm::constants::pi()), threshold));
+	CHECK(scalar_near_equal(scalar_deg_to_rad(FloatType(-180.0)), FloatType(-rtm::constants::pi()), threshold));
+	CHECK(scalar_near_equal(scalar_deg_to_rad(FloatType(360.0)), FloatType(rtm::constants::two_pi()), threshold));
+	CHECK(scalar_near_equal(scalar_deg_to_rad(FloatType(-360.0)), FloatType(-rtm::constants::two_pi()), threshold));
 
 	CHECK(scalar_rad_to_deg(FloatType(0.0)) == FloatType(0.0));
-	CHECK(scalar_near_equal(scalar_rad_to_deg(FloatType(1.570796326794896619231321691639751442)), FloatType(90.0), threshold));
-	CHECK(scalar_near_equal(scalar_rad_to_deg(-FloatType(1.570796326794896619231321691639751442)), FloatType(-90.0), threshold));
-	CHECK(scalar_near_equal(scalar_rad_to_deg(FloatType(3.141592653589793238462643383279502884)), FloatType(180.0), threshold));
-	CHECK(scalar_near_equal(scalar_rad_to_deg(-FloatType(3.141592653589793238462643383279502884)), FloatType(-180.0), threshold));
-	CHECK(scalar_near_equal(scalar_rad_to_deg(FloatType(6.283185307179586476925286766559005768)), FloatType(360.0), threshold));
-	CHECK(scalar_near_equal(scalar_rad_to_deg(-FloatType(6.283185307179586476925286766559005768)), FloatType(-360.0), threshold));
+	CHECK(scalar_near_equal(scalar_rad_to_deg(FloatType(rtm::constants::half_pi())), FloatType(90.0), threshold));
+	CHECK(scalar_near_equal(scalar_rad_to_deg(FloatType(-rtm::constants::half_pi())), FloatType(-90.0), threshold));
+	CHECK(scalar_near_equal(scalar_rad_to_deg(FloatType(rtm::constants::pi())), FloatType(180.0), threshold));
+	CHECK(scalar_near_equal(scalar_rad_to_deg(FloatType(-rtm::constants::pi())), FloatType(-180.0), threshold));
+	CHECK(scalar_near_equal(scalar_rad_to_deg(FloatType(rtm::constants::two_pi())), FloatType(360.0), threshold));
+	CHECK(scalar_near_equal(scalar_rad_to_deg(FloatType(-rtm::constants::two_pi())), FloatType(-360.0), threshold));
 }
 
 TEST_CASE("scalarf math", "[math][scalar]")
