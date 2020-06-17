@@ -40,6 +40,9 @@ RTM_IMPL_FILE_PRAGMA_PUSH
 		{ \
 			constexpr operator double() const noexcept { return sign_bias ? value : -value; } \
 			constexpr operator float() const noexcept { return sign_bias ? static_cast<float>(value) : static_cast<float>(-value); } \
+			/* Unary helpers */ \
+			constexpr RTM_JOIN_TOKENS(float_constant_, name) <!sign_bias> operator-() const noexcept { return RTM_JOIN_TOKENS(float_constant_, name) <!sign_bias>{}; } \
+			constexpr RTM_JOIN_TOKENS(float_constant_, name) <sign_bias> operator+() const noexcept { return RTM_JOIN_TOKENS(float_constant_, name) <sign_bias>{}; } \
 		}; \
 		/* Multiplication helpers */ \
 		template<bool sign_bias> constexpr double operator*(double lhs, RTM_JOIN_TOKENS(float_constant_, name) <sign_bias> rhs) noexcept { return lhs * double(rhs); } \
@@ -61,9 +64,31 @@ RTM_IMPL_FILE_PRAGMA_PUSH
 		template<bool sign_bias> constexpr double operator-(RTM_JOIN_TOKENS(float_constant_, name) <sign_bias> lhs, double rhs) noexcept { return double(lhs) - rhs; } \
 		template<bool sign_bias> constexpr float operator-(float lhs, RTM_JOIN_TOKENS(float_constant_, name) <sign_bias> rhs) noexcept { return lhs - float(rhs); } \
 		template<bool sign_bias> constexpr float operator-(RTM_JOIN_TOKENS(float_constant_, name) <sign_bias> lhs, float rhs) noexcept { return float(lhs) - rhs; } \
-		/* Unary helpers */ \
-		template<bool sign_bias> constexpr RTM_JOIN_TOKENS(float_constant_, name) <!sign_bias> operator-(RTM_JOIN_TOKENS(float_constant_, name) <sign_bias> input) noexcept { (void)input; return RTM_JOIN_TOKENS(float_constant_, name) <!sign_bias>{}; } \
-		template<bool sign_bias> constexpr RTM_JOIN_TOKENS(float_constant_, name) <sign_bias> operator+(RTM_JOIN_TOKENS(float_constant_, name) <sign_bias> input) noexcept { return input; } \
+		/* Relational helpers */ \
+		template<bool sign_bias> constexpr bool operator<(double lhs, RTM_JOIN_TOKENS(float_constant_, name) <sign_bias> rhs) noexcept { return lhs < double(rhs); } \
+		template<bool sign_bias> constexpr bool operator<(RTM_JOIN_TOKENS(float_constant_, name) <sign_bias> lhs, double rhs) noexcept { return double(lhs) < rhs; } \
+		template<bool sign_bias> constexpr bool operator<(float lhs, RTM_JOIN_TOKENS(float_constant_, name) <sign_bias> rhs) noexcept { return lhs < float(rhs); } \
+		template<bool sign_bias> constexpr bool operator<(RTM_JOIN_TOKENS(float_constant_, name) <sign_bias> lhs, float rhs) noexcept { return float(lhs) < rhs; } \
+		template<bool sign_bias> constexpr bool operator<=(double lhs, RTM_JOIN_TOKENS(float_constant_, name) <sign_bias> rhs) noexcept { return lhs <= double(rhs); } \
+		template<bool sign_bias> constexpr bool operator<=(RTM_JOIN_TOKENS(float_constant_, name) <sign_bias> lhs, double rhs) noexcept { return double(lhs) <= rhs; } \
+		template<bool sign_bias> constexpr bool operator<=(float lhs, RTM_JOIN_TOKENS(float_constant_, name) <sign_bias> rhs) noexcept { return lhs <= float(rhs); } \
+		template<bool sign_bias> constexpr bool operator<=(RTM_JOIN_TOKENS(float_constant_, name) <sign_bias> lhs, float rhs) noexcept { return float(lhs) <= rhs; } \
+		template<bool sign_bias> constexpr bool operator>(double lhs, RTM_JOIN_TOKENS(float_constant_, name) <sign_bias> rhs) noexcept { return lhs > double(rhs); } \
+		template<bool sign_bias> constexpr bool operator>(RTM_JOIN_TOKENS(float_constant_, name) <sign_bias> lhs, double rhs) noexcept { return double(lhs) > rhs; } \
+		template<bool sign_bias> constexpr bool operator>(float lhs, RTM_JOIN_TOKENS(float_constant_, name) <sign_bias> rhs) noexcept { return lhs > float(rhs); } \
+		template<bool sign_bias> constexpr bool operator>(RTM_JOIN_TOKENS(float_constant_, name) <sign_bias> lhs, float rhs) noexcept { return float(lhs) > rhs; } \
+		template<bool sign_bias> constexpr bool operator>=(double lhs, RTM_JOIN_TOKENS(float_constant_, name) <sign_bias> rhs) noexcept { return lhs >= double(rhs); } \
+		template<bool sign_bias> constexpr bool operator>=(RTM_JOIN_TOKENS(float_constant_, name) <sign_bias> lhs, double rhs) noexcept { return double(lhs) >= rhs; } \
+		template<bool sign_bias> constexpr bool operator>=(float lhs, RTM_JOIN_TOKENS(float_constant_, name) <sign_bias> rhs) noexcept { return lhs >= float(rhs); } \
+		template<bool sign_bias> constexpr bool operator>=(RTM_JOIN_TOKENS(float_constant_, name) <sign_bias> lhs, float rhs) noexcept { return float(lhs) >= rhs; } \
+		template<bool sign_bias> constexpr bool operator==(double lhs, RTM_JOIN_TOKENS(float_constant_, name) <sign_bias> rhs) noexcept { return lhs == double(rhs); } \
+		template<bool sign_bias> constexpr bool operator==(RTM_JOIN_TOKENS(float_constant_, name) <sign_bias> lhs, double rhs) noexcept { return double(lhs) == rhs; } \
+		template<bool sign_bias> constexpr bool operator==(float lhs, RTM_JOIN_TOKENS(float_constant_, name) <sign_bias> rhs) noexcept { return lhs == float(rhs); } \
+		template<bool sign_bias> constexpr bool operator==(RTM_JOIN_TOKENS(float_constant_, name) <sign_bias> lhs, float rhs) noexcept { return float(lhs) == rhs; } \
+		template<bool sign_bias> constexpr bool operator!=(double lhs, RTM_JOIN_TOKENS(float_constant_, name) <sign_bias> rhs) noexcept { return lhs != double(rhs); } \
+		template<bool sign_bias> constexpr bool operator!=(RTM_JOIN_TOKENS(float_constant_, name) <sign_bias> lhs, double rhs) noexcept { return double(lhs) != rhs; } \
+		template<bool sign_bias> constexpr bool operator!=(float lhs, RTM_JOIN_TOKENS(float_constant_, name) <sign_bias> rhs) noexcept { return lhs != float(rhs); } \
+		template<bool sign_bias> constexpr bool operator!=(RTM_JOIN_TOKENS(float_constant_, name) <sign_bias> lhs, float rhs) noexcept { return float(lhs) != rhs; } \
 	} \
 	/* Function user code calls to return the constant value */ \
 	constexpr RTM_JOIN_TOKENS(rtm_impl::float_constant_, name) <true> name() noexcept { return RTM_JOIN_TOKENS(rtm_impl::float_constant_, name) <true>{}; }
