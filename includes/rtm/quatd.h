@@ -614,6 +614,75 @@ namespace rtm
 	}
 #endif
 
+#if defined(RTM_SSE2_INTRINSICS)
+	//////////////////////////////////////////////////////////////////////////
+	// Returns the spherical interpolation between start and end for a given alpha value.
+	// See: https://www.euclideanspace.com/maths/algebra/realNormedAlgebra/quaternions/slerp/index.htm
+	// Perhaps try this someday: http://number-none.com/product/Understanding%20Slerp,%20Then%20Not%20Using%20It/
+	//////////////////////////////////////////////////////////////////////////
+	inline quatd RTM_SIMD_CALL quat_slerp(const quatd& start, const quatd& end, const scalard& alpha) RTM_NO_EXCEPT
+	{
+		vector4d start_v = quat_to_vector(start);
+		vector4d end_v = quat_to_vector(end);
+
+		vector4d cos_half_angle_v = vector_dot(start_v, end_v);
+		mask4d is_angle_negative = vector_less_than(cos_half_angle_v, vector_zero());
+
+		// If the two input quaternions aren't on the same half of the hypersphere, flip one and the angle sign
+		end_v = vector_select(is_angle_negative, vector_neg(end_v), end_v);
+		cos_half_angle_v = vector_select(is_angle_negative, vector_neg(cos_half_angle_v), cos_half_angle_v);
+
+		scalard cos_half_angle = vector_get_x(cos_half_angle_v);
+		scalard half_angle = scalar_acos(cos_half_angle);
+		scalard sin_half_angle = scalar_sqrt(scalar_sub(scalar_set(1.0), scalar_mul(cos_half_angle, cos_half_angle)));
+		scalard inv_sin_half_angle = scalar_reciprocal(sin_half_angle);
+
+		scalard start_contribution_angle = scalar_mul(scalar_sub(scalar_set(1.0), alpha), half_angle);
+		scalard end_contribution_angle = scalar_mul(alpha, half_angle);
+		vector4d contribution_angles = vector_set(start_contribution_angle, end_contribution_angle, start_contribution_angle, end_contribution_angle);
+		vector4d contributions = vector_mul(vector_sin(contribution_angles), inv_sin_half_angle);
+		vector4d start_contribution = vector_dup_x(contributions);
+		vector4d end_contribution = vector_dup_y(contributions);
+
+		vector4d result = vector_add(vector_mul(start_v, start_contribution), vector_mul(end_v, end_contribution));
+		return vector_to_quat(result);
+	}
+#endif
+
+	//////////////////////////////////////////////////////////////////////////
+	// Returns the spherical interpolation between start and end for a given alpha value.
+	// See: https://www.euclideanspace.com/maths/algebra/realNormedAlgebra/quaternions/slerp/index.htm
+	// Perhaps try this someday: http://number-none.com/product/Understanding%20Slerp,%20Then%20Not%20Using%20It/
+	//////////////////////////////////////////////////////////////////////////
+	inline quatd RTM_SIMD_CALL quat_slerp(const quatd& start, const quatd& end, double alpha) RTM_NO_EXCEPT
+	{
+		vector4d start_v = quat_to_vector(start);
+		vector4d end_v = quat_to_vector(end);
+		scalard alpha_s = scalar_set(alpha);
+
+		vector4d cos_half_angle_v = vector_dot(start_v, end_v);
+		mask4d is_angle_negative = vector_less_than(cos_half_angle_v, vector_zero());
+
+		// If the two input quaternions aren't on the same half of the hypersphere, flip one and the angle sign
+		end_v = vector_select(is_angle_negative, vector_neg(end_v), end_v);
+		cos_half_angle_v = vector_select(is_angle_negative, vector_neg(cos_half_angle_v), cos_half_angle_v);
+
+		scalard cos_half_angle = vector_get_x(cos_half_angle_v);
+		scalard half_angle = scalar_acos(cos_half_angle);
+		scalard sin_half_angle = scalar_sqrt(scalar_sub(scalar_set(1.0), scalar_mul(cos_half_angle, cos_half_angle)));
+		scalard inv_sin_half_angle = scalar_reciprocal(sin_half_angle);
+
+		scalard start_contribution_angle = scalar_mul(scalar_sub(scalar_set(1.0), alpha_s), half_angle);
+		scalard end_contribution_angle = scalar_mul(alpha_s, half_angle);
+		vector4d contribution_angles = vector_set(start_contribution_angle, end_contribution_angle, start_contribution_angle, end_contribution_angle);
+		vector4d contributions = vector_mul(vector_sin(contribution_angles), inv_sin_half_angle);
+		vector4d start_contribution = vector_dup_x(contributions);
+		vector4d end_contribution = vector_dup_y(contributions);
+
+		vector4d result = vector_add(vector_mul(start_v, start_contribution), vector_mul(end_v, end_contribution));
+		return vector_to_quat(result);
+	}
+
 	//////////////////////////////////////////////////////////////////////////
 	// Returns a component wise negated quaternion.
 	//////////////////////////////////////////////////////////////////////////

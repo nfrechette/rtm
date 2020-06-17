@@ -333,6 +333,38 @@ static void test_quat_impl(const FloatType threshold)
 	}
 
 	{
+		QuatType quat0 = quat_normalize(quat_from_euler(scalar_deg_to_rad(FloatType(30.0)), scalar_deg_to_rad(FloatType(-45.0)), scalar_deg_to_rad(FloatType(90.0))));
+		QuatType quat1 = quat_normalize(quat_from_euler(scalar_deg_to_rad(FloatType(45.0)), scalar_deg_to_rad(FloatType(60.0)), scalar_deg_to_rad(FloatType(120.0))));
+
+		CHECK(vector_all_near_equal(quat_to_vector(quat_slerp(quat0, quat1, FloatType(0.0))), quat_to_vector(quat0), threshold));
+		CHECK(vector_all_near_equal(quat_to_vector(quat_slerp(quat0, quat1, FloatType(1.0))), quat_to_vector(quat1), threshold));
+
+		// Remove quat0 from quat1
+		QuatType delta_0_to_1 = quat_normalize(quat_mul(quat1, quat_conjugate(quat0)));
+
+		Vector4Type axis;
+		FloatType angle;
+		quat_to_axis_angle(delta_0_to_1, axis, angle);
+
+		FloatType alpha = FloatType(0.33);
+		QuatType interp_delta = quat_from_axis_angle(axis, angle * alpha);
+
+		QuatType result_ref = quat_mul(interp_delta, quat0);
+		QuatType result0 = quat_slerp(quat0, quat1, alpha);
+		QuatType result0_s = quat_slerp(quat0, quat1, scalar_set(alpha));
+
+		CHECK(vector_all_near_equal(quat_to_vector(result0), quat_to_vector(result_ref), threshold));
+		CHECK(vector_all_near_equal(quat_to_vector(result0_s), quat_to_vector(result_ref), threshold));
+
+		quat1 = quat_neg(quat1);
+		QuatType result1 = quat_slerp(quat0, quat1, alpha);
+		QuatType result1_s = quat_slerp(quat0, quat1, scalar_set(alpha));
+
+		CHECK(vector_all_near_equal(quat_to_vector(result1), quat_to_vector(result_ref), threshold));
+		CHECK(vector_all_near_equal(quat_to_vector(result1_s), quat_to_vector(result_ref), threshold));
+	}
+
+	{
 		QuatType quat0 = quat_from_euler(scalar_deg_to_rad(FloatType(30.0)), scalar_deg_to_rad(FloatType(-45.0)), scalar_deg_to_rad(FloatType(90.0)));
 		QuatType quat1 = quat_neg(quat0);
 
