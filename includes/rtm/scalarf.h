@@ -81,7 +81,7 @@ namespace rtm
 
 #if defined(RTM_SSE2_INTRINSICS)
 	//////////////////////////////////////////////////////////////////////////
-	// Returns the largest integer value not greater than the input.
+	// Returns the largest integer value not greater than the input (round towards minus infinity).
 	// scalar_floor(1.8) = 1.0
 	// scalar_floor(-1.8) = -2.0
 	//////////////////////////////////////////////////////////////////////////
@@ -128,7 +128,7 @@ namespace rtm
 #endif
 
 	//////////////////////////////////////////////////////////////////////////
-	// Returns the largest integer value not greater than the input.
+	// Returns the largest integer value not greater than the input (round towards negative infinity).
 	// scalar_floor(1.8) = 1.0
 	// scalar_floor(-1.8) = -2.0
 	//////////////////////////////////////////////////////////////////////////
@@ -143,7 +143,7 @@ namespace rtm
 
 #if defined(RTM_SSE2_INTRINSICS)
 	//////////////////////////////////////////////////////////////////////////
-	// Returns the smallest integer value not less than the input.
+	// Returns the smallest integer value not less than the input (round towards positive infinity).
 	// scalar_ceil(1.8) = 2.0
 	// scalar_ceil(-1.8) = -1.0
 	//////////////////////////////////////////////////////////////////////////
@@ -190,7 +190,7 @@ namespace rtm
 #endif
 
 	//////////////////////////////////////////////////////////////////////////
-	// Returns the smallest integer value not less than the input.
+	// Returns the smallest integer value not less than the input (round towards positive infinity).
 	// scalar_ceil(1.8) = 2.0
 	// scalar_ceil(-1.8) = -1.0
 	//////////////////////////////////////////////////////////////////////////
