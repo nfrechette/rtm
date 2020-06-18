@@ -739,7 +739,7 @@ namespace rtm
 	}
 
 	//////////////////////////////////////////////////////////////////////////
-	// Per component returns the smallest integer value not less than the input.
+	// Per component returns the smallest integer value not less than the input (round towards positive infinity).
 	// vector_ceil([1.8, 1.0, -1.8, -1.0]) = [2.0, 1.0, -1.0, -1.0]
 	//////////////////////////////////////////////////////////////////////////
 	inline vector4d vector_ceil(const vector4d& input) RTM_NO_EXCEPT
@@ -797,7 +797,7 @@ namespace rtm
 	}
 
 	//////////////////////////////////////////////////////////////////////////
-	// Per component returns the largest integer value not greater than the input.
+	// Per component returns the largest integer value not greater than the input (round towards negative infinity).
 	// vector_floor([1.8, 1.0, -1.8, -1.0]) = [1.0, 1.0, -2.0, -1.0]
 	//////////////////////////////////////////////////////////////////////////
 	inline vector4d vector_floor(const vector4d& input) RTM_NO_EXCEPT
