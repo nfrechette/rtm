@@ -911,6 +911,37 @@ namespace rtm
 		integer_part = _mm_sub_ps(integer_part, bias);
 
 		return _mm_or_ps(_mm_and_ps(use_original_input, input), _mm_andnot_ps(use_original_input, integer_part));
+#elif defined(RTM_NEON64_INTRINSICS)
+		return vrndpq_f32(input);
+#elif defined(RTM_NEON_INTRINSICS)
+		// NaN, +- Infinity, and numbers larger or equal to 2^23 remain unchanged
+		// since they have no fractional part.
+
+		float32x4_t fractional_limit = vdupq_n_f32(8388608.0F); // 2^23
+
+		// Build our mask, larger values that have no fractional part, and infinities will be true
+		// Smaller values and NaN will be false
+		uint32x4_t is_input_large = vcageq_f32(input, fractional_limit);
+
+		// Test if our input is NaN with (value != value), it is only true for NaN
+		uint32x4_t is_nan = vmvnq_u32(vceqq_f32(input, input));
+
+		// Combine our masks to determine if we should return the original value
+		uint32x4_t use_original_input = vorrq_u32(is_input_large, is_nan);
+
+		// Convert to an integer and back. This does banker's rounding by default
+		float32x4_t integer_part = vcvtq_f32_s32(vcvtq_s32_f32(input));
+
+		// Test if the returned value is smaller than the original.
+		// A positive input will round towards zero and be lower when we need it to be greater.
+		uint32x4_t is_positive = vcltq_f32(integer_part, input);
+
+		float32x4_t bias = vcvtq_f32_s32(is_positive);
+
+		// Subtract our bias to properly handle positive values
+		integer_part = vsubq_f32(integer_part, bias);
+
+		return vbslq_f32(use_original_input, input, integer_part);
 #else
 		return vector_set(scalar_ceil(vector_get_x(input)), scalar_ceil(vector_get_y(input)), scalar_ceil(vector_get_z(input)), scalar_ceil(vector_get_w(input)));
 #endif
@@ -957,6 +988,37 @@ namespace rtm
 		integer_part = _mm_add_ps(integer_part, bias);
 
 		return _mm_or_ps(_mm_and_ps(use_original_input, input), _mm_andnot_ps(use_original_input, integer_part));
+#elif defined(RTM_NEON64_INTRINSICS)
+		return vrndmq_f32(input);
+#elif defined(RTM_NEON_INTRINSICS)
+		// NaN, +- Infinity, and numbers larger or equal to 2^23 remain unchanged
+		// since they have no fractional part.
+
+		float32x4_t fractional_limit = vdupq_n_f32(8388608.0F); // 2^23
+
+		// Build our mask, larger values that have no fractional part, and infinities will be true
+		// Smaller values and NaN will be false
+		uint32x4_t is_input_large = vcageq_f32(input, fractional_limit);
+
+		// Test if our input is NaN with (value != value), it is only true for NaN
+		uint32x4_t is_nan = vmvnq_u32(vceqq_f32(input, input));
+
+		// Combine our masks to determine if we should return the original value
+		uint32x4_t use_original_input = vorrq_u32(is_input_large, is_nan);
+
+		// Convert to an integer and back. This does banker's rounding by default
+		float32x4_t integer_part = vcvtq_f32_s32(vcvtq_s32_f32(input));
+
+		// Test if the returned value is greater than the original.
+		// A negative input will round towards zero and be greater when we need it to be smaller.
+		uint32x4_t is_negative = vcgtq_f32(integer_part, input);
+
+		float32x4_t bias = vcvtq_f32_s32(is_negative);
+
+		// Add our bias to properly handle negative values
+		integer_part = vaddq_f32(integer_part, bias);
+
+		return vbslq_f32(use_original_input, input, integer_part);
 #else
 		return vector_set(scalar_floor(vector_get_x(input)), scalar_floor(vector_get_y(input)), scalar_floor(vector_get_z(input)), scalar_floor(vector_get_w(input)));
 #endif
