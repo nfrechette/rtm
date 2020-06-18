@@ -2329,6 +2329,33 @@ namespace rtm
 		__m128 integer_part = _mm_cvtepi32_ps(_mm_cvttps_epi32(biased_input));
 
 		return _mm_or_ps(_mm_and_ps(use_original_input, input), _mm_andnot_ps(use_original_input, integer_part));
+#elif defined(RTM_NEON_INTRINSICS) && !defined(RTM_NEON64_INTRINSICS) // arm64 is faster with scalar code
+		// NaN, +- Infinity, and numbers larger or equal to 2^23 remain unchanged
+		// since they have no fractional part.
+
+		float32x4_t fractional_limit = vdupq_n_f32(8388608.0F); // 2^23
+
+		// Build our mask, larger values that have no fractional part, and infinities will be true
+		// Smaller values and NaN will be false
+		uint32x4_t is_input_large = vcageq_f32(input, fractional_limit);
+
+		// Test if our input is NaN with (value != value), it is only true for NaN
+		uint32x4_t is_nan = vmvnq_u32(vceqq_f32(input, input));
+
+		// Combine our masks to determine if we should return the original value
+		uint32x4_t use_original_input = vorrq_u32(is_input_large, is_nan);
+
+		uint32x4_t sign = vandq_u32(vreinterpretq_u32_f32(input), vdupq_n_f32(-0.0F));
+
+		// For positive values, we add a bias of 0.5.
+		// For negative values, we add a bias of -0.5.
+		float32x4_t bias = vreinterpretq_f32_u32(vorrq_u32(sign, vreinterpretq_u32_f32(vdupq_n_f32(0.5F))));
+		float32x4_t biased_input = vaddq_f32(input, bias);
+
+		// Convert to an integer and back. This does banker's rounding by default
+		float32x4_t integer_part = vcvtq_f32_s32(vcvtq_s32_f32(biased_input));
+
+		return vbslq_f32(use_original_input, input, integer_part);
 #else
 		const vector4f half = vector_set(0.5F);
 		const vector4f floored = vector_floor(vector_add(input, half));

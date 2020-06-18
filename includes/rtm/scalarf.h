@@ -869,8 +869,35 @@ namespace rtm
 	{
 #if defined(RTM_SSE2_INTRINSICS)
 		return scalar_cast(scalar_round_symmetric(scalar_set(input)));
-#else
+#elif defined(RTM_NEON64_INTRINSICS)
+		// arm64 has floor/ceil instructions
 		return input >= 0.0F ? scalar_floor(input + 0.5F) : scalar_ceil(input - 0.5F);
+#else
+		// NaN, +- Infinity, and numbers larger or equal to 2^23 remain unchanged
+		// since they have no fractional part.
+
+		const float fractional_limit = 8388608.0F; // 2^23
+
+		// Build our mask, larger values that have no fractional part, and infinities will be true
+		// Smaller values and NaN will be false
+		float abs_input = scalar_abs(input);
+		bool is_input_large = abs_input >= fractional_limit;
+
+		// Test if our input is NaN with (value != value), it is only true for NaN
+		bool is_nan = input != input;
+
+		// Combine our masks to determine if we should return the original value
+		bool use_original_input = is_input_large | is_nan;
+
+		// For positive values, we add a bias of 0.5.
+		// For negative values, we add a bias of -0.5.
+		float bias = input >= 0.0F ? 0.5F : -0.5F;
+		float biased_input = input + bias;
+
+		// Convert to an integer with truncation and back, this rounds towards zero.
+		float integer_part = static_cast<float>(static_cast<int32_t>(biased_input));
+
+		return use_original_input ? input : integer_part;
 #endif
 	}
 
