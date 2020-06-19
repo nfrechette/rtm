@@ -2739,7 +2739,7 @@ namespace rtm
 		result = _mm_add_ps(_mm_mul_ps(result, x2), _mm_set_ps1(1.0F));
 		result = _mm_mul_ps(result, x);
 
-		__m128 remapped = _mm_sub_ps(_mm_set_ps1(0.933189452F * 1.68325555F), result);
+		__m128 remapped = _mm_sub_ps(_mm_set_ps1(rtm::constants::half_pi()), result);
 
 		// pi/2 - result, (0x3f6ee581 * 0x3fd774eb)
 		result = vector_select(is_larger_than_one, remapped, result);
