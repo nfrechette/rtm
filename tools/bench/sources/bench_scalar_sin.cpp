@@ -132,7 +132,11 @@ RTM_FORCE_NOINLINE float RTM_SIMD_CALL scalar_sin_neon64(float input) RTM_NO_EXC
 	quotient = vrndn_f32(quotient);
 	float32x2_t reference_v = is_x_positive ? constants0.val[2] : constants0.val[3];	// [y] SIMD lane
 
+#if defined(RTM_NEON64_INTRINSICS)
 	float32x2_t x_v = vfms_lane_f32(input_v, quotient, constants0.val[1], 1);	// [y] SIMD lane
+#else
+	float32x2_t x_v = vmls_lane_f32(input_v, quotient, constants0.val[1], 1);	// [y] SIMD lane
+#endif
 
 	float32x2_t reflection_v = vsub_f32(reference_v, x_v);
 
@@ -142,11 +146,21 @@ RTM_FORCE_NOINLINE float RTM_SIMD_CALL scalar_sin_neon64(float input) RTM_NO_EXC
 
 	// Calculate our value, we only care about the [x] SIMD lane
 	float32x2_t x2 = vmul_lane_f32(x_v, x_v, 1);	// [y] SIMD lane
+
+#if defined(RTM_NEON64_INTRINSICS)
 	float32x2_t result = vfma_lane_f32(constants0.val[0], constants0.val[1], x2, 1);
 	result = vfma_lane_f32(constants0.val[2], result, x2, 1);
 	result = vfma_lane_f32(constants0.val[3], result, x2, 1);
 	result = vfma_lane_f32(constants1.val[0], result, x2, 1);
 	result = vfma_lane_f32(constants1.val[1], result, x2, 1);
+#else
+	float32x2_t result = vmla_lane_f32(constants0.val[0], constants0.val[1], x2, 1);
+	result = vmla_lane_f32(constants0.val[2], result, x2, 1);
+	result = vmla_lane_f32(constants0.val[3], result, x2, 1);
+	result = vmla_lane_f32(constants1.val[0], result, x2, 1);
+	result = vmla_lane_f32(constants1.val[1], result, x2, 1);
+#endif
+
 	result = vmul_lane_f32(result, x_v, 1);
 	return vget_lane_f32(result, 0);
 }
