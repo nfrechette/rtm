@@ -2741,7 +2741,7 @@ namespace rtm
 
 		__m128 remapped = _mm_sub_ps(_mm_set_ps1(rtm::constants::half_pi()), result);
 
-		// pi/2 - result, (0x3f6ee581 * 0x3fd774eb)
+		// pi/2 - result
 		result = vector_select(is_larger_than_one, remapped, result);
 
 		// Keep the original sign
