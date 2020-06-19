@@ -2631,6 +2631,48 @@ namespace rtm
 
 		// Remap into [-pi, pi]
 		return _mm_or_ps(result, _mm_andnot_ps(is_less_equal_than_half_pi, sign_mask));
+#elif defined(RTM_NEON_INTRINSICS)
+		// Use a degree 10 minimax approximation polynomial
+		// See: GPGPU Programming for Games and Science (David H. Eberly)
+
+		// Remap our input in the [-pi, pi] range
+		float32x4_t quotient = vmulq_n_f32(input, rtm::constants::one_div_two_pi());
+		quotient = vector_round_bankers(quotient);
+		quotient = vmulq_n_f32(quotient, rtm::constants::two_pi());
+		float32x4_t x = vsubq_f32(input, quotient);
+
+		// Remap our input in the [-pi/2, pi/2] range
+		uint32x4_t sign_mask = vreinterpretq_u32_f32(vdupq_n_f32(-0.0F));
+		uint32x4_t sign = vandq_u32(vreinterpretq_u32_f32(x), sign_mask);
+		float32x4_t reference = vreinterpretq_f32_u32(vorrq_u32(sign, vreinterpretq_u32_f32(vdupq_n_f32(rtm::constants::pi()))));
+
+		float32x4_t reflection = vsubq_f32(reference, x);
+#if defined(RTM_COMPILER_MSVC) && _MSC_VER < 1920
+		float32x4_t is_less_equal_than_half_pi = vcleq_f32(vabsq_f32(x), vdupq_n_f32(rtm::constants::half_pi()));
+#else
+		float32x4_t is_less_equal_than_half_pi = vcaleq_f32(x, vdupq_n_f32(rtm::constants::half_pi()));
+#endif
+		x = vbslq_f32(is_less_equal_than_half_pi, x, reflection);
+
+		// Calculate our value
+		float32x4_t x2 = vmulq_f32(x, x);
+
+#if defined(RTM_NEON64_INTRINSICS)
+		float32x4_t result = vfmaq_n_f32(vdupq_n_f32(2.4760495088926859e-5F), x2, -2.6051615464872668e-7F);
+		result = vfmaq_f32(vdupq_n_f32(-1.3888377661039897e-3F), result, x2);
+		result = vfmaq_f32(vdupq_n_f32(4.1666638865338612e-2F), result, x2);
+		result = vfmaq_f32(vdupq_n_f32(-4.9999999508695869e-1F), result, x2);
+		result = vfmaq_f32(vdupq_n_f32(1.0F), result, x2);
+#else
+		float32x4_t result = vmlaq_n_f32(vdupq_n_f32(2.4760495088926859e-5F), x2, -2.6051615464872668e-7F);
+		result = vmlaq_f32(vdupq_n_f32(-1.3888377661039897e-3F), result, x2);
+		result = vmlaq_f32(vdupq_n_f32(4.1666638865338612e-2F), result, x2);
+		result = vmlaq_f32(vdupq_n_f32(-4.9999999508695869e-1F), result, x2);
+		result = vmlaq_f32(vdupq_n_f32(1.0F), result, x2);
+#endif
+
+		// Remap into [-pi, pi]
+		return vbslq_f32(is_less_equal_than_half_pi, result, vnegq_f32(result));
 #else
 		scalarf x = scalar_cos(scalarf(vector_get_x(input)));
 		scalarf y = scalar_cos(scalarf(vector_get_y(input)));
