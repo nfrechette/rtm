@@ -962,7 +962,7 @@ namespace rtm
 	{
 #if defined(RTM_SSE2_INTRINSICS)
 		return scalar_cast(scalar_round_bankers(scalar_set(input)));
-#elif defined(RTM_NEON64_INTRINSICS) && defined(__ARM_FEATURE_DIRECTED_ROUNDING)
+#elif defined(RTM_NEON64_INTRINSICS) && defined(__ARM_FEATURE_DIRECTED_ROUNDING) && (!defined(RTM_COMPILER_CLANG) || __clang_major__ >= 9)
 		return vrndns_f32(input);
 #else
 		if (!scalar_is_finite(input))
