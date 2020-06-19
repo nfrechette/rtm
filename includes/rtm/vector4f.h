@@ -2410,6 +2410,24 @@ namespace rtm
 		__m128 abs_input = _mm_and_ps(input, _mm_castsi128_ps(abs_mask));
 		__m128 is_input_large = _mm_cmpge_ps(abs_input, fractional_limit);
 		return _mm_or_ps(_mm_and_ps(is_input_large, input), _mm_andnot_ps(is_input_large, integer_part));
+#elif defined(RTM_NEON64_INTRINSICS)
+		return vrndnq_f32(input);
+#elif defined(RTM_NEON_INTRINSICS)
+		uint32x4_t sign = vandq_u32(vreinterpretq_u32_f32(input), vdupq_n_f32(-0.0F));
+
+		// We add the largest integer that a 32 bit floating point number can represent and subtract it afterwards.
+		// This relies on the fact that if we had a fractional part, the new value cannot be represented accurately
+		// and IEEE 754 will perform rounding for us. The default rounding mode is Banker's rounding.
+		// This has the effect of removing the fractional part while simultaneously rounding.
+		// Use the same sign as the input value to make sure we handle positive and negative values.
+		float32x4_t fractional_limit = vdupq_n_f32(8388608.0F); // 2^23
+		float32x4_t truncating_offset = vreinterpretq_f32_u32(vorrq_u32(sign, vreinterpretq_u32_f32(fractional_limit)));
+		float32x4_t integer_part = vsubq_f32(vaddq_f32(input, truncating_offset), truncating_offset);
+
+		// If our input was so large that it had no fractional part, return it unchanged
+		// Otherwise return our integer part
+		uint32x4_t is_input_large = vcageq_f32(input, fractional_limit);
+		return vbslq_f32(is_input_large, input, integer_part);
 #else
 		scalarf x = scalar_round_bankers(scalarf(vector_get_x(input)));
 		scalarf y = scalar_round_bankers(scalarf(vector_get_y(input)));
