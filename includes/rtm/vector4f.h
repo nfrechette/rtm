@@ -2506,7 +2506,11 @@ namespace rtm
 		float32x4_t reference = vreinterpretq_f32_u32(vorrq_u32(sign, vreinterpretq_u32_f32(vdupq_n_f32(rtm::constants::pi()))));
 
 		float32x4_t reflection = vsubq_f32(reference, x);
+#if defined(RTM_COMPILER_MSVC) && _MSC_VER < 1920
+		float32x4_t is_less_equal_than_half_pi = vcleq_f32(vabsq_f32(x), vdupq_n_f32(rtm::constants::half_pi()));
+#else
 		float32x4_t is_less_equal_than_half_pi = vcaleq_f32(x, vdupq_n_f32(rtm::constants::half_pi()));
+#endif
 		x = vbslq_f32(is_less_equal_than_half_pi, x, reflection);
 
 		// Calculate our value
