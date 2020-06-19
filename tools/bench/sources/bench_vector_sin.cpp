@@ -101,11 +101,21 @@ RTM_FORCE_NOINLINE vector4f RTM_SIMD_CALL vector_sin_neon(vector4f_arg0 input) R
 
 	// Calculate our value
 	float32x4_t x2 = vmulq_f32(x, x);
+
+#if defined(RTM_NEON64_INTRINSICS)
+	float32x4_t result = vfmaq_n_f32(vdupq_n_f32(2.7521557770526783e-6F), x2, -2.3828544692960918e-8F);
+	result = vfmaq_f32(vdupq_n_f32(-1.9840782426250314e-4F), result, x2);
+	result = vfmaq_f32(vdupq_n_f32(8.3333303183525942e-3F), result, x2);
+	result = vfmaq_f32(vdupq_n_f32(-1.6666666601721269e-1F), result, x2);
+	result = vfmaq_f32(vdupq_n_f32(1.0F), result, x2);
+#else
 	float32x4_t result = vmlaq_n_f32(vdupq_n_f32(2.7521557770526783e-6F), x2, -2.3828544692960918e-8F);
 	result = vmlaq_f32(vdupq_n_f32(-1.9840782426250314e-4F), result, x2);
 	result = vmlaq_f32(vdupq_n_f32(8.3333303183525942e-3F), result, x2);
 	result = vmlaq_f32(vdupq_n_f32(-1.6666666601721269e-1F), result, x2);
 	result = vmlaq_f32(vdupq_n_f32(1.0F), result, x2);
+#endif
+
 	result = vmulq_f32(result, x);
 	return result;
 }
