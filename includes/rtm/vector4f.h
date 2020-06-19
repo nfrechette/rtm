@@ -865,6 +865,24 @@ namespace rtm
 	}
 
 	//////////////////////////////////////////////////////////////////////////
+	// Per component square root of the input: sqrt(input)
+	//////////////////////////////////////////////////////////////////////////
+	inline vector4f RTM_SIMD_CALL vector_sqrt(vector4f_arg0 input) RTM_NO_EXCEPT
+	{
+#if defined(RTM_SSE2_INTRINSICS)
+		return _mm_sqrt_ps(input);
+#elif defined(RTM_NEON64_INTRINSICS) && (!defined(RTM_COMPILER_MSVC) || _MSC_VER >= 1920)
+		return vsqrtq_f32(input);
+#else
+		scalarf x = vector_get_x(input);
+		scalarf y = vector_get_y(input);
+		scalarf z = vector_get_z(input);
+		scalarf w = vector_get_w(input);
+		return vector_set(scalar_sqrt(x), scalar_sqrt(y), scalar_sqrt(z), scalar_sqrt(w));
+#endif
+	}
+
+	//////////////////////////////////////////////////////////////////////////
 	// Per component returns the smallest integer value not less than the input (round towards positive infinity).
 	// vector_ceil([1.8, 1.0, -1.8, -1.0]) = [2.0, 1.0, -1.0, -1.0]
 	//////////////////////////////////////////////////////////////////////////
