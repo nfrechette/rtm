@@ -2472,6 +2472,34 @@ namespace rtm
 		result = _mm_add_ps(_mm_mul_ps(result, x2), _mm_set_ps1(1.0F));
 		result = _mm_mul_ps(result, x);
 		return result;
+#elif defined(RTM_NEON_INTRINSICS)
+		// Use a degree 11 minimax approximation polynomial
+		// See: GPGPU Programming for Games and Science (David H. Eberly)
+
+		// Remap our input in the [-pi, pi] range
+		float32x4_t quotient = vmulq_n_f32(input, rtm::constants::one_div_two_pi());
+		quotient = vector_round_bankers(quotient);
+		quotient = vmulq_n_f32(quotient, rtm::constants::two_pi());
+		float32x4_t x = vsubq_f32(input, quotient);
+
+		// Remap our input in the [-pi/2, pi/2] range
+		uint32x4_t sign_mask = vreinterpretq_u32_f32(vdupq_n_f32(-0.0F));
+		uint32x4_t sign = vandq_u32(vreinterpretq_u32_f32(x), sign_mask);
+		float32x4_t reference = vreinterpretq_f32_u32(vorrq_u32(sign, vreinterpretq_u32_f32(vdupq_n_f32(rtm::constants::pi()))));
+
+		float32x4_t reflection = vsubq_f32(reference, x);
+		float32x4_t is_less_equal_than_half_pi = vcaleq_f32(x, vdupq_n_f32(rtm::constants::half_pi()));
+		x = vbslq_f32(is_less_equal_than_half_pi, x, reflection);
+
+		// Calculate our value
+		float32x4_t x2 = vmulq_f32(x, x);
+		float32x4_t result = vmlaq_n_f32(vdupq_n_f32(2.7521557770526783e-6F), x2, -2.3828544692960918e-8F);
+		result = vmlaq_f32(vdupq_n_f32(-1.9840782426250314e-4F), result, x2);
+		result = vmlaq_f32(vdupq_n_f32(8.3333303183525942e-3F), result, x2);
+		result = vmlaq_f32(vdupq_n_f32(-1.6666666601721269e-1F), result, x2);
+		result = vmlaq_f32(vdupq_n_f32(1.0F), result, x2);
+		result = vmulq_f32(result, x);
+		return result;
 #else
 		scalarf x = scalar_sin(scalarf(vector_get_x(input)));
 		scalarf y = scalar_sin(scalarf(vector_get_y(input)));
