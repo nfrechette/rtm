@@ -1066,6 +1066,8 @@ namespace rtm
 	{
 #if defined(RTM_SSE2_INTRINSICS)
 		return scalar_cast(scalar_sin(scalar_set(angle)));
+#elif defined(RTM_NEON_INTRINSICS)
+		return std::sin(angle);
 #else
 		// Use a degree 11 minimax approximation polynomial
 		// See: GPGPU Programming for Games and Science (David H. Eberly)
@@ -1147,6 +1149,8 @@ namespace rtm
 	{
 #if defined(RTM_SSE2_INTRINSICS)
 		return scalar_cast(scalar_cos(scalar_set(angle)));
+#elif defined(RTM_NEON_INTRINSICS)
+		return std::cos(angle);
 #else
 		// Use a degree 10 minimax approximation polynomial
 		// See: GPGPU Programming for Games and Science (David H. Eberly)
@@ -1273,6 +1277,8 @@ namespace rtm
 	{
 #if defined(RTM_SSE2_INTRINSICS)
 		return scalar_cast(scalar_asin(scalar_set(value)));
+#elif defined(RTM_NEON_INTRINSICS)
+		return std::asin(value);
 #else
 		// Use a degree 7 minimax approximation polynomial
 		// See: GPGPU Programming for Games and Science (David H. Eberly)
@@ -1352,6 +1358,8 @@ namespace rtm
 	{
 #if defined(RTM_SSE2_INTRINSICS)
 		return scalar_cast(scalar_acos(scalar_set(value)));
+#elif defined(RTM_NEON_INTRINSICS)
+		return std::acos(value);
 #else
 		// Use the identity: acos(value) + asin(value) = PI/2
 		// This ends up being: acos(value) = PI/2 - asin(value)
@@ -1405,6 +1413,9 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	inline float scalar_tan(float angle) RTM_NO_EXCEPT
 	{
+#if defined(RTM_NEON_INTRINSICS)
+		return std::tan(angle);
+#else
 		// Use the identity: tan(angle) = sin(angle) / cos(angle)
 		scalarf angle_ = scalar_set(angle);
 		scalarf sin_ = scalar_sin(angle_);
@@ -1413,6 +1424,7 @@ namespace rtm
 			return std::copysign(std::numeric_limits<float>::infinity(), angle);
 
 		return scalar_cast(scalar_div(sin_, cos_));
+#endif
 	}
 
 #if defined(RTM_SSE2_INTRINSICS)
@@ -1477,6 +1489,8 @@ namespace rtm
 	{
 #if defined(RTM_SSE2_INTRINSICS)
 		return scalar_cast(scalar_atan(scalar_set(value)));
+#elif defined(RTM_NEON_INTRINSICS)
+		return std::atan(value);
 #else
 		// Use a degree 13 minimax approximation polynomial
 		// See: GPGPU Programming for Games and Science (David H. Eberly)
@@ -1567,6 +1581,8 @@ namespace rtm
 	{
 #if defined(RTM_SSE2_INTRINSICS)
 		return scalar_cast(scalar_atan2(scalar_set(y), scalar_set(x)));
+#elif defined(RTM_NEON_INTRINSICS)
+		return std::atan2(y, x);
 #else
 		// If X == 0.0 and Y != 0.0, we return PI/2 with the sign of Y
 		// If X == 0.0 and Y == 0.0, we return 0.0
