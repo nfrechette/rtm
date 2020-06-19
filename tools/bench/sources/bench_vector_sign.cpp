@@ -32,7 +32,7 @@ using namespace rtm;
 // Despite taking 5 instructions unlike sse2 which needs 2, this is consistently faster as well.
 RTM_FORCE_NOINLINE vector4f RTM_SIMD_CALL vector_sign_ref(vector4f_arg0 input) RTM_NO_EXCEPT
 {
-	const mask4i mask = vector_greater_equal(input, vector_zero());
+	const mask4f mask = vector_greater_equal(input, vector_zero());
 	return vector_select(mask, vector_set(1.0f), vector_set(-1.0f));
 }
 
