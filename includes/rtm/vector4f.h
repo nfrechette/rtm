@@ -2796,7 +2796,7 @@ namespace rtm
 		__m128 value = vector_atan(angle);
 
 		// If X == 0.0, our value is 0.0 otherwise it is atan(y/x)
-		value = _mm_or_ps(_mm_and_ps(is_x_zero, zero), _mm_andnot_ps(is_x_zero, value));
+		value = _mm_andnot_ps(is_x_zero, value);
 
 		// If X == 0.0 and Y == 0.0, our value is 0.0
 		value = _mm_andnot_ps(inputs_are_zero, value);
