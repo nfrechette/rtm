@@ -846,15 +846,9 @@ namespace rtm
 	inline vector4f RTM_SIMD_CALL vector_reciprocal(vector4f_arg0 input) RTM_NO_EXCEPT
 	{
 #if defined(RTM_SSE2_INTRINSICS)
-		// Perform two passes of Newton-Raphson iteration on the hardware estimate
-		__m128 x0 = _mm_rcp_ps(input);
-
-		// First iteration
-		__m128 x1 = _mm_sub_ps(_mm_add_ps(x0, x0), _mm_mul_ps(input, _mm_mul_ps(x0, x0)));
-
-		// Second iteration
-		__m128 x2 = _mm_sub_ps(_mm_add_ps(x1, x1), _mm_mul_ps(input, _mm_mul_ps(x1, x1)));
-		return x2;
+		return _mm_div_ps(_mm_set_ps1(1.0F), input);
+#elif defined(RTM_NEON64_INTRINSICS)
+		return vdivq_f32(vdupq_n_f32(1.0F), input);
 #elif defined(RTM_NEON_INTRINSICS)
 		// Perform two passes of Newton-Raphson iteration on the hardware estimate
 		float32x4_t x0 = vrecpeq_f32(input);

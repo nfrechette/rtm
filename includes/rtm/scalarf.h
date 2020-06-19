@@ -327,16 +327,7 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	inline scalarf RTM_SIMD_CALL scalar_reciprocal(scalarf_arg0 input) RTM_NO_EXCEPT
 	{
-		// Perform two passes of Newton-Raphson iteration on the hardware estimate
-		__m128 x0 = _mm_rcp_ss(input.value);
-
-		// First iteration
-		__m128 x1 = _mm_sub_ss(_mm_add_ss(x0, x0), _mm_mul_ss(input.value, _mm_mul_ss(x0, x0)));
-
-		// Second iteration
-		__m128 x2 = _mm_sub_ss(_mm_add_ss(x1, x1), _mm_mul_ss(input.value, _mm_mul_ss(x1, x1)));
-
-		return scalarf{ x2 };
+		return scalarf{ _mm_div_ss(_mm_set_ps1(1.0F), input.value) };
 	}
 #endif
 
