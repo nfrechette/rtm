@@ -2788,6 +2788,50 @@ namespace rtm
 
 		// Keep the original sign
 		return _mm_or_ps(result, _mm_and_ps(input, _mm_set_ps1(-0.0F)));
+#elif defined(RTM_NEON_INTRINSICS)
+		// Use a degree 13 minimax approximation polynomial
+		// See: GPGPU Programming for Games and Science (David H. Eberly)
+
+		// Discard our sign, we'll restore it later
+		float32x4_t abs_value = vabsq_f32(input);
+
+		// Compute our value
+#if defined(RTM_COMPILER_MSVC) && _MSC_VER < 1920
+		uint32x4_t is_larger_than_one = vcgtq_f32(vabsq_f32(input), vdupq_n_f32(1.0F));
+#else
+		uint32x4_t is_larger_than_one = vcagtq_f32(input, vdupq_n_f32(1.0F));
+#endif
+		float32x4_t reciprocal = vector_reciprocal(abs_value);
+
+		float32x4_t x = vector_select(is_larger_than_one, reciprocal, abs_value);
+
+		float32x4_t x2 = vmulq_f32(x, x);
+
+#if defined(RTM_NEON64_INTRINSICS)
+		float32x4_t result = vfmaq_n_f32(vdupq_n_f32(-3.5059680836411644e-2F), x2, 7.2128853633444123e-3F);
+		result = vfmaq_f32(vdupq_n_f32(8.1675882859940430e-2F), result, x2);
+		result = vfmaq_f32(vdupq_n_f32(-1.3374657325451267e-1F), result, x2);
+		result = vfmaq_f32(vdupq_n_f32(1.9856563505717162e-1F), result, x2);
+		result = vfmaq_f32(vdupq_n_f32(-3.3324998579202170e-1F), result, x2);
+		result = vfmaq_f32(vdupq_n_f32(1.0F), result, x2);
+#else
+		float32x4_t result = vmlaq_n_f32(vdupq_n_f32(-3.5059680836411644e-2F), x2, 7.2128853633444123e-3F);
+		result = vmlaq_f32(vdupq_n_f32(8.1675882859940430e-2F), result, x2);
+		result = vmlaq_f32(vdupq_n_f32(-1.3374657325451267e-1F), result, x2);
+		result = vmlaq_f32(vdupq_n_f32(1.9856563505717162e-1F), result, x2);
+		result = vmlaq_f32(vdupq_n_f32(-3.3324998579202170e-1F), result, x2);
+		result = vmlaq_f32(vdupq_n_f32(1.0F), result, x2);
+#endif
+
+		result = vmulq_f32(result, x);
+
+		float32x4_t remapped = vsubq_f32(vdupq_n_f32(rtm::constants::half_pi()), result);
+
+		// pi/2 - result
+		result = vector_select(is_larger_than_one, remapped, result);
+
+		// Keep the original sign
+		return vreinterpretq_f32_u32(vorrq_u32(vreinterpretq_u32_f32(result), vandq_u32(vreinterpretq_u32_f32(input), vreinterpretq_u32_f32(vdupq_n_f32(-0.0F)))));
 #else
 		scalarf x = scalar_atan(scalarf(vector_get_x(input)));
 		scalarf y = scalar_atan(scalarf(vector_get_y(input)));
