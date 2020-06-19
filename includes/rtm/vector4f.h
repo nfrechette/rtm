@@ -2888,6 +2888,52 @@ namespace rtm
 		value = _mm_andnot_ps(inputs_are_zero, value);
 
 		return _mm_add_ps(value, offset);
+#elif defined(RTM_NEON64_INTRINSICS)
+		// If X == 0.0 and Y != 0.0, we return PI/2 with the sign of Y
+		// If X == 0.0 and Y == 0.0, we return 0.0
+		// If X > 0.0, we return atan(y/x)
+		// If X < 0.0, we return atan(y/x) + sign(Y) * PI
+		// See: https://en.wikipedia.org/wiki/Atan2#Definition_and_computation
+
+#if defined(RTM_COMPILER_MSVC) && _MSC_VER < 1920
+		float32x4_t zero = vdupq_n_f32(0.0F);
+		uint32x4_t is_x_zero = vceqq_f32(x, zero);
+		uint32x4_t is_y_zero = vceqq_f32(y, zero);
+		uint32x4_t inputs_are_zero = vandq_u32(is_x_zero, is_y_zero);
+
+		uint32x4_t is_x_positive = vcgtq_f32(x, zero);
+#else
+		uint32x4_t is_x_zero = vceqzq_f32(x);
+		uint32x4_t is_y_zero = vceqzq_f32(y);
+		uint32x4_t inputs_are_zero = vandq_u32(is_x_zero, is_y_zero);
+
+		uint32x4_t is_x_positive = vcgtzq_f32(x);
+#endif
+
+		uint32x4_t y_sign = vandq_u32(vreinterpretq_u32_f32(y), vreinterpretq_u32_f32(vdupq_n_f32(-0.0F)));
+
+		// If X == 0.0, our offset is PI/2 otherwise it is PI both with the sign of Y
+		float32x4_t half_pi = vdupq_n_f32(rtm::constants::half_pi());
+		float32x4_t pi = vdupq_n_f32(rtm::constants::pi());
+		float32x4_t offset = vreinterpretq_f32_u32(vorrq_u32(vandq_u32(is_x_zero, vreinterpretq_u32_f32(half_pi)), vandq_u32(vmvnq_u32(is_x_zero), vreinterpretq_u32_f32(pi))));
+		offset = vreinterpretq_f32_u32(vorrq_u32(vreinterpretq_u32_f32(offset), y_sign));
+
+		// If X > 0.0, our offset is 0.0
+		offset = vreinterpretq_f32_u32(vandq_u32(vmvnq_u32(is_x_positive), vreinterpretq_u32_f32(offset)));
+
+		// If X == 0.0 and Y == 0.0, our offset is 0.0
+		offset = vreinterpretq_f32_u32(vandq_u32(vmvnq_u32(inputs_are_zero), vreinterpretq_u32_f32(offset)));
+
+		float32x4_t angle = vector_div(y, x);
+		float32x4_t value = vector_atan(angle);
+
+		// If X == 0.0, our value is 0.0 otherwise it is atan(y/x)
+		value = vreinterpretq_f32_u32(vandq_u32(vmvnq_u32(is_x_zero), vreinterpretq_u32_f32(value)));
+
+		// If X == 0.0 and Y == 0.0, our value is 0.0
+		value = vreinterpretq_f32_u32(vandq_u32(vmvnq_u32(inputs_are_zero), vreinterpretq_u32_f32(value)));
+
+		return vaddq_f32(value, offset);
 #else
 		scalarf x_ = scalar_atan2(scalarf(vector_get_x(y)), scalarf(vector_get_x(x)));
 		scalarf y_ = scalar_atan2(scalarf(vector_get_y(y)), scalarf(vector_get_y(x)));
