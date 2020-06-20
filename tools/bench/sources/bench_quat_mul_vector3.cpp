@@ -210,78 +210,100 @@ RTM_FORCE_NOINLINE vector4f RTM_SIMD_CALL quat_mul_vector3_scalar(vector4f_arg0 
 }
 
 #if defined(RTM_NEON_INTRINSICS)
-RTM_FORCE_NOINLINE vector4f RTM_SIMD_CALL quat_mul_vector3_neon64(vector4f_arg0 vector, quatf_arg1 rotation) RTM_NO_EXCEPT
+RTM_FORCE_NOINLINE vector4f RTM_SIMD_CALL quat_mul_vector3_neon_neg(vector4f_arg0 vector, quatf_arg1 rotation) RTM_NO_EXCEPT
 {
-	const float32x4_t n_rotation = vnegq_f32(rotation);
-
 	// Normally when we multiply our inverse rotation quaternion with the input vector as a quaternion with W = 0.0.
 	// As a result, we can strip the whole part that uses W saving a few instructions.
-	// We calculate the negation of the input rotation in order to avoid multiplying with a control value to flip signs.
-	// This takes a few more instructions but they are cheaper than floating point operations on ARM64.
-	// We also don't care about the result W lane but it comes for free.
+	// Use the same tricks as quat_mul
 
 	// temp = quat_mul(inv_rotation, vector_quat)
 	float32x4_t temp;
 	{
-		const float32x4_t r_zwxy = vrev64q_f32(rotation);													// r.z, r.w, r.x, r.y
-		const float32x4_t nr_zwxy = vrev64q_f32(n_rotation);												// -r.z, -r.w, -r.x, -r.y
-		const float32x2x2_t tmp1 = vzip_f32(vget_low_f32(r_zwxy), vget_high_f32(r_zwxy));					// r.z, r.x, r.w, r.y
-		const float32x2x2_t tmp2 = vzip_f32(vget_low_f32(nr_zwxy), vget_high_f32(nr_zwxy));					// -r.z, -r.x, -r.w, -r.y
-		const float32x2x2_t tmp3 = vzip_f32(tmp2.val[1], tmp1.val[0]);										// -r.w, r.z, -r.y, r.x
-		const float32x2x2_t tmp4 = vzip_f32(tmp1.val[1], tmp2.val[0]);										// r.w, -r.z, r.y, -r.x
+		float32x4_t lhs = quat_conjugate(rotation);
+		float32x4_t rhs = vector;
 
-		const float32x4_t l_wzyx = vcombine_f32(tmp3.val[0], tmp3.val[1]);									// -r.w, r.z, -r.y, r.x
-		const float32x4_t l_zwxy = vcombine_f32(vget_high_f32(n_rotation), vget_low_f32(rotation));			// -r.z, -r.w, r.x, r.y
-		const float32x4_t l_yxwz = vcombine_f32(tmp4.val[1], tmp3.val[0]);									// r.y, -r.x, -r.w, r.z
+		// Dispatch rev first, if we can't dual dispatch with neg below, we won't stall it
+		// [l.y, l.x, l.w, l.z]
+		const float32x4_t y_x_w_z = vrev64q_f32(lhs);
 
-		const float32x2_t r_xy = vget_low_f32(vector);
-		const float32x2_t r_zw = vget_high_f32(vector);
+		// [-l.x, -l.y, -l.z, -l.w]
+		const float32x4_t neg_lhs = vnegq_f32(lhs);
 
-		const float32x4_t lwrx_lzrx_lyrx_lxrx = vmulq_lane_f32(l_wzyx, r_xy, 0);
+		// trn([l.y, l.x, l.w, l.z], [-l.x, -l.y, -l.z, -l.w]) = [l.y, -l.x, l.w, -l.z], [l.x, -l.y, l.z, -l.w]
+		float32x4x2_t y_nx_w_nz__x_ny_z_nw = vtrnq_f32(y_x_w_z, neg_lhs);
 
-#if defined(RTM_NEON64_INTRINSICS)
-		const float32x4_t result1 = vfmaq_lane_f32(lwrx_lzrx_lyrx_lxrx, l_zwxy, r_xy, 1);
+		// [l.w, -l.z, l.y, -l.x]
+		float32x4_t l_wzyx = vcombine_f32(vget_high_f32(y_nx_w_nz__x_ny_z_nw.val[0]), vget_low_f32(y_nx_w_nz__x_ny_z_nw.val[0]));
+
+		// [l.z, l.w, -l.x, -l.y]
+		float32x4_t l_zwxy = vcombine_f32(vget_high_f32(lhs), vget_low_f32(neg_lhs));
+
+		// neg([l.w, -l.z, l.y, -l.x]) = [-l.w, l.z, -l.y, l.x]
+		float32x4_t nw_z_ny_x = vnegq_f32(l_wzyx);
+
+		// [-l.y, l.x, l.w, -l.z]
+		float32x4_t l_yxwz = vcombine_f32(vget_high_f32(nw_z_ny_x), vget_low_f32(l_wzyx));
+
+		const float32x2_t r_xy = vget_low_f32(rhs);
+		const float32x2_t r_zw = vget_high_f32(rhs);
+
+		const float32x4_t result0 = vmulq_lane_f32(l_wzyx, r_xy, 0);
+
+	#if defined(RTM_NEON64_INTRINSICS)
+		const float32x4_t result1 = vfmaq_lane_f32(result0, l_zwxy, r_xy, 1);
 		temp = vfmaq_lane_f32(result1, l_yxwz, r_zw, 0);
-#else
-		const float32x4_t result1 = vmlaq_lane_f32(lwrx_lzrx_lyrx_lxrx, l_zwxy, r_xy, 1);
+	#else
+		const float32x4_t result1 = vmlaq_lane_f32(result0, l_zwxy, r_xy, 1);
 		temp = vmlaq_lane_f32(result1, l_yxwz, r_zw, 0);
-#endif
+	#endif
 	}
 
 	// result = quat_mul(temp, rotation)
 	{
-		const float32x4_t neg_temp = vnegq_f32(temp);														// -t.x, -t.y, -t.z, -t.w
-		const float32x4_t t_zwxy = vrev64q_f32(temp);														// t.z, t.w, t.x, t.y
-		const float32x4_t nt_zwxy = vrev64q_f32(neg_temp);													// -t.z, -t.w, -t.x, -t.y
+		float32x4_t lhs = temp;
+		float32x4_t rhs = rotation;
 
-		const float32x2x2_t tmp1 = vzip_f32(vget_low_f32(t_zwxy), vget_high_f32(t_zwxy));					// t.z, t.x, t.w, t.y
-		const float32x2x2_t tmp2 = vzip_f32(vget_low_f32(nt_zwxy), vget_high_f32(nt_zwxy));					// -t.z, -t.x, -t.w, -t.y
-		const float32x2x2_t tmp3 = vzip_f32(tmp2.val[1], tmp1.val[0]);										// -t.w, t.z, -t.y, t.x
-		const float32x2x2_t tmp4 = vzip_f32(tmp1.val[1], tmp2.val[0]);										// t.w, -t.z, t.y, -t.x
+		// Dispatch rev first, if we can't dual dispatch with neg below, we won't stall it
+		// [l.y, l.x, l.w, l.z]
+		const float32x4_t y_x_w_z = vrev64q_f32(lhs);
 
-		const float32x4_t l_wzyx = vcombine_f32(tmp3.val[0], tmp3.val[1]);									// -t.w, t.z, -t.y, t.x
-		const float32x4_t l_zwxy = vcombine_f32(vget_high_f32(neg_temp), vget_low_f32(temp));				// -t.z, -t.w, t.x, t.y
-		const float32x4_t l_yxwz = vcombine_f32(tmp4.val[1], tmp3.val[0]);									// t.y, -t.x, -t.w, t.z
+		// [-l.x, -l.y, -l.z, -l.w]
+		const float32x4_t neg_lhs = vnegq_f32(lhs);
 
-		const float32x2_t r_xy = vget_low_f32(rotation);
-		const float32x2_t r_zw = vget_high_f32(rotation);
+		// trn([l.y, l.x, l.w, l.z], [-l.x, -l.y, -l.z, -l.w]) = [l.y, -l.x, l.w, -l.z], [l.x, -l.y, l.z, -l.w]
+		float32x4x2_t y_nx_w_nz__x_ny_z_nw = vtrnq_f32(y_x_w_z, neg_lhs);
+
+		// [l.w, -l.z, l.y, -l.x]
+		float32x4_t l_wzyx = vcombine_f32(vget_high_f32(y_nx_w_nz__x_ny_z_nw.val[0]), vget_low_f32(y_nx_w_nz__x_ny_z_nw.val[0]));
+
+		// [l.z, l.w, -l.x, -l.y]
+		float32x4_t l_zwxy = vcombine_f32(vget_high_f32(lhs), vget_low_f32(neg_lhs));
+
+		// neg([l.w, -l.z, l.y, -l.x]) = [-l.w, l.z, -l.y, l.x]
+		float32x4_t nw_z_ny_x = vnegq_f32(l_wzyx);
+
+		// [-l.y, l.x, l.w, -l.z]
+		float32x4_t l_yxwz = vcombine_f32(vget_high_f32(nw_z_ny_x), vget_low_f32(l_wzyx));
+
+		const float32x2_t r_xy = vget_low_f32(rhs);
+		const float32x2_t r_zw = vget_high_f32(rhs);
 
 		const float32x4_t lxrw_lyrw_lzrw_lwrw = vmulq_lane_f32(temp, r_zw, 1);
 
-#if defined(RTM_NEON64_INTRINSICS)
+	#if defined(RTM_NEON64_INTRINSICS)
 		const float32x4_t result0 = vfmaq_lane_f32(lxrw_lyrw_lzrw_lwrw, l_wzyx, r_xy, 0);
 		const float32x4_t result1 = vfmaq_lane_f32(result0, l_zwxy, r_xy, 1);
 		return vfmaq_lane_f32(result1, l_yxwz, r_zw, 0);
-#else
+	#else
 		const float32x4_t result0 = vmlaq_lane_f32(lxrw_lyrw_lzrw_lwrw, l_wzyx, r_xy, 0);
 		const float32x4_t result1 = vmlaq_lane_f32(result0, l_zwxy, r_xy, 1);
 		return vmlaq_lane_f32(result1, l_yxwz, r_zw, 0);
-#endif
+	#endif
 	}
 }
 
 // Wins on iPad Pro ARM64
-RTM_FORCE_NOINLINE vector4f RTM_SIMD_CALL quat_mul_vector3_neon(vector4f_arg0 vector, quatf_arg1 rotation) RTM_NO_EXCEPT
+RTM_FORCE_NOINLINE vector4f RTM_SIMD_CALL quat_mul_vector3_neon_mul(vector4f_arg0 vector, quatf_arg1 rotation) RTM_NO_EXCEPT
 {
 	alignas(16) constexpr float control_wzyx_f[4] = { 1.0f, -1.0f, 1.0f, -1.0f };
 	alignas(16) constexpr float control_zwxy_f[4] = { 1.0f, 1.0f, -1.0f, -1.0f };
@@ -481,7 +503,7 @@ BENCHMARK(bm_quat_mul_vector3_sse2);
 #endif
 
 #if defined(RTM_NEON_INTRINSICS)
-static void bm_quat_mul_vector3_neon64(benchmark::State& state)
+static void bm_quat_mul_vector3_neon_neg(benchmark::State& state)
 {
 	vector4f v0 = vector_set(12.0f, 32.0f, -2.0f);
 	vector4f v1 = vector_set(12.0f, 32.0f, -2.0f);
@@ -494,10 +516,10 @@ static void bm_quat_mul_vector3_neon64(benchmark::State& state)
 
 	for (auto _ : state)
 	{
-		v0 = quat_mul_vector3_neon64(v0, q0);
-		v1 = quat_mul_vector3_neon64(v1, q1);
-		v2 = quat_mul_vector3_neon64(v2, q2);
-		v3 = quat_mul_vector3_neon64(v3, q3);
+		v0 = quat_mul_vector3_neon_neg(v0, q0);
+		v1 = quat_mul_vector3_neon_neg(v1, q1);
+		v2 = quat_mul_vector3_neon_neg(v2, q2);
+		v3 = quat_mul_vector3_neon_neg(v3, q3);
 	}
 
 	benchmark::DoNotOptimize(q0);
@@ -510,9 +532,9 @@ static void bm_quat_mul_vector3_neon64(benchmark::State& state)
 	benchmark::DoNotOptimize(v3);
 }
 
-BENCHMARK(bm_quat_mul_vector3_neon64);
+BENCHMARK(bm_quat_mul_vector3_neon_neg);
 
-static void bm_quat_mul_vector3_neon(benchmark::State& state)
+static void bm_quat_mul_vector3_neon_mul(benchmark::State& state)
 {
 	vector4f v0 = vector_set(12.0f, 32.0f, -2.0f);
 	vector4f v1 = vector_set(12.0f, 32.0f, -2.0f);
@@ -525,10 +547,10 @@ static void bm_quat_mul_vector3_neon(benchmark::State& state)
 
 	for (auto _ : state)
 	{
-		v0 = quat_mul_vector3_neon(v0, q0);
-		v1 = quat_mul_vector3_neon(v1, q1);
-		v2 = quat_mul_vector3_neon(v2, q2);
-		v3 = quat_mul_vector3_neon(v3, q3);
+		v0 = quat_mul_vector3_neon_mul(v0, q0);
+		v1 = quat_mul_vector3_neon_mul(v1, q1);
+		v2 = quat_mul_vector3_neon_mul(v2, q2);
+		v3 = quat_mul_vector3_neon_mul(v3, q3);
 	}
 
 	benchmark::DoNotOptimize(q0);
@@ -541,5 +563,5 @@ static void bm_quat_mul_vector3_neon(benchmark::State& state)
 	benchmark::DoNotOptimize(v3);
 }
 
-BENCHMARK(bm_quat_mul_vector3_neon);
+BENCHMARK(bm_quat_mul_vector3_neon_mul);
 #endif
