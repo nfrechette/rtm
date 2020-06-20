@@ -428,9 +428,13 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	// Returns the multiplication/addition of the three inputs: s2 + (s0 * s1)
 	//////////////////////////////////////////////////////////////////////////
-	constexpr float scalar_mul_add(float s0, float s1, float s2) RTM_NO_EXCEPT
+	inline float scalar_mul_add(float s0, float s1, float s2) RTM_NO_EXCEPT
 	{
+#if defined(RTM_NEON_INTRINSICS)
+		return std::fma(s0, s1, s2);
+#else
 		return (s0 * s1) + s2;
+#endif
 	}
 
 #if defined(RTM_SSE2_INTRINSICS)
@@ -490,10 +494,10 @@ namespace rtm
 	// This is the same instruction count when FMA is present but it might be slightly slower
 	// due to the extra multiplication compared to: start + (alpha * (end - start)).
 	//////////////////////////////////////////////////////////////////////////
-	constexpr float scalar_lerp(float start, float end, float alpha) RTM_NO_EXCEPT
+	inline float scalar_lerp(float start, float end, float alpha) RTM_NO_EXCEPT
 	{
 		// ((1.0 - alpha) * start) + (alpha * end) == (start - alpha * start) + (alpha * end)
-		return (start - (alpha * start)) + (alpha * end);
+		return scalar_mul_add(end, alpha, scalar_neg_mul_sub(start, alpha, start));
 	}
 
 #if defined(RTM_SSE2_INTRINSICS)
@@ -1025,7 +1029,7 @@ namespace rtm
 		const __m128 sign_mask = _mm_set_ps(-0.0F, -0.0F, -0.0F, -0.0F);
 		__m128 sign = _mm_and_ps(x, sign_mask);
 		__m128 reference = _mm_or_ps(sign, _mm_set_ps1(rtm::constants::pi()));
-		
+
 		const __m128 reflection = _mm_sub_ss(reference, x);
 		const __m128i abs_mask = _mm_set_epi32(0x7FFFFFFFULL, 0x7FFFFFFFULL, 0x7FFFFFFFULL, 0x7FFFFFFFULL);
 		const __m128 x_abs = _mm_and_ps(x, _mm_castsi128_ps(abs_mask));

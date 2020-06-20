@@ -387,9 +387,13 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	// Returns the multiplication/addition of the three inputs: s2 + (s0 * s1)
 	//////////////////////////////////////////////////////////////////////////
-	constexpr double scalar_mul_add(double s0, double s1, double s2) RTM_NO_EXCEPT
+	inline double scalar_mul_add(double s0, double s1, double s2) RTM_NO_EXCEPT
 	{
+#if defined(RTM_NEON_INTRINSICS)
+		return std::fma(s0, s1, s2);
+#else
 		return (s0 * s1) + s2;
+#endif
 	}
 
 #if defined(RTM_SSE2_INTRINSICS)
@@ -449,10 +453,10 @@ namespace rtm
 	// This is the same instruction count when FMA is present but it might be slightly slower
 	// due to the extra multiplication compared to: start + (alpha * (end - start)).
 	//////////////////////////////////////////////////////////////////////////
-	constexpr double scalar_lerp(double start, double end, double alpha) RTM_NO_EXCEPT
+	inline double scalar_lerp(double start, double end, double alpha) RTM_NO_EXCEPT
 	{
 		// ((1.0 - alpha) * start) + (alpha * end) == (start - alpha * start) + (alpha * end)
-		return (start - (alpha * start)) + (alpha * end);
+		return scalar_mul_add(end, alpha, scalar_neg_mul_sub(start, alpha, start));
 	}
 
 #if defined(RTM_SSE2_INTRINSICS)
