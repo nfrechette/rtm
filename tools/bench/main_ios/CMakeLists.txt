@@ -1,6 +1,10 @@
 cmake_minimum_required (VERSION 3.2)
 project(rtm_bench)
 
+# Google Benchmark
+set(BENCHMARK_ENABLE_TESTING OFF CACHE BOOL "No need to run benchmark's tests" FORCE)
+add_subdirectory("${PROJECT_SOURCE_DIR}/../../../external/benchmark" google_benchmark)
+
 # iOS cmake toolchain does not support CMAKE_CXX_STANDARD
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
 
