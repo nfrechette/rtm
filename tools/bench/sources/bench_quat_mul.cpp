@@ -249,26 +249,34 @@ RTM_FORCE_NOINLINE quatf RTM_SIMD_CALL quat_mul_neon_xor(quatf_arg0 lhs, quatf_a
 	return vaddq_f32(vreinterpretq_f32_u32(veorq_u32(vreinterpretq_u32_f32(lyrz_lxrz_lwrz_lzrz), control_yxwz)), result1);
 }
 
-// Wins on Pixel 3 ARM64
-// It appears that loading constants is slower than zipping things around.
-// Multiplication is faster than XOR probably because it is fused.
-// This function uses about half the instructions as the scalar impl.
-// Wins on Samsung S8 ARM64
-// Much faster
+// Wins on iPad Pro ARM64
 RTM_FORCE_NOINLINE quatf RTM_SIMD_CALL quat_mul_neon_neg(quatf_arg0 lhs, quatf_arg1 rhs) RTM_NO_EXCEPT
 {
-	const float32x4_t neg_lhs = vnegq_f32(lhs);														// -t.x, -t.y, -t.z, -t.w
-	const float32x4_t t_zwxy = vrev64q_f32(lhs);														// t.z, t.w, t.x, t.y
-	const float32x4_t nt_zwxy = vrev64q_f32(neg_lhs);													// -t.z, -t.w, -t.x, -t.y
+	// Use shuffles and negation instead of loading constants and doing mul/xor.
+	// On ARM64, neg and shuffles are usually 2 cycles while xor is still 3 cycles.
+	// We have to shuffle things anyway, might as well leverage everything we can.
 
-	const float32x2x2_t tmp1 = vzip_f32(vget_low_f32(t_zwxy), vget_high_f32(t_zwxy));					// t.z, t.x, t.w, t.y
-	const float32x2x2_t tmp2 = vzip_f32(vget_low_f32(nt_zwxy), vget_high_f32(nt_zwxy));					// -t.z, -t.x, -t.w, -t.y
-	const float32x2x2_t tmp3 = vzip_f32(tmp2.val[1], tmp1.val[0]);										// -t.w, t.z, -t.y, t.x
-	const float32x2x2_t tmp4 = vzip_f32(tmp1.val[1], tmp2.val[0]);										// t.w, -t.z, t.y, -t.x
+	// Dispatch rev first, if we can't dual dispatch with neg below, we won't stall it
+	// [l.y, l.x, l.w, l.z]
+	const float32x4_t y_x_w_z = vrev64q_f32(lhs);
 
-	const float32x4_t l_wzyx = vcombine_f32(tmp3.val[0], tmp3.val[1]);									// -t.w, t.z, -t.y, t.x
-	const float32x4_t l_zwxy = vcombine_f32(vget_high_f32(neg_lhs), vget_low_f32(lhs));				// -t.z, -t.w, t.x, t.y
-	const float32x4_t l_yxwz = vcombine_f32(tmp4.val[1], tmp3.val[0]);									// t.y, -t.x, -t.w, t.z
+	// [-l.x, -l.y, -l.z, -l.w]
+	const float32x4_t neg_lhs = vnegq_f32(lhs);
+
+	// trn([l.y, l.x, l.w, l.z], [-l.x, -l.y, -l.z, -l.w]) = [l.y, -l.x, l.w, -l.z], [l.x, -l.y, l.z, -l.w]
+	float32x4x2_t y_nx_w_nz__x_ny_z_nw = vtrnq_f32(y_x_w_z, neg_lhs);
+
+	// [l.w, -l.z, l.y, -l.x]
+	float32x4_t l_wzyx = vcombine_f32(vget_high_f32(y_nx_w_nz__x_ny_z_nw.val[0]), vget_low_f32(y_nx_w_nz__x_ny_z_nw.val[0]));
+
+	// [l.z, l.w, -l.x, -l.y]
+	float32x4_t l_zwxy = vcombine_f32(vget_high_f32(lhs), vget_low_f32(neg_lhs));
+
+	// neg([l.w, -l.z, l.y, -l.x]) = [-l.w, l.z, -l.y, l.x]
+	float32x4_t nw_z_ny_x = vnegq_f32(l_wzyx);
+
+	// [-l.y, l.x, l.w, -l.z]
+	float32x4_t l_yxwz = vcombine_f32(vget_high_f32(nw_z_ny_x), vget_low_f32(l_wzyx));
 
 	const float32x2_t r_xy = vget_low_f32(rhs);
 	const float32x2_t r_zw = vget_high_f32(rhs);

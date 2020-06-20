@@ -497,9 +497,48 @@ namespace rtm
 		const __m128 nlyrz_lxrz_lwrz_wlzrz = _mm_xor_ps(lyrz_lxrz_lwrz_lzrz, control_yxwz);
 		const __m128 result1 = _mm_add_ps(lzry_lwry_nlxry_nlyry, nlyrz_lxrz_lwrz_wlzrz);
 		return _mm_add_ps(result0, result1);
-#else
-		// On ARMv7 and ARM64, the scalar version is faster than SIMD variants.
+#elif defined(RTM_NEON_INTRINSICS)
+		// Use shuffles and negation instead of loading constants and doing mul/xor.
+		// On ARM64, neg and shuffles are usually 2 cycles while xor is still 3 cycles.
+		// We have to shuffle things anyway, might as well leverage everything we can.
 
+		// Dispatch rev first, if we can't dual dispatch with neg below, we won't stall it
+		// [l.y, l.x, l.w, l.z]
+		const float32x4_t y_x_w_z = vrev64q_f32(lhs);
+
+		// [-l.x, -l.y, -l.z, -l.w]
+		const float32x4_t neg_lhs = vnegq_f32(lhs);
+
+		// trn([l.y, l.x, l.w, l.z], [-l.x, -l.y, -l.z, -l.w]) = [l.y, -l.x, l.w, -l.z], [l.x, -l.y, l.z, -l.w]
+		float32x4x2_t y_nx_w_nz__x_ny_z_nw = vtrnq_f32(y_x_w_z, neg_lhs);
+
+		// [l.w, -l.z, l.y, -l.x]
+		float32x4_t l_wzyx = vcombine_f32(vget_high_f32(y_nx_w_nz__x_ny_z_nw.val[0]), vget_low_f32(y_nx_w_nz__x_ny_z_nw.val[0]));
+
+		// [l.z, l.w, -l.x, -l.y]
+		float32x4_t l_zwxy = vcombine_f32(vget_high_f32(lhs), vget_low_f32(neg_lhs));
+
+		// neg([l.w, -l.z, l.y, -l.x]) = [-l.w, l.z, -l.y, l.x]
+		float32x4_t nw_z_ny_x = vnegq_f32(l_wzyx);
+
+		// [-l.y, l.x, l.w, -l.z]
+		float32x4_t l_yxwz = vcombine_f32(vget_high_f32(nw_z_ny_x), vget_low_f32(l_wzyx));
+
+		const float32x2_t r_xy = vget_low_f32(rhs);
+		const float32x2_t r_zw = vget_high_f32(rhs);
+
+		const float32x4_t lxrw_lyrw_lzrw_lwrw = vmulq_lane_f32(lhs, r_zw, 1);
+
+	#if defined(RTM_NEON64_INTRINSICS)
+		const float32x4_t result0 = vfmaq_lane_f32(lxrw_lyrw_lzrw_lwrw, l_wzyx, r_xy, 0);
+		const float32x4_t result1 = vfmaq_lane_f32(result0, l_zwxy, r_xy, 1);
+		return vfmaq_lane_f32(result1, l_yxwz, r_zw, 0);
+	#else
+		const float32x4_t result0 = vmlaq_lane_f32(lxrw_lyrw_lzrw_lwrw, l_wzyx, r_xy, 0);
+		const float32x4_t result1 = vmlaq_lane_f32(result0, l_zwxy, r_xy, 1);
+		return vmlaq_lane_f32(result1, l_yxwz, r_zw, 0);
+	#endif
+#else
 		const float lhs_x = quat_get_x(lhs);
 		const float lhs_y = quat_get_y(lhs);
 		const float lhs_z = quat_get_z(lhs);
