@@ -871,7 +871,7 @@ namespace rtm
 	{
 #if defined(RTM_SSE2_INTRINSICS)
 		return _mm_sqrt_ps(input);
-#elif defined(RTM_NEON64_INTRINSICS) && (!defined(RTM_COMPILER_MSVC) || _MSC_VER >= 1920)
+#elif defined(RTM_NEON64_INTRINSICS) && defined(RTM_IMPL_VSQRT_SUPPORTED)
 		return vsqrtq_f32(input);
 #else
 		scalarf x = vector_get_x(input);
@@ -2506,7 +2506,7 @@ namespace rtm
 		float32x4_t reference = vreinterpretq_f32_u32(vorrq_u32(sign, vreinterpretq_u32_f32(vdupq_n_f32(rtm::constants::pi()))));
 
 		float32x4_t reflection = vsubq_f32(reference, x);
-#if defined(RTM_COMPILER_MSVC) && _MSC_VER < 1920
+#if !defined(RTM_IMPL_VCA_SUPPORTED)
 		float32x4_t is_less_equal_than_half_pi = vcleq_f32(vabsq_f32(x), vdupq_n_f32(rtm::constants::half_pi()));
 #else
 		float32x4_t is_less_equal_than_half_pi = vcaleq_f32(x, vdupq_n_f32(rtm::constants::half_pi()));
@@ -2647,7 +2647,7 @@ namespace rtm
 		float32x4_t reference = vreinterpretq_f32_u32(vorrq_u32(sign, vreinterpretq_u32_f32(vdupq_n_f32(rtm::constants::pi()))));
 
 		float32x4_t reflection = vsubq_f32(reference, x);
-#if defined(RTM_COMPILER_MSVC) && _MSC_VER < 1920
+#if !defined(RTM_IMPL_VCA_SUPPORTED)
 		float32x4_t is_less_equal_than_half_pi = vcleq_f32(vabsq_f32(x), vdupq_n_f32(rtm::constants::half_pi()));
 #else
 		float32x4_t is_less_equal_than_half_pi = vcaleq_f32(x, vdupq_n_f32(rtm::constants::half_pi()));
@@ -2796,7 +2796,7 @@ namespace rtm
 		float32x4_t abs_value = vabsq_f32(input);
 
 		// Compute our value
-#if defined(RTM_COMPILER_MSVC) && _MSC_VER < 1920
+#if !defined(RTM_IMPL_VCA_SUPPORTED)
 		uint32x4_t is_larger_than_one = vcgtq_f32(vabsq_f32(input), vdupq_n_f32(1.0F));
 #else
 		uint32x4_t is_larger_than_one = vcagtq_f32(input, vdupq_n_f32(1.0F));
@@ -2895,7 +2895,7 @@ namespace rtm
 		// If X < 0.0, we return atan(y/x) + sign(Y) * PI
 		// See: https://en.wikipedia.org/wiki/Atan2#Definition_and_computation
 
-#if defined(RTM_COMPILER_MSVC) && _MSC_VER < 1920
+#if !defined(RTM_IMPL_VCZ_SUPPORTED)
 		float32x4_t zero = vdupq_n_f32(0.0F);
 		uint32x4_t is_x_zero = vceqq_f32(x, zero);
 		uint32x4_t is_y_zero = vceqq_f32(y, zero);

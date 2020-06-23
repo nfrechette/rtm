@@ -119,3 +119,48 @@
 		#define RTM_IMPL_VRNDNS_SUPPORTED
 	#endif
 #endif
+
+//////////////////////////////////////////////////////////////////////////
+// Helper macro to determine if the vca* (e.g vcagtq_f32) family of intrinsics are supported (ARM64 only)
+//////////////////////////////////////////////////////////////////////////
+#if defined(__aarch64__) || defined(_M_ARM64)
+	#if defined(RTM_COMPILER_MSVC)
+		#if _MSC_VER >= 1920
+			// Support was introduced in VS2019
+			#define RTM_IMPL_VCA_SUPPORTED
+		#endif
+	#else
+		// Always enable with GCC and clang for now
+		#define RTM_IMPL_VCA_SUPPORTED
+	#endif
+#endif
+
+//////////////////////////////////////////////////////////////////////////
+// Helper macro to determine if the vc*z* (e.g vceqq_f32) family of intrinsics are supported (ARM64 only)
+//////////////////////////////////////////////////////////////////////////
+#if defined(__aarch64__) || defined(_M_ARM64)
+	#if defined(RTM_COMPILER_MSVC)
+		#if _MSC_VER >= 1920
+			// Support was introduced in VS2019
+			#define RTM_IMPL_VCZ_SUPPORTED
+		#endif
+	#else
+		// Always enable with GCC and clang for now
+		#define RTM_IMPL_VCZ_SUPPORTED
+	#endif
+#endif
+
+//////////////////////////////////////////////////////////////////////////
+// Helper macro to determine if the vsqrtq_f32 intrinsic is supported (ARM64 only)
+//////////////////////////////////////////////////////////////////////////
+#if defined(__aarch64__) || defined(_M_ARM64)
+	#if defined(RTM_COMPILER_MSVC)
+		#if _MSC_VER >= 1920
+			// Support was introduced in VS2019
+			#define RTM_IMPL_VSQRT_SUPPORTED
+		#endif
+	#else
+		// Always enable with GCC and clang for now
+		#define RTM_IMPL_VSQRT_SUPPORTED
+	#endif
+#endif
