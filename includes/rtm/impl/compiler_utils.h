@@ -112,4 +112,10 @@
 			#endif
 		#endif
 	#endif
+
+	// MSVC doesn't appear to define __ARM_FEATURE_DIRECTED_ROUNDING but it supports the
+	// intrinsic as of VS2019
+	#if !defined(RTM_IMPL_VRNDNS_SUPPORTED) && defined(RTM_COMPILER_MSVC) && _MSC_VER >= 1920
+		#define RTM_IMPL_VRNDNS_SUPPORTED
+	#endif
 #endif
