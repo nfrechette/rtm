@@ -1944,9 +1944,13 @@ namespace rtm
 		// since they have no fractional part.
 
 #if defined(RTM_SSE4_INTRINSICS)
+		__m128d zero = _mm_setzero_pd();
+		__m128d is_positive_xy = _mm_cmpge_pd(input.xy, zero);
+		__m128d is_positive_zw = _mm_cmpge_pd(input.zw, zero);
+
 		const __m128d sign_mask = _mm_set_pd(-0.0, -0.0);
-		__m128d sign_xy = _mm_and_pd(input.xy, sign_mask);
-		__m128d sign_zw = _mm_and_pd(input.zw, sign_mask);
+		__m128d sign_xy = _mm_andnot_pd(is_positive_xy, sign_mask);
+		__m128d sign_zw = _mm_andnot_pd(is_positive_zw, sign_mask);
 
 		// For positive values, we add a bias of 0.5.
 		// For negative values, we add a bias of -0.5.
@@ -1960,9 +1964,6 @@ namespace rtm
 		__m128d floored_zw = _mm_floor_pd(biased_input_zw);
 		__m128d ceiled_xy = _mm_ceil_pd(biased_input_xy);
 		__m128d ceiled_zw = _mm_ceil_pd(biased_input_zw);
-		__m128d zero = _mm_setzero_pd();
-		__m128d is_positive_xy = _mm_cmpge_pd(input.xy, zero);
-		__m128d is_positive_zw = _mm_cmpge_pd(input.zw, zero);
 
 #if defined(RTM_AVX_INTRINSICS)
 		__m128d result_xy = _mm_blendv_pd(ceiled_xy, floored_xy, is_positive_xy);

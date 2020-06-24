@@ -802,8 +802,10 @@ namespace rtm
 		// since they have no fractional part.
 
 #if defined(RTM_SSE4_INTRINSICS)
+		__m128 is_positive = _mm_cmpge_ss(input.value, _mm_setzero_ps());
+
 		const __m128 sign_mask = _mm_set_ps(-0.0F, -0.0F, -0.0F, -0.0F);
-		__m128 sign = _mm_and_ps(input.value, sign_mask);
+		__m128 sign = _mm_andnot_ps(is_positive, sign_mask);
 
 		// For positive values, we add a bias of 0.5.
 		// For negative values, we add a bias of -0.5.
@@ -812,7 +814,6 @@ namespace rtm
 
 		__m128 floored = _mm_floor_ss(biased_input, biased_input);
 		__m128 ceiled = _mm_ceil_ss(biased_input, biased_input);
-		__m128 is_positive = _mm_cmpge_ss(input.value, _mm_setzero_ps());
 
 #if defined(RTM_AVX_INTRINSICS)
 		__m128 result = _mm_blendv_ps(ceiled, floored, is_positive);

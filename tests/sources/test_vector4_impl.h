@@ -455,6 +455,8 @@ void test_vector4_arithmetic_impl(const FloatType threshold)
 	CHECK(scalar_near_equal(vector_get_z(vector_sqrt(vector_abs(test_value0))), scalar_sqrt(scalar_abs(test_value0_flt[2])), threshold));
 	CHECK(scalar_near_equal(vector_get_w(vector_sqrt(vector_abs(test_value0))), scalar_sqrt(scalar_abs(test_value0_flt[3])), threshold));
 
+	const Vector4Type neg_zero = vector_set(FloatType(-0.0));
+	CHECK(FloatType(vector_get_x(vector_floor(neg_zero))) == scalar_floor(FloatType(-0.0)));
 	CHECK(FloatType(vector_get_x(vector_floor(test_value0))) == scalar_floor(test_value0_flt[0]));
 	CHECK(FloatType(vector_get_y(vector_floor(test_value0))) == scalar_floor(test_value0_flt[1]));
 	CHECK(FloatType(vector_get_z(vector_floor(test_value0))) == scalar_floor(test_value0_flt[2]));
@@ -472,6 +474,7 @@ void test_vector4_arithmetic_impl(const FloatType threshold)
 	CHECK(std::isnan(FloatType(vector_get_z(vector_floor(nan)))));
 	CHECK(std::isnan(FloatType(vector_get_w(vector_floor(nan)))));
 
+	CHECK(FloatType(vector_get_x(vector_ceil(neg_zero))) == scalar_ceil(FloatType(-0.0)));
 	CHECK(FloatType(vector_get_x(vector_ceil(test_value0)) == scalar_ceil(test_value0_flt[0])));
 	CHECK(FloatType(vector_get_y(vector_ceil(test_value0)) == scalar_ceil(test_value0_flt[1])));
 	CHECK(FloatType(vector_get_z(vector_ceil(test_value0)) == scalar_ceil(test_value0_flt[2])));
@@ -578,6 +581,7 @@ void test_vector4_arithmetic_impl(const FloatType threshold)
 	CHECK(vector_all_near_equal(vector_lerp(test_value10, test_value11, scalar_set(FloatType(0.0))), test_value10, FloatType(0.0)));
 	CHECK(vector_all_near_equal(vector_lerp(test_value10, test_value11, scalar_set(FloatType(1.0))), test_value11, FloatType(0.0)));
 
+	CHECK(FloatType(vector_get_x(vector_fraction(neg_zero))) == scalar_fraction(FloatType(-0.0)));
 	CHECK(scalar_near_equal(vector_get_x(vector_fraction(test_value0)), scalar_fraction(test_value0_flt[0]), threshold));
 	CHECK(scalar_near_equal(vector_get_y(vector_fraction(test_value0)), scalar_fraction(test_value0_flt[1]), threshold));
 	CHECK(scalar_near_equal(vector_get_z(vector_fraction(test_value0)), scalar_fraction(test_value0_flt[2]), threshold));
@@ -1016,6 +1020,7 @@ void test_vector4_impl(const FloatType threshold)
 		const Vector4Type result3 = vector_round_symmetric(input3);
 		const Vector4Type result4 = vector_round_symmetric(input4);
 		const Vector4Type result5 = vector_round_symmetric(input5);
+		const Vector4Type result6 = vector_round_symmetric(vector_set(FloatType(-0.0)));
 
 		CHECK(FloatType(vector_get_x(result0)) == scalar_round_symmetric(FloatType(vector_get_x(input0))));
 		CHECK(FloatType(vector_get_y(result0)) == scalar_round_symmetric(FloatType(vector_get_y(input0))));
@@ -1042,6 +1047,8 @@ void test_vector4_impl(const FloatType threshold)
 		CHECK(FloatType(vector_get_z(result4)) == scalar_round_symmetric(FloatType(vector_get_z(input4))));
 		CHECK(FloatType(vector_get_w(result4)) == scalar_round_symmetric(FloatType(vector_get_w(input4))));
 
+		CHECK(FloatType(vector_get_x(result6)) == scalar_round_symmetric(FloatType(-0.0)));
+
 		CHECK(std::isnan(FloatType(vector_get_x(result5))));
 		CHECK(std::isnan(FloatType(vector_get_y(result5))));
 		CHECK(std::isnan(FloatType(vector_get_z(result5))));
@@ -1067,6 +1074,7 @@ void test_vector4_impl(const FloatType threshold)
 		const Vector4Type result4 = vector_round_bankers(input4);
 		const Vector4Type result5 = vector_round_bankers(input5);
 		const Vector4Type result6 = vector_round_bankers(input6);
+		const Vector4Type result7 = vector_round_symmetric(vector_set(FloatType(-0.0)));
 
 		CHECK(FloatType(vector_get_x(result0)) == scalar_round_bankers(FloatType(vector_get_x(input0))));
 		CHECK(FloatType(vector_get_y(result0)) == scalar_round_bankers(FloatType(vector_get_y(input0))));
@@ -1102,6 +1110,8 @@ void test_vector4_impl(const FloatType threshold)
 		CHECK(FloatType(vector_get_y(result6)) == scalar_round_bankers(FloatType(vector_get_y(input6))));
 		CHECK(FloatType(vector_get_z(result6)) == scalar_round_bankers(FloatType(vector_get_z(input6))));
 		CHECK(FloatType(vector_get_w(result6)) == scalar_round_bankers(FloatType(vector_get_w(input6))));
+
+		CHECK(FloatType(vector_get_x(result7)) == scalar_round_symmetric(FloatType(-0.0)));
 	}
 
 	{
