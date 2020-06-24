@@ -952,25 +952,6 @@ namespace rtm
 		return rtm_impl::vector4d_vector_dot{ lhs, rhs };
 	}
 
-	//////////////////////////////////////////////////////////////////////////
-	// 4D dot product: lhs . rhs
-	//////////////////////////////////////////////////////////////////////////
-	RTM_DEPRECATED("Use vector_dot instead, to be removed in v2.0")
-	inline scalard vector_dot_as_scalar(const vector4d& lhs, const vector4d& rhs) RTM_NO_EXCEPT
-	{
-		return scalar_set(vector_dot(lhs, rhs));
-	}
-
-	//////////////////////////////////////////////////////////////////////////
-	// 4D dot product replicated in all components: lhs . rhs
-	//////////////////////////////////////////////////////////////////////////
-	RTM_DEPRECATED("Use vector_dot instead, to be removed in v2.0")
-	inline vector4d vector_dot_as_vector(const vector4d& lhs, const vector4d& rhs) RTM_NO_EXCEPT
-	{
-		const scalard dot = vector_dot(lhs, rhs);
-		return vector_set(dot);
-	}
-
 	namespace rtm_impl
 	{
 		//////////////////////////////////////////////////////////////////////////
@@ -2019,19 +2000,6 @@ namespace rtm
 		const mask4d is_greater_equal = vector_greater_equal(input, vector_zero());
 		return vector_select(is_greater_equal, floored, ceiled);
 #endif
-	}
-
-	//////////////////////////////////////////////////////////////////////////
-	// Returns per component the rounded input using a symmetric algorithm.
-	// vector_symmetric_round(1.5) = 2.0
-	// vector_symmetric_round(1.2) = 1.0
-	// vector_symmetric_round(-1.5) = -2.0
-	// vector_symmetric_round(-1.2) = -1.0
-	//////////////////////////////////////////////////////////////////////////
-	RTM_DEPRECATED("Use vector_round_symmetric instead, to be removed in v2.0")
-	inline vector4d vector_symmetric_round(const vector4d& input) RTM_NO_EXCEPT
-	{
-		return vector_round_symmetric(input);
 	}
 
 	//////////////////////////////////////////////////////////////////////////

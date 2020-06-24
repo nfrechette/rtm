@@ -43,23 +43,6 @@ namespace rtm
 	}
 
 	//////////////////////////////////////////////////////////////////////////
-	// Returns the desired 3x3 matrix axis.
-	//////////////////////////////////////////////////////////////////////////
-	RTM_DEPRECATED("Use matrix_get_axis with an axis3 instead, to be removed in v2.0")
-	inline vector4f RTM_SIMD_CALL matrix_get_axis(matrix3x3f_arg0 input, axis4 axis) RTM_NO_EXCEPT
-	{
-		switch (axis)
-		{
-		case axis4::x: return input.x_axis;
-		case axis4::y: return input.y_axis;
-		case axis4::z: return input.z_axis;
-		default:
-			RTM_ASSERT(false, "Invalid matrix axis");
-			return input.x_axis;
-		}
-	}
-
-	//////////////////////////////////////////////////////////////////////////
 	// Converts a 3x3 matrix into a rotation quaternion.
 	//////////////////////////////////////////////////////////////////////////
 	inline quatf RTM_SIMD_CALL quat_from_matrix(matrix3x3f_arg0 input) RTM_NO_EXCEPT

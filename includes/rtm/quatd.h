@@ -51,15 +51,6 @@ namespace rtm
 	}
 
 	//////////////////////////////////////////////////////////////////////////
-	// Loads an unaligned quaternion from memory.
-	//////////////////////////////////////////////////////////////////////////
-	RTM_DEPRECATED("Use quat_load instead, to be removed in v2.0")
-	inline quatd quat_unaligned_load(const double* input) RTM_NO_EXCEPT
-	{
-		return quat_set(input[0], input[1], input[2], input[3]);
-	}
-
-	//////////////////////////////////////////////////////////////////////////
 	// Casts a vector4 to a quaternion.
 	//////////////////////////////////////////////////////////////////////////
 	inline quatd vector_to_quat(const vector4d& input) RTM_NO_EXCEPT
@@ -345,18 +336,6 @@ namespace rtm
 		output->y = quat_get_y(input);
 		output->z = quat_get_z(input);
 		output->w = quat_get_w(input);
-	}
-
-	//////////////////////////////////////////////////////////////////////////
-	// Writes a quaternion to unaligned memory.
-	//////////////////////////////////////////////////////////////////////////
-	RTM_DEPRECATED("Use quat_store instead, to be removed in v2.0")
-	inline void quat_unaligned_write(const quatd& input, double* output) RTM_NO_EXCEPT
-	{
-		output[0] = quat_get_x(input);
-		output[1] = quat_get_y(input);
-		output[2] = quat_get_z(input);
-		output[3] = quat_get_w(input);
 	}
 
 
