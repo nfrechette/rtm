@@ -54,6 +54,7 @@ static void test_scalar_impl(const FloatType threshold, const FloatType trig_thr
 	CHECK(tmp == FloatType(4.5));
 
 	CHECK(scalar_floor(FloatType(0.0)) == FloatType(0.0));
+	CHECK(scalar_floor(FloatType(-0.0)) == FloatType(0.0));
 	CHECK(scalar_floor(FloatType(0.5)) == FloatType(0.0));
 	CHECK(scalar_floor(FloatType(2.5)) == FloatType(2.0));
 	CHECK(scalar_floor(FloatType(3.0)) == FloatType(3.0));
@@ -65,6 +66,7 @@ static void test_scalar_impl(const FloatType threshold, const FloatType trig_thr
 	CHECK(std::isnan(scalar_floor(FloatType(nan))));
 
 	CHECK(scalar_cast(scalar_floor(scalar_set(FloatType(0.0)))) == FloatType(0.0));
+	CHECK(scalar_cast(scalar_floor(scalar_set(FloatType(-0.0)))) == FloatType(0.0));
 	CHECK(scalar_cast(scalar_floor(scalar_set(FloatType(0.5)))) == FloatType(0.0));
 	CHECK(scalar_cast(scalar_floor(scalar_set(FloatType(2.5)))) == FloatType(2.0));
 	CHECK(scalar_cast(scalar_floor(scalar_set(FloatType(3.0)))) == FloatType(3.0));
@@ -76,6 +78,7 @@ static void test_scalar_impl(const FloatType threshold, const FloatType trig_thr
 	CHECK(std::isnan(scalar_cast(scalar_floor(scalar_set(FloatType(nan))))));
 
 	CHECK(scalar_ceil(FloatType(0.0)) == FloatType(0.0));
+	CHECK(scalar_ceil(FloatType(-0.0)) == FloatType(0.0));
 	CHECK(scalar_ceil(FloatType(0.5)) == FloatType(1.0));
 	CHECK(scalar_ceil(FloatType(2.5)) == FloatType(3.0));
 	CHECK(scalar_ceil(FloatType(3.0)) == FloatType(3.0));
@@ -87,6 +90,7 @@ static void test_scalar_impl(const FloatType threshold, const FloatType trig_thr
 	CHECK(std::isnan(scalar_ceil(FloatType(nan))));
 
 	CHECK(scalar_cast(scalar_ceil(scalar_set(FloatType(0.0)))) == FloatType(0.0));
+	CHECK(scalar_cast(scalar_ceil(scalar_set(FloatType(-0.0)))) == FloatType(0.0));
 	CHECK(scalar_cast(scalar_ceil(scalar_set(FloatType(0.5)))) == FloatType(1.0));
 	CHECK(scalar_cast(scalar_ceil(scalar_set(FloatType(2.5)))) == FloatType(3.0));
 	CHECK(scalar_cast(scalar_ceil(scalar_set(FloatType(3.0)))) == FloatType(3.0));
@@ -375,6 +379,7 @@ static void test_scalar_impl(const FloatType threshold, const FloatType trig_thr
 	CHECK(scalar_round_symmetric(FloatType(-0.5)) == FloatType(-1.0));
 	CHECK(scalar_round_symmetric(FloatType(-0.4999)) == FloatType(0.0));
 	CHECK(scalar_round_symmetric(FloatType(0.0)) == FloatType(0.0));
+	CHECK(scalar_round_symmetric(FloatType(-0.0)) == FloatType(0.0));
 	CHECK(scalar_round_symmetric(FloatType(0.4999)) == FloatType(0.0));
 	CHECK(scalar_round_symmetric(FloatType(0.5)) == FloatType(1.0));
 	CHECK(scalar_round_symmetric(FloatType(1.4999)) == FloatType(1.0));
@@ -390,6 +395,7 @@ static void test_scalar_impl(const FloatType threshold, const FloatType trig_thr
 	CHECK(scalar_cast(scalar_round_symmetric(scalar_set(FloatType(-0.5)))) == FloatType(-1.0));
 	CHECK(scalar_cast(scalar_round_symmetric(scalar_set(FloatType(-0.4999)))) == FloatType(0.0));
 	CHECK(scalar_cast(scalar_round_symmetric(scalar_set(FloatType(0.0)))) == FloatType(0.0));
+	CHECK(scalar_cast(scalar_round_symmetric(scalar_set(FloatType(-0.0)))) == FloatType(0.0));
 	CHECK(scalar_cast(scalar_round_symmetric(scalar_set(FloatType(0.4999)))) == FloatType(0.0));
 	CHECK(scalar_cast(scalar_round_symmetric(scalar_set(FloatType(0.5)))) == FloatType(1.0));
 	CHECK(scalar_cast(scalar_round_symmetric(scalar_set(FloatType(1.4999)))) == FloatType(1.0));
@@ -406,6 +412,7 @@ static void test_scalar_impl(const FloatType threshold, const FloatType trig_thr
 	CHECK(scalar_round_bankers(FloatType(-0.5)) == FloatType(0.0));
 	CHECK(scalar_round_bankers(FloatType(-0.4999)) == FloatType(0.0));
 	CHECK(scalar_round_bankers(FloatType(0.0)) == FloatType(0.0));
+	CHECK(scalar_round_bankers(FloatType(-0.0)) == FloatType(0.0));
 	CHECK(scalar_round_bankers(FloatType(0.4999)) == FloatType(0.0));
 	CHECK(scalar_round_bankers(FloatType(0.5)) == FloatType(0.0));
 	CHECK(scalar_round_bankers(FloatType(1.4999)) == FloatType(1.0));
@@ -420,6 +427,7 @@ static void test_scalar_impl(const FloatType threshold, const FloatType trig_thr
 	CHECK(scalar_cast(scalar_round_bankers(scalar_set(FloatType(-0.5)))) == FloatType(0.0));
 	CHECK(scalar_cast(scalar_round_bankers(scalar_set(FloatType(-0.4999)))) == FloatType(0.0));
 	CHECK(scalar_cast(scalar_round_bankers(scalar_set(FloatType(0.0)))) == FloatType(0.0));
+	CHECK(scalar_cast(scalar_round_bankers(scalar_set(FloatType(-0.0)))) == FloatType(0.0));
 	CHECK(scalar_cast(scalar_round_bankers(scalar_set(FloatType(0.4999)))) == FloatType(0.0));
 	CHECK(scalar_cast(scalar_round_bankers(scalar_set(FloatType(0.5)))) == FloatType(0.0));
 	CHECK(scalar_cast(scalar_round_bankers(scalar_set(FloatType(1.4999)))) == FloatType(1.0));
@@ -428,6 +436,7 @@ static void test_scalar_impl(const FloatType threshold, const FloatType trig_thr
 	CHECK(scalar_cast(scalar_round_bankers(scalar_set(FloatType(2.5)))) == FloatType(2.0));
 
 	CHECK(scalar_fraction(FloatType(0.0)) == FloatType(0.0));
+	CHECK(scalar_fraction(FloatType(-0.0)) == FloatType(0.0));
 	CHECK(scalar_fraction(FloatType(1.0)) == FloatType(0.0));
 	CHECK(scalar_fraction(FloatType(-1.0)) == FloatType(0.0));
 	CHECK(scalar_near_equal(scalar_fraction(FloatType(0.25)), FloatType(0.25), threshold));
