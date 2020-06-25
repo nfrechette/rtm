@@ -37,7 +37,7 @@ namespace rtm
 	// Returns the quaternion on the hypersphere with a positive [w] component
 	// that represents the same 3D rotation as the input.
 	//////////////////////////////////////////////////////////////////////////
-	inline quatd quat_ensure_positive_w(const quatd& input) RTM_NO_EXCEPT
+	RTM_DISABLE_SECURITY_COOKIE_CHECK inline quatd quat_ensure_positive_w(const quatd& input) RTM_NO_EXCEPT
 	{
 		return quat_get_w(input) >= 0.0 ? input : quat_neg(input);
 	}
@@ -46,7 +46,7 @@ namespace rtm
 	// Returns a quaternion constructed from a vector3 representing the [xyz]
 	// components while reconstructing the [w] component by assuming it is positive.
 	//////////////////////////////////////////////////////////////////////////
-	inline quatd quat_from_positive_w(const vector4d& input) RTM_NO_EXCEPT
+	RTM_DISABLE_SECURITY_COOKIE_CHECK inline quatd quat_from_positive_w(const vector4d& input) RTM_NO_EXCEPT
 	{
 		const double input_x = vector_get_x(input);
 		const double input_y = vector_get_y(input);

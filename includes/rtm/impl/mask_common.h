@@ -41,7 +41,7 @@ namespace rtm
 		//////////////////////////////////////////////////////////////////////////
 		struct mask4_bool_set
 		{
-			inline RTM_SIMD_CALL operator mask4d() const RTM_NO_EXCEPT
+			RTM_DISABLE_SECURITY_COOKIE_CHECK inline RTM_SIMD_CALL operator mask4d() const RTM_NO_EXCEPT
 			{
 #if defined(RTM_SSE2_INTRINSICS)
 				const uint64_t x_mask = x ? 0xFFFFFFFFFFFFFFFFULL : 0;
@@ -60,7 +60,7 @@ namespace rtm
 #endif
 			}
 
-			inline RTM_SIMD_CALL operator mask4q() const RTM_NO_EXCEPT
+			RTM_DISABLE_SECURITY_COOKIE_CHECK inline RTM_SIMD_CALL operator mask4q() const RTM_NO_EXCEPT
 			{
 #if defined(RTM_SSE2_INTRINSICS)
 				const uint64_t x_mask = x ? 0xFFFFFFFFFFFFFFFFULL : 0;
@@ -79,7 +79,7 @@ namespace rtm
 #endif
 			}
 
-			inline RTM_SIMD_CALL operator mask4f() const RTM_NO_EXCEPT
+			RTM_DISABLE_SECURITY_COOKIE_CHECK inline RTM_SIMD_CALL operator mask4f() const RTM_NO_EXCEPT
 			{
 				const uint32_t x_mask = x ? 0xFFFFFFFFU : 0;
 				const uint32_t y_mask = y ? 0xFFFFFFFFU : 0;
@@ -97,7 +97,7 @@ namespace rtm
 #endif
 			}
 
-			inline RTM_SIMD_CALL operator mask4i() const RTM_NO_EXCEPT
+			RTM_DISABLE_SECURITY_COOKIE_CHECK inline RTM_SIMD_CALL operator mask4i() const RTM_NO_EXCEPT
 			{
 				const uint32_t x_mask = x ? 0xFFFFFFFFU : 0;
 				const uint32_t y_mask = y ? 0xFFFFFFFFU : 0;
@@ -125,7 +125,7 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	// Creates a mask4 from all 4 bool components.
 	//////////////////////////////////////////////////////////////////////////
-	constexpr rtm_impl::mask4_bool_set RTM_SIMD_CALL mask_set(bool x, bool y, bool z, bool w) RTM_NO_EXCEPT
+	RTM_DISABLE_SECURITY_COOKIE_CHECK constexpr rtm_impl::mask4_bool_set RTM_SIMD_CALL mask_set(bool x, bool y, bool z, bool w) RTM_NO_EXCEPT
 	{
 		return rtm_impl::mask4_bool_set{ x, y, z, w };
 	}
@@ -140,7 +140,7 @@ namespace rtm
 		//////////////////////////////////////////////////////////////////////////
 		struct mask4_uint32_set
 		{
-			inline RTM_SIMD_CALL operator mask4f() const RTM_NO_EXCEPT
+			RTM_DISABLE_SECURITY_COOKIE_CHECK inline RTM_SIMD_CALL operator mask4f() const RTM_NO_EXCEPT
 			{
 #if defined(RTM_SSE2_INTRINSICS)
 				return _mm_castsi128_ps(_mm_set_epi32(w, z, y, x));
@@ -153,7 +153,7 @@ namespace rtm
 #endif
 			}
 
-			inline RTM_SIMD_CALL operator mask4i() const RTM_NO_EXCEPT
+			RTM_DISABLE_SECURITY_COOKIE_CHECK inline RTM_SIMD_CALL operator mask4i() const RTM_NO_EXCEPT
 			{
 #if defined(RTM_SSE2_INTRINSICS)
 				return _mm_set_epi32(w, z, y, x);
@@ -176,7 +176,7 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	// Creates a mask4 from 4 uint32 components.
 	//////////////////////////////////////////////////////////////////////////
-	constexpr rtm_impl::mask4_uint32_set RTM_SIMD_CALL mask_set(uint32_t x, uint32_t y, uint32_t z, uint32_t w) RTM_NO_EXCEPT
+	RTM_DISABLE_SECURITY_COOKIE_CHECK constexpr rtm_impl::mask4_uint32_set RTM_SIMD_CALL mask_set(uint32_t x, uint32_t y, uint32_t z, uint32_t w) RTM_NO_EXCEPT
 	{
 		return rtm_impl::mask4_uint32_set{ x, y, z, w };
 	}
@@ -191,7 +191,7 @@ namespace rtm
 		//////////////////////////////////////////////////////////////////////////
 		struct mask4_uint64_set
 		{
-			inline RTM_SIMD_CALL operator mask4d() const RTM_NO_EXCEPT
+			RTM_DISABLE_SECURITY_COOKIE_CHECK inline RTM_SIMD_CALL operator mask4d() const RTM_NO_EXCEPT
 			{
 #if defined(RTM_SSE2_INTRINSICS)
 	//////////////////////////////////////////////////////////////////////////
@@ -216,7 +216,7 @@ namespace rtm
 #endif
 			}
 
-			inline RTM_SIMD_CALL operator mask4q() const RTM_NO_EXCEPT
+			RTM_DISABLE_SECURITY_COOKIE_CHECK inline RTM_SIMD_CALL operator mask4q() const RTM_NO_EXCEPT
 			{
 #if defined(RTM_SSE2_INTRINSICS)
 	//////////////////////////////////////////////////////////////////////////
@@ -251,7 +251,7 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	// Creates a mask4 from 4 uint64 components.
 	//////////////////////////////////////////////////////////////////////////
-	constexpr rtm_impl::mask4_uint64_set RTM_SIMD_CALL mask_set(uint64_t x, uint64_t y, uint64_t z, uint64_t w) RTM_NO_EXCEPT
+	RTM_DISABLE_SECURITY_COOKIE_CHECK constexpr rtm_impl::mask4_uint64_set RTM_SIMD_CALL mask_set(uint64_t x, uint64_t y, uint64_t z, uint64_t w) RTM_NO_EXCEPT
 	{
 		return rtm_impl::mask4_uint64_set{ x, y, z, w };
 	}

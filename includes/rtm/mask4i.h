@@ -35,7 +35,7 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	// Returns the mask4i [x] component.
 	//////////////////////////////////////////////////////////////////////////
-	inline uint32_t RTM_SIMD_CALL mask_get_x(mask4i_arg0 input) RTM_NO_EXCEPT
+	RTM_DISABLE_SECURITY_COOKIE_CHECK inline uint32_t RTM_SIMD_CALL mask_get_x(mask4i_arg0 input) RTM_NO_EXCEPT
 	{
 #if defined(RTM_SSE2_INTRINSICS)
 		return _mm_cvtsi128_si32(input);
@@ -49,7 +49,7 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	// Returns the mask4i [y] component.
 	//////////////////////////////////////////////////////////////////////////
-	inline uint32_t RTM_SIMD_CALL mask_get_y(mask4i_arg0 input) RTM_NO_EXCEPT
+	RTM_DISABLE_SECURITY_COOKIE_CHECK inline uint32_t RTM_SIMD_CALL mask_get_y(mask4i_arg0 input) RTM_NO_EXCEPT
 	{
 #if defined(RTM_SSE2_INTRINSICS)
 		return _mm_cvtsi128_si32(_mm_shuffle_epi32(input, _MM_SHUFFLE(1, 1, 1, 1)));
@@ -63,7 +63,7 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	// Returns the mask4i [z] component.
 	//////////////////////////////////////////////////////////////////////////
-	inline uint32_t RTM_SIMD_CALL mask_get_z(mask4i_arg0 input) RTM_NO_EXCEPT
+	RTM_DISABLE_SECURITY_COOKIE_CHECK inline uint32_t RTM_SIMD_CALL mask_get_z(mask4i_arg0 input) RTM_NO_EXCEPT
 	{
 #if defined(RTM_SSE2_INTRINSICS)
 		return _mm_cvtsi128_si32(_mm_shuffle_epi32(input, _MM_SHUFFLE(2, 2, 2, 2)));
@@ -77,7 +77,7 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	// Returns the mask4i [w] component.
 	//////////////////////////////////////////////////////////////////////////
-	inline uint32_t RTM_SIMD_CALL mask_get_w(mask4i_arg0 input) RTM_NO_EXCEPT
+	RTM_DISABLE_SECURITY_COOKIE_CHECK inline uint32_t RTM_SIMD_CALL mask_get_w(mask4i_arg0 input) RTM_NO_EXCEPT
 	{
 #if defined(RTM_SSE2_INTRINSICS)
 		return _mm_cvtsi128_si32(_mm_shuffle_epi32(input, _MM_SHUFFLE(3, 3, 3, 3)));
@@ -91,7 +91,7 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	// Returns true if all 4 components are true, otherwise false: all(input != 0)
 	//////////////////////////////////////////////////////////////////////////
-	inline bool RTM_SIMD_CALL mask_all_true(mask4i_arg0 input) RTM_NO_EXCEPT
+	RTM_DISABLE_SECURITY_COOKIE_CHECK inline bool RTM_SIMD_CALL mask_all_true(mask4i_arg0 input) RTM_NO_EXCEPT
 	{
 #if defined(RTM_SSE2_INTRINSICS)
 		return _mm_movemask_epi8(input) == 0xFFFF;
@@ -108,7 +108,7 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	// Returns true if all [xy] components are true, otherwise false: all(input != 0)
 	//////////////////////////////////////////////////////////////////////////
-	inline bool RTM_SIMD_CALL mask_all_true2(mask4i_arg0 input) RTM_NO_EXCEPT
+	RTM_DISABLE_SECURITY_COOKIE_CHECK inline bool RTM_SIMD_CALL mask_all_true2(mask4i_arg0 input) RTM_NO_EXCEPT
 	{
 #if defined(RTM_SSE2_INTRINSICS)
 		return (_mm_movemask_epi8(input) & 0x00FF) == 0x00FF;
@@ -122,7 +122,7 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	// Returns true if all [xyz] components are true, otherwise false: all(input != 0)
 	//////////////////////////////////////////////////////////////////////////
-	inline bool RTM_SIMD_CALL mask_all_true3(mask4i_arg0 input) RTM_NO_EXCEPT
+	RTM_DISABLE_SECURITY_COOKIE_CHECK inline bool RTM_SIMD_CALL mask_all_true3(mask4i_arg0 input) RTM_NO_EXCEPT
 	{
 #if defined(RTM_SSE2_INTRINSICS)
 		return (_mm_movemask_epi8(input) & 0x0FFF) == 0x0FFF;
@@ -139,7 +139,7 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	// Returns true if any 4 components are true, otherwise false: any(input != 0)
 	//////////////////////////////////////////////////////////////////////////
-	inline bool RTM_SIMD_CALL mask_any_true(mask4i_arg0 input) RTM_NO_EXCEPT
+	RTM_DISABLE_SECURITY_COOKIE_CHECK inline bool RTM_SIMD_CALL mask_any_true(mask4i_arg0 input) RTM_NO_EXCEPT
 	{
 #if defined(RTM_SSE2_INTRINSICS)
 		return _mm_movemask_epi8(input) != 0;
@@ -156,7 +156,7 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	// Returns true if any [xy] components are true, otherwise false: any(input != 0)
 	//////////////////////////////////////////////////////////////////////////
-	inline bool RTM_SIMD_CALL mask_any_true2(mask4i_arg0 input) RTM_NO_EXCEPT
+	RTM_DISABLE_SECURITY_COOKIE_CHECK inline bool RTM_SIMD_CALL mask_any_true2(mask4i_arg0 input) RTM_NO_EXCEPT
 	{
 #if defined(RTM_SSE2_INTRINSICS)
 		return (_mm_movemask_epi8(input) & 0x00FF) != 0;
@@ -170,7 +170,7 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	// Returns true if any [xyz] components are true, otherwise false: any(input != 0)
 	//////////////////////////////////////////////////////////////////////////
-	inline bool RTM_SIMD_CALL mask_any_true3(mask4i_arg0 input) RTM_NO_EXCEPT
+	RTM_DISABLE_SECURITY_COOKIE_CHECK inline bool RTM_SIMD_CALL mask_any_true3(mask4i_arg0 input) RTM_NO_EXCEPT
 	{
 #if defined(RTM_SSE2_INTRINSICS)
 		return (_mm_movemask_epi8(input) & 0x0FFF) != 0;

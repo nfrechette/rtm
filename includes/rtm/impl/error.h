@@ -74,7 +74,7 @@ RTM_IMPL_FILE_PRAGMA_PUSH
 	{
 		namespace rtm_impl
 		{
-			inline void on_assert_abort(const char* expression, int line, const char* file, const char* format, ...)
+			RTM_DISABLE_SECURITY_COOKIE_CHECK inline void on_assert_abort(const char* expression, int line, const char* file, const char* format, ...)
 			{
 				(void)expression;
 				(void)line;
@@ -115,7 +115,7 @@ RTM_IMPL_FILE_PRAGMA_PUSH
 
 		namespace rtm_impl
 		{
-			inline void on_assert_throw(const char* expression, int line, const char* file, const char* format, ...)
+			RTM_DISABLE_SECURITY_COOKIE_CHECK inline void on_assert_throw(const char* expression, int line, const char* file, const char* format, ...)
 			{
 				(void)expression;
 				(void)line;

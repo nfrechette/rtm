@@ -39,7 +39,7 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	// Casts a QVV transform float32 variant to a float64 variant.
 	//////////////////////////////////////////////////////////////////////////
-	inline qvvd qvv_cast(const qvvf& input) RTM_NO_EXCEPT
+	RTM_DISABLE_SECURITY_COOKIE_CHECK inline qvvd qvv_cast(const qvvf& input) RTM_NO_EXCEPT
 	{
 		return qvvd{ quat_cast(input.rotation), vector_cast(input.translation), vector_cast(input.scale) };
 	}
@@ -50,7 +50,7 @@ namespace rtm
 	// NOTE: When scale is present, multiplication will not properly handle skew/shear,
 	// use affine matrices if you have issues.
 	//////////////////////////////////////////////////////////////////////////
-	inline qvvd qvv_mul(const qvvd& lhs, const qvvd& rhs) RTM_NO_EXCEPT
+	RTM_DISABLE_SECURITY_COOKIE_CHECK inline qvvd qvv_mul(const qvvd& lhs, const qvvd& rhs) RTM_NO_EXCEPT
 	{
 		const vector4d min_scale = vector_min(lhs.scale, rhs.scale);
 		const vector4d scale = vector_mul(lhs.scale, rhs.scale);
@@ -85,7 +85,7 @@ namespace rtm
 	// The resulting QVV transform with have a [1,1,1] 3D scale.
 	// Multiplication order is as follow: local_to_world = qvv_mul(local_to_object, object_to_world)
 	//////////////////////////////////////////////////////////////////////////
-	inline qvvd qvv_mul_no_scale(const qvvd& lhs, const qvvd& rhs) RTM_NO_EXCEPT
+	RTM_DISABLE_SECURITY_COOKIE_CHECK inline qvvd qvv_mul_no_scale(const qvvd& lhs, const qvvd& rhs) RTM_NO_EXCEPT
 	{
 		const quatd rotation = quat_mul(lhs.rotation, rhs.rotation);
 		const vector4d translation = vector_add(quat_mul_vector3(lhs.translation, rhs.rotation), rhs.translation);
@@ -96,7 +96,7 @@ namespace rtm
 	// Multiplies a QVV transform and a 3D point.
 	// Multiplication order is as follow: world_position = qvv_mul_point3(local_position, local_to_world)
 	//////////////////////////////////////////////////////////////////////////
-	inline vector4d qvv_mul_point3(const vector4d& point, const qvvd& qvv) RTM_NO_EXCEPT
+	RTM_DISABLE_SECURITY_COOKIE_CHECK inline vector4d qvv_mul_point3(const vector4d& point, const qvvd& qvv) RTM_NO_EXCEPT
 	{
 		return vector_add(quat_mul_vector3(vector_mul(point, qvv.scale), qvv.rotation), qvv.translation);
 	}
@@ -105,7 +105,7 @@ namespace rtm
 	// Multiplies a QVV transform and a 3D point ignoring 3D scale.
 	// Multiplication order is as follow: world_position = qvv_mul_point3_no_scale(local_position, local_to_world)
 	//////////////////////////////////////////////////////////////////////////
-	inline vector4d qvv_mul_point3_no_scale(const vector4d& point, const qvvd& qvv) RTM_NO_EXCEPT
+	RTM_DISABLE_SECURITY_COOKIE_CHECK inline vector4d qvv_mul_point3_no_scale(const vector4d& point, const qvvd& qvv) RTM_NO_EXCEPT
 	{
 		return vector_add(quat_mul_vector3(point, qvv.rotation), qvv.translation);
 	}
@@ -113,7 +113,7 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	// Returns the inverse of the input QVV transform.
 	//////////////////////////////////////////////////////////////////////////
-	inline qvvd qvv_inverse(const qvvd& input) RTM_NO_EXCEPT
+	RTM_DISABLE_SECURITY_COOKIE_CHECK inline qvvd qvv_inverse(const qvvd& input) RTM_NO_EXCEPT
 	{
 		const quatd inv_rotation = quat_conjugate(input.rotation);
 		const vector4d inv_scale = vector_reciprocal(input.scale);
@@ -125,7 +125,7 @@ namespace rtm
 	// Returns the inverse of the input QVV transform ignoring 3D scale.
 	// The resulting QVV transform with have a [1,1,1] 3D scale.
 	//////////////////////////////////////////////////////////////////////////
-	inline qvvd qvv_inverse_no_scale(const qvvd& input) RTM_NO_EXCEPT
+	RTM_DISABLE_SECURITY_COOKIE_CHECK inline qvvd qvv_inverse_no_scale(const qvvd& input) RTM_NO_EXCEPT
 	{
 		const quatd inv_rotation = quat_conjugate(input.rotation);
 		const vector4d inv_translation = vector_neg(quat_mul_vector3(input.translation, inv_rotation));
@@ -135,7 +135,7 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	// Returns a QVV transforms with the rotation part normalized.
 	//////////////////////////////////////////////////////////////////////////
-	inline qvvd qvv_normalize(const qvvd& input) RTM_NO_EXCEPT
+	RTM_DISABLE_SECURITY_COOKIE_CHECK inline qvvd qvv_normalize(const qvvd& input) RTM_NO_EXCEPT
 	{
 		const quatd rotation = quat_normalize(input.rotation);
 		return qvv_set(rotation, input.translation, input.scale);
