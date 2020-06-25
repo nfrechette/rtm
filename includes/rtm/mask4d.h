@@ -35,7 +35,7 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	// Returns the mask4d [x] component.
 	//////////////////////////////////////////////////////////////////////////
-	inline uint64_t RTM_SIMD_CALL mask_get_x(const mask4d& input) RTM_NO_EXCEPT
+	RTM_DISABLE_SECURITY_COOKIE_CHECK inline uint64_t RTM_SIMD_CALL mask_get_x(const mask4d& input) RTM_NO_EXCEPT
 	{
 #if defined(RTM_SSE2_INTRINSICS)
 #if defined(_M_X64)
@@ -52,7 +52,7 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	// Returns the mask4d [y] component.
 	//////////////////////////////////////////////////////////////////////////
-	inline uint64_t RTM_SIMD_CALL mask_get_y(const mask4d& input) RTM_NO_EXCEPT
+	RTM_DISABLE_SECURITY_COOKIE_CHECK inline uint64_t RTM_SIMD_CALL mask_get_y(const mask4d& input) RTM_NO_EXCEPT
 	{
 #if defined(RTM_SSE2_INTRINSICS)
 #if defined(_M_X64)
@@ -69,7 +69,7 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	// Returns the mask4d [z] component.
 	//////////////////////////////////////////////////////////////////////////
-	inline uint64_t RTM_SIMD_CALL mask_get_z(const mask4d& input) RTM_NO_EXCEPT
+	RTM_DISABLE_SECURITY_COOKIE_CHECK inline uint64_t RTM_SIMD_CALL mask_get_z(const mask4d& input) RTM_NO_EXCEPT
 	{
 #if defined(RTM_SSE2_INTRINSICS)
 #if defined(_M_X64)
@@ -86,7 +86,7 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	// Returns the mask4d [w] component.
 	//////////////////////////////////////////////////////////////////////////
-	inline uint64_t RTM_SIMD_CALL mask_get_w(const mask4d& input) RTM_NO_EXCEPT
+	RTM_DISABLE_SECURITY_COOKIE_CHECK inline uint64_t RTM_SIMD_CALL mask_get_w(const mask4d& input) RTM_NO_EXCEPT
 	{
 #if defined(RTM_SSE2_INTRINSICS)
 #if defined(_M_X64)
@@ -103,7 +103,7 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	// Returns true if all 4 components are true, otherwise false: all(input != 0)
 	//////////////////////////////////////////////////////////////////////////
-	inline bool RTM_SIMD_CALL mask_all_true(const mask4d& input) RTM_NO_EXCEPT
+	RTM_DISABLE_SECURITY_COOKIE_CHECK inline bool RTM_SIMD_CALL mask_all_true(const mask4d& input) RTM_NO_EXCEPT
 	{
 #if defined(RTM_SSE2_INTRINSICS)
 		return (_mm_movemask_pd(input.xy) & _mm_movemask_pd(input.zw)) == 3;
@@ -115,7 +115,7 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	// Returns true if all [xy] components are true, otherwise false: all(input != 0)
 	//////////////////////////////////////////////////////////////////////////
-	inline bool RTM_SIMD_CALL mask_all_true2(const mask4d& input) RTM_NO_EXCEPT
+	RTM_DISABLE_SECURITY_COOKIE_CHECK inline bool RTM_SIMD_CALL mask_all_true2(const mask4d& input) RTM_NO_EXCEPT
 	{
 #if defined(RTM_SSE2_INTRINSICS)
 		return _mm_movemask_pd(input.xy) == 3;
@@ -127,7 +127,7 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	// Returns true if all [xyz] components are true, otherwise false: all(input != 0)
 	//////////////////////////////////////////////////////////////////////////
-	inline bool RTM_SIMD_CALL mask_all_true3(const mask4d& input) RTM_NO_EXCEPT
+	RTM_DISABLE_SECURITY_COOKIE_CHECK inline bool RTM_SIMD_CALL mask_all_true3(const mask4d& input) RTM_NO_EXCEPT
 	{
 #if defined(RTM_SSE2_INTRINSICS)
 		return _mm_movemask_pd(input.xy) == 3 && (_mm_movemask_pd(input.zw) & 1) != 0;
@@ -139,7 +139,7 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	// Returns true if any 4 components are true, otherwise false: any(input != 0)
 	//////////////////////////////////////////////////////////////////////////
-	inline bool RTM_SIMD_CALL mask_any_true(const mask4d& input) RTM_NO_EXCEPT
+	RTM_DISABLE_SECURITY_COOKIE_CHECK inline bool RTM_SIMD_CALL mask_any_true(const mask4d& input) RTM_NO_EXCEPT
 	{
 #if defined(RTM_SSE2_INTRINSICS)
 		return (_mm_movemask_pd(input.xy) | _mm_movemask_pd(input.zw)) != 0;
@@ -151,7 +151,7 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	// Returns true if any [xy] components are true, otherwise false: any(input != 0)
 	//////////////////////////////////////////////////////////////////////////
-	inline bool RTM_SIMD_CALL mask_any_true2(const mask4d& input) RTM_NO_EXCEPT
+	RTM_DISABLE_SECURITY_COOKIE_CHECK inline bool RTM_SIMD_CALL mask_any_true2(const mask4d& input) RTM_NO_EXCEPT
 	{
 #if defined(RTM_SSE2_INTRINSICS)
 		return _mm_movemask_pd(input.xy) != 0;
@@ -163,7 +163,7 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	// Returns true if any [xyz] components are true, otherwise false: any(input != 0)
 	//////////////////////////////////////////////////////////////////////////
-	inline bool RTM_SIMD_CALL mask_any_true3(const mask4d& input) RTM_NO_EXCEPT
+	RTM_DISABLE_SECURITY_COOKIE_CHECK inline bool RTM_SIMD_CALL mask_any_true3(const mask4d& input) RTM_NO_EXCEPT
 	{
 #if defined(RTM_SSE2_INTRINSICS)
 		return _mm_movemask_pd(input.xy) != 0 || (_mm_movemask_pd(input.zw) & 1) != 0;

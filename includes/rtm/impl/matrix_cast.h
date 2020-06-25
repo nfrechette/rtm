@@ -44,35 +44,35 @@ namespace rtm
 		template<>
 		struct matrix_caster<matrix3x3f>
 		{
-			constexpr explicit matrix_caster(const matrix3x3f& mtx_) RTM_NO_EXCEPT : mtx(mtx_) {}
+			RTM_DISABLE_SECURITY_COOKIE_CHECK constexpr explicit matrix_caster(const matrix3x3f& mtx_) RTM_NO_EXCEPT : mtx(mtx_) {}
 
-			constexpr RTM_SIMD_CALL operator matrix3x3f() const RTM_NO_EXCEPT
+			RTM_DISABLE_SECURITY_COOKIE_CHECK constexpr RTM_SIMD_CALL operator matrix3x3f() const RTM_NO_EXCEPT
 			{
 				return mtx;
 			}
 
-			inline RTM_SIMD_CALL operator matrix3x3d() const RTM_NO_EXCEPT
+			RTM_DISABLE_SECURITY_COOKIE_CHECK inline RTM_SIMD_CALL operator matrix3x3d() const RTM_NO_EXCEPT
 			{
 				return matrix3x3d{ vector_cast(mtx.x_axis), vector_cast(mtx.y_axis), vector_cast(mtx.z_axis) };
 			}
 
-			inline RTM_SIMD_CALL operator matrix3x4f() const RTM_NO_EXCEPT
+			RTM_DISABLE_SECURITY_COOKIE_CHECK inline RTM_SIMD_CALL operator matrix3x4f() const RTM_NO_EXCEPT
 			{
 				return matrix3x4f{ mtx.x_axis, mtx.y_axis, mtx.z_axis, vector_zero() };
 			}
 
-			inline RTM_SIMD_CALL operator matrix3x4d() const RTM_NO_EXCEPT
+			RTM_DISABLE_SECURITY_COOKIE_CHECK inline RTM_SIMD_CALL operator matrix3x4d() const RTM_NO_EXCEPT
 			{
 				const vector4d z_axis = vector_cast(mtx.z_axis);
 				return matrix3x4d{ vector_cast(mtx.x_axis), vector_cast(mtx.y_axis), z_axis, z_axis };
 			}
 
-			constexpr RTM_SIMD_CALL operator matrix4x4f() const RTM_NO_EXCEPT
+			RTM_DISABLE_SECURITY_COOKIE_CHECK constexpr RTM_SIMD_CALL operator matrix4x4f() const RTM_NO_EXCEPT
 			{
 				return matrix4x4f{ mtx.x_axis, mtx.y_axis, mtx.z_axis, mtx.z_axis };
 			}
 
-			inline RTM_SIMD_CALL operator matrix4x4d() const RTM_NO_EXCEPT
+			RTM_DISABLE_SECURITY_COOKIE_CHECK inline RTM_SIMD_CALL operator matrix4x4d() const RTM_NO_EXCEPT
 			{
 				const vector4d z_axis = vector_cast(mtx.z_axis);
 				return matrix4x4d{ vector_cast(mtx.x_axis), vector_cast(mtx.y_axis), z_axis, z_axis };
@@ -84,36 +84,36 @@ namespace rtm
 		template<>
 		struct matrix_caster<matrix3x3d>
 		{
-			constexpr explicit matrix_caster(const matrix3x3d& mtx_) RTM_NO_EXCEPT : mtx(mtx_) {}
+			RTM_DISABLE_SECURITY_COOKIE_CHECK constexpr explicit matrix_caster(const matrix3x3d& mtx_) RTM_NO_EXCEPT : mtx(mtx_) {}
 
-			inline RTM_SIMD_CALL operator matrix3x3f() const RTM_NO_EXCEPT
+			RTM_DISABLE_SECURITY_COOKIE_CHECK inline RTM_SIMD_CALL operator matrix3x3f() const RTM_NO_EXCEPT
 			{
 				return matrix3x3f{ vector_cast(mtx.x_axis), vector_cast(mtx.y_axis), vector_cast(mtx.z_axis) };
 			}
 
-			constexpr RTM_SIMD_CALL operator matrix3x3d() const RTM_NO_EXCEPT
+			RTM_DISABLE_SECURITY_COOKIE_CHECK constexpr RTM_SIMD_CALL operator matrix3x3d() const RTM_NO_EXCEPT
 			{
 				return mtx;
 			}
 
-			inline RTM_SIMD_CALL operator matrix3x4f() const RTM_NO_EXCEPT
+			RTM_DISABLE_SECURITY_COOKIE_CHECK inline RTM_SIMD_CALL operator matrix3x4f() const RTM_NO_EXCEPT
 			{
 				const vector4f z_axis = vector_cast(mtx.z_axis);
 				return matrix3x4f{ vector_cast(mtx.x_axis), vector_cast(mtx.y_axis), z_axis, z_axis };
 			}
 
-			inline RTM_SIMD_CALL operator matrix3x4d() const RTM_NO_EXCEPT
+			RTM_DISABLE_SECURITY_COOKIE_CHECK inline RTM_SIMD_CALL operator matrix3x4d() const RTM_NO_EXCEPT
 			{
 				return matrix3x4d{ mtx.x_axis, mtx.y_axis, mtx.z_axis, vector_zero() };
 			}
 
-			inline RTM_SIMD_CALL operator matrix4x4f() const RTM_NO_EXCEPT
+			RTM_DISABLE_SECURITY_COOKIE_CHECK inline RTM_SIMD_CALL operator matrix4x4f() const RTM_NO_EXCEPT
 			{
 				const vector4f z_axis = vector_cast(mtx.z_axis);
 				return matrix4x4f{ vector_cast(mtx.x_axis), vector_cast(mtx.y_axis), z_axis, z_axis };
 			}
 
-			constexpr RTM_SIMD_CALL operator matrix4x4d() const RTM_NO_EXCEPT
+			RTM_DISABLE_SECURITY_COOKIE_CHECK constexpr RTM_SIMD_CALL operator matrix4x4d() const RTM_NO_EXCEPT
 			{
 				return matrix4x4d{ mtx.x_axis, mtx.y_axis, mtx.z_axis, mtx.z_axis };
 			}
@@ -124,34 +124,34 @@ namespace rtm
 		template<>
 		struct matrix_caster<matrix3x4f>
 		{
-			constexpr explicit matrix_caster(const matrix3x4f& mtx_) RTM_NO_EXCEPT : mtx(mtx_) {}
+			RTM_DISABLE_SECURITY_COOKIE_CHECK constexpr explicit matrix_caster(const matrix3x4f& mtx_) RTM_NO_EXCEPT : mtx(mtx_) {}
 
-			constexpr RTM_SIMD_CALL operator matrix3x3f() const RTM_NO_EXCEPT
+			RTM_DISABLE_SECURITY_COOKIE_CHECK constexpr RTM_SIMD_CALL operator matrix3x3f() const RTM_NO_EXCEPT
 			{
 				return matrix3x3f{ mtx.x_axis, mtx.y_axis, mtx.z_axis };
 			}
 
-			inline RTM_SIMD_CALL operator matrix3x3d() const RTM_NO_EXCEPT
+			RTM_DISABLE_SECURITY_COOKIE_CHECK inline RTM_SIMD_CALL operator matrix3x3d() const RTM_NO_EXCEPT
 			{
 				return matrix3x3d{ vector_cast(mtx.x_axis), vector_cast(mtx.y_axis), vector_cast(mtx.z_axis) };
 			}
 
-			constexpr RTM_SIMD_CALL operator matrix3x4f() const RTM_NO_EXCEPT
+			RTM_DISABLE_SECURITY_COOKIE_CHECK constexpr RTM_SIMD_CALL operator matrix3x4f() const RTM_NO_EXCEPT
 			{
 				return mtx;
 			}
 
-			inline RTM_SIMD_CALL operator matrix3x4d() const RTM_NO_EXCEPT
+			RTM_DISABLE_SECURITY_COOKIE_CHECK inline RTM_SIMD_CALL operator matrix3x4d() const RTM_NO_EXCEPT
 			{
 				return matrix3x4d{ vector_cast(mtx.x_axis), vector_cast(mtx.y_axis), vector_cast(mtx.z_axis), vector_cast(mtx.w_axis) };
 			}
 
-			constexpr RTM_SIMD_CALL operator matrix4x4f() const RTM_NO_EXCEPT
+			RTM_DISABLE_SECURITY_COOKIE_CHECK constexpr RTM_SIMD_CALL operator matrix4x4f() const RTM_NO_EXCEPT
 			{
 				return matrix4x4f{ mtx.x_axis, mtx.y_axis, mtx.z_axis, mtx.w_axis };
 			}
 
-			inline RTM_SIMD_CALL operator matrix4x4d() const RTM_NO_EXCEPT
+			RTM_DISABLE_SECURITY_COOKIE_CHECK inline RTM_SIMD_CALL operator matrix4x4d() const RTM_NO_EXCEPT
 			{
 				return matrix4x4d{ vector_cast(mtx.x_axis), vector_cast(mtx.y_axis), vector_cast(mtx.z_axis), vector_cast(mtx.w_axis) };
 			}
@@ -162,34 +162,34 @@ namespace rtm
 		template<>
 		struct matrix_caster<matrix3x4d>
 		{
-			constexpr explicit matrix_caster(const matrix3x4d& mtx_) RTM_NO_EXCEPT : mtx(mtx_) {}
+			RTM_DISABLE_SECURITY_COOKIE_CHECK constexpr explicit matrix_caster(const matrix3x4d& mtx_) RTM_NO_EXCEPT : mtx(mtx_) {}
 
-			inline RTM_SIMD_CALL operator matrix3x3f() const RTM_NO_EXCEPT
+			RTM_DISABLE_SECURITY_COOKIE_CHECK inline RTM_SIMD_CALL operator matrix3x3f() const RTM_NO_EXCEPT
 			{
 				return matrix3x3f{ vector_cast(mtx.x_axis), vector_cast(mtx.y_axis), vector_cast(mtx.z_axis) };
 			}
 
-			constexpr RTM_SIMD_CALL operator matrix3x3d() const RTM_NO_EXCEPT
+			RTM_DISABLE_SECURITY_COOKIE_CHECK constexpr RTM_SIMD_CALL operator matrix3x3d() const RTM_NO_EXCEPT
 			{
 				return matrix3x3d{ mtx.x_axis, mtx.y_axis, mtx.z_axis };
 			}
 
-			inline RTM_SIMD_CALL operator matrix3x4f() const RTM_NO_EXCEPT
+			RTM_DISABLE_SECURITY_COOKIE_CHECK inline RTM_SIMD_CALL operator matrix3x4f() const RTM_NO_EXCEPT
 			{
 				return matrix3x4f{ vector_cast(mtx.x_axis), vector_cast(mtx.y_axis), vector_cast(mtx.z_axis), vector_cast(mtx.w_axis) };
 			}
 
-			constexpr RTM_SIMD_CALL operator matrix3x4d() const RTM_NO_EXCEPT
+			RTM_DISABLE_SECURITY_COOKIE_CHECK constexpr RTM_SIMD_CALL operator matrix3x4d() const RTM_NO_EXCEPT
 			{
 				return mtx;
 			}
 
-			inline RTM_SIMD_CALL operator matrix4x4f() const RTM_NO_EXCEPT
+			RTM_DISABLE_SECURITY_COOKIE_CHECK inline RTM_SIMD_CALL operator matrix4x4f() const RTM_NO_EXCEPT
 			{
 				return matrix4x4f{ vector_cast(mtx.x_axis), vector_cast(mtx.y_axis), vector_cast(mtx.z_axis), vector_cast(mtx.w_axis) };
 			}
 
-			constexpr RTM_SIMD_CALL operator matrix4x4d() const RTM_NO_EXCEPT
+			RTM_DISABLE_SECURITY_COOKIE_CHECK constexpr RTM_SIMD_CALL operator matrix4x4d() const RTM_NO_EXCEPT
 			{
 				return matrix4x4d{ mtx.x_axis, mtx.y_axis, mtx.z_axis, mtx.w_axis };
 			}
@@ -200,34 +200,34 @@ namespace rtm
 		template<>
 		struct matrix_caster<matrix4x4f>
 		{
-			constexpr explicit matrix_caster(const matrix4x4f& mtx_) RTM_NO_EXCEPT : mtx(mtx_) {}
+			RTM_DISABLE_SECURITY_COOKIE_CHECK constexpr explicit matrix_caster(const matrix4x4f& mtx_) RTM_NO_EXCEPT : mtx(mtx_) {}
 
-			constexpr RTM_SIMD_CALL operator matrix3x3f() const RTM_NO_EXCEPT
+			RTM_DISABLE_SECURITY_COOKIE_CHECK constexpr RTM_SIMD_CALL operator matrix3x3f() const RTM_NO_EXCEPT
 			{
 				return matrix3x3f{ mtx.x_axis, mtx.y_axis, mtx.z_axis };
 			}
 
-			inline RTM_SIMD_CALL operator matrix3x3d() const RTM_NO_EXCEPT
+			RTM_DISABLE_SECURITY_COOKIE_CHECK inline RTM_SIMD_CALL operator matrix3x3d() const RTM_NO_EXCEPT
 			{
 				return matrix3x3d{ vector_cast(mtx.x_axis), vector_cast(mtx.y_axis), vector_cast(mtx.z_axis) };
 			}
 
-			constexpr RTM_SIMD_CALL operator matrix3x4f() const RTM_NO_EXCEPT
+			RTM_DISABLE_SECURITY_COOKIE_CHECK constexpr RTM_SIMD_CALL operator matrix3x4f() const RTM_NO_EXCEPT
 			{
 				return matrix3x4f{ mtx.x_axis, mtx.y_axis, mtx.z_axis, mtx.w_axis };
 			}
 
-			inline RTM_SIMD_CALL operator matrix3x4d() const RTM_NO_EXCEPT
+			RTM_DISABLE_SECURITY_COOKIE_CHECK inline RTM_SIMD_CALL operator matrix3x4d() const RTM_NO_EXCEPT
 			{
 				return matrix3x4d{ vector_cast(mtx.x_axis), vector_cast(mtx.y_axis), vector_cast(mtx.z_axis), vector_cast(mtx.w_axis) };
 			}
 
-			constexpr RTM_SIMD_CALL operator matrix4x4f() const RTM_NO_EXCEPT
+			RTM_DISABLE_SECURITY_COOKIE_CHECK constexpr RTM_SIMD_CALL operator matrix4x4f() const RTM_NO_EXCEPT
 			{
 				return mtx;
 			}
 
-			inline RTM_SIMD_CALL operator matrix4x4d() const RTM_NO_EXCEPT
+			RTM_DISABLE_SECURITY_COOKIE_CHECK inline RTM_SIMD_CALL operator matrix4x4d() const RTM_NO_EXCEPT
 			{
 				return matrix4x4d{ vector_cast(mtx.x_axis), vector_cast(mtx.y_axis), vector_cast(mtx.z_axis), vector_cast(mtx.w_axis) };
 			}
@@ -238,34 +238,34 @@ namespace rtm
 		template<>
 		struct matrix_caster<matrix4x4d>
 		{
-			constexpr explicit matrix_caster(const matrix4x4d& mtx_) RTM_NO_EXCEPT : mtx(mtx_) {}
+			RTM_DISABLE_SECURITY_COOKIE_CHECK constexpr explicit matrix_caster(const matrix4x4d& mtx_) RTM_NO_EXCEPT : mtx(mtx_) {}
 
-			inline RTM_SIMD_CALL operator matrix3x3f() const RTM_NO_EXCEPT
+			RTM_DISABLE_SECURITY_COOKIE_CHECK inline RTM_SIMD_CALL operator matrix3x3f() const RTM_NO_EXCEPT
 			{
 				return matrix3x3f{ vector_cast(mtx.x_axis), vector_cast(mtx.y_axis), vector_cast(mtx.z_axis) };
 			}
 
-			constexpr RTM_SIMD_CALL operator matrix3x3d() const RTM_NO_EXCEPT
+			RTM_DISABLE_SECURITY_COOKIE_CHECK constexpr RTM_SIMD_CALL operator matrix3x3d() const RTM_NO_EXCEPT
 			{
 				return matrix3x3d{ mtx.x_axis, mtx.y_axis, mtx.z_axis };
 			}
 
-			inline RTM_SIMD_CALL operator matrix3x4f() const RTM_NO_EXCEPT
+			RTM_DISABLE_SECURITY_COOKIE_CHECK inline RTM_SIMD_CALL operator matrix3x4f() const RTM_NO_EXCEPT
 			{
 				return matrix3x4f{ vector_cast(mtx.x_axis), vector_cast(mtx.y_axis), vector_cast(mtx.z_axis), vector_cast(mtx.w_axis) };
 			}
 
-			constexpr RTM_SIMD_CALL operator matrix3x4d() const RTM_NO_EXCEPT
+			RTM_DISABLE_SECURITY_COOKIE_CHECK constexpr RTM_SIMD_CALL operator matrix3x4d() const RTM_NO_EXCEPT
 			{
 				return matrix3x4d{ mtx.x_axis, mtx.y_axis, mtx.z_axis, mtx.w_axis };
 			}
 
-			inline RTM_SIMD_CALL operator matrix4x4f() const RTM_NO_EXCEPT
+			RTM_DISABLE_SECURITY_COOKIE_CHECK inline RTM_SIMD_CALL operator matrix4x4f() const RTM_NO_EXCEPT
 			{
 				return matrix4x4f{ vector_cast(mtx.x_axis), vector_cast(mtx.y_axis), vector_cast(mtx.z_axis), vector_cast(mtx.w_axis) };
 			}
 
-			constexpr RTM_SIMD_CALL operator matrix4x4d() const RTM_NO_EXCEPT
+			RTM_DISABLE_SECURITY_COOKIE_CHECK constexpr RTM_SIMD_CALL operator matrix4x4d() const RTM_NO_EXCEPT
 			{
 				return mtx;
 			}
@@ -280,7 +280,7 @@ namespace rtm
 	// undefined.
 	//////////////////////////////////////////////////////////////////////////
 	template<typename matrix_type>
-	constexpr rtm_impl::matrix_caster<matrix_type> RTM_SIMD_CALL matrix_cast(const matrix_type& input) RTM_NO_EXCEPT
+	RTM_DISABLE_SECURITY_COOKIE_CHECK constexpr rtm_impl::matrix_caster<matrix_type> RTM_SIMD_CALL matrix_cast(const matrix_type& input) RTM_NO_EXCEPT
 	{
 		return rtm_impl::matrix_caster<matrix_type>(input);
 	}

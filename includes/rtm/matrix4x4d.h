@@ -37,7 +37,7 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	// Returns the desired 4x4 matrix axis.
 	//////////////////////////////////////////////////////////////////////////
-	constexpr const vector4d& matrix_get_axis(const matrix4x4d& input, axis4 axis) RTM_NO_EXCEPT
+	RTM_DISABLE_SECURITY_COOKIE_CHECK constexpr const vector4d& matrix_get_axis(const matrix4x4d& input, axis4 axis) RTM_NO_EXCEPT
 	{
 		return axis == axis4::x ? input.x_axis : (axis == axis4::y ? input.y_axis : (axis == axis4::z ? input.z_axis : input.w_axis));
 	}
@@ -46,7 +46,7 @@ namespace rtm
 	// Multiplies two 4x4 matrices.
 	// Multiplication order is as follow: local_to_world = matrix_mul(local_to_object, object_to_world)
 	//////////////////////////////////////////////////////////////////////////
-	inline matrix4x4d RTM_SIMD_CALL matrix_mul(const matrix4x4d& lhs, const matrix4x4d& rhs) RTM_NO_EXCEPT
+	RTM_DISABLE_SECURITY_COOKIE_CHECK inline matrix4x4d RTM_SIMD_CALL matrix_mul(const matrix4x4d& lhs, const matrix4x4d& rhs) RTM_NO_EXCEPT
 	{
 		vector4d tmp = vector_mul(vector_dup_x(lhs.x_axis), rhs.x_axis);
 		tmp = vector_mul_add(vector_dup_y(lhs.x_axis), rhs.y_axis, tmp);
@@ -74,7 +74,7 @@ namespace rtm
 	// Multiplies a 4x4 matrix and a 4D vector.
 	// Multiplication order is as follow: world_position = matrix_mul(local_position, local_to_world)
 	//////////////////////////////////////////////////////////////////////////
-	inline vector4d RTM_SIMD_CALL matrix_mul_vector(const vector4d& vec4, const matrix4x4d& mtx) RTM_NO_EXCEPT
+	RTM_DISABLE_SECURITY_COOKIE_CHECK inline vector4d RTM_SIMD_CALL matrix_mul_vector(const vector4d& vec4, const matrix4x4d& mtx) RTM_NO_EXCEPT
 	{
 		vector4d tmp;
 
@@ -89,7 +89,7 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	// Transposes a 4x4 matrix.
 	//////////////////////////////////////////////////////////////////////////
-	inline matrix4x4d RTM_SIMD_CALL matrix_transpose(const matrix4x4d& input) RTM_NO_EXCEPT
+	RTM_DISABLE_SECURITY_COOKIE_CHECK inline matrix4x4d RTM_SIMD_CALL matrix_transpose(const matrix4x4d& input) RTM_NO_EXCEPT
 	{
 		vector4d tmp0 = vector_mix<mix4::x, mix4::y, mix4::a, mix4::b>(input.x_axis, input.y_axis);
 		vector4d tmp1 = vector_mix<mix4::z, mix4::w, mix4::c, mix4::d>(input.x_axis, input.y_axis);
@@ -108,7 +108,7 @@ namespace rtm
 	// If the input matrix is not invertible, the result is undefined.
 	// For a safe alternative, supply a fallback value and a threshold.
 	//////////////////////////////////////////////////////////////////////////
-	inline matrix4x4d RTM_SIMD_CALL matrix_inverse(const matrix4x4d& input) RTM_NO_EXCEPT
+	RTM_DISABLE_SECURITY_COOKIE_CHECK inline matrix4x4d RTM_SIMD_CALL matrix_inverse(const matrix4x4d& input) RTM_NO_EXCEPT
 	{
 		matrix4x4d input_transposed = matrix_transpose(input);
 
@@ -202,7 +202,7 @@ namespace rtm
 	// If the input matrix has a determinant whose absolute value is below the supplied threshold, the
 	// fall back value is returned instead.
 	//////////////////////////////////////////////////////////////////////////
-	inline matrix4x4d RTM_SIMD_CALL matrix_inverse(const matrix4x4d& input, const matrix4x4d& fallback, double threshold = 1.0E-8) RTM_NO_EXCEPT
+	RTM_DISABLE_SECURITY_COOKIE_CHECK inline matrix4x4d RTM_SIMD_CALL matrix_inverse(const matrix4x4d& input, const matrix4x4d& fallback, double threshold = 1.0E-8) RTM_NO_EXCEPT
 	{
 		matrix4x4d input_transposed = matrix_transpose(input);
 
@@ -297,7 +297,7 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	// Returns the determinant of the input 4x4 matrix.
 	//////////////////////////////////////////////////////////////////////////
-	inline scalard RTM_SIMD_CALL matrix_determinant(const matrix4x4d& input) RTM_NO_EXCEPT
+	RTM_DISABLE_SECURITY_COOKIE_CHECK inline scalard RTM_SIMD_CALL matrix_determinant(const matrix4x4d& input) RTM_NO_EXCEPT
 	{
 		matrix4x4d input_transposed = matrix_transpose(input);
 
@@ -377,7 +377,7 @@ namespace rtm
 	// The minor is the determinant of the sub-matrix input when the specified
 	// row and column are removed.
 	//////////////////////////////////////////////////////////////////////////
-	inline scalard RTM_SIMD_CALL matrix_minor(const matrix4x4d& input, axis4 row, axis4 column) RTM_NO_EXCEPT
+	RTM_DISABLE_SECURITY_COOKIE_CHECK inline scalard RTM_SIMD_CALL matrix_minor(const matrix4x4d& input, axis4 row, axis4 column) RTM_NO_EXCEPT
 	{
 		vector4d row0;
 		vector4d row1;
@@ -441,7 +441,7 @@ namespace rtm
 	// Returns the cofactor matrix of the input 4x4 matrix.
 	// See: https://en.wikipedia.org/wiki/Minor_(linear_algebra)#Cofactor_expansion_of_the_determinant
 	//////////////////////////////////////////////////////////////////////////
-	inline matrix4x4d RTM_SIMD_CALL matrix_cofactor(const matrix4x4d& input) RTM_NO_EXCEPT
+	RTM_DISABLE_SECURITY_COOKIE_CHECK inline matrix4x4d RTM_SIMD_CALL matrix_cofactor(const matrix4x4d& input) RTM_NO_EXCEPT
 	{
 		const scalard minor_xx = matrix_minor(input, axis4::x, axis4::x);
 		const scalard minor_xy = matrix_minor(input, axis4::x, axis4::y);
@@ -477,7 +477,7 @@ namespace rtm
 	// Returns the adjugate of the input matrix.
 	// See: https://en.wikipedia.org/wiki/Adjugate_matrix
 	//////////////////////////////////////////////////////////////////////////
-	inline matrix4x4d RTM_SIMD_CALL matrix_adjugate(const matrix4x4d& input) RTM_NO_EXCEPT
+	RTM_DISABLE_SECURITY_COOKIE_CHECK inline matrix4x4d RTM_SIMD_CALL matrix_adjugate(const matrix4x4d& input) RTM_NO_EXCEPT
 	{
 		return matrix_transpose(matrix_cofactor(input));
 	}

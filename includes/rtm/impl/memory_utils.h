@@ -60,7 +60,7 @@ namespace rtm
 		//////////////////////////////////////////////////////////////////////////
 		// Returns true if the input is a power of two, false otherwise.
 		//////////////////////////////////////////////////////////////////////////
-		constexpr bool is_power_of_two(size_t input) RTM_NO_EXCEPT
+		RTM_DISABLE_SECURITY_COOKIE_CHECK constexpr bool is_power_of_two(size_t input) RTM_NO_EXCEPT
 		{
 			return input != 0 && (input & (input - 1)) == 0;
 		}
@@ -69,7 +69,7 @@ namespace rtm
 		// Returns true if the alignment provided satisfies the requirement for the provided Type, false otherwise.
 		//////////////////////////////////////////////////////////////////////////
 		template<typename Type>
-		constexpr bool is_alignment_valid(size_t alignment) RTM_NO_EXCEPT
+		RTM_DISABLE_SECURITY_COOKIE_CHECK constexpr bool is_alignment_valid(size_t alignment) RTM_NO_EXCEPT
 		{
 			return is_power_of_two(alignment) && alignment >= alignof(Type);
 		}
@@ -78,7 +78,7 @@ namespace rtm
 		// Returns true if the pointer provided satisfies the specified alignment, false otherwise.
 		//////////////////////////////////////////////////////////////////////////
 		template<typename PtrType>
-		inline bool is_aligned_to(PtrType* value, size_t alignment) RTM_NO_EXCEPT
+		RTM_DISABLE_SECURITY_COOKIE_CHECK inline bool is_aligned_to(PtrType* value, size_t alignment) RTM_NO_EXCEPT
 		{
 			RTM_ASSERT(is_power_of_two(alignment), "Alignment value must be a power of two");
 			return (reinterpret_cast<intptr_t>(value) & (alignment - 1)) == 0;
@@ -88,7 +88,7 @@ namespace rtm
 		// Returns true if the integral value provided satisfies the specified alignment, false otherwise.
 		//////////////////////////////////////////////////////////////////////////
 		template<typename IntegralType>
-		inline bool is_aligned_to(IntegralType value, size_t alignment) RTM_NO_EXCEPT
+		RTM_DISABLE_SECURITY_COOKIE_CHECK inline bool is_aligned_to(IntegralType value, size_t alignment) RTM_NO_EXCEPT
 		{
 			RTM_ASSERT(is_power_of_two(alignment), "Alignment value must be a power of two");
 			return (static_cast<size_t>(value) & (alignment - 1)) == 0;
@@ -98,7 +98,7 @@ namespace rtm
 		// Returns true if the provided pointer satisfies the alignment of PtrType, false otherwise.
 		//////////////////////////////////////////////////////////////////////////
 		template<typename PtrType>
-		constexpr bool is_aligned(PtrType* value) RTM_NO_EXCEPT
+		RTM_DISABLE_SECURITY_COOKIE_CHECK constexpr bool is_aligned(PtrType* value) RTM_NO_EXCEPT
 		{
 			return is_aligned_to(value, alignof(PtrType));
 		}
@@ -107,7 +107,7 @@ namespace rtm
 		// The input pointer is rounded up to the desired alignment.
 		//////////////////////////////////////////////////////////////////////////
 		template<typename PtrType>
-		inline PtrType* align_to(PtrType* value, size_t alignment) RTM_NO_EXCEPT
+		RTM_DISABLE_SECURITY_COOKIE_CHECK inline PtrType* align_to(PtrType* value, size_t alignment) RTM_NO_EXCEPT
 		{
 			RTM_ASSERT(is_power_of_two(alignment), "Alignment value must be a power of two");
 			return reinterpret_cast<PtrType*>((reinterpret_cast<intptr_t>(value) + (alignment - 1)) & ~(alignment - 1));
@@ -117,7 +117,7 @@ namespace rtm
 		// The input integral value is rounded up to the desired alignment.
 		//////////////////////////////////////////////////////////////////////////
 		template<typename IntegralType>
-		inline IntegralType align_to(IntegralType value, size_t alignment) RTM_NO_EXCEPT
+		RTM_DISABLE_SECURITY_COOKIE_CHECK inline IntegralType align_to(IntegralType value, size_t alignment) RTM_NO_EXCEPT
 		{
 			RTM_ASSERT(is_power_of_two(alignment), "Alignment value must be a power of two");
 			return static_cast<IntegralType>((static_cast<size_t>(value) + (alignment - 1)) & ~(alignment - 1));
@@ -127,7 +127,7 @@ namespace rtm
 		// Returns the array size for the provided array.
 		//////////////////////////////////////////////////////////////////////////
 		template<typename ElementType, size_t num_elements>
-		constexpr size_t get_array_size(ElementType const (&)[num_elements]) RTM_NO_EXCEPT { return num_elements; }
+		RTM_DISABLE_SECURITY_COOKIE_CHECK constexpr size_t get_array_size(ElementType const (&)[num_elements]) RTM_NO_EXCEPT { return num_elements; }
 
 		//////////////////////////////////////////////////////////////////////////
 		// Type safe casting
@@ -135,7 +135,7 @@ namespace rtm
 		template<typename DestPtrType, typename SrcType>
 		struct safe_ptr_to_ptr_cast_impl
 		{
-			inline static DestPtrType* cast(SrcType* input) RTM_NO_EXCEPT
+			RTM_DISABLE_SECURITY_COOKIE_CHECK inline static DestPtrType* cast(SrcType* input) RTM_NO_EXCEPT
 			{
 				RTM_ASSERT(is_aligned_to(input, alignof(DestPtrType)), "reinterpret_cast would result in an unaligned pointer");
 				return reinterpret_cast<DestPtrType*>(input);
@@ -145,13 +145,13 @@ namespace rtm
 		template<typename SrcType>
 		struct safe_ptr_to_ptr_cast_impl<void, SrcType>
 		{
-			static constexpr void* cast(SrcType* input) RTM_NO_EXCEPT { return input; }
+			RTM_DISABLE_SECURITY_COOKIE_CHECK static constexpr void* cast(SrcType* input) RTM_NO_EXCEPT { return input; }
 		};
 
 		template<typename DestPtrType, typename SrcType>
 		struct safe_int_to_ptr_cast_impl
 		{
-			inline static DestPtrType* cast(SrcType input) RTM_NO_EXCEPT
+			RTM_DISABLE_SECURITY_COOKIE_CHECK inline static DestPtrType* cast(SrcType input) RTM_NO_EXCEPT
 			{
 				RTM_ASSERT(is_aligned_to(input, alignof(DestPtrType)), "reinterpret_cast would result in an unaligned pointer");
 				return reinterpret_cast<DestPtrType*>(input);
@@ -161,17 +161,17 @@ namespace rtm
 		template<typename SrcType>
 		struct safe_int_to_ptr_cast_impl<void, SrcType>
 		{
-			static constexpr void* cast(SrcType input) RTM_NO_EXCEPT { return reinterpret_cast<void*>(input); }
+			RTM_DISABLE_SECURITY_COOKIE_CHECK static constexpr void* cast(SrcType input) RTM_NO_EXCEPT { return reinterpret_cast<void*>(input); }
 		};
 
 		template<typename DestPtrType, typename SrcType>
-		inline DestPtrType* safe_ptr_cast(SrcType* input) RTM_NO_EXCEPT
+		RTM_DISABLE_SECURITY_COOKIE_CHECK inline DestPtrType* safe_ptr_cast(SrcType* input) RTM_NO_EXCEPT
 		{
 			return safe_ptr_to_ptr_cast_impl<DestPtrType, SrcType>::cast(input);
 		}
 
 		template<typename DestPtrType, typename SrcType>
-		inline DestPtrType* safe_ptr_cast(SrcType input) RTM_NO_EXCEPT
+		RTM_DISABLE_SECURITY_COOKIE_CHECK inline DestPtrType* safe_ptr_cast(SrcType input) RTM_NO_EXCEPT
 		{
 			return safe_int_to_ptr_cast_impl<DestPtrType, SrcType>::cast(input);
 		}
@@ -192,7 +192,7 @@ namespace rtm
 		template<typename DstType, typename SrcType, bool is_floating_point = false>
 		struct is_static_cast_safe_s
 		{
-			static bool test(SrcType input) RTM_NO_EXCEPT
+			RTM_DISABLE_SECURITY_COOKIE_CHECK static bool test(SrcType input) RTM_NO_EXCEPT
 			{
 				using SrcRealType = typename safe_underlying_type<SrcType, std::is_enum<SrcType>::value>::type;
 
@@ -208,21 +208,21 @@ namespace rtm
 		template<typename DstType, typename SrcType>
 		struct is_static_cast_safe_s<DstType, SrcType, true>
 		{
-			static bool test(SrcType input) RTM_NO_EXCEPT
+			RTM_DISABLE_SECURITY_COOKIE_CHECK static bool test(SrcType input) RTM_NO_EXCEPT
 			{
 				return SrcType(DstType(input)) == input;
 			}
 		};
 
 		template<typename DstType, typename SrcType>
-		inline bool is_static_cast_safe(SrcType input) RTM_NO_EXCEPT
+		RTM_DISABLE_SECURITY_COOKIE_CHECK inline bool is_static_cast_safe(SrcType input) RTM_NO_EXCEPT
 		{
 			// TODO: In C++17 this should be folded to constexpr if
 			return is_static_cast_safe_s<DstType, SrcType, static_condition<(std::is_floating_point<SrcType>::value || std::is_floating_point<DstType>::value)>::test()>::test(input);
 		}
 
 		template<typename DstType, typename SrcType>
-		inline DstType safe_static_cast(SrcType input) RTM_NO_EXCEPT
+		RTM_DISABLE_SECURITY_COOKIE_CHECK inline DstType safe_static_cast(SrcType input) RTM_NO_EXCEPT
 		{
 #if defined(RTM_HAS_ASSERT_CHECKS)
 			const bool is_safe = is_static_cast_safe<DstType, SrcType>(input);
@@ -240,7 +240,7 @@ namespace rtm
 		// Reads a DataType from the input pointer regardless of its alignment.
 		//////////////////////////////////////////////////////////////////////////
 		template<typename DataType>
-		inline DataType unaligned_read(const void* input) RTM_NO_EXCEPT
+		RTM_DISABLE_SECURITY_COOKIE_CHECK inline DataType unaligned_read(const void* input) RTM_NO_EXCEPT
 		{
 			DataType result;
 			std::memcpy(&result, input, sizeof(DataType));
@@ -251,7 +251,7 @@ namespace rtm
 		// Reads a DataType from the input pointer with an alignment check.
 		//////////////////////////////////////////////////////////////////////////
 		template<typename DataType>
-		inline DataType aligned_read(const void* input) RTM_NO_EXCEPT
+		RTM_DISABLE_SECURITY_COOKIE_CHECK inline DataType aligned_read(const void* input) RTM_NO_EXCEPT
 		{
 			return *safe_ptr_cast<const DataType, const void*>(input);
 		}
@@ -260,7 +260,7 @@ namespace rtm
 		// Writes a DataType into the output pointer regardless of its alignment.
 		//////////////////////////////////////////////////////////////////////////
 		template<typename DataType>
-		inline void unaligned_write(DataType input, void* output) RTM_NO_EXCEPT
+		RTM_DISABLE_SECURITY_COOKIE_CHECK inline void unaligned_write(DataType input, void* output) RTM_NO_EXCEPT
 		{
 			std::memcpy(output, &input, sizeof(DataType));
 		}

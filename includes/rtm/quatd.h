@@ -45,7 +45,7 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	// Loads an unaligned quaternion from memory.
 	//////////////////////////////////////////////////////////////////////////
-	inline quatd quat_load(const double* input) RTM_NO_EXCEPT
+	RTM_DISABLE_SECURITY_COOKIE_CHECK inline quatd quat_load(const double* input) RTM_NO_EXCEPT
 	{
 		return quat_set(input[0], input[1], input[2], input[3]);
 	}
@@ -53,7 +53,7 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	// Casts a vector4 to a quaternion.
 	//////////////////////////////////////////////////////////////////////////
-	inline quatd vector_to_quat(const vector4d& input) RTM_NO_EXCEPT
+	RTM_DISABLE_SECURITY_COOKIE_CHECK inline quatd vector_to_quat(const vector4d& input) RTM_NO_EXCEPT
 	{
 #if defined(RTM_SSE2_INTRINSICS)
 		return quatd{ input.xy, input.zw };
@@ -65,7 +65,7 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	// Casts a quaternion float32 variant to a float64 variant.
 	//////////////////////////////////////////////////////////////////////////
-	inline quatd quat_cast(const quatf& input) RTM_NO_EXCEPT
+	RTM_DISABLE_SECURITY_COOKIE_CHECK inline quatd quat_cast(const quatf& input) RTM_NO_EXCEPT
 	{
 #if defined(RTM_SSE2_INTRINSICS)
 		return quatd{ _mm_cvtps_pd(input), _mm_cvtps_pd(_mm_shuffle_ps(input, input, _MM_SHUFFLE(3, 2, 3, 2))) };
@@ -86,7 +86,7 @@ namespace rtm
 		//////////////////////////////////////////////////////////////////////////
 		struct quatd_quat_get_x
 		{
-			inline RTM_SIMD_CALL operator double() const RTM_NO_EXCEPT
+			RTM_DISABLE_SECURITY_COOKIE_CHECK inline RTM_SIMD_CALL operator double() const RTM_NO_EXCEPT
 			{
 #if defined(RTM_SSE2_INTRINSICS)
 				return _mm_cvtsd_f64(input.xy);
@@ -96,7 +96,7 @@ namespace rtm
 			}
 
 #if defined(RTM_SSE2_INTRINSICS)
-			inline RTM_SIMD_CALL operator scalard() const RTM_NO_EXCEPT
+			RTM_DISABLE_SECURITY_COOKIE_CHECK inline RTM_SIMD_CALL operator scalard() const RTM_NO_EXCEPT
 			{
 				return scalard{ input.xy };
 			}
@@ -109,7 +109,7 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	// Returns the quaternion [x] component (real part).
 	//////////////////////////////////////////////////////////////////////////
-	constexpr rtm_impl::quatd_quat_get_x quat_get_x(const quatd& input) RTM_NO_EXCEPT
+	RTM_DISABLE_SECURITY_COOKIE_CHECK constexpr rtm_impl::quatd_quat_get_x quat_get_x(const quatd& input) RTM_NO_EXCEPT
 	{
 		return rtm_impl::quatd_quat_get_x{ input };
 	}
@@ -124,7 +124,7 @@ namespace rtm
 		//////////////////////////////////////////////////////////////////////////
 		struct quatd_quat_get_y
 		{
-			inline RTM_SIMD_CALL operator double() const RTM_NO_EXCEPT
+			RTM_DISABLE_SECURITY_COOKIE_CHECK inline RTM_SIMD_CALL operator double() const RTM_NO_EXCEPT
 			{
 #if defined(RTM_SSE2_INTRINSICS)
 				return _mm_cvtsd_f64(_mm_shuffle_pd(input.xy, input.xy, 1));
@@ -134,7 +134,7 @@ namespace rtm
 			}
 
 #if defined(RTM_SSE2_INTRINSICS)
-			inline RTM_SIMD_CALL operator scalard() const RTM_NO_EXCEPT
+			RTM_DISABLE_SECURITY_COOKIE_CHECK inline RTM_SIMD_CALL operator scalard() const RTM_NO_EXCEPT
 			{
 				return scalard{ _mm_shuffle_pd(input.xy, input.xy, 1) };
 			}
@@ -147,7 +147,7 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	// Returns the quaternion [y] component (real part).
 	//////////////////////////////////////////////////////////////////////////
-	constexpr rtm_impl::quatd_quat_get_y quat_get_y(const quatd& input) RTM_NO_EXCEPT
+	RTM_DISABLE_SECURITY_COOKIE_CHECK constexpr rtm_impl::quatd_quat_get_y quat_get_y(const quatd& input) RTM_NO_EXCEPT
 	{
 		return rtm_impl::quatd_quat_get_y{ input };
 	}
@@ -162,7 +162,7 @@ namespace rtm
 		//////////////////////////////////////////////////////////////////////////
 		struct quatd_quat_get_z
 		{
-			inline RTM_SIMD_CALL operator double() const RTM_NO_EXCEPT
+			RTM_DISABLE_SECURITY_COOKIE_CHECK inline RTM_SIMD_CALL operator double() const RTM_NO_EXCEPT
 			{
 #if defined(RTM_SSE2_INTRINSICS)
 				return _mm_cvtsd_f64(input.zw);
@@ -172,7 +172,7 @@ namespace rtm
 			}
 
 #if defined(RTM_SSE2_INTRINSICS)
-			inline RTM_SIMD_CALL operator scalard() const RTM_NO_EXCEPT
+			RTM_DISABLE_SECURITY_COOKIE_CHECK inline RTM_SIMD_CALL operator scalard() const RTM_NO_EXCEPT
 			{
 				return scalard{ input.zw };
 			}
@@ -185,7 +185,7 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	// Returns the quaternion [z] component (real part).
 	//////////////////////////////////////////////////////////////////////////
-	constexpr rtm_impl::quatd_quat_get_z quat_get_z(const quatd& input) RTM_NO_EXCEPT
+	RTM_DISABLE_SECURITY_COOKIE_CHECK constexpr rtm_impl::quatd_quat_get_z quat_get_z(const quatd& input) RTM_NO_EXCEPT
 	{
 		return rtm_impl::quatd_quat_get_z{ input };
 	}
@@ -200,7 +200,7 @@ namespace rtm
 		//////////////////////////////////////////////////////////////////////////
 		struct quatd_quat_get_w
 		{
-			inline RTM_SIMD_CALL operator double() const RTM_NO_EXCEPT
+			RTM_DISABLE_SECURITY_COOKIE_CHECK inline RTM_SIMD_CALL operator double() const RTM_NO_EXCEPT
 			{
 #if defined(RTM_SSE2_INTRINSICS)
 				return _mm_cvtsd_f64(_mm_shuffle_pd(input.zw, input.zw, 1));
@@ -210,7 +210,7 @@ namespace rtm
 			}
 
 #if defined(RTM_SSE2_INTRINSICS)
-			inline RTM_SIMD_CALL operator scalard() const RTM_NO_EXCEPT
+			RTM_DISABLE_SECURITY_COOKIE_CHECK inline RTM_SIMD_CALL operator scalard() const RTM_NO_EXCEPT
 			{
 				return scalard{ _mm_shuffle_pd(input.zw, input.zw, 1) };
 			}
@@ -223,7 +223,7 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	// Returns the quaternion [w] component (imaginary part).
 	//////////////////////////////////////////////////////////////////////////
-	constexpr rtm_impl::quatd_quat_get_w quat_get_w(const quatd& input) RTM_NO_EXCEPT
+	RTM_DISABLE_SECURITY_COOKIE_CHECK constexpr rtm_impl::quatd_quat_get_w quat_get_w(const quatd& input) RTM_NO_EXCEPT
 	{
 		return rtm_impl::quatd_quat_get_w{ input };
 	}
@@ -231,7 +231,7 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	// Sets the quaternion [x] component (real part) and returns the new value.
 	//////////////////////////////////////////////////////////////////////////
-	inline quatd quat_set_x(const quatd& input, double lane_value) RTM_NO_EXCEPT
+	RTM_DISABLE_SECURITY_COOKIE_CHECK inline quatd quat_set_x(const quatd& input, double lane_value) RTM_NO_EXCEPT
 	{
 #if defined(RTM_SSE2_INTRINSICS)
 		return quatd{ _mm_move_sd(input.xy, _mm_set_sd(lane_value)), input.zw };
@@ -244,7 +244,7 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	// Sets the quaternion [x] component (real part) and returns the new value.
 	//////////////////////////////////////////////////////////////////////////
-	inline quatd quat_set_x(const quatd& input, const scalard& lane_value) RTM_NO_EXCEPT
+	RTM_DISABLE_SECURITY_COOKIE_CHECK inline quatd quat_set_x(const quatd& input, const scalard& lane_value) RTM_NO_EXCEPT
 	{
 		return quatd{ _mm_move_sd(input.xy, lane_value.value), input.zw };
 	}
@@ -253,7 +253,7 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	// Sets the quaternion [y] component (real part) and returns the new value.
 	//////////////////////////////////////////////////////////////////////////
-	inline quatd quat_set_y(const quatd& input, double lane_value) RTM_NO_EXCEPT
+	RTM_DISABLE_SECURITY_COOKIE_CHECK inline quatd quat_set_y(const quatd& input, double lane_value) RTM_NO_EXCEPT
 	{
 #if defined(RTM_SSE2_INTRINSICS)
 		return quatd{ _mm_shuffle_pd(input.xy, _mm_set_sd(lane_value), 0), input.zw };
@@ -266,7 +266,7 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	// Sets the quaternion [y] component (real part) and returns the new value.
 	//////////////////////////////////////////////////////////////////////////
-	inline quatd quat_set_y(const quatd& input, const scalard& lane_value) RTM_NO_EXCEPT
+	RTM_DISABLE_SECURITY_COOKIE_CHECK inline quatd quat_set_y(const quatd& input, const scalard& lane_value) RTM_NO_EXCEPT
 	{
 		return quatd{ _mm_shuffle_pd(input.xy, lane_value.value, 0), input.zw };
 	}
@@ -275,7 +275,7 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	// Sets the quaternion [z] component (real part) and returns the new value.
 	//////////////////////////////////////////////////////////////////////////
-	inline quatd quat_set_z(const quatd& input, double lane_value) RTM_NO_EXCEPT
+	RTM_DISABLE_SECURITY_COOKIE_CHECK inline quatd quat_set_z(const quatd& input, double lane_value) RTM_NO_EXCEPT
 	{
 #if defined(RTM_SSE2_INTRINSICS)
 		return quatd{ input.xy, _mm_move_sd(input.zw, _mm_set_sd(lane_value)) };
@@ -288,7 +288,7 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	// Sets the quaternion [z] component (real part) and returns the new value.
 	//////////////////////////////////////////////////////////////////////////
-	inline quatd quat_set_z(const quatd& input, const scalard& lane_value) RTM_NO_EXCEPT
+	RTM_DISABLE_SECURITY_COOKIE_CHECK inline quatd quat_set_z(const quatd& input, const scalard& lane_value) RTM_NO_EXCEPT
 	{
 		return quatd{ input.xy, _mm_move_sd(input.zw, lane_value.value) };
 	}
@@ -297,7 +297,7 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	// Sets the quaternion [w] component (imaginary part) and returns the new value.
 	//////////////////////////////////////////////////////////////////////////
-	inline quatd quat_set_w(const quatd& input, double lane_value) RTM_NO_EXCEPT
+	RTM_DISABLE_SECURITY_COOKIE_CHECK inline quatd quat_set_w(const quatd& input, double lane_value) RTM_NO_EXCEPT
 	{
 #if defined(RTM_SSE2_INTRINSICS)
 		return quatd{ input.xy, _mm_shuffle_pd(input.zw, _mm_set_sd(lane_value), 0) };
@@ -310,7 +310,7 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	// Sets the quaternion [w] component (imaginary part) and returns the new value.
 	//////////////////////////////////////////////////////////////////////////
-	inline quatd quat_set_w(const quatd& input, const scalard& lane_value) RTM_NO_EXCEPT
+	RTM_DISABLE_SECURITY_COOKIE_CHECK inline quatd quat_set_w(const quatd& input, const scalard& lane_value) RTM_NO_EXCEPT
 	{
 		return quatd{ input.xy, _mm_shuffle_pd(input.zw, lane_value.value, 0) };
 	}
@@ -319,7 +319,7 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	// Writes a quaternion to unaligned memory.
 	//////////////////////////////////////////////////////////////////////////
-	inline void quat_store(const quatd& input, double* output) RTM_NO_EXCEPT
+	RTM_DISABLE_SECURITY_COOKIE_CHECK inline void quat_store(const quatd& input, double* output) RTM_NO_EXCEPT
 	{
 		output[0] = quat_get_x(input);
 		output[1] = quat_get_y(input);
@@ -330,7 +330,7 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	// Writes a quaternion to unaligned memory.
 	//////////////////////////////////////////////////////////////////////////
-	inline void quat_store(const quatd& input, float4d* output) RTM_NO_EXCEPT
+	RTM_DISABLE_SECURITY_COOKIE_CHECK inline void quat_store(const quatd& input, float4d* output) RTM_NO_EXCEPT
 	{
 		output->x = quat_get_x(input);
 		output->y = quat_get_y(input);
@@ -349,7 +349,7 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	// Returns the quaternion conjugate.
 	//////////////////////////////////////////////////////////////////////////
-	inline quatd quat_conjugate(const quatd& input) RTM_NO_EXCEPT
+	RTM_DISABLE_SECURITY_COOKIE_CHECK inline quatd quat_conjugate(const quatd& input) RTM_NO_EXCEPT
 	{
 		return quat_set(-quat_get_x(input), -quat_get_y(input), -quat_get_z(input), quat_get_w(input));
 	}
@@ -359,7 +359,7 @@ namespace rtm
 	// Note that due to floating point rounding, the result might not be perfectly normalized.
 	// Multiplication order is as follow: local_to_world = quat_mul(local_to_object, object_to_world)
 	//////////////////////////////////////////////////////////////////////////
-	inline quatd quat_mul(const quatd& lhs, const quatd& rhs) RTM_NO_EXCEPT
+	RTM_DISABLE_SECURITY_COOKIE_CHECK inline quatd quat_mul(const quatd& lhs, const quatd& rhs) RTM_NO_EXCEPT
 	{
 		double lhs_x = quat_get_x(lhs);
 		double lhs_y = quat_get_y(lhs);
@@ -383,7 +383,7 @@ namespace rtm
 	// Multiplies a quaternion and a 3D vector, rotating it.
 	// Multiplication order is as follow: world_position = quat_mul_vector3(local_vector, local_to_world)
 	//////////////////////////////////////////////////////////////////////////
-	inline vector4d quat_mul_vector3(const vector4d& vector, const quatd& rotation) RTM_NO_EXCEPT
+	RTM_DISABLE_SECURITY_COOKIE_CHECK inline vector4d quat_mul_vector3(const vector4d& vector, const quatd& rotation) RTM_NO_EXCEPT
 	{
 		quatd vector_quat = quat_set_w(vector_to_quat(vector), 0.0);
 		quatd inv_rotation = quat_conjugate(rotation);
@@ -400,7 +400,7 @@ namespace rtm
 		//////////////////////////////////////////////////////////////////////////
 		struct quatd_quat_dot
 		{
-			inline RTM_SIMD_CALL operator double() const RTM_NO_EXCEPT
+			RTM_DISABLE_SECURITY_COOKIE_CHECK inline RTM_SIMD_CALL operator double() const RTM_NO_EXCEPT
 			{
 				const scalard lhs_x = quat_get_x(lhs);
 				const scalard lhs_y = quat_get_y(lhs);
@@ -418,7 +418,7 @@ namespace rtm
 			}
 
 #if defined(RTM_SSE2_INTRINSICS)
-			inline RTM_SIMD_CALL operator scalard() const RTM_NO_EXCEPT
+			RTM_DISABLE_SECURITY_COOKIE_CHECK inline RTM_SIMD_CALL operator scalard() const RTM_NO_EXCEPT
 			{
 				const scalard lhs_x = quat_get_x(lhs);
 				const scalard lhs_y = quat_get_y(lhs);
@@ -444,7 +444,7 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	// Quaternion dot product: lhs . rhs
 	//////////////////////////////////////////////////////////////////////////
-	constexpr rtm_impl::quatd_quat_dot quat_dot(const quatd& lhs, const quatd& rhs) RTM_NO_EXCEPT
+	RTM_DISABLE_SECURITY_COOKIE_CHECK constexpr rtm_impl::quatd_quat_dot quat_dot(const quatd& lhs, const quatd& rhs) RTM_NO_EXCEPT
 	{
 		return rtm_impl::quatd_quat_dot{ lhs, rhs };
 	}
@@ -452,7 +452,7 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	// Returns the squared length/norm of the quaternion.
 	//////////////////////////////////////////////////////////////////////////
-	constexpr rtm_impl::quatd_quat_dot quat_length_squared(const quatd& input) RTM_NO_EXCEPT
+	RTM_DISABLE_SECURITY_COOKIE_CHECK constexpr rtm_impl::quatd_quat_dot quat_length_squared(const quatd& input) RTM_NO_EXCEPT
 	{
 		return rtm_impl::quatd_quat_dot{ input, input };
 	}
@@ -467,14 +467,14 @@ namespace rtm
 		//////////////////////////////////////////////////////////////////////////
 		struct quatd_quat_length
 		{
-			inline RTM_SIMD_CALL operator double() const RTM_NO_EXCEPT
+			RTM_DISABLE_SECURITY_COOKIE_CHECK inline RTM_SIMD_CALL operator double() const RTM_NO_EXCEPT
 			{
 				const scalard len_sq = quat_length_squared(input);
 				return scalar_cast(scalar_sqrt(len_sq));
 			}
 
 #if defined(RTM_SSE2_INTRINSICS)
-			inline RTM_SIMD_CALL operator scalard() const RTM_NO_EXCEPT
+			RTM_DISABLE_SECURITY_COOKIE_CHECK inline RTM_SIMD_CALL operator scalard() const RTM_NO_EXCEPT
 			{
 				const scalard len_sq = quat_length_squared(input);
 				return scalar_sqrt(len_sq);
@@ -488,7 +488,7 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	// Returns the length/norm of the quaternion.
 	//////////////////////////////////////////////////////////////////////////
-	constexpr rtm_impl::quatd_quat_length quat_length(const quatd& input) RTM_NO_EXCEPT
+	RTM_DISABLE_SECURITY_COOKIE_CHECK constexpr rtm_impl::quatd_quat_length quat_length(const quatd& input) RTM_NO_EXCEPT
 	{
 		return rtm_impl::quatd_quat_length{ input };
 	}
@@ -503,14 +503,14 @@ namespace rtm
 		//////////////////////////////////////////////////////////////////////////
 		struct quatd_quat_length_reciprocal
 		{
-			inline RTM_SIMD_CALL operator double() const RTM_NO_EXCEPT
+			RTM_DISABLE_SECURITY_COOKIE_CHECK inline RTM_SIMD_CALL operator double() const RTM_NO_EXCEPT
 			{
 				const scalard len_sq = quat_length_squared(input);
 				return scalar_cast(scalar_sqrt_reciprocal(len_sq));
 			}
 
 #if defined(RTM_SSE2_INTRINSICS)
-			inline RTM_SIMD_CALL operator scalard() const RTM_NO_EXCEPT
+			RTM_DISABLE_SECURITY_COOKIE_CHECK inline RTM_SIMD_CALL operator scalard() const RTM_NO_EXCEPT
 			{
 				const scalard len_sq = quat_length_squared(input);
 				return scalar_sqrt_reciprocal(len_sq);
@@ -524,7 +524,7 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	// Returns the reciprocal length/norm of the quaternion.
 	//////////////////////////////////////////////////////////////////////////
-	constexpr rtm_impl::quatd_quat_length_reciprocal quat_length_reciprocal(const quatd& input) RTM_NO_EXCEPT
+	RTM_DISABLE_SECURITY_COOKIE_CHECK constexpr rtm_impl::quatd_quat_length_reciprocal quat_length_reciprocal(const quatd& input) RTM_NO_EXCEPT
 	{
 		return rtm_impl::quatd_quat_length_reciprocal{ input };
 	}
@@ -534,7 +534,7 @@ namespace rtm
 	// Note that if the input quaternion is invalid (pure zero or with NaN/Inf),
 	// the result is undefined.
 	//////////////////////////////////////////////////////////////////////////
-	inline quatd quat_normalize(const quatd& input) RTM_NO_EXCEPT
+	RTM_DISABLE_SECURITY_COOKIE_CHECK inline quatd quat_normalize(const quatd& input) RTM_NO_EXCEPT
 	{
 		// TODO: Use high precision recip sqrt function and vector_mul
 		double length = quat_length(input);
@@ -555,7 +555,7 @@ namespace rtm
 	// is returned. Furthermore, if 'start' and 'end' aren't exactly normalized, the result might
 	// not match exactly when 'alpha' is 0.0 or 1.0 because we normalize the resulting quaternion.
 	//////////////////////////////////////////////////////////////////////////
-	inline quatd quat_lerp(const quatd& start, const quatd& end, double alpha) RTM_NO_EXCEPT
+	RTM_DISABLE_SECURITY_COOKIE_CHECK inline quatd quat_lerp(const quatd& start, const quatd& end, double alpha) RTM_NO_EXCEPT
 	{
 		// To ensure we take the shortest path, we apply a bias if the dot product is negative
 		vector4d start_vector = quat_to_vector(start);
@@ -579,7 +579,7 @@ namespace rtm
 	// is returned. Furthermore, if 'start' and 'end' aren't exactly normalized, the result might
 	// not match exactly when 'alpha' is 0.0 or 1.0 because we normalize the resulting quaternion.
 	//////////////////////////////////////////////////////////////////////////
-	inline quatd quat_lerp(const quatd& start, const quatd& end, const scalard& alpha) RTM_NO_EXCEPT
+	RTM_DISABLE_SECURITY_COOKIE_CHECK inline quatd quat_lerp(const quatd& start, const quatd& end, const scalard& alpha) RTM_NO_EXCEPT
 	{
 		// To ensure we take the shortest path, we apply a bias if the dot product is negative
 		vector4d start_vector = quat_to_vector(start);
@@ -599,7 +599,7 @@ namespace rtm
 	// See: https://www.euclideanspace.com/maths/algebra/realNormedAlgebra/quaternions/slerp/index.htm
 	// Perhaps try this someday: http://number-none.com/product/Understanding%20Slerp,%20Then%20Not%20Using%20It/
 	//////////////////////////////////////////////////////////////////////////
-	inline quatd RTM_SIMD_CALL quat_slerp(const quatd& start, const quatd& end, const scalard& alpha) RTM_NO_EXCEPT
+	RTM_DISABLE_SECURITY_COOKIE_CHECK inline quatd RTM_SIMD_CALL quat_slerp(const quatd& start, const quatd& end, const scalard& alpha) RTM_NO_EXCEPT
 	{
 		vector4d start_v = quat_to_vector(start);
 		vector4d end_v = quat_to_vector(end);
@@ -633,7 +633,7 @@ namespace rtm
 	// See: https://www.euclideanspace.com/maths/algebra/realNormedAlgebra/quaternions/slerp/index.htm
 	// Perhaps try this someday: http://number-none.com/product/Understanding%20Slerp,%20Then%20Not%20Using%20It/
 	//////////////////////////////////////////////////////////////////////////
-	inline quatd RTM_SIMD_CALL quat_slerp(const quatd& start, const quatd& end, double alpha) RTM_NO_EXCEPT
+	RTM_DISABLE_SECURITY_COOKIE_CHECK inline quatd RTM_SIMD_CALL quat_slerp(const quatd& start, const quatd& end, double alpha) RTM_NO_EXCEPT
 	{
 		vector4d start_v = quat_to_vector(start);
 		vector4d end_v = quat_to_vector(end);
@@ -665,7 +665,7 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	// Returns a component wise negated quaternion.
 	//////////////////////////////////////////////////////////////////////////
-	inline quatd quat_neg(const quatd& input) RTM_NO_EXCEPT
+	RTM_DISABLE_SECURITY_COOKIE_CHECK inline quatd quat_neg(const quatd& input) RTM_NO_EXCEPT
 	{
 		return vector_to_quat(vector_mul(quat_to_vector(input), -1.0));
 	}
@@ -681,7 +681,7 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	// Returns the rotation axis and rotation angle that make up the input quaternion.
 	//////////////////////////////////////////////////////////////////////////
-	inline void quat_to_axis_angle(const quatd& input, vector4d& out_axis, double& out_angle) RTM_NO_EXCEPT
+	RTM_DISABLE_SECURITY_COOKIE_CHECK inline void quat_to_axis_angle(const quatd& input, vector4d& out_axis, double& out_angle) RTM_NO_EXCEPT
 	{
 		constexpr double epsilon = 1.0E-8;
 		constexpr double epsilon_squared = epsilon * epsilon;
@@ -696,7 +696,7 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	// Returns the rotation axis part of the input quaternion.
 	//////////////////////////////////////////////////////////////////////////
-	inline vector4d quat_get_axis(const quatd& input) RTM_NO_EXCEPT
+	RTM_DISABLE_SECURITY_COOKIE_CHECK inline vector4d quat_get_axis(const quatd& input) RTM_NO_EXCEPT
 	{
 		constexpr double epsilon = 1.0E-8;
 		constexpr double epsilon_squared = epsilon * epsilon;
@@ -708,7 +708,7 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	// Returns the rotation angle part of the input quaternion.
 	//////////////////////////////////////////////////////////////////////////
-	inline double quat_get_angle(const quatd& input) RTM_NO_EXCEPT
+	RTM_DISABLE_SECURITY_COOKIE_CHECK inline double quat_get_angle(const quatd& input) RTM_NO_EXCEPT
 	{
 		const scalard input_w = quat_get_w(input);
 		return scalar_cast(scalar_acos(input_w)) * 2.0;
@@ -717,7 +717,7 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	// Creates a quaternion from a rotation axis and a rotation angle.
 	//////////////////////////////////////////////////////////////////////////
-	inline quatd quat_from_axis_angle(const vector4d& axis, double angle) RTM_NO_EXCEPT
+	RTM_DISABLE_SECURITY_COOKIE_CHECK inline quatd quat_from_axis_angle(const vector4d& axis, double angle) RTM_NO_EXCEPT
 	{
 		vector4d sincos_ = scalar_sincos(0.5 * angle);
 		vector4d sin_ = vector_dup_x(sincos_);
@@ -732,7 +732,7 @@ namespace rtm
 	// Yaw is around the Z axis (up)
 	// Roll is around the X axis (forward)
 	//////////////////////////////////////////////////////////////////////////
-	inline quatd quat_from_euler(double pitch, double yaw, double roll) RTM_NO_EXCEPT
+	RTM_DISABLE_SECURITY_COOKIE_CHECK inline quatd quat_from_euler(double pitch, double yaw, double roll) RTM_NO_EXCEPT
 	{
 		double sp;
 		double sy;
@@ -762,7 +762,7 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	// Returns true if the input quaternion does not contain any NaN or Inf, otherwise false.
 	//////////////////////////////////////////////////////////////////////////
-	inline bool quat_is_finite(const quatd& input) RTM_NO_EXCEPT
+	RTM_DISABLE_SECURITY_COOKIE_CHECK inline bool quat_is_finite(const quatd& input) RTM_NO_EXCEPT
 	{
 #if defined(RTM_SSE2_INTRINSICS)
 		const __m128i abs_mask = _mm_set_epi64x(0x7FFFFFFFFFFFFFFFULL, 0x7FFFFFFFFFFFFFFFULL);
@@ -788,7 +788,7 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	// Returns true if the input quaternion is normalized, otherwise false.
 	//////////////////////////////////////////////////////////////////////////
-	inline bool quat_is_normalized(const quatd& input, double threshold = 0.00001) RTM_NO_EXCEPT
+	RTM_DISABLE_SECURITY_COOKIE_CHECK inline bool quat_is_normalized(const quatd& input, double threshold = 0.00001) RTM_NO_EXCEPT
 	{
 		double length_squared = quat_length_squared(input);
 		return scalar_abs(length_squared - 1.0) < threshold;
@@ -797,7 +797,7 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	// Returns true if the two quaternions are nearly equal component wise, otherwise false.
 	//////////////////////////////////////////////////////////////////////////
-	inline bool quat_near_equal(const quatd& lhs, const quatd& rhs, double threshold = 0.00001) RTM_NO_EXCEPT
+	RTM_DISABLE_SECURITY_COOKIE_CHECK inline bool quat_near_equal(const quatd& lhs, const quatd& rhs, double threshold = 0.00001) RTM_NO_EXCEPT
 	{
 		return vector_all_near_equal(quat_to_vector(lhs), quat_to_vector(rhs), threshold);
 	}
@@ -806,7 +806,7 @@ namespace rtm
 	// Returns true if the input quaternion is nearly equal to the identity quaternion
 	// by comparing its rotation angle.
 	//////////////////////////////////////////////////////////////////////////
-	inline bool quat_near_identity(const quatd& input, double threshold_angle = 0.00284714461) RTM_NO_EXCEPT
+	RTM_DISABLE_SECURITY_COOKIE_CHECK inline bool quat_near_identity(const quatd& input, double threshold_angle = 0.00284714461) RTM_NO_EXCEPT
 	{
 		// See the quatf version of quat_near_identity for details.
 		const scalard input_w = quat_get_w(input);

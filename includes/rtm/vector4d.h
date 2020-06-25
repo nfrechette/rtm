@@ -43,7 +43,7 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	// Loads an unaligned vector4 from memory.
 	//////////////////////////////////////////////////////////////////////////
-	inline vector4d vector_load(const double* input) RTM_NO_EXCEPT
+	RTM_DISABLE_SECURITY_COOKIE_CHECK inline vector4d vector_load(const double* input) RTM_NO_EXCEPT
 	{
 		return vector_set(input[0], input[1], input[2], input[3]);
 	}
@@ -51,7 +51,7 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	// Loads an input scalar from memory into the [x] component and sets the [yzw] components to zero.
 	//////////////////////////////////////////////////////////////////////////
-	inline vector4d vector_load1(const double* input) RTM_NO_EXCEPT
+	RTM_DISABLE_SECURITY_COOKIE_CHECK inline vector4d vector_load1(const double* input) RTM_NO_EXCEPT
 	{
 		return vector_set(input[0], 0.0, 0.0, 0.0);
 	}
@@ -59,7 +59,7 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	// Loads an unaligned vector2 from memory and sets the [zw] components to zero.
 	//////////////////////////////////////////////////////////////////////////
-	inline vector4d vector_load2(const double* input) RTM_NO_EXCEPT
+	RTM_DISABLE_SECURITY_COOKIE_CHECK inline vector4d vector_load2(const double* input) RTM_NO_EXCEPT
 	{
 		return vector_set(input[0], input[1], 0.0, 0.0);
 	}
@@ -67,7 +67,7 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	// Loads an unaligned vector3 from memory and sets the [w] component to zero.
 	//////////////////////////////////////////////////////////////////////////
-	inline vector4d vector_load3(const double* input) RTM_NO_EXCEPT
+	RTM_DISABLE_SECURITY_COOKIE_CHECK inline vector4d vector_load3(const double* input) RTM_NO_EXCEPT
 	{
 		return vector_set(input[0], input[1], input[2], 0.0);
 	}
@@ -75,7 +75,7 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	// Loads an unaligned vector4 from memory.
 	//////////////////////////////////////////////////////////////////////////
-	inline vector4d vector_load(const float4d* input) RTM_NO_EXCEPT
+	RTM_DISABLE_SECURITY_COOKIE_CHECK inline vector4d vector_load(const float4d* input) RTM_NO_EXCEPT
 	{
 		return vector_set(input->x, input->y, input->z, input->w);
 	}
@@ -83,7 +83,7 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	// Loads an unaligned vector2 from memory and sets the [zw] components to zero.
 	//////////////////////////////////////////////////////////////////////////
-	inline vector4d vector_load2(const float2d* input) RTM_NO_EXCEPT
+	RTM_DISABLE_SECURITY_COOKIE_CHECK inline vector4d vector_load2(const float2d* input) RTM_NO_EXCEPT
 	{
 		return vector_set(input->x, input->y, 0.0, 0.0);
 	}
@@ -91,7 +91,7 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	// Loads an unaligned vector3 from memory and sets the [w] component to zero.
 	//////////////////////////////////////////////////////////////////////////
-	inline vector4d vector_load3(const float3d* input) RTM_NO_EXCEPT
+	RTM_DISABLE_SECURITY_COOKIE_CHECK inline vector4d vector_load3(const float3d* input) RTM_NO_EXCEPT
 	{
 		return vector_set(input->x, input->y, input->z, 0.0);
 	}
@@ -99,7 +99,7 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	// Loads an input scalar from memory into the [xyzw] components.
 	//////////////////////////////////////////////////////////////////////////
-	inline vector4d vector_broadcast(const double* input) RTM_NO_EXCEPT
+	RTM_DISABLE_SECURITY_COOKIE_CHECK inline vector4d vector_broadcast(const double* input) RTM_NO_EXCEPT
 	{
 #if defined(RTM_SSE2_INTRINSICS)
 		const __m128d value = _mm_load1_pd(input);
@@ -112,7 +112,7 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	// Casts a quaternion to a vector4.
 	//////////////////////////////////////////////////////////////////////////
-	inline vector4d quat_to_vector(const quatd& input) RTM_NO_EXCEPT
+	RTM_DISABLE_SECURITY_COOKIE_CHECK inline vector4d quat_to_vector(const quatd& input) RTM_NO_EXCEPT
 	{
 #if defined(RTM_SSE2_INTRINSICS)
 		return vector4d{ input.xy, input.zw };
@@ -124,7 +124,7 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	// Casts a vector4 float32 variant to a float64 variant.
 	//////////////////////////////////////////////////////////////////////////
-	inline vector4d vector_cast(const vector4f& input) RTM_NO_EXCEPT
+	RTM_DISABLE_SECURITY_COOKIE_CHECK inline vector4d vector_cast(const vector4f& input) RTM_NO_EXCEPT
 	{
 #if defined(RTM_SSE2_INTRINSICS)
 		return vector4d{ _mm_cvtps_pd(input), _mm_cvtps_pd(_mm_shuffle_ps(input, input, _MM_SHUFFLE(3, 2, 3, 2))) };
@@ -145,7 +145,7 @@ namespace rtm
 		//////////////////////////////////////////////////////////////////////////
 		struct vector4d_vector_get_x
 		{
-			inline RTM_SIMD_CALL operator double() const RTM_NO_EXCEPT
+			RTM_DISABLE_SECURITY_COOKIE_CHECK inline RTM_SIMD_CALL operator double() const RTM_NO_EXCEPT
 			{
 #if defined(RTM_SSE2_INTRINSICS)
 				return _mm_cvtsd_f64(input.xy);
@@ -155,7 +155,7 @@ namespace rtm
 			}
 
 #if defined(RTM_SSE2_INTRINSICS)
-			inline RTM_SIMD_CALL operator scalard() const RTM_NO_EXCEPT
+			RTM_DISABLE_SECURITY_COOKIE_CHECK inline RTM_SIMD_CALL operator scalard() const RTM_NO_EXCEPT
 			{
 				return scalard{ input.xy };
 			}
@@ -168,7 +168,7 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	// Returns the vector4 [x] component.
 	//////////////////////////////////////////////////////////////////////////
-	constexpr rtm_impl::vector4d_vector_get_x vector_get_x(const vector4d& input) RTM_NO_EXCEPT
+	RTM_DISABLE_SECURITY_COOKIE_CHECK constexpr rtm_impl::vector4d_vector_get_x vector_get_x(const vector4d& input) RTM_NO_EXCEPT
 	{
 		return rtm_impl::vector4d_vector_get_x{ input };
 	}
@@ -183,7 +183,7 @@ namespace rtm
 		//////////////////////////////////////////////////////////////////////////
 		struct vector4d_vector_get_y
 		{
-			inline RTM_SIMD_CALL operator double() const RTM_NO_EXCEPT
+			RTM_DISABLE_SECURITY_COOKIE_CHECK inline RTM_SIMD_CALL operator double() const RTM_NO_EXCEPT
 			{
 #if defined(RTM_SSE2_INTRINSICS)
 				return _mm_cvtsd_f64(_mm_shuffle_pd(input.xy, input.xy, 1));
@@ -193,7 +193,7 @@ namespace rtm
 			}
 
 #if defined(RTM_SSE2_INTRINSICS)
-			inline RTM_SIMD_CALL operator scalard() const RTM_NO_EXCEPT
+			RTM_DISABLE_SECURITY_COOKIE_CHECK inline RTM_SIMD_CALL operator scalard() const RTM_NO_EXCEPT
 			{
 				return scalard{ _mm_shuffle_pd(input.xy, input.xy, 1) };
 			}
@@ -206,7 +206,7 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	// Returns the vector4 [y] component.
 	//////////////////////////////////////////////////////////////////////////
-	constexpr rtm_impl::vector4d_vector_get_y vector_get_y(const vector4d& input) RTM_NO_EXCEPT
+	RTM_DISABLE_SECURITY_COOKIE_CHECK constexpr rtm_impl::vector4d_vector_get_y vector_get_y(const vector4d& input) RTM_NO_EXCEPT
 	{
 		return rtm_impl::vector4d_vector_get_y{ input };
 	}
@@ -221,7 +221,7 @@ namespace rtm
 		//////////////////////////////////////////////////////////////////////////
 		struct vector4d_vector_get_z
 		{
-			inline RTM_SIMD_CALL operator double() const RTM_NO_EXCEPT
+			RTM_DISABLE_SECURITY_COOKIE_CHECK inline RTM_SIMD_CALL operator double() const RTM_NO_EXCEPT
 			{
 #if defined(RTM_SSE2_INTRINSICS)
 				return _mm_cvtsd_f64(input.zw);
@@ -231,7 +231,7 @@ namespace rtm
 			}
 
 #if defined(RTM_SSE2_INTRINSICS)
-			inline RTM_SIMD_CALL operator scalard() const RTM_NO_EXCEPT
+			RTM_DISABLE_SECURITY_COOKIE_CHECK inline RTM_SIMD_CALL operator scalard() const RTM_NO_EXCEPT
 			{
 				return scalard{ input.zw };
 			}
@@ -244,7 +244,7 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	// Returns the vector4 [z] component.
 	//////////////////////////////////////////////////////////////////////////
-	constexpr rtm_impl::vector4d_vector_get_z vector_get_z(const vector4d& input) RTM_NO_EXCEPT
+	RTM_DISABLE_SECURITY_COOKIE_CHECK constexpr rtm_impl::vector4d_vector_get_z vector_get_z(const vector4d& input) RTM_NO_EXCEPT
 	{
 		return rtm_impl::vector4d_vector_get_z{ input };
 	}
@@ -259,7 +259,7 @@ namespace rtm
 		//////////////////////////////////////////////////////////////////////////
 		struct vector4d_vector_get_w
 		{
-			inline RTM_SIMD_CALL operator double() const RTM_NO_EXCEPT
+			RTM_DISABLE_SECURITY_COOKIE_CHECK inline RTM_SIMD_CALL operator double() const RTM_NO_EXCEPT
 			{
 #if defined(RTM_SSE2_INTRINSICS)
 				return _mm_cvtsd_f64(_mm_shuffle_pd(input.zw, input.zw, 1));
@@ -269,7 +269,7 @@ namespace rtm
 			}
 
 #if defined(RTM_SSE2_INTRINSICS)
-			inline RTM_SIMD_CALL operator scalard() const RTM_NO_EXCEPT
+			RTM_DISABLE_SECURITY_COOKIE_CHECK inline RTM_SIMD_CALL operator scalard() const RTM_NO_EXCEPT
 			{
 				return scalard{ _mm_shuffle_pd(input.zw, input.zw, 1) };
 			}
@@ -282,7 +282,7 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	// Returns the vector4 [w] component.
 	//////////////////////////////////////////////////////////////////////////
-	constexpr rtm_impl::vector4d_vector_get_w vector_get_w(const vector4d& input) RTM_NO_EXCEPT
+	RTM_DISABLE_SECURITY_COOKIE_CHECK constexpr rtm_impl::vector4d_vector_get_w vector_get_w(const vector4d& input) RTM_NO_EXCEPT
 	{
 		return rtm_impl::vector4d_vector_get_w{ input };
 	}
@@ -298,7 +298,7 @@ namespace rtm
 		template<mix4 component>
 		struct vector4d_vector_get_component_static
 		{
-			inline RTM_SIMD_CALL operator double() const RTM_NO_EXCEPT
+			RTM_DISABLE_SECURITY_COOKIE_CHECK inline RTM_SIMD_CALL operator double() const RTM_NO_EXCEPT
 			{
 				const mix4 xyzw = mix4(int(component) % 4);
 				if (rtm_impl::static_condition<xyzw == mix4::x>::test())
@@ -312,7 +312,7 @@ namespace rtm
 			}
 
 #if defined(RTM_SSE2_INTRINSICS)
-			inline RTM_SIMD_CALL operator scalard() const RTM_NO_EXCEPT
+			RTM_DISABLE_SECURITY_COOKIE_CHECK inline RTM_SIMD_CALL operator scalard() const RTM_NO_EXCEPT
 			{
 				const mix4 xyzw = mix4(int(component) % 4);
 				if (rtm_impl::static_condition<xyzw == mix4::x>::test())
@@ -334,7 +334,7 @@ namespace rtm
 	// Returns the vector4 desired component.
 	//////////////////////////////////////////////////////////////////////////
 	template<mix4 component>
-	constexpr rtm_impl::vector4d_vector_get_component_static<component> vector_get_component(const vector4d& input) RTM_NO_EXCEPT
+	RTM_DISABLE_SECURITY_COOKIE_CHECK constexpr rtm_impl::vector4d_vector_get_component_static<component> vector_get_component(const vector4d& input) RTM_NO_EXCEPT
 	{
 		return rtm_impl::vector4d_vector_get_component_static<component>{ input };
 	}
@@ -349,7 +349,7 @@ namespace rtm
 		//////////////////////////////////////////////////////////////////////////
 		struct vector4d_vector_get_component
 		{
-			inline RTM_SIMD_CALL operator double() const RTM_NO_EXCEPT
+			RTM_DISABLE_SECURITY_COOKIE_CHECK inline RTM_SIMD_CALL operator double() const RTM_NO_EXCEPT
 			{
 				const mix4 xyzw = mix4(int(component) % 4);
 				if (xyzw == mix4::x)
@@ -363,7 +363,7 @@ namespace rtm
 			}
 
 #if defined(RTM_SSE2_INTRINSICS)
-			inline RTM_SIMD_CALL operator scalard() const RTM_NO_EXCEPT
+			RTM_DISABLE_SECURITY_COOKIE_CHECK inline RTM_SIMD_CALL operator scalard() const RTM_NO_EXCEPT
 			{
 				const mix4 xyzw = mix4(int(component) % 4);
 				if (xyzw == mix4::x)
@@ -386,7 +386,7 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	// Returns the vector4 desired component.
 	//////////////////////////////////////////////////////////////////////////
-	constexpr rtm_impl::vector4d_vector_get_component vector_get_component(const vector4d& input, mix4 component) RTM_NO_EXCEPT
+	RTM_DISABLE_SECURITY_COOKIE_CHECK constexpr rtm_impl::vector4d_vector_get_component vector_get_component(const vector4d& input, mix4 component) RTM_NO_EXCEPT
 	{
 		return rtm_impl::vector4d_vector_get_component{ input, component, { 0 } };
 	}
@@ -394,7 +394,7 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	// Returns the smallest component in the input vector as a scalar.
 	//////////////////////////////////////////////////////////////////////////
-	constexpr rtm_impl::vector4d_get_min_component vector_get_min_component(const vector4d& input) RTM_NO_EXCEPT
+	RTM_DISABLE_SECURITY_COOKIE_CHECK constexpr rtm_impl::vector4d_get_min_component vector_get_min_component(const vector4d& input) RTM_NO_EXCEPT
 	{
 		return rtm_impl::vector4d_get_min_component{ input };
 	}
@@ -402,7 +402,7 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	// Returns the largest component in the input vector as a scalar.
 	//////////////////////////////////////////////////////////////////////////
-	constexpr rtm_impl::vector4d_get_max_component vector_get_max_component(const vector4d& input) RTM_NO_EXCEPT
+	RTM_DISABLE_SECURITY_COOKIE_CHECK constexpr rtm_impl::vector4d_get_max_component vector_get_max_component(const vector4d& input) RTM_NO_EXCEPT
 	{
 		return rtm_impl::vector4d_get_max_component{ input };
 	}
@@ -410,7 +410,7 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	// Sets the vector4 [x] component and returns the new value.
 	//////////////////////////////////////////////////////////////////////////
-	inline vector4d vector_set_x(const vector4d& input, double lane_value) RTM_NO_EXCEPT
+	RTM_DISABLE_SECURITY_COOKIE_CHECK inline vector4d vector_set_x(const vector4d& input, double lane_value) RTM_NO_EXCEPT
 	{
 #if defined(RTM_SSE2_INTRINSICS)
 		return vector4d{ _mm_move_sd(input.xy, _mm_set_sd(lane_value)), input.zw };
@@ -423,7 +423,7 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	// Sets the vector4 [x] component and returns the new value.
 	//////////////////////////////////////////////////////////////////////////
-	inline vector4d vector_set_x(const vector4d& input, const scalard& lane_value) RTM_NO_EXCEPT
+	RTM_DISABLE_SECURITY_COOKIE_CHECK inline vector4d vector_set_x(const vector4d& input, const scalard& lane_value) RTM_NO_EXCEPT
 	{
 		return vector4d{ _mm_move_sd(input.xy, lane_value.value), input.zw };
 	}
@@ -432,7 +432,7 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	// Sets the vector4 [y] component and returns the new value.
 	//////////////////////////////////////////////////////////////////////////
-	inline vector4d vector_set_y(const vector4d& input, double lane_value) RTM_NO_EXCEPT
+	RTM_DISABLE_SECURITY_COOKIE_CHECK inline vector4d vector_set_y(const vector4d& input, double lane_value) RTM_NO_EXCEPT
 	{
 #if defined(RTM_SSE2_INTRINSICS)
 		return vector4d{ _mm_shuffle_pd(input.xy, _mm_set_sd(lane_value), 0), input.zw };
@@ -445,7 +445,7 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	// Sets the vector4 [y] component and returns the new value.
 	//////////////////////////////////////////////////////////////////////////
-	inline vector4d vector_set_y(const vector4d& input, const scalard& lane_value) RTM_NO_EXCEPT
+	RTM_DISABLE_SECURITY_COOKIE_CHECK inline vector4d vector_set_y(const vector4d& input, const scalard& lane_value) RTM_NO_EXCEPT
 	{
 		return vector4d{ _mm_shuffle_pd(input.xy, lane_value.value, 0), input.zw };
 	}
@@ -454,7 +454,7 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	// Sets the vector4 [z] component and returns the new value.
 	//////////////////////////////////////////////////////////////////////////
-	inline vector4d vector_set_z(const vector4d& input, double lane_value) RTM_NO_EXCEPT
+	RTM_DISABLE_SECURITY_COOKIE_CHECK inline vector4d vector_set_z(const vector4d& input, double lane_value) RTM_NO_EXCEPT
 	{
 #if defined(RTM_SSE2_INTRINSICS)
 		return vector4d{ input.xy, _mm_move_sd(input.zw, _mm_set_sd(lane_value)) };
@@ -467,7 +467,7 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	// Sets the vector4 [z] component and returns the new value.
 	//////////////////////////////////////////////////////////////////////////
-	inline vector4d vector_set_z(const vector4d& input, const scalard& lane_value) RTM_NO_EXCEPT
+	RTM_DISABLE_SECURITY_COOKIE_CHECK inline vector4d vector_set_z(const vector4d& input, const scalard& lane_value) RTM_NO_EXCEPT
 	{
 		return vector4d{ input.xy, _mm_move_sd(input.zw, lane_value.value) };
 	}
@@ -476,7 +476,7 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	// Sets the vector4 [w] component and returns the new value.
 	//////////////////////////////////////////////////////////////////////////
-	inline vector4d vector_set_w(const vector4d& input, double lane_value) RTM_NO_EXCEPT
+	RTM_DISABLE_SECURITY_COOKIE_CHECK inline vector4d vector_set_w(const vector4d& input, double lane_value) RTM_NO_EXCEPT
 	{
 #if defined(RTM_SSE2_INTRINSICS)
 		return vector4d{ input.xy, _mm_shuffle_pd(input.zw, _mm_set_sd(lane_value), 0) };
@@ -489,7 +489,7 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	// Sets the vector4 [w] component and returns the new value.
 	//////////////////////////////////////////////////////////////////////////
-	inline vector4d vector_set_w(const vector4d& input, const scalard& lane_value) RTM_NO_EXCEPT
+	RTM_DISABLE_SECURITY_COOKIE_CHECK inline vector4d vector_set_w(const vector4d& input, const scalard& lane_value) RTM_NO_EXCEPT
 	{
 		return vector4d{ input.xy, _mm_shuffle_pd(input.zw, lane_value.value, 0) };
 	}
@@ -498,7 +498,7 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	// Returns a floating point pointer to the vector4 data.
 	//////////////////////////////////////////////////////////////////////////
-	inline const double* vector_to_pointer(const vector4d& input) RTM_NO_EXCEPT
+	RTM_DISABLE_SECURITY_COOKIE_CHECK inline const double* vector_to_pointer(const vector4d& input) RTM_NO_EXCEPT
 	{
 		return reinterpret_cast<const double*>(&input);
 	}
@@ -506,7 +506,7 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	// Writes a vector4 to unaligned memory.
 	//////////////////////////////////////////////////////////////////////////
-	inline void vector_store(const vector4d& input, double* output) RTM_NO_EXCEPT
+	RTM_DISABLE_SECURITY_COOKIE_CHECK inline void vector_store(const vector4d& input, double* output) RTM_NO_EXCEPT
 	{
 		output[0] = vector_get_x(input);
 		output[1] = vector_get_y(input);
@@ -517,7 +517,7 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	// Writes a vector1 to unaligned memory.
 	//////////////////////////////////////////////////////////////////////////
-	inline void vector_store1(const vector4d& input, double* output) RTM_NO_EXCEPT
+	RTM_DISABLE_SECURITY_COOKIE_CHECK inline void vector_store1(const vector4d& input, double* output) RTM_NO_EXCEPT
 	{
 		output[0] = vector_get_x(input);
 	}
@@ -525,7 +525,7 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	// Writes a vector2 to unaligned memory.
 	//////////////////////////////////////////////////////////////////////////
-	inline void vector_store2(const vector4d& input, double* output) RTM_NO_EXCEPT
+	RTM_DISABLE_SECURITY_COOKIE_CHECK inline void vector_store2(const vector4d& input, double* output) RTM_NO_EXCEPT
 	{
 		output[0] = vector_get_x(input);
 		output[1] = vector_get_y(input);
@@ -534,7 +534,7 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	// Writes a vector3 to unaligned memory.
 	//////////////////////////////////////////////////////////////////////////
-	inline void vector_store3(const vector4d& input, double* output) RTM_NO_EXCEPT
+	RTM_DISABLE_SECURITY_COOKIE_CHECK inline void vector_store3(const vector4d& input, double* output) RTM_NO_EXCEPT
 	{
 		output[0] = vector_get_x(input);
 		output[1] = vector_get_y(input);
@@ -544,7 +544,7 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	// Writes a vector4 to unaligned memory.
 	//////////////////////////////////////////////////////////////////////////
-	inline void vector_store(const vector4d& input, uint8_t* output) RTM_NO_EXCEPT
+	RTM_DISABLE_SECURITY_COOKIE_CHECK inline void vector_store(const vector4d& input, uint8_t* output) RTM_NO_EXCEPT
 	{
 		std::memcpy(output, &input, sizeof(vector4d));
 	}
@@ -552,7 +552,7 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	// Writes a vector1 to unaligned memory.
 	//////////////////////////////////////////////////////////////////////////
-	inline void vector_store1(const vector4d& input, uint8_t* output)
+	RTM_DISABLE_SECURITY_COOKIE_CHECK inline void vector_store1(const vector4d& input, uint8_t* output)
 	{
 		std::memcpy(output, &input, sizeof(double) * 1);
 	}
@@ -560,7 +560,7 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	// Writes a vector2 to unaligned memory.
 	//////////////////////////////////////////////////////////////////////////
-	inline void vector_store2(const vector4d& input, uint8_t* output)
+	RTM_DISABLE_SECURITY_COOKIE_CHECK inline void vector_store2(const vector4d& input, uint8_t* output)
 	{
 		std::memcpy(output, &input, sizeof(double) * 2);
 	}
@@ -568,7 +568,7 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	// Writes a vector3 to unaligned memory.
 	//////////////////////////////////////////////////////////////////////////
-	inline void vector_store3(const vector4d& input, uint8_t* output)
+	RTM_DISABLE_SECURITY_COOKIE_CHECK inline void vector_store3(const vector4d& input, uint8_t* output)
 	{
 		std::memcpy(output, &input, sizeof(double) * 3);
 	}
@@ -576,7 +576,7 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	// Writes a vector4 to unaligned memory.
 	//////////////////////////////////////////////////////////////////////////
-	inline void vector_store(const vector4d& input, float4d* output) RTM_NO_EXCEPT
+	RTM_DISABLE_SECURITY_COOKIE_CHECK inline void vector_store(const vector4d& input, float4d* output) RTM_NO_EXCEPT
 	{
 		output->x = vector_get_x(input);
 		output->y = vector_get_y(input);
@@ -587,7 +587,7 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	// Writes a vector2 to unaligned memory.
 	//////////////////////////////////////////////////////////////////////////
-	inline void vector_store2(const vector4d& input, float2d* output) RTM_NO_EXCEPT
+	RTM_DISABLE_SECURITY_COOKIE_CHECK inline void vector_store2(const vector4d& input, float2d* output) RTM_NO_EXCEPT
 	{
 		output->x = vector_get_x(input);
 		output->y = vector_get_y(input);
@@ -596,7 +596,7 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	// Writes a vector3 to unaligned memory.
 	//////////////////////////////////////////////////////////////////////////
-	inline void vector_store3(const vector4d& input, float3d* output) RTM_NO_EXCEPT
+	RTM_DISABLE_SECURITY_COOKIE_CHECK inline void vector_store3(const vector4d& input, float3d* output) RTM_NO_EXCEPT
 	{
 		output->x = vector_get_x(input);
 		output->y = vector_get_y(input);
@@ -613,7 +613,7 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	// Per component addition of the two inputs: lhs + rhs
 	//////////////////////////////////////////////////////////////////////////
-	inline vector4d vector_add(const vector4d& lhs, const vector4d& rhs) RTM_NO_EXCEPT
+	RTM_DISABLE_SECURITY_COOKIE_CHECK inline vector4d vector_add(const vector4d& lhs, const vector4d& rhs) RTM_NO_EXCEPT
 	{
 #if defined(RTM_SSE2_INTRINSICS)
 		return vector4d{ _mm_add_pd(lhs.xy, rhs.xy), _mm_add_pd(lhs.zw, rhs.zw) };
@@ -625,7 +625,7 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	// Per component subtraction of the two inputs: lhs - rhs
 	//////////////////////////////////////////////////////////////////////////
-	inline vector4d vector_sub(const vector4d& lhs, const vector4d& rhs) RTM_NO_EXCEPT
+	RTM_DISABLE_SECURITY_COOKIE_CHECK inline vector4d vector_sub(const vector4d& lhs, const vector4d& rhs) RTM_NO_EXCEPT
 	{
 #if defined(RTM_SSE2_INTRINSICS)
 		return vector4d{ _mm_sub_pd(lhs.xy, rhs.xy), _mm_sub_pd(lhs.zw, rhs.zw) };
@@ -637,7 +637,7 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	// Per component multiplication of the two inputs: lhs * rhs
 	//////////////////////////////////////////////////////////////////////////
-	inline vector4d vector_mul(const vector4d& lhs, const vector4d& rhs) RTM_NO_EXCEPT
+	RTM_DISABLE_SECURITY_COOKIE_CHECK inline vector4d vector_mul(const vector4d& lhs, const vector4d& rhs) RTM_NO_EXCEPT
 	{
 #if defined(RTM_SSE2_INTRINSICS)
 		return vector4d{ _mm_mul_pd(lhs.xy, rhs.xy), _mm_mul_pd(lhs.zw, rhs.zw) };
@@ -649,7 +649,7 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	// Per component multiplication of the vector by a scalar: lhs * rhs
 	//////////////////////////////////////////////////////////////////////////
-	inline vector4d vector_mul(const vector4d& lhs, double rhs) RTM_NO_EXCEPT
+	RTM_DISABLE_SECURITY_COOKIE_CHECK inline vector4d vector_mul(const vector4d& lhs, double rhs) RTM_NO_EXCEPT
 	{
 		return vector_mul(lhs, vector_set(rhs));
 	}
@@ -658,7 +658,7 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	// Per component multiplication of the vector by a scalar: lhs * rhs
 	//////////////////////////////////////////////////////////////////////////
-	inline vector4d vector_mul(const vector4d& lhs, const scalard& rhs) RTM_NO_EXCEPT
+	RTM_DISABLE_SECURITY_COOKIE_CHECK inline vector4d vector_mul(const vector4d& lhs, const scalard& rhs) RTM_NO_EXCEPT
 	{
 		const __m128d rhs_xx = _mm_shuffle_pd(rhs.value, rhs.value, 0);
 		return vector4d{ _mm_mul_pd(lhs.xy, rhs_xx), _mm_mul_pd(lhs.zw, rhs_xx) };
@@ -668,7 +668,7 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	// Per component division of the two inputs: lhs / rhs
 	//////////////////////////////////////////////////////////////////////////
-	inline vector4d vector_div(const vector4d& lhs, const vector4d& rhs) RTM_NO_EXCEPT
+	RTM_DISABLE_SECURITY_COOKIE_CHECK inline vector4d vector_div(const vector4d& lhs, const vector4d& rhs) RTM_NO_EXCEPT
 	{
 #if defined(RTM_SSE2_INTRINSICS)
 		return vector4d{ _mm_div_pd(lhs.xy, rhs.xy), _mm_div_pd(lhs.zw, rhs.zw) };
@@ -680,7 +680,7 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	// Per component maximum of the two inputs: max(lhs, rhs)
 	//////////////////////////////////////////////////////////////////////////
-	inline vector4d vector_max(const vector4d& lhs, const vector4d& rhs) RTM_NO_EXCEPT
+	RTM_DISABLE_SECURITY_COOKIE_CHECK inline vector4d vector_max(const vector4d& lhs, const vector4d& rhs) RTM_NO_EXCEPT
 	{
 #if defined(RTM_SSE2_INTRINSICS)
 		return vector4d{ _mm_max_pd(lhs.xy, rhs.xy), _mm_max_pd(lhs.zw, rhs.zw) };
@@ -692,7 +692,7 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	// Per component minimum of the two inputs: min(lhs, rhs)
 	//////////////////////////////////////////////////////////////////////////
-	inline vector4d vector_min(const vector4d& lhs, const vector4d& rhs) RTM_NO_EXCEPT
+	RTM_DISABLE_SECURITY_COOKIE_CHECK inline vector4d vector_min(const vector4d& lhs, const vector4d& rhs) RTM_NO_EXCEPT
 	{
 #if defined(RTM_SSE2_INTRINSICS)
 		return vector4d{ _mm_min_pd(lhs.xy, rhs.xy), _mm_min_pd(lhs.zw, rhs.zw) };
@@ -704,7 +704,7 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	// Per component clamping of an input between a minimum and a maximum value: min(max_value, max(min_value, input))
 	//////////////////////////////////////////////////////////////////////////
-	inline vector4d vector_clamp(const vector4d& input, const vector4d& min_value, const vector4d& max_value) RTM_NO_EXCEPT
+	RTM_DISABLE_SECURITY_COOKIE_CHECK inline vector4d vector_clamp(const vector4d& input, const vector4d& min_value, const vector4d& max_value) RTM_NO_EXCEPT
 	{
 		return vector_min(max_value, vector_max(min_value, input));
 	}
@@ -712,7 +712,7 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	// Per component absolute of the input: abs(input)
 	//////////////////////////////////////////////////////////////////////////
-	inline vector4d vector_abs(const vector4d& input) RTM_NO_EXCEPT
+	RTM_DISABLE_SECURITY_COOKIE_CHECK inline vector4d vector_abs(const vector4d& input) RTM_NO_EXCEPT
 	{
 #if defined(RTM_SSE2_INTRINSICS)
 		vector4d zero{ _mm_setzero_pd(), _mm_setzero_pd() };
@@ -725,7 +725,7 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	// Per component negation of the input: -input
 	//////////////////////////////////////////////////////////////////////////
-	inline vector4d vector_neg(const vector4d& input) RTM_NO_EXCEPT
+	RTM_DISABLE_SECURITY_COOKIE_CHECK inline vector4d vector_neg(const vector4d& input) RTM_NO_EXCEPT
 	{
 		return vector_mul(input, -1.0);
 	}
@@ -733,7 +733,7 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	// Per component reciprocal of the input: 1.0 / input
 	//////////////////////////////////////////////////////////////////////////
-	inline vector4d vector_reciprocal(const vector4d& input) RTM_NO_EXCEPT
+	RTM_DISABLE_SECURITY_COOKIE_CHECK inline vector4d vector_reciprocal(const vector4d& input) RTM_NO_EXCEPT
 	{
 		return vector_div(vector_set(1.0), input);
 	}
@@ -741,7 +741,7 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	// Per component square root of the input: sqrt(input)
 	//////////////////////////////////////////////////////////////////////////
-	inline vector4d vector_sqrt(const vector4d& input) RTM_NO_EXCEPT
+	RTM_DISABLE_SECURITY_COOKIE_CHECK inline vector4d vector_sqrt(const vector4d& input) RTM_NO_EXCEPT
 	{
 #if defined(RTM_SSE2_INTRINSICS)
 		return vector4d{ _mm_sqrt_pd(input.xy), _mm_sqrt_pd(input.zw) };
@@ -758,7 +758,7 @@ namespace rtm
 	// Per component returns the smallest integer value not less than the input (round towards positive infinity).
 	// vector_ceil([1.8, 1.0, -1.8, -1.0]) = [2.0, 1.0, -1.0, -1.0]
 	//////////////////////////////////////////////////////////////////////////
-	inline vector4d vector_ceil(const vector4d& input) RTM_NO_EXCEPT
+	RTM_DISABLE_SECURITY_COOKIE_CHECK inline vector4d vector_ceil(const vector4d& input) RTM_NO_EXCEPT
 	{
 #if defined(RTM_SSE2_INTRINSICS)
 		// NaN, +- Infinity, and numbers larger or equal to 2^23 remain unchanged
@@ -816,7 +816,7 @@ namespace rtm
 	// Per component returns the largest integer value not greater than the input (round towards negative infinity).
 	// vector_floor([1.8, 1.0, -1.8, -1.0]) = [1.0, 1.0, -2.0, -1.0]
 	//////////////////////////////////////////////////////////////////////////
-	inline vector4d vector_floor(const vector4d& input) RTM_NO_EXCEPT
+	RTM_DISABLE_SECURITY_COOKIE_CHECK inline vector4d vector_floor(const vector4d& input) RTM_NO_EXCEPT
 	{
 #if defined(RTM_SSE4_INTRINSICS)
 		return vector4d{ _mm_floor_pd(input.xy), _mm_floor_pd(input.zw) };
@@ -875,7 +875,7 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	// 3D cross product: lhs x rhs
 	//////////////////////////////////////////////////////////////////////////
-	inline vector4d vector_cross3(const vector4d& lhs, const vector4d& rhs) RTM_NO_EXCEPT
+	RTM_DISABLE_SECURITY_COOKIE_CHECK inline vector4d vector_cross3(const vector4d& lhs, const vector4d& rhs) RTM_NO_EXCEPT
 	{
 		// cross(a, b) = (a.yzx * b.zxy) - (a.zxy * b.yzx)
 		const double lhs_x = vector_get_x(lhs);
@@ -897,7 +897,7 @@ namespace rtm
 		//////////////////////////////////////////////////////////////////////////
 		struct vector4d_vector_dot
 		{
-			inline RTM_SIMD_CALL operator double() const RTM_NO_EXCEPT
+			RTM_DISABLE_SECURITY_COOKIE_CHECK inline RTM_SIMD_CALL operator double() const RTM_NO_EXCEPT
 			{
 				const scalard lhs_x = vector_get_x(lhs);
 				const scalard lhs_y = vector_get_y(lhs);
@@ -915,7 +915,7 @@ namespace rtm
 			}
 
 #if defined(RTM_SSE2_INTRINSICS)
-			inline RTM_SIMD_CALL operator scalard() const RTM_NO_EXCEPT
+			RTM_DISABLE_SECURITY_COOKIE_CHECK inline RTM_SIMD_CALL operator scalard() const RTM_NO_EXCEPT
 			{
 				const scalard lhs_x = vector_get_x(lhs);
 				const scalard lhs_y = vector_get_y(lhs);
@@ -947,7 +947,7 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	// 4D dot product: lhs . rhs
 	//////////////////////////////////////////////////////////////////////////
-	constexpr rtm_impl::vector4d_vector_dot vector_dot(const vector4d& lhs, const vector4d& rhs) RTM_NO_EXCEPT
+	RTM_DISABLE_SECURITY_COOKIE_CHECK constexpr rtm_impl::vector4d_vector_dot vector_dot(const vector4d& lhs, const vector4d& rhs) RTM_NO_EXCEPT
 	{
 		return rtm_impl::vector4d_vector_dot{ lhs, rhs };
 	}
@@ -962,7 +962,7 @@ namespace rtm
 		//////////////////////////////////////////////////////////////////////////
 		struct vector4d_vector_dot3
 		{
-			inline RTM_SIMD_CALL operator double() const RTM_NO_EXCEPT
+			RTM_DISABLE_SECURITY_COOKIE_CHECK inline RTM_SIMD_CALL operator double() const RTM_NO_EXCEPT
 			{
 #if defined(RTM_SSE2_INTRINSICS)
 				__m128d x2_y2 = _mm_mul_pd(lhs.xy, rhs.xy);
@@ -976,7 +976,7 @@ namespace rtm
 			}
 
 #if defined(RTM_SSE2_INTRINSICS)
-			inline RTM_SIMD_CALL operator scalard() const RTM_NO_EXCEPT
+			RTM_DISABLE_SECURITY_COOKIE_CHECK inline RTM_SIMD_CALL operator scalard() const RTM_NO_EXCEPT
 			{
 				__m128d x2_y2 = _mm_mul_pd(lhs.xy, rhs.xy);
 				__m128d z2_w2 = _mm_mul_pd(lhs.zw, rhs.zw);
@@ -994,7 +994,7 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	// 3D dot product: lhs . rhs
 	//////////////////////////////////////////////////////////////////////////
-	constexpr rtm_impl::vector4d_vector_dot3 vector_dot3(const vector4d& lhs, const vector4d& rhs) RTM_NO_EXCEPT
+	RTM_DISABLE_SECURITY_COOKIE_CHECK constexpr rtm_impl::vector4d_vector_dot3 vector_dot3(const vector4d& lhs, const vector4d& rhs) RTM_NO_EXCEPT
 	{
 		return rtm_impl::vector4d_vector_dot3{ lhs, rhs };
 	}
@@ -1002,7 +1002,7 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	// Returns the squared length/norm of the vector4.
 	//////////////////////////////////////////////////////////////////////////
-	constexpr rtm_impl::vector4d_vector_dot vector_length_squared(const vector4d& input) RTM_NO_EXCEPT
+	RTM_DISABLE_SECURITY_COOKIE_CHECK constexpr rtm_impl::vector4d_vector_dot vector_length_squared(const vector4d& input) RTM_NO_EXCEPT
 	{
 		return rtm_impl::vector4d_vector_dot{ input, input };
 	}
@@ -1010,7 +1010,7 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	// Returns the squared length/norm of the vector3.
 	//////////////////////////////////////////////////////////////////////////
-	constexpr rtm_impl::vector4d_vector_dot3 vector_length_squared3(const vector4d& input) RTM_NO_EXCEPT
+	RTM_DISABLE_SECURITY_COOKIE_CHECK constexpr rtm_impl::vector4d_vector_dot3 vector_length_squared3(const vector4d& input) RTM_NO_EXCEPT
 	{
 		return rtm_impl::vector4d_vector_dot3{ input, input };
 	}
@@ -1025,14 +1025,14 @@ namespace rtm
 		//////////////////////////////////////////////////////////////////////////
 		struct vector4d_vector_length
 		{
-			inline RTM_SIMD_CALL operator double() const RTM_NO_EXCEPT
+			RTM_DISABLE_SECURITY_COOKIE_CHECK inline RTM_SIMD_CALL operator double() const RTM_NO_EXCEPT
 			{
 				const scalard len_sq = vector_length_squared(input);
 				return scalar_cast(scalar_sqrt(len_sq));
 			}
 
 #if defined(RTM_SSE2_INTRINSICS)
-			inline RTM_SIMD_CALL operator scalard() const RTM_NO_EXCEPT
+			RTM_DISABLE_SECURITY_COOKIE_CHECK inline RTM_SIMD_CALL operator scalard() const RTM_NO_EXCEPT
 			{
 				const scalard len_sq = vector_length_squared(input);
 				return scalar_sqrt(len_sq);
@@ -1046,7 +1046,7 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	// Returns the length/norm of the vector4.
 	//////////////////////////////////////////////////////////////////////////
-	constexpr rtm_impl::vector4d_vector_length vector_length(const vector4d& input) RTM_NO_EXCEPT
+	RTM_DISABLE_SECURITY_COOKIE_CHECK constexpr rtm_impl::vector4d_vector_length vector_length(const vector4d& input) RTM_NO_EXCEPT
 	{
 		return rtm_impl::vector4d_vector_length{ input };
 	}
@@ -1061,14 +1061,14 @@ namespace rtm
 		//////////////////////////////////////////////////////////////////////////
 		struct vector4d_vector_length3
 		{
-			inline RTM_SIMD_CALL operator double() const RTM_NO_EXCEPT
+			RTM_DISABLE_SECURITY_COOKIE_CHECK inline RTM_SIMD_CALL operator double() const RTM_NO_EXCEPT
 			{
 				const scalard len_sq = vector_length_squared3(input);
 				return scalar_cast(scalar_sqrt(len_sq));
 			}
 
 #if defined(RTM_SSE2_INTRINSICS)
-			inline RTM_SIMD_CALL operator scalard() const RTM_NO_EXCEPT
+			RTM_DISABLE_SECURITY_COOKIE_CHECK inline RTM_SIMD_CALL operator scalard() const RTM_NO_EXCEPT
 			{
 				const scalard len_sq = vector_length_squared3(input);
 				return scalar_sqrt(len_sq);
@@ -1082,7 +1082,7 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	// Returns the length/norm of the vector3.
 	//////////////////////////////////////////////////////////////////////////
-	constexpr rtm_impl::vector4d_vector_length3 vector_length3(const vector4d& input) RTM_NO_EXCEPT
+	RTM_DISABLE_SECURITY_COOKIE_CHECK constexpr rtm_impl::vector4d_vector_length3 vector_length3(const vector4d& input) RTM_NO_EXCEPT
 	{
 		return rtm_impl::vector4d_vector_length3{ input };
 	}
@@ -1097,14 +1097,14 @@ namespace rtm
 		//////////////////////////////////////////////////////////////////////////
 		struct vector4d_vector_length_reciprocal
 		{
-			inline RTM_SIMD_CALL operator double() const RTM_NO_EXCEPT
+			RTM_DISABLE_SECURITY_COOKIE_CHECK inline RTM_SIMD_CALL operator double() const RTM_NO_EXCEPT
 			{
 				const scalard len_sq = vector_length_squared(input);
 				return scalar_cast(scalar_sqrt_reciprocal(len_sq));
 			}
 
 #if defined(RTM_SSE2_INTRINSICS)
-			inline RTM_SIMD_CALL operator scalard() const RTM_NO_EXCEPT
+			RTM_DISABLE_SECURITY_COOKIE_CHECK inline RTM_SIMD_CALL operator scalard() const RTM_NO_EXCEPT
 			{
 				const scalard len_sq = vector_length_squared(input);
 				return scalar_sqrt_reciprocal(len_sq);
@@ -1118,7 +1118,7 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	// Returns the reciprocal length/norm of the vector4.
 	//////////////////////////////////////////////////////////////////////////
-	constexpr rtm_impl::vector4d_vector_length_reciprocal vector_length_reciprocal(const vector4d& input) RTM_NO_EXCEPT
+	RTM_DISABLE_SECURITY_COOKIE_CHECK constexpr rtm_impl::vector4d_vector_length_reciprocal vector_length_reciprocal(const vector4d& input) RTM_NO_EXCEPT
 	{
 		return rtm_impl::vector4d_vector_length_reciprocal{ input };
 	}
@@ -1133,14 +1133,14 @@ namespace rtm
 		//////////////////////////////////////////////////////////////////////////
 		struct vector4d_vector_length_reciprocal3
 		{
-			inline RTM_SIMD_CALL operator double() const RTM_NO_EXCEPT
+			RTM_DISABLE_SECURITY_COOKIE_CHECK inline RTM_SIMD_CALL operator double() const RTM_NO_EXCEPT
 			{
 				const scalard len_sq = vector_length_squared3(input);
 				return scalar_cast(scalar_sqrt_reciprocal(len_sq));
 			}
 
 #if defined(RTM_SSE2_INTRINSICS)
-			inline RTM_SIMD_CALL operator scalard() const RTM_NO_EXCEPT
+			RTM_DISABLE_SECURITY_COOKIE_CHECK inline RTM_SIMD_CALL operator scalard() const RTM_NO_EXCEPT
 			{
 				const scalard len_sq = vector_length_squared3(input);
 				return scalar_sqrt_reciprocal(len_sq);
@@ -1154,7 +1154,7 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	// Returns the reciprocal length/norm of the vector3.
 	//////////////////////////////////////////////////////////////////////////
-	constexpr rtm_impl::vector4d_vector_length_reciprocal3 vector_length_reciprocal3(const vector4d& input) RTM_NO_EXCEPT
+	RTM_DISABLE_SECURITY_COOKIE_CHECK constexpr rtm_impl::vector4d_vector_length_reciprocal3 vector_length_reciprocal3(const vector4d& input) RTM_NO_EXCEPT
 	{
 		return rtm_impl::vector4d_vector_length_reciprocal3{ input };
 	}
@@ -1162,7 +1162,7 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	// Returns the distance between two 3D points.
 	//////////////////////////////////////////////////////////////////////////
-	inline rtm_impl::vector4d_vector_length3 vector_distance3(const vector4d& lhs, const vector4d& rhs) RTM_NO_EXCEPT
+	RTM_DISABLE_SECURITY_COOKIE_CHECK inline rtm_impl::vector4d_vector_length3 vector_distance3(const vector4d& lhs, const vector4d& rhs) RTM_NO_EXCEPT
 	{
 		const vector4d difference = vector_sub(lhs, rhs);
 		return rtm_impl::vector4d_vector_length3{ difference };
@@ -1173,7 +1173,7 @@ namespace rtm
 	// If the length of the input is not finite or zero, the result is undefined.
 	// For a safe alternative, supply a fallback value and a threshold.
 	//////////////////////////////////////////////////////////////////////////
-	inline vector4d vector_normalize3(const vector4d& input) RTM_NO_EXCEPT
+	RTM_DISABLE_SECURITY_COOKIE_CHECK inline vector4d vector_normalize3(const vector4d& input) RTM_NO_EXCEPT
 	{
 		// Reciprocal is more accurate to normalize with
 		const scalard len_sq = vector_length_squared3(input);
@@ -1185,7 +1185,7 @@ namespace rtm
 	// If the length of the input is below the supplied threshold, the
 	// fall back value is returned instead.
 	//////////////////////////////////////////////////////////////////////////
-	inline vector4d vector_normalize3(const vector4d& input, const vector4d& fallback, double threshold = 1.0E-8) RTM_NO_EXCEPT
+	RTM_DISABLE_SECURITY_COOKIE_CHECK inline vector4d vector_normalize3(const vector4d& input, const vector4d& fallback, double threshold = 1.0E-8) RTM_NO_EXCEPT
 	{
 		// Reciprocal is more accurate to normalize with
 		const scalard len_sq = vector_length_squared3(input);
@@ -1198,7 +1198,7 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	// Returns per component the fractional part of the input.
 	//////////////////////////////////////////////////////////////////////////
-	inline vector4d vector_fraction(const vector4d& input) RTM_NO_EXCEPT
+	RTM_DISABLE_SECURITY_COOKIE_CHECK inline vector4d vector_fraction(const vector4d& input) RTM_NO_EXCEPT
 	{
 		return vector_set(scalar_fraction(vector_get_x(input)), scalar_fraction(vector_get_y(input)), scalar_fraction(vector_get_z(input)), scalar_fraction(vector_get_w(input)));
 	}
@@ -1206,7 +1206,7 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	// Per component multiplication/addition of the three inputs: v2 + (v0 * v1)
 	//////////////////////////////////////////////////////////////////////////
-	inline vector4d vector_mul_add(const vector4d& v0, const vector4d& v1, const vector4d& v2) RTM_NO_EXCEPT
+	RTM_DISABLE_SECURITY_COOKIE_CHECK inline vector4d vector_mul_add(const vector4d& v0, const vector4d& v1, const vector4d& v2) RTM_NO_EXCEPT
 	{
 		return vector_add(vector_mul(v0, v1), v2);
 	}
@@ -1214,7 +1214,7 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	// Per component multiplication/addition of the three inputs: v2 + (v0 * s1)
 	//////////////////////////////////////////////////////////////////////////
-	inline vector4d vector_mul_add(const vector4d& v0, double s1, const vector4d& v2) RTM_NO_EXCEPT
+	RTM_DISABLE_SECURITY_COOKIE_CHECK inline vector4d vector_mul_add(const vector4d& v0, double s1, const vector4d& v2) RTM_NO_EXCEPT
 	{
 		return vector_add(vector_mul(v0, s1), v2);
 	}
@@ -1223,7 +1223,7 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	// Per component multiplication/addition of the three inputs: v2 + (v0 * s1)
 	//////////////////////////////////////////////////////////////////////////
-	inline vector4d vector_mul_add(const vector4d& v0, const scalard& s1, const vector4d& v2) RTM_NO_EXCEPT
+	RTM_DISABLE_SECURITY_COOKIE_CHECK inline vector4d vector_mul_add(const vector4d& v0, const scalard& s1, const vector4d& v2) RTM_NO_EXCEPT
 	{
 		return vector_add(vector_mul(v0, s1), v2);
 	}
@@ -1233,7 +1233,7 @@ namespace rtm
 	// Per component negative multiplication/subtraction of the three inputs: -((v0 * v1) - v2)
 	// This is mathematically equivalent to: v2 - (v0 * v1)
 	//////////////////////////////////////////////////////////////////////////
-	inline vector4d vector_neg_mul_sub(const vector4d& v0, const vector4d& v1, const vector4d& v2) RTM_NO_EXCEPT
+	RTM_DISABLE_SECURITY_COOKIE_CHECK inline vector4d vector_neg_mul_sub(const vector4d& v0, const vector4d& v1, const vector4d& v2) RTM_NO_EXCEPT
 	{
 		return vector_sub(v2, vector_mul(v0, v1));
 	}
@@ -1242,7 +1242,7 @@ namespace rtm
 	// Per component negative multiplication/subtraction of the three inputs: -((v0 * s1) - v2)
 	// This is mathematically equivalent to: v2 - (v0 * s1)
 	//////////////////////////////////////////////////////////////////////////
-	inline vector4d vector_neg_mul_sub(const vector4d& v0, double s1, const vector4d& v2) RTM_NO_EXCEPT
+	RTM_DISABLE_SECURITY_COOKIE_CHECK inline vector4d vector_neg_mul_sub(const vector4d& v0, double s1, const vector4d& v2) RTM_NO_EXCEPT
 	{
 		return vector_sub(v2, vector_mul(v0, s1));
 	}
@@ -1252,7 +1252,7 @@ namespace rtm
 	// Per component negative multiplication/subtraction of the three inputs: -((v0 * s1) - v2)
 	// This is mathematically equivalent to: v2 - (v0 * s1)
 	//////////////////////////////////////////////////////////////////////////
-	inline vector4d vector_neg_mul_sub(const vector4d& v0, const scalard& s1, const vector4d& v2) RTM_NO_EXCEPT
+	RTM_DISABLE_SECURITY_COOKIE_CHECK inline vector4d vector_neg_mul_sub(const vector4d& v0, const scalard& s1, const vector4d& v2) RTM_NO_EXCEPT
 	{
 		return vector_sub(v2, vector_mul(v0, s1));
 	}
@@ -1265,7 +1265,7 @@ namespace rtm
 	// This is the same instruction count when FMA is present but it might be slightly slower
 	// due to the extra multiplication compared to: start + (alpha * (end - start)).
 	//////////////////////////////////////////////////////////////////////////
-	inline vector4d vector_lerp(const vector4d& start, const vector4d& end, double alpha) RTM_NO_EXCEPT
+	RTM_DISABLE_SECURITY_COOKIE_CHECK inline vector4d vector_lerp(const vector4d& start, const vector4d& end, double alpha) RTM_NO_EXCEPT
 	{
 		// ((1.0 - alpha) * start) + (alpha * end) == (start - alpha * start) + (alpha * end)
 		return vector_mul_add(end, alpha, vector_neg_mul_sub(start, alpha, start));
@@ -1279,7 +1279,7 @@ namespace rtm
 	// This is the same instruction count when FMA is present but it might be slightly slower
 	// due to the extra multiplication compared to: start + (alpha * (end - start)).
 	//////////////////////////////////////////////////////////////////////////
-	inline vector4d vector_lerp(const vector4d& start, const vector4d& end, const scalard& alpha) RTM_NO_EXCEPT
+	RTM_DISABLE_SECURITY_COOKIE_CHECK inline vector4d vector_lerp(const vector4d& start, const vector4d& end, const scalard& alpha) RTM_NO_EXCEPT
 	{
 		// ((1.0 - alpha) * start) + (alpha * end) == (start - alpha * start) + (alpha * end)
 		const vector4d alpha_v = vector_set(alpha);
@@ -1297,7 +1297,7 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	// Returns per component ~0 if equal, otherwise 0: lhs == rhs ? ~0 : 0
 	//////////////////////////////////////////////////////////////////////////
-	inline mask4d vector_equal(const vector4d& lhs, const vector4d& rhs) RTM_NO_EXCEPT
+	RTM_DISABLE_SECURITY_COOKIE_CHECK inline mask4d vector_equal(const vector4d& lhs, const vector4d& rhs) RTM_NO_EXCEPT
 	{
 #if defined(RTM_SSE2_INTRINSICS)
 		__m128d xy_lt_pd = _mm_cmpeq_pd(lhs.xy, rhs.xy);
@@ -1311,7 +1311,7 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	// Returns per component ~0 if less than, otherwise 0: lhs < rhs ? ~0 : 0
 	//////////////////////////////////////////////////////////////////////////
-	inline mask4d vector_less_than(const vector4d& lhs, const vector4d& rhs) RTM_NO_EXCEPT
+	RTM_DISABLE_SECURITY_COOKIE_CHECK inline mask4d vector_less_than(const vector4d& lhs, const vector4d& rhs) RTM_NO_EXCEPT
 	{
 #if defined(RTM_SSE2_INTRINSICS)
 		__m128d xy_lt_pd = _mm_cmplt_pd(lhs.xy, rhs.xy);
@@ -1325,7 +1325,7 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	// Returns per component ~0 if less equal, otherwise 0: lhs <= rhs ? ~0 : 0
 	//////////////////////////////////////////////////////////////////////////
-	inline mask4d vector_less_equal(const vector4d& lhs, const vector4d& rhs) RTM_NO_EXCEPT
+	RTM_DISABLE_SECURITY_COOKIE_CHECK inline mask4d vector_less_equal(const vector4d& lhs, const vector4d& rhs) RTM_NO_EXCEPT
 	{
 #if defined(RTM_SSE2_INTRINSICS)
 		__m128d xy_lt_pd = _mm_cmple_pd(lhs.xy, rhs.xy);
@@ -1339,7 +1339,7 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	// Returns per component ~0 if greater than, otherwise 0: lhs > rhs ? ~0 : 0
 	//////////////////////////////////////////////////////////////////////////
-	inline mask4d vector_greater_than(const vector4d& lhs, const vector4d& rhs) RTM_NO_EXCEPT
+	RTM_DISABLE_SECURITY_COOKIE_CHECK inline mask4d vector_greater_than(const vector4d& lhs, const vector4d& rhs) RTM_NO_EXCEPT
 	{
 #if defined(RTM_SSE2_INTRINSICS)
 		__m128d xy_ge_pd = _mm_cmpgt_pd(lhs.xy, rhs.xy);
@@ -1353,7 +1353,7 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	// Returns per component ~0 if greater equal, otherwise 0: lhs >= rhs ? ~0 : 0
 	//////////////////////////////////////////////////////////////////////////
-	inline mask4d vector_greater_equal(const vector4d& lhs, const vector4d& rhs) RTM_NO_EXCEPT
+	RTM_DISABLE_SECURITY_COOKIE_CHECK inline mask4d vector_greater_equal(const vector4d& lhs, const vector4d& rhs) RTM_NO_EXCEPT
 	{
 #if defined(RTM_SSE2_INTRINSICS)
 		__m128d xy_ge_pd = _mm_cmpge_pd(lhs.xy, rhs.xy);
@@ -1367,7 +1367,7 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	// Returns true if all 4 components are less than, otherwise false: all(lhs < rhs)
 	//////////////////////////////////////////////////////////////////////////
-	inline bool vector_all_less_than(const vector4d& lhs, const vector4d& rhs) RTM_NO_EXCEPT
+	RTM_DISABLE_SECURITY_COOKIE_CHECK inline bool vector_all_less_than(const vector4d& lhs, const vector4d& rhs) RTM_NO_EXCEPT
 	{
 #if defined(RTM_SSE2_INTRINSICS)
 		__m128d xy_lt_pd = _mm_cmplt_pd(lhs.xy, rhs.xy);
@@ -1381,7 +1381,7 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	// Returns true if all [xy] components are less than, otherwise false: all(lhs < rhs)
 	//////////////////////////////////////////////////////////////////////////
-	inline bool vector_all_less_than2(const vector4d& lhs, const vector4d& rhs) RTM_NO_EXCEPT
+	RTM_DISABLE_SECURITY_COOKIE_CHECK inline bool vector_all_less_than2(const vector4d& lhs, const vector4d& rhs) RTM_NO_EXCEPT
 	{
 #if defined(RTM_SSE2_INTRINSICS)
 		__m128d xy_lt_pd = _mm_cmplt_pd(lhs.xy, rhs.xy);
@@ -1394,7 +1394,7 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	// Returns true if all [xyz] components are less than, otherwise false: all(lhs < rhs)
 	//////////////////////////////////////////////////////////////////////////
-	inline bool vector_all_less_than3(const vector4d& lhs, const vector4d& rhs) RTM_NO_EXCEPT
+	RTM_DISABLE_SECURITY_COOKIE_CHECK inline bool vector_all_less_than3(const vector4d& lhs, const vector4d& rhs) RTM_NO_EXCEPT
 	{
 #if defined(RTM_SSE2_INTRINSICS)
 		__m128d xy_lt_pd = _mm_cmplt_pd(lhs.xy, rhs.xy);
@@ -1408,7 +1408,7 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	// Returns true if any 4 components are less than, otherwise false: any(lhs < rhs)
 	//////////////////////////////////////////////////////////////////////////
-	inline bool vector_any_less_than(const vector4d& lhs, const vector4d& rhs) RTM_NO_EXCEPT
+	RTM_DISABLE_SECURITY_COOKIE_CHECK inline bool vector_any_less_than(const vector4d& lhs, const vector4d& rhs) RTM_NO_EXCEPT
 	{
 #if defined(RTM_SSE2_INTRINSICS)
 		__m128d xy_lt_pd = _mm_cmplt_pd(lhs.xy, rhs.xy);
@@ -1422,7 +1422,7 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	// Returns true if any [xy] components are less than, otherwise false: any(lhs < rhs)
 	//////////////////////////////////////////////////////////////////////////
-	inline bool vector_any_less_than2(const vector4d& lhs, const vector4d& rhs) RTM_NO_EXCEPT
+	RTM_DISABLE_SECURITY_COOKIE_CHECK inline bool vector_any_less_than2(const vector4d& lhs, const vector4d& rhs) RTM_NO_EXCEPT
 	{
 #if defined(RTM_SSE2_INTRINSICS)
 		__m128d xy_lt_pd = _mm_cmplt_pd(lhs.xy, rhs.xy);
@@ -1435,7 +1435,7 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	// Returns true if any [xyz] components are less than, otherwise false: any(lhs < rhs)
 	//////////////////////////////////////////////////////////////////////////
-	inline bool vector_any_less_than3(const vector4d& lhs, const vector4d& rhs) RTM_NO_EXCEPT
+	RTM_DISABLE_SECURITY_COOKIE_CHECK inline bool vector_any_less_than3(const vector4d& lhs, const vector4d& rhs) RTM_NO_EXCEPT
 	{
 #if defined(RTM_SSE2_INTRINSICS)
 		__m128d xy_lt_pd = _mm_cmplt_pd(lhs.xy, rhs.xy);
@@ -1449,7 +1449,7 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	// Returns true if all 4 components are less equal, otherwise false: all(lhs <= rhs)
 	//////////////////////////////////////////////////////////////////////////
-	inline bool vector_all_less_equal(const vector4d& lhs, const vector4d& rhs) RTM_NO_EXCEPT
+	RTM_DISABLE_SECURITY_COOKIE_CHECK inline bool vector_all_less_equal(const vector4d& lhs, const vector4d& rhs) RTM_NO_EXCEPT
 	{
 #if defined(RTM_SSE2_INTRINSICS)
 		__m128d xy_le_pd = _mm_cmple_pd(lhs.xy, rhs.xy);
@@ -1463,7 +1463,7 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	// Returns true if all [xy] components are less equal, otherwise false: all(lhs <= rhs)
 	//////////////////////////////////////////////////////////////////////////
-	inline bool vector_all_less_equal2(const vector4d& lhs, const vector4d& rhs) RTM_NO_EXCEPT
+	RTM_DISABLE_SECURITY_COOKIE_CHECK inline bool vector_all_less_equal2(const vector4d& lhs, const vector4d& rhs) RTM_NO_EXCEPT
 	{
 #if defined(RTM_SSE2_INTRINSICS)
 		__m128d xy_le_pd = _mm_cmple_pd(lhs.xy, rhs.xy);
@@ -1476,7 +1476,7 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	// Returns true if all [xyz] components are less equal, otherwise false: all(lhs <= rhs)
 	//////////////////////////////////////////////////////////////////////////
-	inline bool vector_all_less_equal3(const vector4d& lhs, const vector4d& rhs) RTM_NO_EXCEPT
+	RTM_DISABLE_SECURITY_COOKIE_CHECK inline bool vector_all_less_equal3(const vector4d& lhs, const vector4d& rhs) RTM_NO_EXCEPT
 	{
 #if defined(RTM_SSE2_INTRINSICS)
 		__m128d xy_le_pd = _mm_cmple_pd(lhs.xy, rhs.xy);
@@ -1490,7 +1490,7 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	// Returns true if any 4 components are less equal, otherwise false: any(lhs <= rhs)
 	//////////////////////////////////////////////////////////////////////////
-	inline bool vector_any_less_equal(const vector4d& lhs, const vector4d& rhs) RTM_NO_EXCEPT
+	RTM_DISABLE_SECURITY_COOKIE_CHECK inline bool vector_any_less_equal(const vector4d& lhs, const vector4d& rhs) RTM_NO_EXCEPT
 	{
 #if defined(RTM_SSE2_INTRINSICS)
 		__m128d xy_le_pd = _mm_cmple_pd(lhs.xy, rhs.xy);
@@ -1504,7 +1504,7 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	// Returns true if any [xy] components are less equal, otherwise false: any(lhs <= rhs)
 	//////////////////////////////////////////////////////////////////////////
-	inline bool vector_any_less_equal2(const vector4d& lhs, const vector4d& rhs) RTM_NO_EXCEPT
+	RTM_DISABLE_SECURITY_COOKIE_CHECK inline bool vector_any_less_equal2(const vector4d& lhs, const vector4d& rhs) RTM_NO_EXCEPT
 	{
 #if defined(RTM_SSE2_INTRINSICS)
 		__m128d xy_le_pd = _mm_cmple_pd(lhs.xy, rhs.xy);
@@ -1517,7 +1517,7 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	// Returns true if any [xyz] components are less equal, otherwise false: any(lhs <= rhs)
 	//////////////////////////////////////////////////////////////////////////
-	inline bool vector_any_less_equal3(const vector4d& lhs, const vector4d& rhs) RTM_NO_EXCEPT
+	RTM_DISABLE_SECURITY_COOKIE_CHECK inline bool vector_any_less_equal3(const vector4d& lhs, const vector4d& rhs) RTM_NO_EXCEPT
 	{
 #if defined(RTM_SSE2_INTRINSICS)
 		__m128d xy_le_pd = _mm_cmple_pd(lhs.xy, rhs.xy);
@@ -1531,7 +1531,7 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	// Returns true if all 4 components are greater than, otherwise false: all(lhs > rhs)
 	//////////////////////////////////////////////////////////////////////////
-	inline bool vector_all_greater_than(const vector4d& lhs, const vector4d& rhs) RTM_NO_EXCEPT
+	RTM_DISABLE_SECURITY_COOKIE_CHECK inline bool vector_all_greater_than(const vector4d& lhs, const vector4d& rhs) RTM_NO_EXCEPT
 	{
 #if defined(RTM_SSE2_INTRINSICS)
 		__m128d xy_ge_pd = _mm_cmpgt_pd(lhs.xy, rhs.xy);
@@ -1545,7 +1545,7 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	// Returns true if all [xy] components are greater than, otherwise false: all(lhs > rhs)
 	//////////////////////////////////////////////////////////////////////////
-	inline bool vector_all_greater_than2(const vector4d& lhs, const vector4d& rhs) RTM_NO_EXCEPT
+	RTM_DISABLE_SECURITY_COOKIE_CHECK inline bool vector_all_greater_than2(const vector4d& lhs, const vector4d& rhs) RTM_NO_EXCEPT
 	{
 #if defined(RTM_SSE2_INTRINSICS)
 		__m128d xy_ge_pd = _mm_cmpgt_pd(lhs.xy, rhs.xy);
@@ -1558,7 +1558,7 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	// Returns true if all [xyz] components are greater than, otherwise false: all(lhs > rhs)
 	//////////////////////////////////////////////////////////////////////////
-	inline bool vector_all_greater_than3(const vector4d& lhs, const vector4d& rhs) RTM_NO_EXCEPT
+	RTM_DISABLE_SECURITY_COOKIE_CHECK inline bool vector_all_greater_than3(const vector4d& lhs, const vector4d& rhs) RTM_NO_EXCEPT
 	{
 #if defined(RTM_SSE2_INTRINSICS)
 		__m128d xy_ge_pd = _mm_cmpgt_pd(lhs.xy, rhs.xy);
@@ -1572,7 +1572,7 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	// Returns true if any 4 components are greater than, otherwise false: any(lhs > rhs)
 	//////////////////////////////////////////////////////////////////////////
-	inline bool vector_any_greater_than(const vector4d& lhs, const vector4d& rhs) RTM_NO_EXCEPT
+	RTM_DISABLE_SECURITY_COOKIE_CHECK inline bool vector_any_greater_than(const vector4d& lhs, const vector4d& rhs) RTM_NO_EXCEPT
 	{
 #if defined(RTM_SSE2_INTRINSICS)
 		__m128d xy_ge_pd = _mm_cmpgt_pd(lhs.xy, rhs.xy);
@@ -1586,7 +1586,7 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	// Returns true if any [xy] components are greater than, otherwise false: any(lhs > rhs)
 	//////////////////////////////////////////////////////////////////////////
-	inline bool vector_any_greater_than2(const vector4d& lhs, const vector4d& rhs) RTM_NO_EXCEPT
+	RTM_DISABLE_SECURITY_COOKIE_CHECK inline bool vector_any_greater_than2(const vector4d& lhs, const vector4d& rhs) RTM_NO_EXCEPT
 	{
 #if defined(RTM_SSE2_INTRINSICS)
 		__m128d xy_ge_pd = _mm_cmpgt_pd(lhs.xy, rhs.xy);
@@ -1599,7 +1599,7 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	// Returns true if any [xyz] components are greater than, otherwise false: any(lhs > rhs)
 	//////////////////////////////////////////////////////////////////////////
-	inline bool vector_any_greater_than3(const vector4d& lhs, const vector4d& rhs) RTM_NO_EXCEPT
+	RTM_DISABLE_SECURITY_COOKIE_CHECK inline bool vector_any_greater_than3(const vector4d& lhs, const vector4d& rhs) RTM_NO_EXCEPT
 	{
 #if defined(RTM_SSE2_INTRINSICS)
 		__m128d xy_ge_pd = _mm_cmpgt_pd(lhs.xy, rhs.xy);
@@ -1613,7 +1613,7 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	// Returns true if all 4 components are greater equal, otherwise false: all(lhs >= rhs)
 	//////////////////////////////////////////////////////////////////////////
-	inline bool vector_all_greater_equal(const vector4d& lhs, const vector4d& rhs) RTM_NO_EXCEPT
+	RTM_DISABLE_SECURITY_COOKIE_CHECK inline bool vector_all_greater_equal(const vector4d& lhs, const vector4d& rhs) RTM_NO_EXCEPT
 	{
 #if defined(RTM_SSE2_INTRINSICS)
 		__m128d xy_ge_pd = _mm_cmpge_pd(lhs.xy, rhs.xy);
@@ -1627,7 +1627,7 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	// Returns true if all [xy] components are greater equal, otherwise false: all(lhs >= rhs)
 	//////////////////////////////////////////////////////////////////////////
-	inline bool vector_all_greater_equal2(const vector4d& lhs, const vector4d& rhs) RTM_NO_EXCEPT
+	RTM_DISABLE_SECURITY_COOKIE_CHECK inline bool vector_all_greater_equal2(const vector4d& lhs, const vector4d& rhs) RTM_NO_EXCEPT
 	{
 #if defined(RTM_SSE2_INTRINSICS)
 		__m128d xy_ge_pd = _mm_cmpge_pd(lhs.xy, rhs.xy);
@@ -1640,7 +1640,7 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	// Returns true if all [xyz] components are greater equal, otherwise false: all(lhs >= rhs)
 	//////////////////////////////////////////////////////////////////////////
-	inline bool vector_all_greater_equal3(const vector4d& lhs, const vector4d& rhs) RTM_NO_EXCEPT
+	RTM_DISABLE_SECURITY_COOKIE_CHECK inline bool vector_all_greater_equal3(const vector4d& lhs, const vector4d& rhs) RTM_NO_EXCEPT
 	{
 #if defined(RTM_SSE2_INTRINSICS)
 		__m128d xy_ge_pd = _mm_cmpge_pd(lhs.xy, rhs.xy);
@@ -1654,7 +1654,7 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	// Returns true if any 4 components are greater equal, otherwise false: any(lhs >= rhs)
 	//////////////////////////////////////////////////////////////////////////
-	inline bool vector_any_greater_equal(const vector4d& lhs, const vector4d& rhs) RTM_NO_EXCEPT
+	RTM_DISABLE_SECURITY_COOKIE_CHECK inline bool vector_any_greater_equal(const vector4d& lhs, const vector4d& rhs) RTM_NO_EXCEPT
 	{
 #if defined(RTM_SSE2_INTRINSICS)
 		__m128d xy_ge_pd = _mm_cmpge_pd(lhs.xy, rhs.xy);
@@ -1668,7 +1668,7 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	// Returns true if any [xy] components are greater equal, otherwise false: any(lhs >= rhs)
 	//////////////////////////////////////////////////////////////////////////
-	inline bool vector_any_greater_equal2(const vector4d& lhs, const vector4d& rhs) RTM_NO_EXCEPT
+	RTM_DISABLE_SECURITY_COOKIE_CHECK inline bool vector_any_greater_equal2(const vector4d& lhs, const vector4d& rhs) RTM_NO_EXCEPT
 	{
 #if defined(RTM_SSE2_INTRINSICS)
 		__m128d xy_ge_pd = _mm_cmpge_pd(lhs.xy, rhs.xy);
@@ -1681,7 +1681,7 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	// Returns true if any [xyz] components are greater equal, otherwise false: any(lhs >= rhs)
 	//////////////////////////////////////////////////////////////////////////
-	inline bool vector_any_greater_equal3(const vector4d& lhs, const vector4d& rhs) RTM_NO_EXCEPT
+	RTM_DISABLE_SECURITY_COOKIE_CHECK inline bool vector_any_greater_equal3(const vector4d& lhs, const vector4d& rhs) RTM_NO_EXCEPT
 	{
 #if defined(RTM_SSE2_INTRINSICS)
 		__m128d xy_ge_pd = _mm_cmpge_pd(lhs.xy, rhs.xy);
@@ -1695,7 +1695,7 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	// Returns true if all 4 components are near equal, otherwise false: all(abs(lhs - rhs) <= threshold)
 	//////////////////////////////////////////////////////////////////////////
-	inline bool vector_all_near_equal(const vector4d& lhs, const vector4d& rhs, double threshold = 0.00001) RTM_NO_EXCEPT
+	RTM_DISABLE_SECURITY_COOKIE_CHECK inline bool vector_all_near_equal(const vector4d& lhs, const vector4d& rhs, double threshold = 0.00001) RTM_NO_EXCEPT
 	{
 		return vector_all_less_equal(vector_abs(vector_sub(lhs, rhs)), vector_set(threshold));
 	}
@@ -1703,7 +1703,7 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	// Returns true if all [xy] components are near equal, otherwise false: all(abs(lhs - rhs) <= threshold)
 	//////////////////////////////////////////////////////////////////////////
-	inline bool vector_all_near_equal2(const vector4d& lhs, const vector4d& rhs, double threshold = 0.00001) RTM_NO_EXCEPT
+	RTM_DISABLE_SECURITY_COOKIE_CHECK inline bool vector_all_near_equal2(const vector4d& lhs, const vector4d& rhs, double threshold = 0.00001) RTM_NO_EXCEPT
 	{
 		return vector_all_less_equal2(vector_abs(vector_sub(lhs, rhs)), vector_set(threshold));
 	}
@@ -1711,7 +1711,7 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	// Returns true if all [xyz] components are near equal, otherwise false: all(abs(lhs - rhs) <= threshold)
 	//////////////////////////////////////////////////////////////////////////
-	inline bool vector_all_near_equal3(const vector4d& lhs, const vector4d& rhs, double threshold = 0.00001) RTM_NO_EXCEPT
+	RTM_DISABLE_SECURITY_COOKIE_CHECK inline bool vector_all_near_equal3(const vector4d& lhs, const vector4d& rhs, double threshold = 0.00001) RTM_NO_EXCEPT
 	{
 		return vector_all_less_equal3(vector_abs(vector_sub(lhs, rhs)), vector_set(threshold));
 	}
@@ -1719,7 +1719,7 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	// Returns true if any 4 components are near equal, otherwise false: any(abs(lhs - rhs) <= threshold)
 	//////////////////////////////////////////////////////////////////////////
-	inline bool vector_any_near_equal(const vector4d& lhs, const vector4d& rhs, double threshold = 0.00001) RTM_NO_EXCEPT
+	RTM_DISABLE_SECURITY_COOKIE_CHECK inline bool vector_any_near_equal(const vector4d& lhs, const vector4d& rhs, double threshold = 0.00001) RTM_NO_EXCEPT
 	{
 		return vector_any_less_equal(vector_abs(vector_sub(lhs, rhs)), vector_set(threshold));
 	}
@@ -1727,7 +1727,7 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	// Returns true if any [xy] components are near equal, otherwise false: any(abs(lhs - rhs) <= threshold)
 	//////////////////////////////////////////////////////////////////////////
-	inline bool vector_any_near_equal2(const vector4d& lhs, const vector4d& rhs, double threshold = 0.00001) RTM_NO_EXCEPT
+	RTM_DISABLE_SECURITY_COOKIE_CHECK inline bool vector_any_near_equal2(const vector4d& lhs, const vector4d& rhs, double threshold = 0.00001) RTM_NO_EXCEPT
 	{
 		return vector_any_less_equal2(vector_abs(vector_sub(lhs, rhs)), vector_set(threshold));
 	}
@@ -1735,7 +1735,7 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	// Returns true if any [xyz] components are near equal, otherwise false: any(abs(lhs - rhs) <= threshold)
 	//////////////////////////////////////////////////////////////////////////
-	inline bool vector_any_near_equal3(const vector4d& lhs, const vector4d& rhs, double threshold = 0.00001) RTM_NO_EXCEPT
+	RTM_DISABLE_SECURITY_COOKIE_CHECK inline bool vector_any_near_equal3(const vector4d& lhs, const vector4d& rhs, double threshold = 0.00001) RTM_NO_EXCEPT
 	{
 		return vector_any_less_equal3(vector_abs(vector_sub(lhs, rhs)), vector_set(threshold));
 	}
@@ -1743,7 +1743,7 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	// Returns true if all 4 components are finite (not NaN/Inf), otherwise false: all(finite(input))
 	//////////////////////////////////////////////////////////////////////////
-	inline bool vector_is_finite(const vector4d& input) RTM_NO_EXCEPT
+	RTM_DISABLE_SECURITY_COOKIE_CHECK inline bool vector_is_finite(const vector4d& input) RTM_NO_EXCEPT
 	{
 #if defined(RTM_SSE2_INTRINSICS)
 		const __m128i abs_mask = _mm_set_epi64x(0x7FFFFFFFFFFFFFFFULL, 0x7FFFFFFFFFFFFFFFULL);
@@ -1769,7 +1769,7 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	// Returns true if all [xy] components are finite (not NaN/Inf), otherwise false: all(finite(input))
 	//////////////////////////////////////////////////////////////////////////
-	inline bool vector_is_finite2(const vector4d& input) RTM_NO_EXCEPT
+	RTM_DISABLE_SECURITY_COOKIE_CHECK inline bool vector_is_finite2(const vector4d& input) RTM_NO_EXCEPT
 	{
 #if defined(RTM_SSE2_INTRINSICS)
 		const __m128i abs_mask = _mm_set_epi64x(0x7FFFFFFFFFFFFFFFULL, 0x7FFFFFFFFFFFFFFFULL);
@@ -1790,7 +1790,7 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	// Returns true if all [xyz] components are finite (not NaN/Inf), otherwise false: all(finite(input))
 	//////////////////////////////////////////////////////////////////////////
-	inline bool vector_is_finite3(const vector4d& input) RTM_NO_EXCEPT
+	RTM_DISABLE_SECURITY_COOKIE_CHECK inline bool vector_is_finite3(const vector4d& input) RTM_NO_EXCEPT
 	{
 #if defined(RTM_SSE2_INTRINSICS)
 		const __m128i abs_mask = _mm_set_epi64x(0x7FFFFFFFFFFFFFFFULL, 0x7FFFFFFFFFFFFFFFULL);
@@ -1822,7 +1822,7 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	// Per component selection depending on the mask: mask != 0 ? if_true : if_false
 	//////////////////////////////////////////////////////////////////////////
-	inline vector4d vector_select(const mask4d& mask, const vector4d& if_true, const vector4d& if_false) RTM_NO_EXCEPT
+	RTM_DISABLE_SECURITY_COOKIE_CHECK inline vector4d vector_select(const mask4d& mask, const vector4d& if_true, const vector4d& if_false) RTM_NO_EXCEPT
 	{
 #if defined(RTM_SSE2_INTRINSICS)
 		__m128d xy = _mm_or_pd(_mm_andnot_pd(mask.xy, if_false.xy), _mm_and_pd(if_true.xy, mask.xy));
@@ -1838,7 +1838,7 @@ namespace rtm
 	// [xyzw] indexes into the first input while [abcd] indexes in the second.
 	//////////////////////////////////////////////////////////////////////////
 	template<mix4 comp0, mix4 comp1, mix4 comp2, mix4 comp3>
-	inline vector4d vector_mix(const vector4d& input0, const vector4d& input1) RTM_NO_EXCEPT
+	RTM_DISABLE_SECURITY_COOKIE_CHECK inline vector4d vector_mix(const vector4d& input0, const vector4d& input1) RTM_NO_EXCEPT
 	{
 		// Slow code path, not yet optimized or not using intrinsics
 		const double x = rtm_impl::is_mix_xyzw(comp0) ? vector_get_component<comp0>(input0) : vector_get_component<comp0>(input1);
@@ -1851,22 +1851,22 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	// Replicates the [x] component in all components.
 	//////////////////////////////////////////////////////////////////////////
-	inline vector4d vector_dup_x(const vector4d& input) RTM_NO_EXCEPT { return vector_mix<mix4::x, mix4::x, mix4::x, mix4::x>(input, input); }
+	RTM_DISABLE_SECURITY_COOKIE_CHECK inline vector4d vector_dup_x(const vector4d& input) RTM_NO_EXCEPT { return vector_mix<mix4::x, mix4::x, mix4::x, mix4::x>(input, input); }
 
 	//////////////////////////////////////////////////////////////////////////
 	// Replicates the [y] component in all components.
 	//////////////////////////////////////////////////////////////////////////
-	inline vector4d vector_dup_y(const vector4d& input) RTM_NO_EXCEPT { return vector_mix<mix4::y, mix4::y, mix4::y, mix4::y>(input, input); }
+	RTM_DISABLE_SECURITY_COOKIE_CHECK inline vector4d vector_dup_y(const vector4d& input) RTM_NO_EXCEPT { return vector_mix<mix4::y, mix4::y, mix4::y, mix4::y>(input, input); }
 
 	//////////////////////////////////////////////////////////////////////////
 	// Replicates the [z] component in all components.
 	//////////////////////////////////////////////////////////////////////////
-	inline vector4d vector_dup_z(const vector4d& input) RTM_NO_EXCEPT { return vector_mix<mix4::z, mix4::z, mix4::z, mix4::z>(input, input); }
+	RTM_DISABLE_SECURITY_COOKIE_CHECK inline vector4d vector_dup_z(const vector4d& input) RTM_NO_EXCEPT { return vector_mix<mix4::z, mix4::z, mix4::z, mix4::z>(input, input); }
 
 	//////////////////////////////////////////////////////////////////////////
 	// Replicates the [w] component in all components.
 	//////////////////////////////////////////////////////////////////////////
-	inline vector4d vector_dup_w(const vector4d& input) RTM_NO_EXCEPT { return vector_mix<mix4::w, mix4::w, mix4::w, mix4::w>(input, input); }
+	RTM_DISABLE_SECURITY_COOKIE_CHECK inline vector4d vector_dup_w(const vector4d& input) RTM_NO_EXCEPT { return vector_mix<mix4::w, mix4::w, mix4::w, mix4::w>(input, input); }
 
 
 	//////////////////////////////////////////////////////////////////////////
@@ -1877,7 +1877,7 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	// Returns per component the sign of the input vector: input >= 0.0 ? 1.0 : -1.0
 	//////////////////////////////////////////////////////////////////////////
-	inline vector4d vector_sign(const vector4d& input) RTM_NO_EXCEPT
+	RTM_DISABLE_SECURITY_COOKIE_CHECK inline vector4d vector_sign(const vector4d& input) RTM_NO_EXCEPT
 	{
 		const mask4d mask = vector_greater_equal(input, vector_zero());
 		return vector_select(mask, vector_set(1.0), vector_set(-1.0));
@@ -1886,7 +1886,7 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	// Returns per component the input with the sign of the control value.
 	//////////////////////////////////////////////////////////////////////////
-	inline vector4d vector_copy_sign(const vector4d& input, const vector4d& control_sign) RTM_NO_EXCEPT
+	RTM_DISABLE_SECURITY_COOKIE_CHECK inline vector4d vector_copy_sign(const vector4d& input, const vector4d& control_sign) RTM_NO_EXCEPT
 	{
 #if defined(RTM_SSE2_INTRINSICS)
 		const __m128d sign_bit = _mm_set1_pd(-0.0);
@@ -1919,7 +1919,7 @@ namespace rtm
 	// vector_round_symmetric(-1.5) = -2.0
 	// vector_round_symmetric(-1.2) = -1.0
 	//////////////////////////////////////////////////////////////////////////
-	inline vector4d vector_round_symmetric(const vector4d& input) RTM_NO_EXCEPT
+	RTM_DISABLE_SECURITY_COOKIE_CHECK inline vector4d vector_round_symmetric(const vector4d& input) RTM_NO_EXCEPT
 	{
 		// NaN, +- Infinity, and numbers larger or equal to 2^23 remain unchanged
 		// since they have no fractional part.
@@ -2011,7 +2011,7 @@ namespace rtm
 	// vector_round_bankers(-1.5) = -2.0
 	// vector_round_bankers(-1.2) = -1.0
 	//////////////////////////////////////////////////////////////////////////
-	inline vector4d vector_round_bankers(const vector4d& input) RTM_NO_EXCEPT
+	RTM_DISABLE_SECURITY_COOKIE_CHECK inline vector4d vector_round_bankers(const vector4d& input) RTM_NO_EXCEPT
 	{
 #if defined(RTM_SSE4_INTRINSICS)
 		return vector4d{ _mm_round_pd(input.xy, _MM_FROUND_TO_NEAREST_INT | _MM_FROUND_NO_EXC), _mm_round_pd(input.zw, _MM_FROUND_TO_NEAREST_INT | _MM_FROUND_NO_EXC) };
@@ -2052,7 +2052,7 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	// Returns per component the sine of the input angle.
 	//////////////////////////////////////////////////////////////////////////
-	inline vector4d vector_sin(const vector4d& input) RTM_NO_EXCEPT
+	RTM_DISABLE_SECURITY_COOKIE_CHECK inline vector4d vector_sin(const vector4d& input) RTM_NO_EXCEPT
 	{
 		scalard x = scalar_sin(scalard(vector_get_x(input)));
 		scalard y = scalar_sin(scalard(vector_get_y(input)));
@@ -2065,7 +2065,7 @@ namespace rtm
 	// Returns per component the arc-sine of the input.
 	// Input value must be in the range [-1.0, 1.0].
 	//////////////////////////////////////////////////////////////////////////
-	inline vector4d vector_asin(const vector4d& input) RTM_NO_EXCEPT
+	RTM_DISABLE_SECURITY_COOKIE_CHECK inline vector4d vector_asin(const vector4d& input) RTM_NO_EXCEPT
 	{
 		scalard x = scalar_asin(scalard(vector_get_x(input)));
 		scalard y = scalar_asin(scalard(vector_get_y(input)));
@@ -2077,7 +2077,7 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	// Returns per component the cosine of the input angle.
 	//////////////////////////////////////////////////////////////////////////
-	inline vector4d vector_cos(const vector4d& input) RTM_NO_EXCEPT
+	RTM_DISABLE_SECURITY_COOKIE_CHECK inline vector4d vector_cos(const vector4d& input) RTM_NO_EXCEPT
 	{
 		scalard x = scalar_cos(scalard(vector_get_x(input)));
 		scalard y = scalar_cos(scalard(vector_get_y(input)));
@@ -2090,7 +2090,7 @@ namespace rtm
 	// Returns per component the arc-cosine of the input.
 	// Input value must be in the range [-1.0, 1.0].
 	//////////////////////////////////////////////////////////////////////////
-	inline vector4d vector_acos(const vector4d& input) RTM_NO_EXCEPT
+	RTM_DISABLE_SECURITY_COOKIE_CHECK inline vector4d vector_acos(const vector4d& input) RTM_NO_EXCEPT
 	{
 		scalard x = scalar_acos(scalard(vector_get_x(input)));
 		scalard y = scalar_acos(scalard(vector_get_y(input)));
@@ -2102,7 +2102,7 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	// Returns per component the tangent of the input angle.
 	//////////////////////////////////////////////////////////////////////////
-	inline vector4d vector_tan(const vector4d& angle) RTM_NO_EXCEPT
+	RTM_DISABLE_SECURITY_COOKIE_CHECK inline vector4d vector_tan(const vector4d& angle) RTM_NO_EXCEPT
 	{
 		// Use the identity: tan(angle) = sin(angle) / cos(angle)
 		vector4d sin_ = vector_sin(angle);
@@ -2119,7 +2119,7 @@ namespace rtm
 	// Note that due to the sign ambiguity, atan cannot determine which quadrant
 	// the value resides in.
 	//////////////////////////////////////////////////////////////////////////
-	inline vector4d vector_atan(const vector4d& input) RTM_NO_EXCEPT
+	RTM_DISABLE_SECURITY_COOKIE_CHECK inline vector4d vector_atan(const vector4d& input) RTM_NO_EXCEPT
 	{
 		scalard x = scalar_atan(scalard(vector_get_x(input)));
 		scalard y = scalar_atan(scalard(vector_get_y(input)));
@@ -2134,7 +2134,7 @@ namespace rtm
 	// Y represents the proportion of the y-coordinate.
 	// X represents the proportion of the x-coordinate.
 	//////////////////////////////////////////////////////////////////////////
-	inline vector4d vector_atan2(const vector4d& y, const vector4d& x) RTM_NO_EXCEPT
+	RTM_DISABLE_SECURITY_COOKIE_CHECK inline vector4d vector_atan2(const vector4d& y, const vector4d& x) RTM_NO_EXCEPT
 	{
 		scalard x_ = scalar_atan2(scalard(vector_get_x(y)), scalard(vector_get_x(x)));
 		scalard y_ = scalar_atan2(scalard(vector_get_y(y)), scalard(vector_get_y(x)));

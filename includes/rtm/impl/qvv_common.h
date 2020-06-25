@@ -34,7 +34,7 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	// Creates a QVV transform from a rotation quaternion, a translation, and a 3D scale.
 	//////////////////////////////////////////////////////////////////////////
-	constexpr qvvf RTM_SIMD_CALL qvv_set(quatf_arg0 rotation, vector4f_arg1 translation, vector4f_arg2 scale) RTM_NO_EXCEPT
+	RTM_DISABLE_SECURITY_COOKIE_CHECK constexpr qvvf RTM_SIMD_CALL qvv_set(quatf_arg0 rotation, vector4f_arg1 translation, vector4f_arg2 scale) RTM_NO_EXCEPT
 	{
 		return qvvf{ rotation, translation, scale };
 	}
@@ -42,7 +42,7 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	// Creates a QVV transform from a rotation quaternion, a translation, and a 3D scale.
 	//////////////////////////////////////////////////////////////////////////
-	constexpr qvvd RTM_SIMD_CALL qvv_set(const quatd& rotation, const vector4d& translation, const vector4d& scale) RTM_NO_EXCEPT
+	RTM_DISABLE_SECURITY_COOKIE_CHECK constexpr qvvd RTM_SIMD_CALL qvv_set(const quatd& rotation, const vector4d& translation, const vector4d& scale) RTM_NO_EXCEPT
 	{
 		return qvvd{ rotation, translation, scale };
 	}
@@ -57,12 +57,12 @@ namespace rtm
 		//////////////////////////////////////////////////////////////////////////
 		struct qvv_identity_impl
 		{
-			inline RTM_SIMD_CALL operator qvvd() const RTM_NO_EXCEPT
+			RTM_DISABLE_SECURITY_COOKIE_CHECK inline RTM_SIMD_CALL operator qvvd() const RTM_NO_EXCEPT
 			{
 				return qvv_set(quat_identity(), vector_zero(), vector_set(1.0));
 			}
 
-			inline RTM_SIMD_CALL operator qvvf() const RTM_NO_EXCEPT
+			RTM_DISABLE_SECURITY_COOKIE_CHECK inline RTM_SIMD_CALL operator qvvf() const RTM_NO_EXCEPT
 			{
 				return qvv_set(quat_identity(), vector_zero(), vector_set(1.0F));
 			}
@@ -72,7 +72,7 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	// Returns the identity QVV transform.
 	//////////////////////////////////////////////////////////////////////////
-	constexpr rtm_impl::qvv_identity_impl RTM_SIMD_CALL qvv_identity() RTM_NO_EXCEPT
+	RTM_DISABLE_SECURITY_COOKIE_CHECK constexpr rtm_impl::qvv_identity_impl RTM_SIMD_CALL qvv_identity() RTM_NO_EXCEPT
 	{
 		return rtm_impl::qvv_identity_impl();
 	}

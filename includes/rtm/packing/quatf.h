@@ -37,7 +37,7 @@ namespace rtm
 	// Returns the quaternion on the hypersphere with a positive [w] component
 	// that represents the same 3D rotation as the input.
 	//////////////////////////////////////////////////////////////////////////
-	inline quatf RTM_SIMD_CALL quat_ensure_positive_w(quatf_arg0 input) RTM_NO_EXCEPT
+	RTM_DISABLE_SECURITY_COOKIE_CHECK inline quatf RTM_SIMD_CALL quat_ensure_positive_w(quatf_arg0 input) RTM_NO_EXCEPT
 	{
 #if defined(RTM_SSE2_INTRINSICS)
 		constexpr __m128 sign_bit = { -0.0F, -0.0F, -0.0F, -0.0F };
@@ -60,7 +60,7 @@ namespace rtm
 	// Returns a quaternion constructed from a vector3 representing the [xyz]
 	// components while reconstructing the [w] component by assuming it is positive.
 	//////////////////////////////////////////////////////////////////////////
-	inline quatf RTM_SIMD_CALL quat_from_positive_w(vector4f_arg0 input) RTM_NO_EXCEPT
+	RTM_DISABLE_SECURITY_COOKIE_CHECK inline quatf RTM_SIMD_CALL quat_from_positive_w(vector4f_arg0 input) RTM_NO_EXCEPT
 	{
 #if defined(RTM_SSE2_INTRINSICS)
 		const __m128i abs_mask = _mm_set_epi32(0x7FFFFFFFULL, 0x7FFFFFFFULL, 0x7FFFFFFFULL, 0x7FFFFFFFULL);
