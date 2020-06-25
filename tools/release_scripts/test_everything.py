@@ -29,6 +29,11 @@ if __name__ == "__main__":
 	simd_opts = [ '', '-avx', '-avx2', '-nosimd' ]
 	python_exe = get_python_exe_name()
 
+	if platform.system() == 'Darwin':
+		result = subprocess.check_output(['xcodebuild', '-version']).decode("utf-8")
+		if 'Xcode 11' in result:
+			archs.remove('x86')
+
 	cmd_args = []
 	for config in configs:
 		for arch in archs:
