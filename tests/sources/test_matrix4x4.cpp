@@ -344,10 +344,10 @@ TEST_CASE("matrix4x4f math", "[math][matrix4x4]")
 		matrix3x4f src3x4 = matrix_from_qvv(rotation_around_z, translation, scale);
 
 		matrix4x4f src = matrix_cast(src3x4);
-		CHECK(vector_get_w(src.x_axis) == 0.0F);
-		CHECK(vector_get_w(src.y_axis) == 0.0F);
-		CHECK(vector_get_w(src.z_axis) == 0.0F);
-		CHECK(vector_get_w(src.w_axis) == 1.0F);
+		CHECK((float)vector_get_w(src.x_axis) == 0.0F);
+		CHECK((float)vector_get_w(src.y_axis) == 0.0F);
+		CHECK((float)vector_get_w(src.z_axis) == 0.0F);
+		CHECK((float)vector_get_w(src.w_axis) == 1.0F);
 
 		matrix4x4d dst = matrix_cast(src);
 		CHECK(vector_all_near_equal(vector_cast(src.x_axis), dst.x_axis, 1.0E-4));
@@ -371,10 +371,10 @@ TEST_CASE("matrix4x4d math", "[math][matrix4x4]")
 		matrix3x4d src3x4 = matrix_from_qvv(rotation_around_z, translation, scale);
 
 		matrix4x4d src = matrix_cast(src3x4);
-		CHECK(vector_get_w(src.x_axis) == 0.0);
-		CHECK(vector_get_w(src.y_axis) == 0.0);
-		CHECK(vector_get_w(src.z_axis) == 0.0);
-		CHECK(vector_get_w(src.w_axis) == 1.0);
+		CHECK((double)vector_get_w(src.x_axis) == 0.0);
+		CHECK((double)vector_get_w(src.y_axis) == 0.0);
+		CHECK((double)vector_get_w(src.z_axis) == 0.0);
+		CHECK((double)vector_get_w(src.w_axis) == 1.0);
 
 		matrix4x4f dst = matrix_cast(src);
 		CHECK(vector_all_near_equal(vector_cast(src.x_axis), dst.x_axis, 1.0E-4F));
