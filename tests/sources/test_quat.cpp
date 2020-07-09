@@ -143,6 +143,14 @@ static void test_quat_impl(const FloatType threshold)
 	}
 
 	{
+		Float4Type tmpf4 = { FloatType(0.0), FloatType(2.34), FloatType(-3.12), FloatType(10000.0) };
+		CHECK(FloatType(quat_get_x(quat_load(&tmpf4))) == tmpf4.x);
+		CHECK(FloatType(quat_get_y(quat_load(&tmpf4))) == tmpf4.y);
+		CHECK(FloatType(quat_get_z(quat_load(&tmpf4))) == tmpf4.z);
+		CHECK(FloatType(quat_get_w(quat_load(&tmpf4))) == tmpf4.w);
+	}
+
+	{
 		const Vector4Type vec = vector_set(FloatType(0.0), FloatType(2.34), FloatType(-3.12), FloatType(10000.0));
 		CHECK(FloatType(quat_get_x(vector_to_quat(vec))) == FloatType(vector_get_x(vec)));
 		CHECK(FloatType(quat_get_y(vector_to_quat(vec))) == FloatType(vector_get_y(vec)));
