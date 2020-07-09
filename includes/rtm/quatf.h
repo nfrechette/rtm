@@ -57,6 +57,20 @@ namespace rtm
 	}
 
 	//////////////////////////////////////////////////////////////////////////
+	// Loads an unaligned quat from memory.
+	//////////////////////////////////////////////////////////////////////////
+	RTM_DISABLE_SECURITY_COOKIE_CHECK inline quatf RTM_SIMD_CALL quat_load(const float4f* input) RTM_NO_EXCEPT
+	{
+#if defined(RTM_SSE2_INTRINSICS)
+		return _mm_loadu_ps(&input->x);
+#elif defined(RTM_NEON_INTRINSICS)
+		return vld1q_f32(&input->x);
+#else
+		return quat_set(input->x, input->y, input->z, input->w);
+#endif
+	}
+
+	//////////////////////////////////////////////////////////////////////////
 	// Casts a vector4 to a quaternion.
 	//////////////////////////////////////////////////////////////////////////
 	RTM_DISABLE_SECURITY_COOKIE_CHECK inline quatf RTM_SIMD_CALL vector_to_quat(vector4f_arg0 input) RTM_NO_EXCEPT
