@@ -150,7 +150,7 @@ RTM_IMPL_FILE_PRAGMA_PUSH
 	#endif
 
 	#define RTM_HAS_ASSERT_CHECKS
-	#define RTM_NO_EXCEPT noexcept
+	#define RTM_NO_EXCEPT
 
 #else
 
