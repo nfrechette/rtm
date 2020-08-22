@@ -93,7 +93,7 @@ RTM_IMPL_FILE_PRAGMA_PUSH
 	// This is mathematically equivalent to: v2 - (v0 * v1)
 	// All three inputs must be an rtm::vector4f.
 	//////////////////////////////////////////////////////////////////////////
-	#define RTM_VECTOR4F_NEG_MULV_SUB(v0, v1, v2) rtm::vector_sub(rtm::vector_mul((v0), (v1)), (v2))
+	#define RTM_VECTOR4F_NEG_MULV_SUB(v0, v1, v2) rtm::vector_sub((v2), rtm::vector_mul((v0), (v1)))
 #endif
 
 #if defined(RTM_NEON64_INTRINSICS)
@@ -116,7 +116,7 @@ RTM_IMPL_FILE_PRAGMA_PUSH
 	// This is mathematically equivalent to: v2 - (v0 * s1)
 	// The v0 and v2 inputs must be a rtm::vector4f and s1 must be a float.
 	//////////////////////////////////////////////////////////////////////////
-	#define RTM_VECTOR4F_NEG_MULS_SUB(v0, s1, v2) rtm::vector_sub(rtm::vector_mul((v0), (s1)), (v2))
+	#define RTM_VECTOR4F_NEG_MULS_SUB(v0, s1, v2) rtm::vector_sub((v2), rtm::vector_mul((v0), (s1)))
 #endif
 
 RTM_IMPL_FILE_PRAGMA_POP
