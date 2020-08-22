@@ -37,7 +37,7 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	// Returns the desired 4x4 matrix axis.
 	//////////////////////////////////////////////////////////////////////////
-	RTM_DISABLE_SECURITY_COOKIE_CHECK constexpr const vector4d& matrix_get_axis(const matrix4x4d& input, axis4 axis) RTM_NO_EXCEPT
+	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE constexpr const vector4d& matrix_get_axis(const matrix4x4d& input, axis4 axis) RTM_NO_EXCEPT
 	{
 		return axis == axis4::x ? input.x_axis : (axis == axis4::y ? input.y_axis : (axis == axis4::z ? input.z_axis : input.w_axis));
 	}
@@ -74,7 +74,7 @@ namespace rtm
 	// Multiplies a 4x4 matrix and a 4D vector.
 	// Multiplication order is as follow: world_position = matrix_mul(local_position, local_to_world)
 	//////////////////////////////////////////////////////////////////////////
-	RTM_DISABLE_SECURITY_COOKIE_CHECK inline vector4d RTM_SIMD_CALL matrix_mul_vector(const vector4d& vec4, const matrix4x4d& mtx) RTM_NO_EXCEPT
+	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE vector4d RTM_SIMD_CALL matrix_mul_vector(const vector4d& vec4, const matrix4x4d& mtx) RTM_NO_EXCEPT
 	{
 		vector4d tmp;
 
@@ -89,7 +89,7 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	// Transposes a 4x4 matrix.
 	//////////////////////////////////////////////////////////////////////////
-	RTM_DISABLE_SECURITY_COOKIE_CHECK inline matrix4x4d RTM_SIMD_CALL matrix_transpose(const matrix4x4d& input) RTM_NO_EXCEPT
+	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE matrix4x4d RTM_SIMD_CALL matrix_transpose(const matrix4x4d& input) RTM_NO_EXCEPT
 	{
 		vector4d tmp0 = vector_mix<mix4::x, mix4::y, mix4::a, mix4::b>(input.x_axis, input.y_axis);
 		vector4d tmp1 = vector_mix<mix4::z, mix4::w, mix4::c, mix4::d>(input.x_axis, input.y_axis);

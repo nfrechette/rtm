@@ -37,7 +37,7 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	// Returns the desired 3x3 matrix axis.
 	//////////////////////////////////////////////////////////////////////////
-	RTM_DISABLE_SECURITY_COOKIE_CHECK constexpr const vector4d& matrix_get_axis(const matrix3x3d& input, axis3 axis) RTM_NO_EXCEPT
+	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE constexpr const vector4d& matrix_get_axis(const matrix3x3d& input, axis3 axis) RTM_NO_EXCEPT
 	{
 		return axis == axis3::x ? input.x_axis : (axis == axis3::y ? input.y_axis : input.z_axis);
 	}
@@ -81,7 +81,7 @@ namespace rtm
 	// is to multiply the normal with the cofactor matrix.
 	// See: https://github.com/graphitemaster/normals_revisited
 	//////////////////////////////////////////////////////////////////////////
-	RTM_DISABLE_SECURITY_COOKIE_CHECK inline vector4d RTM_SIMD_CALL matrix_mul_vector3(const vector4d& vec3, const matrix3x3d& mtx) RTM_NO_EXCEPT
+	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE vector4d RTM_SIMD_CALL matrix_mul_vector3(const vector4d& vec3, const matrix3x3d& mtx) RTM_NO_EXCEPT
 	{
 		vector4d tmp;
 
@@ -95,7 +95,7 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	// Transposes a 3x3 matrix.
 	//////////////////////////////////////////////////////////////////////////
-	RTM_DISABLE_SECURITY_COOKIE_CHECK inline matrix3x3d RTM_SIMD_CALL matrix_transpose(const matrix3x3d& input) RTM_NO_EXCEPT
+	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE matrix3x3d RTM_SIMD_CALL matrix_transpose(const matrix3x3d& input) RTM_NO_EXCEPT
 	{
 		const vector4d v00_v01_v10_v11 = vector_mix<mix4::x, mix4::y, mix4::a, mix4::b>(input.x_axis, input.y_axis);
 		const vector4d v02_v03_v12_v13 = vector_mix<mix4::z, mix4::w, mix4::c, mix4::d>(input.x_axis, input.y_axis);

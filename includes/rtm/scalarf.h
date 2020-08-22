@@ -40,7 +40,7 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	// Creates a scalar from a floating point value.
 	//////////////////////////////////////////////////////////////////////////
-	RTM_DISABLE_SECURITY_COOKIE_CHECK inline scalarf RTM_SIMD_CALL scalar_set(float xyzw) RTM_NO_EXCEPT
+	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE scalarf RTM_SIMD_CALL scalar_set(float xyzw) RTM_NO_EXCEPT
 	{
 #if defined(RTM_SSE2_INTRINSICS)
 		return scalarf{ _mm_set_ps1(xyzw) };
@@ -53,7 +53,7 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	// Writes a scalar to memory.
 	//////////////////////////////////////////////////////////////////////////
-	RTM_DISABLE_SECURITY_COOKIE_CHECK inline void RTM_SIMD_CALL scalar_store(scalarf_arg0 input, float* output) RTM_NO_EXCEPT
+	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE void RTM_SIMD_CALL scalar_store(scalarf_arg0 input, float* output) RTM_NO_EXCEPT
 	{
 		_mm_store_ss(output, input.value);
 	}
@@ -62,7 +62,7 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	// Writes a scalar to memory.
 	//////////////////////////////////////////////////////////////////////////
-	RTM_DISABLE_SECURITY_COOKIE_CHECK inline void scalar_store(float input, float* output) RTM_NO_EXCEPT
+	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE void scalar_store(float input, float* output) RTM_NO_EXCEPT
 	{
 		*output = input;
 	}
@@ -70,7 +70,7 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	// Casts a scalar into a floating point value.
 	//////////////////////////////////////////////////////////////////////////
-	RTM_DISABLE_SECURITY_COOKIE_CHECK inline float RTM_SIMD_CALL scalar_cast(scalarf_arg0 input) RTM_NO_EXCEPT
+	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE float RTM_SIMD_CALL scalar_cast(scalarf_arg0 input) RTM_NO_EXCEPT
 	{
 #if defined(RTM_SSE2_INTRINSICS)
 		return _mm_cvtss_f32(input.value);
@@ -85,7 +85,7 @@ namespace rtm
 	// scalar_floor(1.8) = 1.0
 	// scalar_floor(-1.8) = -2.0
 	//////////////////////////////////////////////////////////////////////////
-	RTM_DISABLE_SECURITY_COOKIE_CHECK inline scalarf RTM_SIMD_CALL scalar_floor(scalarf_arg0 input) RTM_NO_EXCEPT
+	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE scalarf RTM_SIMD_CALL scalar_floor(scalarf_arg0 input) RTM_NO_EXCEPT
 	{
 #if defined(RTM_SSE4_INTRINSICS)
 		return scalarf{ _mm_round_ss(input.value, input.value, 0x9) };
@@ -132,7 +132,7 @@ namespace rtm
 	// scalar_floor(1.8) = 1.0
 	// scalar_floor(-1.8) = -2.0
 	//////////////////////////////////////////////////////////////////////////
-	RTM_DISABLE_SECURITY_COOKIE_CHECK inline float scalar_floor(float input) RTM_NO_EXCEPT
+	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE float scalar_floor(float input) RTM_NO_EXCEPT
 	{
 #if defined(RTM_SSE2_INTRINSICS)
 		return scalar_cast(scalar_floor(scalar_set(input)));
@@ -147,7 +147,7 @@ namespace rtm
 	// scalar_ceil(1.8) = 2.0
 	// scalar_ceil(-1.8) = -1.0
 	//////////////////////////////////////////////////////////////////////////
-	RTM_DISABLE_SECURITY_COOKIE_CHECK inline scalarf RTM_SIMD_CALL scalar_ceil(scalarf_arg0 input) RTM_NO_EXCEPT
+	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE scalarf RTM_SIMD_CALL scalar_ceil(scalarf_arg0 input) RTM_NO_EXCEPT
 	{
 #if defined(RTM_SSE4_INTRINSICS)
 		return scalarf{ _mm_round_ss(input.value, input.value, 0xA) };
@@ -194,7 +194,7 @@ namespace rtm
 	// scalar_ceil(1.8) = 2.0
 	// scalar_ceil(-1.8) = -1.0
 	//////////////////////////////////////////////////////////////////////////
-	RTM_DISABLE_SECURITY_COOKIE_CHECK inline float scalar_ceil(float input) RTM_NO_EXCEPT
+	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE float scalar_ceil(float input) RTM_NO_EXCEPT
 	{
 #if defined(RTM_SSE2_INTRINSICS)
 		return scalar_cast(scalar_ceil(scalar_set(input)));
@@ -208,7 +208,7 @@ namespace rtm
 	// Returns the input if it is within the min/max values otherwise the
 	// exceeded boundary is returned.
 	//////////////////////////////////////////////////////////////////////////
-	RTM_DISABLE_SECURITY_COOKIE_CHECK inline scalarf RTM_SIMD_CALL scalar_clamp(scalarf_arg0 input, scalarf_arg1 min, scalarf_arg2 max) RTM_NO_EXCEPT
+	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE scalarf RTM_SIMD_CALL scalar_clamp(scalarf_arg0 input, scalarf_arg1 min, scalarf_arg2 max) RTM_NO_EXCEPT
 	{
 		return scalarf{ _mm_min_ss(_mm_max_ss(input.value, min.value), max.value) };
 	}
@@ -218,7 +218,7 @@ namespace rtm
 	// Returns the input if it is within the min/max values otherwise the
 	// exceeded boundary is returned.
 	//////////////////////////////////////////////////////////////////////////
-	RTM_DISABLE_SECURITY_COOKIE_CHECK inline float scalar_clamp(float input, float min, float max) RTM_NO_EXCEPT
+	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE float scalar_clamp(float input, float min, float max) RTM_NO_EXCEPT
 	{
 #if defined(RTM_SSE2_INTRINSICS)
 		return _mm_cvtss_f32(_mm_min_ss(_mm_max_ss(_mm_set_ps1(input), _mm_set_ps1(min)), _mm_set_ps1(max)));
@@ -231,7 +231,7 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	// Returns the absolute value of the input.
 	//////////////////////////////////////////////////////////////////////////
-	RTM_DISABLE_SECURITY_COOKIE_CHECK inline scalarf RTM_SIMD_CALL scalar_abs(scalarf_arg0 input) RTM_NO_EXCEPT
+	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE scalarf RTM_SIMD_CALL scalar_abs(scalarf_arg0 input) RTM_NO_EXCEPT
 	{
 		const __m128i abs_mask = _mm_set_epi32(0x7FFFFFFFULL, 0x7FFFFFFFULL, 0x7FFFFFFFULL, 0x7FFFFFFFULL);
 		return scalarf{ _mm_and_ps(input.value, _mm_castsi128_ps(abs_mask)) };
@@ -241,7 +241,7 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	// Returns the absolute value of the input.
 	//////////////////////////////////////////////////////////////////////////
-	RTM_DISABLE_SECURITY_COOKIE_CHECK inline float scalar_abs(float input) RTM_NO_EXCEPT
+	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE float scalar_abs(float input) RTM_NO_EXCEPT
 	{
 #if defined(RTM_SSE2_INTRINSICS)
 		const __m128i abs_mask = _mm_set_epi32(0x7FFFFFFFULL, 0x7FFFFFFFULL, 0x7FFFFFFFULL, 0x7FFFFFFFULL);
@@ -255,7 +255,7 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	// Returns the square root of the input.
 	//////////////////////////////////////////////////////////////////////////
-	RTM_DISABLE_SECURITY_COOKIE_CHECK inline scalarf RTM_SIMD_CALL scalar_sqrt(scalarf_arg0 input) RTM_NO_EXCEPT
+	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE scalarf RTM_SIMD_CALL scalar_sqrt(scalarf_arg0 input) RTM_NO_EXCEPT
 	{
 		return scalarf{ _mm_sqrt_ss(input.value) };
 	}
@@ -264,7 +264,7 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	// Returns the square root of the input.
 	//////////////////////////////////////////////////////////////////////////
-	RTM_DISABLE_SECURITY_COOKIE_CHECK inline float RTM_SIMD_CALL scalar_sqrt(float input) RTM_NO_EXCEPT
+	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE float RTM_SIMD_CALL scalar_sqrt(float input) RTM_NO_EXCEPT
 	{
 #if defined(RTM_SSE2_INTRINSICS)
 		return _mm_cvtss_f32(_mm_sqrt_ss(_mm_set_ps1(input)));
@@ -284,7 +284,7 @@ namespace rtm
 		// TODO: Remove this hack sometime in 2022 or later once the fix is old enough that we no longer have to support the hack
 		#pragma optimize("", off)
 	#endif
-	RTM_DISABLE_SECURITY_COOKIE_CHECK inline scalarf RTM_SIMD_CALL scalar_sqrt_reciprocal(scalarf_arg0 input) RTM_NO_EXCEPT
+	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE scalarf RTM_SIMD_CALL scalar_sqrt_reciprocal(scalarf_arg0 input) RTM_NO_EXCEPT
 	{
 		// Perform two passes of Newton-Raphson iteration on the hardware estimate
 		const __m128 half = _mm_set_ss(0.5F);
@@ -312,7 +312,7 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	// Returns the reciprocal square root of the input.
 	//////////////////////////////////////////////////////////////////////////
-	RTM_DISABLE_SECURITY_COOKIE_CHECK inline float RTM_SIMD_CALL scalar_sqrt_reciprocal(float input) RTM_NO_EXCEPT
+	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE float RTM_SIMD_CALL scalar_sqrt_reciprocal(float input) RTM_NO_EXCEPT
 	{
 #if defined(RTM_SSE2_INTRINSICS)
 		return scalar_cast(scalar_sqrt_reciprocal(scalar_set(input)));
@@ -325,7 +325,7 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	// Returns the reciprocal of the input.
 	//////////////////////////////////////////////////////////////////////////
-	RTM_DISABLE_SECURITY_COOKIE_CHECK inline scalarf RTM_SIMD_CALL scalar_reciprocal(scalarf_arg0 input) RTM_NO_EXCEPT
+	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE scalarf RTM_SIMD_CALL scalar_reciprocal(scalarf_arg0 input) RTM_NO_EXCEPT
 	{
 		return scalarf{ _mm_div_ss(_mm_set_ps1(1.0F), input.value) };
 	}
@@ -334,7 +334,7 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	// Returns the reciprocal of the input.
 	//////////////////////////////////////////////////////////////////////////
-	RTM_DISABLE_SECURITY_COOKIE_CHECK inline float RTM_SIMD_CALL scalar_reciprocal(float input) RTM_NO_EXCEPT
+	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE float RTM_SIMD_CALL scalar_reciprocal(float input) RTM_NO_EXCEPT
 	{
 #if defined(RTM_SSE2_INTRINSICS)
 		return scalar_cast(scalar_reciprocal(scalar_set(input)));
@@ -347,7 +347,7 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	// Returns the addition of the two scalar inputs.
 	//////////////////////////////////////////////////////////////////////////
-	RTM_DISABLE_SECURITY_COOKIE_CHECK inline scalarf RTM_SIMD_CALL scalar_add(scalarf_arg0 lhs, scalarf_arg1 rhs) RTM_NO_EXCEPT
+	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE scalarf RTM_SIMD_CALL scalar_add(scalarf_arg0 lhs, scalarf_arg1 rhs) RTM_NO_EXCEPT
 	{
 		return scalarf{ _mm_add_ss(lhs.value, rhs.value) };
 	}
@@ -356,7 +356,7 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	// Returns the addition of the two scalar inputs.
 	//////////////////////////////////////////////////////////////////////////
-	RTM_DISABLE_SECURITY_COOKIE_CHECK constexpr float scalar_add(float lhs, float rhs) RTM_NO_EXCEPT
+	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE constexpr float scalar_add(float lhs, float rhs) RTM_NO_EXCEPT
 	{
 		return lhs + rhs;
 	}
@@ -365,7 +365,7 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	// Returns the subtraction of the two scalar inputs.
 	//////////////////////////////////////////////////////////////////////////
-	RTM_DISABLE_SECURITY_COOKIE_CHECK inline scalarf RTM_SIMD_CALL scalar_sub(scalarf_arg0 lhs, scalarf_arg1 rhs) RTM_NO_EXCEPT
+	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE scalarf RTM_SIMD_CALL scalar_sub(scalarf_arg0 lhs, scalarf_arg1 rhs) RTM_NO_EXCEPT
 	{
 		return scalarf{ _mm_sub_ss(lhs.value, rhs.value) };
 	}
@@ -374,7 +374,7 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	// Returns the subtraction of the two scalar inputs.
 	//////////////////////////////////////////////////////////////////////////
-	RTM_DISABLE_SECURITY_COOKIE_CHECK constexpr float scalar_sub(float lhs, float rhs) RTM_NO_EXCEPT
+	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE constexpr float scalar_sub(float lhs, float rhs) RTM_NO_EXCEPT
 	{
 		return lhs - rhs;
 	}
@@ -383,7 +383,7 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	// Returns the multiplication of the two scalar inputs.
 	//////////////////////////////////////////////////////////////////////////
-	RTM_DISABLE_SECURITY_COOKIE_CHECK inline scalarf RTM_SIMD_CALL scalar_mul(scalarf_arg0 lhs, scalarf_arg1 rhs) RTM_NO_EXCEPT
+	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE scalarf RTM_SIMD_CALL scalar_mul(scalarf_arg0 lhs, scalarf_arg1 rhs) RTM_NO_EXCEPT
 	{
 		return scalarf{ _mm_mul_ss(lhs.value, rhs.value) };
 	}
@@ -392,7 +392,7 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	// Returns the multiplication of the two scalar inputs.
 	//////////////////////////////////////////////////////////////////////////
-	RTM_DISABLE_SECURITY_COOKIE_CHECK constexpr float scalar_mul(float lhs, float rhs) RTM_NO_EXCEPT
+	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE constexpr float scalar_mul(float lhs, float rhs) RTM_NO_EXCEPT
 	{
 		return lhs * rhs;
 	}
@@ -401,7 +401,7 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	// Returns the division of the two scalar inputs.
 	//////////////////////////////////////////////////////////////////////////
-	RTM_DISABLE_SECURITY_COOKIE_CHECK inline scalarf RTM_SIMD_CALL scalar_div(scalarf_arg0 lhs, scalarf_arg1 rhs) RTM_NO_EXCEPT
+	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE scalarf RTM_SIMD_CALL scalar_div(scalarf_arg0 lhs, scalarf_arg1 rhs) RTM_NO_EXCEPT
 	{
 		return scalarf{ _mm_div_ss(lhs.value, rhs.value) };
 	}
@@ -410,7 +410,7 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	// Returns the division of the two scalar inputs.
 	//////////////////////////////////////////////////////////////////////////
-	RTM_DISABLE_SECURITY_COOKIE_CHECK constexpr float scalar_div(float lhs, float rhs) RTM_NO_EXCEPT
+	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE constexpr float scalar_div(float lhs, float rhs) RTM_NO_EXCEPT
 	{
 		return lhs / rhs;
 	}
@@ -419,7 +419,7 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	// Returns the multiplication/addition of the three inputs: s2 + (s0 * s1)
 	//////////////////////////////////////////////////////////////////////////
-	RTM_DISABLE_SECURITY_COOKIE_CHECK inline scalarf RTM_SIMD_CALL scalar_mul_add(scalarf_arg0 s0, scalarf_arg1 s1, scalarf_arg2 s2) RTM_NO_EXCEPT
+	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE scalarf RTM_SIMD_CALL scalar_mul_add(scalarf_arg0 s0, scalarf_arg1 s1, scalarf_arg2 s2) RTM_NO_EXCEPT
 	{
 		return scalarf{ _mm_add_ss(_mm_mul_ss(s0.value, s1.value), s2.value) };
 	}
@@ -428,7 +428,7 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	// Returns the multiplication/addition of the three inputs: s2 + (s0 * s1)
 	//////////////////////////////////////////////////////////////////////////
-	RTM_DISABLE_SECURITY_COOKIE_CHECK inline float scalar_mul_add(float s0, float s1, float s2) RTM_NO_EXCEPT
+	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE float scalar_mul_add(float s0, float s1, float s2) RTM_NO_EXCEPT
 	{
 #if defined(RTM_NEON_INTRINSICS)
 		return std::fma(s0, s1, s2);
@@ -442,7 +442,7 @@ namespace rtm
 	// Returns the negative multiplication/subtraction of the three inputs: -((s0 * s1) - s2)
 	// This is mathematically equivalent to: s2 - (s0 * s1)
 	//////////////////////////////////////////////////////////////////////////
-	RTM_DISABLE_SECURITY_COOKIE_CHECK inline scalarf RTM_SIMD_CALL scalar_neg_mul_sub(scalarf_arg0 s0, scalarf_arg1 s1, scalarf_arg2 s2) RTM_NO_EXCEPT
+	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE scalarf RTM_SIMD_CALL scalar_neg_mul_sub(scalarf_arg0 s0, scalarf_arg1 s1, scalarf_arg2 s2) RTM_NO_EXCEPT
 	{
 		return scalarf{ _mm_sub_ss(s2.value, _mm_mul_ss(s0.value, s1.value)) };
 	}
@@ -452,7 +452,7 @@ namespace rtm
 	// Returns the negative multiplication/subtraction of the three inputs: -((s0 * s1) - s2)
 	// This is mathematically equivalent to: s2 - (s0 * s1)
 	//////////////////////////////////////////////////////////////////////////
-	RTM_DISABLE_SECURITY_COOKIE_CHECK constexpr float scalar_neg_mul_sub(float s0, float s1, float s2) RTM_NO_EXCEPT
+	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE constexpr float scalar_neg_mul_sub(float s0, float s1, float s2) RTM_NO_EXCEPT
 	{
 		return s2 - (s0 * s1);
 	}
@@ -465,7 +465,7 @@ namespace rtm
 	// This is the same instruction count when FMA is present but it might be slightly slower
 	// due to the extra multiplication compared to: start + (alpha * (end - start)).
 	//////////////////////////////////////////////////////////////////////////
-	RTM_DISABLE_SECURITY_COOKIE_CHECK inline scalarf RTM_SIMD_CALL scalar_lerp(scalarf_arg0 start, scalarf_arg1 end, scalarf_arg2 alpha) RTM_NO_EXCEPT
+	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE scalarf RTM_SIMD_CALL scalar_lerp(scalarf_arg0 start, scalarf_arg1 end, scalarf_arg2 alpha) RTM_NO_EXCEPT
 	{
 		// ((1.0 - alpha) * start) + (alpha * end) == (start - alpha * start) + (alpha * end)
 		return scalar_mul_add(end, alpha, scalar_neg_mul_sub(start, alpha, start));
@@ -479,7 +479,7 @@ namespace rtm
 	// This is the same instruction count when FMA is present but it might be slightly slower
 	// due to the extra multiplication compared to: start + (alpha * (end - start)).
 	//////////////////////////////////////////////////////////////////////////
-	RTM_DISABLE_SECURITY_COOKIE_CHECK inline float scalar_lerp(float start, float end, float alpha) RTM_NO_EXCEPT
+	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE float scalar_lerp(float start, float end, float alpha) RTM_NO_EXCEPT
 	{
 		// ((1.0 - alpha) * start) + (alpha * end) == (start - alpha * start) + (alpha * end)
 		return scalar_mul_add(end, alpha, scalar_neg_mul_sub(start, alpha, start));
@@ -489,7 +489,7 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	// Returns the smallest of the two inputs.
 	//////////////////////////////////////////////////////////////////////////
-	RTM_DISABLE_SECURITY_COOKIE_CHECK inline scalarf RTM_SIMD_CALL scalar_min(scalarf_arg0 lhs, scalarf_arg1 rhs) RTM_NO_EXCEPT
+	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE scalarf RTM_SIMD_CALL scalar_min(scalarf_arg0 lhs, scalarf_arg1 rhs) RTM_NO_EXCEPT
 	{
 		return scalarf{ _mm_min_ss(lhs.value, rhs.value) };
 	}
@@ -498,7 +498,7 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	// Returns the smallest of the two inputs.
 	//////////////////////////////////////////////////////////////////////////
-	RTM_DISABLE_SECURITY_COOKIE_CHECK inline float scalar_min(float left, float right) RTM_NO_EXCEPT
+	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE float scalar_min(float left, float right) RTM_NO_EXCEPT
 	{
 #if defined(RTM_SSE2_INTRINSICS)
 		return _mm_cvtss_f32(_mm_min_ss(_mm_set_ps1(left), _mm_set_ps1(right)));
@@ -511,7 +511,7 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	// Returns the largest of the two inputs.
 	//////////////////////////////////////////////////////////////////////////
-	RTM_DISABLE_SECURITY_COOKIE_CHECK inline scalarf RTM_SIMD_CALL scalar_max(scalarf_arg0 lhs, scalarf_arg1 rhs) RTM_NO_EXCEPT
+	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE scalarf RTM_SIMD_CALL scalar_max(scalarf_arg0 lhs, scalarf_arg1 rhs) RTM_NO_EXCEPT
 	{
 		return scalarf{ _mm_max_ss(lhs.value, rhs.value) };
 	}
@@ -520,7 +520,7 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	// Returns the largest of the two inputs.
 	//////////////////////////////////////////////////////////////////////////
-	RTM_DISABLE_SECURITY_COOKIE_CHECK inline float scalar_max(float left, float right) RTM_NO_EXCEPT
+	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE float scalar_max(float left, float right) RTM_NO_EXCEPT
 	{
 #if defined(RTM_SSE2_INTRINSICS)
 		return _mm_cvtss_f32(_mm_max_ss(_mm_set_ps1(left), _mm_set_ps1(right)));
@@ -533,7 +533,7 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	// Returns true if both inputs are equal, false otherwise.
 	//////////////////////////////////////////////////////////////////////////
-	RTM_DISABLE_SECURITY_COOKIE_CHECK inline bool RTM_SIMD_CALL scalar_equal(scalarf_arg0 lhs, scalarf_arg1 rhs) RTM_NO_EXCEPT
+	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE bool RTM_SIMD_CALL scalar_equal(scalarf_arg0 lhs, scalarf_arg1 rhs) RTM_NO_EXCEPT
 	{
 		return _mm_comieq_ss(lhs.value, rhs.value) != 0;
 	}
@@ -542,7 +542,7 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	// Returns true if both inputs are equal, false otherwise.
 	//////////////////////////////////////////////////////////////////////////
-	RTM_DISABLE_SECURITY_COOKIE_CHECK constexpr bool scalar_equal(float lhs, float rhs) RTM_NO_EXCEPT
+	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE constexpr bool scalar_equal(float lhs, float rhs) RTM_NO_EXCEPT
 	{
 		return lhs == rhs;
 	}
@@ -551,7 +551,7 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	// Returns true if lhs < rhs, false otherwise.
 	//////////////////////////////////////////////////////////////////////////
-	RTM_DISABLE_SECURITY_COOKIE_CHECK inline bool RTM_SIMD_CALL scalar_lower_than(scalarf_arg0 lhs, scalarf_arg1 rhs) RTM_NO_EXCEPT
+	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE bool RTM_SIMD_CALL scalar_lower_than(scalarf_arg0 lhs, scalarf_arg1 rhs) RTM_NO_EXCEPT
 	{
 		return _mm_comilt_ss(lhs.value, rhs.value) != 0;
 	}
@@ -560,7 +560,7 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	// Returns true if lhs < rhs, false otherwise.
 	//////////////////////////////////////////////////////////////////////////
-	RTM_DISABLE_SECURITY_COOKIE_CHECK constexpr bool scalar_lower_than(float lhs, float rhs) RTM_NO_EXCEPT
+	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE constexpr bool scalar_lower_than(float lhs, float rhs) RTM_NO_EXCEPT
 	{
 		return lhs < rhs;
 	}
@@ -569,7 +569,7 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	// Returns true if lhs <= rhs, false otherwise.
 	//////////////////////////////////////////////////////////////////////////
-	RTM_DISABLE_SECURITY_COOKIE_CHECK inline bool RTM_SIMD_CALL scalar_lower_equal(scalarf_arg0 lhs, scalarf_arg1 rhs) RTM_NO_EXCEPT
+	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE bool RTM_SIMD_CALL scalar_lower_equal(scalarf_arg0 lhs, scalarf_arg1 rhs) RTM_NO_EXCEPT
 	{
 		return _mm_comile_ss(lhs.value, rhs.value) != 0;
 	}
@@ -578,7 +578,7 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	// Returns true if lhs <= rhs, false otherwise.
 	//////////////////////////////////////////////////////////////////////////
-	RTM_DISABLE_SECURITY_COOKIE_CHECK constexpr bool scalar_lower_equal(float lhs, float rhs) RTM_NO_EXCEPT
+	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE constexpr bool scalar_lower_equal(float lhs, float rhs) RTM_NO_EXCEPT
 	{
 		return lhs <= rhs;
 	}
@@ -587,7 +587,7 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	// Returns true if lhs > rhs, false otherwise.
 	//////////////////////////////////////////////////////////////////////////
-	RTM_DISABLE_SECURITY_COOKIE_CHECK inline bool RTM_SIMD_CALL scalar_greater_than(scalarf_arg0 lhs, scalarf_arg1 rhs) RTM_NO_EXCEPT
+	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE bool RTM_SIMD_CALL scalar_greater_than(scalarf_arg0 lhs, scalarf_arg1 rhs) RTM_NO_EXCEPT
 	{
 		return _mm_comigt_ss(lhs.value, rhs.value) != 0;
 	}
@@ -596,7 +596,7 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	// Returns true if lhs > rhs, false otherwise.
 	//////////////////////////////////////////////////////////////////////////
-	RTM_DISABLE_SECURITY_COOKIE_CHECK constexpr bool scalar_greater_than(float lhs, float rhs) RTM_NO_EXCEPT
+	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE constexpr bool scalar_greater_than(float lhs, float rhs) RTM_NO_EXCEPT
 	{
 		return lhs > rhs;
 	}
@@ -605,7 +605,7 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	// Returns true if lhs >= rhs, false otherwise.
 	//////////////////////////////////////////////////////////////////////////
-	RTM_DISABLE_SECURITY_COOKIE_CHECK inline bool RTM_SIMD_CALL scalar_greater_equal(scalarf_arg0 lhs, scalarf_arg1 rhs) RTM_NO_EXCEPT
+	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE bool RTM_SIMD_CALL scalar_greater_equal(scalarf_arg0 lhs, scalarf_arg1 rhs) RTM_NO_EXCEPT
 	{
 		return _mm_comige_ss(lhs.value, rhs.value) != 0;
 	}
@@ -614,7 +614,7 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	// Returns true if lhs >= rhs, false otherwise.
 	//////////////////////////////////////////////////////////////////////////
-	RTM_DISABLE_SECURITY_COOKIE_CHECK constexpr bool scalar_greater_equal(float lhs, float rhs) RTM_NO_EXCEPT
+	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE constexpr bool scalar_greater_equal(float lhs, float rhs) RTM_NO_EXCEPT
 	{
 		return lhs >= rhs;
 	}
@@ -623,7 +623,7 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	// Returns true if both inputs are nearly equal, otherwise false: abs(lhs - rhs) <= threshold
 	//////////////////////////////////////////////////////////////////////////
-	RTM_DISABLE_SECURITY_COOKIE_CHECK inline bool RTM_SIMD_CALL scalar_near_equal(scalarf_arg0 lhs, scalarf_arg1 rhs, scalarf_arg2 threshold) RTM_NO_EXCEPT
+	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE bool RTM_SIMD_CALL scalar_near_equal(scalarf_arg0 lhs, scalarf_arg1 rhs, scalarf_arg2 threshold) RTM_NO_EXCEPT
 	{
 		return scalar_lower_equal(scalar_abs(scalar_sub(lhs, rhs)), threshold);
 	}
@@ -632,7 +632,7 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	// Returns true if both inputs are nearly equal, otherwise false: abs(lhs - rhs) <= threshold
 	//////////////////////////////////////////////////////////////////////////
-	RTM_DISABLE_SECURITY_COOKIE_CHECK inline bool scalar_near_equal(float lhs, float rhs, float threshold) RTM_NO_EXCEPT
+	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE bool scalar_near_equal(float lhs, float rhs, float threshold) RTM_NO_EXCEPT
 	{
 		return scalar_abs(lhs - rhs) <= threshold;
 	}
@@ -641,7 +641,7 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	// Returns true if the input is finite (not NaN or Inf), false otherwise.
 	//////////////////////////////////////////////////////////////////////////
-	RTM_DISABLE_SECURITY_COOKIE_CHECK inline bool RTM_SIMD_CALL scalar_is_finite(scalarf_arg0 input) RTM_NO_EXCEPT
+	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE bool RTM_SIMD_CALL scalar_is_finite(scalarf_arg0 input) RTM_NO_EXCEPT
 	{
 		const __m128i abs_mask = _mm_set_epi32(0x7FFFFFFFULL, 0x7FFFFFFFULL, 0x7FFFFFFFULL, 0x7FFFFFFFULL);
 		__m128 abs_input = _mm_and_ps(input.value, _mm_castsi128_ps(abs_mask));
@@ -659,7 +659,7 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	// Returns true if the input is finite (not NaN or Inf), false otherwise.
 	//////////////////////////////////////////////////////////////////////////
-	RTM_DISABLE_SECURITY_COOKIE_CHECK inline bool scalar_is_finite(float input) RTM_NO_EXCEPT
+	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE bool scalar_is_finite(float input) RTM_NO_EXCEPT
 	{
 		return std::isfinite(input);
 	}
@@ -785,7 +785,7 @@ namespace rtm
 	// scalar_round_bankers(-1.2) = -1.0
 	// Note: This function relies on the default floating point rounding mode (banker's rounding).
 	//////////////////////////////////////////////////////////////////////////
-	RTM_DISABLE_SECURITY_COOKIE_CHECK inline scalarf RTM_SIMD_CALL scalar_round_bankers(scalarf_arg0 input) RTM_NO_EXCEPT
+	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE scalarf RTM_SIMD_CALL scalar_round_bankers(scalarf_arg0 input) RTM_NO_EXCEPT
 	{
 #if defined(RTM_SSE4_INTRINSICS)
 		return scalarf{ _mm_round_ss(input.value, input.value, _MM_FROUND_TO_NEAREST_INT | _MM_FROUND_NO_EXC) };
@@ -823,7 +823,7 @@ namespace rtm
 	// scalar_round_bankers(-1.5) = -2.0
 	// scalar_round_bankers(-1.2) = -1.0
 	//////////////////////////////////////////////////////////////////////////
-	RTM_DISABLE_SECURITY_COOKIE_CHECK inline float scalar_round_bankers(float input) RTM_NO_EXCEPT
+	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE float scalar_round_bankers(float input) RTM_NO_EXCEPT
 	{
 #if defined(RTM_SSE2_INTRINSICS)
 		return scalar_cast(scalar_round_bankers(scalar_set(input)));
@@ -851,7 +851,7 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	// Returns the fractional part of the input.
 	//////////////////////////////////////////////////////////////////////////
-	RTM_DISABLE_SECURITY_COOKIE_CHECK inline float scalar_fraction(float value) RTM_NO_EXCEPT
+	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE float scalar_fraction(float value) RTM_NO_EXCEPT
 	{
 		return value - scalar_floor(value);
 	}
@@ -860,7 +860,7 @@ namespace rtm
 	// Safely casts an integral input into a float64 output.
 	//////////////////////////////////////////////////////////////////////////
 	template<typename SrcIntegralType>
-	RTM_DISABLE_SECURITY_COOKIE_CHECK inline float scalar_safe_to_float(SrcIntegralType input) RTM_NO_EXCEPT
+	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE float scalar_safe_to_float(SrcIntegralType input) RTM_NO_EXCEPT
 	{
 		float input_f = float(input);
 		RTM_ASSERT(SrcIntegralType(input_f) == input, "Conversion to float would result in truncation");
@@ -1466,7 +1466,7 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	// Converts degrees into radians.
 	//////////////////////////////////////////////////////////////////////////
-	RTM_DISABLE_SECURITY_COOKIE_CHECK constexpr float scalar_deg_to_rad(float deg) RTM_NO_EXCEPT
+	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE constexpr float scalar_deg_to_rad(float deg) RTM_NO_EXCEPT
 	{
 		return deg * constants::pi_div_one_eighty();
 	}
@@ -1474,7 +1474,7 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	// Converts radians into degrees.
 	//////////////////////////////////////////////////////////////////////////
-	RTM_DISABLE_SECURITY_COOKIE_CHECK constexpr float scalar_rad_to_deg(float rad) RTM_NO_EXCEPT
+	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE constexpr float scalar_rad_to_deg(float rad) RTM_NO_EXCEPT
 	{
 		return rad * constants::one_eighty_div_pi();
 	}

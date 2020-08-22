@@ -39,7 +39,7 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	// Casts a QVV transform float32 variant to a float64 variant.
 	//////////////////////////////////////////////////////////////////////////
-	RTM_DISABLE_SECURITY_COOKIE_CHECK inline qvvd qvv_cast(const qvvf& input) RTM_NO_EXCEPT
+	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE qvvd qvv_cast(const qvvf& input) RTM_NO_EXCEPT
 	{
 		return qvvd{ quat_cast(input.rotation), vector_cast(input.translation), vector_cast(input.scale) };
 	}
@@ -135,7 +135,7 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	// Returns a QVV transforms with the rotation part normalized.
 	//////////////////////////////////////////////////////////////////////////
-	RTM_DISABLE_SECURITY_COOKIE_CHECK inline qvvd qvv_normalize(const qvvd& input) RTM_NO_EXCEPT
+	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE qvvd qvv_normalize(const qvvd& input) RTM_NO_EXCEPT
 	{
 		const quatd rotation = quat_normalize(input.rotation);
 		return qvv_set(rotation, input.translation, input.scale);
