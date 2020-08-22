@@ -9,7 +9,7 @@ environment:
 image:
   - Visual Studio 2015
   - Visual Studio 2017
-  - Visual Studio 2019
+  - Previous Visual Studio 2019
 
 configuration:
   - Debug
@@ -29,6 +29,9 @@ matrix:
     - image: Visual Studio 2017
       toolchain: clang
     - image: Visual Studio 2019
+      platform: arm64
+      toolchain: clang
+    - image: Previous Visual Studio 2019
       platform: arm64
       toolchain: clang
 
