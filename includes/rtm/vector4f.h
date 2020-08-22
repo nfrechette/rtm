@@ -25,6 +25,7 @@
 // SOFTWARE.
 ////////////////////////////////////////////////////////////////////////////////
 
+#include "rtm/macros.h"
 #include "rtm/math.h"
 #include "rtm/scalarf.h"
 #include "rtm/impl/compiler_utils.h"
@@ -1411,13 +1412,7 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE vector4f RTM_SIMD_CALL vector_mul_add(vector4f_arg0 v0, vector4f_arg1 v1, vector4f_arg2 v2) RTM_NO_EXCEPT
 	{
-#if defined(RTM_NEON64_INTRINSICS)
-		return vfmaq_f32(v2, v0, v1);
-#elif defined(RTM_NEON_INTRINSICS)
-		return vmlaq_f32(v2, v0, v1);
-#else
-		return vector_add(vector_mul(v0, v1), v2);
-#endif
+		return RTM_VECTOR4F_MULV_ADD(v0, v1, v2);
 	}
 
 	//////////////////////////////////////////////////////////////////////////
@@ -1425,13 +1420,7 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE vector4f RTM_SIMD_CALL vector_mul_add(vector4f_arg0 v0, float s1, vector4f_arg2 v2) RTM_NO_EXCEPT
 	{
-#if defined(RTM_NEON64_INTRINSICS)
-		return vfmaq_n_f32(v2, v0, s1);
-#elif defined(RTM_NEON_INTRINSICS)
-		return vmlaq_n_f32(v2, v0, s1);
-#else
-		return vector_add(vector_mul(v0, s1), v2);
-#endif
+		return RTM_VECTOR4F_MULS_ADD(v0, s1, v2);
 	}
 
 #if defined(RTM_SSE2_INTRINSICS)
@@ -1450,13 +1439,7 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE vector4f RTM_SIMD_CALL vector_neg_mul_sub(vector4f_arg0 v0, vector4f_arg1 v1, vector4f_arg2 v2) RTM_NO_EXCEPT
 	{
-#if defined(RTM_NEON64_INTRINSICS)
-		return vfmsq_f32(v2, v0, v1);
-#elif defined(RTM_NEON_INTRINSICS)
-		return vmlsq_f32(v2, v0, v1);
-#else
-		return vector_sub(v2, vector_mul(v0, v1));
-#endif
+		return RTM_VECTOR4F_NEG_MULV_SUB(v0, v1, v2);
 	}
 
 	//////////////////////////////////////////////////////////////////////////
@@ -1465,13 +1448,7 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE vector4f RTM_SIMD_CALL vector_neg_mul_sub(vector4f_arg0 v0, float s1, vector4f_arg2 v2) RTM_NO_EXCEPT
 	{
-#if defined(RTM_NEON64_INTRINSICS)
-		return vfmsq_n_f32(v2, v0, s1);
-#elif defined(RTM_NEON_INTRINSICS)
-		return vmlsq_n_f32(v2, v0, s1);
-#else
-		return vector_sub(v2, vector_mul(v0, s1));
-#endif
+		return RTM_VECTOR4F_NEG_MULS_SUB(v0, s1, v2);
 	}
 
 #if defined(RTM_SSE2_INTRINSICS)
@@ -2448,19 +2425,11 @@ namespace rtm
 		// Calculate our value
 		float32x4_t x2 = vmulq_f32(x, x);
 
-#if defined(RTM_NEON64_INTRINSICS)
-		float32x4_t result = vfmaq_n_f32(vdupq_n_f32(2.7521557770526783e-6F), x2, -2.3828544692960918e-8F);
-		result = vfmaq_f32(vdupq_n_f32(-1.9840782426250314e-4F), result, x2);
-		result = vfmaq_f32(vdupq_n_f32(8.3333303183525942e-3F), result, x2);
-		result = vfmaq_f32(vdupq_n_f32(-1.6666666601721269e-1F), result, x2);
-		result = vfmaq_f32(vdupq_n_f32(1.0F), result, x2);
-#else
-		float32x4_t result = vmlaq_n_f32(vdupq_n_f32(2.7521557770526783e-6F), x2, -2.3828544692960918e-8F);
-		result = vmlaq_f32(vdupq_n_f32(-1.9840782426250314e-4F), result, x2);
-		result = vmlaq_f32(vdupq_n_f32(8.3333303183525942e-3F), result, x2);
-		result = vmlaq_f32(vdupq_n_f32(-1.6666666601721269e-1F), result, x2);
-		result = vmlaq_f32(vdupq_n_f32(1.0F), result, x2);
-#endif
+		float32x4_t result = RTM_VECTOR4F_MULS_ADD(x2, -2.3828544692960918e-8F, vdupq_n_f32(2.7521557770526783e-6F));
+		result = RTM_VECTOR4F_MULV_ADD(result, x2, vdupq_n_f32(-1.9840782426250314e-4F));
+		result = RTM_VECTOR4F_MULV_ADD(result, x2, vdupq_n_f32(8.3333303183525942e-3F));
+		result = RTM_VECTOR4F_MULV_ADD(result, x2, vdupq_n_f32(-1.6666666601721269e-1F));
+		result = RTM_VECTOR4F_MULV_ADD(result, x2, vdupq_n_f32(1.0F));
 
 		result = vmulq_f32(result, x);
 		return result;
@@ -2589,19 +2558,11 @@ namespace rtm
 		// Calculate our value
 		float32x4_t x2 = vmulq_f32(x, x);
 
-#if defined(RTM_NEON64_INTRINSICS)
-		float32x4_t result = vfmaq_n_f32(vdupq_n_f32(2.4760495088926859e-5F), x2, -2.6051615464872668e-7F);
-		result = vfmaq_f32(vdupq_n_f32(-1.3888377661039897e-3F), result, x2);
-		result = vfmaq_f32(vdupq_n_f32(4.1666638865338612e-2F), result, x2);
-		result = vfmaq_f32(vdupq_n_f32(-4.9999999508695869e-1F), result, x2);
-		result = vfmaq_f32(vdupq_n_f32(1.0F), result, x2);
-#else
-		float32x4_t result = vmlaq_n_f32(vdupq_n_f32(2.4760495088926859e-5F), x2, -2.6051615464872668e-7F);
-		result = vmlaq_f32(vdupq_n_f32(-1.3888377661039897e-3F), result, x2);
-		result = vmlaq_f32(vdupq_n_f32(4.1666638865338612e-2F), result, x2);
-		result = vmlaq_f32(vdupq_n_f32(-4.9999999508695869e-1F), result, x2);
-		result = vmlaq_f32(vdupq_n_f32(1.0F), result, x2);
-#endif
+		float32x4_t result = RTM_VECTOR4F_MULS_ADD(x2, -2.6051615464872668e-7F, vdupq_n_f32(2.4760495088926859e-5F));
+		result = RTM_VECTOR4F_MULV_ADD(result, x2, vdupq_n_f32(-1.3888377661039897e-3F));
+		result = RTM_VECTOR4F_MULV_ADD(result, x2, vdupq_n_f32(4.1666638865338612e-2F));
+		result = RTM_VECTOR4F_MULV_ADD(result, x2, vdupq_n_f32(-4.9999999508695869e-1F));
+		result = RTM_VECTOR4F_MULV_ADD(result, x2, vdupq_n_f32(1.0F));
 
 		// Remap into [-pi, pi]
 		return vbslq_f32(is_less_equal_than_half_pi, result, vnegq_f32(result));
@@ -2739,21 +2700,12 @@ namespace rtm
 
 		float32x4_t x2 = vmulq_f32(x, x);
 
-#if defined(RTM_NEON64_INTRINSICS)
-		float32x4_t result = vfmaq_n_f32(vdupq_n_f32(-3.5059680836411644e-2F), x2, 7.2128853633444123e-3F);
-		result = vfmaq_f32(vdupq_n_f32(8.1675882859940430e-2F), result, x2);
-		result = vfmaq_f32(vdupq_n_f32(-1.3374657325451267e-1F), result, x2);
-		result = vfmaq_f32(vdupq_n_f32(1.9856563505717162e-1F), result, x2);
-		result = vfmaq_f32(vdupq_n_f32(-3.3324998579202170e-1F), result, x2);
-		result = vfmaq_f32(vdupq_n_f32(1.0F), result, x2);
-#else
-		float32x4_t result = vmlaq_n_f32(vdupq_n_f32(-3.5059680836411644e-2F), x2, 7.2128853633444123e-3F);
-		result = vmlaq_f32(vdupq_n_f32(8.1675882859940430e-2F), result, x2);
-		result = vmlaq_f32(vdupq_n_f32(-1.3374657325451267e-1F), result, x2);
-		result = vmlaq_f32(vdupq_n_f32(1.9856563505717162e-1F), result, x2);
-		result = vmlaq_f32(vdupq_n_f32(-3.3324998579202170e-1F), result, x2);
-		result = vmlaq_f32(vdupq_n_f32(1.0F), result, x2);
-#endif
+		float32x4_t result = RTM_VECTOR4F_MULS_ADD(x2, 7.2128853633444123e-3F, vdupq_n_f32(-3.5059680836411644e-2F));
+		result = RTM_VECTOR4F_MULV_ADD(result, x2, vdupq_n_f32(8.1675882859940430e-2F));
+		result = RTM_VECTOR4F_MULV_ADD(result, x2, vdupq_n_f32(-1.3374657325451267e-1F));
+		result = RTM_VECTOR4F_MULV_ADD(result, x2, vdupq_n_f32(1.9856563505717162e-1F));
+		result = RTM_VECTOR4F_MULV_ADD(result, x2, vdupq_n_f32(-3.3324998579202170e-1F));
+		result = RTM_VECTOR4F_MULV_ADD(result, x2, vdupq_n_f32(1.0F));
 
 		result = vmulq_f32(result, x);
 
