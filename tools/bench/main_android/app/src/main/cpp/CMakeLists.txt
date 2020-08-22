@@ -14,7 +14,7 @@ include_directories("${PROJECT_ROOT_DIR}/../../../includes")
 include_directories("${PROJECT_ROOT_DIR}/../../../external/benchmark/include")
 
 # Grab all of our test source files
-file(GLOB_RECURSE ALL_TEST_SOURCE_FILES LIST_DIRECTORIES false
+file(GLOB_RECURSE ALL_BENCH_SOURCE_FILES LIST_DIRECTORIES false
 	${PROJECT_ROOT_DIR}/../sources/*.h
 	${PROJECT_ROOT_DIR}/../sources/*.cpp)
 
@@ -22,7 +22,7 @@ file(GLOB_RECURSE ALL_TEST_SOURCE_FILES LIST_DIRECTORIES false
 file(GLOB_RECURSE ALL_MAIN_SOURCE_FILES LIST_DIRECTORIES false
 	${PROJECT_SOURCE_DIR}/*.cpp)
 
-add_library(${PROJECT_NAME} SHARED ${ALL_TEST_SOURCE_FILES} ${ALL_MAIN_SOURCE_FILES})
+add_library(${PROJECT_NAME} SHARED ${ALL_BENCH_SOURCE_FILES} ${ALL_MAIN_SOURCE_FILES})
 
 # Enable debug symbols
 target_compile_options(${PROJECT_NAME} PRIVATE -g)
