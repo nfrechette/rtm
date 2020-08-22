@@ -119,4 +119,100 @@ RTM_IMPL_FILE_PRAGMA_PUSH
 	#define RTM_VECTOR4F_NEG_MULS_SUB(v0, s1, v2) rtm::vector_sub((v2), rtm::vector_mul((v0), (s1)))
 #endif
 
+#if defined(RTM_NEON_INTRINSICS)
+	//////////////////////////////////////////////////////////////////////////
+	// Transposes a 4x4 matrix.
+	// All inputs and outputs must be rtm::vector4f.
+	//////////////////////////////////////////////////////////////////////////
+	#define RTM_MATRIX_TRANSPOSE_4X4(input0, input1, input2, input3, output0, output1, output2, output3) \
+		do { \
+			const float32x4x2_t tmp0 = vzipq_f32(input0, input2); \
+			const float32x4x2_t tmp1 = vzipq_f32(input1, input3); \
+			const float32x4x2_t tmp2 = vzipq_f32(tmp0.val[0], tmp1.val[0]); \
+			const float32x4x2_t tmp3 = vzipq_f32(tmp0.val[1], tmp1.val[1]); \
+			(output0) = tmp2.val[0]; \
+			(output1) = tmp2.val[1]; \
+			(output2) = tmp3.val[0]; \
+			(output3) = tmp3.val[1]; \
+		} while(0)
+#else
+	//////////////////////////////////////////////////////////////////////////
+	// Transposes a 4x4 matrix.
+	// All inputs and outputs must be rtm::vector4f.
+	//////////////////////////////////////////////////////////////////////////
+	#define RTM_MATRIX_TRANSPOSE_4X4(input0, input1, input2, input3, output0, output1, output2, output3) \
+		do { \
+			const rtm::vector4f tmp0 = rtm::vector_mix<rtm::mix4::x, rtm::mix4::y, rtm::mix4::a, rtm::mix4::b>((input0), (input1)); \
+			const rtm::vector4f tmp1 = rtm::vector_mix<rtm::mix4::z, rtm::mix4::w, rtm::mix4::c, rtm::mix4::d>((input0), (input1)); \
+			const rtm::vector4f tmp2 = rtm::vector_mix<rtm::mix4::x, rtm::mix4::y, rtm::mix4::a, rtm::mix4::b>((input2), (input3)); \
+			const rtm::vector4f tmp3 = rtm::vector_mix<rtm::mix4::z, rtm::mix4::w, rtm::mix4::c, rtm::mix4::d>((input2), (input3)); \
+			(output0) = rtm::vector_mix<rtm::mix4::x, rtm::mix4::z, rtm::mix4::a, rtm::mix4::c>(tmp0, tmp2); \
+			(output1) = rtm::vector_mix<rtm::mix4::y, rtm::mix4::w, rtm::mix4::b, rtm::mix4::d>(tmp0, tmp2); \
+			(output2) = rtm::vector_mix<rtm::mix4::x, rtm::mix4::z, rtm::mix4::a, rtm::mix4::c>(tmp1, tmp3); \
+			(output3) = rtm::vector_mix<rtm::mix4::y, rtm::mix4::w, rtm::mix4::b, rtm::mix4::d>(tmp1, tmp3); \
+		} while(0)
+#endif
+
+#if defined(RTM_NEON_INTRINSICS)
+	//////////////////////////////////////////////////////////////////////////
+	// Transposes a 3x3 matrix.
+	// All inputs and outputs must be rtm::vector4f.
+	//////////////////////////////////////////////////////////////////////////
+	#define RTM_MATRIX_TRANSPOSE_3X3(input0, input1, input2, output0, output1, output2) \
+		do { \
+			const float32x4x2_t tmp0 = vzipq_f32(input0, input2); \
+			const float32x4x2_t tmp1 = vzipq_f32(input1, input1); \
+			const float32x4x2_t tmp2 = vzipq_f32(tmp0.val[0], tmp1.val[0]); \
+			const float32x4x2_t tmp3 = vzipq_f32(tmp0.val[1], tmp1.val[1]); \
+			(output0) = tmp2.val[0]; \
+			(output1) = tmp2.val[1]; \
+			(output2) = tmp3.val[0]; \
+		} while(0)
+#else
+	//////////////////////////////////////////////////////////////////////////
+	// Transposes a 3x3 matrix.
+	// All inputs and outputs must be rtm::vector4f.
+	//////////////////////////////////////////////////////////////////////////
+	#define RTM_MATRIX_TRANSPOSE_3X3(input0, input1, input2, output0, output1, output2) \
+		do { \
+			const rtm::vector4f tmp0 = rtm::vector_mix<rtm::mix4::x, rtm::mix4::y, rtm::mix4::a, rtm::mix4::b>((input0), (input1)); \
+			const rtm::vector4f tmp1 = rtm::vector_mix<rtm::mix4::z, rtm::mix4::w, rtm::mix4::c, rtm::mix4::d>((input0), (input1)); \
+			(output0) = rtm::vector_mix<rtm::mix4::x, rtm::mix4::z, rtm::mix4::a, rtm::mix4::c>(tmp0, (input2)); \
+			(output1) = rtm::vector_mix<rtm::mix4::y, rtm::mix4::w, rtm::mix4::b, rtm::mix4::d>(tmp0, (input2)); \
+			(output2) = rtm::vector_mix<rtm::mix4::x, rtm::mix4::z, rtm::mix4::c, rtm::mix4::c>(tmp1, (input2)); \
+		} while(0)
+#endif
+
+#if defined(RTM_NEON_INTRINSICS)
+	//////////////////////////////////////////////////////////////////////////
+	// Transposes a 4x3 matrix.
+	// All inputs and outputs must be rtm::vector4f.
+	//////////////////////////////////////////////////////////////////////////
+	#define RTM_MATRIX_TRANSPOSE_4X3(input0, input1, input2, input3, output0, output1, output2) \
+		do { \
+			const float32x4x2_t tmp0 = vzipq_f32(input0, input2); \
+			const float32x4x2_t tmp1 = vzipq_f32(input1, input3); \
+			const float32x4x2_t tmp2 = vzipq_f32(tmp0.val[0], tmp1.val[0]); \
+			const float32x4x2_t tmp3 = vzipq_f32(tmp0.val[1], tmp1.val[1]); \
+			(output0) = tmp2.val[0]; \
+			(output1) = tmp2.val[1]; \
+			(output2) = tmp3.val[0]; \
+		} while(0)
+#else
+	//////////////////////////////////////////////////////////////////////////
+	// Transposes a 4x3 matrix.
+	// All inputs and outputs must be rtm::vector4f.
+	//////////////////////////////////////////////////////////////////////////
+	#define RTM_MATRIX_TRANSPOSE_4X3(input0, input1, input2, input3, output0, output1, output2) \
+		do { \
+			const rtm::vector4f tmp0 = rtm::vector_mix<rtm::mix4::x, rtm::mix4::y, rtm::mix4::a, rtm::mix4::b>((input0), (input1)); \
+			const rtm::vector4f tmp1 = rtm::vector_mix<rtm::mix4::z, rtm::mix4::w, rtm::mix4::c, rtm::mix4::d>((input0), (input1)); \
+			const rtm::vector4f tmp2 = rtm::vector_mix<rtm::mix4::x, rtm::mix4::y, rtm::mix4::a, rtm::mix4::b>((input2), (input3)); \
+			const rtm::vector4f tmp3 = rtm::vector_mix<rtm::mix4::z, rtm::mix4::w, rtm::mix4::c, rtm::mix4::d>((input2), (input3)); \
+			(output0) = rtm::vector_mix<rtm::mix4::x, rtm::mix4::z, rtm::mix4::a, rtm::mix4::c>(tmp0, tmp2); \
+			(output1) = rtm::vector_mix<rtm::mix4::y, rtm::mix4::w, rtm::mix4::b, rtm::mix4::d>(tmp0, tmp2); \
+			(output2) = rtm::vector_mix<rtm::mix4::x, rtm::mix4::z, rtm::mix4::a, rtm::mix4::c>(tmp1, tmp3); \
+		} while(0)
+#endif
+
 RTM_IMPL_FILE_PRAGMA_POP
