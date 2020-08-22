@@ -24,6 +24,7 @@
 // SOFTWARE.
 ////////////////////////////////////////////////////////////////////////////////
 
+#include "rtm/macros.h"
 #include "rtm/math.h"
 #include "rtm/matrix3x3f.h"
 #include "rtm/vector4f.h"
@@ -91,15 +92,11 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE matrix4x4f RTM_SIMD_CALL matrix_transpose(matrix4x4f_arg0 input) RTM_NO_EXCEPT
 	{
-		vector4f tmp0 = vector_mix<mix4::x, mix4::y, mix4::a, mix4::b>(input.x_axis, input.y_axis);
-		vector4f tmp1 = vector_mix<mix4::z, mix4::w, mix4::c, mix4::d>(input.x_axis, input.y_axis);
-		vector4f tmp2 = vector_mix<mix4::x, mix4::y, mix4::a, mix4::b>(input.z_axis, input.w_axis);
-		vector4f tmp3 = vector_mix<mix4::z, mix4::w, mix4::c, mix4::d>(input.z_axis, input.w_axis);
-
-		vector4f x_axis = vector_mix<mix4::x, mix4::z, mix4::a, mix4::c>(tmp0, tmp2);
-		vector4f y_axis = vector_mix<mix4::y, mix4::w, mix4::b, mix4::d>(tmp0, tmp2);
-		vector4f z_axis = vector_mix<mix4::x, mix4::z, mix4::a, mix4::c>(tmp1, tmp3);
-		vector4f w_axis = vector_mix<mix4::y, mix4::w, mix4::b, mix4::d>(tmp1, tmp3);
+		vector4f x_axis;
+		vector4f y_axis;
+		vector4f z_axis;
+		vector4f w_axis;
+		RTM_MATRIX_TRANSPOSE_4X4(input.x_axis, input.y_axis, input.z_axis, input.w_axis, x_axis, y_axis, z_axis, w_axis);
 		return matrix4x4f{ x_axis, y_axis, z_axis, w_axis };
 	}
 

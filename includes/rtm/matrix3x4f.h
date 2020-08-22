@@ -25,6 +25,7 @@
 // SOFTWARE.
 ////////////////////////////////////////////////////////////////////////////////
 
+#include "rtm/macros.h"
 #include "rtm/math.h"
 #include "rtm/matrix3x3f.h"
 #include "rtm/quatf.h"
@@ -179,12 +180,10 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE matrix3x3f RTM_SIMD_CALL matrix_transpose(matrix3x4f_arg0 input) RTM_NO_EXCEPT
 	{
-		const vector4f v00_v01_v10_v11 = vector_mix<mix4::x, mix4::y, mix4::a, mix4::b>(input.x_axis, input.y_axis);
-		const vector4f v02_v03_v12_v13 = vector_mix<mix4::z, mix4::w, mix4::c, mix4::d>(input.x_axis, input.y_axis);
-
-		const vector4f x_axis = vector_mix<mix4::x, mix4::z, mix4::a, mix4::c>(v00_v01_v10_v11, input.z_axis);
-		const vector4f y_axis = vector_mix<mix4::y, mix4::w, mix4::b, mix4::d>(v00_v01_v10_v11, input.z_axis);
-		const vector4f z_axis = vector_mix<mix4::x, mix4::z, mix4::c, mix4::c>(v02_v03_v12_v13, input.z_axis);
+		vector4f x_axis;
+		vector4f y_axis;
+		vector4f z_axis;
+		RTM_MATRIX_TRANSPOSE_3X3(input.x_axis, input.y_axis, input.z_axis, x_axis, y_axis, z_axis);
 		return matrix3x3f{ x_axis, y_axis, z_axis };
 	}
 
