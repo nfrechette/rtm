@@ -124,7 +124,7 @@ RTM_IMPL_FILE_PRAGMA_PUSH
 	// Transposes a 4x4 matrix.
 	// All inputs and outputs must be rtm::vector4f.
 	//////////////////////////////////////////////////////////////////////////
-	#define RTM_MATRIX_TRANSPOSE_4X4(input0, input1, input2, input3, output0, output1, output2, output3) \
+	#define RTM_MATRIXF_TRANSPOSE_4X4(input0, input1, input2, input3, output0, output1, output2, output3) \
 		do { \
 			const float32x4x2_t tmp0 = vzipq_f32(input0, input2); \
 			const float32x4x2_t tmp1 = vzipq_f32(input1, input3); \
@@ -140,7 +140,7 @@ RTM_IMPL_FILE_PRAGMA_PUSH
 	// Transposes a 4x4 matrix.
 	// All inputs and outputs must be rtm::vector4f.
 	//////////////////////////////////////////////////////////////////////////
-	#define RTM_MATRIX_TRANSPOSE_4X4(input0, input1, input2, input3, output0, output1, output2, output3) \
+	#define RTM_MATRIXF_TRANSPOSE_4X4(input0, input1, input2, input3, output0, output1, output2, output3) \
 		do { \
 			const rtm::vector4f tmp0 = rtm::vector_mix<rtm::mix4::x, rtm::mix4::y, rtm::mix4::a, rtm::mix4::b>((input0), (input1)); \
 			const rtm::vector4f tmp1 = rtm::vector_mix<rtm::mix4::z, rtm::mix4::w, rtm::mix4::c, rtm::mix4::d>((input0), (input1)); \
@@ -158,7 +158,7 @@ RTM_IMPL_FILE_PRAGMA_PUSH
 	// Transposes a 3x3 matrix.
 	// All inputs and outputs must be rtm::vector4f.
 	//////////////////////////////////////////////////////////////////////////
-	#define RTM_MATRIX_TRANSPOSE_3X3(input0, input1, input2, output0, output1, output2) \
+	#define RTM_MATRIXF_TRANSPOSE_3X3(input0, input1, input2, output0, output1, output2) \
 		do { \
 			const float32x4x2_t tmp0 = vzipq_f32(input0, input2); \
 			const float32x4x2_t tmp1 = vzipq_f32(input1, input1); \
@@ -173,7 +173,7 @@ RTM_IMPL_FILE_PRAGMA_PUSH
 	// Transposes a 3x3 matrix.
 	// All inputs and outputs must be rtm::vector4f.
 	//////////////////////////////////////////////////////////////////////////
-	#define RTM_MATRIX_TRANSPOSE_3X3(input0, input1, input2, output0, output1, output2) \
+	#define RTM_MATRIXF_TRANSPOSE_3X3(input0, input1, input2, output0, output1, output2) \
 		do { \
 			const rtm::vector4f tmp0 = rtm::vector_mix<rtm::mix4::x, rtm::mix4::y, rtm::mix4::a, rtm::mix4::b>((input0), (input1)); \
 			const rtm::vector4f tmp1 = rtm::vector_mix<rtm::mix4::z, rtm::mix4::w, rtm::mix4::c, rtm::mix4::d>((input0), (input1)); \
@@ -188,7 +188,7 @@ RTM_IMPL_FILE_PRAGMA_PUSH
 	// Transposes a 4x3 matrix.
 	// All inputs and outputs must be rtm::vector4f.
 	//////////////////////////////////////////////////////////////////////////
-	#define RTM_MATRIX_TRANSPOSE_4X3(input0, input1, input2, input3, output0, output1, output2) \
+	#define RTM_MATRIXF_TRANSPOSE_4X3(input0, input1, input2, input3, output0, output1, output2) \
 		do { \
 			const float32x4x2_t tmp0 = vzipq_f32(input0, input2); \
 			const float32x4x2_t tmp1 = vzipq_f32(input1, input3); \
@@ -203,7 +203,7 @@ RTM_IMPL_FILE_PRAGMA_PUSH
 	// Transposes a 4x3 matrix.
 	// All inputs and outputs must be rtm::vector4f.
 	//////////////////////////////////////////////////////////////////////////
-	#define RTM_MATRIX_TRANSPOSE_4X3(input0, input1, input2, input3, output0, output1, output2) \
+	#define RTM_MATRIXF_TRANSPOSE_4X3(input0, input1, input2, input3, output0, output1, output2) \
 		do { \
 			const rtm::vector4f tmp0 = rtm::vector_mix<rtm::mix4::x, rtm::mix4::y, rtm::mix4::a, rtm::mix4::b>((input0), (input1)); \
 			const rtm::vector4f tmp1 = rtm::vector_mix<rtm::mix4::z, rtm::mix4::w, rtm::mix4::c, rtm::mix4::d>((input0), (input1)); \
