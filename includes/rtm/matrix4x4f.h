@@ -96,7 +96,7 @@ namespace rtm
 		vector4f y_axis;
 		vector4f z_axis;
 		vector4f w_axis;
-		RTM_MATRIX_TRANSPOSE_4X4(input.x_axis, input.y_axis, input.z_axis, input.w_axis, x_axis, y_axis, z_axis, w_axis);
+		RTM_MATRIXF_TRANSPOSE_4X4(input.x_axis, input.y_axis, input.z_axis, input.w_axis, x_axis, y_axis, z_axis, w_axis);
 		return matrix4x4f{ x_axis, y_axis, z_axis, w_axis };
 	}
 

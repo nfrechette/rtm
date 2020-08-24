@@ -183,7 +183,7 @@ namespace rtm
 		vector4f x_axis;
 		vector4f y_axis;
 		vector4f z_axis;
-		RTM_MATRIX_TRANSPOSE_3X3(input.x_axis, input.y_axis, input.z_axis, x_axis, y_axis, z_axis);
+		RTM_MATRIXF_TRANSPOSE_3X3(input.x_axis, input.y_axis, input.z_axis, x_axis, y_axis, z_axis);
 		return matrix3x3f{ x_axis, y_axis, z_axis };
 	}
 
