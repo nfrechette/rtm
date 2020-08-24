@@ -34,6 +34,9 @@ using namespace rtm;
 template<typename Vector4Type, typename FloatType, mix4 XArg, mix4 YArg>
 void test_vector_mix_impl(const FloatType threshold)
 {
+	(void)threshold;
+
+#if defined(RTM_IMPL_WITH_VECTOR_MIX_TESTS)
 	const FloatType test_value0_flt[4] = { FloatType(2.0), FloatType(9.34), FloatType(-54.12), FloatType(6000.0) };
 	const FloatType test_value1_flt[4] = { FloatType(0.75), FloatType(-4.52), FloatType(44.68), FloatType(-54225.0) };
 
@@ -90,4 +93,5 @@ void test_vector_mix_impl(const FloatType threshold)
 
 #undef RTM_TEST_MIX_XY
 #undef RTM_TEST_MIX_XYZ
+#endif	// defined(RTM_IMPL_WITH_VECTOR_MIX_TESTS)
 }
