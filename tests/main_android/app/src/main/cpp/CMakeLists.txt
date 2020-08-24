@@ -34,6 +34,11 @@ if(NOT USE_SIMD_INSTRUCTIONS)
 	add_definitions(-DRTM_NO_INTRINSICS)
 endif()
 
+if(WITH_VECTOR_MIX_TESTS)
+	# Enable vector_mix unit tests
+	add_definitions(-DRTM_IMPL_WITH_VECTOR_MIX_TESTS)
+endif()
+
 target_include_directories(${PROJECT_NAME} PUBLIC jni)
 
 target_link_libraries(${PROJECT_NAME} m log)

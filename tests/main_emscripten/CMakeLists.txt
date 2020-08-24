@@ -20,6 +20,11 @@ add_executable(${PROJECT_NAME} ${ALL_TEST_SOURCE_FILES} ${ALL_MAIN_SOURCE_FILES}
 # Throw on failure to allow us to catch them and recover
 add_definitions(-DRTM_ON_ASSERT_THROW)
 
+if(WITH_VECTOR_MIX_TESTS)
+	# Enable vector_mix unit tests
+	add_definitions(-DRTM_IMPL_WITH_VECTOR_MIX_TESTS)
+endif()
+
 target_compile_options(${PROJECT_NAME} PRIVATE -Wall -Wextra)		# Enable all warnings
 target_compile_options(${PROJECT_NAME} PRIVATE -Wshadow)			# Enable shadowing warnings
 target_compile_options(${PROJECT_NAME} PRIVATE -Werror)				# Treat warnings as errors

@@ -38,4 +38,9 @@ endif()
 # Throw on failure to allow us to catch them and recover
 add_definitions(-DRTM_ON_ASSERT_THROW)
 
+if(WITH_VECTOR_MIX_TESTS)
+	# Enable vector_mix unit tests
+	add_definitions(-DRTM_IMPL_WITH_VECTOR_MIX_TESTS)
+endif()
+
 install(TARGETS ${PROJECT_NAME} RUNTIME DESTINATION bin)
