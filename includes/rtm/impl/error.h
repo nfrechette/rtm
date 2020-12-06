@@ -93,7 +93,7 @@ RTM_IMPL_FILE_PRAGMA_PUSH
 		}
 	}
 
-	#define RTM_ASSERT(expression, format, ...) if (!(expression)) rtm::rtm_impl::on_assert_abort(#expression, __LINE__, __FILE__, (format), ## __VA_ARGS__)
+	#define RTM_ASSERT(expression, format, ...) do { if (!(expression)) rtm::rtm_impl::on_assert_abort(#expression, __LINE__, __FILE__, (format), ## __VA_ARGS__); } while(false)
 	#define RTM_HAS_ASSERT_CHECKS
 	#define RTM_NO_EXCEPT noexcept
 
@@ -139,14 +139,14 @@ RTM_IMPL_FILE_PRAGMA_PUSH
 		}
 	}
 
-	#define RTM_ASSERT(expression, format, ...) if (!(expression)) rtm::rtm_impl::on_assert_throw(#expression, __LINE__, __FILE__, (format), ## __VA_ARGS__)
+	#define RTM_ASSERT(expression, format, ...) do { if (!(expression)) rtm::rtm_impl::on_assert_throw(#expression, __LINE__, __FILE__, (format), ## __VA_ARGS__); } while(false)
 	#define RTM_HAS_ASSERT_CHECKS
 	#define RTM_NO_EXCEPT
 
 #elif defined(RTM_ON_ASSERT_CUSTOM)
 
 	#if !defined(RTM_ASSERT)
-		#define RTM_ASSERT(expression, format, ...) if (!(expression)) RTM_ON_ASSERT_CUSTOM(#expression, __LINE__, __FILE__, (format), ## __VA_ARGS__)
+		#define RTM_ASSERT(expression, format, ...) do { if (!(expression)) RTM_ON_ASSERT_CUSTOM(#expression, __LINE__, __FILE__, (format), ## __VA_ARGS__); } while(false)
 	#endif
 
 	#define RTM_HAS_ASSERT_CHECKS
