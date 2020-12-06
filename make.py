@@ -12,6 +12,7 @@ def parse_argv():
 	actions = parser.add_argument_group(title='Actions', description='If no action is specified, on Windows, OS X, and Linux the solution/make files are generated.  Multiple actions can be used simultaneously.')
 	actions.add_argument('-build', action='store_true')
 	actions.add_argument('-clean', action='store_true')
+	actions.add_argument('-clean_only', action='store_true')
 	actions.add_argument('-unit_test', action='store_true')
 	actions.add_argument('-bench', action='store_true')
 
@@ -35,7 +36,7 @@ def parse_argv():
 	if not num_threads or num_threads == 0:
 		num_threads = 4
 
-	parser.set_defaults(build=False, clean=False, unit_test=False, compiler=None, config='Release', cpu=None, use_avx=False, use_avx2=False, use_simd=True, num_threads=num_threads, tests_matching='', vector_mix_test=False)
+	parser.set_defaults(build=False, clean=False, clean_only=False, unit_test=False, compiler=None, config='Release', cpu=None, use_avx=False, use_avx2=False, use_simd=True, num_threads=num_threads, tests_matching='', vector_mix_test=False)
 
 	args = parser.parse_args()
 
@@ -427,9 +428,13 @@ if __name__ == "__main__":
 	build_dir = os.path.join(os.getcwd(), 'build')
 	cmake_script_dir = os.path.join(os.getcwd(), 'cmake')
 
-	if args.clean and os.path.exists(build_dir):
+	is_clean_requested = args.clean or args.clean_only
+	if is_clean_requested and os.path.exists(build_dir):
 		print('Cleaning previous build ...')
 		shutil.rmtree(build_dir)
+
+	if args.clean_only:
+		sys.exit(0)
 
 	if not os.path.exists(build_dir):
 		os.makedirs(build_dir)
