@@ -1,6 +1,18 @@
 name: build
 
-on: [push, pull_request]
+on:
+  push:
+    branches:
+      - '**'
+    paths-ignore:
+      - docs/**
+      - '**/*.md'
+  pull_request:
+    branches:
+      - '**'
+    paths-ignore:
+      - docs/**
+      - '**/*.md'
 
 jobs:
   linux:
