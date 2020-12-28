@@ -36,6 +36,8 @@ def get_platform_compilers():
 			compilers.append('clang9')
 		if shutil.which('clang++-10'):
 			compilers.append('clang10')
+		if shutil.which('clang++-11'):
+			compilers.append('clang11')
 
 		return compilers
 	elif platform.system() == 'Darwin':
