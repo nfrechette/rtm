@@ -150,44 +150,44 @@ RTM_IMPL_FILE_PRAGMA_PUSH
 	// Transposes a 4x4 matrix.
 	// All inputs and outputs must be rtm::vector4f.
 	//////////////////////////////////////////////////////////////////////////
-	#define RTM_MATRIXF_TRANSPOSE_4X4(input0, input1, input2, input3, output0, output1, output2, output3) \
+	#define RTM_MATRIXF_TRANSPOSE_4X4(input_xyzw0, input_xyzw1, input_xyzw2, input_xyzw3, output_xxxx, output_yyyy, output_zzzz, output_wwww) \
 		do { \
-			const float32x4x2_t tmp0 = vzipq_f32(input0, input2); \
-			const float32x4x2_t tmp1 = vzipq_f32(input1, input3); \
-			const float32x4x2_t tmp2 = vzipq_f32(tmp0.val[0], tmp1.val[0]); \
-			const float32x4x2_t tmp3 = vzipq_f32(tmp0.val[1], tmp1.val[1]); \
-			(output0) = tmp2.val[0]; \
-			(output1) = tmp2.val[1]; \
-			(output2) = tmp3.val[0]; \
-			(output3) = tmp3.val[1]; \
+			const float32x4x2_t x0x2y0y2_z0z2w0w2 = vzipq_f32(input_xyzw0, input_xyzw2); \
+			const float32x4x2_t x1x3y1y3_z1z3w1w3 = vzipq_f32(input_xyzw1, input_xyzw3); \
+			const float32x4x2_t x0x1x2x3_y0y1y2y3 = vzipq_f32(x0x2y0y2_z0z2w0w2.val[0], x1x3y1y3_z1z3w1w3.val[0]); \
+			const float32x4x2_t z0z1z2z3_w0w1w2w3 = vzipq_f32(x0x2y0y2_z0z2w0w2.val[1], x1x3y1y3_z1z3w1w3.val[1]); \
+			(output_xxxx) = x0x1x2x3_y0y1y2y3.val[0]; \
+			(output_yyyy) = x0x1x2x3_y0y1y2y3.val[1]; \
+			(output_zzzz) = z0z1z2z3_w0w1w2w3.val[0]; \
+			(output_wwww) = z0z1z2z3_w0w1w2w3.val[1]; \
 		} while(0)
 #elif defined(RTM_SSE2_INTRINSICS)
 	//////////////////////////////////////////////////////////////////////////
 	// Transposes a 4x4 matrix.
 	// All inputs and outputs must be rtm::vector4f.
 	//////////////////////////////////////////////////////////////////////////
-	#define RTM_MATRIXF_TRANSPOSE_4X4(input0, input1, input2, input3, output0, output1, output2, output3) \
+	#define RTM_MATRIXF_TRANSPOSE_4X4(input_xyzw0, input_xyzw1, input_xyzw2, input_xyzw3, output_xxxx, output_yyyy, output_zzzz, output_wwww) \
 		do { \
-			const __m128 tmp0 = _mm_shuffle_ps((input0), (input1), _MM_SHUFFLE(1, 0, 1, 0)); \
-			const __m128 tmp1 = _mm_shuffle_ps((input0), (input1), _MM_SHUFFLE(3, 2, 3, 2)); \
-			const __m128 tmp2 = _mm_shuffle_ps((input2), (input3), _MM_SHUFFLE(1, 0, 1, 0)); \
-			const __m128 tmp3 = _mm_shuffle_ps((input2), (input3), _MM_SHUFFLE(3, 2, 3, 2)); \
-			(output0) = _mm_shuffle_ps(tmp0, tmp2, _MM_SHUFFLE(2, 0, 2, 0)); \
-			(output1) = _mm_shuffle_ps(tmp0, tmp2, _MM_SHUFFLE(3, 1, 3, 1)); \
-			(output2) = _mm_shuffle_ps(tmp1, tmp3, _MM_SHUFFLE(2, 0, 2, 0)); \
-			(output3) = _mm_shuffle_ps(tmp1, tmp3, _MM_SHUFFLE(3, 1, 3, 1)); \
+			const __m128 x0y0x1y1 = _mm_shuffle_ps((input_xyzw0), (input_xyzw1), _MM_SHUFFLE(1, 0, 1, 0)); \
+			const __m128 z0w0z1w1 = _mm_shuffle_ps((input_xyzw0), (input_xyzw1), _MM_SHUFFLE(3, 2, 3, 2)); \
+			const __m128 x2y2x3y3 = _mm_shuffle_ps((input_xyzw2), (input_xyzw3), _MM_SHUFFLE(1, 0, 1, 0)); \
+			const __m128 z2w2z3w3 = _mm_shuffle_ps((input_xyzw2), (input_xyzw3), _MM_SHUFFLE(3, 2, 3, 2)); \
+			(output_xxxx) = _mm_shuffle_ps(x0y0x1y1, x2y2x3y3, _MM_SHUFFLE(2, 0, 2, 0)); \
+			(output_yyyy) = _mm_shuffle_ps(x0y0x1y1, x2y2x3y3, _MM_SHUFFLE(3, 1, 3, 1)); \
+			(output_zzzz) = _mm_shuffle_ps(z0w0z1w1, z2w2z3w3, _MM_SHUFFLE(2, 0, 2, 0)); \
+			(output_wwww) = _mm_shuffle_ps(z0w0z1w1, z2w2z3w3, _MM_SHUFFLE(3, 1, 3, 1)); \
 		} while(0)
 #else
 	//////////////////////////////////////////////////////////////////////////
 	// Transposes a 4x4 matrix.
 	// All inputs and outputs must be rtm::vector4f.
 	//////////////////////////////////////////////////////////////////////////
-	#define RTM_MATRIXF_TRANSPOSE_4X4(input0, input1, input2, input3, output0, output1, output2, output3) \
+	#define RTM_MATRIXF_TRANSPOSE_4X4(input_xyzw0, input_xyzw1, input_xyzw2, input_xyzw3, output_xxxx, output_yyyy, output_zzzz, output_wwww) \
 		do { \
-			(output0) = rtm::vector4f { (input0).x, (input1).x, (input2).x, (input3).x }; \
-			(output1) = rtm::vector4f { (input0).y, (input1).y, (input2).y, (input3).y }; \
-			(output2) = rtm::vector4f { (input0).z, (input1).z, (input2).z, (input3).z }; \
-			(output3) = rtm::vector4f { (input0).w, (input1).w, (input2).w, (input3).w }; \
+			(output_xxxx) = rtm::vector4f { (input_xyzw0).x, (input_xyzw1).x, (input_xyzw2).x, (input_xyzw3).x }; \
+			(output_yyyy) = rtm::vector4f { (input_xyzw0).y, (input_xyzw1).y, (input_xyzw2).y, (input_xyzw3).y }; \
+			(output_zzzz) = rtm::vector4f { (input_xyzw0).z, (input_xyzw1).z, (input_xyzw2).z, (input_xyzw3).z }; \
+			(output_wwww) = rtm::vector4f { (input_xyzw0).w, (input_xyzw1).w, (input_xyzw2).w, (input_xyzw3).w }; \
 		} while(0)
 #endif
 
@@ -196,39 +196,39 @@ RTM_IMPL_FILE_PRAGMA_PUSH
 	// Transposes a 3x3 matrix.
 	// All inputs and outputs must be rtm::vector4f.
 	//////////////////////////////////////////////////////////////////////////
-	#define RTM_MATRIXF_TRANSPOSE_3X3(input0, input1, input2, output0, output1, output2) \
+	#define RTM_MATRIXF_TRANSPOSE_3X3(input_xyz0, input_xyz1, input_xyz2, output_xxx, output_yyy, output_zzz) \
 		do { \
-			const float32x4x2_t tmp0 = vzipq_f32(input0, input2); \
-			const float32x4x2_t tmp1 = vzipq_f32(input1, input1); \
-			const float32x4x2_t tmp2 = vzipq_f32(tmp0.val[0], tmp1.val[0]); \
-			const float32x4x2_t tmp3 = vzipq_f32(tmp0.val[1], tmp1.val[1]); \
-			(output0) = tmp2.val[0]; \
-			(output1) = tmp2.val[1]; \
-			(output2) = tmp3.val[0]; \
+			const float32x4x2_t x0x2y0y2_z0z2w0w2 = vzipq_f32(input_xyz0, input_xyz2); \
+			const float32x4x2_t x1x1y1y1_z1z1w1w1 = vzipq_f32(input_xyz1, input_xyz1); \
+			const float32x4x2_t x0x1x2x1_y0y1y2y1 = vzipq_f32(x0x2y0y2_z0z2w0w2.val[0], x1x1y1y1_z1z1w1w1.val[0]); \
+			const float32x4x2_t z0z1z2z1_w0w1w2w1 = vzipq_f32(x0x2y0y2_z0z2w0w2.val[1], x1x1y1y1_z1z1w1w1.val[1]); \
+			(output_xxx) = x0x1x2x1_y0y1y2y1.val[0]; \
+			(output_yyy) = x0x1x2x1_y0y1y2y1.val[1]; \
+			(output_zzz) = z0z1z2z1_w0w1w2w1.val[0]; \
 		} while(0)
 #elif defined(RTM_SSE2_INTRINSICS)
 	//////////////////////////////////////////////////////////////////////////
 	// Transposes a 3x3 matrix.
 	// All inputs and outputs must be rtm::vector4f.
 	//////////////////////////////////////////////////////////////////////////
-	#define RTM_MATRIXF_TRANSPOSE_3X3(input0, input1, input2, output0, output1, output2) \
+	#define RTM_MATRIXF_TRANSPOSE_3X3(input_xyz0, input_xyz1, input_xyz2, output_xxx, output_yyy, output_zzz) \
 		do { \
-			const __m128 tmp0 = _mm_shuffle_ps((input0), (input1), _MM_SHUFFLE(1, 0, 1, 0)); \
-			const __m128 tmp1 = _mm_shuffle_ps((input0), (input1), _MM_SHUFFLE(3, 2, 3, 2)); \
-			(output0) = _mm_shuffle_ps(tmp0, (input2), _MM_SHUFFLE(2, 0, 2, 0)); \
-			(output1) = _mm_shuffle_ps(tmp0, (input2), _MM_SHUFFLE(3, 1, 3, 1)); \
-			(output2) = _mm_shuffle_ps(tmp1, (input2), _MM_SHUFFLE(2, 2, 2, 0)); \
+			const __m128 x0y0x1y1 = _mm_shuffle_ps((input_xyz0), (input_xyz1), _MM_SHUFFLE(1, 0, 1, 0)); \
+			const __m128 z0w0z1w1 = _mm_shuffle_ps((input_xyz0), (input_xyz1), _MM_SHUFFLE(3, 2, 3, 2)); \
+			(output_xxx) = _mm_shuffle_ps(x0y0x1y1, (input_xyz2), _MM_SHUFFLE(2, 0, 2, 0)); \
+			(output_yyy) = _mm_shuffle_ps(x0y0x1y1, (input_xyz2), _MM_SHUFFLE(3, 1, 3, 1)); \
+			(output_zzz) = _mm_shuffle_ps(z0w0z1w1, (input_xyz2), _MM_SHUFFLE(2, 2, 2, 0)); \
 		} while(0)
 #else
 	//////////////////////////////////////////////////////////////////////////
 	// Transposes a 3x3 matrix.
 	// All inputs and outputs must be rtm::vector4f.
 	//////////////////////////////////////////////////////////////////////////
-	#define RTM_MATRIXF_TRANSPOSE_3X3(input0, input1, input2, output0, output1, output2) \
+	#define RTM_MATRIXF_TRANSPOSE_3X3(input_xyz0, input_xyz1, input_xyz2, output_xxx, output_yyy, output_zzz) \
 		do { \
-			(output0) = rtm::vector4f { (input0).x, (input1).x, (input2).x, (input2).x }; \
-			(output1) = rtm::vector4f { (input0).y, (input1).y, (input2).y, (input2).y }; \
-			(output2) = rtm::vector4f { (input0).z, (input1).z, (input2).z, (input2).z }; \
+			(output_xxx) = rtm::vector4f { (input_xyz0).x, (input_xyz1).x, (input_xyz2).x, (input_xyz2).x }; \
+			(output_yyy) = rtm::vector4f { (input_xyz0).y, (input_xyz1).y, (input_xyz2).y, (input_xyz2).y }; \
+			(output_zzz) = rtm::vector4f { (input_xyz0).z, (input_xyz1).z, (input_xyz2).z, (input_xyz2).z }; \
 		} while(0)
 #endif
 
@@ -237,41 +237,41 @@ RTM_IMPL_FILE_PRAGMA_PUSH
 	// Transposes a 4x3 matrix.
 	// All inputs and outputs must be rtm::vector4f.
 	//////////////////////////////////////////////////////////////////////////
-	#define RTM_MATRIXF_TRANSPOSE_4X3(input0, input1, input2, input3, output0, output1, output2) \
+	#define RTM_MATRIXF_TRANSPOSE_4X3(input_xyz0, input_xyz1, input_xyz2, input_xyz3, output_xxxx, output_yyyy, output_zzzz) \
 		do { \
-			const float32x4x2_t tmp0 = vzipq_f32(input0, input2); \
-			const float32x4x2_t tmp1 = vzipq_f32(input1, input3); \
-			const float32x4x2_t tmp2 = vzipq_f32(tmp0.val[0], tmp1.val[0]); \
-			const float32x4x2_t tmp3 = vzipq_f32(tmp0.val[1], tmp1.val[1]); \
-			(output0) = tmp2.val[0]; \
-			(output1) = tmp2.val[1]; \
-			(output2) = tmp3.val[0]; \
+			const float32x4x2_t x0x2y0y2_z0z2w0w2 = vzipq_f32(input_xyz0, input_xyz2); \
+			const float32x4x2_t x1x3y1y3_z1z3w1w3 = vzipq_f32(input_xyz1, input_xyz3); \
+			const float32x4x2_t x0x1x2x3_y0y1y2y3 = vzipq_f32(x0x2y0y2_z0z2w0w2.val[0], x1x3y1y3_z1z3w1w3.val[0]); \
+			const float32x4x2_t z0z1z2z3_w0w1w2w3 = vzipq_f32(x0x2y0y2_z0z2w0w2.val[1], x1x3y1y3_z1z3w1w3.val[1]); \
+			(output_xxxx) = x0x1x2x3_y0y1y2y3.val[0]; \
+			(output_yyyy) = x0x1x2x3_y0y1y2y3.val[1]; \
+			(output_zzzz) = z0z1z2z3_w0w1w2w3.val[0]; \
 		} while(0)
 #elif defined(RTM_SSE2_INTRINSICS)
 	//////////////////////////////////////////////////////////////////////////
 	// Transposes a 4x3 matrix.
 	// All inputs and outputs must be rtm::vector4f.
 	//////////////////////////////////////////////////////////////////////////
-	#define RTM_MATRIXF_TRANSPOSE_4X3(input0, input1, input2, input3, output0, output1, output2) \
+	#define RTM_MATRIXF_TRANSPOSE_4X3(input_xyz0, input_xyz1, input_xyz2, input_xyz3, output_xxxx, output_yyyy, output_zzzz) \
 		do { \
-			const __m128 tmp0 = _mm_shuffle_ps((input0), (input1), _MM_SHUFFLE(1, 0, 1, 0)); \
-			const __m128 tmp1 = _mm_shuffle_ps((input0), (input1), _MM_SHUFFLE(3, 2, 3, 2)); \
-			const __m128 tmp2 = _mm_shuffle_ps((input2), (input3), _MM_SHUFFLE(1, 0, 1, 0)); \
-			const __m128 tmp3 = _mm_shuffle_ps((input2), (input3), _MM_SHUFFLE(3, 2, 3, 2)); \
-			(output0) = _mm_shuffle_ps(tmp0, tmp2, _MM_SHUFFLE(2, 0, 2, 0)); \
-			(output1) = _mm_shuffle_ps(tmp0, tmp2, _MM_SHUFFLE(3, 1, 3, 1)); \
-			(output2) = _mm_shuffle_ps(tmp1, tmp3, _MM_SHUFFLE(2, 0, 2, 0)); \
+			const __m128 x0y0x1y1 = _mm_shuffle_ps((input_xyz0), (input_xyz1), _MM_SHUFFLE(1, 0, 1, 0)); \
+			const __m128 z0w0z1w1 = _mm_shuffle_ps((input_xyz0), (input_xyz1), _MM_SHUFFLE(3, 2, 3, 2)); \
+			const __m128 x2y2x3y3 = _mm_shuffle_ps((input_xyz2), (input_xyz3), _MM_SHUFFLE(1, 0, 1, 0)); \
+			const __m128 z2w2z3w3 = _mm_shuffle_ps((input_xyz2), (input_xyz3), _MM_SHUFFLE(3, 2, 3, 2)); \
+			(output_xxxx) = _mm_shuffle_ps(x0y0x1y1, x2y2x3y3, _MM_SHUFFLE(2, 0, 2, 0)); \
+			(output_yyyy) = _mm_shuffle_ps(x0y0x1y1, x2y2x3y3, _MM_SHUFFLE(3, 1, 3, 1)); \
+			(output_zzzz) = _mm_shuffle_ps(z0w0z1w1, z2w2z3w3, _MM_SHUFFLE(2, 0, 2, 0)); \
 		} while(0)
 #else
 	//////////////////////////////////////////////////////////////////////////
 	// Transposes a 4x3 matrix.
 	// All inputs and outputs must be rtm::vector4f.
 	//////////////////////////////////////////////////////////////////////////
-	#define RTM_MATRIXF_TRANSPOSE_4X3(input0, input1, input2, input3, output0, output1, output2) \
+	#define RTM_MATRIXF_TRANSPOSE_4X3(input_xyz0, input_xyz1, input_xyz2, input_xyz3, output_xxxx, output_yyyy, output_zzzz) \
 		do { \
-			(output0) = rtm::vector4f { (input0).x, (input1).x, (input2).x, (input3).x }; \
-			(output1) = rtm::vector4f { (input0).y, (input1).y, (input2).y, (input3).y }; \
-			(output2) = rtm::vector4f { (input0).z, (input1).z, (input2).z, (input3).z }; \
+			(output_xxxx) = rtm::vector4f { (input_xyz0).x, (input_xyz1).x, (input_xyz2).x, (input_xyz3).x }; \
+			(output_yyyy) = rtm::vector4f { (input_xyz0).y, (input_xyz1).y, (input_xyz2).y, (input_xyz3).y }; \
+			(output_zzzz) = rtm::vector4f { (input_xyz0).z, (input_xyz1).z, (input_xyz2).z, (input_xyz3).z }; \
 		} while(0)
 #endif
 
