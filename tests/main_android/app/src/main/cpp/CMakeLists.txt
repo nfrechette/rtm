@@ -7,7 +7,7 @@ set(CMAKE_CXX_STANDARD 11)
 set(PROJECT_ROOT_DIR "${PROJECT_SOURCE_DIR}/../../../..")
 
 include_directories("${PROJECT_ROOT_DIR}/../../includes")
-include_directories("${PROJECT_ROOT_DIR}/../../external/catch2/single_include/catch2")
+include_directories("${PROJECT_ROOT_DIR}/../../external/catch2/single_include")
 
 # Grab all of our test source files
 file(GLOB_RECURSE ALL_TEST_SOURCE_FILES LIST_DIRECTORIES false

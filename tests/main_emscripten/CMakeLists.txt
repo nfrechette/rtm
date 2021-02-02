@@ -4,7 +4,7 @@ project(rtm_unit_tests CXX)
 set(CMAKE_CXX_STANDARD 11)
 
 include_directories("${PROJECT_SOURCE_DIR}/../../includes")
-include_directories("${PROJECT_SOURCE_DIR}/../../external/catch2/single_include/catch2")
+include_directories("${PROJECT_SOURCE_DIR}/../../external/catch2/single_include")
 
 # Grab all of our test source files
 file(GLOB_RECURSE ALL_TEST_SOURCE_FILES LIST_DIRECTORIES false

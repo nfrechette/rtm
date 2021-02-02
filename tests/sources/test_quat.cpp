@@ -23,7 +23,7 @@
 // SOFTWARE.
 ////////////////////////////////////////////////////////////////////////////////
 
-#include <catch.hpp>
+#include <catch2/catch.hpp>
 
 #include <rtm/type_traits.h>
 #include <rtm/quatf.h>
