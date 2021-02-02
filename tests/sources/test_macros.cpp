@@ -79,4 +79,21 @@ TEST_CASE("macros", "[math][macros]")
 		CHECK(rtm::vector_all_near_equal(rtm::vector_set(2.0F, 5.0F, 8.0F, 11.0F), yyyy, threshold));
 		CHECK(rtm::vector_all_near_equal(rtm::vector_set(3.0F, 6.0F, 9.0F, 12.0F), zzzz, threshold));
 	}
+
+	{
+		rtm::vector4f xyzw0 = rtm::vector_set(1.0F, 2.0F, 3.0F, 20.0F);
+		rtm::vector4f xyzw1 = rtm::vector_set(4.0F, 5.0F, 6.0F, 21.0F);
+		rtm::vector4f xyzw2 = rtm::vector_set(7.0F, 8.0F, 9.0F, 22.0F);
+
+		rtm::vector4f xxx;
+		rtm::vector4f yyy;
+		rtm::vector4f zzz;
+		rtm::vector4f www;
+		RTM_MATRIXF_TRANSPOSE_3X4(xyzw0, xyzw1, xyzw2, xxx, yyy, zzz, www);
+
+		CHECK(rtm::vector_all_near_equal3(rtm::vector_set(1.0F, 4.0F, 7.0F), xxx, threshold));
+		CHECK(rtm::vector_all_near_equal3(rtm::vector_set(2.0F, 5.0F, 8.0F), yyy, threshold));
+		CHECK(rtm::vector_all_near_equal3(rtm::vector_set(3.0F, 6.0F, 9.0F), zzz, threshold));
+		CHECK(rtm::vector_all_near_equal3(rtm::vector_set(20.0F, 21.0F, 22.0F), www, threshold));
+	}
 }
