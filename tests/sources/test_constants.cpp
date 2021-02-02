@@ -22,7 +22,7 @@
 // SOFTWARE.
 ////////////////////////////////////////////////////////////////////////////////
 
-#include <catch.hpp>
+#include <catch2/catch.hpp>
 
 #include <rtm/constants.h>
 #include <rtm/scalarf.h>

@@ -22,7 +22,7 @@
 // SOFTWARE.
 ////////////////////////////////////////////////////////////////////////////////
 
-#include <catch.hpp>
+#include <catch2/catch.hpp>
 
 #include <rtm/macros.h>
 #include <rtm/vector4f.h>

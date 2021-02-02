@@ -16,7 +16,7 @@ set(MACOSX_BUNDLE_GUI_IDENTIFIER "com.rtm.rtm-unit-tests")
 set(MACOSX_BUNDLE_BUNDLE_NAME "rtm-unit-tests")
 
 include_directories("${PROJECT_SOURCE_DIR}/../../includes")
-include_directories("${PROJECT_SOURCE_DIR}/../../external/catch2/single_include/catch2")
+include_directories("${PROJECT_SOURCE_DIR}/../../external/catch2/single_include")
 
 # Grab all of our test source files
 file(GLOB_RECURSE ALL_TEST_SOURCE_FILES LIST_DIRECTORIES false
