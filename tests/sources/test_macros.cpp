@@ -36,27 +36,27 @@ TEST_CASE("macros", "[math][macros]")
 		rtm::vector4f xyz1 = rtm::vector_set(4.0F, 5.0F, 6.0F);
 		rtm::vector4f xyz2 = rtm::vector_set(7.0F, 8.0F, 9.0F);
 
-		rtm::vector4f xxxx;
-		rtm::vector4f yyyy;
-		rtm::vector4f zzzz;
-		RTM_MATRIXF_TRANSPOSE_3X3(xyz0, xyz1, xyz2, xxxx, yyyy, zzzz);
+		rtm::vector4f xxx;
+		rtm::vector4f yyy;
+		rtm::vector4f zzz;
+		RTM_MATRIXF_TRANSPOSE_3X3(xyz0, xyz1, xyz2, xxx, yyy, zzz);
 
-		CHECK(rtm::vector_all_near_equal3(rtm::vector_set(1.0F, 4.0F, 7.0F), xxxx, threshold));
-		CHECK(rtm::vector_all_near_equal3(rtm::vector_set(2.0F, 5.0F, 8.0F), yyyy, threshold));
-		CHECK(rtm::vector_all_near_equal3(rtm::vector_set(3.0F, 6.0F, 9.0F), zzzz, threshold));
+		CHECK(rtm::vector_all_near_equal3(rtm::vector_set(1.0F, 4.0F, 7.0F), xxx, threshold));
+		CHECK(rtm::vector_all_near_equal3(rtm::vector_set(2.0F, 5.0F, 8.0F), yyy, threshold));
+		CHECK(rtm::vector_all_near_equal3(rtm::vector_set(3.0F, 6.0F, 9.0F), zzz, threshold));
 	}
 
 	{
-		rtm::vector4f xyz0 = rtm::vector_set(1.0F, 2.0F, 3.0F, 20.0F);
-		rtm::vector4f xyz1 = rtm::vector_set(4.0F, 5.0F, 6.0F, 21.0F);
-		rtm::vector4f xyz2 = rtm::vector_set(7.0F, 8.0F, 9.0F, 22.0F);
-		rtm::vector4f xyz3 = rtm::vector_set(10.0F, 11.0F, 12.0F, 23.0F);
+		rtm::vector4f xyzw0 = rtm::vector_set(1.0F, 2.0F, 3.0F, 20.0F);
+		rtm::vector4f xyzw1 = rtm::vector_set(4.0F, 5.0F, 6.0F, 21.0F);
+		rtm::vector4f xyzw2 = rtm::vector_set(7.0F, 8.0F, 9.0F, 22.0F);
+		rtm::vector4f xyzw3 = rtm::vector_set(10.0F, 11.0F, 12.0F, 23.0F);
 
 		rtm::vector4f xxxx;
 		rtm::vector4f yyyy;
 		rtm::vector4f zzzz;
 		rtm::vector4f wwww;
-		RTM_MATRIXF_TRANSPOSE_4X4(xyz0, xyz1, xyz2, xyz3, xxxx, yyyy, zzzz, wwww);
+		RTM_MATRIXF_TRANSPOSE_4X4(xyzw0, xyzw1, xyzw2, xyzw3, xxxx, yyyy, zzzz, wwww);
 
 		CHECK(rtm::vector_all_near_equal(rtm::vector_set(1.0F, 4.0F, 7.0F, 10.0F), xxxx, threshold));
 		CHECK(rtm::vector_all_near_equal(rtm::vector_set(2.0F, 5.0F, 8.0F, 11.0F), yyyy, threshold));
