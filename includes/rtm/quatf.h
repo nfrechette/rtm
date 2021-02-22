@@ -1271,7 +1271,7 @@ namespace rtm
 	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE bool RTM_SIMD_CALL quat_is_normalized(quatf_arg0 input, float threshold = 0.00001F) RTM_NO_EXCEPT
 	{
 		float length_squared = quat_length_squared(input);
-		return scalar_abs(length_squared - 1.0F) < threshold;
+		return scalar_abs(length_squared - 1.0F) <= threshold;
 	}
 
 	//////////////////////////////////////////////////////////////////////////

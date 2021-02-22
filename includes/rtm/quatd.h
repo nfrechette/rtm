@@ -799,7 +799,7 @@ namespace rtm
 	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE bool quat_is_normalized(const quatd& input, double threshold = 0.00001) RTM_NO_EXCEPT
 	{
 		double length_squared = quat_length_squared(input);
-		return scalar_abs(length_squared - 1.0) < threshold;
+		return scalar_abs(length_squared - 1.0) <= threshold;
 	}
 
 	//////////////////////////////////////////////////////////////////////////

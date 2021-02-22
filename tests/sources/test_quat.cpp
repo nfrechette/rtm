@@ -441,6 +441,7 @@ static void test_quat_impl(const FloatType threshold)
 		FloatType quat_len = quat_length(quat0);
 		CHECK(scalar_near_equal(quat_len, FloatType(1.0), threshold));
 		CHECK(quat_is_normalized(quat0) == true);
+		CHECK(quat_is_normalized(identity, FloatType(0.0)) == true);
 
 		QuatType quat1 = vector_to_quat(vector_mul(quat_to_vector(quat0), FloatType(1.1)));
 		CHECK(quat_is_normalized(quat1) == false);
