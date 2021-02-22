@@ -59,11 +59,7 @@ RTM_FORCE_NOINLINE vector4f RTM_SIMD_CALL vector_cos_sse2(vector4f_arg0 input) R
 	__m128 x_abs = _mm_and_ps(x, _mm_castsi128_ps(abs_mask));
 	__m128 is_less_equal_than_half_pi = _mm_cmple_ps(x_abs, _mm_set_ps1(rtm::constants::half_pi()));
 
-#if defined(RTM_AVX_INTRINSICS)
-	x = _mm_blendv_ps(reflection, x, is_less_equal_than_half_pi);
-#else
-	x = _mm_or_ps(_mm_andnot_ps(is_less_equal_than_half_pi, reflection), _mm_and_ps(x, is_less_equal_than_half_pi));
-#endif
+	x = RTM_VECTOR4F_SELECT(is_less_equal_than_half_pi, x, reflection);
 
 	// Calculate our value
 	const __m128 x2 = _mm_mul_ps(x, x);

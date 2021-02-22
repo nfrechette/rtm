@@ -1825,8 +1825,8 @@ namespace rtm
 	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE vector4d vector_select(const mask4d& mask, const vector4d& if_true, const vector4d& if_false) RTM_NO_EXCEPT
 	{
 #if defined(RTM_SSE2_INTRINSICS)
-		__m128d xy = _mm_or_pd(_mm_andnot_pd(mask.xy, if_false.xy), _mm_and_pd(if_true.xy, mask.xy));
-		__m128d zw = _mm_or_pd(_mm_andnot_pd(mask.zw, if_false.zw), _mm_and_pd(if_true.zw, mask.zw));
+		__m128d xy = RTM_VECTOR2D_SELECT(mask.xy, if_true.xy, if_false.xy);
+		__m128d zw = RTM_VECTOR2D_SELECT(mask.zw, if_true.zw, if_false.zw);
 		return vector4d{ xy, zw };
 #else
 		return vector4d{ rtm_impl::select(mask.x, if_true.x, if_false.x), rtm_impl::select(mask.y, if_true.y, if_false.y), rtm_impl::select(mask.z, if_true.z, if_false.z), rtm_impl::select(mask.w, if_true.w, if_false.w) };
@@ -1946,13 +1946,8 @@ namespace rtm
 		__m128d ceiled_xy = _mm_ceil_pd(biased_input_xy);
 		__m128d ceiled_zw = _mm_ceil_pd(biased_input_zw);
 
-#if defined(RTM_AVX_INTRINSICS)
-		__m128d result_xy = _mm_blendv_pd(ceiled_xy, floored_xy, is_positive_xy);
-		__m128d result_zw = _mm_blendv_pd(ceiled_zw, floored_zw, is_positive_zw);
-#else
-		__m128d result_xy = _mm_or_pd(_mm_and_pd(is_positive_xy, floored_xy), _mm_andnot_pd(is_positive_xy, ceiled_xy));
-		__m128d result_zw = _mm_or_pd(_mm_and_pd(is_positive_zw, floored_zw), _mm_andnot_pd(is_positive_zw, ceiled_zw));
-#endif
+		__m128d result_xy = RTM_VECTOR2D_SELECT(is_positive_xy, floored_xy, ceiled_xy);
+		__m128d result_zw = RTM_VECTOR2D_SELECT(is_positive_zw, floored_zw, ceiled_zw);
 		return vector4d{ result_xy, result_zw };
 #elif defined(RTM_SSE2_INTRINSICS)
 		const __m128i abs_mask = _mm_set_epi64x(0x7FFFFFFFFFFFFFFFULL, 0x7FFFFFFFFFFFFFFFULL);

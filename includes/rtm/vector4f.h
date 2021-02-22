@@ -2083,12 +2083,8 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE vector4f RTM_SIMD_CALL vector_select(mask4f_arg0 mask, vector4f_arg1 if_true, vector4f_arg2 if_false) RTM_NO_EXCEPT
 	{
-#if defined(RTM_AVX_INTRINSICS)
-		return _mm_blendv_ps(if_false, if_true, mask);
-#elif defined(RTM_SSE2_INTRINSICS)
-		return _mm_or_ps(_mm_andnot_ps(mask, if_false), _mm_and_ps(if_true, mask));
-#elif defined(RTM_NEON_INTRINSICS)
-		return vbslq_f32(mask, if_true, if_false);
+#if defined(RTM_SSE2_INTRINSICS) || defined(RTM_NEON_INTRINSICS)
+		return RTM_VECTOR4F_SELECT(mask, if_true, if_false);
 #else
 		return vector4f{ rtm_impl::select(mask.x, if_true.x, if_false.x), rtm_impl::select(mask.y, if_true.y, if_false.y), rtm_impl::select(mask.z, if_true.z, if_false.z), rtm_impl::select(mask.w, if_true.w, if_false.w) };
 #endif
@@ -2384,11 +2380,7 @@ namespace rtm
 
 		__m128 is_less_equal_than_half_pi = _mm_cmple_ps(x_abs, _mm_set_ps1(rtm::constants::half_pi()));
 
-#if defined(RTM_AVX_INTRINSICS)
-		x = _mm_blendv_ps(reflection, x, is_less_equal_than_half_pi);
-#else
-		x = _mm_or_ps(_mm_andnot_ps(is_less_equal_than_half_pi, reflection), _mm_and_ps(x, is_less_equal_than_half_pi));
-#endif
+		x = RTM_VECTOR4F_SELECT(is_less_equal_than_half_pi, x, reflection);
 
 		// Calculate our value
 		const __m128 x2 = _mm_mul_ps(x, x);
@@ -2516,11 +2508,7 @@ namespace rtm
 		__m128 x_abs = _mm_and_ps(x, _mm_castsi128_ps(abs_mask));
 		__m128 is_less_equal_than_half_pi = _mm_cmple_ps(x_abs, _mm_set_ps1(rtm::constants::half_pi()));
 
-#if defined(RTM_AVX_INTRINSICS)
-		x = _mm_blendv_ps(reflection, x, is_less_equal_than_half_pi);
-#else
-		x = _mm_or_ps(_mm_andnot_ps(is_less_equal_than_half_pi, reflection), _mm_and_ps(x, is_less_equal_than_half_pi));
-#endif
+		x = RTM_VECTOR4F_SELECT(is_less_equal_than_half_pi, x, reflection);
 
 		// Calculate our value
 		const __m128 x2 = _mm_mul_ps(x, x);

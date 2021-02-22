@@ -26,6 +26,7 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 #include "rtm/constants.h"
+#include "rtm/macros.h"
 #include "rtm/math.h"
 #include "rtm/impl/compiler_utils.h"
 #include "rtm/impl/scalar_common.h"
@@ -692,11 +693,7 @@ namespace rtm
 		__m128 floored = _mm_floor_ss(biased_input, biased_input);
 		__m128 ceiled = _mm_ceil_ss(biased_input, biased_input);
 
-#if defined(RTM_AVX_INTRINSICS)
-		__m128 result = _mm_blendv_ps(ceiled, floored, is_positive);
-#else
-		__m128 result = _mm_or_ps(_mm_and_ps(is_positive, floored), _mm_andnot_ps(is_positive, ceiled));
-#endif
+		__m128 result = RTM_VECTOR4F_SELECT(is_positive, floored, ceiled);
 		return scalarf{ result };
 #else
 		const __m128i abs_mask = _mm_set_epi32(0x7FFFFFFFULL, 0x7FFFFFFFULL, 0x7FFFFFFFULL, 0x7FFFFFFFULL);
@@ -897,11 +894,7 @@ namespace rtm
 
 		__m128 is_less_equal_than_half_pi = _mm_cmple_ss(x_abs, _mm_set_ps1(rtm::constants::half_pi()));
 
-#if defined(RTM_AVX_INTRINSICS)
-		x = _mm_blendv_ps(reflection, x, is_less_equal_than_half_pi);
-#else
-		x = _mm_or_ps(_mm_andnot_ps(is_less_equal_than_half_pi, reflection), _mm_and_ps(x, is_less_equal_than_half_pi));
-#endif
+		x = RTM_VECTOR4F_SELECT(is_less_equal_than_half_pi, x, reflection);
 
 		// Calculate our value
 		const float x2 = _mm_cvtss_f32(_mm_mul_ss(x, x));
@@ -977,11 +970,7 @@ namespace rtm
 		__m128 x_abs = _mm_and_ps(x, _mm_castsi128_ps(abs_mask));
 		__m128 is_less_equal_than_half_pi = _mm_cmple_ss(x_abs, _mm_set_ps1(rtm::constants::half_pi()));
 
-#if defined(RTM_AVX_INTRINSICS)
-		x = _mm_blendv_ps(reflection, x, is_less_equal_than_half_pi);
-#else
-		x = _mm_or_ps(_mm_andnot_ps(is_less_equal_than_half_pi, reflection), _mm_and_ps(x, is_less_equal_than_half_pi));
-#endif
+		x = RTM_VECTOR4F_SELECT(is_less_equal_than_half_pi, x, reflection);
 
 		// Calculate our value
 		const float x2 = _mm_cvtss_f32(_mm_mul_ss(x, x));
@@ -1302,11 +1291,7 @@ namespace rtm
 		__m128 is_larger_than_one = _mm_cmpgt_ss(abs_value, _mm_set_ps1(1.0F));
 		__m128 reciprocal = scalar_reciprocal(scalarf{ abs_value }).value;
 
-#if defined(RTM_AVX_INTRINSICS)
-		__m128 x = _mm_blendv_ps(abs_value, reciprocal, is_larger_than_one);
-#else
-		__m128 x = _mm_or_ps(_mm_andnot_ps(is_larger_than_one, abs_value), _mm_and_ps(reciprocal, is_larger_than_one));
-#endif
+		__m128 x = RTM_VECTOR4F_SELECT(is_larger_than_one, reciprocal, abs_value);
 
 		float x_s = _mm_cvtss_f32(x);
 		float x2 = x_s * x_s;
@@ -1323,11 +1308,7 @@ namespace rtm
 		__m128 remapped = _mm_sub_ss(_mm_set_ps1(rtm::constants::half_pi()), result_s);
 
 		// pi/2 - result
-#if defined(RTM_AVX_INTRINSICS)
-		result_s = _mm_blendv_ps(result_s, remapped, is_larger_than_one);
-#else
-		result_s = _mm_or_ps(_mm_andnot_ps(is_larger_than_one, result_s), _mm_and_ps(remapped, is_larger_than_one));
-#endif
+		result_s = RTM_VECTOR4F_SELECT(is_larger_than_one, remapped, result_s);
 
 		// Keep the original sign
 		result_s = _mm_or_ps(result_s, _mm_and_ps(value.value, _mm_set_ps1(-0.0F)));

@@ -651,11 +651,7 @@ namespace rtm
 		__m128d floored = _mm_floor_sd(biased_input, biased_input);
 		__m128d ceiled = _mm_ceil_sd(biased_input, biased_input);
 
-#if defined(RTM_AVX_INTRINSICS)
-		__m128d result = _mm_blendv_pd(ceiled, floored, is_positive);
-#else
-		__m128d result = _mm_or_pd(_mm_and_pd(is_positive, floored), _mm_andnot_pd(is_positive, ceiled));
-#endif
+		__m128d result = RTM_VECTOR2D_SELECT(is_positive, floored, ceiled);
 		return scalard{ result };
 #else
 		const __m128i abs_mask = _mm_set_epi64x(0x7FFFFFFFFFFFFFFFULL, 0x7FFFFFFFFFFFFFFFULL);

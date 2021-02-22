@@ -145,6 +145,37 @@ RTM_IMPL_FILE_PRAGMA_PUSH
 	#define RTM_VECTOR4F_NEG_MULS_SUB(v0, s1, v2) rtm::vector4f { (v2).x - ((v0).x * (s1)), (v2).y - ((v0).y * (s1)), (v2).z - ((v0).z * (s1)), (v2).w - ((v0).w * (s1)) }
 #endif
 
+#if defined(RTM_AVX_INTRINSICS)
+	//////////////////////////////////////////////////////////////////////////
+	// Per component selection depending on the mask: mask != 0 ? if_true : if_false
+	//////////////////////////////////////////////////////////////////////////
+	#define RTM_VECTOR4F_SELECT(mask, if_true, if_false) _mm_blendv_ps(if_false, if_true, mask)
+
+	//////////////////////////////////////////////////////////////////////////
+	// Per component selection depending on the mask: mask != 0 ? if_true : if_false
+	//////////////////////////////////////////////////////////////////////////
+	#define RTM_VECTOR2D_SELECT(mask, if_true, if_false) _mm_blendv_pd(if_false, if_true, mask)
+#elif defined(RTM_SSE2_INTRINSICS)
+	//////////////////////////////////////////////////////////////////////////
+	// Per component selection depending on the mask: mask != 0 ? if_true : if_false
+	//////////////////////////////////////////////////////////////////////////
+	#define RTM_VECTOR4F_SELECT(mask, if_true, if_false) _mm_or_ps(_mm_andnot_ps(mask, if_false), _mm_and_ps(if_true, mask))
+
+	//////////////////////////////////////////////////////////////////////////
+	// Per component selection depending on the mask: mask != 0 ? if_true : if_false
+	//////////////////////////////////////////////////////////////////////////
+	#define RTM_VECTOR2D_SELECT(mask, if_true, if_false) _mm_or_pd(_mm_andnot_pd(mask, if_false), _mm_and_pd(if_true, mask))
+#elif defined(RTM_NEON_INTRINSICS)
+	//////////////////////////////////////////////////////////////////////////
+	// Per component selection depending on the mask: mask != 0 ? if_true : if_false
+	//////////////////////////////////////////////////////////////////////////
+	#define RTM_VECTOR4F_SELECT(mask, if_true, if_false) vbslq_f32(mask, if_true, if_false)
+
+	// RTM_VECTOR2D_SELECT not defined for NEON yet, TODO
+#else
+	// Macros not defined for scalar code path
+#endif
+
 #if defined(RTM_NEON_INTRINSICS)
 	//////////////////////////////////////////////////////////////////////////
 	// Transposes a 4x4 matrix.
