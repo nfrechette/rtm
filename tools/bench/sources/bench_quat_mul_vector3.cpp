@@ -165,7 +165,7 @@ RTM_FORCE_NOINLINE vector4f RTM_SIMD_CALL quat_mul_vector3_scalar(vector4f_arg0 
 #if defined(RTM_NEON_INTRINSICS)
 	const float32x4_t n_rotation = vnegq_f32(rotation);
 #else
-	const vector4f n_rotation = quat_conjugate(rotation);
+	const quatf n_rotation = quat_conjugate(rotation);
 #endif
 
 	// temp = quat_mul(inv_rotation, vector_quat)
@@ -179,9 +179,9 @@ RTM_FORCE_NOINLINE vector4f RTM_SIMD_CALL quat_mul_vector3_scalar(vector4f_arg0 
 		const float lhs_z = quat_get_z(n_rotation);
 		const float lhs_w = quat_get_w(rotation);
 
-		const float rhs_x = quat_get_x(vector);
-		const float rhs_y = quat_get_y(vector);
-		const float rhs_z = quat_get_z(vector);
+		const float rhs_x = vector_get_x(vector);
+		const float rhs_y = vector_get_y(vector);
+		const float rhs_z = vector_get_z(vector);
 
 		temp_x = (rhs_x * lhs_w) + (rhs_y * lhs_z) - (rhs_z * lhs_y);
 		temp_y =  -(rhs_x * lhs_z) + (rhs_y * lhs_w) + (rhs_z * lhs_x);
