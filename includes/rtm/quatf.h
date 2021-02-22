@@ -1089,6 +1089,9 @@ namespace rtm
 		end_v = vector_select(is_angle_negative, vector_neg(end_v), end_v);
 		cos_half_angle_v = vector_select(is_angle_negative, vector_neg(cos_half_angle_v), cos_half_angle_v);
 
+		// Clamp our half angle cosine
+		cos_half_angle_v = vector_clamp(cos_half_angle_v, vector_set(-1.0F), vector_set(1.0F));
+
 		scalarf cos_half_angle = vector_get_x(cos_half_angle_v);
 		scalarf half_angle = scalar_acos(cos_half_angle);
 		scalarf sin_half_angle = scalar_sqrt(scalar_sub(scalar_set(1.0F), scalar_mul(cos_half_angle, cos_half_angle)));
@@ -1123,6 +1126,9 @@ namespace rtm
 		// If the two input quaternions aren't on the same half of the hypersphere, flip one and the angle sign
 		end_v = vector_select(is_angle_negative, vector_neg(end_v), end_v);
 		cos_half_angle_v = vector_select(is_angle_negative, vector_neg(cos_half_angle_v), cos_half_angle_v);
+
+		// Clamp our half angle cosine
+		cos_half_angle_v = vector_clamp(cos_half_angle_v, vector_set(-1.0F), vector_set(1.0F));
 
 		scalarf cos_half_angle = vector_get_x(cos_half_angle_v);
 		scalarf half_angle = scalar_acos(cos_half_angle);
@@ -1171,7 +1177,7 @@ namespace rtm
 		constexpr float epsilon = 1.0E-8F;
 		constexpr float epsilon_squared = epsilon * epsilon;
 
-		const scalarf input_w = quat_get_w(input);
+		const scalarf input_w = scalar_clamp((scalarf)quat_get_w(input), scalar_set(-1.0F), scalar_set(1.0F));
 		out_angle = scalar_cast(scalar_acos(input_w)) * 2.0F;
 
 		const float scale_sq = scalar_max(1.0F - quat_get_w(input) * quat_get_w(input), 0.0F);
@@ -1195,7 +1201,7 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	RTM_DISABLE_SECURITY_COOKIE_CHECK inline float RTM_SIMD_CALL quat_get_angle(quatf_arg0 input) RTM_NO_EXCEPT
 	{
-		const scalarf input_w = quat_get_w(input);
+		const scalarf input_w = scalar_clamp((scalarf)quat_get_w(input), scalar_set(-1.0F), scalar_set(1.0F));
 		return scalar_cast(scalar_acos(input_w)) * 2.0F;
 	}
 
@@ -1302,7 +1308,8 @@ namespace rtm
 		// a negative 0 rotation. By forcing quat.w to be positive, we'll end up with
 		// the shortest path.
 		const scalarf input_w = quat_get_w(input);
-		const float positive_w_angle = scalar_acos(scalar_cast(scalar_abs(input_w))) * 2.0F;
+		const scalarf input_abs_w = scalar_min(scalar_abs(input_w), scalar_set(1.0F));
+		const float positive_w_angle = scalar_acos(scalar_cast(input_abs_w)) * 2.0F;
 		return positive_w_angle <= threshold_angle;
 	}
 }
