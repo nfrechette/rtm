@@ -24,7 +24,9 @@ file(GLOB_RECURSE RTM_INCLUDE_FILES LIST_DIRECTORIES false
 	${PROJECT_SOURCE_DIR}/includes/*.h
 	${PROJECT_SOURCE_DIR}/docs/*.md
 	${PROJECT_SOURCE_DIR}/cmake/*.cmake
-	${PROJECT_SOURCE_DIR}/tools/vs_visualizers/*.natvis)
+	${PROJECT_SOURCE_DIR}/tools/release_scripts/*.py
+	${PROJECT_SOURCE_DIR}/tools/vs_visualizers/*.natvis
+	)
 
 create_source_groups("${RTM_INCLUDE_FILES}" ${PROJECT_SOURCE_DIR})
 
