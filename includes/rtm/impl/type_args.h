@@ -33,8 +33,6 @@ namespace rtm
 	// Register passing typedefs
 	//////////////////////////////////////////////////////////////////////////
 
-
-
 #if defined(RTM_USE_VECTORCALL)
 	// On x64 with __vectorcall, the first 6x vector4f/quatf arguments can be passed by value in a register,
 	// everything else afterwards is passed by const&. They can also be returned by register.
