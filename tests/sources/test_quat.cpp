@@ -386,8 +386,12 @@ static void test_quat_impl(const FloatType threshold)
 		QuatType quat0 = quat_from_euler(scalar_deg_to_rad(FloatType(30.0)), scalar_deg_to_rad(FloatType(-45.0)), scalar_deg_to_rad(FloatType(90.0)));
 		QuatType quat_log = quat_rotation_log(quat0);
 		QuatType quat_exp = quat_rotation_exp(quat_log);
+		QuatType quat_log_identity = quat_rotation_log(identity);
+		QuatType quat_exp_identity = quat_rotation_exp(quat_log_identity);
 
 		CHECK(quat_near_equal(quat0, quat_exp, threshold));
+		CHECK(vector_all_near_equal(quat_to_vector(quat_log_identity), zero, threshold));
+		CHECK(quat_near_equal(identity, quat_exp_identity, threshold));
 	}
 
 	//////////////////////////////////////////////////////////////////////////

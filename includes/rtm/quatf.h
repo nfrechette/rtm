@@ -1175,12 +1175,23 @@ namespace rtm
 		// The length of our input XYZ can be calculated either as sqrt(dot(q.xyz, q.xyz)) or
 		// by taking the sine of the quaternion half angle with sin(acos(q.w))
 		//
+		// If our input rotation is near the identity, we cannot calculate the output XYZ since we would
+		// divide by zero. If this happens we return a quaternion near zero which should reconstruct as the
+		// identity with quat_rotation_exp(..).
+		//
 		// If our quaternion isn't normalized, more math is required
 
-		const scalarf input_w = scalar_clamp((scalarf)quat_get_w(input), (scalarf)scalar_set(-1.0F), (scalarf)scalar_set(1.0F));
+		const vector4f input_v = quat_to_vector(input);
+		const scalarf input_w = scalar_clamp((scalarf)quat_get_w(input), scalar_set(-1.0F), scalar_set(1.0F));
 		const scalarf half_angle = scalar_acos(input_w);
-		const scalarf xyz_inv_len = vector_length_reciprocal3(quat_to_vector(input));
-		const vector4f result_xyz = vector_mul(quat_to_vector(input), scalar_mul(xyz_inv_len, half_angle));
+		const scalarf xyz_inv_len = vector_length_reciprocal3(input_v);
+		vector4f result_xyz = vector_mul(input_v, scalar_mul(xyz_inv_len, half_angle));
+
+		// If we are near the identity, xyz will be set to our input xyz which should be near zero
+		// For a true identity input, we'll output zero
+		const mask4f is_input_near_identity = vector_greater_than(vector_set(input_w), vector_set(1.0F - 1.0E-6F));
+		result_xyz = vector_select(is_input_near_identity, input_v, result_xyz);
+
 		return vector_to_quat(vector_set_w(result_xyz, 0.0F));
 	}
 
