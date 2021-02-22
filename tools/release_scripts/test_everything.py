@@ -6,7 +6,7 @@ import sys
 
 def get_platform_compilers():
 	if platform.system() == 'Windows':
-		return [ 'vs2015', 'vs2017', 'vs2019' ]
+		return [ 'vs2015', 'vs2017', 'vs2019', 'vs2019-clang' ]
 	elif platform.system() == 'Linux':
 		compilers = []
 		if shutil.which('g++-5'):
@@ -89,6 +89,16 @@ if __name__ == "__main__":
 			cmd_args.append([x for x in args if x])
 			args = [python_exe, 'make.py', '-compiler', 'vs2019', '-cpu', 'arm64', '-config', config, '-build', '-vector_mix_test', '-clean', '-nosimd']
 			cmd_args.append([x for x in args if x])
+
+			# Android
+			args = [python_exe, 'make.py', '-compiler', 'android', '-cpu', 'armv7', '-config', config, '-build', '-vector_mix_test', '-clean']
+			cmd_args.append([x for x in args if x])
+			args = [python_exe, 'make.py', '-compiler', 'android', '-cpu', 'armv7', '-config', config, '-build', '-vector_mix_test', '-clean', '-nosimd']
+			cmd_args.append([x for x in args if x])
+			args = [python_exe, 'make.py', '-compiler', 'android', '-cpu', 'arm64', '-config', config, '-build', '-vector_mix_test', '-clean']
+			cmd_args.append([x for x in args if x])
+			args = [python_exe, 'make.py', '-compiler', 'android', '-cpu', 'arm64', '-config', config, '-build', '-vector_mix_test', '-clean', '-nosimd']
+			cmd_args.append([x for x in args if x])
 	elif platform.system() == 'Darwin':
 		for config in configs:
 			# iOS
@@ -111,7 +121,10 @@ if __name__ == "__main__":
 		cmd = " ".join(args)
 		print('Running command: "{}" ...'.format(cmd))
 		try:
-			subprocess.check_output(args)
+			if 'android' in args:
+				subprocess.check_call(args)
+			else:
+				subprocess.check_output(args)
 		except subprocess.CalledProcessError as e:
 			print('Failed command: {}'.format(cmd))
 			print(e.output.decode(sys.stdout.encoding))
