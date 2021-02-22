@@ -38,7 +38,7 @@ namespace rtm
 	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE uint64_t RTM_SIMD_CALL mask_get_x(const mask4q& input) RTM_NO_EXCEPT
 	{
 #if defined(RTM_SSE2_INTRINSICS)
-#if defined(_M_X64)
+#if defined(RTM_ARCH_X64)
 		return _mm_cvtsi128_si64(input.xy);
 #else
 		// Just sign extend on 32bit systems
@@ -55,7 +55,7 @@ namespace rtm
 	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE uint64_t RTM_SIMD_CALL mask_get_y(const mask4q& input) RTM_NO_EXCEPT
 	{
 #if defined(RTM_SSE2_INTRINSICS)
-#if defined(_M_X64)
+#if defined(RTM_ARCH_X64)
 		return _mm_cvtsi128_si64(_mm_shuffle_epi32(input.xy, _MM_SHUFFLE(3, 2, 3, 2)));
 #else
 		// Just sign extend on 32bit systems
@@ -72,7 +72,7 @@ namespace rtm
 	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE uint64_t RTM_SIMD_CALL mask_get_z(const mask4q& input) RTM_NO_EXCEPT
 	{
 #if defined(RTM_SSE2_INTRINSICS)
-#if defined(_M_X64)
+#if defined(RTM_ARCH_X64)
 		return _mm_cvtsi128_si64(input.zw);
 #else
 		// Just sign extend on 32bit systems
@@ -89,7 +89,7 @@ namespace rtm
 	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE uint64_t RTM_SIMD_CALL mask_get_w(const mask4q& input) RTM_NO_EXCEPT
 	{
 #if defined(RTM_SSE2_INTRINSICS)
-#if defined(_M_X64)
+#if defined(RTM_ARCH_X64)
 		return _mm_cvtsi128_si64(_mm_shuffle_epi32(input.zw, _MM_SHUFFLE(3, 2, 3, 2)));
 #else
 		// Just sign extend on 32bit systems

@@ -24,6 +24,7 @@
 // SOFTWARE.
 ////////////////////////////////////////////////////////////////////////////////
 
+#include "rtm/impl/detect_arch.h"
 #include "rtm/impl/detect_compiler.h"
 
 //////////////////////////////////////////////////////////////////////////
@@ -84,7 +85,7 @@
 //////////////////////////////////////////////////////////////////////////
 // Helper macro to determine if vrndns_f32 is supported (ARM64 only)
 //////////////////////////////////////////////////////////////////////////
-#if defined(__aarch64__) || defined(_M_ARM64)
+#if defined(RTM_ARCH_ARM64)
 	// ARM documentation states __ARM_FEATURE_DIRECTED_ROUNDING must be defined
 	#if defined(__ARM_FEATURE_DIRECTED_ROUNDING)
 		// Only support it with clang for now
@@ -114,7 +115,7 @@
 //////////////////////////////////////////////////////////////////////////
 // Helper macro to determine if the vca* (e.g vcagtq_f32) family of intrinsics are supported (ARM64 only)
 //////////////////////////////////////////////////////////////////////////
-#if defined(__aarch64__) || defined(_M_ARM64)
+#if defined(RTM_ARCH_ARM64)
 	#if defined(RTM_COMPILER_MSVC)
 		#if RTM_COMPILER_MSVC >= ACL_COMPILER_MSVC_2019
 			// Support was introduced in VS2019
@@ -129,7 +130,7 @@
 //////////////////////////////////////////////////////////////////////////
 // Helper macro to determine if the vc*z* (e.g vceqq_f32) family of intrinsics are supported (ARM64 only)
 //////////////////////////////////////////////////////////////////////////
-#if defined(__aarch64__) || defined(_M_ARM64)
+#if defined(RTM_ARCH_ARM64)
 	#if defined(RTM_COMPILER_MSVC)
 		#if RTM_COMPILER_MSVC >= ACL_COMPILER_MSVC_2019
 			// Support was introduced in VS2019
@@ -144,7 +145,7 @@
 //////////////////////////////////////////////////////////////////////////
 // Helper macro to determine if the vsqrtq_f32 intrinsic is supported (ARM64 only)
 //////////////////////////////////////////////////////////////////////////
-#if defined(__aarch64__) || defined(_M_ARM64)
+#if defined(RTM_ARCH_ARM64)
 	#if defined(RTM_COMPILER_MSVC)
 		#if RTM_COMPILER_MSVC >= ACL_COMPILER_MSVC_2019
 			// Support was introduced in VS2019

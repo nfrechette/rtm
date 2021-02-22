@@ -25,6 +25,7 @@
 // SOFTWARE.
 ////////////////////////////////////////////////////////////////////////////////
 
+#include "rtm/impl/detect_arch.h"
 #include "rtm/impl/detect_compiler.h"
 
 //////////////////////////////////////////////////////////////////////////
@@ -35,36 +36,31 @@
 	#if defined(__AVX2__)
 		#define RTM_AVX2_INTRINSICS
 		#define RTM_FMA_INTRINSICS
-	#endif
-
-	#if defined(__AVX__)
 		#define RTM_AVX_INTRINSICS
 		#define RTM_SSE4_INTRINSICS
 		#define RTM_SSE3_INTRINSICS
 		#define RTM_SSE2_INTRINSICS
-	#endif
-
-	#if defined(__SSE4_1__)
+	#elif defined(__AVX__)
+		#define RTM_AVX_INTRINSICS
 		#define RTM_SSE4_INTRINSICS
 		#define RTM_SSE3_INTRINSICS
 		#define RTM_SSE2_INTRINSICS
-	#endif
-
-	#if defined(__SSSE3__)
+	#elif defined(__SSE4_1__)
+		#define RTM_SSE4_INTRINSICS
 		#define RTM_SSE3_INTRINSICS
 		#define RTM_SSE2_INTRINSICS
-	#endif
-
-	#if defined(__SSE2__) || defined(_M_IX86) || defined(_M_X64)
+	#elif defined(__SSSE3__)
+		#define RTM_SSE3_INTRINSICS
+		#define RTM_SSE2_INTRINSICS
+	#elif defined(__SSE2__) || defined(RTM_ARCH_x86) || defined(RTM_ARCH_X64)
 		#define RTM_SSE2_INTRINSICS
 	#endif
 
-	#if defined(__ARM_NEON) || defined(_M_ARM) || defined(_M_ARM64)
+	#if defined(RTM_ARCH_ARM64)
 		#define RTM_NEON_INTRINSICS
-
-		#if defined(__aarch64__) || defined(_M_ARM64)
-			#define RTM_NEON64_INTRINSICS
-		#endif
+		#define RTM_NEON64_INTRINSICS
+	#elif defined(RTM_ARCH_ARM)
+		#define RTM_NEON_INTRINSICS
 	#endif
 
 	// If SSE2 and NEON aren't used, we default to the scalar implementation
