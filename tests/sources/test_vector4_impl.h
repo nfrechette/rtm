@@ -1140,8 +1140,9 @@ void test_vector4_impl(const FloatType threshold)
 
 			const Vector4Type rtm_sin = vector_sin(angle_v);
 			const Vector4Type rtm_cos = vector_cos(angle_v);
+			Vector4Type rtm_sin2;
 			Vector4Type rtm_cos2;
-			const Vector4Type rtm_sin2 = vector_sincos(angle_v, rtm_cos2);
+			vector_sincos(angle_v, rtm_sin2, rtm_cos2);
 			const Vector4Type rtm_tan = vector_tan(angle_v);
 			const Vector4Type rtm_asin = vector_asin(vector_set(ref_sin));
 			const Vector4Type rtm_acos = vector_acos(vector_set(ref_cos));

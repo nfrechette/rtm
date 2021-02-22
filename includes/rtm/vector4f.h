@@ -2644,9 +2644,8 @@ namespace rtm
 
 	//////////////////////////////////////////////////////////////////////////
 	// Returns per component the sine and cosine of the input angle.
-	// The sine is returned by register and cosine by argument.
 	//////////////////////////////////////////////////////////////////////////
-	RTM_DISABLE_SECURITY_COOKIE_CHECK inline vector4f RTM_SIMD_CALL vector_sincos(vector4f_arg0 input, vector4f& out_cosine) RTM_NO_EXCEPT
+	RTM_DISABLE_SECURITY_COOKIE_CHECK inline void RTM_SIMD_CALL vector_sincos(vector4f_arg0 input, vector4f& out_sine, vector4f& out_cosine) RTM_NO_EXCEPT
 	{
 #if defined(RTM_SSE2_INTRINSICS)
 		// Use a degree 10 minimax approximation polynomial
@@ -2687,7 +2686,7 @@ namespace rtm
 		sine_result = _mm_add_ps(_mm_mul_ps(sine_result, x2), _mm_set_ps1(8.3333303183525942e-3F));
 		sine_result = _mm_add_ps(_mm_mul_ps(sine_result, x2), _mm_set_ps1(-1.6666666601721269e-1F));
 		sine_result = _mm_add_ps(_mm_mul_ps(sine_result, x2), _mm_set_ps1(1.0F));
-		return _mm_mul_ps(sine_result, x);
+		out_sine = _mm_mul_ps(sine_result, x);
 #elif defined(RTM_NEON_INTRINSICS)
 		// Use a degree 10 minimax approximation polynomial
 		// See: GPGPU Programming for Games and Science (David H. Eberly)
@@ -2729,7 +2728,7 @@ namespace rtm
 		sine_result = RTM_VECTOR4F_MULV_ADD(sine_result, x2, vdupq_n_f32(-1.6666666601721269e-1F));
 		sine_result = RTM_VECTOR4F_MULV_ADD(sine_result, x2, vdupq_n_f32(1.0F));
 
-		return vmulq_f32(sine_result, x);
+		out_sine = vmulq_f32(sine_result, x);
 #else
 		const vector4f x = scalar_sincos(scalarf(vector_get_x(input)));
 		const vector4f y = scalar_sincos(scalarf(vector_get_y(input)));
@@ -2737,7 +2736,7 @@ namespace rtm
 		const vector4f w = scalar_sincos(scalarf(vector_get_w(input)));
 
 		out_cosine = vector4f{ x.y, y.y, z.y, w.y };
-		return vector4f{ x.x, y.x, z.x, w.x };
+		out_sine = vector4f{ x.x, y.x, z.x, w.x };
 #endif
 	}
 
@@ -2747,8 +2746,9 @@ namespace rtm
 	RTM_DISABLE_SECURITY_COOKIE_CHECK inline vector4f RTM_SIMD_CALL vector_tan(vector4f_arg0 angle) RTM_NO_EXCEPT
 	{
 		// Use the identity: tan(angle) = sin(angle) / cos(angle)
+		vector4f sin_;
 		vector4f cos_;
-		const vector4f sin_ = vector_sincos(angle, cos_);
+		vector_sincos(angle, sin_, cos_);
 
 		const mask4f is_cos_zero = vector_equal(cos_, vector_zero());
 		const vector4f signed_infinity = vector_copy_sign(vector_set(std::numeric_limits<float>::infinity()), angle);

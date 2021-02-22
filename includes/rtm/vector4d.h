@@ -2102,9 +2102,8 @@ namespace rtm
 
 	//////////////////////////////////////////////////////////////////////////
 	// Returns per component the sine and cosine of the input angle.
-	// The sine is returned by register and cosine by argument.
 	//////////////////////////////////////////////////////////////////////////
-	RTM_DISABLE_SECURITY_COOKIE_CHECK inline vector4d vector_sincos(const vector4d& input, vector4d& out_cosine) RTM_NO_EXCEPT
+	RTM_DISABLE_SECURITY_COOKIE_CHECK inline void vector_sincos(const vector4d& input, vector4d& out_sine, vector4d& out_cosine) RTM_NO_EXCEPT
 	{
 		const vector4d x = scalar_sincos(scalard(vector_get_x(input)));
 		const vector4d y = scalar_sincos(scalard(vector_get_y(input)));
@@ -2117,7 +2116,7 @@ namespace rtm
 
 		const vector4d sin_xy = vector_mix<mix4::x, mix4::a, mix4::x, mix4::a>(x, y);
 		const vector4d sin_zw = vector_mix<mix4::x, mix4::a, mix4::x, mix4::a>(z, w);
-		return vector_mix<mix4::x, mix4::y, mix4::a, mix4::b>(sin_xy, sin_zw);
+		out_sine = vector_mix<mix4::x, mix4::y, mix4::a, mix4::b>(sin_xy, sin_zw);
 	}
 
 	//////////////////////////////////////////////////////////////////////////
@@ -2126,8 +2125,9 @@ namespace rtm
 	RTM_DISABLE_SECURITY_COOKIE_CHECK inline vector4d vector_tan(const vector4d& angle) RTM_NO_EXCEPT
 	{
 		// Use the identity: tan(angle) = sin(angle) / cos(angle)
+		vector4d sin_;
 		vector4d cos_;
-		const vector4d sin_ = vector_sincos(angle, cos_);
+		vector_sincos(angle, sin_, cos_);
 
 		const mask4d is_cos_zero = vector_equal(cos_, vector_zero());
 		const vector4d signed_infinity = vector_copy_sign(vector_set(std::numeric_limits<double>::infinity()), angle);
