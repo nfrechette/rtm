@@ -24,7 +24,6 @@
 // SOFTWARE.
 ////////////////////////////////////////////////////////////////////////////////
 
-#include "rtm/impl/detect_arch.h"
 #include "rtm/impl/detect_compiler.h"
 
 //////////////////////////////////////////////////////////////////////////
@@ -81,78 +80,3 @@
 // Joins two pre-processor tokens: RTM_JOIN_TOKENS(foo, bar) yields 'foobar'
 //////////////////////////////////////////////////////////////////////////
 #define RTM_JOIN_TOKENS(a, b) a ## b
-
-//////////////////////////////////////////////////////////////////////////
-// Helper macro to determine if vrndns_f32 is supported (ARM64 only)
-//////////////////////////////////////////////////////////////////////////
-#if defined(RTM_ARCH_ARM64)
-	// ARM documentation states __ARM_FEATURE_DIRECTED_ROUNDING must be defined
-	#if defined(__ARM_FEATURE_DIRECTED_ROUNDING)
-		// Only support it with clang for now
-		#if defined(RTM_COMPILER_CLANG)
-			// Apple redefines __clang_major__ to match the XCode version
-			#if defined(__APPLE__)
-				#if __clang_major__ >= 10
-					// Apple clang supports it starting with XCode 10
-					#define RTM_IMPL_VRNDNS_SUPPORTED
-				#endif
-			#else
-				#if __clang_major__ >= 6
-					// Ordinary clang supports it starting with clang 6
-					#define RTM_IMPL_VRNDNS_SUPPORTED
-				#endif
-			#endif
-		#endif
-	#endif
-
-	// MSVC doesn't appear to define __ARM_FEATURE_DIRECTED_ROUNDING but it supports the
-	// intrinsic as of VS2019
-	#if !defined(RTM_IMPL_VRNDNS_SUPPORTED) && defined(RTM_COMPILER_MSVC) && RTM_COMPILER_MSVC >= ACL_COMPILER_MSVC_2019
-		#define RTM_IMPL_VRNDNS_SUPPORTED
-	#endif
-#endif
-
-//////////////////////////////////////////////////////////////////////////
-// Helper macro to determine if the vca* (e.g vcagtq_f32) family of intrinsics are supported (ARM64 only)
-//////////////////////////////////////////////////////////////////////////
-#if defined(RTM_ARCH_ARM64)
-	#if defined(RTM_COMPILER_MSVC)
-		#if RTM_COMPILER_MSVC >= ACL_COMPILER_MSVC_2019
-			// Support was introduced in VS2019
-			#define RTM_IMPL_VCA_SUPPORTED
-		#endif
-	#else
-		// Always enable with GCC and clang for now
-		#define RTM_IMPL_VCA_SUPPORTED
-	#endif
-#endif
-
-//////////////////////////////////////////////////////////////////////////
-// Helper macro to determine if the vc*z* (e.g vceqq_f32) family of intrinsics are supported (ARM64 only)
-//////////////////////////////////////////////////////////////////////////
-#if defined(RTM_ARCH_ARM64)
-	#if defined(RTM_COMPILER_MSVC)
-		#if RTM_COMPILER_MSVC >= ACL_COMPILER_MSVC_2019
-			// Support was introduced in VS2019
-			#define RTM_IMPL_VCZ_SUPPORTED
-		#endif
-	#else
-		// Always enable with GCC and clang for now
-		#define RTM_IMPL_VCZ_SUPPORTED
-	#endif
-#endif
-
-//////////////////////////////////////////////////////////////////////////
-// Helper macro to determine if the vsqrtq_f32 intrinsic is supported (ARM64 only)
-//////////////////////////////////////////////////////////////////////////
-#if defined(RTM_ARCH_ARM64)
-	#if defined(RTM_COMPILER_MSVC)
-		#if RTM_COMPILER_MSVC >= ACL_COMPILER_MSVC_2019
-			// Support was introduced in VS2019
-			#define RTM_IMPL_VSQRT_SUPPORTED
-		#endif
-	#else
-		// Always enable with GCC and clang for now
-		#define RTM_IMPL_VSQRT_SUPPORTED
-	#endif
-#endif
