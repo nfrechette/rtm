@@ -986,6 +986,12 @@ namespace rtm
 			}
 #endif
 
+			RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE RTM_SIMD_CALL operator vector4d() const RTM_NO_EXCEPT
+			{
+				const scalard dot = *this;
+				return vector_set(dot);
+			}
+
 			vector4d lhs;
 			vector4d rhs;
 		};

@@ -1190,6 +1190,32 @@ namespace rtm
 			}
 #endif
 
+			RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE RTM_SIMD_CALL operator vector4f() const RTM_NO_EXCEPT
+			{
+#if defined(RTM_SSE4_INTRINSICS) && 0
+				// SSE4 dot product instruction isn't precise enough
+				return _mm_cvtss_f32(_mm_dp_ps(lhs, rhs, 0xFF));
+#elif defined(RTM_SSE2_INTRINSICS)
+				__m128 x2_y2_z2_w2 = _mm_mul_ps(lhs, rhs);
+				__m128 y2_0_0_0 = _mm_shuffle_ps(x2_y2_z2_w2, x2_y2_z2_w2, _MM_SHUFFLE(0, 0, 0, 1));
+				__m128 x2y2_0_0_0 = _mm_add_ss(x2_y2_z2_w2, y2_0_0_0);
+				__m128 z2_0_0_0 = _mm_shuffle_ps(x2_y2_z2_w2, x2_y2_z2_w2, _MM_SHUFFLE(0, 0, 0, 2));
+				__m128 x2y2z2_0_0_0 = _mm_add_ss(x2y2_0_0_0, z2_0_0_0);
+				return _mm_shuffle_ps(x2y2z2_0_0_0, x2y2z2_0_0_0, _MM_SHUFFLE(0, 0, 0, 0));
+#elif defined(RTM_NEON_INTRINSICS)
+				float32x4_t x2_y2_z2_w2 = vmulq_f32(lhs, rhs);
+				float32x2_t x2_y2 = vget_low_f32(x2_y2_z2_w2);
+				float32x2_t z2_w2 = vget_high_f32(x2_y2_z2_w2);
+				float32x2_t x2y2_x2y2 = vpadd_f32(x2_y2, x2_y2);
+				float32x2_t z2_z2 = vdup_lane_f32(z2_w2, 0);
+				float32x2_t x2y2z2_x2y2z2 = vadd_f32(x2y2_x2y2, z2_z2);
+				return vdupq_lane_f32(x2y2z2_x2y2z2, 0);
+#else
+				scalarf result = *this;
+				return vector_set(result);
+#endif
+			}
+
 			vector4f lhs;
 			vector4f rhs;
 		};
