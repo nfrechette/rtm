@@ -15,6 +15,8 @@ def parse_argv():
 	actions.add_argument('-clean_only', action='store_true')
 	actions.add_argument('-unit_test', action='store_true')
 	actions.add_argument('-bench', action='store_true')
+	actions.add_argument('-run_bench', action='store_true')
+	actions.add_argument('-pull_bench', action='store_true')	# Android only
 
 	target = parser.add_argument_group(title='Target')
 	target.add_argument('-compiler', choices=['vs2015', 'vs2017', 'vs2019', 'vs2019-clang', 'android', 'clang4', 'clang5', 'clang6', 'clang7', 'clang8', 'clang9', 'clang10', 'clang11', 'gcc5', 'gcc6', 'gcc7', 'gcc8', 'gcc9', 'gcc10', 'osx', 'ios', 'emscripten'], help='Defaults to the host system\'s default compiler')
@@ -36,7 +38,9 @@ def parse_argv():
 	if not num_threads or num_threads == 0:
 		num_threads = 4
 
-	parser.set_defaults(build=False, clean=False, clean_only=False, unit_test=False, compiler=None, config='Release', cpu=None, use_avx=False, use_avx2=False, use_simd=True, num_threads=num_threads, tests_matching='', vector_mix_test=False)
+	parser.set_defaults(build=False, clean=False, clean_only=False, unit_test=False,
+		compiler=None, config='Release', cpu=None, use_avx=False, use_avx2=False, use_simd=True, num_threads=num_threads, tests_matching='', vector_mix_test=False,
+		bench=False, run_bench=False, pull_bench=False)
 
 	args = parser.parse_args()
 
@@ -375,7 +379,7 @@ def do_tests(build_dir, args):
 	else:
 		do_tests_cmake(args)
 
-def do_bench_android():
+def do_run_bench_android(build_dir, args):
 	# Switch our working directory to where we built everything
 	working_dir = os.path.join(build_dir, 'tools', 'bench', 'main_android')
 	os.chdir(working_dir)
@@ -403,28 +407,46 @@ def do_bench_android():
 	# Restore working directory
 	os.chdir(build_dir)
 
-def do_bench_native():
+def do_pull_bench_android(build_dir):
+	# Grab the android directory we wrote the results to
+	output = str(subprocess.check_output('adb logcat -s acl -e "Benchmark results will be written to:" -m 1 -d'))
+	matches = re.search('Benchmark results will be written to: ([/\.\w]+)', output)
+	if matches == None:
+		print('Failed to find Android source directory from ADB')
+		android_src_dir = '/storage/emulated/0/Android/data/com.rtm.benchmark/files'
+		print('{} will be used instead'.format(android_src_dir))
+	else:
+		android_src_dir = matches.group(1)
+
+	# Grab the benchmark results from the android device
+	dst_filename = os.path.join(build_dir, 'benchmark_results.json')
+	src_filename = '{}/benchmark_results.json'.format(android_src_dir)
+	cmd = 'adb pull "{}" "{}"'.format(src_filename, dst_filename)
+	os.system(cmd)
+
+def do_run_bench_native(build_dir):
 	if platform.system() == 'Windows':
 		bench_exe = os.path.join(os.getcwd(), 'bin/rtm_bench.exe')
 	else:
 		bench_exe = os.path.join(os.getcwd(), 'bin/rtm_bench')
 
-	bench_cmd = '{}'.format(bench_exe)
+	benchmark_output_filename = os.path.join(build_dir, 'benchmark_results.json')
+	bench_cmd = '{} --benchmark_out={} --benchmark_out_format=json'.format(bench_exe, benchmark_output_filename)
 
 	result = subprocess.call(bench_cmd, shell=True)
 	if result != 0:
 		sys.exit(result)
 
-def do_bench():
+def do_run_bench(build_dir, args):
 	if args.compiler == 'ios':
 		return	# Not supported on iOS
 
 	print('Running benchmark ...')
 
 	if args.compiler == 'android':
-		do_bench_android()
+		do_run_bench_android(build_dir, args)
 	else:
-		do_bench_native()
+		do_run_bench_native(build_dir)
 
 if __name__ == "__main__":
 	args = parse_argv()
@@ -459,7 +481,10 @@ if __name__ == "__main__":
 	if args.unit_test:
 		do_tests(build_dir, args)
 
-	if args.bench:
-		do_bench()
+	if args.run_bench:
+		do_run_bench(build_dir, args)
+
+	if args.pull_bench:
+		do_pull_bench_android(build_dir)
 
 	sys.exit(0)
