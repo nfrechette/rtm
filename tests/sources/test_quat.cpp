@@ -382,6 +382,14 @@ static void test_quat_impl(const FloatType threshold)
 		CHECK(FloatType(quat_get_w(quat0)) == -FloatType(quat_get_w(quat1)));
 	}
 
+	{
+		QuatType quat0 = quat_from_euler(scalar_deg_to_rad(FloatType(30.0)), scalar_deg_to_rad(FloatType(-45.0)), scalar_deg_to_rad(FloatType(90.0)));
+		QuatType quat_log = quat_rotation_log(quat0);
+		QuatType quat_exp = quat_rotation_exp(quat_log);
+
+		CHECK(quat_near_equal(quat0, quat_exp, threshold));
+	}
+
 	//////////////////////////////////////////////////////////////////////////
 	// Conversion to/from axis/angle/euler
 
