@@ -149,6 +149,120 @@ namespace rtm
 		const quatf rotation = quat_normalize(input.rotation);
 		return qvv_set(rotation, input.translation, input.scale);
 	}
+
+	//////////////////////////////////////////////////////////////////////////
+	// Per component linear interpolation of the two inputs at the specified alpha.
+	// The formula used is: ((1.0 - alpha) * start) + (alpha * end).
+	// Interpolation is stable and will return 'start' when alpha is 0.0 and 'end' when it is 1.0.
+	// This is the same instruction count when FMA is present but it might be slightly slower
+	// due to the extra multiplication compared to: start + (alpha * (end - start)).
+	//////////////////////////////////////////////////////////////////////////
+	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE qvvf RTM_SIMD_CALL qvv_lerp(qvvf_arg0 start, qvvf_arg1 end, float alpha) RTM_NO_EXCEPT
+	{
+		const quatf rotation = quat_lerp(start.rotation, end.rotation, alpha);
+		const vector4f translation = vector_lerp(start.translation, end.translation, alpha);
+		const vector4f scale = vector_lerp(start.scale, end.scale, alpha);
+		return qvv_set(rotation, translation, scale);
+	}
+
+#if defined(RTM_SSE2_INTRINSICS)
+	//////////////////////////////////////////////////////////////////////////
+	// Per component linear interpolation of the two inputs at the specified alpha.
+	// The formula used is: ((1.0 - alpha) * start) + (alpha * end).
+	// Interpolation is stable and will return 'start' when alpha is 0.0 and 'end' when it is 1.0.
+	// This is the same instruction count when FMA is present but it might be slightly slower
+	// due to the extra multiplication compared to: start + (alpha * (end - start)).
+	//////////////////////////////////////////////////////////////////////////
+	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE qvvf RTM_SIMD_CALL qvv_lerp(qvvf_arg0 start, qvvf_arg1 end, scalarf_arg2 alpha) RTM_NO_EXCEPT
+	{
+		const quatf rotation = quat_lerp(start.rotation, end.rotation, alpha);
+		const vector4f translation = vector_lerp(start.translation, end.translation, alpha);
+		const vector4f scale = vector_lerp(start.scale, end.scale, alpha);
+		return qvv_set(rotation, translation, scale);
+	}
+#endif
+
+	//////////////////////////////////////////////////////////////////////////
+	// Per component linear interpolation of the two inputs at the specified alpha.
+	// The formula used is: ((1.0 - alpha) * start) + (alpha * end).
+	// Interpolation is stable and will return 'start' when alpha is 0.0 and 'end' when it is 1.0.
+	// This is the same instruction count when FMA is present but it might be slightly slower
+	// due to the extra multiplication compared to: start + (alpha * (end - start)).
+	// The resulting QVV transform will have the start scale.
+	//////////////////////////////////////////////////////////////////////////
+	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE qvvf RTM_SIMD_CALL qvv_lerp_no_scale(qvvf_arg0 start, qvvf_arg1 end, float alpha) RTM_NO_EXCEPT
+	{
+		const quatf rotation = quat_lerp(start.rotation, end.rotation, alpha);
+		const vector4f translation = vector_lerp(start.translation, end.translation, alpha);
+		return qvv_set(rotation, translation, start.scale);
+	}
+
+#if defined(RTM_SSE2_INTRINSICS)
+	//////////////////////////////////////////////////////////////////////////
+	// Per component linear interpolation of the two inputs at the specified alpha.
+	// The formula used is: ((1.0 - alpha) * start) + (alpha * end).
+	// Interpolation is stable and will return 'start' when alpha is 0.0 and 'end' when it is 1.0.
+	// This is the same instruction count when FMA is present but it might be slightly slower
+	// due to the extra multiplication compared to: start + (alpha * (end - start)).
+	// The resulting QVV transform will have the start scale.
+	//////////////////////////////////////////////////////////////////////////
+	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE qvvf RTM_SIMD_CALL qvv_lerp_no_scale(qvvf_arg0 start, qvvf_arg1 end, scalarf_arg2 alpha) RTM_NO_EXCEPT
+	{
+		const quatf rotation = quat_lerp(start.rotation, end.rotation, alpha);
+		const vector4f translation = vector_lerp(start.translation, end.translation, alpha);
+		return qvv_set(rotation, translation, start.scale);
+	}
+#endif
+
+	//////////////////////////////////////////////////////////////////////////
+	// Per component spherical interpolation of the two inputs at the specified alpha.
+	// See quat_slerp(..)
+	//////////////////////////////////////////////////////////////////////////
+	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE qvvf RTM_SIMD_CALL qvv_slerp(qvvf_arg0 start, qvvf_arg1 end, float alpha) RTM_NO_EXCEPT
+	{
+		const quatf rotation = quat_slerp(start.rotation, end.rotation, alpha);
+		const vector4f translation = vector_lerp(start.translation, end.translation, alpha);
+		const vector4f scale = vector_lerp(start.scale, end.scale, alpha);
+		return qvv_set(rotation, translation, scale);
+	}
+
+#if defined(RTM_SSE2_INTRINSICS)
+	//////////////////////////////////////////////////////////////////////////
+	// Per component spherical interpolation of the two inputs at the specified alpha.
+	// See quat_slerp(..)
+	//////////////////////////////////////////////////////////////////////////
+	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE qvvf RTM_SIMD_CALL qvv_slerp(qvvf_arg0 start, qvvf_arg1 end, scalarf_arg2 alpha) RTM_NO_EXCEPT
+	{
+		const quatf rotation = quat_slerp(start.rotation, end.rotation, alpha);
+		const vector4f translation = vector_lerp(start.translation, end.translation, alpha);
+		const vector4f scale = vector_lerp(start.scale, end.scale, alpha);
+		return qvv_set(rotation, translation, scale);
+	}
+#endif
+
+	//////////////////////////////////////////////////////////////////////////
+	// Per component spherical interpolation of the two inputs at the specified alpha.
+	// See quat_slerp(..)
+	//////////////////////////////////////////////////////////////////////////
+	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE qvvf RTM_SIMD_CALL qvv_slerp_no_scale(qvvf_arg0 start, qvvf_arg1 end, float alpha) RTM_NO_EXCEPT
+	{
+		const quatf rotation = quat_slerp(start.rotation, end.rotation, alpha);
+		const vector4f translation = vector_lerp(start.translation, end.translation, alpha);
+		return qvv_set(rotation, translation, start.scale);
+	}
+
+#if defined(RTM_SSE2_INTRINSICS)
+	//////////////////////////////////////////////////////////////////////////
+	// Per component spherical interpolation of the two inputs at the specified alpha.
+	// See quat_slerp(..)
+	//////////////////////////////////////////////////////////////////////////
+	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE qvvf RTM_SIMD_CALL qvv_slerp_no_scale(qvvf_arg0 start, qvvf_arg1 end, scalarf_arg2 alpha) RTM_NO_EXCEPT
+	{
+		const quatf rotation = quat_slerp(start.rotation, end.rotation, alpha);
+		const vector4f translation = vector_lerp(start.translation, end.translation, alpha);
+		return qvv_set(rotation, translation, start.scale);
+	}
+#endif
 }
 
 RTM_IMPL_FILE_PRAGMA_POP

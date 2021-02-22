@@ -35,6 +35,7 @@ static void test_qvv_impl(const TransformType& identity, const FloatType thresho
 {
 	using QuatType = decltype(TransformType::rotation);
 	using Vector4Type = decltype(TransformType::translation);
+	using ScalarType = typename float_traits<FloatType>::scalar;
 
 	{
 		Vector4Type zero = vector_set(FloatType(0.0));
@@ -161,6 +162,79 @@ static void test_qvv_impl(const TransformType& identity, const FloatType thresho
 		TransformType transform_b = qvv_set(quat, x_axis, vector_set(FloatType(1.0)));
 		CHECK(!quat_is_normalized(transform_b.rotation, threshold));
 		CHECK(quat_is_normalized(qvv_normalize(transform_b).rotation, threshold));
+	}
+
+	{
+		FloatType alpha = FloatType(0.33);
+		ScalarType alpha_s = scalar_set(alpha);
+		QuatType quat0 = quat_normalize(quat_from_euler(scalar_deg_to_rad(FloatType(30.0)), scalar_deg_to_rad(FloatType(-45.0)), scalar_deg_to_rad(FloatType(90.0))));
+		QuatType quat1 = quat_normalize(quat_from_euler(scalar_deg_to_rad(FloatType(45.0)), scalar_deg_to_rad(FloatType(60.0)), scalar_deg_to_rad(FloatType(120.0))));
+
+		QuatType quat_ref_lerp = quat_lerp(quat0, quat1, alpha);
+		QuatType quat_ref_lerp_s = quat_lerp(quat0, quat1, alpha_s);
+		QuatType quat_ref_slerp = quat_slerp(quat0, quat1, alpha);
+		QuatType quat_ref_slerp_s = quat_slerp(quat0, quat1, alpha_s);
+
+		Vector4Type trans0 = vector_set(FloatType(-0.001138), FloatType(0.91623), FloatType(-1.624598));
+		Vector4Type trans1 = vector_set(FloatType(-0.001138), FloatType(0.91623), FloatType(-1.624598));
+
+		Vector4Type trans_ref = vector_lerp(trans0, trans1, alpha);
+		Vector4Type trans_ref_s = vector_lerp(trans0, trans1, alpha_s);
+
+		Vector4Type scale0 = vector_set(FloatType(-1.915), FloatType(0.23656), FloatType(-3.7811));
+		Vector4Type scale1 = vector_set(FloatType(-0.2113), FloatType(12.22335), FloatType(-1.7261));
+
+		Vector4Type scale_ref = vector_lerp(scale0, scale1, alpha);
+		Vector4Type scale_ref_s = vector_lerp(scale0, scale1, alpha_s);
+
+		TransformType transform0 = qvv_set(quat0, trans0, scale0);
+		TransformType transform1 = qvv_set(quat1, trans1, scale1);
+
+		TransformType transform_ref_lerp = qvv_set(quat_ref_lerp, trans_ref, scale_ref);
+		TransformType transform_ref_slerp = qvv_set(quat_ref_slerp, trans_ref, scale_ref);
+
+		TransformType transform_ref_lerp_s = qvv_set(quat_ref_lerp, trans_ref, scale_ref_s);
+		TransformType transform_ref_slerp_s = qvv_set(quat_ref_slerp, trans_ref, scale_ref_s);
+
+		TransformType transform_lerp = qvv_lerp(transform0, transform1, alpha);
+		TransformType transform_lerp_s = qvv_lerp(transform0, transform1, alpha_s);
+
+		TransformType transform_slerp = qvv_slerp(transform0, transform1, alpha);
+		TransformType transform_slerp_s = qvv_slerp(transform0, transform1, alpha_s);
+
+		TransformType transform_lerp_no_scale = qvv_lerp_no_scale(transform0, transform1, alpha);
+		TransformType transform_lerp_no_scale_s = qvv_lerp_no_scale(transform0, transform1, alpha_s);
+
+		TransformType transform_slerp_no_scale = qvv_slerp_no_scale(transform0, transform1, alpha);
+		TransformType transform_slerp_no_scale_s = qvv_slerp_no_scale(transform0, transform1, alpha_s);
+
+		CHECK(quat_near_equal(transform_lerp.rotation, transform_ref_lerp.rotation, threshold));
+		CHECK(quat_near_equal(transform_lerp_s.rotation, transform_ref_lerp_s.rotation, threshold));
+		CHECK(vector_all_near_equal3(transform_lerp.translation, transform_ref_lerp.translation, threshold));
+		CHECK(vector_all_near_equal3(transform_lerp_s.translation, transform_ref_lerp_s.translation, threshold));
+		CHECK(vector_all_near_equal3(transform_lerp.scale, transform_ref_lerp.scale, threshold));
+		CHECK(vector_all_near_equal3(transform_lerp_s.scale, transform_ref_lerp_s.scale, threshold));
+
+		CHECK(quat_near_equal(transform_slerp.rotation, transform_ref_slerp.rotation, threshold));
+		CHECK(quat_near_equal(transform_slerp_s.rotation, transform_ref_slerp_s.rotation, threshold));
+		CHECK(vector_all_near_equal3(transform_slerp.translation, transform_ref_slerp.translation, threshold));
+		CHECK(vector_all_near_equal3(transform_slerp_s.translation, transform_ref_slerp_s.translation, threshold));
+		CHECK(vector_all_near_equal3(transform_slerp.scale, transform_ref_slerp.scale, threshold));
+		CHECK(vector_all_near_equal3(transform_slerp_s.scale, transform_ref_slerp_s.scale, threshold));
+
+		CHECK(quat_near_equal(transform_lerp_no_scale.rotation, transform_ref_lerp.rotation, threshold));
+		CHECK(quat_near_equal(transform_lerp_no_scale_s.rotation, transform_ref_lerp_s.rotation, threshold));
+		CHECK(vector_all_near_equal3(transform_lerp_no_scale.translation, transform_ref_lerp.translation, threshold));
+		CHECK(vector_all_near_equal3(transform_lerp_no_scale_s.translation, transform_ref_lerp_s.translation, threshold));
+		CHECK(vector_all_near_equal3(transform_lerp_no_scale.scale, transform0.scale, threshold));
+		CHECK(vector_all_near_equal3(transform_lerp_no_scale_s.scale, transform0.scale, threshold));
+
+		CHECK(quat_near_equal(transform_slerp_no_scale.rotation, transform_ref_slerp.rotation, threshold));
+		CHECK(quat_near_equal(transform_slerp_no_scale_s.rotation, transform_ref_slerp_s.rotation, threshold));
+		CHECK(vector_all_near_equal3(transform_slerp_no_scale.translation, transform_ref_slerp.translation, threshold));
+		CHECK(vector_all_near_equal3(transform_slerp_no_scale_s.translation, transform_ref_slerp_s.translation, threshold));
+		CHECK(vector_all_near_equal3(transform_slerp_no_scale.scale, transform0.scale, threshold));
+		CHECK(vector_all_near_equal3(transform_slerp_no_scale_s.scale, transform0.scale, threshold));
 	}
 }
 
