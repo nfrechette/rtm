@@ -1303,7 +1303,7 @@ namespace rtm
 		// the shortest path.
 		const scalarf input_w = quat_get_w(input);
 		const float positive_w_angle = scalar_acos(scalar_cast(scalar_abs(input_w))) * 2.0F;
-		return positive_w_angle < threshold_angle;
+		return positive_w_angle <= threshold_angle;
 	}
 }
 

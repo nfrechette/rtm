@@ -819,7 +819,7 @@ namespace rtm
 		// See the quatf version of quat_near_identity for details.
 		const scalard input_w = quat_get_w(input);
 		const double positive_w_angle = scalar_acos(scalar_cast(scalar_abs(input_w))) * 2.0;
-		return positive_w_angle < threshold_angle;
+		return positive_w_angle <= threshold_angle;
 	}
 }
 

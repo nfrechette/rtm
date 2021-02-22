@@ -455,7 +455,7 @@ static void test_quat_impl(const FloatType threshold)
 	}
 
 	{
-		CHECK(quat_near_identity(identity, threshold) == true);
+		CHECK(quat_near_identity(identity, FloatType(0.0)) == true);
 		CHECK(quat_near_identity(quat_set(FloatType(0.0), FloatType(0.0), FloatType(0.0), FloatType(0.9999999)), FloatType(0.001)) == true);
 		CHECK(quat_near_identity(quat_set(FloatType(0.0), FloatType(0.0), FloatType(0.0), FloatType(0.98)), FloatType(0.001)) == false);
 	}
