@@ -25,6 +25,8 @@
 // SOFTWARE.
 ////////////////////////////////////////////////////////////////////////////////
 
+#include "rtm/impl/detect_compiler.h"
+
 //////////////////////////////////////////////////////////////////////////
 // Detect which intrinsics the current compilation environment supports.
 //////////////////////////////////////////////////////////////////////////
@@ -77,8 +79,8 @@
 
 	// With MSVC and SSE2, we can use the __vectorcall calling convention to pass vector types and aggregates by value through registers
 	// for improved code generation
-	#if defined(_MSC_VER) && !defined(_M_ARM) && !defined(_MANAGED) && !defined(_M_CEE) && (!defined(_M_IX86_FP) || (_M_IX86_FP > 1)) && !defined(RTM_SIMD_CALL)
-		#if ((_MSC_FULL_VER >= 170065501) && (_MSC_VER < 1800)) || (_MSC_FULL_VER >= 180020418)
+	#if defined(RTM_COMPILER_MSVC) && !defined(_MANAGED) && !defined(_M_CEE) && (!defined(_M_IX86_FP) || (_M_IX86_FP > 1)) && !defined(RTM_SIMD_CALL)
+		#if RTM_COMPILER_MSVC >= ACL_COMPILER_MSVC_2015
 			#define RTM_USE_VECTORCALL
 		#endif
 	#endif
@@ -96,7 +98,7 @@
 	#include <immintrin.h>
 #endif
 
-#if defined(RTM_NEON64_INTRINSICS) && defined(_M_ARM64)
+#if defined(RTM_NEON64_INTRINSICS) && defined(RTM_COMPILER_MSVC)
 	// MSVC specific header
 	#include <arm64_neon.h>
 #elif defined(RTM_NEON_INTRINSICS)

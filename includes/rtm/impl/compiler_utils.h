@@ -106,7 +106,7 @@
 
 	// MSVC doesn't appear to define __ARM_FEATURE_DIRECTED_ROUNDING but it supports the
 	// intrinsic as of VS2019
-	#if !defined(RTM_IMPL_VRNDNS_SUPPORTED) && defined(RTM_COMPILER_MSVC) && _MSC_VER >= 1920
+	#if !defined(RTM_IMPL_VRNDNS_SUPPORTED) && defined(RTM_COMPILER_MSVC) && RTM_COMPILER_MSVC >= ACL_COMPILER_MSVC_2019
 		#define RTM_IMPL_VRNDNS_SUPPORTED
 	#endif
 #endif
@@ -116,7 +116,7 @@
 //////////////////////////////////////////////////////////////////////////
 #if defined(__aarch64__) || defined(_M_ARM64)
 	#if defined(RTM_COMPILER_MSVC)
-		#if _MSC_VER >= 1920
+		#if RTM_COMPILER_MSVC >= ACL_COMPILER_MSVC_2019
 			// Support was introduced in VS2019
 			#define RTM_IMPL_VCA_SUPPORTED
 		#endif
@@ -131,7 +131,7 @@
 //////////////////////////////////////////////////////////////////////////
 #if defined(__aarch64__) || defined(_M_ARM64)
 	#if defined(RTM_COMPILER_MSVC)
-		#if _MSC_VER >= 1920
+		#if RTM_COMPILER_MSVC >= ACL_COMPILER_MSVC_2019
 			// Support was introduced in VS2019
 			#define RTM_IMPL_VCZ_SUPPORTED
 		#endif
@@ -146,7 +146,7 @@
 //////////////////////////////////////////////////////////////////////////
 #if defined(__aarch64__) || defined(_M_ARM64)
 	#if defined(RTM_COMPILER_MSVC)
-		#if _MSC_VER >= 1920
+		#if RTM_COMPILER_MSVC >= ACL_COMPILER_MSVC_2019
 			// Support was introduced in VS2019
 			#define RTM_IMPL_VSQRT_SUPPORTED
 		#endif
