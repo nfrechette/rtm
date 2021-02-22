@@ -2095,17 +2095,37 @@ namespace rtm
 	}
 
 	//////////////////////////////////////////////////////////////////////////
+	// Returns per component the sine and cosine of the input angle.
+	// The sine is returned by register and cosine by argument.
+	//////////////////////////////////////////////////////////////////////////
+	RTM_DISABLE_SECURITY_COOKIE_CHECK inline vector4d vector_sincos(const vector4d& input, vector4d& out_cosine) RTM_NO_EXCEPT
+	{
+		const vector4d x = scalar_sincos(scalard(vector_get_x(input)));
+		const vector4d y = scalar_sincos(scalard(vector_get_y(input)));
+		const vector4d z = scalar_sincos(scalard(vector_get_z(input)));
+		const vector4d w = scalar_sincos(scalard(vector_get_w(input)));
+
+		const vector4d cos_xy = vector_mix<mix4::y, mix4::b, mix4::y, mix4::b>(x, y);
+		const vector4d cos_zw = vector_mix<mix4::y, mix4::b, mix4::y, mix4::b>(z, w);
+		out_cosine = vector_mix<mix4::x, mix4::y, mix4::a, mix4::b>(cos_xy, cos_zw);
+
+		const vector4d sin_xy = vector_mix<mix4::x, mix4::a, mix4::x, mix4::a>(x, y);
+		const vector4d sin_zw = vector_mix<mix4::x, mix4::a, mix4::x, mix4::a>(z, w);
+		return vector_mix<mix4::x, mix4::y, mix4::a, mix4::b>(sin_xy, sin_zw);
+	}
+
+	//////////////////////////////////////////////////////////////////////////
 	// Returns per component the tangent of the input angle.
 	//////////////////////////////////////////////////////////////////////////
 	RTM_DISABLE_SECURITY_COOKIE_CHECK inline vector4d vector_tan(const vector4d& angle) RTM_NO_EXCEPT
 	{
 		// Use the identity: tan(angle) = sin(angle) / cos(angle)
-		vector4d sin_ = vector_sin(angle);
-		vector4d cos_ = vector_cos(angle);
+		vector4d cos_;
+		const vector4d sin_ = vector_sincos(angle, cos_);
 
-		mask4d is_cos_zero = vector_equal(cos_, vector_zero());
-		vector4d signed_infinity = vector_copy_sign(vector_set(std::numeric_limits<double>::infinity()), angle);
-		vector4d result = vector_div(sin_, cos_);
+		const mask4d is_cos_zero = vector_equal(cos_, vector_zero());
+		const vector4d signed_infinity = vector_copy_sign(vector_set(std::numeric_limits<double>::infinity()), angle);
+		const vector4d result = vector_div(sin_, cos_);
 		return vector_select(is_cos_zero, signed_infinity, result);
 	}
 

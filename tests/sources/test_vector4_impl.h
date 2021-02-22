@@ -1129,11 +1129,14 @@ void test_vector4_impl(const FloatType threshold)
 			const FloatType ref_sin = scalar_sin(angle);
 			const FloatType ref_cos = scalar_cos(angle);
 			const FloatType ref_tan = scalar_tan(angle);
+			const Vector4Type ref_sincos = scalar_sincos(angle);
 			const FloatType ref_asin = scalar_asin(ref_sin);
 			const FloatType ref_acos = scalar_acos(ref_cos);
 
 			const Vector4Type rtm_sin = vector_sin(angle_v);
 			const Vector4Type rtm_cos = vector_cos(angle_v);
+			Vector4Type rtm_cos2;
+			const Vector4Type rtm_sin2 = vector_sincos(angle_v, rtm_cos2);
 			const Vector4Type rtm_tan = vector_tan(angle_v);
 			const Vector4Type rtm_asin = vector_asin(vector_set(ref_sin));
 			const Vector4Type rtm_acos = vector_acos(vector_set(ref_cos));
@@ -1157,6 +1160,15 @@ void test_vector4_impl(const FloatType threshold)
 			CHECK(scalar_near_equal(FloatType(vector_get_y(rtm_acos)), ref_acos, threshold));
 			CHECK(scalar_near_equal(FloatType(vector_get_z(rtm_acos)), ref_acos, threshold));
 			CHECK(scalar_near_equal(FloatType(vector_get_w(rtm_acos)), ref_acos, threshold));
+
+			CHECK(scalar_near_equal(FloatType(vector_get_x(rtm_sin2)), (FloatType)vector_get_x(ref_sincos), threshold));
+			CHECK(scalar_near_equal(FloatType(vector_get_y(rtm_sin2)), (FloatType)vector_get_x(ref_sincos), threshold));
+			CHECK(scalar_near_equal(FloatType(vector_get_z(rtm_sin2)), (FloatType)vector_get_x(ref_sincos), threshold));
+			CHECK(scalar_near_equal(FloatType(vector_get_w(rtm_sin2)), (FloatType)vector_get_x(ref_sincos), threshold));
+			CHECK(scalar_near_equal(FloatType(vector_get_x(rtm_cos2)), (FloatType)vector_get_y(ref_sincos), threshold));
+			CHECK(scalar_near_equal(FloatType(vector_get_y(rtm_cos2)), (FloatType)vector_get_y(ref_sincos), threshold));
+			CHECK(scalar_near_equal(FloatType(vector_get_z(rtm_cos2)), (FloatType)vector_get_y(ref_sincos), threshold));
+			CHECK(scalar_near_equal(FloatType(vector_get_w(rtm_cos2)), (FloatType)vector_get_y(ref_sincos), threshold));
 
 			// For +-PI/2, we only test that the value is really large or really small
 			if (scalar_abs(angle) == half_pi)
