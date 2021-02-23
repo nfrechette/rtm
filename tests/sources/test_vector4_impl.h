@@ -580,11 +580,18 @@ void test_vector4_arithmetic_impl(const FloatType threshold)
 	CHECK(scalar_near_equal(vector_get_z(vector_lerp(test_value10, test_value11, scalar_set(FloatType(0.33)))), ((test_value11_flt[2] - test_value10_flt[2]) * FloatType(0.33)) + test_value10_flt[2], threshold));
 	CHECK(scalar_near_equal(vector_get_w(vector_lerp(test_value10, test_value11, scalar_set(FloatType(0.33)))), ((test_value11_flt[3] - test_value10_flt[3]) * FloatType(0.33)) + test_value10_flt[3], threshold));
 
+	CHECK(scalar_near_equal(vector_get_x(vector_lerp(test_value10, test_value11, vector_set(FloatType(0.33)))), ((test_value11_flt[0] - test_value10_flt[0]) * FloatType(0.33)) + test_value10_flt[0], threshold));
+	CHECK(scalar_near_equal(vector_get_y(vector_lerp(test_value10, test_value11, vector_set(FloatType(0.33)))), ((test_value11_flt[1] - test_value10_flt[1]) * FloatType(0.33)) + test_value10_flt[1], threshold));
+	CHECK(scalar_near_equal(vector_get_z(vector_lerp(test_value10, test_value11, vector_set(FloatType(0.33)))), ((test_value11_flt[2] - test_value10_flt[2]) * FloatType(0.33)) + test_value10_flt[2], threshold));
+	CHECK(scalar_near_equal(vector_get_w(vector_lerp(test_value10, test_value11, vector_set(FloatType(0.33)))), ((test_value11_flt[3] - test_value10_flt[3]) * FloatType(0.33)) + test_value10_flt[3], threshold));
+
 	// Lerp must be stable and return exactly the start when the interpolation alpha is 0.0 and exactly the end when 1.0
 	CHECK(vector_all_near_equal(vector_lerp(test_value10, test_value11, FloatType(0.0)), test_value10, FloatType(0.0)));
 	CHECK(vector_all_near_equal(vector_lerp(test_value10, test_value11, FloatType(1.0)), test_value11, FloatType(0.0)));
 	CHECK(vector_all_near_equal(vector_lerp(test_value10, test_value11, scalar_set(FloatType(0.0))), test_value10, FloatType(0.0)));
 	CHECK(vector_all_near_equal(vector_lerp(test_value10, test_value11, scalar_set(FloatType(1.0))), test_value11, FloatType(0.0)));
+	CHECK(vector_all_near_equal(vector_lerp(test_value10, test_value11, vector_set(FloatType(0.0))), test_value10, FloatType(0.0)));
+	CHECK(vector_all_near_equal(vector_lerp(test_value10, test_value11, vector_set(FloatType(1.0))), test_value11, FloatType(0.0)));
 
 	CHECK(FloatType(vector_get_x(vector_fraction(neg_zero))) == scalar_fraction(FloatType(-0.0)));
 	CHECK(scalar_near_equal(vector_get_x(vector_fraction(test_value0)), scalar_fraction(test_value0_flt[0]), threshold));
