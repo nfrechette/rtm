@@ -193,8 +193,8 @@ static void test_qvv_impl(const TransformType& identity, const FloatType thresho
 		TransformType transform_ref_lerp = qvv_set(quat_ref_lerp, trans_ref, scale_ref);
 		TransformType transform_ref_slerp = qvv_set(quat_ref_slerp, trans_ref, scale_ref);
 
-		TransformType transform_ref_lerp_s = qvv_set(quat_ref_lerp, trans_ref, scale_ref_s);
-		TransformType transform_ref_slerp_s = qvv_set(quat_ref_slerp, trans_ref, scale_ref_s);
+		TransformType transform_ref_lerp_s = qvv_set(quat_ref_lerp_s, trans_ref_s, scale_ref_s);
+		TransformType transform_ref_slerp_s = qvv_set(quat_ref_slerp_s, trans_ref_s, scale_ref_s);
 
 		TransformType transform_lerp = qvv_lerp(transform0, transform1, alpha);
 		TransformType transform_lerp_s = qvv_lerp(transform0, transform1, alpha_s);
