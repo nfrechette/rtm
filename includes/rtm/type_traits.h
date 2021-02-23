@@ -48,9 +48,12 @@ namespace rtm
 		using matrix3x4 = matrix3x4f;
 		using matrix4x4 = matrix4x4f;
 
+		using float1 = float;
 		using float2 = float2f;
 		using float3 = float3f;
 		using float4 = float4f;
+
+		using int1 = uint32_t;
 	};
 
 	template<>
@@ -67,8 +70,11 @@ namespace rtm
 		using matrix3x4 = matrix3x4d;
 		using matrix4x4 = matrix4x4d;
 
+		using float1 = double;
 		using float2 = float2d;
 		using float3 = float3d;
 		using float4 = float4d;
+
+		using int1 = uint64_t;
 	};
 }
