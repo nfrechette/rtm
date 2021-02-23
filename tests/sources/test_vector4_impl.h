@@ -1016,8 +1016,6 @@ void test_vector4_logical_impl()
 {
 	using Vector4Type = typename float_traits<FloatType>::vector4;
 
-	const Vector4Type zero = vector_zero();
-
 	const FloatType test_value0_flt[4] = { FloatType(2.0), FloatType(9.34), FloatType(-54.12), FloatType(6000.0) };
 	const FloatType test_value1_flt[4] = { FloatType(0.75), FloatType(-4.52), FloatType(44.68), FloatType(-54225.0) };
 	const FloatType test_value2_flt[4] = { FloatType(2.0), FloatType(-9.34), FloatType(54.12), FloatType(6000.1) };
