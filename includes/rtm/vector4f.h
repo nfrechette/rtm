@@ -2199,6 +2199,86 @@ namespace rtm
 	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE vector4f RTM_SIMD_CALL vector_dup_w(vector4f_arg0 input) RTM_NO_EXCEPT { return vector_mix<mix4::w, mix4::w, mix4::w, mix4::w>(input, input); }
 
 	//////////////////////////////////////////////////////////////////////////
+	// Logical
+	//////////////////////////////////////////////////////////////////////////
+
+	//////////////////////////////////////////////////////////////////////////
+	// Per component logical AND between the inputs: input0 & input1
+	//////////////////////////////////////////////////////////////////////////
+	inline vector4f RTM_SIMD_CALL vector_and(vector4f_arg0 input0, vector4f_arg1 input1) RTM_NO_EXCEPT
+	{
+#if defined(RTM_SSE2_INTRINSICS)
+		return _mm_and_ps(input0, input1);
+#elif defined(RTM_NEON_INTRINSICS)
+		return vreinterpretq_f32_u32(vandq_u32(vreinterpretq_u32_f32(input0), vreinterpretq_u32_f32(input1)));
+#else
+		const uint32_t* input0_ = reinterpret_cast<const uint32_t*>(&input0);
+		const uint32_t* input1_ = reinterpret_cast<const uint32_t*>(&input1);
+
+		vector4f result;
+		uint32_t* result_ = reinterpret_cast<uint32_t*>(&result);
+
+		result_[0] = input0_[0] & input1_[0];
+		result_[1] = input0_[1] & input1_[1];
+		result_[2] = input0_[2] & input1_[2];
+		result_[3] = input0_[3] & input1_[3];
+
+		return result;
+#endif
+	}
+
+	//////////////////////////////////////////////////////////////////////////
+	// Per component logical OR between the inputs: input0 | input1
+	//////////////////////////////////////////////////////////////////////////
+	inline vector4f RTM_SIMD_CALL vector_or(vector4f_arg0 input0, vector4f_arg1 input1) RTM_NO_EXCEPT
+	{
+#if defined(RTM_SSE2_INTRINSICS)
+		return _mm_or_ps(input0, input1);
+#elif defined(RTM_NEON_INTRINSICS)
+		return vreinterpretq_f32_u32(vorrq_u32(vreinterpretq_u32_f32(input0), vreinterpretq_u32_f32(input1)));
+#else
+		const uint32_t* input0_ = reinterpret_cast<const uint32_t*>(&input0);
+		const uint32_t* input1_ = reinterpret_cast<const uint32_t*>(&input1);
+
+		vector4f result;
+		uint32_t* result_ = reinterpret_cast<uint32_t*>(&result);
+
+		result_[0] = input0_[0] | input1_[0];
+		result_[1] = input0_[1] | input1_[1];
+		result_[2] = input0_[2] | input1_[2];
+		result_[3] = input0_[3] | input1_[3];
+
+		return result;
+#endif
+	}
+
+	//////////////////////////////////////////////////////////////////////////
+	// Per component logical XOR between the inputs: input0 ^ input1
+	//////////////////////////////////////////////////////////////////////////
+	inline vector4f RTM_SIMD_CALL vector_xor(vector4f_arg0 input0, vector4f_arg1 input1) RTM_NO_EXCEPT
+	{
+#if defined(RTM_SSE2_INTRINSICS)
+		return _mm_xor_ps(input0, input1);
+#elif defined(RTM_NEON_INTRINSICS)
+		return vreinterpretq_f32_u32(veorq_u32(vreinterpretq_u32_f32(input0), vreinterpretq_u32_f32(input1)));
+#else
+		const uint32_t* input0_ = reinterpret_cast<const uint32_t*>(&input0);
+		const uint32_t* input1_ = reinterpret_cast<const uint32_t*>(&input1);
+
+		vector4f result;
+		uint32_t* result_ = reinterpret_cast<uint32_t*>(&result);
+
+		result_[0] = input0_[0] ^ input1_[0];
+		result_[1] = input0_[1] ^ input1_[1];
+		result_[2] = input0_[2] ^ input1_[2];
+		result_[3] = input0_[3] ^ input1_[3];
+
+		return result;
+#endif
+	}
+
+
+	//////////////////////////////////////////////////////////////////////////
 	// Miscellaneous
 	//////////////////////////////////////////////////////////////////////////
 

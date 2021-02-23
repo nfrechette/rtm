@@ -939,6 +939,105 @@ void test_vector4_relational_impl(const FloatType threshold)
 	CHECK(vector_any_near_equal3(zero, vector_set(FloatType(1.0), FloatType(1.0), FloatType(1.0), FloatType(2.0)), FloatType(0.9999)) == false);
 }
 
+template<typename FloatType, typename Vector4Type>
+inline Vector4Type reference_vector_and(const Vector4Type& input0, const Vector4Type& input1)
+{
+	using Int1Type = typename float_traits<FloatType>::int1;
+
+	Int1Type input0_[4];
+	Int1Type input1_[4];
+
+	static_assert(sizeof(Vector4Type) == sizeof(input0_), "Unexpected size");
+	std::memcpy(&input0_[0], &input0, sizeof(Vector4Type));
+	std::memcpy(&input1_[0], &input1, sizeof(Vector4Type));
+
+	Int1Type result_[4];
+	result_[0] = input0_[0] & input1_[0];
+	result_[1] = input0_[1] & input1_[1];
+	result_[2] = input0_[2] & input1_[2];
+	result_[3] = input0_[3] & input1_[3];
+
+	Vector4Type result;
+	std::memcpy(&result, &result_[0], sizeof(Vector4Type));
+
+	return result;
+}
+
+template<typename FloatType, typename Vector4Type>
+inline Vector4Type reference_vector_or(const Vector4Type& input0, const Vector4Type& input1)
+{
+	using Int1Type = typename float_traits<FloatType>::int1;
+
+	Int1Type input0_[4];
+	Int1Type input1_[4];
+
+	static_assert(sizeof(Vector4Type) == sizeof(input0_), "Unexpected size");
+	std::memcpy(&input0_[0], &input0, sizeof(Vector4Type));
+	std::memcpy(&input1_[0], &input1, sizeof(Vector4Type));
+
+	Int1Type result_[4];
+	result_[0] = input0_[0] | input1_[0];
+	result_[1] = input0_[1] | input1_[1];
+	result_[2] = input0_[2] | input1_[2];
+	result_[3] = input0_[3] | input1_[3];
+
+	Vector4Type result;
+	std::memcpy(&result, &result_[0], sizeof(Vector4Type));
+
+	return result;
+}
+
+template<typename FloatType, typename Vector4Type>
+inline Vector4Type reference_vector_xor(const Vector4Type& input0, const Vector4Type& input1)
+{
+	using Int1Type = typename float_traits<FloatType>::int1;
+
+	Int1Type input0_[4];
+	Int1Type input1_[4];
+
+	static_assert(sizeof(Vector4Type) == sizeof(input0_), "Unexpected size");
+	std::memcpy(&input0_[0], &input0, sizeof(Vector4Type));
+	std::memcpy(&input1_[0], &input1, sizeof(Vector4Type));
+
+	Int1Type result_[4];
+	result_[0] = input0_[0] ^ input1_[0];
+	result_[1] = input0_[1] ^ input1_[1];
+	result_[2] = input0_[2] ^ input1_[2];
+	result_[3] = input0_[3] ^ input1_[3];
+
+	Vector4Type result;
+	std::memcpy(&result, &result_[0], sizeof(Vector4Type));
+
+	return result;
+}
+
+template<typename FloatType>
+void test_vector4_logical_impl()
+{
+	using Vector4Type = typename float_traits<FloatType>::vector4;
+
+	const Vector4Type zero = vector_zero();
+
+	const FloatType test_value0_flt[4] = { FloatType(2.0), FloatType(9.34), FloatType(-54.12), FloatType(6000.0) };
+	const FloatType test_value1_flt[4] = { FloatType(0.75), FloatType(-4.52), FloatType(44.68), FloatType(-54225.0) };
+	const FloatType test_value2_flt[4] = { FloatType(2.0), FloatType(-9.34), FloatType(54.12), FloatType(6000.1) };
+	const Vector4Type test_value0 = vector_set(test_value0_flt[0], test_value0_flt[1], test_value0_flt[2], test_value0_flt[3]);
+	const Vector4Type test_value1 = vector_set(test_value1_flt[0], test_value1_flt[1], test_value1_flt[2], test_value1_flt[3]);
+	const Vector4Type test_value2 = vector_set(test_value2_flt[0], test_value2_flt[1], test_value2_flt[2], test_value2_flt[3]);
+
+	CHECK(vector_all_near_equal(vector_and(test_value0, test_value1), reference_vector_and<FloatType>(test_value0, test_value1), FloatType(0.0)));
+	CHECK(vector_all_near_equal(vector_and(test_value1, test_value2), reference_vector_and<FloatType>(test_value1, test_value2), FloatType(0.0)));
+	CHECK(vector_all_near_equal(vector_and(test_value0, test_value2), reference_vector_and<FloatType>(test_value0, test_value2), FloatType(0.0)));
+
+	CHECK(vector_all_near_equal(vector_or(test_value0, test_value1), reference_vector_or<FloatType>(test_value0, test_value1), FloatType(0.0)));
+	CHECK(vector_all_near_equal(vector_or(test_value1, test_value2), reference_vector_or<FloatType>(test_value1, test_value2), FloatType(0.0)));
+	CHECK(vector_all_near_equal(vector_or(test_value0, test_value2), reference_vector_or<FloatType>(test_value0, test_value2), FloatType(0.0)));
+
+	CHECK(vector_all_near_equal(vector_xor(test_value0, test_value1), reference_vector_xor<FloatType>(test_value0, test_value1), FloatType(0.0)));
+	CHECK(vector_all_near_equal(vector_xor(test_value1, test_value2), reference_vector_xor<FloatType>(test_value1, test_value2), FloatType(0.0)));
+	CHECK(vector_all_near_equal(vector_xor(test_value0, test_value2), reference_vector_xor<FloatType>(test_value0, test_value2), FloatType(0.0)));
+}
+
 template<typename FloatType>
 void test_vector4_impl(const FloatType threshold)
 {

@@ -1889,6 +1889,86 @@ namespace rtm
 
 
 	//////////////////////////////////////////////////////////////////////////
+	// Logical
+	//////////////////////////////////////////////////////////////////////////
+
+	//////////////////////////////////////////////////////////////////////////
+	// Per component logical AND between the inputs: input0 & input1
+	//////////////////////////////////////////////////////////////////////////
+	inline vector4d vector_and(const vector4d& input0, const vector4d& input1) RTM_NO_EXCEPT
+	{
+#if defined(RTM_SSE2_INTRINSICS)
+		__m128d xy = _mm_and_pd(input0.xy, input1.xy);
+		__m128d zw = _mm_and_pd(input0.zw, input1.zw);
+		return vector4d{ xy, zw };
+#else
+		const uint64_t* input0_ = reinterpret_cast<const uint64_t*>(&input0);
+		const uint64_t* input1_ = reinterpret_cast<const uint64_t*>(&input1);
+
+		vector4d result;
+		uint64_t* result_ = reinterpret_cast<uint64_t*>(&result);
+
+		result_[0] = input0_[0] & input1_[0];
+		result_[1] = input0_[1] & input1_[1];
+		result_[2] = input0_[2] & input1_[2];
+		result_[3] = input0_[3] & input1_[3];
+
+		return result;
+#endif
+	}
+
+	//////////////////////////////////////////////////////////////////////////
+	// Per component logical OR between the inputs: input0 | input1
+	//////////////////////////////////////////////////////////////////////////
+	inline vector4d vector_or(const vector4d& input0, const vector4d& input1) RTM_NO_EXCEPT
+	{
+#if defined(RTM_SSE2_INTRINSICS)
+		__m128d xy = _mm_or_pd(input0.xy, input1.xy);
+		__m128d zw = _mm_or_pd(input0.zw, input1.zw);
+		return vector4d{ xy, zw };
+#else
+		const uint64_t* input0_ = reinterpret_cast<const uint64_t*>(&input0);
+		const uint64_t* input1_ = reinterpret_cast<const uint64_t*>(&input1);
+
+		vector4d result;
+		uint64_t* result_ = reinterpret_cast<uint64_t*>(&result);
+
+		result_[0] = input0_[0] | input1_[0];
+		result_[1] = input0_[1] | input1_[1];
+		result_[2] = input0_[2] | input1_[2];
+		result_[3] = input0_[3] | input1_[3];
+
+		return result;
+#endif
+	}
+
+	//////////////////////////////////////////////////////////////////////////
+	// Per component logical XOR between the inputs: input0 ^ input1
+	//////////////////////////////////////////////////////////////////////////
+	inline vector4d vector_xor(const vector4d& input0, const vector4d& input1) RTM_NO_EXCEPT
+	{
+#if defined(RTM_SSE2_INTRINSICS)
+		__m128d xy = _mm_xor_pd(input0.xy, input1.xy);
+		__m128d zw = _mm_xor_pd(input0.zw, input1.zw);
+		return vector4d{ xy, zw };
+#else
+		const uint64_t* input0_ = reinterpret_cast<const uint64_t*>(&input0);
+		const uint64_t* input1_ = reinterpret_cast<const uint64_t*>(&input1);
+
+		vector4d result;
+		uint64_t* result_ = reinterpret_cast<uint64_t*>(&result);
+
+		result_[0] = input0_[0] ^ input1_[0];
+		result_[1] = input0_[1] ^ input1_[1];
+		result_[2] = input0_[2] ^ input1_[2];
+		result_[3] = input0_[3] ^ input1_[3];
+
+		return result;
+#endif
+	}
+
+
+	//////////////////////////////////////////////////////////////////////////
 	// Miscellaneous
 	//////////////////////////////////////////////////////////////////////////
 
