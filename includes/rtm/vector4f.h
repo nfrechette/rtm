@@ -2212,6 +2212,13 @@ namespace rtm
 #elif defined(RTM_NEON_INTRINSICS)
 		return vreinterpretq_f32_u32(vandq_u32(vreinterpretq_u32_f32(input0), vreinterpretq_u32_f32(input1)));
 #else
+
+#if defined(RTM_COMPILER_GCC)
+	// GCC complains 'result' is used uninitialized but that is not true, ignore it
+	#pragma GCC diagnostic push
+	#pragma GCC diagnostic ignored "-Wuninitialized"
+#endif
+
 		const uint32_t* input0_ = reinterpret_cast<const uint32_t*>(&input0);
 		const uint32_t* input1_ = reinterpret_cast<const uint32_t*>(&input1);
 
@@ -2224,6 +2231,10 @@ namespace rtm
 		result_[3] = input0_[3] & input1_[3];
 
 		return result;
+
+#if defined(RTM_COMPILER_GCC)
+	#pragma GCC diagnostic pop
+#endif
 #endif
 	}
 
@@ -2237,6 +2248,13 @@ namespace rtm
 #elif defined(RTM_NEON_INTRINSICS)
 		return vreinterpretq_f32_u32(vorrq_u32(vreinterpretq_u32_f32(input0), vreinterpretq_u32_f32(input1)));
 #else
+
+#if defined(RTM_COMPILER_GCC)
+	// GCC complains 'result' is used uninitialized but that is not true, ignore it
+	#pragma GCC diagnostic push
+	#pragma GCC diagnostic ignored "-Wuninitialized"
+#endif
+
 		const uint32_t* input0_ = reinterpret_cast<const uint32_t*>(&input0);
 		const uint32_t* input1_ = reinterpret_cast<const uint32_t*>(&input1);
 
@@ -2249,6 +2267,10 @@ namespace rtm
 		result_[3] = input0_[3] | input1_[3];
 
 		return result;
+
+#if defined(RTM_COMPILER_GCC)
+	#pragma GCC diagnostic pop
+#endif
 #endif
 	}
 
@@ -2262,6 +2284,13 @@ namespace rtm
 #elif defined(RTM_NEON_INTRINSICS)
 		return vreinterpretq_f32_u32(veorq_u32(vreinterpretq_u32_f32(input0), vreinterpretq_u32_f32(input1)));
 #else
+
+#if defined(RTM_COMPILER_GCC)
+	// GCC complains 'result' is used uninitialized but that is not true, ignore it
+	#pragma GCC diagnostic push
+	#pragma GCC diagnostic ignored "-Wuninitialized"
+#endif
+
 		const uint32_t* input0_ = reinterpret_cast<const uint32_t*>(&input0);
 		const uint32_t* input1_ = reinterpret_cast<const uint32_t*>(&input1);
 
@@ -2274,6 +2303,10 @@ namespace rtm
 		result_[3] = input0_[3] ^ input1_[3];
 
 		return result;
+
+#if defined(RTM_COMPILER_GCC)
+	#pragma GCC diagnostic pop
+#endif
 #endif
 	}
 
