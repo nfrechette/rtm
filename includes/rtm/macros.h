@@ -183,8 +183,8 @@ RTM_IMPL_FILE_PRAGMA_PUSH
 	//////////////////////////////////////////////////////////////////////////
 	#define RTM_MATRIXF_TRANSPOSE_4X4(input_xyzw0, input_xyzw1, input_xyzw2, input_xyzw3, output_xxxx, output_yyyy, output_zzzz, output_wwww) \
 		do { \
-			const float32x4x2_t x0x2y0y2_z0z2w0w2 = vzipq_f32(input_xyzw0, input_xyzw2); \
-			const float32x4x2_t x1x3y1y3_z1z3w1w3 = vzipq_f32(input_xyzw1, input_xyzw3); \
+			const float32x4x2_t x0x2y0y2_z0z2w0w2 = vzipq_f32((input_xyzw0), (input_xyzw2)); \
+			const float32x4x2_t x1x3y1y3_z1z3w1w3 = vzipq_f32((input_xyzw1), (input_xyzw3)); \
 			const float32x4x2_t x0x1x2x3_y0y1y2y3 = vzipq_f32(x0x2y0y2_z0z2w0w2.val[0], x1x3y1y3_z1z3w1w3.val[0]); \
 			const float32x4x2_t z0z1z2z3_w0w1w2w3 = vzipq_f32(x0x2y0y2_z0z2w0w2.val[1], x1x3y1y3_z1z3w1w3.val[1]); \
 			(output_xxxx) = x0x1x2x3_y0y1y2y3.val[0]; \
@@ -229,8 +229,8 @@ RTM_IMPL_FILE_PRAGMA_PUSH
 	//////////////////////////////////////////////////////////////////////////
 	#define RTM_MATRIXF_TRANSPOSE_3X3(input_xyz0, input_xyz1, input_xyz2, output_xxx, output_yyy, output_zzz) \
 		do { \
-			const float32x4x2_t x0x2y0y2_z0z2w0w2 = vzipq_f32(input_xyz0, input_xyz2); \
-			const float32x4x2_t x1x1y1y1_z1z1w1w1 = vzipq_f32(input_xyz1, input_xyz1); \
+			const float32x4x2_t x0x2y0y2_z0z2w0w2 = vzipq_f32((input_xyz0), (input_xyz2)); \
+			const float32x4x2_t x1x1y1y1_z1z1w1w1 = vzipq_f32((input_xyz1), (input_xyz1)); \
 			const float32x4x2_t x0x1x2x1_y0y1y2y1 = vzipq_f32(x0x2y0y2_z0z2w0w2.val[0], x1x1y1y1_z1z1w1w1.val[0]); \
 			const float32x4x2_t z0z1z2z1_w0w1w2w1 = vzipq_f32(x0x2y0y2_z0z2w0w2.val[1], x1x1y1y1_z1z1w1w1.val[1]); \
 			(output_xxx) = x0x1x2x1_y0y1y2y1.val[0]; \
@@ -270,8 +270,8 @@ RTM_IMPL_FILE_PRAGMA_PUSH
 	//////////////////////////////////////////////////////////////////////////
 	#define RTM_MATRIXF_TRANSPOSE_4X3(input_xyz0, input_xyz1, input_xyz2, input_xyz3, output_xxxx, output_yyyy, output_zzzz) \
 		do { \
-			const float32x4x2_t x0x2y0y2_z0z2w0w2 = vzipq_f32(input_xyz0, input_xyz2); \
-			const float32x4x2_t x1x3y1y3_z1z3w1w3 = vzipq_f32(input_xyz1, input_xyz3); \
+			const float32x4x2_t x0x2y0y2_z0z2w0w2 = vzipq_f32((input_xyz0), (input_xyz2)); \
+			const float32x4x2_t x1x3y1y3_z1z3w1w3 = vzipq_f32((input_xyz1), (input_xyz3)); \
 			const float32x4x2_t x0x1x2x3_y0y1y2y3 = vzipq_f32(x0x2y0y2_z0z2w0w2.val[0], x1x3y1y3_z1z3w1w3.val[0]); \
 			const float32x4x2_t z0z1z2z3_w0w1w2w3 = vzipq_f32(x0x2y0y2_z0z2w0w2.val[1], x1x3y1y3_z1z3w1w3.val[1]); \
 			(output_xxxx) = x0x1x2x3_y0y1y2y3.val[0]; \
@@ -313,8 +313,8 @@ RTM_IMPL_FILE_PRAGMA_PUSH
 	//////////////////////////////////////////////////////////////////////////
 	#define RTM_MATRIXF_TRANSPOSE_3X4(input_xyzw0, input_xyzw1, input_xyzw2, output_xxx, output_yyy, output_zzz, output_www) \
 		do { \
-			const float32x4x2_t x0x2y0y2_z0z2w0w2 = vzipq_f32(input_xyzw0, input_xyzw2); \
-			const float32x4x2_t x1x1y1y1_z1z1w1w1 = vzipq_f32(input_xyzw1, input_xyzw1); \
+			const float32x4x2_t x0x2y0y2_z0z2w0w2 = vzipq_f32((input_xyzw0), (input_xyzw2)); \
+			const float32x4x2_t x1x1y1y1_z1z1w1w1 = vzipq_f32((input_xyzw1), (input_xyzw1)); \
 			const float32x4x2_t x0x1x2x1_y0y1y2y1 = vzipq_f32(x0x2y0y2_z0z2w0w2.val[0], x1x1y1y1_z1z1w1w1.val[0]); \
 			const float32x4x2_t z0z1z2z1_w0w1w2w1 = vzipq_f32(x0x2y0y2_z0z2w0w2.val[1], x1x1y1y1_z1z1w1w1.val[1]); \
 			(output_xxx) = x0x1x2x1_y0y1y2y1.val[0]; \
