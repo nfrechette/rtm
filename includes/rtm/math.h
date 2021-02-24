@@ -52,7 +52,7 @@
 	#elif defined(__SSSE3__)
 		#define RTM_SSE3_INTRINSICS
 		#define RTM_SSE2_INTRINSICS
-	#elif defined(__SSE2__) || defined(RTM_ARCH_x86) || defined(RTM_ARCH_X64)
+	#elif defined(__SSE2__) || defined(RTM_ARCH_X86) || defined(RTM_ARCH_X64)
 		#define RTM_SSE2_INTRINSICS
 	#endif
 
