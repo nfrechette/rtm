@@ -260,11 +260,12 @@ RTM_IMPL_FILE_PRAGMA_PUSH
 	//////////////////////////////////////////////////////////////////////////
 	#define RTM_MATRIXF_TRANSPOSE_3X3(input_xyz0, input_xyz1, input_xyz2, output_xxx, output_yyy, output_zzz) \
 		do { \
+			const __m128 input_xyz2_ = (input_xyz2); \
 			const __m128 x0y0x1y1 = _mm_shuffle_ps((input_xyz0), (input_xyz1), _MM_SHUFFLE(1, 0, 1, 0)); \
 			const __m128 z0w0z1w1 = _mm_shuffle_ps((input_xyz0), (input_xyz1), _MM_SHUFFLE(3, 2, 3, 2)); \
-			(output_xxx) = _mm_shuffle_ps(x0y0x1y1, (input_xyz2), _MM_SHUFFLE(2, 0, 2, 0)); \
-			(output_yyy) = _mm_shuffle_ps(x0y0x1y1, (input_xyz2), _MM_SHUFFLE(3, 1, 3, 1)); \
-			(output_zzz) = _mm_shuffle_ps(z0w0z1w1, (input_xyz2), _MM_SHUFFLE(2, 2, 2, 0)); \
+			(output_xxx) = _mm_shuffle_ps(x0y0x1y1, input_xyz2_, _MM_SHUFFLE(2, 0, 2, 0)); \
+			(output_yyy) = _mm_shuffle_ps(x0y0x1y1, input_xyz2_, _MM_SHUFFLE(3, 1, 3, 1)); \
+			(output_zzz) = _mm_shuffle_ps(z0w0z1w1, input_xyz2_, _MM_SHUFFLE(2, 2, 2, 0)); \
 		} while(0)
 #else
 	//////////////////////////////////////////////////////////////////////////
@@ -366,12 +367,13 @@ RTM_IMPL_FILE_PRAGMA_PUSH
 	//////////////////////////////////////////////////////////////////////////
 	#define RTM_MATRIXF_TRANSPOSE_3X4(input_xyzw0, input_xyzw1, input_xyzw2, output_xxx, output_yyy, output_zzz, output_www) \
 		do { \
+			const __m128 input_xyzw2_ = (input_xyzw2); \
 			const __m128 x0y0x1y1 = _mm_shuffle_ps((input_xyzw0), (input_xyzw1), _MM_SHUFFLE(1, 0, 1, 0)); \
 			const __m128 z0w0z1w1 = _mm_shuffle_ps((input_xyzw0), (input_xyzw1), _MM_SHUFFLE(3, 2, 3, 2)); \
-			(output_xxx) = _mm_shuffle_ps(x0y0x1y1, (input_xyzw2), _MM_SHUFFLE(0, 0, 2, 0)); \
-			(output_yyy) = _mm_shuffle_ps(x0y0x1y1, (input_xyzw2), _MM_SHUFFLE(1, 1, 3, 1)); \
-			(output_zzz) = _mm_shuffle_ps(z0w0z1w1, (input_xyzw2), _MM_SHUFFLE(2, 2, 2, 0)); \
-			(output_www) = _mm_shuffle_ps(z0w0z1w1, (input_xyzw2), _MM_SHUFFLE(3, 3, 3, 1)); \
+			(output_xxx) = _mm_shuffle_ps(x0y0x1y1, input_xyzw2_, _MM_SHUFFLE(0, 0, 2, 0)); \
+			(output_yyy) = _mm_shuffle_ps(x0y0x1y1, input_xyzw2_, _MM_SHUFFLE(1, 1, 3, 1)); \
+			(output_zzz) = _mm_shuffle_ps(z0w0z1w1, input_xyzw2_, _MM_SHUFFLE(2, 2, 2, 0)); \
+			(output_www) = _mm_shuffle_ps(z0w0z1w1, input_xyzw2_, _MM_SHUFFLE(3, 3, 3, 1)); \
 		} while(0)
 #else
 	//////////////////////////////////////////////////////////////////////////
