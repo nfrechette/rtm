@@ -76,7 +76,7 @@
 	// With MSVC and SSE2, we can use the __vectorcall calling convention to pass vector types and aggregates by value through registers
 	// for improved code generation
 	#if defined(RTM_COMPILER_MSVC) && !defined(_MANAGED) && !defined(_M_CEE) && (!defined(_M_IX86_FP) || (_M_IX86_FP > 1)) && !defined(RTM_SIMD_CALL)
-		#if RTM_COMPILER_MSVC >= ACL_COMPILER_MSVC_2015
+		#if RTM_COMPILER_MSVC >= RTM_COMPILER_MSVC_2015
 			#define RTM_USE_VECTORCALL
 		#endif
 	#endif
