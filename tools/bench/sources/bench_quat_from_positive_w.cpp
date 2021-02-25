@@ -125,10 +125,10 @@ static void bm_quat_from_positive_w_scalar(benchmark::State& state)
 
 	for (auto _ : state)
 	{
-		q0 = quat_from_positive_w_scalar(q0);
-		q1 = quat_from_positive_w_scalar(q1);
-		q2 = quat_from_positive_w_scalar(q2);
-		q3 = quat_from_positive_w_scalar(q3);
+		q0 = quat_from_positive_w_scalar(quat_to_vector(q0));
+		q1 = quat_from_positive_w_scalar(quat_to_vector(q1));
+		q2 = quat_from_positive_w_scalar(quat_to_vector(q2));
+		q3 = quat_from_positive_w_scalar(quat_to_vector(q3));
 	}
 
 	benchmark::DoNotOptimize(q0);

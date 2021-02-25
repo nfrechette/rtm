@@ -86,11 +86,7 @@ RTM_FORCE_NOINLINE float RTM_SIMD_CALL scalar_sin_sse2(float input) RTM_NO_EXCEP
 
 	__m128 is_less_equal_than_half_pi = _mm_cmple_ss(x_abs, _mm_set_ps1(rtm::constants::half_pi()));
 
-#if defined(RTM_AVX_INTRINSICS)
-	x = _mm_blendv_ps(reflection, x, is_less_equal_than_half_pi);
-#else
-	x = _mm_or_ps(_mm_andnot_ps(is_less_equal_than_half_pi, reflection), _mm_and_ps(x, is_less_equal_than_half_pi));
-#endif
+	x = RTM_VECTOR4F_SELECT(is_less_equal_than_half_pi, x, reflection);
 
 	// Calculate our value
 	const float x2 = _mm_cvtss_f32(_mm_mul_ss(x, x));

@@ -149,6 +149,12 @@ namespace rtm
 		//////////////////////////////////////////////////////////////////////////
 		RTM_DISABLE_SECURITY_COOKIE_CHECK inline quatf RTM_SIMD_CALL quat_from_matrix(vector4f_arg0 x_axis, vector4f_arg1 y_axis, vector4f_arg2 z_axis) RTM_NO_EXCEPT
 		{
+			// TODO: Rework this function, we should be able to handle one axis with zero scale by using the largest diagonal element
+			// See here for details: https://www.euclideanspace.com/maths/geometry/rotations/conversions/matrixToQuaternion/
+			// We should be able to remove the case with trace > 0 as well by always using the diagonal derivation
+			// This should give some result as well if at least one axis has non-zero scale.
+			// Unclear what the result will be, if any, with a zero matrix
+
 			const vector4f zero = vector_zero();
 			if (vector_all_near_equal3(x_axis, zero) || vector_all_near_equal3(y_axis, zero) || vector_all_near_equal3(z_axis, zero))
 				return quat_identity();	// Zero scale not supported, return the identity

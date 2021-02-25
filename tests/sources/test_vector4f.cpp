@@ -52,6 +52,11 @@ TEST_CASE("vector4f math relational", "[math][vector4]")
 	test_vector4_relational_impl<float>(threshold);
 }
 
+TEST_CASE("vector4f math logical", "[math][vector4]")
+{
+	test_vector4_logical_impl<float>();
+}
+
 TEST_CASE("vector4f math misc", "[math][vector4]")
 {
 #if defined(RTM_NO_INTRINSICS)

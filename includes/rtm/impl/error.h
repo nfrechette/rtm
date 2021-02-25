@@ -46,7 +46,7 @@ RTM_IMPL_FILE_PRAGMA_PUSH
 // Throwing:
 //    In order to enable the throwing behavior, simply define the macro RTM_ON_ASSERT_THROW:
 //    #define RTM_ON_ASSERT_THROW
-//    Note that the type of the exception thrown is std::runtime_error.
+//    Note that the type of the exception thrown is rtm::runtime_assert.
 //
 // Custom function:
 //    In order to enable the custom function calling behavior, define the macro RTM_ON_ASSERT_CUSTOM
@@ -108,9 +108,7 @@ RTM_IMPL_FILE_PRAGMA_PUSH
 	{
 		class runtime_assert final : public std::runtime_error
 		{
-		public:
-			explicit runtime_assert(const std::string& message) : std::runtime_error(message.c_str()) {}
-			explicit runtime_assert(const char* message) : std::runtime_error(message) {}
+			using std::runtime_error::runtime_error;	// Inherit constructors
 		};
 
 		namespace rtm_impl

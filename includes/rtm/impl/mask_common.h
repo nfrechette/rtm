@@ -201,7 +201,7 @@ namespace rtm
 	// are identical in the mask, which should be true.
 	// See: https://github.com/nfrechette/rtm/issues/84
 	//////////////////////////////////////////////////////////////////////////
-	#if defined(RTM_COMPILER_MSVC) && defined(_M_IX86) && !defined(NDEBUG)
+	#if defined(RTM_COMPILER_MSVC) && defined(RTM_ARCH_X86) && !defined(NDEBUG)
 				const uint32_t x_mask = x ? 0xFFFFFFFFU : 0;
 				const uint32_t y_mask = y ? 0xFFFFFFFFU : 0;
 				const uint32_t z_mask = z ? 0xFFFFFFFFU : 0;
@@ -226,7 +226,7 @@ namespace rtm
 	// are identical in the mask, which should be true.
 	// See: https://github.com/nfrechette/rtm/issues/84
 	//////////////////////////////////////////////////////////////////////////
-	#if defined(RTM_COMPILER_MSVC) && defined(_M_IX86) && !defined(NDEBUG)
+	#if defined(RTM_COMPILER_MSVC) && defined(RTM_ARCH_X86) && !defined(NDEBUG)
 				const uint32_t x_mask = x ? 0xFFFFFFFFU : 0;
 				const uint32_t y_mask = y ? 0xFFFFFFFFU : 0;
 				const uint32_t z_mask = z ? 0xFFFFFFFFU : 0;

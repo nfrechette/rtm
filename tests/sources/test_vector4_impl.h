@@ -512,6 +512,11 @@ void test_vector4_arithmetic_impl(const FloatType threshold)
 	CHECK(scalar_near_equal(vector_dot3_result, scalar_dot3_result, threshold));
 	const ScalarType vector_dot3_result_scalar = vector_dot3(test_value10, test_value11);
 	CHECK(scalar_equal(vector_dot3_result, scalar_cast(vector_dot3_result_scalar)));
+	const Vector4Type vector_dot3_result_vec = vector_dot3(test_value10, test_value11);
+	CHECK(scalar_equal(vector_dot3_result, (FloatType)vector_get_x(vector_dot3_result_vec)));
+	CHECK(scalar_equal(vector_dot3_result, (FloatType)vector_get_y(vector_dot3_result_vec)));
+	CHECK(scalar_equal(vector_dot3_result, (FloatType)vector_get_z(vector_dot3_result_vec)));
+	CHECK(scalar_equal(vector_dot3_result, (FloatType)vector_get_w(vector_dot3_result_vec)));
 
 	const ScalarType vector_sdot_result = vector_dot(test_value10, test_value11);
 	CHECK(scalar_near_equal(scalar_cast(vector_sdot_result), scalar_dot_result, threshold));
@@ -575,11 +580,18 @@ void test_vector4_arithmetic_impl(const FloatType threshold)
 	CHECK(scalar_near_equal(vector_get_z(vector_lerp(test_value10, test_value11, scalar_set(FloatType(0.33)))), ((test_value11_flt[2] - test_value10_flt[2]) * FloatType(0.33)) + test_value10_flt[2], threshold));
 	CHECK(scalar_near_equal(vector_get_w(vector_lerp(test_value10, test_value11, scalar_set(FloatType(0.33)))), ((test_value11_flt[3] - test_value10_flt[3]) * FloatType(0.33)) + test_value10_flt[3], threshold));
 
+	CHECK(scalar_near_equal(vector_get_x(vector_lerp(test_value10, test_value11, vector_set(FloatType(0.33)))), ((test_value11_flt[0] - test_value10_flt[0]) * FloatType(0.33)) + test_value10_flt[0], threshold));
+	CHECK(scalar_near_equal(vector_get_y(vector_lerp(test_value10, test_value11, vector_set(FloatType(0.33)))), ((test_value11_flt[1] - test_value10_flt[1]) * FloatType(0.33)) + test_value10_flt[1], threshold));
+	CHECK(scalar_near_equal(vector_get_z(vector_lerp(test_value10, test_value11, vector_set(FloatType(0.33)))), ((test_value11_flt[2] - test_value10_flt[2]) * FloatType(0.33)) + test_value10_flt[2], threshold));
+	CHECK(scalar_near_equal(vector_get_w(vector_lerp(test_value10, test_value11, vector_set(FloatType(0.33)))), ((test_value11_flt[3] - test_value10_flt[3]) * FloatType(0.33)) + test_value10_flt[3], threshold));
+
 	// Lerp must be stable and return exactly the start when the interpolation alpha is 0.0 and exactly the end when 1.0
 	CHECK(vector_all_near_equal(vector_lerp(test_value10, test_value11, FloatType(0.0)), test_value10, FloatType(0.0)));
 	CHECK(vector_all_near_equal(vector_lerp(test_value10, test_value11, FloatType(1.0)), test_value11, FloatType(0.0)));
 	CHECK(vector_all_near_equal(vector_lerp(test_value10, test_value11, scalar_set(FloatType(0.0))), test_value10, FloatType(0.0)));
 	CHECK(vector_all_near_equal(vector_lerp(test_value10, test_value11, scalar_set(FloatType(1.0))), test_value11, FloatType(0.0)));
+	CHECK(vector_all_near_equal(vector_lerp(test_value10, test_value11, vector_set(FloatType(0.0))), test_value10, FloatType(0.0)));
+	CHECK(vector_all_near_equal(vector_lerp(test_value10, test_value11, vector_set(FloatType(1.0))), test_value11, FloatType(0.0)));
 
 	CHECK(FloatType(vector_get_x(vector_fraction(neg_zero))) == scalar_fraction(FloatType(-0.0)));
 	CHECK(scalar_near_equal(vector_get_x(vector_fraction(test_value0)), scalar_fraction(test_value0_flt[0]), threshold));
@@ -927,6 +939,103 @@ void test_vector4_relational_impl(const FloatType threshold)
 	CHECK(vector_any_near_equal3(zero, vector_set(FloatType(1.0), FloatType(1.0), FloatType(1.0), FloatType(2.0)), FloatType(0.9999)) == false);
 }
 
+template<typename FloatType, typename Vector4Type>
+inline Vector4Type reference_vector_and(const Vector4Type& input0, const Vector4Type& input1)
+{
+	using Int1Type = typename float_traits<FloatType>::int1;
+
+	Int1Type input0_[4];
+	Int1Type input1_[4];
+
+	static_assert(sizeof(Vector4Type) == sizeof(input0_), "Unexpected size");
+	std::memcpy(&input0_[0], &input0, sizeof(Vector4Type));
+	std::memcpy(&input1_[0], &input1, sizeof(Vector4Type));
+
+	Int1Type result_[4];
+	result_[0] = input0_[0] & input1_[0];
+	result_[1] = input0_[1] & input1_[1];
+	result_[2] = input0_[2] & input1_[2];
+	result_[3] = input0_[3] & input1_[3];
+
+	Vector4Type result;
+	std::memcpy(&result, &result_[0], sizeof(Vector4Type));
+
+	return result;
+}
+
+template<typename FloatType, typename Vector4Type>
+inline Vector4Type reference_vector_or(const Vector4Type& input0, const Vector4Type& input1)
+{
+	using Int1Type = typename float_traits<FloatType>::int1;
+
+	Int1Type input0_[4];
+	Int1Type input1_[4];
+
+	static_assert(sizeof(Vector4Type) == sizeof(input0_), "Unexpected size");
+	std::memcpy(&input0_[0], &input0, sizeof(Vector4Type));
+	std::memcpy(&input1_[0], &input1, sizeof(Vector4Type));
+
+	Int1Type result_[4];
+	result_[0] = input0_[0] | input1_[0];
+	result_[1] = input0_[1] | input1_[1];
+	result_[2] = input0_[2] | input1_[2];
+	result_[3] = input0_[3] | input1_[3];
+
+	Vector4Type result;
+	std::memcpy(&result, &result_[0], sizeof(Vector4Type));
+
+	return result;
+}
+
+template<typename FloatType, typename Vector4Type>
+inline Vector4Type reference_vector_xor(const Vector4Type& input0, const Vector4Type& input1)
+{
+	using Int1Type = typename float_traits<FloatType>::int1;
+
+	Int1Type input0_[4];
+	Int1Type input1_[4];
+
+	static_assert(sizeof(Vector4Type) == sizeof(input0_), "Unexpected size");
+	std::memcpy(&input0_[0], &input0, sizeof(Vector4Type));
+	std::memcpy(&input1_[0], &input1, sizeof(Vector4Type));
+
+	Int1Type result_[4];
+	result_[0] = input0_[0] ^ input1_[0];
+	result_[1] = input0_[1] ^ input1_[1];
+	result_[2] = input0_[2] ^ input1_[2];
+	result_[3] = input0_[3] ^ input1_[3];
+
+	Vector4Type result;
+	std::memcpy(&result, &result_[0], sizeof(Vector4Type));
+
+	return result;
+}
+
+template<typename FloatType>
+void test_vector4_logical_impl()
+{
+	using Vector4Type = typename float_traits<FloatType>::vector4;
+
+	const FloatType test_value0_flt[4] = { FloatType(2.0), FloatType(9.34), FloatType(-54.12), FloatType(6000.0) };
+	const FloatType test_value1_flt[4] = { FloatType(0.75), FloatType(-4.52), FloatType(44.68), FloatType(-54225.0) };
+	const FloatType test_value2_flt[4] = { FloatType(2.0), FloatType(-9.34), FloatType(54.12), FloatType(6000.1) };
+	const Vector4Type test_value0 = vector_set(test_value0_flt[0], test_value0_flt[1], test_value0_flt[2], test_value0_flt[3]);
+	const Vector4Type test_value1 = vector_set(test_value1_flt[0], test_value1_flt[1], test_value1_flt[2], test_value1_flt[3]);
+	const Vector4Type test_value2 = vector_set(test_value2_flt[0], test_value2_flt[1], test_value2_flt[2], test_value2_flt[3]);
+
+	CHECK(vector_all_near_equal(vector_and(test_value0, test_value1), reference_vector_and<FloatType>(test_value0, test_value1), FloatType(0.0)));
+	CHECK(vector_all_near_equal(vector_and(test_value1, test_value2), reference_vector_and<FloatType>(test_value1, test_value2), FloatType(0.0)));
+	CHECK(vector_all_near_equal(vector_and(test_value0, test_value2), reference_vector_and<FloatType>(test_value0, test_value2), FloatType(0.0)));
+
+	CHECK(vector_all_near_equal(vector_or(test_value0, test_value1), reference_vector_or<FloatType>(test_value0, test_value1), FloatType(0.0)));
+	CHECK(vector_all_near_equal(vector_or(test_value1, test_value2), reference_vector_or<FloatType>(test_value1, test_value2), FloatType(0.0)));
+	CHECK(vector_all_near_equal(vector_or(test_value0, test_value2), reference_vector_or<FloatType>(test_value0, test_value2), FloatType(0.0)));
+
+	CHECK(vector_all_near_equal(vector_xor(test_value0, test_value1), reference_vector_xor<FloatType>(test_value0, test_value1), FloatType(0.0)));
+	CHECK(vector_all_near_equal(vector_xor(test_value1, test_value2), reference_vector_xor<FloatType>(test_value1, test_value2), FloatType(0.0)));
+	CHECK(vector_all_near_equal(vector_xor(test_value0, test_value2), reference_vector_xor<FloatType>(test_value0, test_value2), FloatType(0.0)));
+}
+
 template<typename FloatType>
 void test_vector4_impl(const FloatType threshold)
 {
@@ -1129,11 +1238,15 @@ void test_vector4_impl(const FloatType threshold)
 			const FloatType ref_sin = scalar_sin(angle);
 			const FloatType ref_cos = scalar_cos(angle);
 			const FloatType ref_tan = scalar_tan(angle);
+			const Vector4Type ref_sincos = scalar_sincos(angle);
 			const FloatType ref_asin = scalar_asin(ref_sin);
 			const FloatType ref_acos = scalar_acos(ref_cos);
 
 			const Vector4Type rtm_sin = vector_sin(angle_v);
 			const Vector4Type rtm_cos = vector_cos(angle_v);
+			Vector4Type rtm_sin2;
+			Vector4Type rtm_cos2;
+			vector_sincos(angle_v, rtm_sin2, rtm_cos2);
 			const Vector4Type rtm_tan = vector_tan(angle_v);
 			const Vector4Type rtm_asin = vector_asin(vector_set(ref_sin));
 			const Vector4Type rtm_acos = vector_acos(vector_set(ref_cos));
@@ -1157,6 +1270,15 @@ void test_vector4_impl(const FloatType threshold)
 			CHECK(scalar_near_equal(FloatType(vector_get_y(rtm_acos)), ref_acos, threshold));
 			CHECK(scalar_near_equal(FloatType(vector_get_z(rtm_acos)), ref_acos, threshold));
 			CHECK(scalar_near_equal(FloatType(vector_get_w(rtm_acos)), ref_acos, threshold));
+
+			CHECK(scalar_near_equal(FloatType(vector_get_x(rtm_sin2)), (FloatType)vector_get_x(ref_sincos), threshold));
+			CHECK(scalar_near_equal(FloatType(vector_get_y(rtm_sin2)), (FloatType)vector_get_x(ref_sincos), threshold));
+			CHECK(scalar_near_equal(FloatType(vector_get_z(rtm_sin2)), (FloatType)vector_get_x(ref_sincos), threshold));
+			CHECK(scalar_near_equal(FloatType(vector_get_w(rtm_sin2)), (FloatType)vector_get_x(ref_sincos), threshold));
+			CHECK(scalar_near_equal(FloatType(vector_get_x(rtm_cos2)), (FloatType)vector_get_y(ref_sincos), threshold));
+			CHECK(scalar_near_equal(FloatType(vector_get_y(rtm_cos2)), (FloatType)vector_get_y(ref_sincos), threshold));
+			CHECK(scalar_near_equal(FloatType(vector_get_z(rtm_cos2)), (FloatType)vector_get_y(ref_sincos), threshold));
+			CHECK(scalar_near_equal(FloatType(vector_get_w(rtm_cos2)), (FloatType)vector_get_y(ref_sincos), threshold));
 
 			// For +-PI/2, we only test that the value is really large or really small
 			if (scalar_abs(angle) == half_pi)

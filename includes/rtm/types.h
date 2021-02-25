@@ -140,7 +140,7 @@ namespace rtm
 		uint64_t w;
 	};
 
-#if defined(_MSC_VER)
+#if defined(RTM_COMPILER_MSVC)
 	// MSVC uses a simple typedef to an identical underlying type for uint32x4_t and float32x4_t
 	// To avoid issues of duplicate symbols, we introduce a concrete type
 

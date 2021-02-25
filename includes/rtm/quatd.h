@@ -619,6 +619,9 @@ namespace rtm
 		end_v = vector_select(is_angle_negative, vector_neg(end_v), end_v);
 		cos_half_angle_v = vector_select(is_angle_negative, vector_neg(cos_half_angle_v), cos_half_angle_v);
 
+		// Clamp our half angle cosine
+		cos_half_angle_v = vector_clamp(cos_half_angle_v, vector_set(-1.0), vector_set(1.0));
+
 		scalard cos_half_angle = vector_get_x(cos_half_angle_v);
 		scalard half_angle = scalar_acos(cos_half_angle);
 		scalard sin_half_angle = scalar_sqrt(scalar_sub(scalar_set(1.0), scalar_mul(cos_half_angle, cos_half_angle)));
@@ -654,6 +657,9 @@ namespace rtm
 		end_v = vector_select(is_angle_negative, vector_neg(end_v), end_v);
 		cos_half_angle_v = vector_select(is_angle_negative, vector_neg(cos_half_angle_v), cos_half_angle_v);
 
+		// Clamp our half angle cosine
+		cos_half_angle_v = vector_clamp(cos_half_angle_v, vector_set(-1.0), vector_set(1.0));
+
 		scalard cos_half_angle = vector_get_x(cos_half_angle_v);
 		scalard half_angle = scalar_acos(cos_half_angle);
 		scalard sin_half_angle = scalar_sqrt(scalar_sub(scalar_set(1.0), scalar_mul(cos_half_angle, cos_half_angle)));
@@ -678,6 +684,80 @@ namespace rtm
 		return vector_to_quat(vector_mul(quat_to_vector(input), -1.0));
 	}
 
+	//////////////////////////////////////////////////////////////////////////
+	// Returns the quaternion logarithm for a 3D rotation.
+	//////////////////////////////////////////////////////////////////////////
+	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE quatd quat_rotation_log(const quatd& input) RTM_NO_EXCEPT
+	{
+		// The logarithm equation is as follow:
+		// log(q).xyz = (q.xyz / ||q.xyz||) * acos(q.w / ||q||)
+		// log(q).w = ln(||q||)
+		//
+		// If our quaternion is normalized (a rotation), our output W is always 0.0 since ln(1) = 0.0
+		// Our XYZ simplifies as well down to: normalize(q.xyz) * acos(q.w)
+		// The length of our input XYZ can be calculated either as sqrt(dot(q.xyz, q.xyz)) or
+		// by taking the sine of the quaternion half angle with sin(acos(q.w))
+		//
+		// If our input rotation is near the identity, we cannot calculate the output XYZ since we would
+		// divide by zero. If this happens we return a quaternion near zero which should reconstruct as the
+		// identity with quat_rotation_exp(..).
+		//
+		// If our quaternion isn't normalized, more math is required
+
+		const vector4d input_v = quat_to_vector(input);
+		const scalard input_w = scalar_clamp((scalard)quat_get_w(input), scalar_set(-1.0), scalar_set(1.0));
+		const scalard half_angle = scalar_acos(input_w);
+		const scalard xyz_inv_len = vector_length_reciprocal3(input_v);
+		vector4d result_xyz = vector_mul(input_v, scalar_mul(xyz_inv_len, half_angle));
+
+		// If we are near the identity, xyz will be set to our input xyz which should be near zero
+		// For a true identity input, we'll output zero
+		const mask4d is_input_near_identity = vector_greater_than(vector_set(input_w), vector_set(1.0 - 1.0E-8));
+		result_xyz = vector_select(is_input_near_identity, input_v, result_xyz);
+
+		return vector_to_quat(vector_set_w(result_xyz, 0.0));
+	}
+
+	//////////////////////////////////////////////////////////////////////////
+	// Returns the quaternion exponential for a 3D rotation.
+	// The result might not be fully normalized if the input is near zero.
+	//////////////////////////////////////////////////////////////////////////
+	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE quatd quat_rotation_exp(const quatd& input) RTM_NO_EXCEPT
+	{
+		// The exponential equation is as follow:
+		// exp(q).xyz = exp(q.w) * (q.xyz / ||q.xyz||) * sin(||q.xyz||)
+		// exp(q).w = exp(q.w) * cos(||q.xyz||)
+		//
+		// If our output (normalized) quaternion is to represent a rotation, its logarithm passed as input has a W component equal to 0.0
+		// Furthermore our input XYZ length is equal to our rotation half angle
+		// Since exp(0.0) = 1.0, our equation simplifies as follow:
+		// exp(q).xyz = (q.xyz / ||q.xyz||) * sin(||q.xyz||) = normalize(q.xyz) * sin(||q.xyz||)
+		// exp(q).w = cos(||q.xyz||)
+		//
+		// If our half angle is 0.0, the whole input is 0,0,0,0 and the result is undefined since we can use any rotation axis.
+		// When this happens, we return the approximated identity.
+		// This is easily achieved because cos(||q.xyz||) = cos(0.0) = 1.0
+		//
+		// If our output quaternion does not represent a rotation, more math is required
+
+		const vector4d input_v = quat_to_vector(input);
+		const scalard input_len = vector_length3(input_v);
+		const vector4d input_len_v = vector_set(input_len);
+		const vector4d input_normalized = vector_div(input_v, input_len_v);
+		const vector4d sincos = scalar_sincos(input_len);
+
+		vector4d result_xyz = vector_mul(input_normalized, vector_dup_x(sincos));
+
+		// If we are near zero, xyz will be set to our input xyz which should be near zero
+		// For a true zero input, we'll output the identity
+		const mask4d is_input_near_zero = vector_less_than(input_len_v, vector_set(1.0E-8));
+		result_xyz = vector_select(is_input_near_zero, input_v, result_xyz);
+
+		const vector4d result_w = vector_dup_y(sincos);
+		const vector4d result = vector_mix<mix4::x, mix4::y, mix4::z, mix4::d>(result_xyz, result_w);
+		return vector_to_quat(result);
+	}
+
 
 
 	//////////////////////////////////////////////////////////////////////////
@@ -694,7 +774,7 @@ namespace rtm
 		constexpr double epsilon = 1.0E-8;
 		constexpr double epsilon_squared = epsilon * epsilon;
 
-		const scalard input_w = quat_get_w(input);
+		const scalard input_w = scalar_clamp((scalard)quat_get_w(input), scalar_set(-1.0), scalar_set(1.0));
 		out_angle = scalar_cast(scalar_acos(input_w)) * 2.0;
 
 		const double scale_sq = scalar_max(1.0 - quat_get_w(input) * quat_get_w(input), 0.0);
@@ -718,7 +798,7 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	RTM_DISABLE_SECURITY_COOKIE_CHECK inline double quat_get_angle(const quatd& input) RTM_NO_EXCEPT
 	{
-		const scalard input_w = quat_get_w(input);
+		const scalard input_w = scalar_clamp((scalard)quat_get_w(input), scalar_set(-1.0), scalar_set(1.0));
 		return scalar_cast(scalar_acos(input_w)) * 2.0;
 	}
 
@@ -799,7 +879,7 @@ namespace rtm
 	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE bool quat_is_normalized(const quatd& input, double threshold = 0.00001) RTM_NO_EXCEPT
 	{
 		double length_squared = quat_length_squared(input);
-		return scalar_abs(length_squared - 1.0) < threshold;
+		return scalar_abs(length_squared - 1.0) <= threshold;
 	}
 
 	//////////////////////////////////////////////////////////////////////////
@@ -818,8 +898,9 @@ namespace rtm
 	{
 		// See the quatf version of quat_near_identity for details.
 		const scalard input_w = quat_get_w(input);
-		const double positive_w_angle = scalar_acos(scalar_cast(scalar_abs(input_w))) * 2.0;
-		return positive_w_angle < threshold_angle;
+		const scalard input_abs_w = scalar_min(scalar_abs(input_w), scalar_set(1.0));
+		const double positive_w_angle = scalar_acos(scalar_cast(input_abs_w)) * 2.0;
+		return positive_w_angle <= threshold_angle;
 	}
 }
 

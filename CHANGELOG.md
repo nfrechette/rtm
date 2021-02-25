@@ -1,5 +1,12 @@
 # Significant changes per release
 
+## 2.1.0
+
+*  Force inlined most functions to improve MSVC code generation
+*  Migrated from Travis to GitHub Actions
+*  Added support for clang 11
+*  Lots of minor additions, fixes, and improvements
+
 ## 2.0.0
 
 *  Added support for GCC10, clang8, clang9, clang10, VS 2019 clang, and emscripten

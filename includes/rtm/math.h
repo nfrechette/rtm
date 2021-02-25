@@ -25,6 +25,9 @@
 // SOFTWARE.
 ////////////////////////////////////////////////////////////////////////////////
 
+#include "rtm/impl/detect_arch.h"
+#include "rtm/impl/detect_compiler.h"
+
 //////////////////////////////////////////////////////////////////////////
 // Detect which intrinsics the current compilation environment supports.
 //////////////////////////////////////////////////////////////////////////
@@ -33,36 +36,31 @@
 	#if defined(__AVX2__)
 		#define RTM_AVX2_INTRINSICS
 		#define RTM_FMA_INTRINSICS
-	#endif
-
-	#if defined(__AVX__)
 		#define RTM_AVX_INTRINSICS
 		#define RTM_SSE4_INTRINSICS
 		#define RTM_SSE3_INTRINSICS
 		#define RTM_SSE2_INTRINSICS
-	#endif
-
-	#if defined(__SSE4_1__)
+	#elif defined(__AVX__)
+		#define RTM_AVX_INTRINSICS
 		#define RTM_SSE4_INTRINSICS
 		#define RTM_SSE3_INTRINSICS
 		#define RTM_SSE2_INTRINSICS
-	#endif
-
-	#if defined(__SSSE3__)
+	#elif defined(__SSE4_1__)
+		#define RTM_SSE4_INTRINSICS
 		#define RTM_SSE3_INTRINSICS
 		#define RTM_SSE2_INTRINSICS
-	#endif
-
-	#if defined(__SSE2__) || defined(_M_IX86) || defined(_M_X64)
+	#elif defined(__SSSE3__)
+		#define RTM_SSE3_INTRINSICS
+		#define RTM_SSE2_INTRINSICS
+	#elif defined(__SSE2__) || defined(RTM_ARCH_X86) || defined(RTM_ARCH_X64)
 		#define RTM_SSE2_INTRINSICS
 	#endif
 
-	#if defined(__ARM_NEON) || defined(_M_ARM) || defined(_M_ARM64)
+	#if defined(RTM_ARCH_ARM64)
 		#define RTM_NEON_INTRINSICS
-
-		#if defined(__aarch64__) || defined(_M_ARM64)
-			#define RTM_NEON64_INTRINSICS
-		#endif
+		#define RTM_NEON64_INTRINSICS
+	#elif defined(RTM_ARCH_ARM)
+		#define RTM_NEON_INTRINSICS
 	#endif
 
 	// If SSE2 and NEON aren't used, we default to the scalar implementation
@@ -77,8 +75,8 @@
 
 	// With MSVC and SSE2, we can use the __vectorcall calling convention to pass vector types and aggregates by value through registers
 	// for improved code generation
-	#if defined(_MSC_VER) && !defined(_M_ARM) && !defined(_MANAGED) && !defined(_M_CEE) && (!defined(_M_IX86_FP) || (_M_IX86_FP > 1)) && !defined(RTM_SIMD_CALL)
-		#if ((_MSC_FULL_VER >= 170065501) && (_MSC_VER < 1800)) || (_MSC_FULL_VER >= 180020418)
+	#if defined(RTM_COMPILER_MSVC) && !defined(_MANAGED) && !defined(_M_CEE) && (!defined(_M_IX86_FP) || (_M_IX86_FP > 1)) && !defined(RTM_SIMD_CALL)
+		#if RTM_COMPILER_MSVC >= RTM_COMPILER_MSVC_2015
 			#define RTM_USE_VECTORCALL
 		#endif
 	#endif
@@ -96,7 +94,7 @@
 	#include <immintrin.h>
 #endif
 
-#if defined(RTM_NEON64_INTRINSICS) && defined(_M_ARM64)
+#if defined(RTM_NEON64_INTRINSICS) && defined(RTM_COMPILER_MSVC)
 	// MSVC specific header
 	#include <arm64_neon.h>
 #elif defined(RTM_NEON_INTRINSICS)
@@ -112,6 +110,7 @@
 	#endif
 #endif
 
-// By default, we include the type definitions and error handling
+// By default, we include the type definitions, feature detection, and error handling
+#include "rtm/impl/detect_features.h"
 #include "rtm/impl/error.h"
 #include "rtm/types.h"

@@ -3,7 +3,7 @@
 ////////////////////////////////////////////////////////////////////////////////
 // The MIT License (MIT)
 //
-// Copyright (c) 2018 Nicholas Frechette & Realtime Math contributors
+// Copyright (c) 2021 Nicholas Frechette & Realtime Math contributors
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -24,57 +24,21 @@
 // SOFTWARE.
 ////////////////////////////////////////////////////////////////////////////////
 
-#include "rtm/types.h"
+//////////////////////////////////////////////////////////////////////////
+// Macro to identify individual compilers
+//////////////////////////////////////////////////////////////////////////
+#if defined(__GNUG__) && !defined(__clang__)
+	#define RTM_COMPILER_GCC
+#elif defined(__clang__)
+	#define RTM_COMPILER_CLANG
+#elif defined(_MSC_VER) && !defined(__clang__)
+	#define RTM_COMPILER_MSVC		_MSC_VER
+	#define RTM_COMPILER_MSVC_2013	1800
+	#define RTM_COMPILER_MSVC_2015	1900
+	#define RTM_COMPILER_MSVC_2017	1910
+	#define RTM_COMPILER_MSVC_2019	1920
 
-namespace rtm
-{
-	//////////////////////////////////////////////////////////////////////////
-	// Returns the proper types for a floating point type.
-	//////////////////////////////////////////////////////////////////////////
-	template<typename float_type>
-	struct float_traits {};
-
-	template<>
-	struct float_traits<float>
-	{
-		using mask4 = mask4f;
-
-		using scalar = scalarf;
-		using vector4 = vector4f;
-		using quat = quatf;
-		using qvv = qvvf;
-
-		using matrix3x3 = matrix3x3f;
-		using matrix3x4 = matrix3x4f;
-		using matrix4x4 = matrix4x4f;
-
-		using float1 = float;
-		using float2 = float2f;
-		using float3 = float3f;
-		using float4 = float4f;
-
-		using int1 = uint32_t;
-	};
-
-	template<>
-	struct float_traits<double>
-	{
-		using mask4 = mask4d;
-
-		using scalar = scalard;
-		using vector4 = vector4d;
-		using quat = quatd;
-		using qvv = qvvd;
-
-		using matrix3x3 = matrix3x3d;
-		using matrix3x4 = matrix3x4d;
-		using matrix4x4 = matrix4x4d;
-
-		using float1 = double;
-		using float2 = float2d;
-		using float3 = float3d;
-		using float4 = float4d;
-
-		using int1 = uint64_t;
-	};
-}
+	#if RTM_COMPILER_MSVC < RTM_COMPILER_MSVC_2015
+		#pragma message("Warning: This version of visual studio isn't officially supported")
+	#endif
+#endif

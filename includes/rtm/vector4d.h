@@ -986,6 +986,12 @@ namespace rtm
 			}
 #endif
 
+			RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE RTM_SIMD_CALL operator vector4d() const RTM_NO_EXCEPT
+			{
+				const scalard dot = *this;
+				return vector_set(dot);
+			}
+
 			vector4d lhs;
 			vector4d rhs;
 		};
@@ -1286,6 +1292,19 @@ namespace rtm
 		return vector_mul_add(end, alpha_v, vector_neg_mul_sub(start, alpha_v, start));
 	}
 #endif
+
+	//////////////////////////////////////////////////////////////////////////
+	// Per component linear interpolation of the two inputs at the specified alpha.
+	// The formula used is: ((1.0 - alpha) * start) + (alpha * end).
+	// Interpolation is stable and will return 'start' when alpha is 0.0 and 'end' when it is 1.0.
+	// This is the same instruction count when FMA is present but it might be slightly slower
+	// due to the extra multiplication compared to: start + (alpha * (end - start)).
+	//////////////////////////////////////////////////////////////////////////
+	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE vector4d vector_lerp(const vector4d& start, const vector4d& end, const vector4d& alpha) RTM_NO_EXCEPT
+	{
+		// ((1.0 - alpha) * start) + (alpha * end) == (start - alpha * start) + (alpha * end)
+		return vector_mul_add(end, alpha, vector_neg_mul_sub(start, alpha, start));
+	}
 
 
 
@@ -1825,8 +1844,8 @@ namespace rtm
 	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE vector4d vector_select(const mask4d& mask, const vector4d& if_true, const vector4d& if_false) RTM_NO_EXCEPT
 	{
 #if defined(RTM_SSE2_INTRINSICS)
-		__m128d xy = _mm_or_pd(_mm_andnot_pd(mask.xy, if_false.xy), _mm_and_pd(if_true.xy, mask.xy));
-		__m128d zw = _mm_or_pd(_mm_andnot_pd(mask.zw, if_false.zw), _mm_and_pd(if_true.zw, mask.zw));
+		__m128d xy = RTM_VECTOR2D_SELECT(mask.xy, if_true.xy, if_false.xy);
+		__m128d zw = RTM_VECTOR2D_SELECT(mask.zw, if_true.zw, if_false.zw);
 		return vector4d{ xy, zw };
 #else
 		return vector4d{ rtm_impl::select(mask.x, if_true.x, if_false.x), rtm_impl::select(mask.y, if_true.y, if_false.y), rtm_impl::select(mask.z, if_true.z, if_false.z), rtm_impl::select(mask.w, if_true.w, if_false.w) };
@@ -1867,6 +1886,86 @@ namespace rtm
 	// Replicates the [w] component in all components.
 	//////////////////////////////////////////////////////////////////////////
 	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE vector4d vector_dup_w(const vector4d& input) RTM_NO_EXCEPT { return vector_mix<mix4::w, mix4::w, mix4::w, mix4::w>(input, input); }
+
+
+	//////////////////////////////////////////////////////////////////////////
+	// Logical
+	//////////////////////////////////////////////////////////////////////////
+
+	//////////////////////////////////////////////////////////////////////////
+	// Per component logical AND between the inputs: input0 & input1
+	//////////////////////////////////////////////////////////////////////////
+	inline vector4d vector_and(const vector4d& input0, const vector4d& input1) RTM_NO_EXCEPT
+	{
+#if defined(RTM_SSE2_INTRINSICS)
+		__m128d xy = _mm_and_pd(input0.xy, input1.xy);
+		__m128d zw = _mm_and_pd(input0.zw, input1.zw);
+		return vector4d{ xy, zw };
+#else
+		const uint64_t* input0_ = reinterpret_cast<const uint64_t*>(&input0);
+		const uint64_t* input1_ = reinterpret_cast<const uint64_t*>(&input1);
+
+		vector4d result;
+		uint64_t* result_ = reinterpret_cast<uint64_t*>(&result);
+
+		result_[0] = input0_[0] & input1_[0];
+		result_[1] = input0_[1] & input1_[1];
+		result_[2] = input0_[2] & input1_[2];
+		result_[3] = input0_[3] & input1_[3];
+
+		return result;
+#endif
+	}
+
+	//////////////////////////////////////////////////////////////////////////
+	// Per component logical OR between the inputs: input0 | input1
+	//////////////////////////////////////////////////////////////////////////
+	inline vector4d vector_or(const vector4d& input0, const vector4d& input1) RTM_NO_EXCEPT
+	{
+#if defined(RTM_SSE2_INTRINSICS)
+		__m128d xy = _mm_or_pd(input0.xy, input1.xy);
+		__m128d zw = _mm_or_pd(input0.zw, input1.zw);
+		return vector4d{ xy, zw };
+#else
+		const uint64_t* input0_ = reinterpret_cast<const uint64_t*>(&input0);
+		const uint64_t* input1_ = reinterpret_cast<const uint64_t*>(&input1);
+
+		vector4d result;
+		uint64_t* result_ = reinterpret_cast<uint64_t*>(&result);
+
+		result_[0] = input0_[0] | input1_[0];
+		result_[1] = input0_[1] | input1_[1];
+		result_[2] = input0_[2] | input1_[2];
+		result_[3] = input0_[3] | input1_[3];
+
+		return result;
+#endif
+	}
+
+	//////////////////////////////////////////////////////////////////////////
+	// Per component logical XOR between the inputs: input0 ^ input1
+	//////////////////////////////////////////////////////////////////////////
+	inline vector4d vector_xor(const vector4d& input0, const vector4d& input1) RTM_NO_EXCEPT
+	{
+#if defined(RTM_SSE2_INTRINSICS)
+		__m128d xy = _mm_xor_pd(input0.xy, input1.xy);
+		__m128d zw = _mm_xor_pd(input0.zw, input1.zw);
+		return vector4d{ xy, zw };
+#else
+		const uint64_t* input0_ = reinterpret_cast<const uint64_t*>(&input0);
+		const uint64_t* input1_ = reinterpret_cast<const uint64_t*>(&input1);
+
+		vector4d result;
+		uint64_t* result_ = reinterpret_cast<uint64_t*>(&result);
+
+		result_[0] = input0_[0] ^ input1_[0];
+		result_[1] = input0_[1] ^ input1_[1];
+		result_[2] = input0_[2] ^ input1_[2];
+		result_[3] = input0_[3] ^ input1_[3];
+
+		return result;
+#endif
+	}
 
 
 	//////////////////////////////////////////////////////////////////////////
@@ -1946,13 +2045,8 @@ namespace rtm
 		__m128d ceiled_xy = _mm_ceil_pd(biased_input_xy);
 		__m128d ceiled_zw = _mm_ceil_pd(biased_input_zw);
 
-#if defined(RTM_AVX_INTRINSICS)
-		__m128d result_xy = _mm_blendv_pd(ceiled_xy, floored_xy, is_positive_xy);
-		__m128d result_zw = _mm_blendv_pd(ceiled_zw, floored_zw, is_positive_zw);
-#else
-		__m128d result_xy = _mm_or_pd(_mm_and_pd(is_positive_xy, floored_xy), _mm_andnot_pd(is_positive_xy, ceiled_xy));
-		__m128d result_zw = _mm_or_pd(_mm_and_pd(is_positive_zw, floored_zw), _mm_andnot_pd(is_positive_zw, ceiled_zw));
-#endif
+		__m128d result_xy = RTM_VECTOR2D_SELECT(is_positive_xy, floored_xy, ceiled_xy);
+		__m128d result_zw = RTM_VECTOR2D_SELECT(is_positive_zw, floored_zw, ceiled_zw);
 		return vector4d{ result_xy, result_zw };
 #elif defined(RTM_SSE2_INTRINSICS)
 		const __m128i abs_mask = _mm_set_epi64x(0x7FFFFFFFFFFFFFFFULL, 0x7FFFFFFFFFFFFFFFULL);
@@ -2100,17 +2194,37 @@ namespace rtm
 	}
 
 	//////////////////////////////////////////////////////////////////////////
+	// Returns per component the sine and cosine of the input angle.
+	//////////////////////////////////////////////////////////////////////////
+	RTM_DISABLE_SECURITY_COOKIE_CHECK inline void vector_sincos(const vector4d& input, vector4d& out_sine, vector4d& out_cosine) RTM_NO_EXCEPT
+	{
+		const vector4d x = scalar_sincos(scalard(vector_get_x(input)));
+		const vector4d y = scalar_sincos(scalard(vector_get_y(input)));
+		const vector4d z = scalar_sincos(scalard(vector_get_z(input)));
+		const vector4d w = scalar_sincos(scalard(vector_get_w(input)));
+
+		const vector4d cos_xy = vector_mix<mix4::y, mix4::b, mix4::y, mix4::b>(x, y);
+		const vector4d cos_zw = vector_mix<mix4::y, mix4::b, mix4::y, mix4::b>(z, w);
+		out_cosine = vector_mix<mix4::x, mix4::y, mix4::a, mix4::b>(cos_xy, cos_zw);
+
+		const vector4d sin_xy = vector_mix<mix4::x, mix4::a, mix4::x, mix4::a>(x, y);
+		const vector4d sin_zw = vector_mix<mix4::x, mix4::a, mix4::x, mix4::a>(z, w);
+		out_sine = vector_mix<mix4::x, mix4::y, mix4::a, mix4::b>(sin_xy, sin_zw);
+	}
+
+	//////////////////////////////////////////////////////////////////////////
 	// Returns per component the tangent of the input angle.
 	//////////////////////////////////////////////////////////////////////////
 	RTM_DISABLE_SECURITY_COOKIE_CHECK inline vector4d vector_tan(const vector4d& angle) RTM_NO_EXCEPT
 	{
 		// Use the identity: tan(angle) = sin(angle) / cos(angle)
-		vector4d sin_ = vector_sin(angle);
-		vector4d cos_ = vector_cos(angle);
+		vector4d sin_;
+		vector4d cos_;
+		vector_sincos(angle, sin_, cos_);
 
-		mask4d is_cos_zero = vector_equal(cos_, vector_zero());
-		vector4d signed_infinity = vector_copy_sign(vector_set(std::numeric_limits<double>::infinity()), angle);
-		vector4d result = vector_div(sin_, cos_);
+		const mask4d is_cos_zero = vector_equal(cos_, vector_zero());
+		const vector4d signed_infinity = vector_copy_sign(vector_set(std::numeric_limits<double>::infinity()), angle);
+		const vector4d result = vector_div(sin_, cos_);
 		return vector_select(is_cos_zero, signed_infinity, result);
 	}
 

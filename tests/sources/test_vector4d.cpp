@@ -40,6 +40,11 @@ TEST_CASE("vector4d math relational", "[math][vector4]")
 	test_vector4_relational_impl<double>(1.0E-9);
 }
 
+TEST_CASE("vector4d math logical", "[math][vector4]")
+{
+	test_vector4_logical_impl<double>();
+}
+
 TEST_CASE("vector4d math misc", "[math][vector4]")
 {
 	test_vector4_impl<double>(1.0E-9);

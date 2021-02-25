@@ -382,6 +382,18 @@ static void test_quat_impl(const FloatType threshold)
 		CHECK(FloatType(quat_get_w(quat0)) == -FloatType(quat_get_w(quat1)));
 	}
 
+	{
+		QuatType quat0 = quat_from_euler(scalar_deg_to_rad(FloatType(30.0)), scalar_deg_to_rad(FloatType(-45.0)), scalar_deg_to_rad(FloatType(90.0)));
+		QuatType quat_log = quat_rotation_log(quat0);
+		QuatType quat_exp = quat_rotation_exp(quat_log);
+		QuatType quat_log_identity = quat_rotation_log(identity);
+		QuatType quat_exp_identity = quat_rotation_exp(quat_log_identity);
+
+		CHECK(quat_near_equal(quat0, quat_exp, threshold));
+		CHECK(vector_all_near_equal(quat_to_vector(quat_log_identity), zero, threshold));
+		CHECK(quat_near_equal(identity, quat_exp_identity, threshold));
+	}
+
 	//////////////////////////////////////////////////////////////////////////
 	// Conversion to/from axis/angle/euler
 
@@ -441,20 +453,21 @@ static void test_quat_impl(const FloatType threshold)
 		FloatType quat_len = quat_length(quat0);
 		CHECK(scalar_near_equal(quat_len, FloatType(1.0), threshold));
 		CHECK(quat_is_normalized(quat0) == true);
+		CHECK(quat_is_normalized(identity, FloatType(0.0)) == true);
 
 		QuatType quat1 = vector_to_quat(vector_mul(quat_to_vector(quat0), FloatType(1.1)));
 		CHECK(quat_is_normalized(quat1) == false);
 	}
 
 	{
-		CHECK(quat_near_equal(identity, identity, threshold) == true);
+		CHECK(quat_near_equal(identity, identity, FloatType(0.0)) == true);
 		CHECK(quat_near_equal(identity, quat_set(FloatType(0.0), FloatType(0.0), FloatType(0.0), FloatType(2.0)), FloatType(1.0001)) == true);
 		CHECK(quat_near_equal(identity, quat_set(FloatType(0.0), FloatType(0.0), FloatType(0.0), FloatType(2.0)), FloatType(1.0)) == true);
 		CHECK(quat_near_equal(identity, quat_set(FloatType(0.0), FloatType(0.0), FloatType(0.0), FloatType(2.0)), FloatType(0.9999)) == false);
 	}
 
 	{
-		CHECK(quat_near_identity(identity, threshold) == true);
+		CHECK(quat_near_identity(identity, FloatType(0.0)) == true);
 		CHECK(quat_near_identity(quat_set(FloatType(0.0), FloatType(0.0), FloatType(0.0), FloatType(0.9999999)), FloatType(0.001)) == true);
 		CHECK(quat_near_identity(quat_set(FloatType(0.0), FloatType(0.0), FloatType(0.0), FloatType(0.98)), FloatType(0.001)) == false);
 	}

@@ -1190,6 +1190,32 @@ namespace rtm
 			}
 #endif
 
+			RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE RTM_SIMD_CALL operator vector4f() const RTM_NO_EXCEPT
+			{
+#if defined(RTM_SSE4_INTRINSICS) && 0
+				// SSE4 dot product instruction isn't precise enough
+				return _mm_cvtss_f32(_mm_dp_ps(lhs, rhs, 0xFF));
+#elif defined(RTM_SSE2_INTRINSICS)
+				__m128 x2_y2_z2_w2 = _mm_mul_ps(lhs, rhs);
+				__m128 y2_0_0_0 = _mm_shuffle_ps(x2_y2_z2_w2, x2_y2_z2_w2, _MM_SHUFFLE(0, 0, 0, 1));
+				__m128 x2y2_0_0_0 = _mm_add_ss(x2_y2_z2_w2, y2_0_0_0);
+				__m128 z2_0_0_0 = _mm_shuffle_ps(x2_y2_z2_w2, x2_y2_z2_w2, _MM_SHUFFLE(0, 0, 0, 2));
+				__m128 x2y2z2_0_0_0 = _mm_add_ss(x2y2_0_0_0, z2_0_0_0);
+				return _mm_shuffle_ps(x2y2z2_0_0_0, x2y2z2_0_0_0, _MM_SHUFFLE(0, 0, 0, 0));
+#elif defined(RTM_NEON_INTRINSICS)
+				float32x4_t x2_y2_z2_w2 = vmulq_f32(lhs, rhs);
+				float32x2_t x2_y2 = vget_low_f32(x2_y2_z2_w2);
+				float32x2_t z2_w2 = vget_high_f32(x2_y2_z2_w2);
+				float32x2_t x2y2_x2y2 = vpadd_f32(x2_y2, x2_y2);
+				float32x2_t z2_z2 = vdup_lane_f32(z2_w2, 0);
+				float32x2_t x2y2z2_x2y2z2 = vadd_f32(x2y2_x2y2, z2_z2);
+				return vdupq_lane_f32(x2y2z2_x2y2z2, 0);
+#else
+				scalarf result = *this;
+				return vector_set(result);
+#endif
+			}
+
 			vector4f lhs;
 			vector4f rhs;
 		};
@@ -1490,6 +1516,19 @@ namespace rtm
 		return vector_mul_add(end, alpha_v, vector_neg_mul_sub(start, alpha_v, start));
 	}
 #endif
+
+	//////////////////////////////////////////////////////////////////////////
+	// Per component linear interpolation of the two inputs at the specified alpha.
+	// The formula used is: ((1.0 - alpha) * start) + (alpha * end).
+	// Interpolation is stable and will return 'start' when alpha is 0.0 and 'end' when it is 1.0.
+	// This is the same instruction count when FMA is present but it might be slightly slower
+	// due to the extra multiplication compared to: start + (alpha * (end - start)).
+	//////////////////////////////////////////////////////////////////////////
+	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE vector4f RTM_SIMD_CALL vector_lerp(vector4f_arg0 start, vector4f_arg1 end, vector4f_arg2 alpha) RTM_NO_EXCEPT
+	{
+		// ((1.0 - alpha) * start) + (alpha * end) == (start - alpha * start) + (alpha * end)
+		return vector_mul_add(end, alpha, vector_neg_mul_sub(start, alpha, start));
+	}
 
 
 
@@ -2083,12 +2122,8 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE vector4f RTM_SIMD_CALL vector_select(mask4f_arg0 mask, vector4f_arg1 if_true, vector4f_arg2 if_false) RTM_NO_EXCEPT
 	{
-#if defined(RTM_AVX_INTRINSICS)
-		return _mm_blendv_ps(if_false, if_true, mask);
-#elif defined(RTM_SSE2_INTRINSICS)
-		return _mm_or_ps(_mm_andnot_ps(mask, if_false), _mm_and_ps(if_true, mask));
-#elif defined(RTM_NEON_INTRINSICS)
-		return vbslq_f32(mask, if_true, if_false);
+#if defined(RTM_SSE2_INTRINSICS) || defined(RTM_NEON_INTRINSICS)
+		return RTM_VECTOR4F_SELECT(mask, if_true, if_false);
 #else
 		return vector4f{ rtm_impl::select(mask.x, if_true.x, if_false.x), rtm_impl::select(mask.y, if_true.y, if_false.y), rtm_impl::select(mask.z, if_true.z, if_false.z), rtm_impl::select(mask.w, if_true.w, if_false.w) };
 #endif
@@ -2162,6 +2197,119 @@ namespace rtm
 	// Replicates the [w] component in all components.
 	//////////////////////////////////////////////////////////////////////////
 	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE vector4f RTM_SIMD_CALL vector_dup_w(vector4f_arg0 input) RTM_NO_EXCEPT { return vector_mix<mix4::w, mix4::w, mix4::w, mix4::w>(input, input); }
+
+	//////////////////////////////////////////////////////////////////////////
+	// Logical
+	//////////////////////////////////////////////////////////////////////////
+
+	//////////////////////////////////////////////////////////////////////////
+	// Per component logical AND between the inputs: input0 & input1
+	//////////////////////////////////////////////////////////////////////////
+	inline vector4f RTM_SIMD_CALL vector_and(vector4f_arg0 input0, vector4f_arg1 input1) RTM_NO_EXCEPT
+	{
+#if defined(RTM_SSE2_INTRINSICS)
+		return _mm_and_ps(input0, input1);
+#elif defined(RTM_NEON_INTRINSICS)
+		return vreinterpretq_f32_u32(vandq_u32(vreinterpretq_u32_f32(input0), vreinterpretq_u32_f32(input1)));
+#else
+
+#if defined(RTM_COMPILER_GCC)
+	// GCC complains 'result' is used uninitialized but that is not true, ignore it
+	#pragma GCC diagnostic push
+	#pragma GCC diagnostic ignored "-Wuninitialized"
+#endif
+
+		const uint32_t* input0_ = reinterpret_cast<const uint32_t*>(&input0);
+		const uint32_t* input1_ = reinterpret_cast<const uint32_t*>(&input1);
+
+		vector4f result;
+		uint32_t* result_ = reinterpret_cast<uint32_t*>(&result);
+
+		result_[0] = input0_[0] & input1_[0];
+		result_[1] = input0_[1] & input1_[1];
+		result_[2] = input0_[2] & input1_[2];
+		result_[3] = input0_[3] & input1_[3];
+
+		return result;
+
+#if defined(RTM_COMPILER_GCC)
+	#pragma GCC diagnostic pop
+#endif
+#endif
+	}
+
+	//////////////////////////////////////////////////////////////////////////
+	// Per component logical OR between the inputs: input0 | input1
+	//////////////////////////////////////////////////////////////////////////
+	inline vector4f RTM_SIMD_CALL vector_or(vector4f_arg0 input0, vector4f_arg1 input1) RTM_NO_EXCEPT
+	{
+#if defined(RTM_SSE2_INTRINSICS)
+		return _mm_or_ps(input0, input1);
+#elif defined(RTM_NEON_INTRINSICS)
+		return vreinterpretq_f32_u32(vorrq_u32(vreinterpretq_u32_f32(input0), vreinterpretq_u32_f32(input1)));
+#else
+
+#if defined(RTM_COMPILER_GCC)
+	// GCC complains 'result' is used uninitialized but that is not true, ignore it
+	#pragma GCC diagnostic push
+	#pragma GCC diagnostic ignored "-Wuninitialized"
+#endif
+
+		const uint32_t* input0_ = reinterpret_cast<const uint32_t*>(&input0);
+		const uint32_t* input1_ = reinterpret_cast<const uint32_t*>(&input1);
+
+		vector4f result;
+		uint32_t* result_ = reinterpret_cast<uint32_t*>(&result);
+
+		result_[0] = input0_[0] | input1_[0];
+		result_[1] = input0_[1] | input1_[1];
+		result_[2] = input0_[2] | input1_[2];
+		result_[3] = input0_[3] | input1_[3];
+
+		return result;
+
+#if defined(RTM_COMPILER_GCC)
+	#pragma GCC diagnostic pop
+#endif
+#endif
+	}
+
+	//////////////////////////////////////////////////////////////////////////
+	// Per component logical XOR between the inputs: input0 ^ input1
+	//////////////////////////////////////////////////////////////////////////
+	inline vector4f RTM_SIMD_CALL vector_xor(vector4f_arg0 input0, vector4f_arg1 input1) RTM_NO_EXCEPT
+	{
+#if defined(RTM_SSE2_INTRINSICS)
+		return _mm_xor_ps(input0, input1);
+#elif defined(RTM_NEON_INTRINSICS)
+		return vreinterpretq_f32_u32(veorq_u32(vreinterpretq_u32_f32(input0), vreinterpretq_u32_f32(input1)));
+#else
+
+#if defined(RTM_COMPILER_GCC)
+	// GCC complains 'result' is used uninitialized but that is not true, ignore it
+	#pragma GCC diagnostic push
+	#pragma GCC diagnostic ignored "-Wuninitialized"
+#endif
+
+		const uint32_t* input0_ = reinterpret_cast<const uint32_t*>(&input0);
+		const uint32_t* input1_ = reinterpret_cast<const uint32_t*>(&input1);
+
+		vector4f result;
+		uint32_t* result_ = reinterpret_cast<uint32_t*>(&result);
+
+		result_[0] = input0_[0] ^ input1_[0];
+		result_[1] = input0_[1] ^ input1_[1];
+		result_[2] = input0_[2] ^ input1_[2];
+		result_[3] = input0_[3] ^ input1_[3];
+
+		return result;
+
+#if defined(RTM_COMPILER_GCC)
+	#pragma GCC diagnostic pop
+#endif
+#endif
+	}
+
 
 	//////////////////////////////////////////////////////////////////////////
 	// Miscellaneous
@@ -2384,11 +2532,7 @@ namespace rtm
 
 		__m128 is_less_equal_than_half_pi = _mm_cmple_ps(x_abs, _mm_set_ps1(rtm::constants::half_pi()));
 
-#if defined(RTM_AVX_INTRINSICS)
-		x = _mm_blendv_ps(reflection, x, is_less_equal_than_half_pi);
-#else
-		x = _mm_or_ps(_mm_andnot_ps(is_less_equal_than_half_pi, reflection), _mm_and_ps(x, is_less_equal_than_half_pi));
-#endif
+		x = RTM_VECTOR4F_SELECT(is_less_equal_than_half_pi, x, reflection);
 
 		// Calculate our value
 		const __m128 x2 = _mm_mul_ps(x, x);
@@ -2516,11 +2660,7 @@ namespace rtm
 		__m128 x_abs = _mm_and_ps(x, _mm_castsi128_ps(abs_mask));
 		__m128 is_less_equal_than_half_pi = _mm_cmple_ps(x_abs, _mm_set_ps1(rtm::constants::half_pi()));
 
-#if defined(RTM_AVX_INTRINSICS)
-		x = _mm_blendv_ps(reflection, x, is_less_equal_than_half_pi);
-#else
-		x = _mm_or_ps(_mm_andnot_ps(is_less_equal_than_half_pi, reflection), _mm_and_ps(x, is_less_equal_than_half_pi));
-#endif
+		x = RTM_VECTOR4F_SELECT(is_less_equal_than_half_pi, x, reflection);
 
 		// Calculate our value
 		const __m128 x2 = _mm_mul_ps(x, x);
@@ -2629,17 +2769,116 @@ namespace rtm
 	}
 
 	//////////////////////////////////////////////////////////////////////////
+	// Returns per component the sine and cosine of the input angle.
+	//////////////////////////////////////////////////////////////////////////
+	RTM_DISABLE_SECURITY_COOKIE_CHECK inline void RTM_SIMD_CALL vector_sincos(vector4f_arg0 input, vector4f& out_sine, vector4f& out_cosine) RTM_NO_EXCEPT
+	{
+#if defined(RTM_SSE2_INTRINSICS)
+		// Use a degree 10 minimax approximation polynomial
+		// See: GPGPU Programming for Games and Science (David H. Eberly)
+
+		// Remap our input in the [-pi, pi] range
+		__m128 quotient = _mm_mul_ps(input, _mm_set_ps1(rtm::constants::one_div_two_pi()));
+		quotient = vector_round_bankers(quotient);
+		quotient = _mm_mul_ps(quotient, _mm_set_ps1(rtm::constants::two_pi()));
+		__m128 x = _mm_sub_ps(input, quotient);
+
+		// Remap our input in the [-pi/2, pi/2] range
+		const __m128 sign_mask = _mm_set_ps(-0.0F, -0.0F, -0.0F, -0.0F);
+		__m128 x_sign = _mm_and_ps(x, sign_mask);
+		__m128 reference = _mm_or_ps(x_sign, _mm_set_ps1(rtm::constants::pi()));
+		const __m128 reflection = _mm_sub_ps(reference, x);
+
+		const __m128i abs_mask = _mm_set_epi32(0x7FFFFFFFULL, 0x7FFFFFFFULL, 0x7FFFFFFFULL, 0x7FFFFFFFULL);
+		__m128 x_abs = _mm_and_ps(x, _mm_castsi128_ps(abs_mask));
+		__m128 is_less_equal_than_half_pi = _mm_cmple_ps(x_abs, _mm_set_ps1(rtm::constants::half_pi()));
+
+		x = RTM_VECTOR4F_SELECT(is_less_equal_than_half_pi, x, reflection);
+		const __m128 x2 = _mm_mul_ps(x, x);
+
+		// Calculate our cosine value
+		__m128 cosine_result = _mm_add_ps(_mm_mul_ps(x2, _mm_set_ps1(-2.6051615464872668e-7F)), _mm_set_ps1(2.4760495088926859e-5F));
+		cosine_result = _mm_add_ps(_mm_mul_ps(cosine_result, x2), _mm_set_ps1(-1.3888377661039897e-3F));
+		cosine_result = _mm_add_ps(_mm_mul_ps(cosine_result, x2), _mm_set_ps1(4.1666638865338612e-2F));
+		cosine_result = _mm_add_ps(_mm_mul_ps(cosine_result, x2), _mm_set_ps1(-4.9999999508695869e-1F));
+		cosine_result = _mm_add_ps(_mm_mul_ps(cosine_result, x2), _mm_set_ps1(1.0F));
+
+		// Remap into [-pi, pi]
+		out_cosine = _mm_or_ps(cosine_result, _mm_andnot_ps(is_less_equal_than_half_pi, sign_mask));
+
+		// Calculate our sine value
+		__m128 sine_result = _mm_add_ps(_mm_mul_ps(x2, _mm_set_ps1(-2.3828544692960918e-8F)), _mm_set_ps1(2.7521557770526783e-6F));
+		sine_result = _mm_add_ps(_mm_mul_ps(sine_result, x2), _mm_set_ps1(-1.9840782426250314e-4F));
+		sine_result = _mm_add_ps(_mm_mul_ps(sine_result, x2), _mm_set_ps1(8.3333303183525942e-3F));
+		sine_result = _mm_add_ps(_mm_mul_ps(sine_result, x2), _mm_set_ps1(-1.6666666601721269e-1F));
+		sine_result = _mm_add_ps(_mm_mul_ps(sine_result, x2), _mm_set_ps1(1.0F));
+		out_sine = _mm_mul_ps(sine_result, x);
+#elif defined(RTM_NEON_INTRINSICS)
+		// Use a degree 10 minimax approximation polynomial
+		// See: GPGPU Programming for Games and Science (David H. Eberly)
+
+		// Remap our input in the [-pi, pi] range
+		float32x4_t quotient = vmulq_n_f32(input, rtm::constants::one_div_two_pi());
+		quotient = vector_round_bankers(quotient);
+		quotient = vmulq_n_f32(quotient, rtm::constants::two_pi());
+		float32x4_t x = vsubq_f32(input, quotient);
+
+		// Remap our input in the [-pi/2, pi/2] range
+		const uint32x4_t sign_mask = vreinterpretq_u32_f32(vdupq_n_f32(-0.0F));
+		const uint32x4_t sign = vandq_u32(vreinterpretq_u32_f32(x), sign_mask);
+		const float32x4_t reference = vreinterpretq_f32_u32(vorrq_u32(sign, vreinterpretq_u32_f32(vdupq_n_f32(rtm::constants::pi()))));
+
+		const float32x4_t reflection = vsubq_f32(reference, x);
+#if !defined(RTM_IMPL_VCA_SUPPORTED)
+		const float32x4_t is_less_equal_than_half_pi = vcleq_f32(vabsq_f32(x), vdupq_n_f32(rtm::constants::half_pi()));
+#else
+		const float32x4_t is_less_equal_than_half_pi = vcaleq_f32(x, vdupq_n_f32(rtm::constants::half_pi()));
+#endif
+		x = vbslq_f32(is_less_equal_than_half_pi, x, reflection);
+		const float32x4_t x2 = vmulq_f32(x, x);
+
+		// Calculate our cosine value
+		float32x4_t cosine_result = RTM_VECTOR4F_MULS_ADD(x2, -2.6051615464872668e-7F, vdupq_n_f32(2.4760495088926859e-5F));
+		cosine_result = RTM_VECTOR4F_MULV_ADD(cosine_result, x2, vdupq_n_f32(-1.3888377661039897e-3F));
+		cosine_result = RTM_VECTOR4F_MULV_ADD(cosine_result, x2, vdupq_n_f32(4.1666638865338612e-2F));
+		cosine_result = RTM_VECTOR4F_MULV_ADD(cosine_result, x2, vdupq_n_f32(-4.9999999508695869e-1F));
+		cosine_result = RTM_VECTOR4F_MULV_ADD(cosine_result, x2, vdupq_n_f32(1.0F));
+
+		// Remap into [-pi, pi]
+		out_cosine = vbslq_f32(is_less_equal_than_half_pi, cosine_result, vnegq_f32(cosine_result));
+
+		// Calculate our sine value
+		float32x4_t sine_result = RTM_VECTOR4F_MULS_ADD(x2, -2.3828544692960918e-8F, vdupq_n_f32(2.7521557770526783e-6F));
+		sine_result = RTM_VECTOR4F_MULV_ADD(sine_result, x2, vdupq_n_f32(-1.9840782426250314e-4F));
+		sine_result = RTM_VECTOR4F_MULV_ADD(sine_result, x2, vdupq_n_f32(8.3333303183525942e-3F));
+		sine_result = RTM_VECTOR4F_MULV_ADD(sine_result, x2, vdupq_n_f32(-1.6666666601721269e-1F));
+		sine_result = RTM_VECTOR4F_MULV_ADD(sine_result, x2, vdupq_n_f32(1.0F));
+
+		out_sine = vmulq_f32(sine_result, x);
+#else
+		const vector4f x = scalar_sincos(scalarf(vector_get_x(input)));
+		const vector4f y = scalar_sincos(scalarf(vector_get_y(input)));
+		const vector4f z = scalar_sincos(scalarf(vector_get_z(input)));
+		const vector4f w = scalar_sincos(scalarf(vector_get_w(input)));
+
+		out_cosine = vector4f{ x.y, y.y, z.y, w.y };
+		out_sine = vector4f{ x.x, y.x, z.x, w.x };
+#endif
+	}
+
+	//////////////////////////////////////////////////////////////////////////
 	// Returns per component the tangent of the input angle.
 	//////////////////////////////////////////////////////////////////////////
 	RTM_DISABLE_SECURITY_COOKIE_CHECK inline vector4f RTM_SIMD_CALL vector_tan(vector4f_arg0 angle) RTM_NO_EXCEPT
 	{
 		// Use the identity: tan(angle) = sin(angle) / cos(angle)
-		vector4f sin_ = vector_sin(angle);
-		vector4f cos_ = vector_cos(angle);
+		vector4f sin_;
+		vector4f cos_;
+		vector_sincos(angle, sin_, cos_);
 
-		mask4f is_cos_zero = vector_equal(cos_, vector_zero());
-		vector4f signed_infinity = vector_copy_sign(vector_set(std::numeric_limits<float>::infinity()), angle);
-		vector4f result = vector_div(sin_, cos_);
+		const mask4f is_cos_zero = vector_equal(cos_, vector_zero());
+		const vector4f signed_infinity = vector_copy_sign(vector_set(std::numeric_limits<float>::infinity()), angle);
+		const vector4f result = vector_div(sin_, cos_);
 		return vector_select(is_cos_zero, signed_infinity, result);
 	}
 
