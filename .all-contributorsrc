@@ -15,6 +15,16 @@
         "platform",
         "infra"
       ]
+    },
+    {
+      "login": "mwerschy",
+      "name": "Malte Werschy",
+      "avatar_url": "https://avatars.githubusercontent.com/u/6616804?v=4",
+      "profile": "https://github.com/mwerschy",
+      "contributions": [
+        "code",
+        "platform"
+      ]
     }
   ],
   "contributorsPerLine": 7,
