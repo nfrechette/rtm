@@ -33,6 +33,6 @@
 	#define RTM_ARCH_X86
 #elif defined(_M_ARM64) || defined(__aarch64__)
 	#define RTM_ARCH_ARM64
-#elif defined(_M_ARM) || defined(__ARM_NEON) || defined(__arm__)
+#elif defined(_M_ARM) || defined(__ARM_NEON)
 	#define RTM_ARCH_ARM
 #endif
