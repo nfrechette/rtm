@@ -1,5 +1,9 @@
 # Significant changes per release
 
+## 2.1.1
+
+*  Avoid enabling NEON when just `__arm__` is present
+
 ## 2.1.0
 
 *  Force inlined most functions to improve MSVC code generation
