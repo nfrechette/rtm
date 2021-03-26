@@ -30,7 +30,7 @@
 //////////////////////////////////////////////////////////////////////////
 // Helper macro to determine if vrndns_f32 is supported (ARM64 only)
 //////////////////////////////////////////////////////////////////////////
-#if defined(RTM_ARCH_ARM64)
+#if defined(RTM_ARCH_ARM64) && !defined(RTM_IMPL_VRNDNS_SUPPORTED)
 	// ARM documentation states __ARM_FEATURE_DIRECTED_ROUNDING must be defined
 	#if defined(__ARM_FEATURE_DIRECTED_ROUNDING)
 		// Only support it with clang for now
@@ -52,7 +52,8 @@
 
 	// MSVC doesn't appear to define __ARM_FEATURE_DIRECTED_ROUNDING but it supports the
 	// intrinsic as of VS2019
-	#if !defined(RTM_IMPL_VRNDNS_SUPPORTED) && defined(RTM_COMPILER_MSVC) && RTM_COMPILER_MSVC >= RTM_COMPILER_MSVC_2019
+	// MSVC uses defines for the ARM intrinsics, use them to perform feature detection
+	#if !defined(RTM_IMPL_VRNDNS_SUPPORTED) && defined(RTM_COMPILER_MSVC) && defined(vrndns_f32)
 		#define RTM_IMPL_VRNDNS_SUPPORTED
 	#endif
 #endif
@@ -60,10 +61,11 @@
 //////////////////////////////////////////////////////////////////////////
 // Helper macro to determine if the vca* (e.g vcagtq_f32) family of intrinsics are supported (ARM64 only)
 //////////////////////////////////////////////////////////////////////////
-#if defined(RTM_ARCH_ARM64)
+#if defined(RTM_ARCH_ARM64) && !defined(RTM_IMPL_VCA_SUPPORTED)
 	#if defined(RTM_COMPILER_MSVC)
-		#if RTM_COMPILER_MSVC >= RTM_COMPILER_MSVC_2019
+		#if defined(vcaleq_f32)
 			// Support was introduced in VS2019
+			// MSVC uses defines for the ARM intrinsics, use them to perform feature detection
 			#define RTM_IMPL_VCA_SUPPORTED
 		#endif
 	#else
@@ -75,10 +77,11 @@
 //////////////////////////////////////////////////////////////////////////
 // Helper macro to determine if the vc*z* (e.g vceqq_f32) family of intrinsics are supported (ARM64 only)
 //////////////////////////////////////////////////////////////////////////
-#if defined(RTM_ARCH_ARM64)
+#if defined(RTM_ARCH_ARM64) && !defined(RTM_IMPL_VCZ_SUPPORTED)
 	#if defined(RTM_COMPILER_MSVC)
-		#if RTM_COMPILER_MSVC >= RTM_COMPILER_MSVC_2019
+		#if defined(vceqzq_f32)
 			// Support was introduced in VS2019
+			// MSVC uses defines for the ARM intrinsics, use them to perform feature detection
 			#define RTM_IMPL_VCZ_SUPPORTED
 		#endif
 	#else
@@ -90,10 +93,11 @@
 //////////////////////////////////////////////////////////////////////////
 // Helper macro to determine if the vsqrtq_f32 intrinsic is supported (ARM64 only)
 //////////////////////////////////////////////////////////////////////////
-#if defined(RTM_ARCH_ARM64)
+#if defined(RTM_ARCH_ARM64) && !defined(RTM_IMPL_VSQRT_SUPPORTED)
 	#if defined(RTM_COMPILER_MSVC)
-		#if RTM_COMPILER_MSVC >= RTM_COMPILER_MSVC_2019
+		#if defined(vsqrtq_f32)
 			// Support was introduced in VS2019
+			// MSVC uses defines for the ARM intrinsics, use them to perform feature detection
 			#define RTM_IMPL_VSQRT_SUPPORTED
 		#endif
 	#else
