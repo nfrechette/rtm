@@ -1,5 +1,10 @@
 # Significant changes per release
 
+## 2.1.2
+
+*  Fix MSVC/clang static analysis warnings
+*  Improve MSVC ARM64 intrinsic support detection
+
 ## 2.1.1
 
 *  Avoid enabling NEON when just `__arm__` is present
