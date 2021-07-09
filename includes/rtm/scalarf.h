@@ -28,11 +28,11 @@
 #include "rtm/constants.h"
 #include "rtm/macros.h"
 #include "rtm/math.h"
+#include "rtm/impl/cmath.impl.h"
 #include "rtm/impl/compiler_utils.h"
 #include "rtm/impl/scalar_common.h"
 
 #include <algorithm>
-#include <cmath>
 
 RTM_IMPL_FILE_PRAGMA_PUSH
 
