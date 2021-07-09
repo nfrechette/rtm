@@ -764,7 +764,7 @@ namespace rtm
 		float z = vgetq_lane_f32(lhs, 2) / vgetq_lane_f32(rhs, 2);
 		float w = vgetq_lane_f32(lhs, 3) / vgetq_lane_f32(rhs, 3);
 
-		float32x4_t result;
+		float32x4_t result = lhs;
 		result = vsetq_lane_f32(x, result, 0);
 		result = vsetq_lane_f32(y, result, 1);
 		result = vsetq_lane_f32(z, result, 2);
