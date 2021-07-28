@@ -35,10 +35,12 @@
 // We thus manually polyfill what is missing.
 // This must also be done when the compiler is clang when it makes use of the GCC implementation of the STL,
 // which is the default behavior on linux. Properly detecting the version of the GCC STL used by clang cannot
-// be done with the __GNUC__  macro, which are overridden by clang. Instead, we check for the definition
-// of the macro ``_GLIBCXX_USE_CXX11_ABI`` which is only defined with GCC versions greater than 5.
+// be done with the __GNUC__  macro, which is overridden by clang. Instead, we check for the definition
+// of the macro _GLIBCXX_USE_CXX11_ABI which is only defined with GCC versions greater than 5.
+// _GLIBCXX_USE_C99_MATH_TR1 is sometimes undefined when some C++11 functions are unimplemented which strips most of them out.
+// This is the case for various 32 bit platforms (e.g. ARMv7)
 //////////////////////////////////////////////////////////////////////////
-#if defined(__GNUG__) && !defined(_LIBCPP_VERSION) && !defined(_GLIBCXX_USE_CXX11_ABI)
+#if defined(__GNUG__) && !defined(_LIBCPP_VERSION) && !defined(_GLIBCXX_USE_CXX11_ABI) && !defined(_GLIBCXX_USE_C99_MATH_TR1)
 namespace std
 {
 	inline float copysign(float x, float y) { return ::copysignf(x, y); }
