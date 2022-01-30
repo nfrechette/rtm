@@ -275,6 +275,90 @@ namespace rtm
 		return lhs.x == rhs.x || lhs.y == rhs.y || lhs.z == rhs.z;
 #endif
 	}
+
+	//////////////////////////////////////////////////////////////////////////
+	// Per component logical AND between the inputs: lhs & rhs
+	//////////////////////////////////////////////////////////////////////////
+	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE mask4q mask_and(const mask4q& lhs, const mask4q& rhs) RTM_NO_EXCEPT
+	{
+#if defined(RTM_SSE2_INTRINSICS)
+		__m128i xy = _mm_and_si128(lhs.xy, rhs.xy);
+		__m128i zw = _mm_and_si128(lhs.zw, rhs.zw);
+		return mask4q{ xy, zw };
+#else
+		const uint64_t* lhs_ = reinterpret_cast<const uint64_t*>(&lhs);
+		const uint64_t* rhs_ = reinterpret_cast<const uint64_t*>(&rhs);
+
+		union
+		{
+			mask4q vector;
+			uint64_t scalar[4];
+		} result;
+
+		result.scalar[0] = lhs_[0] & rhs_[0];
+		result.scalar[1] = lhs_[1] & rhs_[1];
+		result.scalar[2] = lhs_[2] & rhs_[2];
+		result.scalar[3] = lhs_[3] & rhs_[3];
+
+		return result.vector;
+#endif
+	}
+
+	//////////////////////////////////////////////////////////////////////////
+	// Per component logical OR between the inputs: lhs | rhs
+	//////////////////////////////////////////////////////////////////////////
+	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE mask4q mask_or(const mask4q& lhs, const mask4q& rhs) RTM_NO_EXCEPT
+	{
+#if defined(RTM_SSE2_INTRINSICS)
+		__m128i xy = _mm_or_si128(lhs.xy, rhs.xy);
+		__m128i zw = _mm_or_si128(lhs.zw, rhs.zw);
+		return mask4q{ xy, zw };
+#else
+		const uint64_t* lhs_ = reinterpret_cast<const uint64_t*>(&lhs);
+		const uint64_t* rhs_ = reinterpret_cast<const uint64_t*>(&rhs);
+
+		union
+		{
+			mask4q vector;
+			uint64_t scalar[4];
+		} result;
+
+		result.scalar[0] = lhs_[0] | rhs_[0];
+		result.scalar[1] = lhs_[1] | rhs_[1];
+		result.scalar[2] = lhs_[2] | rhs_[2];
+		result.scalar[3] = lhs_[3] | rhs_[3];
+
+		return result.vector;
+#endif
+	}
+
+	//////////////////////////////////////////////////////////////////////////
+	// Per component logical XOR between the inputs: lhs ^ rhs
+	//////////////////////////////////////////////////////////////////////////
+	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE mask4q mask_xor(const mask4q& lhs, const mask4q& rhs) RTM_NO_EXCEPT
+	{
+#if defined(RTM_SSE2_INTRINSICS)
+		__m128i xy = _mm_xor_si128(lhs.xy, rhs.xy);
+		__m128i zw = _mm_xor_si128(lhs.zw, rhs.zw);
+		return mask4q{ xy, zw };
+#else
+		const uint64_t* lhs_ = reinterpret_cast<const uint64_t*>(&lhs);
+		const uint64_t* rhs_ = reinterpret_cast<const uint64_t*>(&rhs);
+
+		union
+		{
+			mask4q vector;
+			uint64_t scalar[4];
+		} result;
+
+		result.scalar[0] = lhs_[0] ^ rhs_[0];
+		result.scalar[1] = lhs_[1] ^ rhs_[1];
+		result.scalar[2] = lhs_[2] ^ rhs_[2];
+		result.scalar[3] = lhs_[3] ^ rhs_[3];
+
+		return result.vector;
+#endif
+	}
 }
 
 RTM_IMPL_FILE_PRAGMA_POP

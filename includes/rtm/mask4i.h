@@ -281,6 +281,48 @@ namespace rtm
 		return lhs.x == rhs.x || lhs.y == rhs.y || lhs.z == rhs.z;
 #endif
 	}
+
+	//////////////////////////////////////////////////////////////////////////
+	// Per component logical AND between the inputs: lhs & rhs
+	//////////////////////////////////////////////////////////////////////////
+	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE mask4i RTM_SIMD_CALL mask_and(mask4i_arg0 lhs, mask4i_arg1 rhs) RTM_NO_EXCEPT
+	{
+#if defined(RTM_SSE2_INTRINSICS)
+		return _mm_and_si128(lhs, rhs);
+#elif defined(RTM_NEON_INTRINSICS)
+		return RTM_IMPL_MASK4i_SET(vandq_u32(RTM_IMPL_MASK4i_GET(lhs), RTM_IMPL_MASK4i_GET(rhs)));
+#else
+		return mask4i{ lhs.x & rhs.x, lhs.y & rhs.y, lhs.z & rhs.z, lhs.w & rhs.w };
+#endif
+	}
+
+	//////////////////////////////////////////////////////////////////////////
+	// Per component logical OR between the inputs: lhs | rhs
+	//////////////////////////////////////////////////////////////////////////
+	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE mask4i RTM_SIMD_CALL mask_or(mask4i_arg0 lhs, mask4i_arg1 rhs) RTM_NO_EXCEPT
+	{
+#if defined(RTM_SSE2_INTRINSICS)
+		return _mm_or_si128(lhs, rhs);
+#elif defined(RTM_NEON_INTRINSICS)
+		return RTM_IMPL_MASK4i_SET(vorrq_u32(RTM_IMPL_MASK4i_GET(lhs), RTM_IMPL_MASK4i_GET(rhs)));
+#else
+		return mask4i{ lhs.x | rhs.x, lhs.y | rhs.y, lhs.z | rhs.z, lhs.w | rhs.w };
+#endif
+	}
+
+	//////////////////////////////////////////////////////////////////////////
+	// Per component logical XOR between the inputs: lhs ^ rhs
+	//////////////////////////////////////////////////////////////////////////
+	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE mask4i RTM_SIMD_CALL mask_xor(mask4i_arg0 lhs, mask4i_arg1 rhs) RTM_NO_EXCEPT
+	{
+#if defined(RTM_SSE2_INTRINSICS)
+		return _mm_xor_si128(lhs, rhs);
+#elif defined(RTM_NEON_INTRINSICS)
+		return RTM_IMPL_MASK4i_SET(veorq_u32(RTM_IMPL_MASK4i_GET(lhs), RTM_IMPL_MASK4i_GET(rhs)));
+#else
+		return mask4i{ lhs.x ^ rhs.x, lhs.y ^ rhs.y, lhs.z ^ rhs.z, lhs.w ^ rhs.w };
+#endif
+	}
 }
 
 RTM_IMPL_FILE_PRAGMA_POP
