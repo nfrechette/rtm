@@ -171,6 +171,110 @@ namespace rtm
 		return input.x != 0 || input.y != 0 || input.z != 0;
 #endif
 	}
+
+	//////////////////////////////////////////////////////////////////////////
+	// Returns true if all 4 components are equal, otherwise false: all(lhs.xyzw == rhs.xyzw)
+	//////////////////////////////////////////////////////////////////////////
+	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE bool RTM_SIMD_CALL mask_all_equal(const mask4q& lhs, const mask4q& rhs) RTM_NO_EXCEPT
+	{
+#if defined(RTM_SSE2_INTRINSICS)
+		// WARNING: SSE2 doesn't have a 64 bit int compare, we use 32 bit here and we assume
+		// that in a mask all bits are equal
+		__m128i xy_eq = _mm_cmpeq_epi32(lhs.xy, rhs.xy);
+		__m128i zw_eq = _mm_cmpeq_epi32(lhs.zw, rhs.zw);
+		return (_mm_movemask_epi8(xy_eq) & _mm_movemask_epi8(zw_eq)) == 0xFFFF;
+#elif defined(RTM_SSE4_INTRINSICS) && 0
+		// TODO
+#else
+		return lhs.x == rhs.x && lhs.y == rhs.y && lhs.z == rhs.z && lhs.w == rhs.w;
+#endif
+	}
+
+	//////////////////////////////////////////////////////////////////////////
+	// Returns true if all [xy] components are equal, otherwise false: all(lhs.xy == rhs.xy)
+	//////////////////////////////////////////////////////////////////////////
+	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE bool RTM_SIMD_CALL mask_all_equal2(const mask4q& lhs, const mask4q& rhs) RTM_NO_EXCEPT
+	{
+#if defined(RTM_SSE2_INTRINSICS)
+		// WARNING: SSE2 doesn't have a 64 bit int compare, we use 32 bit here and we assume
+		// that in a mask all bits are equal
+		return _mm_movemask_epi8(_mm_cmpeq_epi32(lhs.xy, rhs.xy)) == 0xFFFF;
+#elif defined(RTM_SSE4_INTRINSICS) && 0
+		// TODO
+#else
+		return lhs.x == rhs.x && lhs.y == rhs.y;
+#endif
+	}
+
+	//////////////////////////////////////////////////////////////////////////
+	// Returns true if all [xyz] components are equal, otherwise false: all(lhs.xyz == rhs.xyz)
+	//////////////////////////////////////////////////////////////////////////
+	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE bool RTM_SIMD_CALL mask_all_equal3(const mask4q& lhs, const mask4q& rhs) RTM_NO_EXCEPT
+	{
+#if defined(RTM_SSE2_INTRINSICS)
+		// WARNING: SSE2 doesn't have a 64 bit int compare, we use 32 bit here and we assume
+		// that in a mask all bits are equal
+		__m128i xy_eq = _mm_cmpeq_epi32(lhs.xy, rhs.xy);
+		__m128i zw_eq = _mm_cmpeq_epi32(lhs.zw, rhs.zw);
+		return _mm_movemask_epi8(xy_eq) == 0xFFFF && (_mm_movemask_epi8(zw_eq) & 0x00FF) == 0x00FF;
+#elif defined(RTM_SSE4_INTRINSICS) && 0
+		// TODO
+#else
+		return lhs.x == rhs.x && lhs.y == rhs.y && lhs.z == rhs.z;
+#endif
+	}
+
+	//////////////////////////////////////////////////////////////////////////
+	// Returns true if any 4 components are equal, otherwise false: any(lhs.xyzw == rhs.xyzw)
+	//////////////////////////////////////////////////////////////////////////
+	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE bool RTM_SIMD_CALL mask_any_equal(const mask4q& lhs, const mask4q& rhs) RTM_NO_EXCEPT
+	{
+#if defined(RTM_SSE2_INTRINSICS)
+		// WARNING: SSE2 doesn't have a 64 bit int compare, we use 32 bit here and we assume
+		// that in a mask all bits are equal
+		__m128i xy_eq = _mm_cmpeq_epi32(lhs.xy, rhs.xy);
+		__m128i zw_eq = _mm_cmpeq_epi32(lhs.zw, rhs.zw);
+		return (_mm_movemask_epi8(xy_eq) | _mm_movemask_epi8(zw_eq)) != 0;
+#elif defined(RTM_SSE4_INTRINSICS) && 0
+		// TODO
+#else
+		return lhs.x == rhs.x || lhs.y == rhs.y || lhs.z == rhs.z || lhs.w == rhs.w;
+#endif
+	}
+
+	//////////////////////////////////////////////////////////////////////////
+	// Returns true if any [xy] components are equal, otherwise false: any(lhs.xy == rhs.xy)
+	//////////////////////////////////////////////////////////////////////////
+	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE bool RTM_SIMD_CALL mask_any_equal2(const mask4q& lhs, const mask4q& rhs) RTM_NO_EXCEPT
+	{
+#if defined(RTM_SSE2_INTRINSICS)
+		// WARNING: SSE2 doesn't have a 64 bit int compare, we use 32 bit here and we assume
+		// that in a mask all bits are equal
+		return _mm_movemask_epi8(_mm_cmpeq_epi32(lhs.xy, rhs.xy)) != 0;
+#elif defined(RTM_SSE4_INTRINSICS) && 0
+		// TODO
+#else
+		return lhs.x == rhs.x || lhs.y == rhs.y;
+#endif
+	}
+
+	//////////////////////////////////////////////////////////////////////////
+	// Returns true if any [xyz] components are equal, otherwise false: any(lhs.xyz == rhs.xyz)
+	//////////////////////////////////////////////////////////////////////////
+	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE bool RTM_SIMD_CALL mask_any_equal3(const mask4q& lhs, const mask4q& rhs) RTM_NO_EXCEPT
+	{
+#if defined(RTM_SSE2_INTRINSICS)
+		// WARNING: SSE2 doesn't have a 64 bit int compare, we use 32 bit here and we assume
+		// that in a mask all bits are equal
+		__m128i xy_eq = _mm_cmpeq_epi32(lhs.xy, rhs.xy);
+		__m128i zw_eq = _mm_cmpeq_epi32(lhs.zw, rhs.zw);
+		return _mm_movemask_epi8(xy_eq) != 0 || (_mm_movemask_epi8(zw_eq) & 0x00FF) != 0;
+#elif defined(RTM_SSE4_INTRINSICS) && 0
+		// TODO
+#else
+		return lhs.x == rhs.x || lhs.y == rhs.y || lhs.z == rhs.z;
+#endif
+	}
 }
 
 RTM_IMPL_FILE_PRAGMA_POP

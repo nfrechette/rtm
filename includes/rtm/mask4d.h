@@ -171,6 +171,100 @@ namespace rtm
 		return input.x != 0 || input.y != 0 || input.z != 0;
 #endif
 	}
+
+	//////////////////////////////////////////////////////////////////////////
+	// Returns true if all 4 components are equal, otherwise false: all(lhs.xyzw == rhs.xyzw)
+	//////////////////////////////////////////////////////////////////////////
+	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE bool RTM_SIMD_CALL mask_all_equal(const mask4d& lhs, const mask4d& rhs) RTM_NO_EXCEPT
+	{
+#if defined(RTM_SSE2_INTRINSICS)
+		__m128d xy_eq_pd = _mm_cmpeq_pd(lhs.xy, rhs.xy);
+		__m128d zw_eq_pd = _mm_cmpeq_pd(lhs.zw, rhs.zw);
+		return (_mm_movemask_pd(xy_eq_pd) & _mm_movemask_pd(zw_eq_pd)) == 3;
+#else
+		// Cannot use == and != with NaN floats
+		return std::memcmp(&lhs, &rhs, sizeof(uint64_t) * 4) == 0;
+#endif
+	}
+
+	//////////////////////////////////////////////////////////////////////////
+	// Returns true if all [xy] components are equal, otherwise false: all(lhs.xy == rhs.xy)
+	//////////////////////////////////////////////////////////////////////////
+	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE bool RTM_SIMD_CALL mask_all_equal2(const mask4d& lhs, const mask4d& rhs) RTM_NO_EXCEPT
+	{
+#if defined(RTM_SSE2_INTRINSICS)
+		return _mm_movemask_pd(_mm_cmpeq_pd(lhs.xy, rhs.xy)) == 3;
+#else
+		// Cannot use == and != with NaN floats
+		return std::memcmp(&lhs, &rhs, sizeof(uint64_t) * 2) == 0;
+#endif
+	}
+
+	//////////////////////////////////////////////////////////////////////////
+	// Returns true if all [xyz] components are equal, otherwise false: all(lhs.xyz == rhs.xyz)
+	//////////////////////////////////////////////////////////////////////////
+	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE bool RTM_SIMD_CALL mask_all_equal3(const mask4d& lhs, const mask4d& rhs) RTM_NO_EXCEPT
+	{
+#if defined(RTM_SSE2_INTRINSICS)
+		__m128d xy_eq_pd = _mm_cmpeq_pd(lhs.xy, rhs.xy);
+		__m128d zw_eq_pd = _mm_cmpeq_pd(lhs.zw, rhs.zw);
+		return _mm_movemask_pd(xy_eq_pd) == 3 && (_mm_movemask_pd(zw_eq_pd) & 1) == 1;
+#else
+		// Cannot use == and != with NaN floats
+		return std::memcmp(&lhs, &rhs, sizeof(uint64_t) * 3) == 0;
+#endif
+	}
+
+	//////////////////////////////////////////////////////////////////////////
+	// Returns true if any 4 components are equal, otherwise false: any(lhs.xyzw == rhs.xyzw)
+	//////////////////////////////////////////////////////////////////////////
+	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE bool RTM_SIMD_CALL mask_any_equal(const mask4d& lhs, const mask4d& rhs) RTM_NO_EXCEPT
+	{
+#if defined(RTM_SSE2_INTRINSICS)
+		__m128d xy_eq_pd = _mm_cmpeq_pd(lhs.xy, rhs.xy);
+		__m128d zw_eq_pd = _mm_cmpeq_pd(lhs.zw, rhs.zw);
+		return (_mm_movemask_pd(xy_eq_pd) & _mm_movemask_pd(zw_eq_pd)) != 0;
+#else
+		// Cannot use == and != with NaN floats
+		return std::memcmp(&lhs.x, &rhs.x, sizeof(uint64_t)) == 0
+			|| std::memcmp(&lhs.y, &rhs.y, sizeof(uint64_t)) == 0
+			|| std::memcmp(&lhs.z, &rhs.z, sizeof(uint64_t)) == 0
+			|| std::memcmp(&lhs.w, &rhs.w, sizeof(uint64_t)) == 0;
+#endif
+	}
+
+	//////////////////////////////////////////////////////////////////////////
+	// Returns true if any [xy] components are equal, otherwise false: any(lhs.xy == rhs.xy)
+	//////////////////////////////////////////////////////////////////////////
+	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE bool RTM_SIMD_CALL mask_any_equal2(const mask4d& lhs, const mask4d& rhs) RTM_NO_EXCEPT
+	{
+#if defined(RTM_SSE2_INTRINSICS)
+		return _mm_movemask_pd(_mm_cmpeq_pd(lhs.xy, rhs.xy)) != 0;
+#else
+		// Cannot use == and != with NaN floats
+		return std::memcmp(&lhs.x, &rhs.x, sizeof(uint64_t)) == 0
+			|| std::memcmp(&lhs.y, &rhs.y, sizeof(uint64_t)) == 0;
+#endif
+	}
+
+	//////////////////////////////////////////////////////////////////////////
+	// Returns true if any [xyz] components are equal, otherwise false: any(lhs.xyz == rhs.xyz)
+	//////////////////////////////////////////////////////////////////////////
+	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE bool RTM_SIMD_CALL mask_any_equal3(const mask4d& lhs, const mask4d& rhs) RTM_NO_EXCEPT
+	{
+#if defined(RTM_SSE2_INTRINSICS)
+		__m128d xy_eq_pd = _mm_cmpeq_pd(lhs.xy, rhs.xy);
+		__m128d zw_eq_pd = _mm_cmpeq_pd(lhs.zw, rhs.zw);
+		return _mm_movemask_pd(xy_eq_pd) != 0 && (_mm_movemask_pd(zw_eq_pd) & 1) != 0;
+#else
+		// Cannot use == and != with NaN floats
+		return std::memcmp(&lhs.x, &rhs.x, sizeof(uint64_t)) == 0
+			|| std::memcmp(&lhs.y, &rhs.y, sizeof(uint64_t)) == 0
+			|| std::memcmp(&lhs.z, &rhs.z, sizeof(uint64_t)) == 0;
+#endif
+	}
+#endif
+	}
 }
 
 RTM_IMPL_FILE_PRAGMA_POP

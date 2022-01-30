@@ -122,6 +122,83 @@ static void test_mask_impl()
 		CHECK(mask_any_true3(mask7) == true);
 		CHECK(mask_any_true3(mask8) == true);
 	}
+
+	{
+		const MaskType all_true = mask_set(true, true, true, true);
+		const MaskType all_false = mask_set(false, false, false, false);
+
+		CHECK(!mask_all_equal2(all_true, mask_set(false, false, false, false)));
+		CHECK(!mask_all_equal2(all_true, mask_set(true, false, false, false)));
+		CHECK(mask_all_equal2(all_true, mask_set(true, true, false, false)));
+		CHECK(mask_all_equal2(all_true, mask_set(true, true, true, false)));
+		CHECK(mask_all_equal2(all_true, mask_set(true, true, true, true)));
+
+		CHECK(mask_all_equal2(all_false, mask_set(false, false, false, false)));
+		CHECK(mask_all_equal2(all_false, mask_set(false, false, false, true)));
+		CHECK(mask_all_equal2(all_false, mask_set(false, false, true, true)));
+		CHECK(!mask_all_equal2(all_false, mask_set(false, true, true, true)));
+		CHECK(!mask_all_equal2(all_false, mask_set(true, true, true, true)));
+
+		CHECK(!mask_all_equal3(all_true, mask_set(false, false, false, false)));
+		CHECK(!mask_all_equal3(all_true, mask_set(true, false, false, false)));
+		CHECK(!mask_all_equal3(all_true, mask_set(true, true, false, false)));
+		CHECK(mask_all_equal3(all_true, mask_set(true, true, true, false)));
+		CHECK(mask_all_equal3(all_true, mask_set(true, true, true, true)));
+
+		CHECK(mask_all_equal3(all_false, mask_set(false, false, false, false)));
+		CHECK(mask_all_equal3(all_false, mask_set(false, false, false, true)));
+		CHECK(!mask_all_equal3(all_false, mask_set(false, false, true, true)));
+		CHECK(!mask_all_equal3(all_false, mask_set(false, true, true, true)));
+		CHECK(!mask_all_equal3(all_false, mask_set(true, true, true, true)));
+
+		CHECK(!mask_all_equal(all_true, mask_set(false, false, false, false)));
+		CHECK(!mask_all_equal(all_true, mask_set(true, false, false, false)));
+		CHECK(!mask_all_equal(all_true, mask_set(true, true, false, false)));
+		CHECK(!mask_all_equal(all_true, mask_set(true, true, true, false)));
+		CHECK(mask_all_equal(all_true, mask_set(true, true, true, true)));
+
+		CHECK(mask_all_equal(all_false, mask_set(false, false, false, false)));
+		CHECK(!mask_all_equal(all_false, mask_set(false, false, false, true)));
+		CHECK(!mask_all_equal(all_false, mask_set(false, false, true, true)));
+		CHECK(!mask_all_equal(all_false, mask_set(false, true, true, true)));
+		CHECK(!mask_all_equal(all_false, mask_set(true, true, true, true)));
+
+		CHECK(!mask_any_equal2(all_true, mask_set(false, false, false, false)));
+		CHECK(mask_any_equal2(all_true, mask_set(true, false, false, false)));
+		CHECK(mask_any_equal2(all_true, mask_set(false, true, false, false)));
+		CHECK(mask_any_equal2(all_true, mask_set(true, true, true, false)));
+		CHECK(mask_any_equal2(all_true, mask_set(true, true, true, true)));
+
+		CHECK(mask_any_equal2(all_false, mask_set(false, false, false, false)));
+		CHECK(mask_any_equal2(all_false, mask_set(false, false, false, true)));
+		CHECK(mask_any_equal2(all_false, mask_set(true, false, true, true)));
+		CHECK(mask_any_equal2(all_false, mask_set(false, true, true, true)));
+		CHECK(!mask_any_equal2(all_false, mask_set(true, true, true, true)));
+
+		CHECK(!mask_any_equal3(all_true, mask_set(false, false, false, false)));
+		CHECK(mask_any_equal3(all_true, mask_set(true, false, false, false)));
+		CHECK(mask_any_equal3(all_true, mask_set(true, true, false, false)));
+		CHECK(mask_any_equal3(all_true, mask_set(true, true, true, false)));
+		CHECK(mask_any_equal3(all_true, mask_set(true, true, true, true)));
+
+		CHECK(mask_any_equal3(all_false, mask_set(false, false, false, false)));
+		CHECK(mask_any_equal3(all_false, mask_set(false, false, false, true)));
+		CHECK(mask_any_equal3(all_false, mask_set(false, false, true, true)));
+		CHECK(mask_any_equal3(all_false, mask_set(false, true, true, true)));
+		CHECK(!mask_any_equal3(all_false, mask_set(true, true, true, true)));
+
+		CHECK(!mask_any_equal(all_true, mask_set(false, false, false, false)));
+		CHECK(mask_any_equal(all_true, mask_set(true, false, false, false)));
+		CHECK(mask_any_equal(all_true, mask_set(true, true, false, false)));
+		CHECK(mask_any_equal(all_true, mask_set(true, true, true, false)));
+		CHECK(mask_any_equal(all_true, mask_set(true, true, true, true)));
+
+		CHECK(mask_any_equal(all_false, mask_set(false, false, false, false)));
+		CHECK(mask_any_equal(all_false, mask_set(false, false, false, true)));
+		CHECK(mask_any_equal(all_false, mask_set(false, false, true, true)));
+		CHECK(mask_any_equal(all_false, mask_set(false, true, true, true)));
+		CHECK(!mask_any_equal(all_false, mask_set(true, true, true, true)));
+	}
 }
 
 TEST_CASE("mask4f math", "[math][mask]")
