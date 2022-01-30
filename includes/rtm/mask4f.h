@@ -254,7 +254,10 @@ namespace rtm
 		uint16x4x2_t mask_0_8_4_12_1_9_5_13_2_10_6_14_3_11_7_15 = vzip_u16(mask_0_8_1_9_2_10_3_11_4_12_5_13_6_14_7_15.val[0], mask_0_8_1_9_2_10_3_11_4_12_5_13_6_14_7_15.val[1]);
 		return vget_lane_u32(mask_0_8_4_12_1_9_5_13_2_10_6_14_3_11_7_15.val[0], 0) != 0;
 #else
-		return std::memcmp(&lhs, &rhs, sizeof(uint32_t) * 4) != 0;
+		return std::memcmp(&lhs.x, &rhs.x, sizeof(uint32_t)) == 0
+			|| std::memcmp(&lhs.y, &rhs.y, sizeof(uint32_t)) == 0
+			|| std::memcmp(&lhs.z, &rhs.z, sizeof(uint32_t)) == 0
+			|| std::memcmp(&lhs.w, &rhs.w, sizeof(uint32_t)) == 0;
 #endif
 	}
 
@@ -270,7 +273,8 @@ namespace rtm
 		uint32x2_t mask = vceq_u32(vget_low_u32(vreinterpretq_u32_f32(lhs)), vget_low_u32(vreinterpretq_u32_f32(rhs)));
 		return vget_lane_u64(mask, 0) != 0;
 #else
-		return std::memcmp(&lhs, &rhs, sizeof(uint32_t) * 2) != 0;
+		return std::memcmp(&lhs.x, &rhs.x, sizeof(uint32_t)) == 0
+			|| std::memcmp(&lhs.y, &rhs.y, sizeof(uint32_t)) == 0;
 #endif
 	}
 
@@ -288,7 +292,9 @@ namespace rtm
 		uint16x4x2_t mask_0_8_4_12_1_9_5_13_2_10_6_14_3_11_7_15 = vzip_u16(mask_0_8_1_9_2_10_3_11_4_12_5_13_6_14_7_15.val[0], mask_0_8_1_9_2_10_3_11_4_12_5_13_6_14_7_15.val[1]);
 		return (vget_lane_u32(mask_0_8_4_12_1_9_5_13_2_10_6_14_3_11_7_15.val[0], 0) & 0x00FFFFFFU) != 0;
 #else
-		return std::memcmp(&lhs, &rhs, sizeof(uint32_t) * 3) != 0;
+		return std::memcmp(&lhs.x, &rhs.x, sizeof(uint32_t)) == 0
+			|| std::memcmp(&lhs.y, &rhs.y, sizeof(uint32_t)) == 0
+			|| std::memcmp(&lhs.z, &rhs.z, sizeof(uint32_t)) == 0;
 #endif
 	}
 
