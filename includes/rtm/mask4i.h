@@ -190,7 +190,7 @@ namespace rtm
 	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE bool RTM_SIMD_CALL mask_all_equal(mask4i_arg0 lhs, mask4i_arg1 rhs) RTM_NO_EXCEPT
 	{
 #if defined(RTM_SSE2_INTRINSICS)
-		return _mm_movemask_epi8(_mm_cmpeq_epi32(lhs, rhs)) == 0xF;
+		return _mm_movemask_epi8(_mm_cmpeq_epi32(lhs, rhs)) == 0xFFFF;
 #elif defined(RTM_NEON_INTRINSICS)
 		uint32x4_t mask = vceqq_u32(RTM_IMPL_MASK4i_GET(lhs), RTM_IMPL_MASK4i_GET(rhs));
 		uint8x8x2_t mask_0_8_1_9_2_10_3_11_4_12_5_13_6_14_7_15 = vzip_u8(vget_low_u8(mask), vget_high_u8(mask));
@@ -207,7 +207,7 @@ namespace rtm
 	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE bool RTM_SIMD_CALL mask_all_equal2(mask4i_arg0 lhs, mask4i_arg1 rhs) RTM_NO_EXCEPT
 	{
 #if defined(RTM_SSE2_INTRINSICS)
-		return (_mm_movemask_epi8(_mm_cmpeq_epi32(lhs, rhs)) & 0x3) == 0x3;
+		return (_mm_movemask_epi8(_mm_cmpeq_epi32(lhs, rhs)) & 0x00FF) == 0x00FF;
 #elif defined(RTM_NEON_INTRINSICS)
 		uint32x2_t mask = vceq_u32(vget_low_u32(RTM_IMPL_MASK4i_GET(lhs)), vget_low_u32(RTM_IMPL_MASK4i_GET(rhs)));
 		return vget_lane_u64(mask, 0) == 0xFFFFFFFFFFFFFFFFu;
@@ -222,7 +222,7 @@ namespace rtm
 	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE bool RTM_SIMD_CALL mask_all_equal3(mask4i_arg0 lhs, mask4i_arg1 rhs) RTM_NO_EXCEPT
 	{
 #if defined(RTM_SSE2_INTRINSICS)
-		return (_mm_movemask_epi8(_mm_cmpeq_epi32(lhs, rhs)) & 0x7) == 0x7;
+		return (_mm_movemask_epi8(_mm_cmpeq_epi32(lhs, rhs)) & 0x0FFF) == 0x0FFF;
 #elif defined(RTM_NEON_INTRINSICS)
 		uint32x4_t mask = vceqq_u32(RTM_IMPL_MASK4i_GET(lhs), RTM_IMPL_MASK4i_GET(rhs));
 		uint8x8x2_t mask_0_8_1_9_2_10_3_11_4_12_5_13_6_14_7_15 = vzip_u8(vget_low_u8(mask), vget_high_u8(mask));
@@ -256,7 +256,7 @@ namespace rtm
 	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE bool RTM_SIMD_CALL mask_any_equal2(mask4i_arg0 lhs, mask4i_arg1 rhs) RTM_NO_EXCEPT
 	{
 #if defined(RTM_SSE2_INTRINSICS)
-		return (_mm_movemask_epi8(_mm_cmpeq_epi32(lhs, rhs)) & 0x3) != 0;
+		return (_mm_movemask_epi8(_mm_cmpeq_epi32(lhs, rhs)) & 0x00FF) != 0;
 #elif defined(RTM_NEON_INTRINSICS)
 		uint32x2_t mask = vceq_u32(vget_low_u32(RTM_IMPL_MASK4i_GET(lhs)), vget_low_u32(RTM_IMPL_MASK4i_GET(rhs)));
 		return vget_lane_u64(mask, 0) != 0;
@@ -271,7 +271,7 @@ namespace rtm
 	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE bool RTM_SIMD_CALL mask_any_equal3(mask4i_arg0 lhs, mask4i_arg1 rhs) RTM_NO_EXCEPT
 	{
 #if defined(RTM_SSE2_INTRINSICS)
-		return (_mm_movemask_epi8(_mm_cmpeq_epi32(lhs, rhs)) & 0x7) != 0;
+		return (_mm_movemask_epi8(_mm_cmpeq_epi32(lhs, rhs)) & 0x0FFF) != 0;
 #elif defined(RTM_NEON_INTRINSICS)
 		uint32x4_t mask = vceqq_u32(RTM_IMPL_MASK4i_GET(lhs), RTM_IMPL_MASK4i_GET(rhs));
 		uint8x8x2_t mask_0_8_1_9_2_10_3_11_4_12_5_13_6_14_7_15 = vzip_u8(vget_low_u8(mask), vget_high_u8(mask));
