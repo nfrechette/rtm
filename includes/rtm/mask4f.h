@@ -195,7 +195,7 @@ namespace rtm
 	{
 		// Cannot use == and != with NaN floats
 #if defined(RTM_SSE2_INTRINSICS)
-		return _mm_movemask_epi8(_mm_cmpeq_epi32(_mm_castps_si128(lhs), _mm_castps_si128(rhs))) == 0xF;
+		return _mm_movemask_epi8(_mm_cmpeq_epi32(_mm_castps_si128(lhs), _mm_castps_si128(rhs))) == 0xFFFF;
 #elif defined(RTM_NEON_INTRINSICS)
 		uint32x4_t mask = vceqq_u32(vreinterpretq_u32_f32(lhs), vreinterpretq_u32_f32(rhs));
 		uint8x8x2_t mask_0_8_1_9_2_10_3_11_4_12_5_13_6_14_7_15 = vzip_u8(vget_low_u8(mask), vget_high_u8(mask));
@@ -213,7 +213,7 @@ namespace rtm
 	{
 		// Cannot use == and != with NaN floats
 #if defined(RTM_SSE2_INTRINSICS)
-		return (_mm_movemask_epi8(_mm_cmpeq_epi32(_mm_castps_si128(lhs), _mm_castps_si128(rhs))) & 0x3) == 0x3;
+		return (_mm_movemask_epi8(_mm_cmpeq_epi32(_mm_castps_si128(lhs), _mm_castps_si128(rhs))) & 0x00FF) == 0x00FF;
 #elif defined(RTM_NEON_INTRINSICS)
 		uint32x2_t mask = vceq_u32(vget_low_u32(vreinterpretq_u32_f32(lhs)), vget_low_u32(vreinterpretq_u32_f32(rhs)));
 		return vget_lane_u64(mask, 0) == 0xFFFFFFFFFFFFFFFFu;
@@ -229,7 +229,7 @@ namespace rtm
 	{
 		// Cannot use == and != with NaN floats
 #if defined(RTM_SSE2_INTRINSICS)
-		return (_mm_movemask_epi8(_mm_cmpeq_epi32(_mm_castps_si128(lhs), _mm_castps_si128(rhs))) & 0x7) == 0x7;
+		return (_mm_movemask_epi8(_mm_cmpeq_epi32(_mm_castps_si128(lhs), _mm_castps_si128(rhs))) & 0x0FFF) == 0x0FFF;
 #elif defined(RTM_NEON_INTRINSICS)
 		uint32x4_t mask = vceqq_u32(vreinterpretq_u32_f32(lhs), vreinterpretq_u32_f32(rhs));
 		uint8x8x2_t mask_0_8_1_9_2_10_3_11_4_12_5_13_6_14_7_15 = vzip_u8(vget_low_u8(mask), vget_high_u8(mask));
@@ -265,7 +265,7 @@ namespace rtm
 	{
 		// Cannot use == and != with NaN floats
 #if defined(RTM_SSE2_INTRINSICS)
-		return (_mm_movemask_epi8(_mm_cmpeq_epi32(_mm_castps_si128(lhs), _mm_castps_si128(rhs))) & 0x3) != 0;
+		return (_mm_movemask_epi8(_mm_cmpeq_epi32(_mm_castps_si128(lhs), _mm_castps_si128(rhs))) & 0x00FF) != 0;
 #elif defined(RTM_NEON_INTRINSICS)
 		uint32x2_t mask = vceq_u32(vget_low_u32(vreinterpretq_u32_f32(lhs)), vget_low_u32(vreinterpretq_u32_f32(rhs)));
 		return vget_lane_u64(mask, 0) != 0;
@@ -281,7 +281,7 @@ namespace rtm
 	{
 		// Cannot use == and != with NaN floats
 #if defined(RTM_SSE2_INTRINSICS)
-		return (_mm_movemask_epi8(_mm_cmpeq_epi32(_mm_castps_si128(lhs), _mm_castps_si128(rhs))) & 0x7) != 0;
+		return (_mm_movemask_epi8(_mm_cmpeq_epi32(_mm_castps_si128(lhs), _mm_castps_si128(rhs))) & 0x0FFF) != 0;
 #elif defined(RTM_NEON_INTRINSICS)
 		uint32x4_t mask = vceqq_u32(vreinterpretq_u32_f32(lhs), vreinterpretq_u32_f32(rhs));
 		uint8x8x2_t mask_0_8_1_9_2_10_3_11_4_12_5_13_6_14_7_15 = vzip_u8(vget_low_u8(mask), vget_high_u8(mask));
