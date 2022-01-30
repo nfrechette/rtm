@@ -181,12 +181,20 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE bool RTM_SIMD_CALL mask_all_equal(const mask4d& lhs, const mask4d& rhs) RTM_NO_EXCEPT
 	{
-#if defined(RTM_SSE2_INTRINSICS)
-		__m128d xy_eq_pd = _mm_cmpeq_pd(lhs.xy, rhs.xy);
-		__m128d zw_eq_pd = _mm_cmpeq_pd(lhs.zw, rhs.zw);
-		return (_mm_movemask_pd(xy_eq_pd) & _mm_movemask_pd(zw_eq_pd)) == 3;
-#else
 		// Cannot use == and != with NaN floats
+#if defined(RTM_SSE2_INTRINSICS)
+		// WARNING: SSE2 doesn't have a 64 bit int compare, we use 32 bit here and we assume
+		// that in a mask all bits are equal
+		__m128i lhs_xy = _mm_castpd_si128(lhs.xy);
+		__m128i lhs_zw = _mm_castpd_si128(lhs.zw);
+		__m128i rhs_xy = _mm_castpd_si128(rhs.xy);
+		__m128i rhs_zw = _mm_castpd_si128(rhs.zw);
+		__m128i xy_eq = _mm_cmpeq_epi32(lhs_xy, rhs_xy);
+		__m128i zw_eq = _mm_cmpeq_epi32(lhs_zw, rhs_zw);
+		return (_mm_movemask_epi8(xy_eq_pd) & _mm_movemask_epi8(zw_eq_pd)) == 0xFFFF;
+#elif defined(RTM_SSE4_INTRINSICS) && 0
+		// TODO
+#else
 		return std::memcmp(&lhs, &rhs, sizeof(uint64_t) * 4) == 0;
 #endif
 	}
@@ -196,10 +204,16 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE bool RTM_SIMD_CALL mask_all_equal2(const mask4d& lhs, const mask4d& rhs) RTM_NO_EXCEPT
 	{
-#if defined(RTM_SSE2_INTRINSICS)
-		return _mm_movemask_pd(_mm_cmpeq_pd(lhs.xy, rhs.xy)) == 3;
-#else
 		// Cannot use == and != with NaN floats
+#if defined(RTM_SSE2_INTRINSICS)
+		// WARNING: SSE2 doesn't have a 64 bit int compare, we use 32 bit here and we assume
+		// that in a mask all bits are equal
+		__m128i lhs_xy = _mm_castpd_si128(lhs.xy);
+		__m128i rhs_xy = _mm_castpd_si128(rhs.xy);
+		return _mm_movemask_pd(_mm_cmpeq_epi32(lhs_xy, rhs_xy)) == 0xFFFF;
+#elif defined(RTM_SSE4_INTRINSICS) && 0
+		// TODO
+#else
 		return std::memcmp(&lhs, &rhs, sizeof(uint64_t) * 2) == 0;
 #endif
 	}
@@ -209,12 +223,20 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE bool RTM_SIMD_CALL mask_all_equal3(const mask4d& lhs, const mask4d& rhs) RTM_NO_EXCEPT
 	{
-#if defined(RTM_SSE2_INTRINSICS)
-		__m128d xy_eq_pd = _mm_cmpeq_pd(lhs.xy, rhs.xy);
-		__m128d zw_eq_pd = _mm_cmpeq_pd(lhs.zw, rhs.zw);
-		return _mm_movemask_pd(xy_eq_pd) == 3 && (_mm_movemask_pd(zw_eq_pd) & 1) == 1;
-#else
 		// Cannot use == and != with NaN floats
+#if defined(RTM_SSE2_INTRINSICS)
+		// WARNING: SSE2 doesn't have a 64 bit int compare, we use 32 bit here and we assume
+		// that in a mask all bits are equal
+		__m128i lhs_xy = _mm_castpd_si128(lhs.xy);
+		__m128i lhs_zw = _mm_castpd_si128(lhs.zw);
+		__m128i rhs_xy = _mm_castpd_si128(rhs.xy);
+		__m128i rhs_zw = _mm_castpd_si128(rhs.zw);
+		__m128i xy_eq = _mm_cmpeq_epi32(lhs_xy, rhs_xy);
+		__m128i zw_eq = _mm_cmpeq_epi32(lhs_zw, rhs_zw);
+		return _mm_movemask_epi8(xy_eq) == 0xFFFF && (_mm_movemask_epi8(zw_eq) & 0x00FF) == 0x00FF;
+#elif defined(RTM_SSE4_INTRINSICS) && 0
+		// TODO
+#else
 		return std::memcmp(&lhs, &rhs, sizeof(uint64_t) * 3) == 0;
 #endif
 	}
@@ -224,12 +246,20 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE bool RTM_SIMD_CALL mask_any_equal(const mask4d& lhs, const mask4d& rhs) RTM_NO_EXCEPT
 	{
-#if defined(RTM_SSE2_INTRINSICS)
-		__m128d xy_eq_pd = _mm_cmpeq_pd(lhs.xy, rhs.xy);
-		__m128d zw_eq_pd = _mm_cmpeq_pd(lhs.zw, rhs.zw);
-		return (_mm_movemask_pd(xy_eq_pd) & _mm_movemask_pd(zw_eq_pd)) != 0;
-#else
 		// Cannot use == and != with NaN floats
+#if defined(RTM_SSE2_INTRINSICS)
+		// WARNING: SSE2 doesn't have a 64 bit int compare, we use 32 bit here and we assume
+		// that in a mask all bits are equal
+		__m128i lhs_xy = _mm_castpd_si128(lhs.xy);
+		__m128i lhs_zw = _mm_castpd_si128(lhs.zw);
+		__m128i rhs_xy = _mm_castpd_si128(rhs.xy);
+		__m128i rhs_zw = _mm_castpd_si128(rhs.zw);
+		__m128i xy_eq = _mm_cmpeq_epi32(lhs_xy, rhs_xy);
+		__m128i zw_eq = _mm_cmpeq_epi32(lhs_zw, rhs_zw);
+		return (_mm_movemask_epi8(xy_eq) | _mm_movemask_epi8(zw_eq)) != 0;
+#elif defined(RTM_SSE4_INTRINSICS) && 0
+		// TODO
+#else
 		return std::memcmp(&lhs.x, &rhs.x, sizeof(uint64_t)) == 0
 			|| std::memcmp(&lhs.y, &rhs.y, sizeof(uint64_t)) == 0
 			|| std::memcmp(&lhs.z, &rhs.z, sizeof(uint64_t)) == 0
@@ -242,10 +272,16 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE bool RTM_SIMD_CALL mask_any_equal2(const mask4d& lhs, const mask4d& rhs) RTM_NO_EXCEPT
 	{
-#if defined(RTM_SSE2_INTRINSICS)
-		return _mm_movemask_pd(_mm_cmpeq_pd(lhs.xy, rhs.xy)) != 0;
-#else
 		// Cannot use == and != with NaN floats
+#if defined(RTM_SSE2_INTRINSICS)
+		// WARNING: SSE2 doesn't have a 64 bit int compare, we use 32 bit here and we assume
+		// that in a mask all bits are equal
+		__m128i lhs_xy = _mm_castpd_si128(lhs.xy);
+		__m128i rhs_xy = _mm_castpd_si128(rhs.xy);
+		return _mm_movemask_epi8(_mm_cmpeq_epi32(lhs_xy, rhs_xy)) != 0;
+#elif defined(RTM_SSE4_INTRINSICS) && 0
+		// TODO
+#else
 		return std::memcmp(&lhs.x, &rhs.x, sizeof(uint64_t)) == 0
 			|| std::memcmp(&lhs.y, &rhs.y, sizeof(uint64_t)) == 0;
 #endif
@@ -256,12 +292,20 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE bool RTM_SIMD_CALL mask_any_equal3(const mask4d& lhs, const mask4d& rhs) RTM_NO_EXCEPT
 	{
-#if defined(RTM_SSE2_INTRINSICS)
-		__m128d xy_eq_pd = _mm_cmpeq_pd(lhs.xy, rhs.xy);
-		__m128d zw_eq_pd = _mm_cmpeq_pd(lhs.zw, rhs.zw);
-		return _mm_movemask_pd(xy_eq_pd) != 0 && (_mm_movemask_pd(zw_eq_pd) & 1) != 0;
-#else
 		// Cannot use == and != with NaN floats
+#if defined(RTM_SSE2_INTRINSICS)
+		// WARNING: SSE2 doesn't have a 64 bit int compare, we use 32 bit here and we assume
+		// that in a mask all bits are equal
+		__m128i lhs_xy = _mm_castpd_si128(lhs.xy);
+		__m128i lhs_zw = _mm_castpd_si128(lhs.zw);
+		__m128i rhs_xy = _mm_castpd_si128(rhs.xy);
+		__m128i rhs_zw = _mm_castpd_si128(rhs.zw);
+		__m128i xy_eq = _mm_cmpeq_epi32(lhs_xy, rhs_xy);
+		__m128i zw_eq = _mm_cmpeq_epi32(lhs_zw, rhs_zw);
+		return _mm_movemask_epi8(xy_eq) != 0 || (_mm_movemask_epi8(zw_eq) & 0x00FF) != 0;
+#elif defined(RTM_SSE4_INTRINSICS) && 0
+		// TODO
+#else
 		return std::memcmp(&lhs.x, &rhs.x, sizeof(uint64_t)) == 0
 			|| std::memcmp(&lhs.y, &rhs.y, sizeof(uint64_t)) == 0
 			|| std::memcmp(&lhs.z, &rhs.z, sizeof(uint64_t)) == 0;
