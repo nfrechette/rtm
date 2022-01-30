@@ -89,7 +89,7 @@ namespace rtm
 	}
 
 	//////////////////////////////////////////////////////////////////////////
-	// Returns true if all 4 components are true, otherwise false: all(input != 0)
+	// Returns true if all 4 components are true, otherwise false: all(input.xyzw != 0)
 	//////////////////////////////////////////////////////////////////////////
 	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE bool RTM_SIMD_CALL mask_all_true(mask4i_arg0 input) RTM_NO_EXCEPT
 	{
@@ -106,7 +106,7 @@ namespace rtm
 	}
 
 	//////////////////////////////////////////////////////////////////////////
-	// Returns true if all [xy] components are true, otherwise false: all(input != 0)
+	// Returns true if all [xy] components are true, otherwise false: all(input.xy != 0)
 	//////////////////////////////////////////////////////////////////////////
 	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE bool RTM_SIMD_CALL mask_all_true2(mask4i_arg0 input) RTM_NO_EXCEPT
 	{
@@ -120,7 +120,7 @@ namespace rtm
 	}
 
 	//////////////////////////////////////////////////////////////////////////
-	// Returns true if all [xyz] components are true, otherwise false: all(input != 0)
+	// Returns true if all [xyz] components are true, otherwise false: all(input.xyz != 0)
 	//////////////////////////////////////////////////////////////////////////
 	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE bool RTM_SIMD_CALL mask_all_true3(mask4i_arg0 input) RTM_NO_EXCEPT
 	{
@@ -137,7 +137,7 @@ namespace rtm
 	}
 
 	//////////////////////////////////////////////////////////////////////////
-	// Returns true if any 4 components are true, otherwise false: any(input != 0)
+	// Returns true if any 4 components are true, otherwise false: any(input.xyzw != 0)
 	//////////////////////////////////////////////////////////////////////////
 	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE bool RTM_SIMD_CALL mask_any_true(mask4i_arg0 input) RTM_NO_EXCEPT
 	{
@@ -154,7 +154,7 @@ namespace rtm
 	}
 
 	//////////////////////////////////////////////////////////////////////////
-	// Returns true if any [xy] components are true, otherwise false: any(input != 0)
+	// Returns true if any [xy] components are true, otherwise false: any(input.xy != 0)
 	//////////////////////////////////////////////////////////////////////////
 	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE bool RTM_SIMD_CALL mask_any_true2(mask4i_arg0 input) RTM_NO_EXCEPT
 	{
@@ -168,7 +168,7 @@ namespace rtm
 	}
 
 	//////////////////////////////////////////////////////////////////////////
-	// Returns true if any [xyz] components are true, otherwise false: any(input != 0)
+	// Returns true if any [xyz] components are true, otherwise false: any(input.xyz != 0)
 	//////////////////////////////////////////////////////////////////////////
 	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE bool RTM_SIMD_CALL mask_any_true3(mask4i_arg0 input) RTM_NO_EXCEPT
 	{
