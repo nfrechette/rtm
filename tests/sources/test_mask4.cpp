@@ -30,6 +30,8 @@
 #include <rtm/mask4i.h>
 #include <rtm/mask4q.h>
 
+#include <cstring>
+
 using namespace rtm;
 
 template<typename IntType, typename Mask4Type>
