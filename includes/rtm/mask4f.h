@@ -28,6 +28,10 @@
 #include "rtm/impl/compiler_utils.h"
 #include "rtm/impl/mask_common.h"
 
+#if !defined(RTM_SSE2_INTRINSICS)
+	#include <cstring>
+#endif
+
 RTM_IMPL_FILE_PRAGMA_PUSH
 
 namespace rtm
