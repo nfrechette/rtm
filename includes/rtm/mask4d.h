@@ -191,7 +191,7 @@ namespace rtm
 		__m128i rhs_zw = _mm_castpd_si128(rhs.zw);
 		__m128i xy_eq = _mm_cmpeq_epi32(lhs_xy, rhs_xy);
 		__m128i zw_eq = _mm_cmpeq_epi32(lhs_zw, rhs_zw);
-		return (_mm_movemask_epi8(xy_eq_pd) & _mm_movemask_epi8(zw_eq_pd)) == 0xFFFF;
+		return (_mm_movemask_epi8(xy_eq) & _mm_movemask_epi8(zw_eq)) == 0xFFFF;
 #elif defined(RTM_SSE4_INTRINSICS) && 0
 		// TODO
 #else
@@ -210,7 +210,7 @@ namespace rtm
 		// that in a mask all bits are equal
 		__m128i lhs_xy = _mm_castpd_si128(lhs.xy);
 		__m128i rhs_xy = _mm_castpd_si128(rhs.xy);
-		return _mm_movemask_pd(_mm_cmpeq_epi32(lhs_xy, rhs_xy)) == 0xFFFF;
+		return _mm_movemask_epi8(_mm_cmpeq_epi32(lhs_xy, rhs_xy)) == 0xFFFF;
 #elif defined(RTM_SSE4_INTRINSICS) && 0
 		// TODO
 #else
