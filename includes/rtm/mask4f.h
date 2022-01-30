@@ -183,6 +183,112 @@ namespace rtm
 		return input.x != 0 || input.y != 0 || input.z != 0;
 #endif
 	}
+
+	//////////////////////////////////////////////////////////////////////////
+	// Returns true if all 4 components are equal, otherwise false: all(lhs.xyzw == rhs.xyzw)
+	//////////////////////////////////////////////////////////////////////////
+	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE bool RTM_SIMD_CALL mask_all_equal(mask4f_arg0 lhs, mask4f_arg1 rhs) RTM_NO_EXCEPT
+	{
+#if defined(RTM_SSE2_INTRINSICS)
+		return _mm_movemask_ps(_mm_cmpeq_ps(lhs, rhs)) == 0xF;
+#elif defined(RTM_NEON_INTRINSICS)
+		uint32x4_t mask = vceqq_u32(vreinterpretq_u32_f32(lhs), vreinterpretq_u32_f32(rhs));
+		uint8x8x2_t mask_0_8_1_9_2_10_3_11_4_12_5_13_6_14_7_15 = vzip_u8(vget_low_u8(mask), vget_high_u8(mask));
+		uint16x4x2_t mask_0_8_4_12_1_9_5_13_2_10_6_14_3_11_7_15 = vzip_u16(mask_0_8_1_9_2_10_3_11_4_12_5_13_6_14_7_15.val[0], mask_0_8_1_9_2_10_3_11_4_12_5_13_6_14_7_15.val[1]);
+		return vget_lane_u32(mask_0_8_4_12_1_9_5_13_2_10_6_14_3_11_7_15.val[0], 0) == 0xFFFFFFFFU;
+#else
+		// Cannot use == and != with NaN floats
+		return std::memcmp(&lhs, &rhs, sizeof(uint32_t) * 4) == 0;
+#endif
+	}
+
+	//////////////////////////////////////////////////////////////////////////
+	// Returns true if all [xy] components are equal, otherwise false: all(lhs.xy == rhs.xy)
+	//////////////////////////////////////////////////////////////////////////
+	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE bool RTM_SIMD_CALL mask_all_equal2(mask4f_arg0 lhs, mask4f_arg1 rhs) RTM_NO_EXCEPT
+	{
+#if defined(RTM_SSE2_INTRINSICS)
+		return (_mm_movemask_ps(_mm_cmpeq_ps(lhs, rhs)) & 0x3) == 0x3;
+#elif defined(RTM_NEON_INTRINSICS)
+		uint32x2_t mask = vceq_u32(vget_low_u32(vreinterpretq_u32_f32(lhs)), vget_low_u32(vreinterpretq_u32_f32(rhs)));
+		return vget_lane_u64(mask, 0) == 0xFFFFFFFFFFFFFFFFu;
+#else
+		// Cannot use == and != with NaN floats
+		return std::memcmp(&lhs, &rhs, sizeof(uint32_t) * 2) == 0;
+#endif
+	}
+
+	//////////////////////////////////////////////////////////////////////////
+	// Returns true if all [xyz] components are equal, otherwise false: all(lhs.xyz == rhs.xyz)
+	//////////////////////////////////////////////////////////////////////////
+	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE bool RTM_SIMD_CALL mask_all_equal3(mask4f_arg0 lhs, mask4f_arg1 rhs) RTM_NO_EXCEPT
+	{
+#if defined(RTM_SSE2_INTRINSICS)
+		return (_mm_movemask_ps(_mm_cmpeq_ps(lhs, rhs)) & 0x7) == 0x7;
+#elif defined(RTM_NEON_INTRINSICS)
+		uint32x4_t mask = vceqq_u32(vreinterpretq_u32_f32(lhs), vreinterpretq_u32_f32(rhs));
+		uint8x8x2_t mask_0_8_1_9_2_10_3_11_4_12_5_13_6_14_7_15 = vzip_u8(vget_low_u8(mask), vget_high_u8(mask));
+		uint16x4x2_t mask_0_8_4_12_1_9_5_13_2_10_6_14_3_11_7_15 = vzip_u16(mask_0_8_1_9_2_10_3_11_4_12_5_13_6_14_7_15.val[0], mask_0_8_1_9_2_10_3_11_4_12_5_13_6_14_7_15.val[1]);
+		return (vget_lane_u32(mask_0_8_4_12_1_9_5_13_2_10_6_14_3_11_7_15.val[0], 0) & 0x00FFFFFFU) == 0x00FFFFFFU;
+#else
+		// Cannot use == and != with NaN floats
+		return std::memcmp(&lhs, &rhs, sizeof(uint32_t) * 3) == 0;
+#endif
+	}
+
+	//////////////////////////////////////////////////////////////////////////
+	// Returns true if any 4 components are equal, otherwise false: any(lhs.xyzw == rhs.xyzw)
+	//////////////////////////////////////////////////////////////////////////
+	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE bool RTM_SIMD_CALL mask_any_equal(mask4f_arg0 lhs, mask4f_arg1 rhs) RTM_NO_EXCEPT
+	{
+#if defined(RTM_SSE2_INTRINSICS)
+		return _mm_movemask_ps(_mm_cmpeq_ps(lhs, rhs)) != 0;
+#elif defined(RTM_NEON_INTRINSICS)
+		uint32x4_t mask = vceqq_u32(vreinterpretq_u32_f32(lhs), vreinterpretq_u32_f32(rhs));
+		uint8x8x2_t mask_0_8_1_9_2_10_3_11_4_12_5_13_6_14_7_15 = vzip_u8(vget_low_u8(mask), vget_high_u8(mask));
+		uint16x4x2_t mask_0_8_4_12_1_9_5_13_2_10_6_14_3_11_7_15 = vzip_u16(mask_0_8_1_9_2_10_3_11_4_12_5_13_6_14_7_15.val[0], mask_0_8_1_9_2_10_3_11_4_12_5_13_6_14_7_15.val[1]);
+		return vget_lane_u32(mask_0_8_4_12_1_9_5_13_2_10_6_14_3_11_7_15.val[0], 0) != 0;
+#else
+		// Cannot use == and != with NaN floats
+		return std::memcmp(&lhs, &rhs, sizeof(uint32_t) * 4) != 0;
+#endif
+	}
+
+	//////////////////////////////////////////////////////////////////////////
+	// Returns true if any [xy] components are equal, otherwise false: any(lhs.xy == rhs.xy)
+	//////////////////////////////////////////////////////////////////////////
+	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE bool RTM_SIMD_CALL mask_any_equal2(mask4f_arg0 lhs, mask4f_arg1 rhs) RTM_NO_EXCEPT
+	{
+#if defined(RTM_SSE2_INTRINSICS)
+		return (_mm_movemask_ps(_mm_cmpeq_ps(lhs, rhs)) & 0x3) != 0;
+#elif defined(RTM_NEON_INTRINSICS)
+		uint32x2_t mask = vceq_u32(vget_low_u32(vreinterpretq_u32_f32(lhs)), vget_low_u32(vreinterpretq_u32_f32(rhs)));
+		return vget_lane_u64(mask, 0) != 0;
+#else
+		// Cannot use == and != with NaN floats
+		return std::memcmp(&lhs, &rhs, sizeof(uint32_t) * 2) != 0;
+#endif
+	}
+
+	//////////////////////////////////////////////////////////////////////////
+	// Returns true if any [xyz] components are equal, otherwise false: any(lhs.xyz == rhs.xyz)
+	//////////////////////////////////////////////////////////////////////////
+	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE bool RTM_SIMD_CALL mask_any_equal3(mask4f_arg0 lhs, mask4f_arg1 rhs) RTM_NO_EXCEPT
+	{
+#if defined(RTM_SSE2_INTRINSICS)
+		return (_mm_movemask_ps(_mm_cmpeq_ps(lhs, rhs)) & 0x7) != 0;
+#elif defined(RTM_NEON_INTRINSICS)
+		uint32x4_t mask = vceqq_u32(vreinterpretq_u32_f32(lhs), vreinterpretq_u32_f32(rhs));
+		uint8x8x2_t mask_0_8_1_9_2_10_3_11_4_12_5_13_6_14_7_15 = vzip_u8(vget_low_u8(mask), vget_high_u8(mask));
+		uint16x4x2_t mask_0_8_4_12_1_9_5_13_2_10_6_14_3_11_7_15 = vzip_u16(mask_0_8_1_9_2_10_3_11_4_12_5_13_6_14_7_15.val[0], mask_0_8_1_9_2_10_3_11_4_12_5_13_6_14_7_15.val[1]);
+		return (vget_lane_u32(mask_0_8_4_12_1_9_5_13_2_10_6_14_3_11_7_15.val[0], 0) & 0x00FFFFFFU) != 0;
+#else
+		// Cannot use == and != with NaN floats
+		return std::memcmp(&lhs, &rhs, sizeof(uint32_t) * 3) != 0;
+#endif
+	}
+#endif
+	}
 }
 
 RTM_IMPL_FILE_PRAGMA_POP
