@@ -287,6 +287,88 @@ namespace rtm
 		return std::memcmp(&lhs, &rhs, sizeof(uint32_t) * 3) != 0;
 #endif
 	}
+
+	//////////////////////////////////////////////////////////////////////////
+	// Per component logical AND between the inputs: lhs & rhs
+	//////////////////////////////////////////////////////////////////////////
+	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE mask4f RTM_SIMD_CALL mask_and(mask4f_arg0 lhs, mask4f_arg1 rhs) RTM_NO_EXCEPT
+	{
+#if defined(RTM_SSE2_INTRINSICS)
+		return _mm_and_ps(lhs, rhs);
+#elif defined(RTM_NEON_INTRINSICS)
+		return vreinterpretq_f32_u32(vandq_u32(vreinterpretq_u32_f32(lhs), vreinterpretq_u32_f32(rhs)));
+#else
+		const uint32_t* lhs_ = reinterpret_cast<const uint32_t*>(&lhs);
+		const uint32_t* rhs_ = reinterpret_cast<const uint32_t*>(&rhs);
+
+		union
+		{
+			mask4f vector;
+			uint32_t scalar[4];
+		} result;
+
+		result.scalar[0] = lhs_[0] & rhs_[0];
+		result.scalar[1] = lhs_[1] & rhs_[1];
+		result.scalar[2] = lhs_[2] & rhs_[2];
+		result.scalar[3] = lhs_[3] & rhs_[3];
+
+		return result.vector;
+#endif
+	}
+
+	//////////////////////////////////////////////////////////////////////////
+	// Per component logical OR between the inputs: lhs | rhs
+	//////////////////////////////////////////////////////////////////////////
+	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE mask4f RTM_SIMD_CALL mask_or(mask4f_arg0 lhs, mask4f_arg1 rhs) RTM_NO_EXCEPT
+	{
+#if defined(RTM_SSE2_INTRINSICS)
+		return _mm_or_ps(lhs, rhs);
+#elif defined(RTM_NEON_INTRINSICS)
+		return vreinterpretq_f32_u32(vorrq_u32(vreinterpretq_u32_f32(lhs), vreinterpretq_u32_f32(rhs)));
+#else
+		const uint32_t* lhs_ = reinterpret_cast<const uint32_t*>(&lhs);
+		const uint32_t* rhs_ = reinterpret_cast<const uint32_t*>(&rhs);
+
+		union
+		{
+			mask4f vector;
+			uint32_t scalar[4];
+		} result;
+
+		result.scalar[0] = lhs_[0] | rhs_[0];
+		result.scalar[1] = lhs_[1] | rhs_[1];
+		result.scalar[2] = lhs_[2] | rhs_[2];
+		result.scalar[3] = lhs_[3] | rhs_[3];
+
+		return result.vector;
+#endif
+	}
+
+	//////////////////////////////////////////////////////////////////////////
+	// Per component logical XOR between the inputs: lhs ^ rhs
+	//////////////////////////////////////////////////////////////////////////
+	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE mask4f RTM_SIMD_CALL mask_xor(mask4f_arg0 lhs, mask4f_arg1 rhs) RTM_NO_EXCEPT
+	{
+#if defined(RTM_SSE2_INTRINSICS)
+		return _mm_xor_ps(lhs, rhs);
+#elif defined(RTM_NEON_INTRINSICS)
+		return vreinterpretq_f32_u32(veorq_u32(vreinterpretq_u32_f32(lhs), vreinterpretq_u32_f32(rhs)));
+#else
+		const uint32_t* lhs_ = reinterpret_cast<const uint32_t*>(&lhs);
+		const uint32_t* rhs_ = reinterpret_cast<const uint32_t*>(&rhs);
+
+		union
+		{
+			mask4f vector;
+			uint32_t scalar[4];
+		} result;
+
+		result.scalar[0] = lhs_[0] ^ rhs_[0];
+		result.scalar[1] = lhs_[1] ^ rhs_[1];
+		result.scalar[2] = lhs_[2] ^ rhs_[2];
+		result.scalar[3] = lhs_[3] ^ rhs_[3];
+
+		return result.vector;
 #endif
 	}
 }
