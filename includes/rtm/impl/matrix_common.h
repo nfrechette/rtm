@@ -27,6 +27,7 @@
 #include "rtm/math.h"
 #include "rtm/vector4f.h"
 #include "rtm/vector4d.h"
+#include "rtm/version.h"
 #include "rtm/type_traits.h"
 #include "rtm/impl/compiler_utils.h"
 #include "rtm/impl/matrix_cast.h"
@@ -35,6 +36,8 @@ RTM_IMPL_FILE_PRAGMA_PUSH
 
 namespace rtm
 {
+	RTM_IMPL_VERSION_NAMESPACE_BEGIN
+
 	namespace rtm_impl
 	{
 		//////////////////////////////////////////////////////////////////////////
@@ -164,6 +167,8 @@ namespace rtm
 	{
 		return rtm_impl::matrix_identity_impl();
 	}
+
+	RTM_IMPL_VERSION_NAMESPACE_END
 }
 
 RTM_IMPL_FILE_PRAGMA_POP

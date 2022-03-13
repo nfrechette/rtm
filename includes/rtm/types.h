@@ -26,11 +26,14 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 #include "rtm/math.h"
+#include "rtm/version.h"
 
 #include <cstdint>
 
 namespace rtm
 {
+	RTM_IMPL_VERSION_NAMESPACE_BEGIN
+
 #if defined(RTM_SSE2_INTRINSICS)
 	//////////////////////////////////////////////////////////////////////////
 	// A quaternion (4D complex number) where the imaginary part is the [w] component.
@@ -544,6 +547,8 @@ namespace rtm
 		double z;
 		double w;
 	};
+
+	RTM_IMPL_VERSION_NAMESPACE_END
 }
 
 // Always include the register passing typedefs

@@ -29,6 +29,7 @@
 #include "rtm/quatd.h"
 #include "rtm/vector4d.h"
 #include "rtm/matrix3x4d.h"
+#include "rtm/version.h"
 #include "rtm/impl/compiler_utils.h"
 #include "rtm/impl/qvv_common.h"
 
@@ -36,6 +37,8 @@ RTM_IMPL_FILE_PRAGMA_PUSH
 
 namespace rtm
 {
+	RTM_IMPL_VERSION_NAMESPACE_BEGIN
+
 	//////////////////////////////////////////////////////////////////////////
 	// Casts a QVV transform float32 variant to a float64 variant.
 	//////////////////////////////////////////////////////////////////////////
@@ -254,6 +257,8 @@ namespace rtm
 		return qvv_set(rotation, translation, start.scale);
 	}
 #endif
+
+	RTM_IMPL_VERSION_NAMESPACE_END
 }
 
 RTM_IMPL_FILE_PRAGMA_POP
