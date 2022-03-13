@@ -25,12 +25,15 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 #include "rtm/math.h"
+#include "rtm/version.h"
 #include "rtm/impl/compiler_utils.h"
 
 RTM_IMPL_FILE_PRAGMA_PUSH
 
 namespace rtm
 {
+	RTM_IMPL_VERSION_NAMESPACE_BEGIN
+
 	//////////////////////////////////////////////////////////////////////////
 	// Creates a quaternion from all 4 components.
 	//////////////////////////////////////////////////////////////////////////
@@ -93,6 +96,8 @@ namespace rtm
 	{
 		return rtm_impl::quat_identity_impl();
 	}
+
+	RTM_IMPL_VERSION_NAMESPACE_END
 }
 
 RTM_IMPL_FILE_PRAGMA_POP

@@ -27,6 +27,7 @@
 
 #include "rtm/constants.h"
 #include "rtm/math.h"
+#include "rtm/version.h"
 #include "rtm/impl/compiler_utils.h"
 #include "rtm/impl/scalar_common.h"
 
@@ -37,6 +38,8 @@ RTM_IMPL_FILE_PRAGMA_PUSH
 
 namespace rtm
 {
+	RTM_IMPL_VERSION_NAMESPACE_BEGIN
+
 	//////////////////////////////////////////////////////////////////////////
 	// Creates a scalar from a floating point value.
 	//////////////////////////////////////////////////////////////////////////
@@ -981,8 +984,8 @@ namespace rtm
 		__m128d y_sign = _mm_and_pd(y.value, sign_mask);
 
 		// If X == 0.0, our offset is PI/2 otherwise it is PI both with the sign of Y
-		__m128d half_pi = _mm_set1_pd(rtm::constants::half_pi());
-		__m128d pi = _mm_set1_pd(rtm::constants::pi());
+		__m128d half_pi = _mm_set1_pd(constants::half_pi());
+		__m128d pi = _mm_set1_pd(constants::pi());
 		__m128d offset = _mm_or_pd(_mm_and_pd(is_x_zero, half_pi), _mm_andnot_pd(is_x_zero, pi));
 		offset = _mm_or_pd(offset, y_sign);
 
@@ -1025,14 +1028,14 @@ namespace rtm
 			if (y == 0.0)
 				return 0.0;
 
-			return std::copysign(rtm::constants::half_pi(), y);
+			return std::copysign(constants::half_pi(), y);
 		}
 
 		double value = scalar_atan(y / x);
 		if (x > 0.0)
 			return value;
 
-		double offset = std::copysign(rtm::constants::pi(), y);
+		double offset = std::copysign(constants::pi(), y);
 		return value + offset;
 	}
 
@@ -1051,6 +1054,8 @@ namespace rtm
 	{
 		return rad * constants::one_eighty_div_pi();
 	}
+
+	RTM_IMPL_VERSION_NAMESPACE_END
 }
 
 RTM_IMPL_FILE_PRAGMA_POP

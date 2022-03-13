@@ -27,12 +27,15 @@
 #include "rtm/math.h"
 #include "rtm/quatf.h"
 #include "rtm/vector4f.h"
+#include "rtm/version.h"
 #include "rtm/impl/compiler_utils.h"
 
 RTM_IMPL_FILE_PRAGMA_PUSH
 
 namespace rtm
 {
+	RTM_IMPL_VERSION_NAMESPACE_BEGIN
+
 	//////////////////////////////////////////////////////////////////////////
 	// Returns the quaternion on the hypersphere with a positive [w] component
 	// that represents the same 3D rotation as the input.
@@ -83,7 +86,7 @@ namespace rtm
 		// sub is dependent on the result of the mul where the C impl below pipelines a bit better it seems
 		float32x4_t x2y2z2 = vmulq_f32(input, input);
 		float w_squared = ((1.0F - vgetq_lane_f32(x2y2z2, 0)) - vgetq_lane_f32(x2y2z2, 1)) - vgetq_lane_f32(x2y2z2, 2);
-		float w = rtm::scalar_sqrt(rtm::scalar_abs(w_squared));
+		float w = scalar_sqrt(scalar_abs(w_squared));
 		return vsetq_lane_f32(w, input, 3);
 #else
 		// Operation order is important here, due to rounding, ((1.0 - (X*X)) - Y*Y) - Z*Z is more accurate than 1.0 - dot3(xyz, xyz)
@@ -94,6 +97,8 @@ namespace rtm
 		return quat_set_w(vector_to_quat(input), w);
 #endif
 	}
+
+	RTM_IMPL_VERSION_NAMESPACE_END
 }
 
 RTM_IMPL_FILE_PRAGMA_POP
