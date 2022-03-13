@@ -193,7 +193,6 @@ def get_toolchain(compiler, cmake_script_dir):
 
 def set_compiler_env(compiler, args):
 	if platform.system() == 'Linux':
-		os.environ['MAKEFLAGS'] = '-j{}'.format(args.num_threads)
 		if compiler == 'clang4':
 			os.environ['CC'] = 'clang-4.0'
 			os.environ['CXX'] = 'clang++-4.0'
@@ -472,6 +471,9 @@ if __name__ == "__main__":
 	if args.compiler:
 		print('Using compiler: {}'.format(args.compiler))
 	print('Using {} threads'.format(args.num_threads))
+
+	# Make sure 'make' runs with all available cores
+	os.environ['MAKEFLAGS'] = '-j{}'.format(args.num_threads)
 
 	do_generate_solution(build_dir, cmake_script_dir, args)
 
