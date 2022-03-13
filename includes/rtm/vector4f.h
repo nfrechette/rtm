@@ -28,6 +28,7 @@
 #include "rtm/macros.h"
 #include "rtm/math.h"
 #include "rtm/scalarf.h"
+#include "rtm/version.h"
 #include "rtm/impl/compiler_utils.h"
 #include "rtm/impl/memory_utils.h"
 #include "rtm/impl/vector_common.h"
@@ -36,6 +37,8 @@ RTM_IMPL_FILE_PRAGMA_PUSH
 
 namespace rtm
 {
+	RTM_IMPL_VERSION_NAMESPACE_BEGIN
+
 	//////////////////////////////////////////////////////////////////////////
 	// Setters, getters, and casts
 	//////////////////////////////////////////////////////////////////////////
@@ -2516,21 +2519,21 @@ namespace rtm
 		// See: GPGPU Programming for Games and Science (David H. Eberly)
 
 		// Remap our input in the [-pi, pi] range
-		__m128 quotient = _mm_mul_ps(input, _mm_set_ps1(rtm::constants::one_div_two_pi()));
+		__m128 quotient = _mm_mul_ps(input, _mm_set_ps1(constants::one_div_two_pi()));
 		quotient = vector_round_bankers(quotient);
-		quotient = _mm_mul_ps(quotient, _mm_set_ps1(rtm::constants::two_pi()));
+		quotient = _mm_mul_ps(quotient, _mm_set_ps1(constants::two_pi()));
 		__m128 x = _mm_sub_ps(input, quotient);
 
 		// Remap our input in the [-pi/2, pi/2] range
 		const __m128 sign_mask = _mm_set_ps(-0.0F, -0.0F, -0.0F, -0.0F);
 		__m128 sign = _mm_and_ps(x, sign_mask);
-		__m128 reference = _mm_or_ps(sign, _mm_set_ps1(rtm::constants::pi()));
+		__m128 reference = _mm_or_ps(sign, _mm_set_ps1(constants::pi()));
 
 		const __m128 reflection = _mm_sub_ps(reference, x);
 		const __m128i abs_mask = _mm_set_epi32(0x7FFFFFFFULL, 0x7FFFFFFFULL, 0x7FFFFFFFULL, 0x7FFFFFFFULL);
 		const __m128 x_abs = _mm_and_ps(x, _mm_castsi128_ps(abs_mask));
 
-		__m128 is_less_equal_than_half_pi = _mm_cmple_ps(x_abs, _mm_set_ps1(rtm::constants::half_pi()));
+		__m128 is_less_equal_than_half_pi = _mm_cmple_ps(x_abs, _mm_set_ps1(constants::half_pi()));
 
 		x = RTM_VECTOR4F_SELECT(is_less_equal_than_half_pi, x, reflection);
 
@@ -2548,21 +2551,21 @@ namespace rtm
 		// See: GPGPU Programming for Games and Science (David H. Eberly)
 
 		// Remap our input in the [-pi, pi] range
-		float32x4_t quotient = vmulq_n_f32(input, rtm::constants::one_div_two_pi());
+		float32x4_t quotient = vmulq_n_f32(input, constants::one_div_two_pi());
 		quotient = vector_round_bankers(quotient);
-		quotient = vmulq_n_f32(quotient, rtm::constants::two_pi());
+		quotient = vmulq_n_f32(quotient, constants::two_pi());
 		float32x4_t x = vsubq_f32(input, quotient);
 
 		// Remap our input in the [-pi/2, pi/2] range
 		uint32x4_t sign_mask = vreinterpretq_u32_f32(vdupq_n_f32(-0.0F));
 		uint32x4_t sign = vandq_u32(vreinterpretq_u32_f32(x), sign_mask);
-		float32x4_t reference = vreinterpretq_f32_u32(vorrq_u32(sign, vreinterpretq_u32_f32(vdupq_n_f32(rtm::constants::pi()))));
+		float32x4_t reference = vreinterpretq_f32_u32(vorrq_u32(sign, vreinterpretq_u32_f32(vdupq_n_f32(constants::pi()))));
 
 		float32x4_t reflection = vsubq_f32(reference, x);
 #if !defined(RTM_IMPL_VCA_SUPPORTED)
-		float32x4_t is_less_equal_than_half_pi = vcleq_f32(vabsq_f32(x), vdupq_n_f32(rtm::constants::half_pi()));
+		float32x4_t is_less_equal_than_half_pi = vcleq_f32(vabsq_f32(x), vdupq_n_f32(constants::half_pi()));
 #else
-		float32x4_t is_less_equal_than_half_pi = vcaleq_f32(x, vdupq_n_f32(rtm::constants::half_pi()));
+		float32x4_t is_less_equal_than_half_pi = vcaleq_f32(x, vdupq_n_f32(constants::half_pi()));
 #endif
 		x = vbslq_f32(is_less_equal_than_half_pi, x, reflection);
 
@@ -2621,7 +2624,7 @@ namespace rtm
 		// As such, the offset is PI/2 and it takes the sign of the input
 		// This allows us to load a single constant from memory directly
 		__m128 input_sign = _mm_and_ps(input, sign_bit);
-		__m128 offset = _mm_or_ps(input_sign, _mm_set_ps1(rtm::constants::half_pi()));
+		__m128 offset = _mm_or_ps(input_sign, _mm_set_ps1(constants::half_pi()));
 
 		// And our result has the opposite sign of the input
 		result = _mm_xor_ps(result, _mm_xor_ps(input_sign, sign_bit));
@@ -2645,20 +2648,20 @@ namespace rtm
 		// See: GPGPU Programming for Games and Science (David H. Eberly)
 
 		// Remap our input in the [-pi, pi] range
-		__m128 quotient = _mm_mul_ps(input, _mm_set_ps1(rtm::constants::one_div_two_pi()));
+		__m128 quotient = _mm_mul_ps(input, _mm_set_ps1(constants::one_div_two_pi()));
 		quotient = vector_round_bankers(quotient);
-		quotient = _mm_mul_ps(quotient, _mm_set_ps1(rtm::constants::two_pi()));
+		quotient = _mm_mul_ps(quotient, _mm_set_ps1(constants::two_pi()));
 		__m128 x = _mm_sub_ps(input, quotient);
 
 		// Remap our input in the [-pi/2, pi/2] range
 		const __m128 sign_mask = _mm_set_ps(-0.0F, -0.0F, -0.0F, -0.0F);
 		__m128 x_sign = _mm_and_ps(x, sign_mask);
-		__m128 reference = _mm_or_ps(x_sign, _mm_set_ps1(rtm::constants::pi()));
+		__m128 reference = _mm_or_ps(x_sign, _mm_set_ps1(constants::pi()));
 		const __m128 reflection = _mm_sub_ps(reference, x);
 
 		const __m128i abs_mask = _mm_set_epi32(0x7FFFFFFFULL, 0x7FFFFFFFULL, 0x7FFFFFFFULL, 0x7FFFFFFFULL);
 		__m128 x_abs = _mm_and_ps(x, _mm_castsi128_ps(abs_mask));
-		__m128 is_less_equal_than_half_pi = _mm_cmple_ps(x_abs, _mm_set_ps1(rtm::constants::half_pi()));
+		__m128 is_less_equal_than_half_pi = _mm_cmple_ps(x_abs, _mm_set_ps1(constants::half_pi()));
 
 		x = RTM_VECTOR4F_SELECT(is_less_equal_than_half_pi, x, reflection);
 
@@ -2677,21 +2680,21 @@ namespace rtm
 		// See: GPGPU Programming for Games and Science (David H. Eberly)
 
 		// Remap our input in the [-pi, pi] range
-		float32x4_t quotient = vmulq_n_f32(input, rtm::constants::one_div_two_pi());
+		float32x4_t quotient = vmulq_n_f32(input, constants::one_div_two_pi());
 		quotient = vector_round_bankers(quotient);
-		quotient = vmulq_n_f32(quotient, rtm::constants::two_pi());
+		quotient = vmulq_n_f32(quotient, constants::two_pi());
 		float32x4_t x = vsubq_f32(input, quotient);
 
 		// Remap our input in the [-pi/2, pi/2] range
 		uint32x4_t sign_mask = vreinterpretq_u32_f32(vdupq_n_f32(-0.0F));
 		uint32x4_t sign = vandq_u32(vreinterpretq_u32_f32(x), sign_mask);
-		float32x4_t reference = vreinterpretq_f32_u32(vorrq_u32(sign, vreinterpretq_u32_f32(vdupq_n_f32(rtm::constants::pi()))));
+		float32x4_t reference = vreinterpretq_f32_u32(vorrq_u32(sign, vreinterpretq_u32_f32(vdupq_n_f32(constants::pi()))));
 
 		float32x4_t reflection = vsubq_f32(reference, x);
 #if !defined(RTM_IMPL_VCA_SUPPORTED)
-		float32x4_t is_less_equal_than_half_pi = vcleq_f32(vabsq_f32(x), vdupq_n_f32(rtm::constants::half_pi()));
+		float32x4_t is_less_equal_than_half_pi = vcleq_f32(vabsq_f32(x), vdupq_n_f32(constants::half_pi()));
 #else
-		float32x4_t is_less_equal_than_half_pi = vcaleq_f32(x, vdupq_n_f32(rtm::constants::half_pi()));
+		float32x4_t is_less_equal_than_half_pi = vcaleq_f32(x, vdupq_n_f32(constants::half_pi()));
 #endif
 		x = vbslq_f32(is_less_equal_than_half_pi, x, reflection);
 
@@ -2753,7 +2756,7 @@ namespace rtm
 
 		// As such, the offset is 0.0 when the input is positive and PI when negative
 		__m128 is_input_negative = _mm_cmplt_ps(input, _mm_setzero_ps());
-		__m128 offset = _mm_and_ps(is_input_negative, _mm_set_ps1(rtm::constants::pi()));
+		__m128 offset = _mm_and_ps(is_input_negative, _mm_set_ps1(constants::pi()));
 
 		// And our result has the same sign of the input
 		__m128 input_sign = _mm_and_ps(input, sign_bit);
@@ -2778,20 +2781,20 @@ namespace rtm
 		// See: GPGPU Programming for Games and Science (David H. Eberly)
 
 		// Remap our input in the [-pi, pi] range
-		__m128 quotient = _mm_mul_ps(input, _mm_set_ps1(rtm::constants::one_div_two_pi()));
+		__m128 quotient = _mm_mul_ps(input, _mm_set_ps1(constants::one_div_two_pi()));
 		quotient = vector_round_bankers(quotient);
-		quotient = _mm_mul_ps(quotient, _mm_set_ps1(rtm::constants::two_pi()));
+		quotient = _mm_mul_ps(quotient, _mm_set_ps1(constants::two_pi()));
 		__m128 x = _mm_sub_ps(input, quotient);
 
 		// Remap our input in the [-pi/2, pi/2] range
 		const __m128 sign_mask = _mm_set_ps(-0.0F, -0.0F, -0.0F, -0.0F);
 		__m128 x_sign = _mm_and_ps(x, sign_mask);
-		__m128 reference = _mm_or_ps(x_sign, _mm_set_ps1(rtm::constants::pi()));
+		__m128 reference = _mm_or_ps(x_sign, _mm_set_ps1(constants::pi()));
 		const __m128 reflection = _mm_sub_ps(reference, x);
 
 		const __m128i abs_mask = _mm_set_epi32(0x7FFFFFFFULL, 0x7FFFFFFFULL, 0x7FFFFFFFULL, 0x7FFFFFFFULL);
 		__m128 x_abs = _mm_and_ps(x, _mm_castsi128_ps(abs_mask));
-		__m128 is_less_equal_than_half_pi = _mm_cmple_ps(x_abs, _mm_set_ps1(rtm::constants::half_pi()));
+		__m128 is_less_equal_than_half_pi = _mm_cmple_ps(x_abs, _mm_set_ps1(constants::half_pi()));
 
 		x = RTM_VECTOR4F_SELECT(is_less_equal_than_half_pi, x, reflection);
 		const __m128 x2 = _mm_mul_ps(x, x);
@@ -2818,21 +2821,21 @@ namespace rtm
 		// See: GPGPU Programming for Games and Science (David H. Eberly)
 
 		// Remap our input in the [-pi, pi] range
-		float32x4_t quotient = vmulq_n_f32(input, rtm::constants::one_div_two_pi());
+		float32x4_t quotient = vmulq_n_f32(input, constants::one_div_two_pi());
 		quotient = vector_round_bankers(quotient);
-		quotient = vmulq_n_f32(quotient, rtm::constants::two_pi());
+		quotient = vmulq_n_f32(quotient, constants::two_pi());
 		float32x4_t x = vsubq_f32(input, quotient);
 
 		// Remap our input in the [-pi/2, pi/2] range
 		const uint32x4_t sign_mask = vreinterpretq_u32_f32(vdupq_n_f32(-0.0F));
 		const uint32x4_t sign = vandq_u32(vreinterpretq_u32_f32(x), sign_mask);
-		const float32x4_t reference = vreinterpretq_f32_u32(vorrq_u32(sign, vreinterpretq_u32_f32(vdupq_n_f32(rtm::constants::pi()))));
+		const float32x4_t reference = vreinterpretq_f32_u32(vorrq_u32(sign, vreinterpretq_u32_f32(vdupq_n_f32(constants::pi()))));
 
 		const float32x4_t reflection = vsubq_f32(reference, x);
 #if !defined(RTM_IMPL_VCA_SUPPORTED)
-		const float32x4_t is_less_equal_than_half_pi = vcleq_f32(vabsq_f32(x), vdupq_n_f32(rtm::constants::half_pi()));
+		const float32x4_t is_less_equal_than_half_pi = vcleq_f32(vabsq_f32(x), vdupq_n_f32(constants::half_pi()));
 #else
-		const float32x4_t is_less_equal_than_half_pi = vcaleq_f32(x, vdupq_n_f32(rtm::constants::half_pi()));
+		const float32x4_t is_less_equal_than_half_pi = vcaleq_f32(x, vdupq_n_f32(constants::half_pi()));
 #endif
 		x = vbslq_f32(is_less_equal_than_half_pi, x, reflection);
 		const float32x4_t x2 = vmulq_f32(x, x);
@@ -2913,7 +2916,7 @@ namespace rtm
 		result = _mm_add_ps(_mm_mul_ps(result, x2), _mm_set_ps1(1.0F));
 		result = _mm_mul_ps(result, x);
 
-		__m128 remapped = _mm_sub_ps(_mm_set_ps1(rtm::constants::half_pi()), result);
+		__m128 remapped = _mm_sub_ps(_mm_set_ps1(constants::half_pi()), result);
 
 		// pi/2 - result
 		result = vector_select(is_larger_than_one, remapped, result);
@@ -2948,7 +2951,7 @@ namespace rtm
 
 		result = vmulq_f32(result, x);
 
-		float32x4_t remapped = vsubq_f32(vdupq_n_f32(rtm::constants::half_pi()), result);
+		float32x4_t remapped = vsubq_f32(vdupq_n_f32(constants::half_pi()), result);
 
 		// pi/2 - result
 		result = vector_select(is_larger_than_one, remapped, result);
@@ -2990,8 +2993,8 @@ namespace rtm
 		__m128 y_sign = _mm_and_ps(y, sign_mask);
 
 		// If X == 0.0, our offset is PI/2 otherwise it is PI both with the sign of Y
-		__m128 half_pi = _mm_set_ps1(rtm::constants::half_pi());
-		__m128 pi = _mm_set_ps1(rtm::constants::pi());
+		__m128 half_pi = _mm_set_ps1(constants::half_pi());
+		__m128 pi = _mm_set_ps1(constants::pi());
 		__m128 offset = _mm_or_ps(_mm_and_ps(is_x_zero, half_pi), _mm_andnot_ps(is_x_zero, pi));
 		offset = _mm_or_ps(offset, y_sign);
 
@@ -3036,8 +3039,8 @@ namespace rtm
 		uint32x4_t y_sign = vandq_u32(vreinterpretq_u32_f32(y), vreinterpretq_u32_f32(vdupq_n_f32(-0.0F)));
 
 		// If X == 0.0, our offset is PI/2 otherwise it is PI both with the sign of Y
-		float32x4_t half_pi = vdupq_n_f32(rtm::constants::half_pi());
-		float32x4_t pi = vdupq_n_f32(rtm::constants::pi());
+		float32x4_t half_pi = vdupq_n_f32(constants::half_pi());
+		float32x4_t pi = vdupq_n_f32(constants::pi());
 		float32x4_t offset = vreinterpretq_f32_u32(vorrq_u32(vandq_u32(is_x_zero, vreinterpretq_u32_f32(half_pi)), vandq_u32(vmvnq_u32(is_x_zero), vreinterpretq_u32_f32(pi))));
 		offset = vreinterpretq_f32_u32(vorrq_u32(vreinterpretq_u32_f32(offset), y_sign));
 
@@ -3065,6 +3068,8 @@ namespace rtm
 		return vector_set(x_, y_, z_, w_);
 #endif
 	}
+
+	RTM_IMPL_VERSION_NAMESPACE_END
 }
 
 RTM_IMPL_FILE_PRAGMA_POP

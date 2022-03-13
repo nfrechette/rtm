@@ -25,6 +25,7 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 #include "rtm/math.h"
+#include "rtm/version.h"
 #include "rtm/impl/compiler_utils.h"
 #include "rtm/impl/mask_common.h"
 
@@ -32,6 +33,8 @@ RTM_IMPL_FILE_PRAGMA_PUSH
 
 namespace rtm
 {
+	RTM_IMPL_VERSION_NAMESPACE_BEGIN
+
 	//////////////////////////////////////////////////////////////////////////
 	// Returns the mask4i [x] component.
 	//////////////////////////////////////////////////////////////////////////
@@ -323,6 +326,8 @@ namespace rtm
 		return mask4i{ lhs.x ^ rhs.x, lhs.y ^ rhs.y, lhs.z ^ rhs.z, lhs.w ^ rhs.w };
 #endif
 	}
+
+	RTM_IMPL_VERSION_NAMESPACE_END
 }
 
 RTM_IMPL_FILE_PRAGMA_POP

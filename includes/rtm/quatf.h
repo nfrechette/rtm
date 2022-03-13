@@ -28,6 +28,7 @@
 #include "rtm/math.h"
 #include "rtm/scalarf.h"
 #include "rtm/vector4f.h"
+#include "rtm/version.h"
 #include "rtm/impl/compiler_utils.h"
 #include "rtm/impl/memory_utils.h"
 #include "rtm/impl/quat_common.h"
@@ -36,6 +37,8 @@ RTM_IMPL_FILE_PRAGMA_PUSH
 
 namespace rtm
 {
+	RTM_IMPL_VERSION_NAMESPACE_BEGIN
+
 	//////////////////////////////////////////////////////////////////////////
 	// Setters, getters, and casts
 	//////////////////////////////////////////////////////////////////////////
@@ -1386,6 +1389,8 @@ namespace rtm
 		const float positive_w_angle = scalar_acos(scalar_cast(input_abs_w)) * 2.0F;
 		return positive_w_angle <= threshold_angle;
 	}
+
+	RTM_IMPL_VERSION_NAMESPACE_END
 }
 
 RTM_IMPL_FILE_PRAGMA_POP

@@ -27,12 +27,15 @@
 #include "rtm/math.h"
 #include "rtm/quatd.h"
 #include "rtm/vector4d.h"
+#include "rtm/version.h"
 #include "rtm/impl/compiler_utils.h"
 
 RTM_IMPL_FILE_PRAGMA_PUSH
 
 namespace rtm
 {
+	RTM_IMPL_VERSION_NAMESPACE_BEGIN
+
 	//////////////////////////////////////////////////////////////////////////
 	// Returns the quaternion on the hypersphere with a positive [w] component
 	// that represents the same 3D rotation as the input.
@@ -60,6 +63,8 @@ namespace rtm
 		const double w = scalar_sqrt(scalar_abs(w_squared));
 		return quat_set_w(vector_to_quat(input), w);
 	}
+
+	RTM_IMPL_VERSION_NAMESPACE_END
 }
 
 RTM_IMPL_FILE_PRAGMA_POP

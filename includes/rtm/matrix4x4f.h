@@ -28,6 +28,7 @@
 #include "rtm/math.h"
 #include "rtm/matrix3x3f.h"
 #include "rtm/vector4f.h"
+#include "rtm/version.h"
 #include "rtm/impl/compiler_utils.h"
 #include "rtm/impl/matrix_common.h"
 
@@ -35,6 +36,8 @@ RTM_IMPL_FILE_PRAGMA_PUSH
 
 namespace rtm
 {
+	RTM_IMPL_VERSION_NAMESPACE_BEGIN
+
 	//////////////////////////////////////////////////////////////////////////
 	// Returns the desired 4x4 matrix axis.
 	//////////////////////////////////////////////////////////////////////////
@@ -445,6 +448,8 @@ namespace rtm
 	{
 		return matrix_transpose(matrix_cofactor(input));
 	}
+
+	RTM_IMPL_VERSION_NAMESPACE_END
 }
 
 RTM_IMPL_FILE_PRAGMA_POP

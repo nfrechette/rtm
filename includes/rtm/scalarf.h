@@ -28,6 +28,7 @@
 #include "rtm/constants.h"
 #include "rtm/macros.h"
 #include "rtm/math.h"
+#include "rtm/version.h"
 #include "rtm/impl/cmath.impl.h"
 #include "rtm/impl/compiler_utils.h"
 #include "rtm/impl/scalar_common.h"
@@ -38,6 +39,8 @@ RTM_IMPL_FILE_PRAGMA_PUSH
 
 namespace rtm
 {
+	RTM_IMPL_VERSION_NAMESPACE_BEGIN
+
 	//////////////////////////////////////////////////////////////////////////
 	// Creates a scalar from a floating point value.
 	//////////////////////////////////////////////////////////////////////////
@@ -878,21 +881,21 @@ namespace rtm
 		// See: GPGPU Programming for Games and Science (David H. Eberly)
 
 		// Remap our input in the [-pi, pi] range
-		__m128 quotient = _mm_mul_ss(angle.value, _mm_set_ps1(rtm::constants::one_div_two_pi()));
+		__m128 quotient = _mm_mul_ss(angle.value, _mm_set_ps1(constants::one_div_two_pi()));
 		quotient = scalar_round_bankers(scalarf{ quotient }).value;
-		quotient = _mm_mul_ss(quotient, _mm_set_ps1(rtm::constants::two_pi()));
+		quotient = _mm_mul_ss(quotient, _mm_set_ps1(constants::two_pi()));
 		__m128 x = _mm_sub_ss(angle.value, quotient);
 
 		// Remap our input in the [-pi/2, pi/2] range
 		const __m128 sign_mask = _mm_set_ps(-0.0F, -0.0F, -0.0F, -0.0F);
 		__m128 sign = _mm_and_ps(x, sign_mask);
-		__m128 reference = _mm_or_ps(sign, _mm_set_ps1(rtm::constants::pi()));
+		__m128 reference = _mm_or_ps(sign, _mm_set_ps1(constants::pi()));
 
 		const __m128 reflection = _mm_sub_ss(reference, x);
 		const __m128i abs_mask = _mm_set_epi32(0x7FFFFFFFULL, 0x7FFFFFFFULL, 0x7FFFFFFFULL, 0x7FFFFFFFULL);
 		const __m128 x_abs = _mm_and_ps(x, _mm_castsi128_ps(abs_mask));
 
-		__m128 is_less_equal_than_half_pi = _mm_cmple_ss(x_abs, _mm_set_ps1(rtm::constants::half_pi()));
+		__m128 is_less_equal_than_half_pi = _mm_cmple_ss(x_abs, _mm_set_ps1(constants::half_pi()));
 
 		x = RTM_VECTOR4F_SELECT(is_less_equal_than_half_pi, x, reflection);
 
@@ -922,16 +925,16 @@ namespace rtm
 		// See: GPGPU Programming for Games and Science (David H. Eberly)
 
 		// Remap our input in the [-pi, pi] range
-		float quotient = angle * rtm::constants::one_div_two_pi();
+		float quotient = angle * constants::one_div_two_pi();
 		quotient = scalar_round_bankers(quotient);
-		quotient = quotient * rtm::constants::two_pi();
+		quotient = quotient * constants::two_pi();
 		float x = angle - quotient;
 
 		// Remap our input in the [-pi/2, pi/2] range
-		const float reference = std::copysign(rtm::constants::pi(), x);
+		const float reference = std::copysign(constants::pi(), x);
 		const float reflection = reference - x;
 		const float x_abs = scalar_abs(x);
-		x = x_abs <= rtm::constants::half_pi() ? x : reflection;
+		x = x_abs <= constants::half_pi() ? x : reflection;
 
 		// Calculate our value
 		const float x2 = x * x;
@@ -955,20 +958,20 @@ namespace rtm
 		// See: GPGPU Programming for Games and Science (David H. Eberly)
 
 		// Remap our input in the [-pi, pi] range
-		__m128 quotient = _mm_mul_ss(angle.value, _mm_set_ps1(rtm::constants::one_div_two_pi()));
+		__m128 quotient = _mm_mul_ss(angle.value, _mm_set_ps1(constants::one_div_two_pi()));
 		quotient = scalar_round_bankers(scalarf{ quotient }).value;
-		quotient = _mm_mul_ss(quotient, _mm_set_ps1(rtm::constants::two_pi()));
+		quotient = _mm_mul_ss(quotient, _mm_set_ps1(constants::two_pi()));
 		__m128 x = _mm_sub_ss(angle.value, quotient);
 
 		// Remap our input in the [-pi/2, pi/2] range
 		const __m128 sign_mask = _mm_set_ps(-0.0F, -0.0F, -0.0F, -0.0F);
 		__m128 x_sign = _mm_and_ps(x, sign_mask);
-		__m128 reference = _mm_or_ps(x_sign, _mm_set_ps1(rtm::constants::pi()));
+		__m128 reference = _mm_or_ps(x_sign, _mm_set_ps1(constants::pi()));
 		const __m128 reflection = _mm_sub_ss(reference, x);
 
 		const __m128i abs_mask = _mm_set_epi32(0x7FFFFFFFULL, 0x7FFFFFFFULL, 0x7FFFFFFFULL, 0x7FFFFFFFULL);
 		__m128 x_abs = _mm_and_ps(x, _mm_castsi128_ps(abs_mask));
-		__m128 is_less_equal_than_half_pi = _mm_cmple_ss(x_abs, _mm_set_ps1(rtm::constants::half_pi()));
+		__m128 is_less_equal_than_half_pi = _mm_cmple_ss(x_abs, _mm_set_ps1(constants::half_pi()));
 
 		x = RTM_VECTOR4F_SELECT(is_less_equal_than_half_pi, x, reflection);
 
@@ -1001,16 +1004,16 @@ namespace rtm
 		// See: GPGPU Programming for Games and Science (David H. Eberly)
 
 		// Remap our input in the [-pi, pi] range
-		float quotient = angle * rtm::constants::one_div_two_pi();
+		float quotient = angle * constants::one_div_two_pi();
 		quotient = scalar_round_bankers(quotient);
-		quotient = quotient * rtm::constants::two_pi();
+		quotient = quotient * constants::two_pi();
 		float x = angle - quotient;
 
 		// Remap our input in the [-pi/2, pi/2] range
-		const float reference = std::copysign(rtm::constants::pi(), x);
+		const float reference = std::copysign(constants::pi(), x);
 		const float reflection = reference - x;
 		const float x_abs = scalar_abs(x);
-		x = x_abs <= rtm::constants::half_pi() ? x : reflection;
+		x = x_abs <= constants::half_pi() ? x : reflection;
 
 		// Calculate our value
 		const float x2 = x * x;
@@ -1021,7 +1024,7 @@ namespace rtm
 		result = (result * x2) + 1.0F;
 
 		// Remap into [-pi, pi]
-		if (x_abs <= rtm::constants::half_pi())
+		if (x_abs <= constants::half_pi())
 			return result;
 		else
 			return -result;
@@ -1105,10 +1108,10 @@ namespace rtm
 
 		// Handle negative values through reflection
 		if (_mm_cvtss_f32(value.value) < 0.0F)
-			result = rtm::constants::pi() - result;
+			result = constants::pi() - result;
 
 		// Shift our final result
-		const float offset = rtm::constants::half_pi();
+		const float offset = constants::half_pi();
 		result = offset - result;
 		return scalarf{ _mm_set_ps1(result) };
 	}
@@ -1146,10 +1149,10 @@ namespace rtm
 
 		// Handle negative values through reflection
 		if (value < 0.0F)
-			result = rtm::constants::pi() - result;
+			result = constants::pi() - result;
 
 		// Shift our final result
-		const float offset = rtm::constants::half_pi();
+		const float offset = constants::half_pi();
 		result = offset - result;
 		return result;
 #endif
@@ -1189,7 +1192,7 @@ namespace rtm
 
 		// Handle negative values through reflection
 		if (_mm_cvtss_f32(value.value) < 0.0F)
-			result = rtm::constants::pi() - result;
+			result = constants::pi() - result;
 
 		return scalarf{ _mm_set_ps1(result) };
 	}
@@ -1231,7 +1234,7 @@ namespace rtm
 
 		// Handle negative values through reflection
 		if (value < 0.0F)
-			result = rtm::constants::pi() - result;
+			result = constants::pi() - result;
 
 		return result;
 #endif
@@ -1305,7 +1308,7 @@ namespace rtm
 		result = result * x_s;
 
 		__m128 result_s = _mm_set_ps1(result);
-		__m128 remapped = _mm_sub_ss(_mm_set_ps1(rtm::constants::half_pi()), result_s);
+		__m128 remapped = _mm_sub_ss(_mm_set_ps1(constants::half_pi()), result_s);
 
 		// pi/2 - result
 		result_s = RTM_VECTOR4F_SELECT(is_larger_than_one, remapped, result_s);
@@ -1348,7 +1351,7 @@ namespace rtm
 		result = result * x;
 
 		if (abs_value > 1.0f)
-			result = rtm::constants::half_pi() - result; // pi/2 - result
+			result = constants::half_pi() - result; // pi/2 - result
 
 		// Keep the original sign
 		result = value >= 0.0F ? result : -result;
@@ -1383,8 +1386,8 @@ namespace rtm
 		__m128 y_sign = _mm_and_ps(y.value, sign_mask);
 
 		// If X == 0.0, our offset is PI/2 otherwise it is PI both with the sign of Y
-		__m128 half_pi = _mm_set_ps1(rtm::constants::half_pi());
-		__m128 pi = _mm_set_ps1(rtm::constants::pi());
+		__m128 half_pi = _mm_set_ps1(constants::half_pi());
+		__m128 pi = _mm_set_ps1(constants::pi());
 		__m128 offset = _mm_or_ps(_mm_and_ps(is_x_zero, half_pi), _mm_andnot_ps(is_x_zero, pi));
 		offset = _mm_or_ps(offset, y_sign);
 
@@ -1432,14 +1435,14 @@ namespace rtm
 			if (y == 0.0F)
 				return 0.0F;
 
-			return std::copysign(rtm::constants::half_pi(), y);
+			return std::copysign(constants::half_pi(), y);
 		}
 
 		float value = scalar_atan(y / x);
 		if (x > 0.0F)
 			return value;
 
-		float offset = std::copysign(rtm::constants::pi(), y);
+		float offset = std::copysign(constants::pi(), y);
 		return value + offset;
 #endif
 	}
@@ -1459,6 +1462,8 @@ namespace rtm
 	{
 		return rad * constants::one_eighty_div_pi();
 	}
+
+	RTM_IMPL_VERSION_NAMESPACE_END
 }
 
 RTM_IMPL_FILE_PRAGMA_POP

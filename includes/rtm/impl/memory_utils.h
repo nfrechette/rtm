@@ -25,6 +25,7 @@
 // SOFTWARE.
 ////////////////////////////////////////////////////////////////////////////////
 
+#include "rtm/version.h"
 #include "rtm/impl/compiler_utils.h"
 #include "rtm/impl/error.h"
 
@@ -46,6 +47,8 @@ RTM_IMPL_FILE_PRAGMA_PUSH
 
 namespace rtm
 {
+	RTM_IMPL_VERSION_NAMESPACE_BEGIN
+
 	namespace rtm_impl
 	{
 		//////////////////////////////////////////////////////////////////////////
@@ -265,6 +268,8 @@ namespace rtm
 			std::memcpy(output, &input, sizeof(DataType));
 		}
 	}
+
+	RTM_IMPL_VERSION_NAMESPACE_END
 }
 
 RTM_IMPL_FILE_PRAGMA_POP
