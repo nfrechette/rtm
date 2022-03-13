@@ -27,6 +27,7 @@
 #include "rtm/macros.h"
 #include "rtm/math.h"
 #include "rtm/vector4f.h"
+#include "rtm/version.h"
 #include "rtm/impl/compiler_utils.h"
 #include "rtm/impl/matrix_common.h"
 #include "rtm/impl/matrix_affine_common.h"
@@ -35,6 +36,8 @@ RTM_IMPL_FILE_PRAGMA_PUSH
 
 namespace rtm
 {
+	RTM_IMPL_VERSION_NAMESPACE_BEGIN
+
 	//////////////////////////////////////////////////////////////////////////
 	// Returns the desired 3x3 matrix axis.
 	//////////////////////////////////////////////////////////////////////////
@@ -362,6 +365,8 @@ namespace rtm
 		result.z_axis = vector_normalize3(input.z_axis, input.z_axis);
 		return result;
 	}
+
+	RTM_IMPL_VERSION_NAMESPACE_END
 }
 
 RTM_IMPL_FILE_PRAGMA_POP

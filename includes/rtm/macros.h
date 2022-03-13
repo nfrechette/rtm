@@ -56,7 +56,7 @@ RTM_IMPL_FILE_PRAGMA_PUSH
 	// Per component multiplication/addition of the three inputs: v2 + (v0 * v1)
 	// All three inputs must be an rtm::vector4f.
 	//////////////////////////////////////////////////////////////////////////
-	#define RTM_VECTOR4F_MULV_ADD(v0, v1, v2) rtm::vector4f { (v2).x + ((v0).x * (v1).x), (v2).y + ((v0).y * (v1).y), (v2).z + ((v0).z * (v1).z), (v2).w + ((v0).w * (v1).w) }
+	#define RTM_VECTOR4F_MULV_ADD(v0, v1, v2) RTM_IMPL_NAMESPACE::vector4f { (v2).x + ((v0).x * (v1).x), (v2).y + ((v0).y * (v1).y), (v2).z + ((v0).z * (v1).z), (v2).w + ((v0).w * (v1).w) }
 #endif
 
 #if defined(RTM_NEON64_INTRINSICS)
@@ -82,7 +82,7 @@ RTM_IMPL_FILE_PRAGMA_PUSH
 	// Per component multiplication/addition of the three inputs: v2 + (v0 * s1)
 	// The v0 and v2 inputs must be a rtm::vector4f and s1 must be a float.
 	//////////////////////////////////////////////////////////////////////////
-	#define RTM_VECTOR4F_MULS_ADD(v0, s1, v2) rtm::vector4f { (v2).x + ((v0).x * (s1)), (v2).y + ((v0).y * (s1)), (v2).z + ((v0).z * (s1)), (v2).w + ((v0).w * (s1)) }
+	#define RTM_VECTOR4F_MULS_ADD(v0, s1, v2) RTM_IMPL_NAMESPACE::vector4f { (v2).x + ((v0).x * (s1)), (v2).y + ((v0).y * (s1)), (v2).z + ((v0).z * (s1)), (v2).w + ((v0).w * (s1)) }
 #endif
 
 #if defined(RTM_NEON64_INTRINSICS)
@@ -112,7 +112,7 @@ RTM_IMPL_FILE_PRAGMA_PUSH
 	// This is mathematically equivalent to: v2 - (v0 * v1)
 	// All three inputs must be an rtm::vector4f.
 	//////////////////////////////////////////////////////////////////////////
-	#define RTM_VECTOR4F_NEG_MULV_SUB(v0, v1, v2) rtm::vector4f { (v2).x - ((v0).x * (v1).x), (v2).y - ((v0).y * (v1).y), (v2).z - ((v0).z * (v1).z), (v2).w - ((v0).w * (v1).w) }
+	#define RTM_VECTOR4F_NEG_MULV_SUB(v0, v1, v2) RTM_IMPL_NAMESPACE::vector4f { (v2).x - ((v0).x * (v1).x), (v2).y - ((v0).y * (v1).y), (v2).z - ((v0).z * (v1).z), (v2).w - ((v0).w * (v1).w) }
 #endif
 
 #if defined(RTM_NEON64_INTRINSICS)
@@ -142,7 +142,7 @@ RTM_IMPL_FILE_PRAGMA_PUSH
 	// This is mathematically equivalent to: v2 - (v0 * s1)
 	// The v0 and v2 inputs must be a rtm::vector4f and s1 must be a float.
 	//////////////////////////////////////////////////////////////////////////
-	#define RTM_VECTOR4F_NEG_MULS_SUB(v0, s1, v2) rtm::vector4f { (v2).x - ((v0).x * (s1)), (v2).y - ((v0).y * (s1)), (v2).z - ((v0).z * (s1)), (v2).w - ((v0).w * (s1)) }
+	#define RTM_VECTOR4F_NEG_MULS_SUB(v0, s1, v2) RTM_IMPL_NAMESPACE::vector4f { (v2).x - ((v0).x * (s1)), (v2).y - ((v0).y * (s1)), (v2).z - ((v0).z * (s1)), (v2).w - ((v0).w * (s1)) }
 #endif
 
 #if defined(RTM_AVX_INTRINSICS)
@@ -231,10 +231,10 @@ RTM_IMPL_FILE_PRAGMA_PUSH
 			const float input_y3 = (input_xyzw3).y; \
 			const float input_z3 = (input_xyzw3).z; \
 			const float input_w3 = (input_xyzw3).w; \
-			(output_xxxx) = rtm::vector4f { input_x0, input_x1, input_x2, input_x3 }; \
-			(output_yyyy) = rtm::vector4f { input_y0, input_y1, input_y2, input_y3 }; \
-			(output_zzzz) = rtm::vector4f { input_z0, input_z1, input_z2, input_z3 }; \
-			(output_wwww) = rtm::vector4f { input_w0, input_w1, input_w2, input_w3 }; \
+			(output_xxxx) = RTM_IMPL_NAMESPACE::vector4f { input_x0, input_x1, input_x2, input_x3 }; \
+			(output_yyyy) = RTM_IMPL_NAMESPACE::vector4f { input_y0, input_y1, input_y2, input_y3 }; \
+			(output_zzzz) = RTM_IMPL_NAMESPACE::vector4f { input_z0, input_z1, input_z2, input_z3 }; \
+			(output_wwww) = RTM_IMPL_NAMESPACE::vector4f { input_w0, input_w1, input_w2, input_w3 }; \
 		} while(0)
 #endif
 
@@ -283,9 +283,9 @@ RTM_IMPL_FILE_PRAGMA_PUSH
 			const float input_x2 = (input_xyz2).x; \
 			const float input_y2 = (input_xyz2).y; \
 			const float input_z2 = (input_xyz2).z; \
-			(output_xxx) = rtm::vector4f { input_x0, input_x1, input_x2, input_x2 }; \
-			(output_yyy) = rtm::vector4f { input_y0, input_y1, input_y2, input_y2 }; \
-			(output_zzz) = rtm::vector4f { input_z0, input_z1, input_z2, input_z2 }; \
+			(output_xxx) = RTM_IMPL_NAMESPACE::vector4f { input_x0, input_x1, input_x2, input_x2 }; \
+			(output_yyy) = RTM_IMPL_NAMESPACE::vector4f { input_y0, input_y1, input_y2, input_y2 }; \
+			(output_zzz) = RTM_IMPL_NAMESPACE::vector4f { input_z0, input_z1, input_z2, input_z2 }; \
 		} while(0)
 #endif
 
@@ -338,9 +338,9 @@ RTM_IMPL_FILE_PRAGMA_PUSH
 			const float input_x3 = (input_xyz3).x; \
 			const float input_y3 = (input_xyz3).y; \
 			const float input_z3 = (input_xyz3).z; \
-			(output_xxxx) = rtm::vector4f { input_x0, input_x1, input_x2, input_x3 }; \
-			(output_yyyy) = rtm::vector4f { input_y0, input_y1, input_y2, input_y3 }; \
-			(output_zzzz) = rtm::vector4f { input_z0, input_z1, input_z2, input_z3 }; \
+			(output_xxxx) = RTM_IMPL_NAMESPACE::vector4f { input_x0, input_x1, input_x2, input_x3 }; \
+			(output_yyyy) = RTM_IMPL_NAMESPACE::vector4f { input_y0, input_y1, input_y2, input_y3 }; \
+			(output_zzzz) = RTM_IMPL_NAMESPACE::vector4f { input_z0, input_z1, input_z2, input_z3 }; \
 		} while(0)
 #endif
 
@@ -394,10 +394,10 @@ RTM_IMPL_FILE_PRAGMA_PUSH
 			const float input_y2 = (input_xyzw2).y; \
 			const float input_z2 = (input_xyzw2).z; \
 			const float input_w2 = (input_xyzw2).w; \
-			(output_xxx) = rtm::vector4f { input_x0, input_x1, input_x2, input_x2 }; \
-			(output_yyy) = rtm::vector4f { input_y0, input_y1, input_y2, input_y2 }; \
-			(output_zzz) = rtm::vector4f { input_z0, input_z1, input_z2, input_z2 }; \
-			(output_www) = rtm::vector4f { input_w0, input_w1, input_w2, input_w2 }; \
+			(output_xxx) = RTM_IMPL_NAMESPACE::vector4f { input_x0, input_x1, input_x2, input_x2 }; \
+			(output_yyy) = RTM_IMPL_NAMESPACE::vector4f { input_y0, input_y1, input_y2, input_y2 }; \
+			(output_zzz) = RTM_IMPL_NAMESPACE::vector4f { input_z0, input_z1, input_z2, input_z2 }; \
+			(output_www) = RTM_IMPL_NAMESPACE::vector4f { input_w0, input_w1, input_w2, input_w2 }; \
 		} while(0)
 #endif
 

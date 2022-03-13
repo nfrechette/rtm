@@ -28,6 +28,7 @@
 #include "rtm/impl/compiler_utils.h"
 #include "rtm/scalarf.h"
 #include "rtm/scalard.h"
+#include "rtm/version.h"
 
 #include <cstdint>
 #include <cstring>
@@ -36,6 +37,8 @@ RTM_IMPL_FILE_PRAGMA_PUSH
 
 namespace rtm
 {
+	RTM_IMPL_VERSION_NAMESPACE_BEGIN
+
 	//////////////////////////////////////////////////////////////////////////
 	// Creates a vector4 from all 4 components.
 	//////////////////////////////////////////////////////////////////////////
@@ -607,6 +610,8 @@ namespace rtm
 	{
 		return rtm_impl::vector4d_to_scalard{ input };
 	}
+
+	RTM_IMPL_VERSION_NAMESPACE_END
 }
 
 RTM_IMPL_FILE_PRAGMA_POP
