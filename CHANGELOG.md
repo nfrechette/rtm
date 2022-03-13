@@ -1,5 +1,9 @@
 # Significant changes per release
 
+## 2.1.3
+
+*  Add versioned namespace to allow multiple versions to coexist within a binary
+
 ## 2.1.2
 
 *  Fix MSVC/clang static analysis warnings
