@@ -24,6 +24,8 @@
 // SOFTWARE.
 ////////////////////////////////////////////////////////////////////////////////
 
+#include "rtm/impl/detect_compiler.h"
+
 ////////////////////////////////////////////////////////////////////////////////
 // Macros to detect the Realtime Math version
 ////////////////////////////////////////////////////////////////////////////////
@@ -37,29 +39,48 @@
 // within the same executable/library, the symbols have to be unique per version.
 // We achieve this by using a versioned namespace that we optionally inline.
 // To disable namespace inlining, define RTM_NO_INLINE_NAMESPACE before including
-// any Realtime Mah header.
+// any Realtime Math header. To disable the versioned namespace altogether,
+// define RTM_NO_VERSION_NAMESPACE before including any Realtime Math header.
 ////////////////////////////////////////////////////////////////////////////////
+
+#if !defined(RTM_NO_VERSION_NAMESPACE)
+	#if defined(RTM_COMPILER_MSVC) && RTM_COMPILER_MSVC == RTM_COMPILER_MSVC_2015
+		// VS2015 struggles with type resolution when inline namespaces are used
+		// For that reason, we disable it explicitly
+		#define RTM_NO_VERSION_NAMESPACE
+	#endif
+#endif
 
 // Name of the namespace, e.g. v21
 #define RTM_IMPL_VERSION_NAMESPACE_NAME v ## RTM_VERSION_MAJOR ## RTM_VERSION_MINOR
 
-#if defined(RTM_NO_INLINE_NAMESPACE)
-    // Namespace won't be inlined, its usage will have to be qualified with the
-    // full version everywhere
-    #define RTM_IMPL_NAMESPACE rtm::RTM_IMPL_VERSION_NAMESPACE_NAME
+#if defined(RTM_NO_VERSION_NAMESPACE)
+	// Namespace is inlined, its usage does not need to be qualified with the
+	// full version everywhere
+	#define RTM_IMPL_NAMESPACE rtm
 
-    #define RTM_IMPL_VERSION_NAMESPACE_BEGIN \
-        namespace RTM_IMPL_VERSION_NAMESPACE_NAME \
-        {
+	#define RTM_IMPL_VERSION_NAMESPACE_BEGIN
+	#define RTM_IMPL_VERSION_NAMESPACE_END
+#elif defined(RTM_NO_INLINE_NAMESPACE)
+	// Namespace won't be inlined, its usage will have to be qualified with the
+	// full version everywhere
+	#define RTM_IMPL_NAMESPACE rtm::RTM_IMPL_VERSION_NAMESPACE_NAME
+
+	#define RTM_IMPL_VERSION_NAMESPACE_BEGIN \
+		namespace RTM_IMPL_VERSION_NAMESPACE_NAME \
+		{
+
+	#define RTM_IMPL_VERSION_NAMESPACE_END \
+		}
 #else
-    // Namespace is inlined, its usage does not need to be qualified with the
-    // full version everywhere
-    #define RTM_IMPL_NAMESPACE rtm
+	// Namespace is inlined, its usage does not need to be qualified with the
+	// full version everywhere
+	#define RTM_IMPL_NAMESPACE rtm
 
-    #define RTM_IMPL_VERSION_NAMESPACE_BEGIN \
-        inline namespace RTM_IMPL_VERSION_NAMESPACE_NAME \
-        {
+	#define RTM_IMPL_VERSION_NAMESPACE_BEGIN \
+		inline namespace RTM_IMPL_VERSION_NAMESPACE_NAME \
+		{
+
+	#define RTM_IMPL_VERSION_NAMESPACE_END \
+		}
 #endif
-
-#define RTM_IMPL_VERSION_NAMESPACE_END \
-    }
