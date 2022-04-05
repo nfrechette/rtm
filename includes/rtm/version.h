@@ -54,7 +54,11 @@
 // Name of the namespace, e.g. v21
 #define RTM_IMPL_VERSION_NAMESPACE_NAME v ## RTM_VERSION_MAJOR ## RTM_VERSION_MINOR
 
-#if defined(RTM_NO_VERSION_NAMESPACE)
+// Because this is being introduced in a patch release, as caution, it is disabled
+// by default. It does break ABI if host runtimes forward declare types but that
+// is something they shouldn't do with a 3rd party library. Now, we offer forward
+// declaration headers to help prepare the migration in the next minor release.
+#if defined(RTM_NO_VERSION_NAMESPACE) || !defined(RTM_ENABLE_VERSION_NAMESPACE)
 	// Namespace is inlined, its usage does not need to be qualified with the
 	// full version everywhere
 	#define RTM_IMPL_NAMESPACE rtm
