@@ -1028,14 +1028,14 @@ namespace rtm
 			if (y == 0.0)
 				return 0.0;
 
-			return std::copysign(constants::half_pi(), y);
+			return rtm_impl::copysign(constants::half_pi(), y);
 		}
 
 		double value = scalar_atan(y / x);
 		if (x > 0.0)
 			return value;
 
-		double offset = std::copysign(constants::pi(), y);
+		double offset = rtm_impl::copysign(constants::pi(), y);
 		return value + offset;
 	}
 

@@ -1107,10 +1107,10 @@ void test_vector4_impl(const FloatType threshold)
 	CHECK(FloatType(vector_get_z(vector_sign(test_value0))) == scalar_sign(test_value0_flt[2]));
 	CHECK(FloatType(vector_get_w(vector_sign(test_value0))) == scalar_sign(test_value0_flt[3]));
 
-	CHECK(FloatType(vector_get_x(vector_copy_sign(test_value0, test_value1))) == std::copysign(test_value0_flt[0], test_value1_flt[0]));
-	CHECK(FloatType(vector_get_y(vector_copy_sign(test_value0, test_value1))) == std::copysign(test_value0_flt[1], test_value1_flt[1]));
-	CHECK(FloatType(vector_get_z(vector_copy_sign(test_value0, test_value1))) == std::copysign(test_value0_flt[2], test_value1_flt[2]));
-	CHECK(FloatType(vector_get_w(vector_copy_sign(test_value0, test_value1))) == std::copysign(test_value0_flt[3], test_value1_flt[3]));
+	CHECK(FloatType(vector_get_x(vector_copy_sign(test_value0, test_value1))) == rtm_impl::copysign(test_value0_flt[0], test_value1_flt[0]));
+	CHECK(FloatType(vector_get_y(vector_copy_sign(test_value0, test_value1))) == rtm_impl::copysign(test_value0_flt[1], test_value1_flt[1]));
+	CHECK(FloatType(vector_get_z(vector_copy_sign(test_value0, test_value1))) == rtm_impl::copysign(test_value0_flt[2], test_value1_flt[2]));
+	CHECK(FloatType(vector_get_w(vector_copy_sign(test_value0, test_value1))) == rtm_impl::copysign(test_value0_flt[3], test_value1_flt[3]));
 
 	{
 		const Vector4Type infinity_v = vector_set(std::numeric_limits<FloatType>::infinity());

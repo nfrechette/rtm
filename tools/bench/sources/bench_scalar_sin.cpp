@@ -40,7 +40,7 @@ RTM_FORCE_NOINLINE float RTM_SIMD_CALL scalar_sin_scalar(float input) RTM_NO_EXC
 	float x = input - quotient;
 
 	// Remap our input in the [-pi/2, pi/2] range
-	const float reference = std::copysign(rtm::constants::pi(), x);
+	const float reference = rtm_impl::copysign(rtm::constants::pi(), x);
 	const float reflection = reference - x;
 	const float x_abs = scalar_abs(x);
 	x = x_abs <= rtm::constants::half_pi() ? x : reflection;

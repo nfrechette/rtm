@@ -2010,7 +2010,7 @@ namespace rtm
 		double z_sign = vector_get_z(control_sign);
 		double w_sign = vector_get_w(control_sign);
 
-		return vector_set(std::copysign(x, x_sign), std::copysign(y, y_sign), std::copysign(z, z_sign), std::copysign(w, w_sign));
+		return vector_set(rtm_impl::copysign(x, x_sign), rtm_impl::copysign(y, y_sign), rtm_impl::copysign(z, z_sign), rtm_impl::copysign(w, w_sign));
 #endif
 	}
 
