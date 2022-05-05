@@ -931,7 +931,7 @@ namespace rtm
 		float x = angle - quotient;
 
 		// Remap our input in the [-pi/2, pi/2] range
-		const float reference = std::copysign(constants::pi(), x);
+		const float reference = rtm_impl::copysign(constants::pi(), x);
 		const float reflection = reference - x;
 		const float x_abs = scalar_abs(x);
 		x = x_abs <= constants::half_pi() ? x : reflection;
@@ -1010,7 +1010,7 @@ namespace rtm
 		float x = angle - quotient;
 
 		// Remap our input in the [-pi/2, pi/2] range
-		const float reference = std::copysign(constants::pi(), x);
+		const float reference = rtm_impl::copysign(constants::pi(), x);
 		const float reflection = reference - x;
 		const float x_abs = scalar_abs(x);
 		x = x_abs <= constants::half_pi() ? x : reflection;
@@ -1250,7 +1250,7 @@ namespace rtm
 		scalarf sin_ = scalar_sin(angle);
 		scalarf cos_ = scalar_cos(angle);
 		if (scalar_cast(cos_) == 0.0F)
-			return scalar_set(std::copysign(std::numeric_limits<float>::infinity(), scalar_cast(angle)));
+			return scalar_set(rtm_impl::copysign(std::numeric_limits<float>::infinity(), scalar_cast(angle)));
 
 		return scalar_div(sin_, cos_);
 	}
@@ -1269,7 +1269,7 @@ namespace rtm
 		scalarf sin_ = scalar_sin(angle_);
 		scalarf cos_ = scalar_cos(angle_);
 		if (scalar_cast(cos_) == 0.0F)
-			return std::copysign(std::numeric_limits<float>::infinity(), angle);
+			return rtm_impl::copysign(std::numeric_limits<float>::infinity(), angle);
 
 		return scalar_cast(scalar_div(sin_, cos_));
 #endif
@@ -1435,14 +1435,14 @@ namespace rtm
 			if (y == 0.0F)
 				return 0.0F;
 
-			return std::copysign(constants::half_pi(), y);
+			return rtm_impl::copysign(constants::half_pi(), y);
 		}
 
 		float value = scalar_atan(y / x);
 		if (x > 0.0F)
 			return value;
 
-		float offset = std::copysign(constants::pi(), y);
+		float offset = rtm_impl::copysign(constants::pi(), y);
 		return value + offset;
 #endif
 	}
