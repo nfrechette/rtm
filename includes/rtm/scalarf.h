@@ -1062,8 +1062,7 @@ namespace rtm
 #if defined(RTM_SSE2_INTRINSICS)
 		return _mm_unpacklo_ps(sin_.value, cos_.value);
 #elif defined(RTM_NEON_INTRINSICS)
-		float32x2_t xy = vcreate_f32(((uint64_t)*(const uint32_t*)&sin_) | ((uint64_t)(*(const uint32_t*)&cos_) << 32));
-		return vcombine_f32(xy, xy);
+		return vsetq_lane_f32(cos_, vmovq_n_f32(sin_), 1);
 #else
 		return vector4f{ sin_, cos_, sin_, cos_ };
 #endif
