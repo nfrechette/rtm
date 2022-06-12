@@ -134,7 +134,7 @@ jobs:
       - name: Clean
         uses: docker://ghcr.io/nfrechette/toolchain-amd64-linux-emscripten:v1
         with:
-          args: 'python3 make.py -ci -clean'
+          args: 'python3 make.py -ci -clean_only'
       - name: Build (release)
         uses: docker://ghcr.io/nfrechette/toolchain-amd64-linux-emscripten:v1
         with:
