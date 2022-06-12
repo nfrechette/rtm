@@ -1618,10 +1618,10 @@ namespace rtm
 #if defined(RTM_SSE2_INTRINSICS)
 		return _mm_movemask_ps(_mm_cmplt_ps(lhs, rhs)) == 0xF;
 #elif defined(RTM_NEON_INTRINSICS)
-		uint32x4_t mask = vcltq_f32(lhs, rhs);
+		uint8x16_t mask = vreinterpretq_u8_u32(vcltq_f32(lhs, rhs));
 		uint8x8x2_t mask_0_8_1_9_2_10_3_11_4_12_5_13_6_14_7_15 = vzip_u8(vget_low_u8(mask), vget_high_u8(mask));
-		uint16x4x2_t mask_0_8_4_12_1_9_5_13_2_10_6_14_3_11_7_15 = vzip_u16(mask_0_8_1_9_2_10_3_11_4_12_5_13_6_14_7_15.val[0], mask_0_8_1_9_2_10_3_11_4_12_5_13_6_14_7_15.val[1]);
-		return vget_lane_u32(mask_0_8_4_12_1_9_5_13_2_10_6_14_3_11_7_15.val[0], 0) == 0xFFFFFFFFU;
+		uint16x4x2_t mask_0_8_4_12_1_9_5_13_2_10_6_14_3_11_7_15 = vzip_u16(vreinterpret_u16_u8(mask_0_8_1_9_2_10_3_11_4_12_5_13_6_14_7_15.val[0]), vreinterpret_u16_u8(mask_0_8_1_9_2_10_3_11_4_12_5_13_6_14_7_15.val[1]));
+		return vget_lane_u32(vreinterpret_u32_u16(mask_0_8_4_12_1_9_5_13_2_10_6_14_3_11_7_15.val[0]), 0) == 0xFFFFFFFFU;
 #else
 		return lhs.x < rhs.x && lhs.y < rhs.y && lhs.z < rhs.z && lhs.w < rhs.w;
 #endif
@@ -1636,7 +1636,7 @@ namespace rtm
 		return (_mm_movemask_ps(_mm_cmplt_ps(lhs, rhs)) & 0x3) == 0x3;
 #elif defined(RTM_NEON_INTRINSICS)
 		uint32x2_t mask = vclt_f32(vget_low_f32(lhs), vget_low_f32(rhs));
-		return vget_lane_u64(mask, 0) == 0xFFFFFFFFFFFFFFFFu;
+		return vget_lane_u64(vreinterpret_u64_u32(mask), 0) == 0xFFFFFFFFFFFFFFFFu;
 #else
 		return lhs.x < rhs.x && lhs.y < rhs.y;
 #endif
@@ -1650,10 +1650,10 @@ namespace rtm
 #if defined(RTM_SSE2_INTRINSICS)
 		return (_mm_movemask_ps(_mm_cmplt_ps(lhs, rhs)) & 0x7) == 0x7;
 #elif defined(RTM_NEON_INTRINSICS)
-		uint32x4_t mask = vcltq_f32(lhs, rhs);
+		uint8x16_t mask = vreinterpretq_u8_u32(vcltq_f32(lhs, rhs));
 		uint8x8x2_t mask_0_8_1_9_2_10_3_11_4_12_5_13_6_14_7_15 = vzip_u8(vget_low_u8(mask), vget_high_u8(mask));
-		uint16x4x2_t mask_0_8_4_12_1_9_5_13_2_10_6_14_3_11_7_15 = vzip_u16(mask_0_8_1_9_2_10_3_11_4_12_5_13_6_14_7_15.val[0], mask_0_8_1_9_2_10_3_11_4_12_5_13_6_14_7_15.val[1]);
-		return (vget_lane_u32(mask_0_8_4_12_1_9_5_13_2_10_6_14_3_11_7_15.val[0], 0) & 0x00FFFFFFU) == 0x00FFFFFFU;
+		uint16x4x2_t mask_0_8_4_12_1_9_5_13_2_10_6_14_3_11_7_15 = vzip_u16(vreinterpret_u16_u8(mask_0_8_1_9_2_10_3_11_4_12_5_13_6_14_7_15.val[0]), vreinterpret_u16_u8(mask_0_8_1_9_2_10_3_11_4_12_5_13_6_14_7_15.val[1]));
+		return (vget_lane_u32(vreinterpret_u32_u16(mask_0_8_4_12_1_9_5_13_2_10_6_14_3_11_7_15.val[0]), 0) & 0x00FFFFFFU) == 0x00FFFFFFU;
 #else
 		return lhs.x < rhs.x && lhs.y < rhs.y && lhs.z < rhs.z;
 #endif
@@ -1667,10 +1667,10 @@ namespace rtm
 #if defined(RTM_SSE2_INTRINSICS)
 		return _mm_movemask_ps(_mm_cmplt_ps(lhs, rhs)) != 0;
 #elif defined(RTM_NEON_INTRINSICS)
-		uint32x4_t mask = vcltq_f32(lhs, rhs);
+		uint8x16_t mask = vreinterpretq_u8_u32(vcltq_f32(lhs, rhs));
 		uint8x8x2_t mask_0_8_1_9_2_10_3_11_4_12_5_13_6_14_7_15 = vzip_u8(vget_low_u8(mask), vget_high_u8(mask));
-		uint16x4x2_t mask_0_8_4_12_1_9_5_13_2_10_6_14_3_11_7_15 = vzip_u16(mask_0_8_1_9_2_10_3_11_4_12_5_13_6_14_7_15.val[0], mask_0_8_1_9_2_10_3_11_4_12_5_13_6_14_7_15.val[1]);
-		return vget_lane_u32(mask_0_8_4_12_1_9_5_13_2_10_6_14_3_11_7_15.val[0], 0) != 0;
+		uint16x4x2_t mask_0_8_4_12_1_9_5_13_2_10_6_14_3_11_7_15 = vzip_u16(vreinterpret_u16_u8(mask_0_8_1_9_2_10_3_11_4_12_5_13_6_14_7_15.val[0]), vreinterpret_u16_u8(mask_0_8_1_9_2_10_3_11_4_12_5_13_6_14_7_15.val[1]));
+		return vget_lane_u32(vreinterpret_u32_u16(mask_0_8_4_12_1_9_5_13_2_10_6_14_3_11_7_15.val[0]), 0) != 0;
 #else
 		return lhs.x < rhs.x || lhs.y < rhs.y || lhs.z < rhs.z || lhs.w < rhs.w;
 #endif
@@ -1685,7 +1685,7 @@ namespace rtm
 		return (_mm_movemask_ps(_mm_cmplt_ps(lhs, rhs)) & 0x3) != 0;
 #elif defined(RTM_NEON_INTRINSICS)
 		uint32x2_t mask = vclt_f32(vget_low_f32(lhs), vget_low_f32(rhs));
-		return vget_lane_u64(mask, 0) != 0;
+		return vget_lane_u64(vreinterpret_u64_u32(mask), 0) != 0;
 #else
 		return lhs.x < rhs.x || lhs.y < rhs.y;
 #endif
@@ -1699,10 +1699,10 @@ namespace rtm
 #if defined(RTM_SSE2_INTRINSICS)
 		return (_mm_movemask_ps(_mm_cmplt_ps(lhs, rhs)) & 0x7) != 0;
 #elif defined(RTM_NEON_INTRINSICS)
-		uint32x4_t mask = vcltq_f32(lhs, rhs);
+		uint8x16_t mask = vreinterpretq_u8_u32(vcltq_f32(lhs, rhs));
 		uint8x8x2_t mask_0_8_1_9_2_10_3_11_4_12_5_13_6_14_7_15 = vzip_u8(vget_low_u8(mask), vget_high_u8(mask));
-		uint16x4x2_t mask_0_8_4_12_1_9_5_13_2_10_6_14_3_11_7_15 = vzip_u16(mask_0_8_1_9_2_10_3_11_4_12_5_13_6_14_7_15.val[0], mask_0_8_1_9_2_10_3_11_4_12_5_13_6_14_7_15.val[1]);
-		return (vget_lane_u32(mask_0_8_4_12_1_9_5_13_2_10_6_14_3_11_7_15.val[0], 0) & 0x00FFFFFFU) != 0;
+		uint16x4x2_t mask_0_8_4_12_1_9_5_13_2_10_6_14_3_11_7_15 = vzip_u16(vreinterpret_u16_u8(mask_0_8_1_9_2_10_3_11_4_12_5_13_6_14_7_15.val[0]), vreinterpret_u16_u8(mask_0_8_1_9_2_10_3_11_4_12_5_13_6_14_7_15.val[1]));
+		return (vget_lane_u32(vreinterpret_u32_u16(mask_0_8_4_12_1_9_5_13_2_10_6_14_3_11_7_15.val[0]), 0) & 0x00FFFFFFU) != 0;
 #else
 		return lhs.x < rhs.x || lhs.y < rhs.y || lhs.z < rhs.z;
 #endif
@@ -1716,10 +1716,10 @@ namespace rtm
 #if defined(RTM_SSE2_INTRINSICS)
 		return _mm_movemask_ps(_mm_cmple_ps(lhs, rhs)) == 0xF;
 #elif defined(RTM_NEON_INTRINSICS)
-		uint32x4_t mask = vcleq_f32(lhs, rhs);
+		uint8x16_t mask = vreinterpretq_u8_u32(vcleq_f32(lhs, rhs));
 		uint8x8x2_t mask_0_8_1_9_2_10_3_11_4_12_5_13_6_14_7_15 = vzip_u8(vget_low_u8(mask), vget_high_u8(mask));
-		uint16x4x2_t mask_0_8_4_12_1_9_5_13_2_10_6_14_3_11_7_15 = vzip_u16(mask_0_8_1_9_2_10_3_11_4_12_5_13_6_14_7_15.val[0], mask_0_8_1_9_2_10_3_11_4_12_5_13_6_14_7_15.val[1]);
-		return vget_lane_u32(mask_0_8_4_12_1_9_5_13_2_10_6_14_3_11_7_15.val[0], 0) == 0xFFFFFFFFU;
+		uint16x4x2_t mask_0_8_4_12_1_9_5_13_2_10_6_14_3_11_7_15 = vzip_u16(vreinterpret_u16_u8(mask_0_8_1_9_2_10_3_11_4_12_5_13_6_14_7_15.val[0]), vreinterpret_u16_u8(mask_0_8_1_9_2_10_3_11_4_12_5_13_6_14_7_15.val[1]));
+		return vget_lane_u32(vreinterpret_u32_u16(mask_0_8_4_12_1_9_5_13_2_10_6_14_3_11_7_15.val[0]), 0) == 0xFFFFFFFFU;
 #else
 		return lhs.x <= rhs.x && lhs.y <= rhs.y && lhs.z <= rhs.z && lhs.w <= rhs.w;
 #endif
@@ -1734,7 +1734,7 @@ namespace rtm
 		return (_mm_movemask_ps(_mm_cmple_ps(lhs, rhs)) & 0x3) == 0x3;
 #elif defined(RTM_NEON_INTRINSICS)
 		uint32x2_t mask = vcle_f32(vget_low_f32(lhs), vget_low_f32(rhs));
-		return vget_lane_u64(mask, 0) == 0xFFFFFFFFFFFFFFFFULL;
+		return vget_lane_u64(vreinterpret_u64_u32(mask), 0) == 0xFFFFFFFFFFFFFFFFULL;
 #else
 		return lhs.x <= rhs.x && lhs.y <= rhs.y;
 #endif
@@ -1748,10 +1748,10 @@ namespace rtm
 #if defined(RTM_SSE2_INTRINSICS)
 		return (_mm_movemask_ps(_mm_cmple_ps(lhs, rhs)) & 0x7) == 0x7;
 #elif defined(RTM_NEON_INTRINSICS)
-		uint32x4_t mask = vcleq_f32(lhs, rhs);
+		uint8x16_t mask = vreinterpretq_u8_u32(vcleq_f32(lhs, rhs));
 		uint8x8x2_t mask_0_8_1_9_2_10_3_11_4_12_5_13_6_14_7_15 = vzip_u8(vget_low_u8(mask), vget_high_u8(mask));
-		uint16x4x2_t mask_0_8_4_12_1_9_5_13_2_10_6_14_3_11_7_15 = vzip_u16(mask_0_8_1_9_2_10_3_11_4_12_5_13_6_14_7_15.val[0], mask_0_8_1_9_2_10_3_11_4_12_5_13_6_14_7_15.val[1]);
-		return (vget_lane_u32(mask_0_8_4_12_1_9_5_13_2_10_6_14_3_11_7_15.val[0], 0) & 0x00FFFFFFU) == 0x00FFFFFFU;
+		uint16x4x2_t mask_0_8_4_12_1_9_5_13_2_10_6_14_3_11_7_15 = vzip_u16(vreinterpret_u16_u8(mask_0_8_1_9_2_10_3_11_4_12_5_13_6_14_7_15.val[0]), vreinterpret_u16_u8(mask_0_8_1_9_2_10_3_11_4_12_5_13_6_14_7_15.val[1]));
+		return (vget_lane_u32(vreinterpret_u32_u16(mask_0_8_4_12_1_9_5_13_2_10_6_14_3_11_7_15.val[0]), 0) & 0x00FFFFFFU) == 0x00FFFFFFU;
 #else
 		return lhs.x <= rhs.x && lhs.y <= rhs.y && lhs.z <= rhs.z;
 #endif
@@ -1765,10 +1765,10 @@ namespace rtm
 #if defined(RTM_SSE2_INTRINSICS)
 		return _mm_movemask_ps(_mm_cmple_ps(lhs, rhs)) != 0;
 #elif defined(RTM_NEON_INTRINSICS)
-		uint32x4_t mask = vcleq_f32(lhs, rhs);
+		uint8x16_t mask = vreinterpretq_u8_u32(vcleq_f32(lhs, rhs));
 		uint8x8x2_t mask_0_8_1_9_2_10_3_11_4_12_5_13_6_14_7_15 = vzip_u8(vget_low_u8(mask), vget_high_u8(mask));
-		uint16x4x2_t mask_0_8_4_12_1_9_5_13_2_10_6_14_3_11_7_15 = vzip_u16(mask_0_8_1_9_2_10_3_11_4_12_5_13_6_14_7_15.val[0], mask_0_8_1_9_2_10_3_11_4_12_5_13_6_14_7_15.val[1]);
-		return vget_lane_u32(mask_0_8_4_12_1_9_5_13_2_10_6_14_3_11_7_15.val[0], 0) != 0;
+		uint16x4x2_t mask_0_8_4_12_1_9_5_13_2_10_6_14_3_11_7_15 = vzip_u16(vreinterpret_u16_u8(mask_0_8_1_9_2_10_3_11_4_12_5_13_6_14_7_15.val[0]), vreinterpret_u16_u8(mask_0_8_1_9_2_10_3_11_4_12_5_13_6_14_7_15.val[1]));
+		return vget_lane_u32(vreinterpret_u32_u16(mask_0_8_4_12_1_9_5_13_2_10_6_14_3_11_7_15.val[0]), 0) != 0;
 #else
 		return lhs.x <= rhs.x || lhs.y <= rhs.y || lhs.z <= rhs.z || lhs.w <= rhs.w;
 #endif
@@ -1783,7 +1783,7 @@ namespace rtm
 		return (_mm_movemask_ps(_mm_cmple_ps(lhs, rhs)) & 0x3) != 0;
 #elif defined(RTM_NEON_INTRINSICS)
 		uint32x2_t mask = vcle_f32(vget_low_f32(lhs), vget_low_f32(rhs));
-		return vget_lane_u64(mask, 0) != 0;
+		return vget_lane_u64(vreinterpret_u64_u32(mask), 0) != 0;
 #else
 		return lhs.x <= rhs.x || lhs.y <= rhs.y;
 #endif
@@ -1797,10 +1797,10 @@ namespace rtm
 #if defined(RTM_SSE2_INTRINSICS)
 		return (_mm_movemask_ps(_mm_cmple_ps(lhs, rhs)) & 0x7) != 0;
 #elif defined(RTM_NEON_INTRINSICS)
-		uint32x4_t mask = vcleq_f32(lhs, rhs);
+		uint8x16_t mask = vreinterpretq_u8_u32(vcleq_f32(lhs, rhs));
 		uint8x8x2_t mask_0_8_1_9_2_10_3_11_4_12_5_13_6_14_7_15 = vzip_u8(vget_low_u8(mask), vget_high_u8(mask));
-		uint16x4x2_t mask_0_8_4_12_1_9_5_13_2_10_6_14_3_11_7_15 = vzip_u16(mask_0_8_1_9_2_10_3_11_4_12_5_13_6_14_7_15.val[0], mask_0_8_1_9_2_10_3_11_4_12_5_13_6_14_7_15.val[1]);
-		return (vget_lane_u32(mask_0_8_4_12_1_9_5_13_2_10_6_14_3_11_7_15.val[0], 0) & 0x00FFFFFFU) != 0;
+		uint16x4x2_t mask_0_8_4_12_1_9_5_13_2_10_6_14_3_11_7_15 = vzip_u16(vreinterpret_u16_u8(mask_0_8_1_9_2_10_3_11_4_12_5_13_6_14_7_15.val[0]), vreinterpret_u16_u8(mask_0_8_1_9_2_10_3_11_4_12_5_13_6_14_7_15.val[1]));
+		return (vget_lane_u32(vreinterpret_u32_u16(mask_0_8_4_12_1_9_5_13_2_10_6_14_3_11_7_15.val[0]), 0) & 0x00FFFFFFU) != 0;
 #else
 		return lhs.x <= rhs.x || lhs.y <= rhs.y || lhs.z <= rhs.z;
 #endif
@@ -1814,10 +1814,10 @@ namespace rtm
 #if defined(RTM_SSE2_INTRINSICS)
 		return _mm_movemask_ps(_mm_cmpgt_ps(lhs, rhs)) == 0xF;
 #elif defined(RTM_NEON_INTRINSICS)
-		uint32x4_t mask = vcgtq_f32(lhs, rhs);
+		uint8x16_t mask = vreinterpretq_u8_u32(vcgtq_f32(lhs, rhs));
 		uint8x8x2_t mask_0_8_1_9_2_10_3_11_4_12_5_13_6_14_7_15 = vzip_u8(vget_low_u8(mask), vget_high_u8(mask));
-		uint16x4x2_t mask_0_8_4_12_1_9_5_13_2_10_6_14_3_11_7_15 = vzip_u16(mask_0_8_1_9_2_10_3_11_4_12_5_13_6_14_7_15.val[0], mask_0_8_1_9_2_10_3_11_4_12_5_13_6_14_7_15.val[1]);
-		return vget_lane_u32(mask_0_8_4_12_1_9_5_13_2_10_6_14_3_11_7_15.val[0], 0) == 0xFFFFFFFFU;
+		uint16x4x2_t mask_0_8_4_12_1_9_5_13_2_10_6_14_3_11_7_15 = vzip_u16(vreinterpret_u16_u8(mask_0_8_1_9_2_10_3_11_4_12_5_13_6_14_7_15.val[0]), vreinterpret_u16_u8(mask_0_8_1_9_2_10_3_11_4_12_5_13_6_14_7_15.val[1]));
+		return vget_lane_u32(vreinterpret_u32_u16(mask_0_8_4_12_1_9_5_13_2_10_6_14_3_11_7_15.val[0]), 0) == 0xFFFFFFFFU;
 #else
 		return lhs.x > rhs.x && lhs.y > rhs.y && lhs.z > rhs.z && lhs.w > rhs.w;
 #endif
@@ -1832,7 +1832,7 @@ namespace rtm
 		return (_mm_movemask_ps(_mm_cmpgt_ps(lhs, rhs)) & 0x3) == 0x3;
 #elif defined(RTM_NEON_INTRINSICS)
 		uint32x2_t mask = vcgt_f32(vget_low_f32(lhs), vget_low_f32(rhs));
-		return vget_lane_u64(mask, 0) == 0xFFFFFFFFFFFFFFFFULL;
+		return vget_lane_u64(vreinterpret_u64_u32(mask), 0) == 0xFFFFFFFFFFFFFFFFULL;
 #else
 		return lhs.x > rhs.x && lhs.y > rhs.y;
 #endif
@@ -1846,10 +1846,10 @@ namespace rtm
 #if defined(RTM_SSE2_INTRINSICS)
 		return (_mm_movemask_ps(_mm_cmpgt_ps(lhs, rhs)) & 0x7) == 0x7;
 #elif defined(RTM_NEON_INTRINSICS)
-		uint32x4_t mask = vcgtq_f32(lhs, rhs);
+		uint8x16_t mask = vreinterpretq_u8_u32(vcgtq_f32(lhs, rhs));
 		uint8x8x2_t mask_0_8_1_9_2_10_3_11_4_12_5_13_6_14_7_15 = vzip_u8(vget_low_u8(mask), vget_high_u8(mask));
-		uint16x4x2_t mask_0_8_4_12_1_9_5_13_2_10_6_14_3_11_7_15 = vzip_u16(mask_0_8_1_9_2_10_3_11_4_12_5_13_6_14_7_15.val[0], mask_0_8_1_9_2_10_3_11_4_12_5_13_6_14_7_15.val[1]);
-		return (vget_lane_u32(mask_0_8_4_12_1_9_5_13_2_10_6_14_3_11_7_15.val[0], 0) & 0x00FFFFFFU) == 0x00FFFFFFU;
+		uint16x4x2_t mask_0_8_4_12_1_9_5_13_2_10_6_14_3_11_7_15 = vzip_u16(vreinterpret_u16_u8(mask_0_8_1_9_2_10_3_11_4_12_5_13_6_14_7_15.val[0]), vreinterpret_u16_u8(mask_0_8_1_9_2_10_3_11_4_12_5_13_6_14_7_15.val[1]));
+		return (vget_lane_u32(vreinterpret_u32_u16(mask_0_8_4_12_1_9_5_13_2_10_6_14_3_11_7_15.val[0]), 0) & 0x00FFFFFFU) == 0x00FFFFFFU;
 #else
 		return lhs.x > rhs.x && lhs.y > rhs.y && lhs.z > rhs.z;
 #endif
@@ -1863,10 +1863,10 @@ namespace rtm
 #if defined(RTM_SSE2_INTRINSICS)
 		return _mm_movemask_ps(_mm_cmpgt_ps(lhs, rhs)) != 0;
 #elif defined(RTM_NEON_INTRINSICS)
-		uint32x4_t mask = vcgtq_f32(lhs, rhs);
+		uint8x16_t mask = vreinterpretq_u8_u32(vcgtq_f32(lhs, rhs));
 		uint8x8x2_t mask_0_8_1_9_2_10_3_11_4_12_5_13_6_14_7_15 = vzip_u8(vget_low_u8(mask), vget_high_u8(mask));
-		uint16x4x2_t mask_0_8_4_12_1_9_5_13_2_10_6_14_3_11_7_15 = vzip_u16(mask_0_8_1_9_2_10_3_11_4_12_5_13_6_14_7_15.val[0], mask_0_8_1_9_2_10_3_11_4_12_5_13_6_14_7_15.val[1]);
-		return vget_lane_u32(mask_0_8_4_12_1_9_5_13_2_10_6_14_3_11_7_15.val[0], 0) != 0;
+		uint16x4x2_t mask_0_8_4_12_1_9_5_13_2_10_6_14_3_11_7_15 = vzip_u16(vreinterpret_u16_u8(mask_0_8_1_9_2_10_3_11_4_12_5_13_6_14_7_15.val[0]), vreinterpret_u16_u8(mask_0_8_1_9_2_10_3_11_4_12_5_13_6_14_7_15.val[1]));
+		return vget_lane_u32(vreinterpret_u32_u16(mask_0_8_4_12_1_9_5_13_2_10_6_14_3_11_7_15.val[0]), 0) != 0;
 #else
 		return lhs.x > rhs.x || lhs.y > rhs.y || lhs.z > rhs.z || lhs.w > rhs.w;
 #endif
@@ -1881,7 +1881,7 @@ namespace rtm
 		return (_mm_movemask_ps(_mm_cmpgt_ps(lhs, rhs)) & 0x3) != 0;
 #elif defined(RTM_NEON_INTRINSICS)
 		uint32x2_t mask = vcgt_f32(vget_low_f32(lhs), vget_low_f32(rhs));
-		return vget_lane_u64(mask, 0) != 0;
+		return vget_lane_u64(vreinterpret_u64_u32(mask), 0) != 0;
 #else
 		return lhs.x > rhs.x || lhs.y > rhs.y;
 #endif
@@ -1895,10 +1895,10 @@ namespace rtm
 #if defined(RTM_SSE2_INTRINSICS)
 		return (_mm_movemask_ps(_mm_cmpgt_ps(lhs, rhs)) & 0x7) != 0;
 #elif defined(RTM_NEON_INTRINSICS)
-		uint32x4_t mask = vcgtq_f32(lhs, rhs);
+		uint8x16_t mask = vreinterpretq_u8_u32(vcgtq_f32(lhs, rhs));
 		uint8x8x2_t mask_0_8_1_9_2_10_3_11_4_12_5_13_6_14_7_15 = vzip_u8(vget_low_u8(mask), vget_high_u8(mask));
-		uint16x4x2_t mask_0_8_4_12_1_9_5_13_2_10_6_14_3_11_7_15 = vzip_u16(mask_0_8_1_9_2_10_3_11_4_12_5_13_6_14_7_15.val[0], mask_0_8_1_9_2_10_3_11_4_12_5_13_6_14_7_15.val[1]);
-		return (vget_lane_u32(mask_0_8_4_12_1_9_5_13_2_10_6_14_3_11_7_15.val[0], 0) & 0x00FFFFFFU) != 0;
+		uint16x4x2_t mask_0_8_4_12_1_9_5_13_2_10_6_14_3_11_7_15 = vzip_u16(vreinterpret_u16_u8(mask_0_8_1_9_2_10_3_11_4_12_5_13_6_14_7_15.val[0]), vreinterpret_u16_u8(mask_0_8_1_9_2_10_3_11_4_12_5_13_6_14_7_15.val[1]));
+		return (vget_lane_u32(vreinterpret_u32_u16(mask_0_8_4_12_1_9_5_13_2_10_6_14_3_11_7_15.val[0]), 0) & 0x00FFFFFFU) != 0;
 #else
 		return lhs.x > rhs.x || lhs.y > rhs.y || lhs.z > rhs.z;
 #endif
@@ -1912,10 +1912,10 @@ namespace rtm
 #if defined(RTM_SSE2_INTRINSICS)
 		return _mm_movemask_ps(_mm_cmpge_ps(lhs, rhs)) == 0xF;
 #elif defined(RTM_NEON_INTRINSICS)
-		uint32x4_t mask = vcgeq_f32(lhs, rhs);
+		uint8x16_t mask = vreinterpretq_u8_u32(vcgeq_f32(lhs, rhs));
 		uint8x8x2_t mask_0_8_1_9_2_10_3_11_4_12_5_13_6_14_7_15 = vzip_u8(vget_low_u8(mask), vget_high_u8(mask));
-		uint16x4x2_t mask_0_8_4_12_1_9_5_13_2_10_6_14_3_11_7_15 = vzip_u16(mask_0_8_1_9_2_10_3_11_4_12_5_13_6_14_7_15.val[0], mask_0_8_1_9_2_10_3_11_4_12_5_13_6_14_7_15.val[1]);
-		return vget_lane_u32(mask_0_8_4_12_1_9_5_13_2_10_6_14_3_11_7_15.val[0], 0) == 0xFFFFFFFFU;
+		uint16x4x2_t mask_0_8_4_12_1_9_5_13_2_10_6_14_3_11_7_15 = vzip_u16(vreinterpret_u16_u8(mask_0_8_1_9_2_10_3_11_4_12_5_13_6_14_7_15.val[0]), vreinterpret_u16_u8(mask_0_8_1_9_2_10_3_11_4_12_5_13_6_14_7_15.val[1]));
+		return vget_lane_u32(vreinterpret_u32_u16(mask_0_8_4_12_1_9_5_13_2_10_6_14_3_11_7_15.val[0]), 0) == 0xFFFFFFFFU;
 #else
 		return lhs.x >= rhs.x && lhs.y >= rhs.y && lhs.z >= rhs.z && lhs.w >= rhs.w;
 #endif
@@ -1930,7 +1930,7 @@ namespace rtm
 		return (_mm_movemask_ps(_mm_cmpge_ps(lhs, rhs)) & 0x3) == 0x3;
 #elif defined(RTM_NEON_INTRINSICS)
 		uint32x2_t mask = vcge_f32(vget_low_f32(lhs), vget_low_f32(rhs));
-		return vget_lane_u64(mask, 0) == 0xFFFFFFFFFFFFFFFFULL;
+		return vget_lane_u64(vreinterpret_u64_u32(mask), 0) == 0xFFFFFFFFFFFFFFFFULL;
 #else
 		return lhs.x >= rhs.x && lhs.y >= rhs.y;
 #endif
@@ -1944,10 +1944,10 @@ namespace rtm
 #if defined(RTM_SSE2_INTRINSICS)
 		return (_mm_movemask_ps(_mm_cmpge_ps(lhs, rhs)) & 0x7) == 0x7;
 #elif defined(RTM_NEON_INTRINSICS)
-		uint32x4_t mask = vcgeq_f32(lhs, rhs);
+		uint8x16_t mask = vreinterpretq_u8_u32(vcgeq_f32(lhs, rhs));
 		uint8x8x2_t mask_0_8_1_9_2_10_3_11_4_12_5_13_6_14_7_15 = vzip_u8(vget_low_u8(mask), vget_high_u8(mask));
-		uint16x4x2_t mask_0_8_4_12_1_9_5_13_2_10_6_14_3_11_7_15 = vzip_u16(mask_0_8_1_9_2_10_3_11_4_12_5_13_6_14_7_15.val[0], mask_0_8_1_9_2_10_3_11_4_12_5_13_6_14_7_15.val[1]);
-		return (vget_lane_u32(mask_0_8_4_12_1_9_5_13_2_10_6_14_3_11_7_15.val[0], 0) & 0x00FFFFFFU) == 0x00FFFFFFU;
+		uint16x4x2_t mask_0_8_4_12_1_9_5_13_2_10_6_14_3_11_7_15 = vzip_u16(vreinterpret_u16_u8(mask_0_8_1_9_2_10_3_11_4_12_5_13_6_14_7_15.val[0]), vreinterpret_u16_u8(mask_0_8_1_9_2_10_3_11_4_12_5_13_6_14_7_15.val[1]));
+		return (vget_lane_u32(vreinterpret_u32_u16(mask_0_8_4_12_1_9_5_13_2_10_6_14_3_11_7_15.val[0]), 0) & 0x00FFFFFFU) == 0x00FFFFFFU;
 #else
 		return lhs.x >= rhs.x && lhs.y >= rhs.y && lhs.z >= rhs.z;
 #endif
@@ -1961,10 +1961,10 @@ namespace rtm
 #if defined(RTM_SSE2_INTRINSICS)
 		return _mm_movemask_ps(_mm_cmpge_ps(lhs, rhs)) != 0;
 #elif defined(RTM_NEON_INTRINSICS)
-		uint32x4_t mask = vcgeq_f32(lhs, rhs);
+		uint8x16_t mask = vreinterpretq_u8_u32(vcgeq_f32(lhs, rhs));
 		uint8x8x2_t mask_0_8_1_9_2_10_3_11_4_12_5_13_6_14_7_15 = vzip_u8(vget_low_u8(mask), vget_high_u8(mask));
-		uint16x4x2_t mask_0_8_4_12_1_9_5_13_2_10_6_14_3_11_7_15 = vzip_u16(mask_0_8_1_9_2_10_3_11_4_12_5_13_6_14_7_15.val[0], mask_0_8_1_9_2_10_3_11_4_12_5_13_6_14_7_15.val[1]);
-		return vget_lane_u32(mask_0_8_4_12_1_9_5_13_2_10_6_14_3_11_7_15.val[0], 0) != 0;
+		uint16x4x2_t mask_0_8_4_12_1_9_5_13_2_10_6_14_3_11_7_15 = vzip_u16(vreinterpret_u16_u8(mask_0_8_1_9_2_10_3_11_4_12_5_13_6_14_7_15.val[0]), vreinterpret_u16_u8(mask_0_8_1_9_2_10_3_11_4_12_5_13_6_14_7_15.val[1]));
+		return vget_lane_u32(vreinterpret_u32_u16(mask_0_8_4_12_1_9_5_13_2_10_6_14_3_11_7_15.val[0]), 0) != 0;
 #else
 		return lhs.x >= rhs.x || lhs.y >= rhs.y || lhs.z >= rhs.z || lhs.w >= rhs.w;
 #endif
@@ -1979,7 +1979,7 @@ namespace rtm
 		return (_mm_movemask_ps(_mm_cmpge_ps(lhs, rhs)) & 0x3) != 0;
 #elif defined(RTM_NEON_INTRINSICS)
 		uint32x2_t mask = vcge_f32(vget_low_f32(lhs), vget_low_f32(rhs));
-		return vget_lane_u64(mask, 0) != 0;
+		return vget_lane_u64(vreinterpret_u64_u32(mask), 0) != 0;
 #else
 		return lhs.x >= rhs.x || lhs.y >= rhs.y;
 #endif
@@ -1993,10 +1993,10 @@ namespace rtm
 #if defined(RTM_SSE2_INTRINSICS)
 		return (_mm_movemask_ps(_mm_cmpge_ps(lhs, rhs)) & 0x7) != 0;
 #elif defined(RTM_NEON_INTRINSICS)
-		uint32x4_t mask = vcgeq_f32(lhs, rhs);
+		uint8x16_t mask = vreinterpretq_u8_u32(vcgeq_f32(lhs, rhs));
 		uint8x8x2_t mask_0_8_1_9_2_10_3_11_4_12_5_13_6_14_7_15 = vzip_u8(vget_low_u8(mask), vget_high_u8(mask));
-		uint16x4x2_t mask_0_8_4_12_1_9_5_13_2_10_6_14_3_11_7_15 = vzip_u16(mask_0_8_1_9_2_10_3_11_4_12_5_13_6_14_7_15.val[0], mask_0_8_1_9_2_10_3_11_4_12_5_13_6_14_7_15.val[1]);
-		return (vget_lane_u32(mask_0_8_4_12_1_9_5_13_2_10_6_14_3_11_7_15.val[0], 0) & 0x00FFFFFFU) != 0;
+		uint16x4x2_t mask_0_8_4_12_1_9_5_13_2_10_6_14_3_11_7_15 = vzip_u16(vreinterpret_u16_u8(mask_0_8_1_9_2_10_3_11_4_12_5_13_6_14_7_15.val[0]), vreinterpret_u16_u8(mask_0_8_1_9_2_10_3_11_4_12_5_13_6_14_7_15.val[1]));
+		return (vget_lane_u32(vreinterpret_u32_u16(mask_0_8_4_12_1_9_5_13_2_10_6_14_3_11_7_15.val[0]), 0) & 0x00FFFFFFU) != 0;
 #else
 		return lhs.x >= rhs.x || lhs.y >= rhs.y || lhs.z >= rhs.z;
 #endif
@@ -2563,9 +2563,9 @@ namespace rtm
 
 		float32x4_t reflection = vsubq_f32(reference, x);
 #if !defined(RTM_IMPL_VCA_SUPPORTED)
-		float32x4_t is_less_equal_than_half_pi = vcleq_f32(vabsq_f32(x), vdupq_n_f32(constants::half_pi()));
+		uint32x4_t is_less_equal_than_half_pi = vcleq_f32(vabsq_f32(x), vdupq_n_f32(constants::half_pi()));
 #else
-		float32x4_t is_less_equal_than_half_pi = vcaleq_f32(x, vdupq_n_f32(constants::half_pi()));
+		uint32x4_t is_less_equal_than_half_pi = vcaleq_f32(x, vdupq_n_f32(constants::half_pi()));
 #endif
 		x = vbslq_f32(is_less_equal_than_half_pi, x, reflection);
 
@@ -2692,9 +2692,9 @@ namespace rtm
 
 		float32x4_t reflection = vsubq_f32(reference, x);
 #if !defined(RTM_IMPL_VCA_SUPPORTED)
-		float32x4_t is_less_equal_than_half_pi = vcleq_f32(vabsq_f32(x), vdupq_n_f32(constants::half_pi()));
+		uint32x4_t is_less_equal_than_half_pi = vcleq_f32(vabsq_f32(x), vdupq_n_f32(constants::half_pi()));
 #else
-		float32x4_t is_less_equal_than_half_pi = vcaleq_f32(x, vdupq_n_f32(constants::half_pi()));
+		uint32x4_t is_less_equal_than_half_pi = vcaleq_f32(x, vdupq_n_f32(constants::half_pi()));
 #endif
 		x = vbslq_f32(is_less_equal_than_half_pi, x, reflection);
 
@@ -2833,9 +2833,9 @@ namespace rtm
 
 		const float32x4_t reflection = vsubq_f32(reference, x);
 #if !defined(RTM_IMPL_VCA_SUPPORTED)
-		const float32x4_t is_less_equal_than_half_pi = vcleq_f32(vabsq_f32(x), vdupq_n_f32(constants::half_pi()));
+		const uint32x4_t is_less_equal_than_half_pi = vcleq_f32(vabsq_f32(x), vdupq_n_f32(constants::half_pi()));
 #else
-		const float32x4_t is_less_equal_than_half_pi = vcaleq_f32(x, vdupq_n_f32(constants::half_pi()));
+		const uint32x4_t is_less_equal_than_half_pi = vcaleq_f32(x, vdupq_n_f32(constants::half_pi()));
 #endif
 		x = vbslq_f32(is_less_equal_than_half_pi, x, reflection);
 		const float32x4_t x2 = vmulq_f32(x, x);
@@ -2938,7 +2938,7 @@ namespace rtm
 #endif
 		float32x4_t reciprocal = vector_reciprocal(abs_value);
 
-		float32x4_t x = vector_select(is_larger_than_one, reciprocal, abs_value);
+		float32x4_t x = vbslq_f32(is_larger_than_one, reciprocal, abs_value);
 
 		float32x4_t x2 = vmulq_f32(x, x);
 
@@ -2954,7 +2954,7 @@ namespace rtm
 		float32x4_t remapped = vsubq_f32(vdupq_n_f32(constants::half_pi()), result);
 
 		// pi/2 - result
-		result = vector_select(is_larger_than_one, remapped, result);
+		result = vbslq_f32(is_larger_than_one, remapped, result);
 
 		// Keep the original sign
 		return vreinterpretq_f32_u32(vorrq_u32(vreinterpretq_u32_f32(result), vandq_u32(vreinterpretq_u32_f32(input), vreinterpretq_u32_f32(vdupq_n_f32(-0.0F)))));
