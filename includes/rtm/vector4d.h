@@ -1908,7 +1908,7 @@ namespace rtm
 		const uint64_t* input0_ = reinterpret_cast<const uint64_t*>(&input0);
 		const uint64_t* input1_ = reinterpret_cast<const uint64_t*>(&input1);
 
-		vector4d result;
+		vector4d result = input0;
 		uint64_t* result_ = reinterpret_cast<uint64_t*>(&result);
 
 		result_[0] = input0_[0] & input1_[0];
@@ -1933,7 +1933,7 @@ namespace rtm
 		const uint64_t* input0_ = reinterpret_cast<const uint64_t*>(&input0);
 		const uint64_t* input1_ = reinterpret_cast<const uint64_t*>(&input1);
 
-		vector4d result;
+		vector4d result = input0;
 		uint64_t* result_ = reinterpret_cast<uint64_t*>(&result);
 
 		result_[0] = input0_[0] | input1_[0];
@@ -1958,7 +1958,7 @@ namespace rtm
 		const uint64_t* input0_ = reinterpret_cast<const uint64_t*>(&input0);
 		const uint64_t* input1_ = reinterpret_cast<const uint64_t*>(&input1);
 
-		vector4d result;
+		vector4d result = input0;
 		uint64_t* result_ = reinterpret_cast<uint64_t*>(&result);
 
 		result_[0] = input0_[0] ^ input1_[0];
