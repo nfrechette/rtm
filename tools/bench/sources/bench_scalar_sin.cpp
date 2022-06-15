@@ -100,6 +100,7 @@ RTM_FORCE_NOINLINE float RTM_SIMD_CALL scalar_sin_sse2(float input) RTM_NO_EXCEP
 }
 #endif
 
+#if defined(RTM_NEON64_INTRINSICS)
 alignas(64) static constexpr float constants3_[12] =
 {
 	2.7521557770526783e-6F, rtm::constants::one_div_two_pi(),
@@ -111,7 +112,6 @@ alignas(64) static constexpr float constants3_[12] =
 	1.0F, 1.0F,
 };
 
-#if defined(RTM_NEON64_INTRINSICS)
 RTM_FORCE_NOINLINE float RTM_SIMD_CALL scalar_sin_neon64(float input) RTM_NO_EXCEPT
 {
 	// Use a degree 11 minimax approximation polynomial
