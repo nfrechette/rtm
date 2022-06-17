@@ -34,6 +34,16 @@
       "contributions": [
         "infra"
       ]
+    },
+    {
+      "login": "operasfantom",
+      "name": "Pavel Iatchenii",
+      "avatar_url": "https://avatars.githubusercontent.com/u/31903947?v=4",
+      "profile": "https://github.com/operasfantom",
+      "contributions": [
+        "code",
+        "maintenance"
+      ]
     }
   ],
   "contributorsPerLine": 7,
