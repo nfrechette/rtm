@@ -29,8 +29,8 @@ catch_discover_tests(${PROJECT_NAME})
 setup_default_compiler_flags(${PROJECT_NAME})
 
 if(MSVC)
-	if(CPU_INSTRUCTION_SET MATCHES "arm64")
-		# Exceptions are not enabled by default for ARM targets, enable them
+	if(CPU_INSTRUCTION_SET MATCHES "arm64" OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
+		# Exceptions are not enabled by default for ARM targets and clang-cl, enable them
 		target_compile_options(${PROJECT_NAME} PRIVATE /EHsc)
 	endif()
 endif()
