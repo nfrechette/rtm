@@ -1,14 +1,16 @@
 cmake_minimum_required (VERSION 3.2)
 
 macro(setup_default_compiler_flags _project_name)
-	if(MSVC)
+	if(MSVC) # That's also clang-cl
 		# Replace some default compiler switches and add new ones
 		STRING(REPLACE "/GR" "" CMAKE_CXX_FLAGS ${CMAKE_CXX_FLAGS})			# Disable RTTI
 		STRING(REPLACE "/W3" "/W4" CMAKE_CXX_FLAGS ${CMAKE_CXX_FLAGS})		# Bump warnings to W4
 		target_compile_options(${_project_name} PRIVATE /Zi)				# Add debug info
 		target_compile_options(${_project_name} PRIVATE /Oi)				# Generate intrinsic functions
 		target_compile_options(${_project_name} PRIVATE /WX)				# Treat warnings as errors
-		target_compile_options(${_project_name} PRIVATE /MP)				# Enable parallel compilation
+		if (CMAKE_CXX_COMPILER_ID MATCHES "MSVC") # no Clang no Intel
+			target_compile_options(${_project_name} PRIVATE /MP)            # Enable parallel compilation
+		endif ()
 
 		if(MSVC_VERSION GREATER 1900)
 			# VS2017 and above
