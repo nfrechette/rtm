@@ -2139,6 +2139,49 @@ namespace rtm
 	template<mix4 comp0, mix4 comp1, mix4 comp2, mix4 comp3>
 	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE vector4f RTM_SIMD_CALL vector_mix(vector4f_arg0 input0, vector4f_arg1 input1) RTM_NO_EXCEPT
 	{
+#if defined(RTM_SSE4_INTRINSICS)
+        // Each component comes from the respective position of input 0 or input 1
+        if (rtm_impl::static_condition<(comp0 == mix4::a || comp0 == mix4::x) && (comp1 == mix4::b || comp1 == mix4::y) &&
+                                       (comp2 == mix4::c || comp2 == mix4::z) && (comp3 == mix4::d || comp3 == mix4::w)>::test())
+        {
+            constexpr int mask = (comp0 == mix4::a ? 1 : 0) | (comp1 == mix4::b ? 2 : 0) |
+                                 (comp2 == mix4::c ? 4 : 0) | (comp3 == mix4::d ? 8 : 0);
+            return _mm_blend_ps(input0, input1, mask);
+        }
+
+        // First component comes from input 1, others come from the respective positions of input 0
+        if (rtm_impl::static_condition<rtm_impl::is_mix_abcd(comp0) && comp1 == mix4::y && comp2 == mix4::z && comp3 == mix4::w>::test())
+            return _mm_insert_ps(input0, input1, (int(comp0) % 4) << 6);
+
+        // Second component comes from input 1, others come from the respective positions of input 0
+        if (rtm_impl::static_condition<comp0 == mix4::x && rtm_impl::is_mix_abcd(comp1) && comp2 == mix4::z && comp3 == mix4::w>::test())
+            return _mm_insert_ps(input0, input1, ((int(comp1) % 4) << 6) | (1 << 4));
+
+        // Third component comes from input 1, others come from the respective positions of input 0
+        if (rtm_impl::static_condition<comp0 == mix4::x && comp1 == mix4::y && rtm_impl::is_mix_abcd(comp2) && comp3 == mix4::w>::test())
+            return _mm_insert_ps(input0, input1, ((int(comp2) % 4) << 6) | (2 << 4));
+
+        // Fourth component comes from input 1, others come from the respective positions of input 0
+        if (rtm_impl::static_condition<comp0 == mix4::x && comp1 == mix4::y && comp2 == mix4::z && rtm_impl::is_mix_abcd(comp3)>::test())
+            return _mm_insert_ps(input0, input1, ((int(comp3) % 4) << 6) | (3 << 4));
+
+        // First component comes from input 0, others come from the respective positions of input 1
+        if (rtm_impl::static_condition<rtm_impl::is_mix_xyzw(comp0) && comp1 == mix4::b && comp2 == mix4::c && comp3 == mix4::d>::test())
+            return _mm_insert_ps(input1, input0, (int(comp0) % 4) << 6);
+
+        // Second component comes from input 0, others come from the respective positions of input 1
+        if (rtm_impl::static_condition<comp0 == mix4::a && rtm_impl::is_mix_xyzw(comp1) && comp2 == mix4::c && comp3 == mix4::d>::test())
+            return _mm_insert_ps(input1, input0, ((int(comp1) % 4) << 6) | (1 << 4));
+
+        // Third component comes from input 0, others come from the respective positions of input 1
+        if (rtm_impl::static_condition<comp0 == mix4::a && comp1 == mix4::b && rtm_impl::is_mix_xyzw(comp2) && comp3 == mix4::d>::test())
+            return _mm_insert_ps(input1, input0, ((int(comp2) % 4) << 6) | (2 << 4));
+
+        // Fourth component comes from input 0, others come from the respective positions of input 1
+        if (rtm_impl::static_condition<comp0 == mix4::a && comp1 == mix4::b && comp2 == mix4::c && rtm_impl::is_mix_xyzw(comp3)>::test())
+            return _mm_insert_ps(input1, input0, ((int(comp3) % 4) << 6) | (3 << 4));
+#endif // defined(RTM_SSE4_INTRINSICS)
+
 #if defined(RTM_SSE2_INTRINSICS)
 		// All four components come from input 0
 		if (rtm_impl::static_condition<rtm_impl::is_mix_xyzw(comp0) && rtm_impl::is_mix_xyzw(comp1) && rtm_impl::is_mix_xyzw(comp2) && rtm_impl::is_mix_xyzw(comp3)>::test())
