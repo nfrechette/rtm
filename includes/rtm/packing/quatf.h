@@ -65,6 +65,9 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE quatf RTM_SIMD_CALL quat_from_positive_w(vector4f_arg0 input) RTM_NO_EXCEPT
 	{
+		// w_squared can be negative either due to rounding or due to quantization imprecision, we take the absolute value
+		// to ensure the resulting quaternion is always normalized with a positive W component
+
 #if defined(RTM_SSE2_INTRINSICS)
 		const __m128i abs_mask = _mm_set_epi32(0x7FFFFFFFULL, 0x7FFFFFFFULL, 0x7FFFFFFFULL, 0x7FFFFFFFULL);
 
@@ -81,11 +84,13 @@ namespace rtm
 		__m128 result_wyzx = _mm_move_ss(input_wyzx, w);
 		return _mm_shuffle_ps(result_wyzx, result_wyzx, _MM_SHUFFLE(0, 2, 1, 3));
 #endif
-#elif defined(RTM_NEON_INTRINSICS) && 0
-		// TODO: This is slower on ARMv7-A, measure again on ARM64, fewer instructions but the first
-		// sub is dependent on the result of the mul where the C impl below pipelines a bit better it seems
-		float32x4_t x2y2z2 = vmulq_f32(input, input);
-		float w_squared = ((1.0F - vgetq_lane_f32(x2y2z2, 0)) - vgetq_lane_f32(x2y2z2, 1)) - vgetq_lane_f32(x2y2z2, 2);
+#elif defined(RTM_NEON64_INTRINSICS)
+		// 1.0 - (x * x)
+		float result = vfmss_laneq_f32(1.0F, vgetq_lane_f32(input, 0), input, 0);
+		// result - (y * y)
+		result = vfmss_laneq_f32(result, vgetq_lane_f32(input, 1), input, 1);
+		// result - (z * z)
+		float w_squared = vfmss_laneq_f32(result, vgetq_lane_f32(input, 2), input, 2);
 		float w = scalar_sqrt(scalar_abs(w_squared));
 		return vsetq_lane_f32(w, input, 3);
 #else
