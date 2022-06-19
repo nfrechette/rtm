@@ -84,7 +84,7 @@ namespace rtm
 		__m128 result_wyzx = _mm_move_ss(input_wyzx, w);
 		return _mm_shuffle_ps(result_wyzx, result_wyzx, _MM_SHUFFLE(0, 2, 1, 3));
 #endif
-#elif defined(RTM_NEON64_INTRINSICS)
+#elif defined(RTM_NEON64_INTRINSICS) && defined(RTM_IMPL_VFMSS_SUPPORTED)
 		// 1.0 - (x * x)
 		float result = vfmss_laneq_f32(1.0F, vgetq_lane_f32(input, 0), input, 0);
 		// result - (y * y)
