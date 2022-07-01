@@ -32,7 +32,7 @@
 
 #define RTM_VERSION_MAJOR 2
 #define RTM_VERSION_MINOR 1
-#define RTM_VERSION_PATCH 4
+#define RTM_VERSION_PATCH 99
 
 ////////////////////////////////////////////////////////////////////////////////
 // In order to allow multiple versions of this library to coexist side by side
