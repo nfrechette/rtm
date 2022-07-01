@@ -24,6 +24,8 @@
 // SOFTWARE.
 ////////////////////////////////////////////////////////////////////////////////
 
+// Included only once from macros.h
+
 #include "rtm/math.h"
 #include "rtm/impl/compiler_utils.h"
 
