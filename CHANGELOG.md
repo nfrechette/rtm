@@ -1,5 +1,9 @@
 # Significant changes per release
 
+## 2.1.5
+
+*  Force macro expansion in version namespace identifier
+
 ## 2.1.4
 
 *  Add support for clang 12, 13, and 14
