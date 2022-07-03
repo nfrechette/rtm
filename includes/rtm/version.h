@@ -51,8 +51,12 @@
 	#endif
 #endif
 
-// Name of the namespace, e.g. v21
-#define RTM_IMPL_VERSION_NAMESPACE_NAME v ## RTM_VERSION_MAJOR ## RTM_VERSION_MINOR
+// Force macro expansion to concatenate namespace identifier
+#define RTM_IMPL_VERSION_CONCAT_IMPL(prefix, major, minor, patch) prefix ## major ## minor ## patch
+#define RTM_IMPL_VERSION_CONCAT(prefix, major, minor, patch) RTM_IMPL_VERSION_CONCAT_IMPL(prefix, major, minor, patch)
+
+// Name of the namespace, e.g. v214
+#define RTM_IMPL_VERSION_NAMESPACE_NAME RTM_IMPL_VERSION_CONCAT(v, RTM_VERSION_MAJOR, RTM_VERSION_MINOR, RTM_VERSION_PATCH)
 
 // Because this is being introduced in a patch release, as caution, it is disabled
 // by default. It does break ABI if host runtimes forward declare types but that
