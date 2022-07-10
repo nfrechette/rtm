@@ -114,6 +114,46 @@ RTM_FORCE_NOINLINE quatf RTM_SIMD_CALL quat_from_positive_w_neon(vector4f_arg0 i
 	float w = rtm::scalar_sqrt(rtm::scalar_abs(w_squared));
 	return vsetq_lane_f32(w, input, 3);
 }
+
+// As it turns out, on ARM64, there are special general purpose registers that
+// hold various constants such as 1.0 and the sign bit. The compiler can figure out
+// that we craft the constant by hand here and it generates the same assembly
+// as using a hard coded constant.
+RTM_FORCE_NOINLINE quatf RTM_SIMD_CALL quat_from_positive_w_neon_synt(vector4f_arg0 input) RTM_NO_EXCEPT
+{
+	float32x4_t x2y2z2 = vmulq_f32(input, input);
+	float one = vget_lane_f32(vreinterpret_f32_u32(vshr_n_u32(vshl_n_u32(vceq_u32(vreinterpret_u32_f32(vget_low_f32(input)), vreinterpret_u32_f32(vget_low_f32(input))), 25), 2)), 0);
+	float w_squared = ((one - vgetq_lane_f32(x2y2z2, 0)) - vgetq_lane_f32(x2y2z2, 1)) - vgetq_lane_f32(x2y2z2, 2);
+	float w = rtm::scalar_sqrt(rtm::scalar_abs(w_squared));
+	return vsetq_lane_f32(w, input, 3);
+}
+
+#if defined(RTM_IMPL_VFMSS_SUPPORTED)
+RTM_FORCE_NOINLINE quatf RTM_SIMD_CALL quat_from_positive_w_neon_vfmss(vector4f_arg0 input) RTM_NO_EXCEPT
+{
+	// 1.0 - (x * x)
+	float result = vfmss_laneq_f32(1.0F, vgetq_lane_f32(input, 0), input, 0);
+	// result - (y * y)
+	result = vfmss_laneq_f32(result, vgetq_lane_f32(input, 1), input, 1);
+	// result - (z * z)
+	float w_squared = vfmss_laneq_f32(result, vgetq_lane_f32(input, 2), input, 2);
+	float w = scalar_sqrt(scalar_abs(w_squared));
+	return vsetq_lane_f32(w, input, 3);
+}
+
+RTM_FORCE_NOINLINE quatf RTM_SIMD_CALL quat_from_positive_w_neon_synt_vfmss(vector4f_arg0 input) RTM_NO_EXCEPT
+{
+	float one = vget_lane_f32(vreinterpret_f32_u32(vshr_n_u32(vshl_n_u32(vceq_u32(vreinterpret_u32_f32(vget_low_f32(input)), vreinterpret_u32_f32(vget_low_f32(input))), 25), 2)), 0);
+	// 1.0 - (x * x)
+	float result = vfmss_laneq_f32(one, vgetq_lane_f32(input, 0), input, 0);
+	// result - (y * y)
+	result = vfmss_laneq_f32(result, vgetq_lane_f32(input, 1), input, 1);
+	// result - (z * z)
+	float w_squared = vfmss_laneq_f32(result, vgetq_lane_f32(input, 2), input, 2);
+	float w = scalar_sqrt(scalar_abs(w_squared));
+	return vsetq_lane_f32(w, input, 3);
+}
+#endif
 #endif
 
 static void bm_quat_from_positive_w_scalar(benchmark::State& state)
@@ -258,4 +298,75 @@ static void bm_quat_from_positive_w_neon(benchmark::State& state)
 }
 
 BENCHMARK(bm_quat_from_positive_w_neon);
+
+static void bm_quat_from_positive_w_neon_synt(benchmark::State& state)
+{
+	quatf q0 = quat_identity();
+	quatf q1 = quat_identity();
+	quatf q2 = quat_identity();
+	quatf q3 = quat_identity();
+
+	for (auto _ : state)
+	{
+		q0 = quat_from_positive_w_neon_synt(q0);
+		q1 = quat_from_positive_w_neon_synt(q1);
+		q2 = quat_from_positive_w_neon_synt(q2);
+		q3 = quat_from_positive_w_neon_synt(q3);
+	}
+
+	benchmark::DoNotOptimize(q0);
+	benchmark::DoNotOptimize(q1);
+	benchmark::DoNotOptimize(q2);
+	benchmark::DoNotOptimize(q3);
+}
+
+BENCHMARK(bm_quat_from_positive_w_neon_synt);
+
+#if defined(RTM_IMPL_VFMSS_SUPPORTED)
+static void bm_quat_from_positive_w_neon_vfmss(benchmark::State& state)
+{
+	quatf q0 = quat_identity();
+	quatf q1 = quat_identity();
+	quatf q2 = quat_identity();
+	quatf q3 = quat_identity();
+
+	for (auto _ : state)
+	{
+		q0 = quat_from_positive_w_neon_vfmss(q0);
+		q1 = quat_from_positive_w_neon_vfmss(q1);
+		q2 = quat_from_positive_w_neon_vfmss(q2);
+		q3 = quat_from_positive_w_neon_vfmss(q3);
+	}
+
+	benchmark::DoNotOptimize(q0);
+	benchmark::DoNotOptimize(q1);
+	benchmark::DoNotOptimize(q2);
+	benchmark::DoNotOptimize(q3);
+}
+
+BENCHMARK(bm_quat_from_positive_w_neon_vfmss);
+
+static void bm_quat_from_positive_w_neon_synt_vfmss(benchmark::State& state)
+{
+	quatf q0 = quat_identity();
+	quatf q1 = quat_identity();
+	quatf q2 = quat_identity();
+	quatf q3 = quat_identity();
+
+	for (auto _ : state)
+	{
+		q0 = quat_from_positive_w_neon_synt_vfmss(q0);
+		q1 = quat_from_positive_w_neon_synt_vfmss(q1);
+		q2 = quat_from_positive_w_neon_synt_vfmss(q2);
+		q3 = quat_from_positive_w_neon_synt_vfmss(q3);
+	}
+
+	benchmark::DoNotOptimize(q0);
+	benchmark::DoNotOptimize(q1);
+	benchmark::DoNotOptimize(q2);
+	benchmark::DoNotOptimize(q3);
+}
+
+BENCHMARK(bm_quat_from_positive_w_neon_synt_vfmss);
+#endif
 #endif
