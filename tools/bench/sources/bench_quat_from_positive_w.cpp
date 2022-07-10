@@ -115,10 +115,9 @@ RTM_FORCE_NOINLINE quatf RTM_SIMD_CALL quat_from_positive_w_neon(vector4f_arg0 i
 	return vsetq_lane_f32(w, input, 3);
 }
 
-// As it turns out, on ARM64, there are special general purpose registers that
-// hold various constants such as 1.0 and the sign bit. The compiler can figure out
-// that we craft the constant by hand here and it generates the same assembly
-// as using a hard coded constant.
+// As it turns out, on ARM64, fmov can be used to load certain kind of constants
+// using an immediate value. This works for 1.0 and the float sign bit.
+// See: https://stackoverflow.com/questions/64608307/how-do-i-move-a-floating-point-constant-into-an-fp-register
 RTM_FORCE_NOINLINE quatf RTM_SIMD_CALL quat_from_positive_w_neon_synt(vector4f_arg0 input) RTM_NO_EXCEPT
 {
 	float32x4_t x2y2z2 = vmulq_f32(input, input);
