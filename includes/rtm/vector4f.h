@@ -2473,7 +2473,8 @@ namespace rtm
 		// Combine our masks to determine if we should return the original value
 		uint32x4_t use_original_input = vorrq_u32(is_input_large, is_nan);
 
-		uint32x4_t sign = vandq_u32(vreinterpretq_u32_f32(input), vdupq_n_f32(-0.0F));
+        uint32x4_t sign_mask = vreinterpretq_u32_f32(vdupq_n_f32(-0.0F));
+		uint32x4_t sign = vandq_u32(vreinterpretq_u32_f32(input), sign_mask);
 
 		// For positive values, we add a bias of 0.5.
 		// For negative values, we add a bias of -0.5.
@@ -2528,7 +2529,8 @@ namespace rtm
 #elif defined(RTM_NEON64_INTRINSICS)
 		return vrndnq_f32(input);
 #elif defined(RTM_NEON_INTRINSICS)
-		uint32x4_t sign = vandq_u32(vreinterpretq_u32_f32(input), vdupq_n_f32(-0.0F));
+        uint32x4_t sign_mask = vreinterpretq_u32_f32(vdupq_n_f32(-0.0F));
+		uint32x4_t sign = vandq_u32(vreinterpretq_u32_f32(input), sign_mask);
 
 		// We add the largest integer that a 32 bit floating point number can represent and subtract it afterwards.
 		// This relies on the fact that if we had a fractional part, the new value cannot be represented accurately

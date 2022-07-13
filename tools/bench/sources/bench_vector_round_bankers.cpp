@@ -71,7 +71,8 @@ RTM_FORCE_NOINLINE vector4f RTM_SIMD_CALL vector_round_bankers_neon64(vector4f_a
 #if defined(RTM_NEON_INTRINSICS)
 RTM_FORCE_NOINLINE vector4f RTM_SIMD_CALL vector_round_bankers_neon(vector4f_arg0 input) RTM_NO_EXCEPT
 {
-	uint32x4_t sign = vandq_u32(vreinterpretq_u32_f32(input), vdupq_n_f32(-0.0F));
+    uint32x4_t sign_mask = vreinterpretq_u32_f32(vdupq_n_f32(-0.0F));
+	uint32x4_t sign = vandq_u32(vreinterpretq_u32_f32(input), sign_mask);
 
 	// We add the largest integer that a 32 bit floating point number can represent and subtract it afterwards.
 	// This relies on the fact that if we had a fractional part, the new value cannot be represented accurately

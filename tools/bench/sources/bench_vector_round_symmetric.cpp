@@ -87,7 +87,8 @@ RTM_FORCE_NOINLINE vector4f RTM_SIMD_CALL vector_round_symmetric_neon(vector4f_a
 	// Combine our masks to determine if we should return the original value
 	uint32x4_t use_original_input = vorrq_u32(is_input_large, is_nan);
 
-	uint32x4_t sign = vandq_u32(vreinterpretq_u32_f32(input), vdupq_n_f32(-0.0F));
+    uint32x4_t sign_mask = vreinterpretq_u32_f32(vdupq_n_f32(-0.0F));
+	uint32x4_t sign = vandq_u32(vreinterpretq_u32_f32(input), sign_mask);
 
 	// For positive values, we add a bias of 0.5.
 	// For negative values, we add a bias of -0.5.
