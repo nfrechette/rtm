@@ -2216,7 +2216,124 @@ namespace rtm
 			return _mm_unpackhi_ps(input1, input0);
 #endif	// defined(RTM_SSE2_INTRINSICS)
 
-		// Slow code path, not yet optimized or not using intrinsics
+#if defined(RTM_NEON64_INTRINSICS)
+        // Low words from both inputs are interleaved
+        if (rtm_impl::static_condition<comp0 == mix4::x && comp1 == mix4::a && comp2 == mix4::y && comp3 == mix4::b>::test())
+            return vzip1q_f32(input0, input1);
+
+        // Low words from both inputs are interleaved
+        if (rtm_impl::static_condition<comp0 == mix4::a && comp1 == mix4::x && comp2 == mix4::b && comp3 == mix4::y>::test())
+            return vzip1q_f32(input1, input0);
+
+        // High words from both inputs are interleaved
+        if (rtm_impl::static_condition<comp0 == mix4::z && comp1 == mix4::c && comp2 == mix4::w && comp3 == mix4::d>::test())
+            return vzip2q_f32(input0, input1);
+
+        // High words from both inputs are interleaved
+        if (rtm_impl::static_condition<comp0 == mix4::c && comp1 == mix4::z && comp2 == mix4::d && comp3 == mix4::w>::test())
+            return vzip2q_f32(input1, input0);
+
+        // Even-numbered vector elements, consecutively
+        if (rtm_impl::static_condition<comp0 == mix4::x && comp1 == mix4::z && comp2 == mix4::a && comp3 == mix4::c>::test())
+            return vuzp1q_f32(input0, input1);
+
+        // Even-numbered vector elements, consecutively
+        if (rtm_impl::static_condition<comp0 == mix4::a && comp1 == mix4::c && comp2 == mix4::x && comp3 == mix4::z>::test())
+            return vuzp1q_f32(input1, input0);
+
+        // Odd-numbered vector elements, consecutively
+        if (rtm_impl::static_condition<comp0 == mix4::y && comp1 == mix4::w && comp2 == mix4::b && comp3 == mix4::d>::test())
+            return vuzp2q_f32(input0, input1);
+
+        // Odd-numbered vector elements, consecutively
+        if (rtm_impl::static_condition<comp0 == mix4::b && comp1 == mix4::d && comp2 == mix4::y && comp3 == mix4::w>::test())
+            return vuzp2q_f32(input1, input0);
+
+        // Even-numbered vector elements, interleaved
+        if (rtm_impl::static_condition<comp0 == mix4::x && comp1 == mix4::a && comp2 == mix4::z && comp3 == mix4::c>::test())
+            return vtrn1q_f32(input0, input1);
+
+        // Even-numbered vector elements, interleaved
+        if (rtm_impl::static_condition<comp0 == mix4::a && comp1 == mix4::x && comp2 == mix4::c && comp3 == mix4::z>::test())
+            return vtrn1q_f32(input1, input0);
+
+        // Odd-numbered vector elements, interleaved
+        if (rtm_impl::static_condition<comp0 == mix4::y && comp1 == mix4::b && comp2 == mix4::w && comp3 == mix4::d>::test())
+            return vtrn2q_f32(input0, input1);
+
+        // Odd-numbered vector elements, interleaved
+        if (rtm_impl::static_condition<comp0 == mix4::b && comp1 == mix4::y && comp2 == mix4::d && comp3 == mix4::w>::test())
+            return vtrn2q_f32(input1, input0);
+#endif // defined(RTM_NEON64_INTRINSICS)
+
+#if defined(RTM_NEON_INTRINSICS)
+        // The highest vector elements from input 0 and the lowest vector elements from input 1, consecutively
+        if (rtm_impl::static_condition<rtm_impl::is_mix_xyzw(comp0) &&
+                                       int(comp0) + 1 == int(comp1) &&
+                                       int(comp1) + 1 == int(comp2) &&
+                                       int(comp2) + 1 == int(comp3)>::test())
+            return vextq_f32(input0, input1, int(comp0) % 4);
+
+        // The highest vector elements from input 1 and the lowest vector elements from input 0, consecutively
+        if (rtm_impl::static_condition<rtm_impl::is_mix_abcd(comp0) &&
+                                       (int(comp0) + 1) % 8 == int(comp1) &&
+                                       (int(comp1) + 1) % 8 == int(comp2) &&
+                                       (int(comp2) + 1) % 8 == int(comp3)>::test())
+            return vextq_f32(input1, input0, int(comp0) % 4);
+
+        // All four components come from input 0, reversed order in each doubleword
+        if (rtm_impl::static_condition<comp0 == mix4::y && comp1 == mix4::x && comp2 == mix4::w && comp3 == mix4::z>::test())
+            return vrev64q_f32(input0);
+
+        // All four components come from input 1, reversed order in each doubleword
+        if (rtm_impl::static_condition<comp0 == mix4::b && comp1 == mix4::a && comp2 == mix4::d && comp3 == mix4::c>::test())
+            return vrev64q_f32(input1);
+
+        // First component comes from input 1, others come from the respective positions of input 0
+        if (rtm_impl::static_condition<rtm_impl::is_mix_abcd(comp0) && comp1 == mix4::y && comp2 == mix4::z && comp3 == mix4::w>::test())
+            return vsetq_lane_f32(vgetq_lane_f32(input1, int(comp0) % 4), input0, 0);
+
+        // Second component comes from input 1, others come from the respective positions of input 0
+        if (rtm_impl::static_condition<comp0 == mix4::x && rtm_impl::is_mix_abcd(comp1) && comp2 == mix4::z && comp3 == mix4::w>::test())
+            return vsetq_lane_f32(vgetq_lane_f32(input1, int(comp1) % 4), input0, 1);
+
+        // Third component comes from input 1, others come from the respective positions of input 0
+        if (rtm_impl::static_condition<comp0 == mix4::x && comp1 == mix4::y && rtm_impl::is_mix_abcd(comp2) && comp3 == mix4::w>::test())
+            return vsetq_lane_f32(vgetq_lane_f32(input1, int(comp2) % 4), input0, 2);
+
+        // Fourth component comes from input 1, others come from the respective positions of input 0
+        if (rtm_impl::static_condition<comp0 == mix4::x && comp1 == mix4::y && comp2 == mix4::z && rtm_impl::is_mix_abcd(comp3)>::test())
+            return vsetq_lane_f32(vgetq_lane_f32(input1, int(comp3) % 4), input0, 3);
+
+        // First component comes from input 0, others come from the respective positions of input 1
+        if (rtm_impl::static_condition<rtm_impl::is_mix_xyzw(comp0) && comp1 == mix4::b && comp2 == mix4::c && comp3 == mix4::d>::test())
+            return vsetq_lane_f32(vgetq_lane_f32(input0, int(comp0) % 4), input1, 0);
+
+        // Second component comes from input 0, others come from the respective positions of input 1
+        if (rtm_impl::static_condition<comp0 == mix4::a && rtm_impl::is_mix_xyzw(comp1) && comp2 == mix4::c && comp3 == mix4::d>::test())
+            return vsetq_lane_f32(vgetq_lane_f32(input0, int(comp1) % 4), input1, 1);
+
+        // Third component comes from input 0, others come from the respective positions of input 1
+        if (rtm_impl::static_condition<comp0 == mix4::a && comp1 == mix4::b && rtm_impl::is_mix_xyzw(comp2) && comp3 == mix4::d>::test())
+            return vsetq_lane_f32(vgetq_lane_f32(input0, int(comp2) % 4), input1, 2);
+
+        // Fourth component comes from input 0, others come from the respective positions of input 1
+        if (rtm_impl::static_condition<comp0 == mix4::a && comp1 == mix4::b && comp2 == mix4::c && rtm_impl::is_mix_xyzw(comp3)>::test())
+            return vsetq_lane_f32(vgetq_lane_f32(input0, int(comp3) % 4), input1, 3);
+
+
+        // All comes from the same position
+        if (rtm_impl::static_condition<comp0 == comp1 && comp0 == comp2 && comp0 == comp3>::test()) {
+            // All comes from the same position of input0
+            if (rtm_impl::static_condition<rtm_impl::is_mix_xyzw(comp0)>::test())
+                return vmovq_n_f32(vgetq_lane_f32(input0, int(comp0) % 4));
+            // All comes from the same position of input1
+            if (rtm_impl::static_condition<rtm_impl::is_mix_abcd(comp0)>::test())
+                return vmovq_n_f32(vgetq_lane_f32(input1, int(comp0) % 4));
+        }
+#endif // defined(RTM_NEON_INTRINSICS)
+
+        // Slow code path, not yet optimized or not using intrinsics
 		const float x = rtm_impl::is_mix_xyzw(comp0) ? vector_get_component<comp0>(input0) : vector_get_component<comp0>(input1);
 		const float y = rtm_impl::is_mix_xyzw(comp1) ? vector_get_component<comp1>(input0) : vector_get_component<comp1>(input1);
 		const float z = rtm_impl::is_mix_xyzw(comp2) ? vector_get_component<comp2>(input0) : vector_get_component<comp2>(input1);
