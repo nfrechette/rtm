@@ -115,7 +115,7 @@ def parse_argv():
 		is_arm_supported = False
 
 		# Cross compilation
-		if args.compiler in ['vs2017', 'vs2019', 'ios', 'android']:
+		if args.compiler in ['vs2017', 'vs2019', 'vs2022', 'ios', 'android']:
 			is_arm_supported = True
 
 		# Native compilation
