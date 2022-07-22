@@ -155,3 +155,34 @@ jobs:
         uses: docker://ghcr.io/nfrechette/toolchain-amd64-linux-emscripten:v1
         with:
           args: 'python3 make.py -ci -compiler emscripten -config release -unit_test'
+
+  vs2022:
+    runs-on: windows-2022
+    strategy:
+      matrix:
+        compiler: [vs2022, vs2022-clang]
+        build_config: [debug, release]
+        cpu: [x86, x64, arm64]
+    steps:
+      - name: Git checkout
+        uses: actions/checkout@v2
+        with:
+          submodules: 'recursive'
+      - name: Building (${{ matrix.build_config }}-${{ matrix.cpu }})
+        run: python3 make.py -ci -compiler ${{ matrix.compiler }} -config ${{ matrix.build_config }} -cpu ${{ matrix.cpu }} -build
+      - name: Running unit tests (debug-x64)
+        run: python3 make.py -ci -compiler ${{ matrix.compiler }} -config ${{ matrix.build_config }} -cpu ${{ matrix.cpu }} -unit_test
+      - name: Clean
+        run: python3 make.py -clean_only
+      - name: Building (${{ matrix.build_config }}-${{ matrix.cpu }}) nosimd
+        run: python3 make.py -ci -compiler ${{ matrix.compiler }} -config ${{ matrix.build_config }} -cpu ${{ matrix.cpu }} -build -nosimd
+      - name: Running unit tests (debug-x64)
+        run: python3 make.py -ci -compiler ${{ matrix.compiler }} -config ${{ matrix.build_config }} -cpu ${{ matrix.cpu }} -unit_test -nosimd
+      - name: Clean
+        run: python3 make.py -clean_only
+      - name: Building (${{ matrix.build_config }}-${{ matrix.cpu }}) AVX
+        if: ${{ matrix.compiler != 'arm64' }}
+        run: python3 make.py -ci -compiler ${{ matrix.compiler }} -config ${{ matrix.build_config }} -cpu ${{ matrix.cpu }} -build -avx
+      - name: Running unit tests (debug-x64)
+        if: ${{ matrix.compiler != 'arm64' }}
+        run: python3 make.py -ci -compiler ${{ matrix.compiler }} -config ${{ matrix.build_config }} -cpu ${{ matrix.cpu }} -unit_test -avx
