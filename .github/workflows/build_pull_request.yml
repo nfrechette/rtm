@@ -383,7 +383,7 @@ jobs:
         simd: [-simd, -nosimd, -avx]
         exclude:
           # Don't run arm64 with clang
-          - compiler: vs2022-clang
+          - compiler: vs2019-clang
             cpu: arm64
           # Don't run AVX with arm64
           - cpu: arm64
