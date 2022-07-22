@@ -163,6 +163,9 @@ jobs:
         compiler: [vs2022, vs2022-clang]
         build_config: [debug, release]
         cpu: [x86, x64, arm64]
+        exclude:
+          - compiler: vs2022-clang
+            cpu: arm64
     steps:
       - name: Git checkout
         uses: actions/checkout@v2
