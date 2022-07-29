@@ -17,11 +17,11 @@ jobs:
         with:
           submodules: 'recursive'
       - name: Building (release-x64)
-        uses: docker://ghcr.io/nfrechette/toolchain-amd64-xenial:v1
+        uses: docker://ghcr.io/nfrechette/toolchain-amd64-focal:v1
         with:
           args: 'python3 make.py -ci -compiler clang14 -config Release -cpu x64 -bench -build'
       - name: Running benchmark (release-x64)
-        uses: docker://ghcr.io/nfrechette/toolchain-amd64-xenial:v1
+        uses: docker://ghcr.io/nfrechette/toolchain-amd64-focal:v1
         with:
           args: 'python3 make.py -ci -compiler clang14 -config Release -cpu x64 -bench -run_bench'
  
