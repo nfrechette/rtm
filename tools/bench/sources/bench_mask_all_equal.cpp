@@ -26,6 +26,8 @@
 
 #include <rtm/mask4f.h>
 
+#include <cstring>
+
 using namespace rtm;
 
 RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_NOINLINE bool RTM_SIMD_CALL mask_all_equal_scalar4f(mask4f_arg0 lhs, mask4f_arg1 rhs) RTM_NO_EXCEPT
