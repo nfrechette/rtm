@@ -1715,6 +1715,88 @@ namespace rtm
 	}
 
 	//////////////////////////////////////////////////////////////////////////
+	// Returns true if all [xyzw] components are equal, otherwise false: all(lhs.xyzw == rhs.xyzw)
+	//////////////////////////////////////////////////////////////////////////
+	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE bool vector_all_equal(const vector4d& lhs, const vector4d& rhs) RTM_NO_EXCEPT
+	{
+#if defined(RTM_SSE2_INTRINSICS)
+		__m128d xy_eq_pd = _mm_cmpeq_pd(lhs.xy, rhs.xy);
+		__m128d zw_eq_pd = _mm_cmpeq_pd(lhs.zw, rhs.zw);
+		return (_mm_movemask_pd(xy_eq_pd) & _mm_movemask_pd(zw_eq_pd)) == 3;
+#else
+		return lhs.x == rhs.x && lhs.y == rhs.y && lhs.z == rhs.z && lhs.w == rhs.w;
+#endif
+	}
+
+	//////////////////////////////////////////////////////////////////////////
+	// Returns true if all [xy] components are equal, otherwise false: all(lhs.xy == rhs.xy)
+	//////////////////////////////////////////////////////////////////////////
+	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE bool vector_all_equal2(const vector4d& lhs, const vector4d& rhs) RTM_NO_EXCEPT
+	{
+#if defined(RTM_SSE2_INTRINSICS)
+		__m128d xy_eq_pd = _mm_cmpeq_pd(lhs.xy, rhs.xy);
+		return _mm_movemask_pd(xy_eq_pd) == 3;
+#else
+		return lhs.x == rhs.x && lhs.y == rhs.y;
+#endif
+	}
+
+	//////////////////////////////////////////////////////////////////////////
+	// Returns true if all [xyz] components are equal, otherwise false: all(lhs.xyz == rhs.xyz)
+	//////////////////////////////////////////////////////////////////////////
+	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE bool vector_all_equal3(const vector4d& lhs, const vector4d& rhs) RTM_NO_EXCEPT
+	{
+#if defined(RTM_SSE2_INTRINSICS)
+		__m128d xy_eq_pd = _mm_cmpeq_pd(lhs.xy, rhs.xy);
+		__m128d zw_eq_pd = _mm_cmpeq_pd(lhs.zw, rhs.zw);
+		return _mm_movemask_pd(xy_eq_pd) == 3 && (_mm_movemask_pd(zw_eq_pd) & 1) != 0;
+#else
+		return lhs.x == rhs.x && lhs.y == rhs.y && lhs.z == rhs.z;
+#endif
+	}
+
+	//////////////////////////////////////////////////////////////////////////
+	// Returns true if any [xyzw] components are equal, otherwise false: any(lhs.xyzw == rhs.xyzw)
+	//////////////////////////////////////////////////////////////////////////
+	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE bool vector_any_equal(const vector4d& lhs, const vector4d& rhs) RTM_NO_EXCEPT
+	{
+#if defined(RTM_SSE2_INTRINSICS)
+		__m128d xy_eq_pd = _mm_cmpeq_pd(lhs.xy, rhs.xy);
+		__m128d zw_eq_pd = _mm_cmpeq_pd(lhs.zw, rhs.zw);
+		return (_mm_movemask_pd(xy_eq_pd) | _mm_movemask_pd(zw_eq_pd)) != 0;
+#else
+		return lhs.x == rhs.x || lhs.y == rhs.y || lhs.z == rhs.z || lhs.w == rhs.w;
+#endif
+	}
+
+	//////////////////////////////////////////////////////////////////////////
+	// Returns true if any [xy] components are equal, otherwise false: any(lhs.xy == rhs.xy)
+	//////////////////////////////////////////////////////////////////////////
+	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE bool vector_any_equal2(const vector4d& lhs, const vector4d& rhs) RTM_NO_EXCEPT
+	{
+#if defined(RTM_SSE2_INTRINSICS)
+		__m128d xy_eq_pd = _mm_cmpeq_pd(lhs.xy, rhs.xy);
+		return _mm_movemask_pd(xy_eq_pd) != 0;
+#else
+		return lhs.x == rhs.x || lhs.y == rhs.y;
+#endif
+	}
+
+	//////////////////////////////////////////////////////////////////////////
+	// Returns true if any [xyz] components are equal, otherwise false: any(lhs.xyz == rhs.xyz)
+	//////////////////////////////////////////////////////////////////////////
+	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE bool vector_any_equal3(const vector4d& lhs, const vector4d& rhs) RTM_NO_EXCEPT
+	{
+#if defined(RTM_SSE2_INTRINSICS)
+		__m128d xy_eq_pd = _mm_cmpeq_pd(lhs.xy, rhs.xy);
+		__m128d zw_eq_pd = _mm_cmpeq_pd(lhs.zw, rhs.zw);
+		return _mm_movemask_pd(xy_eq_pd) != 0 || (_mm_movemask_pd(zw_eq_pd) & 1) != 0;
+#else
+		return lhs.x == rhs.x || lhs.y == rhs.y || lhs.z == rhs.z;
+#endif
+	}
+
+	//////////////////////////////////////////////////////////////////////////
 	// Returns true if all 4 components are near equal, otherwise false: all(abs(lhs - rhs).xyzw <= threshold)
 	//////////////////////////////////////////////////////////////////////////
 	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE bool vector_all_near_equal(const vector4d& lhs, const vector4d& rhs, double threshold = 0.00001) RTM_NO_EXCEPT
