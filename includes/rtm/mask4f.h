@@ -27,6 +27,7 @@
 #include "rtm/math.h"
 #include "rtm/version.h"
 #include "rtm/impl/compiler_utils.h"
+#include "rtm/impl/macros.mask4.impl.h"
 #include "rtm/impl/mask_common.h"
 
 #if !defined(RTM_SSE2_INTRINSICS)
@@ -100,16 +101,9 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE bool RTM_SIMD_CALL mask_all_true(mask4f_arg0 input) RTM_NO_EXCEPT
 	{
-#if defined(RTM_SSE2_INTRINSICS)
-		return _mm_movemask_ps(input) == 0xF;
-#elif defined(RTM_NEON_INTRINSICS)
-		uint8x16_t mask = vreinterpretq_u8_f32(input);
-		uint8x8x2_t mask_0_8_1_9_2_10_3_11_4_12_5_13_6_14_7_15 = vzip_u8(vget_low_u8(mask), vget_high_u8(mask));
-		uint16x4x2_t mask_0_8_4_12_1_9_5_13_2_10_6_14_3_11_7_15 = vzip_u16(vreinterpret_u16_u8(mask_0_8_1_9_2_10_3_11_4_12_5_13_6_14_7_15.val[0]), vreinterpret_u16_u8(mask_0_8_1_9_2_10_3_11_4_12_5_13_6_14_7_15.val[1]));
-		return vget_lane_u32(vreinterpret_u32_u16(mask_0_8_4_12_1_9_5_13_2_10_6_14_3_11_7_15.val[0]), 0) == 0xFFFFFFFFU;
-#else
-		return input.x != 0 && input.y != 0 && input.z != 0 && input.w != 0;
-#endif
+		bool result;
+		RTM_MASK4F_ALL_TRUE(input, result);
+		return result;
 	}
 
 	//////////////////////////////////////////////////////////////////////////
@@ -117,13 +111,9 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE bool RTM_SIMD_CALL mask_all_true2(mask4f_arg0 input) RTM_NO_EXCEPT
 	{
-#if defined(RTM_SSE2_INTRINSICS)
-		return (_mm_movemask_ps(input) & 0x3) == 0x3;
-#elif defined(RTM_NEON_INTRINSICS)
-		return vgetq_lane_u64(vreinterpretq_u64_f32(input), 0) == 0xFFFFFFFFFFFFFFFFULL;
-#else
-		return input.x != 0 && input.y != 0;
-#endif
+		bool result;
+		RTM_MASK4F_ALL_TRUE2(input, result);
+		return result;
 	}
 
 	//////////////////////////////////////////////////////////////////////////
@@ -131,16 +121,9 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE bool RTM_SIMD_CALL mask_all_true3(mask4f_arg0 input) RTM_NO_EXCEPT
 	{
-#if defined(RTM_SSE2_INTRINSICS)
-		return (_mm_movemask_ps(input) & 0x7) == 0x7;
-#elif defined(RTM_NEON_INTRINSICS)
-		uint8x16_t mask = vreinterpretq_u8_f32(input);
-		uint8x8x2_t mask_0_8_1_9_2_10_3_11_4_12_5_13_6_14_7_15 = vzip_u8(vget_low_u8(mask), vget_high_u8(mask));
-		uint16x4x2_t mask_0_8_4_12_1_9_5_13_2_10_6_14_3_11_7_15 = vzip_u16(vreinterpret_u16_u8(mask_0_8_1_9_2_10_3_11_4_12_5_13_6_14_7_15.val[0]), vreinterpret_u16_u8(mask_0_8_1_9_2_10_3_11_4_12_5_13_6_14_7_15.val[1]));
-		return (vget_lane_u32(vreinterpret_u32_u16(mask_0_8_4_12_1_9_5_13_2_10_6_14_3_11_7_15.val[0]), 0) & 0x00FFFFFFU) == 0x00FFFFFFU;
-#else
-		return input.x != 0 && input.y != 0 && input.z != 0;
-#endif
+		bool result;
+		RTM_MASK4F_ALL_TRUE3(input, result);
+		return result;
 	}
 
 	//////////////////////////////////////////////////////////////////////////
@@ -148,16 +131,9 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE bool RTM_SIMD_CALL mask_any_true(mask4f_arg0 input) RTM_NO_EXCEPT
 	{
-#if defined(RTM_SSE2_INTRINSICS)
-		return _mm_movemask_ps(input) != 0;
-#elif defined(RTM_NEON_INTRINSICS)
-		uint8x16_t mask = vreinterpretq_u8_f32(input);
-		uint8x8x2_t mask_0_8_1_9_2_10_3_11_4_12_5_13_6_14_7_15 = vzip_u8(vget_low_u8(mask), vget_high_u8(mask));
-		uint16x4x2_t mask_0_8_4_12_1_9_5_13_2_10_6_14_3_11_7_15 = vzip_u16(vreinterpret_u16_u8(mask_0_8_1_9_2_10_3_11_4_12_5_13_6_14_7_15.val[0]), vreinterpret_u16_u8(mask_0_8_1_9_2_10_3_11_4_12_5_13_6_14_7_15.val[1]));
-		return vget_lane_u32(vreinterpret_u32_u16(mask_0_8_4_12_1_9_5_13_2_10_6_14_3_11_7_15.val[0]), 0) != 0;
-#else
-		return input.x != 0 || input.y != 0 || input.z != 0 || input.w != 0;
-#endif
+		bool result;
+		RTM_MASK4F_ANY_TRUE(input, result);
+		return result;
 	}
 
 	//////////////////////////////////////////////////////////////////////////
@@ -165,13 +141,9 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE bool RTM_SIMD_CALL mask_any_true2(mask4f_arg0 input) RTM_NO_EXCEPT
 	{
-#if defined(RTM_SSE2_INTRINSICS)
-		return (_mm_movemask_ps(input) & 0x3) != 0;
-#elif defined(RTM_NEON_INTRINSICS)
-		return vgetq_lane_u64(vreinterpretq_u64_f32(input), 0) != 0;
-#else
-		return input.x != 0 || input.y != 0;
-#endif
+		bool result;
+		RTM_MASK4F_ANY_TRUE2(input, result);
+		return result;
 	}
 
 	//////////////////////////////////////////////////////////////////////////
@@ -179,16 +151,9 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE bool RTM_SIMD_CALL mask_any_true3(mask4f_arg0 input) RTM_NO_EXCEPT
 	{
-#if defined(RTM_SSE2_INTRINSICS)
-		return (_mm_movemask_ps(input) & 0x7) != 0;
-#elif defined(RTM_NEON_INTRINSICS)
-		uint8x16_t mask = vreinterpretq_u8_f32(input);
-		uint8x8x2_t mask_0_8_1_9_2_10_3_11_4_12_5_13_6_14_7_15 = vzip_u8(vget_low_u8(mask), vget_high_u8(mask));
-		uint16x4x2_t mask_0_8_4_12_1_9_5_13_2_10_6_14_3_11_7_15 = vzip_u16(vreinterpret_u16_u8(mask_0_8_1_9_2_10_3_11_4_12_5_13_6_14_7_15.val[0]), vreinterpret_u16_u8(mask_0_8_1_9_2_10_3_11_4_12_5_13_6_14_7_15.val[1]));
-		return (vget_lane_u32(vreinterpret_u32_u16(mask_0_8_4_12_1_9_5_13_2_10_6_14_3_11_7_15.val[0]), 0) & 0x00FFFFFFU) != 0;
-#else
-		return input.x != 0 || input.y != 0 || input.z != 0;
-#endif
+		bool result;
+		RTM_MASK4F_ANY_TRUE3(input, result);
+		return result;
 	}
 
 	//////////////////////////////////////////////////////////////////////////
