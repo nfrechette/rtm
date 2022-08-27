@@ -460,6 +460,14 @@ static void test_quat_impl(const FloatType threshold)
 	}
 
 	{
+		CHECK(quat_are_equal(identity, identity) == true);
+		CHECK(quat_are_equal(identity, quat_set(FloatType(0.0), FloatType(0.0), FloatType(0.0), FloatType(1.000001))) == false);
+		CHECK(quat_are_equal(identity, quat_set(FloatType(0.0), FloatType(0.0), FloatType(0.000001), FloatType(1.0))) == false);
+		CHECK(quat_are_equal(identity, quat_set(FloatType(0.0), FloatType(0.000001), FloatType(0.0), FloatType(1.0))) == false);
+		CHECK(quat_are_equal(identity, quat_set(FloatType(0.000001), FloatType(0.0), FloatType(0.0), FloatType(1.0))) == false);
+	}
+
+	{
 		CHECK(quat_near_equal(identity, identity, FloatType(0.0)) == true);
 		CHECK(quat_near_equal(identity, quat_set(FloatType(0.0), FloatType(0.0), FloatType(0.0), FloatType(2.0)), FloatType(1.0001)) == true);
 		CHECK(quat_near_equal(identity, quat_set(FloatType(0.0), FloatType(0.0), FloatType(0.0), FloatType(2.0)), FloatType(1.0)) == true);
