@@ -236,6 +236,32 @@ static void test_qvv_impl(const TransformType& identity, const FloatType thresho
 		CHECK(vector_all_near_equal3(transform_slerp_no_scale.scale, transform0.scale, threshold));
 		CHECK(vector_all_near_equal3(transform_slerp_no_scale_s.scale, transform0.scale, threshold));
 	}
+
+	{
+		const FloatType inf = std::numeric_limits<FloatType>::infinity();
+		const FloatType nan = std::numeric_limits<FloatType>::quiet_NaN();
+
+		const QuatType quat0 = quat_normalize(quat_from_euler(scalar_deg_to_rad(FloatType(30.0)), scalar_deg_to_rad(FloatType(-45.0)), scalar_deg_to_rad(FloatType(90.0))));
+		const QuatType quat_inf = quat_set(inf, inf, inf, inf);
+		const QuatType quat_nan = quat_set(nan, nan, nan, nan);
+
+		const Vector4Type trans0 = vector_set(FloatType(-0.001138), FloatType(0.91623), FloatType(-1.624598));
+		const Vector4Type scale0 = vector_set(FloatType(-1.915), FloatType(0.23656), FloatType(-3.7811));
+		const Vector4Type vec_inf = vector_set(inf, inf, inf, inf);
+		const Vector4Type vec_nan = vector_set(nan, nan, nan, nan);
+
+
+		CHECK(qvv_is_finite(identity) == true);
+		CHECK(qvv_is_finite(qvv_set(quat0, trans0, scale0)) == true);
+		CHECK(qvv_is_finite(qvv_set(quat_inf, trans0, scale0)) == false);
+		CHECK(qvv_is_finite(qvv_set(quat_nan, trans0, scale0)) == false);
+		CHECK(qvv_is_finite(qvv_set(quat0, vec_inf, scale0)) == false);
+		CHECK(qvv_is_finite(qvv_set(quat0, vec_nan, scale0)) == false);
+		CHECK(qvv_is_finite(qvv_set(quat0, trans0, vec_inf)) == false);
+		CHECK(qvv_is_finite(qvv_set(quat0, trans0, vec_nan)) == false);
+		CHECK(qvv_is_finite(qvv_set(quat_inf, vec_inf, vec_inf)) == false);
+		CHECK(qvv_is_finite(qvv_set(quat_nan, vec_nan, vec_nan)) == false);
+	}
 }
 
 TEST_CASE("qvvf math", "[math][qvv]")
