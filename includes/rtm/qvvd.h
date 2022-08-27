@@ -258,6 +258,14 @@ namespace rtm
 	}
 #endif
 
+	//////////////////////////////////////////////////////////////////////////
+	// Returns true if the input QVV does not contain any NaN or Inf, otherwise false.
+	//////////////////////////////////////////////////////////////////////////
+	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE bool qvv_is_finite(const qvvd& input) RTM_NO_EXCEPT
+	{
+		return quat_is_finite(input.rotation) && vector_is_finite3(input.translation) && vector_is_finite3(input.scale);
+	}
+
 	RTM_IMPL_VERSION_NAMESPACE_END
 }
 
