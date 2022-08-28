@@ -1645,8 +1645,11 @@ namespace rtm
 		RTM_MASK4F_ALL_TRUE2(mask, result);
 		return result;
 #elif defined(RTM_NEON_INTRINSICS)
-		uint32x2_t mask = vclt_f32(vget_low_f32(lhs), vget_low_f32(rhs));
-		return vget_lane_u64(vreinterpret_u64_u32(mask), 0) == 0xFFFFFFFFFFFFFFFFu;
+		const uint32x2_t mask = vclt_f32(vget_low_f32(lhs), vget_low_f32(rhs));
+
+		bool result;
+		RTM_MASK2F_ALL_TRUE(mask, result);
+		return result;
 #else
 		return lhs.x < rhs.x && lhs.y < rhs.y;
 #endif
@@ -1708,8 +1711,11 @@ namespace rtm
 		RTM_MASK4F_ANY_TRUE2(mask, result);
 		return result;
 #elif defined(RTM_NEON_INTRINSICS)
-		uint32x2_t mask = vclt_f32(vget_low_f32(lhs), vget_low_f32(rhs));
-		return vget_lane_u64(vreinterpret_u64_u32(mask), 0) != 0;
+		const uint32x2_t mask = vclt_f32(vget_low_f32(lhs), vget_low_f32(rhs));
+
+		bool result;
+		RTM_MASK2F_ANY_TRUE(mask, result);
+		return result;
 #else
 		return lhs.x < rhs.x || lhs.y < rhs.y;
 #endif
@@ -1771,8 +1777,11 @@ namespace rtm
 		RTM_MASK4F_ALL_TRUE2(mask, result);
 		return result;
 #elif defined(RTM_NEON_INTRINSICS)
-		uint32x2_t mask = vcle_f32(vget_low_f32(lhs), vget_low_f32(rhs));
-		return vget_lane_u64(vreinterpret_u64_u32(mask), 0) == 0xFFFFFFFFFFFFFFFFULL;
+		const uint32x2_t mask = vcle_f32(vget_low_f32(lhs), vget_low_f32(rhs));
+
+		bool result;
+		RTM_MASK2F_ALL_TRUE(mask, result);
+		return result;
 #else
 		return lhs.x <= rhs.x && lhs.y <= rhs.y;
 #endif
@@ -1834,8 +1843,11 @@ namespace rtm
 		RTM_MASK4F_ANY_TRUE2(mask, result);
 		return result;
 #elif defined(RTM_NEON_INTRINSICS)
-		uint32x2_t mask = vcle_f32(vget_low_f32(lhs), vget_low_f32(rhs));
-		return vget_lane_u64(vreinterpret_u64_u32(mask), 0) != 0;
+		const uint32x2_t mask = vcle_f32(vget_low_f32(lhs), vget_low_f32(rhs));
+
+		bool result;
+		RTM_MASK2F_ANY_TRUE(mask, result);
+		return result;
 #else
 		return lhs.x <= rhs.x || lhs.y <= rhs.y;
 #endif
@@ -1897,8 +1909,11 @@ namespace rtm
 		RTM_MASK4F_ALL_TRUE2(mask, result);
 		return result;
 #elif defined(RTM_NEON_INTRINSICS)
-		uint32x2_t mask = vcgt_f32(vget_low_f32(lhs), vget_low_f32(rhs));
-		return vget_lane_u64(vreinterpret_u64_u32(mask), 0) == 0xFFFFFFFFFFFFFFFFULL;
+		const uint32x2_t mask = vcgt_f32(vget_low_f32(lhs), vget_low_f32(rhs));
+
+		bool result;
+		RTM_MASK2F_ALL_TRUE(mask, result);
+		return result;
 #else
 		return lhs.x > rhs.x && lhs.y > rhs.y;
 #endif
@@ -1960,8 +1975,11 @@ namespace rtm
 		RTM_MASK4F_ANY_TRUE2(mask, result);
 		return result;
 #elif defined(RTM_NEON_INTRINSICS)
-		uint32x2_t mask = vcgt_f32(vget_low_f32(lhs), vget_low_f32(rhs));
-		return vget_lane_u64(vreinterpret_u64_u32(mask), 0) != 0;
+		const uint32x2_t mask = vcgt_f32(vget_low_f32(lhs), vget_low_f32(rhs));
+
+		bool result;
+		RTM_MASK2F_ANY_TRUE(mask, result);
+		return result;
 #else
 		return lhs.x > rhs.x || lhs.y > rhs.y;
 #endif
@@ -2023,8 +2041,11 @@ namespace rtm
 		RTM_MASK4F_ALL_TRUE2(mask, result);
 		return result;
 #elif defined(RTM_NEON_INTRINSICS)
-		uint32x2_t mask = vcge_f32(vget_low_f32(lhs), vget_low_f32(rhs));
-		return vget_lane_u64(vreinterpret_u64_u32(mask), 0) == 0xFFFFFFFFFFFFFFFFULL;
+		const uint32x2_t mask = vcge_f32(vget_low_f32(lhs), vget_low_f32(rhs));
+
+		bool result;
+		RTM_MASK2F_ALL_TRUE(mask, result);
+		return result;
 #else
 		return lhs.x >= rhs.x && lhs.y >= rhs.y;
 #endif
@@ -2086,8 +2107,11 @@ namespace rtm
 		RTM_MASK4F_ANY_TRUE2(mask, result);
 		return result;
 #elif defined(RTM_NEON_INTRINSICS)
-		uint32x2_t mask = vcge_f32(vget_low_f32(lhs), vget_low_f32(rhs));
-		return vget_lane_u64(vreinterpret_u64_u32(mask), 0) != 0;
+		const uint32x2_t mask = vcge_f32(vget_low_f32(lhs), vget_low_f32(rhs));
+
+		bool result;
+		RTM_MASK2F_ANY_TRUE(mask, result);
+		return result;
 #else
 		return lhs.x >= rhs.x || lhs.y >= rhs.y;
 #endif
@@ -2149,8 +2173,11 @@ namespace rtm
 		RTM_MASK4F_ALL_TRUE2(mask, result);
 		return result;
 #elif defined(RTM_NEON_INTRINSICS)
-		uint32x2_t mask = vceq_f32(vget_low_f32(lhs), vget_low_f32(rhs));
-		return vget_lane_u64(vreinterpret_u64_u32(mask), 0) == 0xFFFFFFFFFFFFFFFFULL;
+		const uint32x2_t mask = vceq_f32(vget_low_f32(lhs), vget_low_f32(rhs));
+
+		bool result;
+		RTM_MASK2F_ALL_TRUE(mask, result);
+		return result;
 #else
 		return lhs.x == rhs.x && lhs.y == rhs.y;
 #endif
@@ -2212,10 +2239,10 @@ namespace rtm
 		RTM_MASK4F_ANY_TRUE2(mask, result);
 		return result;
 #elif defined(RTM_NEON_INTRINSICS)
-		const uint32x4_t mask = vceqq_f32(lhs, rhs);
+		const uint32x2_t mask = vceq_f32(vget_low_f32(lhs), vget_low_f32(rhs));
 
 		bool result;
-		RTM_MASK4F_ANY_TRUE2(mask, result);
+		RTM_MASK2F_ANY_TRUE(mask, result);
 		return result;
 #else
 		return lhs.x == rhs.x || lhs.y == rhs.y;
