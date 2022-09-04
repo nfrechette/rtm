@@ -35,7 +35,7 @@ RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_NOINLINE bool RTM_SIMD_CALL mask_all
 	return mask_get_x(lhs) == mask_get_x(rhs) &&
 		mask_get_y(lhs) == mask_get_y(rhs) &&
 		mask_get_z(lhs) == mask_get_z(rhs) &&
-		mask_get_z(lhs) == mask_get_w(rhs);
+		mask_get_w(lhs) == mask_get_w(rhs);
 }
 
 RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_NOINLINE bool RTM_SIMD_CALL mask_all_equal_memcmp4f(mask4f_arg0 lhs, mask4f_arg1 rhs) RTM_NO_EXCEPT
