@@ -246,7 +246,6 @@ namespace rtm
 		return (_mm_movemask_ps(_mm_xor_ps(lhs, rhs)) & 0x03) != 0x03;
 #elif defined(RTM_NEON_INTRINSICS)
 		uint32x2_t mask = veor_u32(vget_low_u32(vreinterpretq_u32_f32(lhs)), vget_low_u32(vreinterpretq_u32_f32(rhs)));
-		// TODO: What assembly is generated for this? Would it be cheaper to use NOT(mask) != 0 to avoid loading a large constant?
 		return vget_lane_u64(vreinterpret_u64_u32(mask), 0) != 0xFFFFFFFFFFFFFFFFULL;
 #else
 		return std::memcmp(&lhs.x, &rhs.x, sizeof(uint32_t)) == 0
