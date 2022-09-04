@@ -73,12 +73,7 @@ namespace rtm
 	// Output must be a bool.
 	//////////////////////////////////////////////////////////////////////////
 	#define RTM_MASK4F_ALL_TRUE(input_mask, output) \
-		do { \
-			uint8x16_t mask_rtm_impl = vreinterpretq_u8_u32(rtm::rtm_impl::cast_to_u32(input_mask)); \
-			uint8x8x2_t mask_0_8_1_9_2_10_3_11_4_12_5_13_6_14_7_15 = vzip_u8(vget_low_u8(mask_rtm_impl), vget_high_u8(mask_rtm_impl)); \
-			uint16x4x2_t mask_0_8_4_12_1_9_5_13_2_10_6_14_3_11_7_15 = vzip_u16(vreinterpret_u16_u8(mask_0_8_1_9_2_10_3_11_4_12_5_13_6_14_7_15.val[0]), vreinterpret_u16_u8(mask_0_8_1_9_2_10_3_11_4_12_5_13_6_14_7_15.val[1])); \
-			output = vget_lane_u32(vreinterpret_u32_u16(mask_0_8_4_12_1_9_5_13_2_10_6_14_3_11_7_15.val[0]), 0) == 0xFFFFFFFFU; \
-		} while (0)
+		output = vget_lane_u64(vreinterpret_u64_u16(vmovn_u32(rtm::rtm_impl::cast_to_u32(input_mask))), 0) == 0xFFFFFFFFFFFFFFFFULL
 #elif defined(RTM_SSE2_INTRINSICS)
 	//////////////////////////////////////////////////////////////////////////
 	// Returns true if all [xyzw] SIMD lanes are true (aka ~0).
@@ -138,12 +133,7 @@ namespace rtm
 	// Output must be a bool.
 	//////////////////////////////////////////////////////////////////////////
 	#define RTM_MASK4F_ALL_TRUE3(input_mask, output) \
-		do { \
-			uint8x16_t mask_rtm_impl = vreinterpretq_u8_u32(rtm::rtm_impl::cast_to_u32(input_mask)); \
-			uint8x8x2_t mask_0_8_1_9_2_10_3_11_4_12_5_13_6_14_7_15 = vzip_u8(vget_low_u8(mask_rtm_impl), vget_high_u8(mask_rtm_impl)); \
-			uint16x4x2_t mask_0_8_4_12_1_9_5_13_2_10_6_14_3_11_7_15 = vzip_u16(vreinterpret_u16_u8(mask_0_8_1_9_2_10_3_11_4_12_5_13_6_14_7_15.val[0]), vreinterpret_u16_u8(mask_0_8_1_9_2_10_3_11_4_12_5_13_6_14_7_15.val[1])); \
-			output = (vget_lane_u32(vreinterpret_u32_u16(mask_0_8_4_12_1_9_5_13_2_10_6_14_3_11_7_15.val[0]), 0) & 0x00FFFFFFU) == 0x00FFFFFFU; \
-		} while (0)
+		output = (vget_lane_u64(vreinterpret_u64_u16(vmovn_u32(rtm::rtm_impl::cast_to_u32(input_mask))), 0) & 0x0000FFFFFFFFFFFFULL) == 0x0000FFFFFFFFFFFFULL
 #elif defined(RTM_SSE2_INTRINSICS)
 	//////////////////////////////////////////////////////////////////////////
 	// Returns true if all [xyz] SIMD lanes are true (aka ~0).
@@ -169,12 +159,7 @@ namespace rtm
 	// Output must be a bool.
 	//////////////////////////////////////////////////////////////////////////
 	#define RTM_MASK4F_ANY_TRUE(input_mask, output) \
-		do { \
-			uint8x16_t mask_rtm_impl = vreinterpretq_u8_u32(rtm::rtm_impl::cast_to_u32(input_mask)); \
-			uint8x8x2_t mask_0_8_1_9_2_10_3_11_4_12_5_13_6_14_7_15 = vzip_u8(vget_low_u8(mask_rtm_impl), vget_high_u8(mask_rtm_impl)); \
-			uint16x4x2_t mask_0_8_4_12_1_9_5_13_2_10_6_14_3_11_7_15 = vzip_u16(vreinterpret_u16_u8(mask_0_8_1_9_2_10_3_11_4_12_5_13_6_14_7_15.val[0]), vreinterpret_u16_u8(mask_0_8_1_9_2_10_3_11_4_12_5_13_6_14_7_15.val[1])); \
-			output = vget_lane_u32(vreinterpret_u32_u16(mask_0_8_4_12_1_9_5_13_2_10_6_14_3_11_7_15.val[0]), 0) != 0; \
-		} while (0)
+		output = vget_lane_u64(vreinterpret_u64_u16(vmovn_u32(rtm::rtm_impl::cast_to_u32(input_mask))), 0) != 0
 #elif defined(RTM_SSE2_INTRINSICS)
 	//////////////////////////////////////////////////////////////////////////
 	// Returns true if any [xyzw] SIMD lanes is true (aka ~0).
@@ -234,12 +219,7 @@ namespace rtm
 	// Output must be a bool.
 	//////////////////////////////////////////////////////////////////////////
 	#define RTM_MASK4F_ANY_TRUE3(input_mask, output) \
-		do { \
-			uint8x16_t mask_rtm_impl = vreinterpretq_u8_u32(rtm::rtm_impl::cast_to_u32(input_mask)); \
-			uint8x8x2_t mask_0_8_1_9_2_10_3_11_4_12_5_13_6_14_7_15 = vzip_u8(vget_low_u8(mask_rtm_impl), vget_high_u8(mask_rtm_impl)); \
-			uint16x4x2_t mask_0_8_4_12_1_9_5_13_2_10_6_14_3_11_7_15 = vzip_u16(vreinterpret_u16_u8(mask_0_8_1_9_2_10_3_11_4_12_5_13_6_14_7_15.val[0]), vreinterpret_u16_u8(mask_0_8_1_9_2_10_3_11_4_12_5_13_6_14_7_15.val[1])); \
-			output = (vget_lane_u32(vreinterpret_u32_u16(mask_0_8_4_12_1_9_5_13_2_10_6_14_3_11_7_15.val[0]), 0) & 0x00FFFFFFU) != 0; \
-		} while (0)
+		output = (vget_lane_u64(vreinterpret_u64_u16(vmovn_u32(rtm::rtm_impl::cast_to_u32(input_mask))), 0) & 0x0000FFFFFFFFFFFFULL) != 0
 #elif defined(RTM_SSE2_INTRINSICS)
 	//////////////////////////////////////////////////////////////////////////
 	// Returns true if any [xyz] SIMD lanes is true (aka ~0).

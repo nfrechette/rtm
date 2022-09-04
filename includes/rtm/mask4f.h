@@ -167,10 +167,9 @@ namespace rtm
 #if defined(RTM_SSE2_INTRINSICS)
 		return _mm_movemask_ps(_mm_xor_ps(lhs, rhs)) == 0;
 #elif defined(RTM_NEON_INTRINSICS)
-		uint8x16_t mask = vreinterpretq_u8_u32(veorq_u32(vreinterpretq_u32_f32(lhs), vreinterpretq_u32_f32(rhs)));
-		uint8x8x2_t mask_0_8_1_9_2_10_3_11_4_12_5_13_6_14_7_15 = vzip_u8(vget_low_u8(mask), vget_high_u8(mask));
-		uint16x4x2_t mask_0_8_4_12_1_9_5_13_2_10_6_14_3_11_7_15 = vzip_u16(vreinterpret_u16_u8(mask_0_8_1_9_2_10_3_11_4_12_5_13_6_14_7_15.val[0]), vreinterpret_u16_u8(mask_0_8_1_9_2_10_3_11_4_12_5_13_6_14_7_15.val[1]));
-		return vget_lane_u32(vreinterpret_u32_u16(mask_0_8_4_12_1_9_5_13_2_10_6_14_3_11_7_15.val[0]), 0) == 0;
+		uint32x4_t mask = veorq_u32(vreinterpretq_u32_f32(lhs), vreinterpretq_u32_f32(rhs));
+		uint16x4_t truncated_mask = vmovn_u32(mask);
+		return vget_lane_u64(vreinterpret_u64_u16(truncated_mask), 0) == 0;
 #else
 		return std::memcmp(&lhs, &rhs, sizeof(uint32_t) * 4) == 0;
 #endif
@@ -205,10 +204,9 @@ namespace rtm
 #if defined(RTM_SSE2_INTRINSICS)
 		return (_mm_movemask_ps(_mm_xor_ps(lhs, rhs)) & 0x07) == 0;
 #elif defined(RTM_NEON_INTRINSICS)
-		uint8x16_t mask = vreinterpretq_u8_u32(veorq_u32(vreinterpretq_u32_f32(lhs), vreinterpretq_u32_f32(rhs)));
-		uint8x8x2_t mask_0_8_1_9_2_10_3_11_4_12_5_13_6_14_7_15 = vzip_u8(vget_low_u8(mask), vget_high_u8(mask));
-		uint16x4x2_t mask_0_8_4_12_1_9_5_13_2_10_6_14_3_11_7_15 = vzip_u16(vreinterpret_u16_u8(mask_0_8_1_9_2_10_3_11_4_12_5_13_6_14_7_15.val[0]), vreinterpret_u16_u8(mask_0_8_1_9_2_10_3_11_4_12_5_13_6_14_7_15.val[1]));
-		return (vget_lane_u32(vreinterpret_u32_u16(mask_0_8_4_12_1_9_5_13_2_10_6_14_3_11_7_15.val[0]), 0) & 0x00FFFFFFU) == 0;
+		uint32x4_t mask = veorq_u32(vreinterpretq_u32_f32(lhs), vreinterpretq_u32_f32(rhs));
+		uint16x4_t truncated_mask = vmovn_u32(mask);
+		return (vget_lane_u64(vreinterpret_u64_u16(truncated_mask), 0) & 0x0000FFFFFFFFFFFFULL) == 0;
 #else
 		return std::memcmp(&lhs, &rhs, sizeof(uint32_t) * 3) == 0;
 #endif
@@ -225,10 +223,9 @@ namespace rtm
 #if defined(RTM_SSE2_INTRINSICS)
 		return _mm_movemask_ps(_mm_xor_ps(lhs, rhs)) != 0x0F;
 #elif defined(RTM_NEON_INTRINSICS)
-		uint8x16_t mask = vreinterpretq_u8_u32(veorq_u32(vreinterpretq_u32_f32(lhs), vreinterpretq_u32_f32(rhs)));
-		uint8x8x2_t mask_0_8_1_9_2_10_3_11_4_12_5_13_6_14_7_15 = vzip_u8(vget_low_u8(mask), vget_high_u8(mask));
-		uint16x4x2_t mask_0_8_4_12_1_9_5_13_2_10_6_14_3_11_7_15 = vzip_u16(vreinterpret_u16_u8(mask_0_8_1_9_2_10_3_11_4_12_5_13_6_14_7_15.val[0]), vreinterpret_u16_u8(mask_0_8_1_9_2_10_3_11_4_12_5_13_6_14_7_15.val[1]));
-		return vget_lane_u32(vreinterpret_u32_u16(mask_0_8_4_12_1_9_5_13_2_10_6_14_3_11_7_15.val[0]), 0) != 0xFFFFFFFFU;
+		uint32x4_t mask = veorq_u32(vreinterpretq_u32_f32(lhs), vreinterpretq_u32_f32(rhs));
+		uint16x4_t truncated_mask = vmovn_u32(mask);
+		return vget_lane_u64(vreinterpret_u64_u16(truncated_mask), 0) != 0xFFFFFFFFFFFFFFFFULL;
 #else
 		return std::memcmp(&lhs.x, &rhs.x, sizeof(uint32_t)) == 0
 			|| std::memcmp(&lhs.y, &rhs.y, sizeof(uint32_t)) == 0
@@ -268,10 +265,9 @@ namespace rtm
 #if defined(RTM_SSE2_INTRINSICS)
 		return (_mm_movemask_ps(_mm_xor_ps(lhs, rhs)) & 0x07) != 0x07;
 #elif defined(RTM_NEON_INTRINSICS)
-		uint8x16_t mask = vreinterpretq_u8_u32(veorq_u32(vreinterpretq_u32_f32(lhs), vreinterpretq_u32_f32(rhs)));
-		uint8x8x2_t mask_0_8_1_9_2_10_3_11_4_12_5_13_6_14_7_15 = vzip_u8(vget_low_u8(mask), vget_high_u8(mask));
-		uint16x4x2_t mask_0_8_4_12_1_9_5_13_2_10_6_14_3_11_7_15 = vzip_u16(vreinterpret_u16_u8(mask_0_8_1_9_2_10_3_11_4_12_5_13_6_14_7_15.val[0]), vreinterpret_u16_u8(mask_0_8_1_9_2_10_3_11_4_12_5_13_6_14_7_15.val[1]));
-		return (vget_lane_u32(vreinterpret_u32_u16(mask_0_8_4_12_1_9_5_13_2_10_6_14_3_11_7_15.val[0]), 0) & 0x00FFFFFFU) != 0x00FFFFFFU;
+		uint32x4_t mask = veorq_u32(vreinterpretq_u32_f32(lhs), vreinterpretq_u32_f32(rhs));
+		uint16x4_t truncated_mask = vmovn_u32(mask);
+		return (vget_lane_u64(vreinterpret_u64_u16(truncated_mask), 0) & 0x0000FFFFFFFFFFFFULL) != 0x0000FFFFFFFFFFFFULL;
 #else
 		return std::memcmp(&lhs.x, &rhs.x, sizeof(uint32_t)) == 0
 			|| std::memcmp(&lhs.y, &rhs.y, sizeof(uint32_t)) == 0
