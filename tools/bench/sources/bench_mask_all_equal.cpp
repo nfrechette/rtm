@@ -83,10 +83,10 @@ static void bm_mask_all_equal_scalar4f(benchmark::State& state)
 	mask4f m2 = mask_set(false, true, false, true);
 	mask4f m3 = mask_set(false, false, false, false);
 
-	bool r0 = false;
-	bool r1 = false;
-	bool r2 = false;
-	bool r3 = false;
+	volatile bool r0 = false;
+	volatile bool r1 = false;
+	volatile bool r2 = false;
+	volatile bool r3 = false;
 
 	for (auto _ : state)
 	{
@@ -111,10 +111,10 @@ static void bm_mask_all_equal_memcmp4f(benchmark::State& state)
 	mask4f m2 = mask_set(false, true, false, true);
 	mask4f m3 = mask_set(false, false, false, false);
 
-	bool r0 = false;
-	bool r1 = false;
-	bool r2 = false;
-	bool r3 = false;
+	volatile bool r0 = false;
+	volatile bool r1 = false;
+	volatile bool r2 = false;
+	volatile bool r3 = false;
 
 	for (auto _ : state)
 	{
@@ -140,10 +140,10 @@ static void bm_mask_all_equal_cmp4f(benchmark::State& state)
 	mask4f m2 = mask_set(false, true, false, true);
 	mask4f m3 = mask_set(false, false, false, false);
 
-	bool r0 = false;
-	bool r1 = false;
-	bool r2 = false;
-	bool r3 = false;
+	volatile bool r0 = false;
+	volatile bool r1 = false;
+	volatile bool r2 = false;
+	volatile bool r3 = false;
 
 	for (auto _ : state)
 	{
@@ -168,10 +168,10 @@ static void bm_mask_all_equal_xor4f(benchmark::State& state)
 	mask4f m2 = mask_set(false, true, false, true);
 	mask4f m3 = mask_set(false, false, false, false);
 
-	bool r0 = false;
-	bool r1 = false;
-	bool r2 = false;
-	bool r3 = false;
+	volatile bool r0 = false;
+	volatile bool r1 = false;
+	volatile bool r2 = false;
+	volatile bool r3 = false;
 
 	for (auto _ : state)
 	{
