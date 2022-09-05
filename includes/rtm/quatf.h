@@ -856,6 +856,38 @@ namespace rtm
 	}
 
 	//////////////////////////////////////////////////////////////////////////
+	// Returns a normalized quaternion using a deterministic algorithm.
+	// This ensures that for a given input, the output will be identical on all
+	// platforms that implement IEEE-754. This can be slower than `quat_normalize`.
+	// This is only guaranteed if the rounding modes are consistent.
+	// Note that if the input quaternion is invalid (pure zero or with NaN/Inf),
+	// the result is undefined.
+	//////////////////////////////////////////////////////////////////////////
+	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE quatf RTM_SIMD_CALL quat_normalize_deterministic(quatf_arg0 input) RTM_NO_EXCEPT
+	{
+		vector4f inputv = quat_to_vector(input);
+
+		// Multiply once and retrieve floats, can't use scalarf because we need to use volatile
+		// volatile will force a roundtrip to memory and should prevent re-ordering as well as
+		// other optimizations such as FMA.
+		vector4f input_sq = vector_mul(inputv, inputv);
+		volatile float x_sq = vector_get_x(input_sq);
+		volatile float y_sq = vector_get_y(input_sq);
+		volatile float z_sq = vector_get_z(input_sq);
+		volatile float w_sq = vector_get_w(input_sq);
+		volatile float sum_xy_sq = x_sq + y_sq;
+		volatile float sum_zw_sq = z_sq + w_sq;
+		float len_sq = sum_xy_sq + sum_zw_sq;
+
+		// sqrt(float) might not be exact when fast math or similar optimizations are enabled
+		// We might not be able to disable these
+		// As such, we promote to a double to ensure a deterministic result
+		// We add volatile to ensure rsqrt or similar isn't used
+		volatile double len = scalar_sqrt(double(len_sq));
+		return vector_to_quat(vector_div(inputv, vector_set(float(len))));
+	}
+
+	//////////////////////////////////////////////////////////////////////////
 	// Returns the linear interpolation between start and end for a given alpha value.
 	// The formula used is: ((1.0 - alpha) * start) + (alpha * end).
 	// Interpolation is stable and will return 'start' when 'alpha' is 0.0 and 'end' when it is 1.0.
