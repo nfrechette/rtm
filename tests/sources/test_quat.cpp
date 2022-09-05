@@ -308,6 +308,31 @@ static void test_quat_impl(const FloatType threshold)
 	}
 
 	{
+		// Stored as doubles: quat_set(-0.001138, 0.91623, -1.624598, 0.715671)
+		const uint64_t raw_quat[4] = { 0xBF52A51E321A2E7FULL, 0x3FED51C193B3A68BULL, 0xBFF9FE5A78F25A25ULL, 0x3FE6E6C6DE76427CULL };
+		const double* raw_quat_ = reinterpret_cast<const double*>(&raw_quat[0]);
+		QuatType quat = quat_set(FloatType(raw_quat_[0]), FloatType(raw_quat_[1]), FloatType(raw_quat_[2]), FloatType(raw_quat_[3]));
+
+		const uint64_t raw_result32[4] = { 0xBA15540FULL, 0x3EEAD1D9ULL, 0xBF502EF0ULL, 0x3EB76B2CULL };
+		const uint64_t raw_result64[4] = { 0xBF42AA81E1FF0E34ULL, 0x3FDD5A3B249ED450ULL, 0xBFEA05DDEFFE89CAULL, 0x3FD6ED6586A3C455ULL };
+		const uint64_t* raw_expected_result = sizeof(FloatType) == 4 ? &raw_result32[0] : &raw_result64[0];
+
+		const QuatType quat_normalize_result = quat_normalize_deterministic(quat);
+		CHECK(quat_is_normalized(quat_normalize_result));
+
+		uint64_t result[4] = { 0, 0, 0, 0 };
+		memcpy(&result[0], reinterpret_cast<const uint8_t*>(&quat_normalize_result) + 0 * sizeof(FloatType), sizeof(FloatType));
+		memcpy(&result[1], reinterpret_cast<const uint8_t*>(&quat_normalize_result) + 1 * sizeof(FloatType), sizeof(FloatType));
+		memcpy(&result[2], reinterpret_cast<const uint8_t*>(&quat_normalize_result) + 2 * sizeof(FloatType), sizeof(FloatType));
+		memcpy(&result[3], reinterpret_cast<const uint8_t*>(&quat_normalize_result) + 3 * sizeof(FloatType), sizeof(FloatType));
+
+		CHECK(result[0] == raw_expected_result[0]);
+		CHECK(result[1] == raw_expected_result[1]);
+		CHECK(result[2] == raw_expected_result[2]);
+		CHECK(result[3] == raw_expected_result[3]);
+	}
+
+	{
 		QuatType quat0 = quat_normalize(quat_from_euler(scalar_deg_to_rad(FloatType(30.0)), scalar_deg_to_rad(FloatType(-45.0)), scalar_deg_to_rad(FloatType(90.0))));
 		QuatType quat1 = quat_normalize(quat_from_euler(scalar_deg_to_rad(FloatType(45.0)), scalar_deg_to_rad(FloatType(60.0)), scalar_deg_to_rad(FloatType(120.0))));
 
