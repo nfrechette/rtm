@@ -310,18 +310,18 @@ static void test_quat_impl(const FloatType threshold)
 
 	{
 		// Stored as doubles: quat_set(-0.001138, 0.91623, -1.624598, 0.715671)
-		const std::array<uint64_t, 4> raw_quat = { 0xBF52A51E321A2E7FULL, 0x3FED51C193B3A68BULL, 0xBFF9FE5A78F25A25ULL, 0x3FE6E6C6DE76427CULL };
+		const std::array<uint64_t, 4> raw_quat = { { 0xBF52A51E321A2E7FULL, 0x3FED51C193B3A68BULL, 0xBFF9FE5A78F25A25ULL, 0x3FE6E6C6DE76427CULL } };
 		const double* raw_quat_ = reinterpret_cast<const double*>(raw_quat.data());
 		QuatType quat = quat_set(FloatType(raw_quat_[0]), FloatType(raw_quat_[1]), FloatType(raw_quat_[2]), FloatType(raw_quat_[3]));
 
-		const std::array<uint64_t, 4> raw_result32 = { 0xBA15540FULL, 0x3EEAD1D9ULL, 0xBF502EF0ULL, 0x3EB76B2CULL };
-		const std::array<uint64_t, 4> raw_result64 = { 0xBF42AA81E1FF0E34ULL, 0x3FDD5A3B249ED450ULL, 0xBFEA05DDEFFE89CAULL, 0x3FD6ED6586A3C455ULL };
+		const std::array<uint64_t, 4> raw_result32 = { { 0xBA15540FULL, 0x3EEAD1D9ULL, 0xBF502EF0ULL, 0x3EB76B2CULL } };
+		const std::array<uint64_t, 4> raw_result64 = { { 0xBF42AA81E1FF0E34ULL, 0x3FDD5A3B249ED450ULL, 0xBFEA05DDEFFE89CAULL, 0x3FD6ED6586A3C455ULL } };
 		const std::array<uint64_t, 4>& raw_expected_result = sizeof(FloatType) == 4 ? raw_result32 : raw_result64;
 
 		const QuatType quat_normalize_result = quat_normalize_deterministic(quat);
 		CHECK(quat_is_normalized(quat_normalize_result));
 
-		std::array<uint64_t, 4> result = { 0, 0, 0, 0 };
+		std::array<uint64_t, 4> result = { { 0, 0, 0, 0 } };
 		std::memcpy(&result[0], reinterpret_cast<const uint8_t*>(&quat_normalize_result) + (0 * sizeof(FloatType)), sizeof(FloatType));
 		std::memcpy(&result[1], reinterpret_cast<const uint8_t*>(&quat_normalize_result) + (1 * sizeof(FloatType)), sizeof(FloatType));
 		std::memcpy(&result[2], reinterpret_cast<const uint8_t*>(&quat_normalize_result) + (2 * sizeof(FloatType)), sizeof(FloatType));
