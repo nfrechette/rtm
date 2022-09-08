@@ -37,6 +37,8 @@ RTM_IMPL_FILE_PRAGMA_PUSH
 
 namespace rtm
 {
+	RTM_IMPL_VERSION_NAMESPACE_BEGIN
+
 	namespace rtm_impl
 	{
 #if defined(RTM_NEON_INTRINSICS)
@@ -64,6 +66,8 @@ namespace rtm
 #endif
 #endif
 	}
+
+	RTM_IMPL_VERSION_NAMESPACE_END
 }
 
 #if defined(RTM_NEON_INTRINSICS)
