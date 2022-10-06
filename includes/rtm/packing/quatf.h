@@ -62,6 +62,10 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	// Returns a quaternion constructed from a vector3 representing the [xyz]
 	// components while reconstructing the [w] component by assuming it is positive.
+	// Note: When the squared length of [xyz] is very small, the square-root might not
+	// be very accurate when [w] is reconstructed. As such, the resulting quaternion
+	// might be near but not quite normalized. If high accuracy is required, make
+	// sure to normalize explicitly afterwards.
 	//////////////////////////////////////////////////////////////////////////
 	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE quatf RTM_SIMD_CALL quat_from_positive_w(vector4f_arg0 input) RTM_NO_EXCEPT
 	{
