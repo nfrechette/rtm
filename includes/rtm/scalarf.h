@@ -1038,7 +1038,7 @@ namespace rtm
 	// The result's [y] component contains cos(angle).
 	// [zw] are undefined.
 	//////////////////////////////////////////////////////////////////////////
-	RTM_DISABLE_SECURITY_COOKIE_CHECK inline vector4f RTM_SIMD_CALL scalar_sincos(scalarf angle) RTM_NO_EXCEPT
+	RTM_DISABLE_SECURITY_COOKIE_CHECK inline vector4f RTM_SIMD_CALL scalar_sincos(scalarf_arg0 angle) RTM_NO_EXCEPT
 	{
 		scalarf sin_ = scalar_sin(angle);
 		scalarf cos_ = scalar_cos(angle);
