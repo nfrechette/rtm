@@ -68,12 +68,15 @@ Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/d
 <!-- prettier-ignore-start -->
 <!-- markdownlint-disable -->
 <table>
-  <tr>
-    <td align="center"><a href="https://github.com/CodyDWJones"><img src="https://avatars.githubusercontent.com/u/28773740?v=4?s=100" width="100px;" alt=""/><br /><sub><b>CodyDWJones</b></sub></a><br /><a href="https://github.com/nfrechette/rtm/commits?author=CodyDWJones" title="Code">💻</a> <a href="#platform-CodyDWJones" title="Packaging/porting to new platform">📦</a> <a href="#infra-CodyDWJones" title="Infrastructure (Hosting, Build-Tools, etc)">🚇</a></td>
-    <td align="center"><a href="https://github.com/mwerschy"><img src="https://avatars.githubusercontent.com/u/6616804?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Malte Werschy</b></sub></a><br /><a href="https://github.com/nfrechette/rtm/commits?author=mwerschy" title="Code">💻</a> <a href="#platform-mwerschy" title="Packaging/porting to new platform">📦</a></td>
-    <td align="center"><a href="https://gitlab.com/intelligide"><img src="https://avatars.githubusercontent.com/u/12529837?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Yoann Potinet</b></sub></a><br /><a href="#infra-intelligide" title="Infrastructure (Hosting, Build-Tools, etc)">🚇</a></td>
-    <td align="center"><a href="https://github.com/operasfantom"><img src="https://avatars.githubusercontent.com/u/31903947?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Pavel Iatchenii</b></sub></a><br /><a href="https://github.com/nfrechette/rtm/commits?author=operasfantom" title="Code">💻</a> <a href="#maintenance-operasfantom" title="Maintenance">🚧</a></td>
-  </tr>
+  <tbody>
+    <tr>
+      <td align="center"><a href="https://github.com/CodyDWJones"><img src="https://avatars.githubusercontent.com/u/28773740?v=4?s=100" width="100px;" alt="CodyDWJones"/><br /><sub><b>CodyDWJones</b></sub></a><br /><a href="https://github.com/nfrechette/rtm/commits?author=CodyDWJones" title="Code">💻</a> <a href="#platform-CodyDWJones" title="Packaging/porting to new platform">📦</a> <a href="#infra-CodyDWJones" title="Infrastructure (Hosting, Build-Tools, etc)">🚇</a></td>
+      <td align="center"><a href="https://github.com/mwerschy"><img src="https://avatars.githubusercontent.com/u/6616804?v=4?s=100" width="100px;" alt="Malte Werschy"/><br /><sub><b>Malte Werschy</b></sub></a><br /><a href="https://github.com/nfrechette/rtm/commits?author=mwerschy" title="Code">💻</a> <a href="#platform-mwerschy" title="Packaging/porting to new platform">📦</a></td>
+      <td align="center"><a href="https://gitlab.com/intelligide"><img src="https://avatars.githubusercontent.com/u/12529837?v=4?s=100" width="100px;" alt="Yoann Potinet"/><br /><sub><b>Yoann Potinet</b></sub></a><br /><a href="#infra-intelligide" title="Infrastructure (Hosting, Build-Tools, etc)">🚇</a></td>
+      <td align="center"><a href="https://github.com/operasfantom"><img src="https://avatars.githubusercontent.com/u/31903947?v=4?s=100" width="100px;" alt="Pavel Iatchenii"/><br /><sub><b>Pavel Iatchenii</b></sub></a><br /><a href="https://github.com/nfrechette/rtm/commits?author=operasfantom" title="Code">💻</a> <a href="#maintenance-operasfantom" title="Maintenance">🚧</a></td>
+      <td align="center"><a href="https://github.com/GermanAizek"><img src="https://avatars.githubusercontent.com/u/21138600?v=4?s=100" width="100px;" alt="Herman Semenov"/><br /><sub><b>Herman Semenov</b></sub></a><br /><a href="https://github.com/nfrechette/rtm/commits?author=GermanAizek" title="Code">💻</a></td>
+    </tr>
+  </tbody>
 </table>
 
 <!-- markdownlint-restore -->
