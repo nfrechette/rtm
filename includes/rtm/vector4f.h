@@ -1221,6 +1221,12 @@ namespace rtm
 				__m128 z2_0_0_0 = _mm_shuffle_ps(x2_y2_z2_w2, x2_y2_z2_w2, _MM_SHUFFLE(0, 0, 0, 2));
 				__m128 x2y2z2_0_0_0 = _mm_add_ss(x2y2_0_0_0, z2_0_0_0);
 				return _mm_shuffle_ps(x2y2z2_0_0_0, x2y2z2_0_0_0, _MM_SHUFFLE(0, 0, 0, 0));
+#elif defined(RTM_NEON64_INTRINSICS)
+				float32x4_t x2_y2_z2_w2 = vmulq_f32(lhs, rhs);
+				float32x4_t x2_y2_z2 = vsetq_lane_f32(0.0F, x2_y2_z2_w2, 3);
+				float32x4_t x2y2_z2_x2y2_z2 = vpaddq_f32(x2_y2_z2, x2_y2_z2);
+				float32x4_t x2y2z2_x2y2z2_x2y2z2_x2y2z2 = vpaddq_f32(x2y2_z2_x2y2_z2, x2y2_z2_x2y2_z2);
+				return x2y2z2_x2y2z2_x2y2z2_x2y2z2;
 #elif defined(RTM_NEON_INTRINSICS)
 				float32x4_t x2_y2_z2_w2 = vmulq_f32(lhs, rhs);
 				float32x2_t x2_y2 = vget_low_f32(x2_y2_z2_w2);
