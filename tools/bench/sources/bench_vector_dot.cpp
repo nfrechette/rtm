@@ -48,9 +48,9 @@ RTM_FORCE_NOINLINE float RTM_SIMD_CALL vector_dot_neon(vector4f_arg0 lhs, vector
 {
 	// Compiles down to this with ARM64:
 	// fmul.4s v0, v0, v1
-    // ext.16b v1, v0, v0, #0x8
-    // fadd.2s v0, v0, v1
-    // faddp.2s v0, v0, v0
+	// ext.16b v1, v0, v0, #0x8
+	// fadd.2s v0, v0, v1
+	// faddp.2s v0, v0, v0
 	float32x4_t x2_y2_z2_w2 = vmulq_f32(lhs, rhs);
 	float32x2_t x2_y2 = vget_low_f32(x2_y2_z2_w2);
 	float32x2_t z2_w2 = vget_high_f32(x2_y2_z2_w2);
@@ -65,8 +65,8 @@ RTM_FORCE_NOINLINE float RTM_SIMD_CALL vector_dot_neon64(vector4f_arg0 lhs, vect
 {
 	// Compiles down to:
 	// fmul.4s v0, v0, v1
-    // faddp.4s v0, v0, v0
-    // faddp.2s s0, v0
+	// faddp.4s v0, v0, v0
+	// faddp.2s s0, v0
 	float32x4_t x2_y2_z2_w2 = vmulq_f32(lhs, rhs);
 	return vaddvq_f32(x2_y2_z2_w2);
 }
