@@ -48,10 +48,10 @@ RTM_FORCE_NOINLINE vector4f RTM_SIMD_CALL vector_dot_neon_v(vector4f_arg0 lhs, v
 {
 	// Compiles down to this with ARM64:
 	// fmul.4s v0, v0, v1
-    // ext.16b v1, v0, v0, #0x8
-    // fadd.2s v0, v0, v1
-    // faddp.2s v0, v0, v0
-    // mov.d  v0[1], v0[0]
+	// ext.16b v1, v0, v0, #0x8
+	// fadd.2s v0, v0, v1
+	// faddp.2s v0, v0, v0
+	// mov.d  v0[1], v0[0]
 	float32x4_t x2_y2_z2_w2 = vmulq_f32(lhs, rhs);
 	float32x2_t x2_y2 = vget_low_f32(x2_y2_z2_w2);
 	float32x2_t z2_w2 = vget_high_f32(x2_y2_z2_w2);
@@ -64,11 +64,11 @@ RTM_FORCE_NOINLINE vector4f RTM_SIMD_CALL vector_dot_neon_fma_v(vector4f_arg0 lh
 {
 	// Compiles down to this with ARM64:
 	// ext.16b v2, v0, v0, #0x8
-    // ext.16b v3, v1, v1, #0x8
-    // fmul.2s v0, v0, v1
-    // fmla.2s v0, v3, v2
-    // faddp.2s v0, v0, v0
-    // mov.d  v0[1], v0[0]
+	// ext.16b v3, v1, v1, #0x8
+	// fmul.2s v0, v0, v1
+	// fmla.2s v0, v3, v2
+	// faddp.2s v0, v0, v0
+	// mov.d  v0[1], v0[0]
 	float32x2_t lhs_x_y = vget_low_f32(lhs);
 	float32x2_t lhs_z_w = vget_high_f32(lhs);
 	float32x2_t rhs_x_y = vget_low_f32(rhs);
@@ -85,9 +85,9 @@ RTM_FORCE_NOINLINE vector4f RTM_SIMD_CALL vector_dot_neon64_v(vector4f_arg0 lhs,
 {
 	// Compiles down to:
 	// fmul.4s v0, v0, v1
-    // faddp.4s v0, v0, v0
-    // faddp.2s s0, v0
-    // dup.4s v0, v0[0]
+	// faddp.4s v0, v0, v0
+	// faddp.2s s0, v0
+	// dup.4s v0, v0[0]
 	float32x4_t x2_y2_z2_w2 = vmulq_f32(lhs, rhs);
 	return vdupq_n_f32(vaddvq_f32(x2_y2_z2_w2));
 }
@@ -96,8 +96,8 @@ RTM_FORCE_NOINLINE vector4f RTM_SIMD_CALL vector_dot_neon64_paddq_v(vector4f_arg
 {
 	// Compiles down to:
 	// fmul.4s v0, v0, v1
-    // faddp.4s v0, v0, v0
-    // faddp.4s v0, v0, v0
+	// faddp.4s v0, v0, v0
+	// faddp.4s v0, v0, v0
 	float32x4_t x2_y2_z2_w2 = vmulq_f32(lhs, rhs);
 	float32x4_t x2y2_z2w2_x2y2_z2w2 = vpaddq_f32(x2_y2_z2_w2, x2_y2_z2_w2);
 	float32x4_t x2y2z2w2_x2y2z2w2_x2y2z2w2_x2y2z2w2 = vpaddq_f32(x2y2_z2w2_x2y2_z2w2, x2y2_z2w2_x2y2_z2w2);
