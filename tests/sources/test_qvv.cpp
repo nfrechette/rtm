@@ -250,7 +250,6 @@ static void test_qvv_impl(const TransformType& identity, const FloatType thresho
 		const Vector4Type vec_inf = vector_set(inf, inf, inf, inf);
 		const Vector4Type vec_nan = vector_set(nan, nan, nan, nan);
 
-
 		CHECK(qvv_is_finite(identity) == true);
 		CHECK(qvv_is_finite(qvv_set(quat0, trans0, scale0)) == true);
 		CHECK(qvv_is_finite(qvv_set(quat_inf, trans0, scale0)) == false);
