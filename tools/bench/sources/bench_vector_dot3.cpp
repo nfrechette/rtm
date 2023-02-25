@@ -156,7 +156,7 @@ static void bm_vector_dot3_neon(benchmark::State& state)
 BENCHMARK(bm_vector_dot3_neon);
 #endif
 
-#if defined(RTM_NEON_INTRINSICS)
+#if defined(RTM_NEON64_INTRINSICS)
 static void bm_vector_dot3_neon64(benchmark::State& state)
 {
 	vector4f v0 = vector_set(-1.0F, 1.0F, -2.0F, -123.134F);
