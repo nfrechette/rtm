@@ -680,7 +680,7 @@ namespace rtm
 			RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE RTM_SIMD_CALL operator float() const RTM_NO_EXCEPT
 			{
 #if defined(RTM_SSE4_INTRINSICS) && 0
-				// SSE4 dot product instruction isn't precise enough
+				// SSE4 dot product instruction appears slower on Zen2, is it the case elsewhere as well?
 				return _mm_cvtss_f32(_mm_dp_ps(lhs, rhs, 0xFF));
 #elif defined(RTM_SSE2_INTRINSICS)
 				__m128 x2_y2_z2_w2 = _mm_mul_ps(lhs, rhs);
@@ -698,7 +698,7 @@ namespace rtm
 			RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE RTM_SIMD_CALL operator scalarf() const RTM_NO_EXCEPT
 			{
 #if defined(RTM_SSE4_INTRINSICS) && 0
-				// SSE4 dot product instruction isn't precise enough
+				// SSE4 dot product instruction appears slower on Zen2, is it the case elsewhere as well?
 				return scalarf{ _mm_cvtss_f32(_mm_dp_ps(lhs, rhs, 0xFF)) };
 #else
 				__m128 x2_y2_z2_w2 = _mm_mul_ps(lhs, rhs);
@@ -904,8 +904,7 @@ namespace rtm
 		// Calculate the vector4 dot product: dot(start, end)
 		__m128 dot;
 #if defined(RTM_SSE4_INTRINSICS)
-		// The dpps instruction isn't as accurate but we don't care here, we only need the sign of the
-		// dot product. If both rotations are on opposite ends of the hypersphere, the result will be
+		// If both rotations are on opposite ends of the hypersphere, the result will be
 		// very negative. If we are on the edge, the rotations are nearly opposite but not quite which
 		// means that the linear interpolation here will have terrible accuracy to begin with. It is designed
 		// for interpolating rotations that are reasonably close together. The bias check is mainly necessary
@@ -1039,8 +1038,7 @@ namespace rtm
 		// Calculate the vector4 dot product: dot(start, end)
 		__m128 dot;
 #if defined(RTM_SSE4_INTRINSICS)
-		// The dpps instruction isn't as accurate but we don't care here, we only need the sign of the
-		// dot product. If both rotations are on opposite ends of the hypersphere, the result will be
+		// If both rotations are on opposite ends of the hypersphere, the result will be
 		// very negative. If we are on the edge, the rotations are nearly opposite but not quite which
 		// means that the linear interpolation here will have terrible accuracy to begin with. It is designed
 		// for interpolating rotations that are reasonably close together. The bias check is mainly necessary
