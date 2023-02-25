@@ -85,6 +85,9 @@ RTM_FORCE_NOINLINE float RTM_SIMD_CALL vector_dot_sse2(vector4f_arg0 lhs, vector
 #endif
 
 #if defined(RTM_SSE4_INTRINSICS)
+// It appears that dpps is slower on Zen2 compared to the SSE2 implementation
+// This could be because despite having more instructions, the SSE2 impl manages
+// to pipeline them better.
 RTM_FORCE_NOINLINE float RTM_SIMD_CALL vector_dot_sse4(vector4f_arg0 lhs, vector4f_arg1 rhs) RTM_NO_EXCEPT
 {
 	return _mm_cvtss_f32(_mm_dp_ps(lhs, rhs, 0xFF));
