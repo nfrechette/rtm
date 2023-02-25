@@ -58,6 +58,40 @@ namespace rtm
 	}
 
 	//////////////////////////////////////////////////////////////////////////
+	// Sets a 3x4 affine matrix from a rotation quaternion and translation.
+	//////////////////////////////////////////////////////////////////////////
+	RTM_DISABLE_SECURITY_COOKIE_CHECK inline matrix3x4f RTM_SIMD_CALL matrix_from_qv(quatf_arg0 quat, vector4f_arg1 translation) RTM_NO_EXCEPT
+	{
+		RTM_ASSERT(quat_is_normalized(quat), "Quaternion is not normalized");
+
+		const float x2 = quat_get_x(quat) + quat_get_x(quat);
+		const float y2 = quat_get_y(quat) + quat_get_y(quat);
+		const float z2 = quat_get_z(quat) + quat_get_z(quat);
+		const float xx = quat_get_x(quat) * x2;
+		const float xy = quat_get_x(quat) * y2;
+		const float xz = quat_get_x(quat) * z2;
+		const float yy = quat_get_y(quat) * y2;
+		const float yz = quat_get_y(quat) * z2;
+		const float zz = quat_get_z(quat) * z2;
+		const float wx = quat_get_w(quat) * x2;
+		const float wy = quat_get_w(quat) * y2;
+		const float wz = quat_get_w(quat) * z2;
+
+		const vector4f x_axis = vector_set(1.0F - (yy + zz), xy + wz, xz - wy, 0.0F);
+		const vector4f y_axis = vector_set(xy - wz, 1.0F - (xx + zz), yz + wx, 0.0F);
+		const vector4f z_axis = vector_set(xz + wy, yz - wx, 1.0F - (xx + yy), 0.0F);
+		return matrix3x4f{ x_axis, y_axis, z_axis, translation };
+	}
+
+	//////////////////////////////////////////////////////////////////////////
+	// Converts a QV transform into a 3x4 affine matrix.
+	//////////////////////////////////////////////////////////////////////////
+	RTM_DISABLE_SECURITY_COOKIE_CHECK inline matrix3x4f RTM_SIMD_CALL matrix_from_qv(qvf_arg0 transform) RTM_NO_EXCEPT
+	{
+		return matrix_from_qv(transform.rotation, transform.translation);
+	}
+
+	//////////////////////////////////////////////////////////////////////////
 	// Sets a 3x4 affine matrix from a rotation quaternion, translation, and 3D scale.
 	//////////////////////////////////////////////////////////////////////////
 	RTM_DISABLE_SECURITY_COOKIE_CHECK inline matrix3x4f RTM_SIMD_CALL matrix_from_qvv(quatf_arg0 quat, vector4f_arg1 translation, vector4f_arg2 scale) RTM_NO_EXCEPT

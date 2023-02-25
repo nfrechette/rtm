@@ -45,6 +45,8 @@ namespace rtm
 		using scalar = scalarf;
 		using vector4 = vector4f;
 		using quat = quatf;
+
+		using qv = qvf;
 		using qvv = qvvf;
 
 		using matrix3x3 = matrix3x3f;
@@ -67,6 +69,8 @@ namespace rtm
 		using scalar = scalard;
 		using vector4 = vector4d;
 		using quat = quatd;
+
+		using qv = qvd;
 		using qvv = qvvd;
 
 		using matrix3x3 = matrix3x3d;
