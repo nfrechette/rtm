@@ -351,6 +351,24 @@ namespace rtm
 #endif
 
 	//////////////////////////////////////////////////////////////////////////
+	// A QV transform represents a 3D rotation (quaternion) and a 3D translation (vector).
+	//////////////////////////////////////////////////////////////////////////
+	struct qvf
+	{
+		quatf		rotation;
+		vector4f	translation;
+	};
+
+	//////////////////////////////////////////////////////////////////////////
+	// A QV transform represents a 3D rotation (quaternion) and a 3D translation (vector).
+	//////////////////////////////////////////////////////////////////////////
+	struct qvd
+	{
+		quatd		rotation;
+		vector4d	translation;
+	};
+
+	//////////////////////////////////////////////////////////////////////////
 	// A QVV transform represents a 3D rotation (quaternion), 3D translation (vector), and 3D scale (vector).
 	// It properly handles positive scaling but negative scaling is a bit more problematic.
 	// A best effort is made by converting the quaternion to a matrix during those operations.

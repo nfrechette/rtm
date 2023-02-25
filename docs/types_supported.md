@@ -28,6 +28,10 @@ A comparison mask used by vector selection/blending. Each SIMD lane consists of 
 
 Quaternions are 4D complex numbers commonly used to represent 3D rotations (when normalized). The **[xyz]** components are the real part while the **[w]** component is the imaginary part.
 
+## QV (quaternion-vector)
+
+A QV represents an affine transform in two distinct parts: a rotation quaternion and a vector3 translation. This type is commonly used in video games as it is very fast to work with and more compact than a full affine matrix.
+
 ## QVV (quaternion-vector-vector)
 
 A QVV represents an affine transform in three distinct parts: a rotation quaternion, a vector3 scale, and a vector3 translation. This type is commonly used in video games as it is very fast to work with and more compact than a full affine matrix. It properly handles positive non-uniform scaling but negative scaling is a bit more problematic. A best effort is made by converting the quaternion to a matrix when necessary. If scale fidelity is important, consider using an affine matrix 3x4 instead.

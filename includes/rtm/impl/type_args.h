@@ -90,6 +90,10 @@ namespace rtm
 
 	// With __vectorcall, vector aggregates are also passed by register and they can use up to 4 registers.
 
+	using qvf_arg0 = const qvf;
+	using qvf_arg1 = const qvf;
+	using qvf_argn = const qvf&;
+
 	using qvvf_arg0 = const qvvf;
 	using qvvf_arg1 = const qvvf;
 	using qvvf_argn = const qvvf&;
@@ -163,6 +167,10 @@ namespace rtm
 	// must fit in the number of registers available (e.g. we can pass 2x qvvf but not 3x).
 	// A qvvf can also be returned by register.
 
+	using qvf_arg0 = const qvf;
+	using qvf_arg1 = const qvf;
+	using qvf_argn = const qvf&;
+
 	using qvvf_arg0 = const qvvf;
 	using qvvf_arg1 = const qvvf;
 	using qvvf_argn = const qvvf&;
@@ -234,6 +242,10 @@ namespace rtm
 
 	// ARM NEON does not support passing aggregates by register.
 
+	using qvf_arg0 = const qvf&;
+	using qvf_arg1 = const qvf&;
+	using qvf_argn = const qvf&;
+
 	using qvvf_arg0 = const qvvf&;
 	using qvvf_arg1 = const qvvf&;
 	using qvvf_argn = const qvvf&;
@@ -304,6 +316,10 @@ namespace rtm
 	using mask4i_argn = const mask4i&;
 
 	// gcc does not appear to support passing and returning aggregates by register
+
+	using qvf_arg0 = const qvf&;
+	using qvf_arg1 = const qvf&;
+	using qvf_argn = const qvf&;
 
 	using qvvf_arg0 = const qvvf&;
 	using qvvf_arg1 = const qvvf&;
@@ -381,6 +397,10 @@ namespace rtm
 	// before the next function call can be made. It might be faster regardless as the compiler
 	// might be able to insert other instructions in between.
 
+	using qvf_arg0 = const qvf&;
+	using qvf_arg1 = const qvf&;
+	using qvf_argn = const qvf&;
+
 	using qvvf_arg0 = const qvvf&;
 	using qvvf_arg1 = const qvvf&;
 	using qvvf_argn = const qvvf&;
@@ -447,6 +467,10 @@ namespace rtm
 	using mask4i_arg6 = const mask4i&;
 	using mask4i_arg7 = const mask4i&;
 	using mask4i_argn = const mask4i&;
+
+	using qvf_arg0 = const qvf&;
+	using qvf_arg1 = const qvf&;
+	using qvf_argn = const qvf&;
 
 	using qvvf_arg0 = const qvvf&;
 	using qvvf_arg1 = const qvvf&;

@@ -57,6 +57,40 @@ namespace rtm
 	}
 
 	//////////////////////////////////////////////////////////////////////////
+	// Sets a 3x4 affine matrix from a rotation quaternion and translation.
+	//////////////////////////////////////////////////////////////////////////
+	RTM_DISABLE_SECURITY_COOKIE_CHECK inline matrix3x4d matrix_from_qv(const quatd& quat, const vector4d& translation) RTM_NO_EXCEPT
+	{
+		RTM_ASSERT(quat_is_normalized(quat), "Quaternion is not normalized");
+
+		const double x2 = quat_get_x(quat) + quat_get_x(quat);
+		const double y2 = quat_get_y(quat) + quat_get_y(quat);
+		const double z2 = quat_get_z(quat) + quat_get_z(quat);
+		const double xx = quat_get_x(quat) * x2;
+		const double xy = quat_get_x(quat) * y2;
+		const double xz = quat_get_x(quat) * z2;
+		const double yy = quat_get_y(quat) * y2;
+		const double yz = quat_get_y(quat) * z2;
+		const double zz = quat_get_z(quat) * z2;
+		const double wx = quat_get_w(quat) * x2;
+		const double wy = quat_get_w(quat) * y2;
+		const double wz = quat_get_w(quat) * z2;
+
+		const vector4d x_axis = vector_set(1.0 - (yy + zz), xy + wz, xz - wy, 0.0);
+		const vector4d y_axis = vector_set(xy - wz, 1.0 - (xx + zz), yz + wx, 0.0);
+		const vector4d z_axis = vector_set(xz + wy, yz - wx, 1.0 - (xx + yy), 0.0);
+		return matrix3x4d{ x_axis, y_axis, z_axis, translation };
+	}
+
+	//////////////////////////////////////////////////////////////////////////
+	// Converts a QV transform into a 3x4 affine matrix.
+	//////////////////////////////////////////////////////////////////////////
+	RTM_DISABLE_SECURITY_COOKIE_CHECK inline matrix3x4d matrix_from_qv(const qvd& transform) RTM_NO_EXCEPT
+	{
+		return matrix_from_qv(transform.rotation, transform.translation);
+	}
+
+	//////////////////////////////////////////////////////////////////////////
 	// Sets a 3x4 affine matrix from a rotation quaternion, translation, and 3D scale.
 	//////////////////////////////////////////////////////////////////////////
 	RTM_DISABLE_SECURITY_COOKIE_CHECK inline matrix3x4d matrix_from_qvv(const quatd& quat, const vector4d& translation, const vector4d& scale) RTM_NO_EXCEPT
