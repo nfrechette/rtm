@@ -74,7 +74,7 @@ RTM_FORCE_NOINLINE vector4f RTM_SIMD_CALL vector_dot_neon_fma_v(vector4f_arg0 lh
 	float32x2_t rhs_x_y = vget_low_f32(rhs);
 	float32x2_t rhs_z_w = vget_high_f32(rhs);
 	float32x2_t x2_y2 = vmul_f32(lhs_x_y, rhs_x_y);
-	float32x2_t x2z2_y2w2 = vfma_f32(x2_y2, lhs_z_w, rhs_z_w);
+	float32x2_t x2z2_y2w2 = RTM_VECTOR2F_MULV_ADD(x2_y2, lhs_z_w, rhs_z_w);
 	float32x2_t x2y2z2w2 = vpadd_f32(x2z2_y2w2, x2z2_y2w2);
 	return vcombine_f32(x2y2z2w2, x2y2z2w2);
 }

@@ -41,12 +41,24 @@ RTM_IMPL_FILE_PRAGMA_PUSH
 	// All three inputs must be an rtm::vector4f.
 	//////////////////////////////////////////////////////////////////////////
 	#define RTM_VECTOR4F_MULV_ADD(v0, v1, v2) vfmaq_f32((v2), (v0), (v1))
+
+	//////////////////////////////////////////////////////////////////////////
+	// Per component multiplication/addition of the three inputs: v2 + (v0 * v1)
+	// All three inputs must be an float32x2_t.
+	//////////////////////////////////////////////////////////////////////////
+	#define RTM_VECTOR2F_MULV_ADD(v0, v1, v2) vfma_f32((v2), (v0), (v1))
 #elif defined(RTM_NEON_INTRINSICS)
 	//////////////////////////////////////////////////////////////////////////
 	// Per component multiplication/addition of the three inputs: v2 + (v0 * v1)
 	// All three inputs must be an rtm::vector4f.
 	//////////////////////////////////////////////////////////////////////////
 	#define RTM_VECTOR4F_MULV_ADD(v0, v1, v2) vmlaq_f32((v2), (v0), (v1))
+
+	//////////////////////////////////////////////////////////////////////////
+	// Per component multiplication/addition of the three inputs: v2 + (v0 * v1)
+	// All three inputs must be an float32x2_t.
+	//////////////////////////////////////////////////////////////////////////
+	#define RTM_VECTOR2F_MULV_ADD(v0, v1, v2) vmla_f32((v2), (v0), (v1))
 #elif defined(RTM_SSE2_INTRINSICS)
 	//////////////////////////////////////////////////////////////////////////
 	// Per component multiplication/addition of the three inputs: v2 + (v0 * v1)
