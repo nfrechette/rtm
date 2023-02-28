@@ -1088,7 +1088,7 @@ namespace rtm
 				__m128 y2w2_0_0_0 = _mm_shuffle_ps(x2z2_y2w2_0_0, x2z2_y2w2_0_0, _MM_SHUFFLE(0, 0, 0, 1));
 				__m128 x2y2z2w2_0_0_0 = _mm_add_ps(x2z2_y2w2_0_0, y2w2_0_0_0);
 				return _mm_cvtss_f32(x2y2z2w2_0_0_0);
-#elif defined(RTM_NEON64_INTRINSICS)
+#elif defined(RTM_NEON64_INTRINSICS) && defined(RTM_IMPL_VADDVQ_SUPPORTED)
 				float32x4_t x2_y2_z2_w2 = vmulq_f32(lhs, rhs);
 				return vaddvq_f32(x2_y2_z2_w2);
 #elif defined(RTM_NEON_INTRINSICS)

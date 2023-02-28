@@ -121,3 +121,19 @@
 		#define RTM_IMPL_VFMSS_SUPPORTED
 	#endif
 #endif
+
+//////////////////////////////////////////////////////////////////////////
+// Helper macro to determine if vaddvq_f32 is supported (ARM64 only)
+//////////////////////////////////////////////////////////////////////////
+#if defined(RTM_ARCH_ARM64) && !defined(RTM_IMPL_VADDVQ_SUPPORTED)
+	#if defined(RTM_COMPILER_MSVC)
+		#if defined(vaddvq_f32)
+			// Support was introduced in VS2019
+			// MSVC uses defines for the ARM intrinsics, use them to perform feature detection
+			#define RTM_IMPL_VADDVQ_SUPPORTED
+		#endif
+	#else
+		// Always enable with GCC and clang for now
+		#define RTM_IMPL_VADDVQ_SUPPORTED
+	#endif
+#endif
