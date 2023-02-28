@@ -68,6 +68,7 @@ RTM_FORCE_NOINLINE float RTM_SIMD_CALL vector_dot3_neon(vector4f_arg0 lhs, vecto
 #if defined(RTM_NEON64_INTRINSICS)
 RTM_FORCE_NOINLINE float RTM_SIMD_CALL vector_dot3_neon64(vector4f_arg0 lhs, vector4f_arg1 rhs) RTM_NO_EXCEPT
 {
+#if defined(RTM_IMPL_VADDVQ_SUPPORTED)
 	// Compiles down to:
 	// fmul.4s v0, v0, v1
 	// mov.s  v0[3], wzr
@@ -76,6 +77,11 @@ RTM_FORCE_NOINLINE float RTM_SIMD_CALL vector_dot3_neon64(vector4f_arg0 lhs, vec
 	float32x4_t x2_y2_z2_w2 = vmulq_f32(lhs, rhs);
 	float32x4_t x2_y2_z2 = vsetq_lane_f32(0.0F, x2_y2_z2_w2, 3);
 	return vaddvq_f32(x2_y2_z2);
+#else
+	(void)lhs;
+	(void)rhs;
+	return 0.0F;
+#endif
 }
 #endif
 
