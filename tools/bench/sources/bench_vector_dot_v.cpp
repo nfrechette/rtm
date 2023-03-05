@@ -123,6 +123,10 @@ RTM_FORCE_NOINLINE vector4f RTM_SIMD_CALL vector_dot_sse2_v(vector4f_arg0 lhs, v
 #endif
 
 #if defined(RTM_SSE4_INTRINSICS)
+// SSE4 dot product instruction appears slower on Zen2
+// On the hardware Github Actions run on, performance is identical with clang14
+// Need to measure on Zen3 and Intel, if same speed as well, we should use dpps instruction
+// since it leads to smaller assembly and improved inlining
 RTM_FORCE_NOINLINE vector4f RTM_SIMD_CALL vector_dot_sse4_v(vector4f_arg0 lhs, vector4f_arg1 rhs) RTM_NO_EXCEPT
 {
 	return _mm_dp_ps(lhs, rhs, 0xFF);
