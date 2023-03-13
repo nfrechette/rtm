@@ -1845,6 +1845,37 @@ namespace rtm
 	}
 
 	//////////////////////////////////////////////////////////////////////////
+	// Returns per component ~0 if input is finite, otherwise 0: finite(input) ? ~0 : 0
+	//////////////////////////////////////////////////////////////////////////
+	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE mask4d vector_finite(const vector4d& input) RTM_NO_EXCEPT
+	{
+#if defined(RTM_SSE2_INTRINSICS)
+		const __m128i abs_mask = _mm_set_epi64x(0x7FFFFFFFFFFFFFFFULL, 0x7FFFFFFFFFFFFFFFULL);
+		__m128d abs_input_xy = _mm_and_pd(input.xy, _mm_castsi128_pd(abs_mask));
+		__m128d abs_input_zw = _mm_and_pd(input.zw, _mm_castsi128_pd(abs_mask));
+
+		const __m128d infinity = _mm_set1_pd(std::numeric_limits<double>::infinity());
+		__m128d is_not_infinity_xy = _mm_cmpneq_pd(abs_input_xy, infinity);
+		__m128d is_not_infinity_zw = _mm_cmpneq_pd(abs_input_zw, infinity);
+
+		__m128d is_nan_xy = _mm_cmpneq_pd(input.xy, input.xy);
+		__m128d is_nan_zw = _mm_cmpneq_pd(input.zw, input.zw);
+
+		__m128d is_finite_xy = _mm_andnot_pd(is_nan_xy, is_infinity_xy);
+		__m128d is_finite_zw = _mm_andnot_pd(is_nan_zw, is_infinity_zw);
+		__m128d is_finite = _mm_and_pd(is_finite_xy, is_finite_zw);
+		return is_finite;
+#else
+		return mask4d{
+			rtm_impl::get_mask_value(scalar_is_finite(vector_get_x(input))),
+			rtm_impl::get_mask_value(scalar_is_finite(vector_get_y(input))),
+			rtm_impl::get_mask_value(scalar_is_finite(vector_get_z(input))),
+			rtm_impl::get_mask_value(scalar_is_finite(vector_get_w(input)))
+			};
+#endif
+	}
+
+	//////////////////////////////////////////////////////////////////////////
 	// Returns true if all 4 components are finite (not NaN/Inf), otherwise false: all(finite(input))
 	//////////////////////////////////////////////////////////////////////////
 	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE bool vector_is_finite(const vector4d& input) RTM_NO_EXCEPT
