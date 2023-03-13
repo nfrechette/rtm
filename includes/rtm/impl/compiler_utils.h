@@ -31,14 +31,31 @@
 // compilation flags used. However, in some cases, certain options must be forced.
 // To do this, every header is wrapped in two macros to push and pop the necessary
 // pragmas.
+//
+// Options we use:
+//    - Disable fast math, it can hurt precision for little to no performance gain due to the high level of hand tuned optimizations.
 //////////////////////////////////////////////////////////////////////////
 #if defined(RTM_COMPILER_MSVC)
 	#define RTM_IMPL_FILE_PRAGMA_PUSH \
-		/* Disable fast math, it can hurt precision for little to no performance gain due to the heavy usage of intrinsics. */ \
 		__pragma(float_control(precise, on, push))
 
 	#define RTM_IMPL_FILE_PRAGMA_POP \
 		__pragma(float_control(pop))
+#elif defined(RTM_COMPILER_CLANG) && 0
+	// For some reason, clang doesn't appear to support disabling fast-math through pragmas
+	// See: https://github.com/llvm/llvm-project/issues/55392
+	#define RTM_IMPL_FILE_PRAGMA_PUSH \
+		_Pragma("float_control(precise, on, push)")
+
+	#define RTM_IMPL_FILE_PRAGMA_POP \
+		_Pragma("float_control(pop)")
+#elif defined(RTM_COMPILER_GCC)
+	#define RTM_IMPL_FILE_PRAGMA_PUSH \
+		_Pragma("GCC push_options") \
+		_Pragma("GCC optimize (\"no-fast-math\")")
+
+	#define RTM_IMPL_FILE_PRAGMA_POP \
+		_Pragma("GCC pop_options")
 #else
 	#define RTM_IMPL_FILE_PRAGMA_PUSH
 	#define RTM_IMPL_FILE_PRAGMA_POP
