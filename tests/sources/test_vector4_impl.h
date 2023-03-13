@@ -1114,8 +1114,15 @@ void test_vector4_impl(const FloatType threshold)
 
 	const FloatType inf = std::numeric_limits<FloatType>::infinity();
 	const FloatType nan = std::numeric_limits<FloatType>::quiet_NaN();
+
+	CHECK((mask_get_x(vector_finite(vector_set(FloatType(1.0), inf, nan, -inf))) != 0) == scalar_is_finite(FloatType(1.0)));
+	CHECK((mask_get_y(vector_finite(vector_set(FloatType(1.0), inf, nan, -inf))) != 0) == scalar_is_finite(inf));
+	CHECK((mask_get_z(vector_finite(vector_set(FloatType(1.0), inf, nan, -inf))) != 0) == scalar_is_finite(nan));
+	CHECK((mask_get_w(vector_finite(vector_set(FloatType(1.0), inf, nan, -inf))) != 0) == scalar_is_finite(-inf));
+
 	CHECK(vector_is_finite(zero) == true);
 	CHECK(vector_is_finite(vector_set(inf, inf, inf, inf)) == false);
+	CHECK(vector_is_finite(vector_set(-inf, -inf, -inf, -inf)) == false);
 	CHECK(vector_is_finite(vector_set(inf, FloatType(1.0), FloatType(1.0), FloatType(1.0))) == false);
 	CHECK(vector_is_finite(vector_set(FloatType(1.0), FloatType(inf), FloatType(1.0), FloatType(1.0))) == false);
 	CHECK(vector_is_finite(vector_set(FloatType(1.0), FloatType(1.0), FloatType(inf), FloatType(1.0))) == false);
@@ -1128,6 +1135,7 @@ void test_vector4_impl(const FloatType threshold)
 
 	CHECK(vector_is_finite2(zero) == true);
 	CHECK(vector_is_finite2(vector_set(inf, inf, inf, inf)) == false);
+	CHECK(vector_is_finite2(vector_set(-inf, -inf, -inf, -inf)) == false);
 	CHECK(vector_is_finite2(vector_set(inf, FloatType(1.0), FloatType(1.0), FloatType(1.0))) == false);
 	CHECK(vector_is_finite2(vector_set(FloatType(1.0), FloatType(inf), FloatType(1.0), FloatType(1.0))) == false);
 	CHECK(vector_is_finite2(vector_set(FloatType(1.0), FloatType(1.0), FloatType(inf), FloatType(1.0))) == true);
@@ -1140,6 +1148,7 @@ void test_vector4_impl(const FloatType threshold)
 
 	CHECK(vector_is_finite3(zero) == true);
 	CHECK(vector_is_finite3(vector_set(inf, inf, inf, inf)) == false);
+	CHECK(vector_is_finite3(vector_set(-inf, -inf, -inf, -inf)) == false);
 	CHECK(vector_is_finite3(vector_set(inf, FloatType(1.0), FloatType(1.0), FloatType(1.0))) == false);
 	CHECK(vector_is_finite3(vector_set(FloatType(1.0), FloatType(inf), FloatType(1.0), FloatType(1.0))) == false);
 	CHECK(vector_is_finite3(vector_set(FloatType(1.0), FloatType(1.0), FloatType(inf), FloatType(1.0))) == false);
