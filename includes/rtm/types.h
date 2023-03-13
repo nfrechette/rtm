@@ -130,7 +130,7 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	// A 4x32 bit vector comparison mask for 32 bit floats: ~0 if true, 0 otherwise.
 	//////////////////////////////////////////////////////////////////////////
-	using mask4f = float32x4_t;
+	using mask4f = uint32x4_t;
 
 	//////////////////////////////////////////////////////////////////////////
 	// A 4x64 bit vector comparison mask for 64 bit floats: ~0 if true, 0 otherwise.
@@ -143,9 +143,9 @@ namespace rtm
 		uint64_t w;
 	};
 
-#if defined(RTM_COMPILER_MSVC)
 	// MSVC uses a simple typedef to an identical underlying type for uint32x4_t and float32x4_t
-	// To avoid issues of duplicate symbols, we introduce a concrete type
+	// We also want two different types for mask4f and mask4i and mask4f is more commonly used
+	// To avoid issues of duplicate symbols, we introduce a concrete type for mask4i
 
 	//////////////////////////////////////////////////////////////////////////
 	// A 4x32 bit vector comparison mask for 32 bit integers: ~0 if true, 0 otherwise.
@@ -158,16 +158,6 @@ namespace rtm
 	// Helper macros to simplify usage
 	#define RTM_IMPL_MASK4i_GET(mask) mask.value
 	#define RTM_IMPL_MASK4i_SET(mask) mask4i{ mask }
-#else
-	//////////////////////////////////////////////////////////////////////////
-	// A 4x32 bit vector comparison mask: ~0 if true, 0 otherwise.
-	//////////////////////////////////////////////////////////////////////////
-	using mask4i = uint32x4_t;
-
-	// Helper macros to simplify usage
-	#define RTM_IMPL_MASK4i_GET(mask) mask
-	#define RTM_IMPL_MASK4i_SET(mask) mask
-#endif
 
 	//////////////////////////////////////////////////////////////////////////
 	// A 4x64 bit vector comparison mask for 64 bit integers: ~0 if true, 0 otherwise.
