@@ -148,7 +148,7 @@ namespace rtm
 	// To avoid issues of duplicate symbols, we introduce a concrete type
 
 	//////////////////////////////////////////////////////////////////////////
-	// A 4x32 bit vector comparison mask: ~0 if true, 0 otherwise.
+	// A 4x32 bit vector comparison mask for 32 bit integers: ~0 if true, 0 otherwise.
 	//////////////////////////////////////////////////////////////////////////
 	struct alignas(16) mask4i
 	{
@@ -170,7 +170,7 @@ namespace rtm
 #endif
 
 	//////////////////////////////////////////////////////////////////////////
-	// A 4x64 bit vector comparison mask: ~0 if true, 0 otherwise.
+	// A 4x64 bit vector comparison mask for 64 bit integers: ~0 if true, 0 otherwise.
 	//////////////////////////////////////////////////////////////////////////
 	struct alignas(16) mask4q
 	{
