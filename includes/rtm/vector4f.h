@@ -2356,6 +2356,13 @@ namespace rtm
 
 		__m128 is_finite = _mm_andnot_ps(is_nan, is_not_infinity);
 		return is_finite;
+#elif defined(RTM_NEON_INTRINSICS)
+		const float32x4_t abs_input = vabsq_f32(input);
+		const float32x4_t infinity = vdupq_n_f32(std::numeric_limits<float>::infinity());
+		const uint32x4_t is_not_infinity = vmvnq_u32(vceqq_f32(abs_input, infinity));
+		const uint32x4_t is_not_nan = vceqq_f32(input, input);
+		const uint32x4_t is_finite = vandq_u32(is_not_infinity, is_not_nan);
+		return is_finite;
 #else
 		return mask4f{
 			rtm_impl::get_mask_value(scalar_is_finite(vector_get_x(input))),
