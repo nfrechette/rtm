@@ -1861,10 +1861,9 @@ namespace rtm
 		__m128d is_nan_xy = _mm_cmpneq_pd(input.xy, input.xy);
 		__m128d is_nan_zw = _mm_cmpneq_pd(input.zw, input.zw);
 
-		__m128d is_finite_xy = _mm_andnot_pd(is_nan_xy, is_infinity_xy);
-		__m128d is_finite_zw = _mm_andnot_pd(is_nan_zw, is_infinity_zw);
-		__m128d is_finite = _mm_and_pd(is_finite_xy, is_finite_zw);
-		return is_finite;
+		__m128d is_finite_xy = _mm_andnot_pd(is_nan_xy, is_not_infinity_xy);
+		__m128d is_finite_zw = _mm_andnot_pd(is_nan_zw, is_not_infinity_zw);
+		return mask4d{ is_finite_xy, is_finite_zw };
 #else
 		return mask4d{
 			rtm_impl::get_mask_value(scalar_is_finite(vector_get_x(input))),
