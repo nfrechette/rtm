@@ -78,7 +78,14 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE vector4f RTM_SIMD_CALL vector_load2(const float* input) RTM_NO_EXCEPT
 	{
+#if defined(RTM_SSE2_INTRINSICS)
+		return _mm_castpd_ps(_mm_load_sd(reinterpret_cast<const double*>(input)));
+#elif defined(RTM_NEON_INTRINSICS)
+		const float32x2_t xy = vld1_f32(input);
+		return vcombine_f32(xy, vdup_n_f32(0.0F));
+#else
 		return vector_set(input[0], input[1], 0.0F, 0.0F);
+#endif
 	}
 
 	//////////////////////////////////////////////////////////////////////////
@@ -86,7 +93,17 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE vector4f RTM_SIMD_CALL vector_load3(const float* input) RTM_NO_EXCEPT
 	{
+#if defined(RTM_SSE2_INTRINSICS)
+		const __m128 xy = _mm_castpd_ps(_mm_load_sd(reinterpret_cast<const double*>(input)));
+		const __m128 z = _mm_load_ss(input + 2);
+		return _mm_movehl_ps(xy, z);
+#elif defined(RTM_NEON_INTRINSICS)
+		const float32x2_t xy = vld1_f32(input);
+		const float32x2_t z = vld1_lane_f32(input + 2, vdup_n_f32(0.0F), 0);
+		return vcombine_f32(xy, z);
+#else
 		return vector_set(input[0], input[1], input[2], 0.0F);
+#endif
 	}
 
 	//////////////////////////////////////////////////////////////////////////
@@ -108,7 +125,14 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE vector4f RTM_SIMD_CALL vector_load2(const float2f* input) RTM_NO_EXCEPT
 	{
+#if defined(RTM_SSE2_INTRINSICS)
+		return _mm_castpd_ps(_mm_load_sd(reinterpret_cast<const double*>(&input->x)));
+#elif defined(RTM_NEON_INTRINSICS)
+		const float32x2_t xy = vld1_f32(&input->x);
+		return vcombine_f32(xy, vdup_n_f32(0.0F));
+#else
 		return vector_set(input->x, input->y, 0.0F, 0.0F);
+#endif
 	}
 
 	//////////////////////////////////////////////////////////////////////////
@@ -116,7 +140,17 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE vector4f RTM_SIMD_CALL vector_load3(const float3f* input) RTM_NO_EXCEPT
 	{
+#if defined(RTM_SSE2_INTRINSICS)
+		const __m128 xy = _mm_castpd_ps(_mm_load_sd(reinterpret_cast<const double*>(&input->x)));
+		const __m128 z = _mm_load_ss(&input->z);
+		return _mm_movehl_ps(xy, z);
+#elif defined(RTM_NEON_INTRINSICS)
+		const float32x2_t xy = vld1_f32(&input->x);
+		const float32x2_t z = vld1_lane_f32(&input->z, vdup_n_f32(0.0F), 0);
+		return vcombine_f32(xy, z);
+#else
 		return vector_set(input->x, input->y, input->z, 0.0F);
+#endif
 	}
 
 	//////////////////////////////////////////////////////////////////////////
