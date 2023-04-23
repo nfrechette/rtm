@@ -1,8 +1,6 @@
 cmake_minimum_required(VERSION 3.2)
 project(rtm_bench CXX)
 
-set(CMAKE_CXX_STANDARD 11)
-
 # Project root is <rtm-dir>\tools\bench\main_android
 set(PROJECT_ROOT_DIR "${PROJECT_SOURCE_DIR}/../../../..")
 

@@ -13,7 +13,8 @@ android {
         externalNativeBuild {
             cmake {
                 arguments '-DUSE_SIMD_INSTRUCTIONS=@USE_SIMD_INSTRUCTIONS@',
-                          '-DWITH_VECTOR_MIX_TESTS=@WITH_VECTOR_MIX_TESTS@'
+                          '-DWITH_VECTOR_MIX_TESTS=@WITH_VECTOR_MIX_TESTS@',
+                          '-DCMAKE_CXX_STANDARD=@CMAKE_CXX_STANDARD@'
             }
         }
         ndk {

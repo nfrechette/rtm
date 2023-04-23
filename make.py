@@ -22,6 +22,7 @@ def parse_argv():
 	target.add_argument('-compiler', choices=['vs2015', 'vs2017', 'vs2019', 'vs2019-clang', 'vs2022', 'vs2022-clang', 'android', 'clang4', 'clang5', 'clang6', 'clang7', 'clang8', 'clang9', 'clang10', 'clang11', 'clang12', 'clang13', 'clang14', 'clang15', 'gcc5', 'gcc6', 'gcc7', 'gcc8', 'gcc9', 'gcc10', 'gcc11', 'gcc12', 'gcc13', 'osx', 'ios', 'emscripten'], help='Defaults to the host system\'s default compiler')
 	target.add_argument('-config', choices=['Debug', 'Release'], type=str.capitalize)
 	target.add_argument('-cpu', choices=['x86', 'x64', 'armv7', 'arm64', 'wasm'], help='Defaults to the host system\'s architecture')
+	target.add_argument('-cpp_version', choices=['11', '14', '17', '20'], help='Defaults to C++11')
 
 	misc = parser.add_argument_group(title='Miscellaneous')
 	misc.add_argument('-avx', dest='use_avx', action='store_true', help='Compile using AVX instructions on Windows, OS X, and Linux')
@@ -41,7 +42,7 @@ def parse_argv():
 		num_threads = 4
 
 	parser.set_defaults(build=False, clean=False, clean_only=False, unit_test=False,
-		compiler=None, config='Release', cpu=None, use_avx=False, use_avx2=False, use_simd=True, num_threads=num_threads, tests_matching='', vector_mix_test=False,
+		compiler=None, config='Release', cpu=None, cpp_version='11', use_avx=False, use_avx2=False, use_simd=True, num_threads=num_threads, tests_matching='', vector_mix_test=False,
 		bench=False, run_bench=False, pull_bench=False)
 
 	args = parser.parse_args()
@@ -304,6 +305,7 @@ def do_generate_solution(build_dir, cmake_script_dir, args):
 
 	extra_switches = ['--no-warn-unused-cli']
 	extra_switches.append('-DCPU_INSTRUCTION_SET:STRING={}'.format(cpu))
+	extra_switches.append('-DCMAKE_CXX_STANDARD:STRING={}'.format(args.cpp_version))
 
 	if args.use_avx:
 		print('Enabling AVX usage')
@@ -526,6 +528,7 @@ if __name__ == "__main__":
 	print('Using cpu: {}'.format(args.cpu))
 	if args.compiler:
 		print('Using compiler: {}'.format(args.compiler))
+	print('Using C++-{}'.format(args.cpp_version))
 	print('Using {} threads'.format(args.num_threads))
 
 	# Make sure 'make' runs with all available cores
