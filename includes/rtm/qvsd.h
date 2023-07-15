@@ -264,7 +264,7 @@ namespace rtm
 		const quatd rotation = quat_slerp(start.rotation, end.rotation, alpha);
 		const vector4d translation_scale_lerp = vector_lerp(start.translation_scale, end.translation_scale, alpha);
 		const vector4d translation_scale = vector_mix<mix4::x, mix4::y, mix4::z, mix4::d>(translation_scale_lerp, start.translation_scale);
-		return qvsf{ rotation, translation_scale };
+		return qvsd{ rotation, translation_scale };
 	}
 #endif
 
