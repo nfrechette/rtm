@@ -74,7 +74,7 @@ namespace rtm
 	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE qvsd RTM_SIMD_CALL qvs_set(const quatd& rotation, const vector4d& translation, const scalard& scale) RTM_NO_EXCEPT
 	{
 		const vector4d translation_scale = vector_set_w(translation, scale);
-		return qvsf{ rotation, translation_scale };
+		return qvsd{ rotation, translation_scale };
 	}
 #endif
 
