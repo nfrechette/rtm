@@ -28,6 +28,7 @@
 #include "rtm/math.h"
 #include "rtm/matrix3x3d.h"
 #include "rtm/quatd.h"
+#include "rtm/qvsd.h"
 #include "rtm/vector4d.h"
 #include "rtm/version.h"
 #include "rtm/impl/compiler_utils.h"
@@ -88,6 +89,42 @@ namespace rtm
 	RTM_DISABLE_SECURITY_COOKIE_CHECK inline matrix3x4d matrix_from_qv(const qvd& transform) RTM_NO_EXCEPT
 	{
 		return matrix_from_qv(transform.rotation, transform.translation);
+	}
+
+	//////////////////////////////////////////////////////////////////////////
+	// Sets a 3x4 affine matrix from a rotation quaternion, translation, and scalar scale.
+	//////////////////////////////////////////////////////////////////////////
+	RTM_DISABLE_SECURITY_COOKIE_CHECK inline matrix3x4d matrix_from_qvs(const quatd& quat, const vector4d& translation, double scale) RTM_NO_EXCEPT
+	{
+		RTM_ASSERT(quat_is_normalized(quat), "Quaternion is not normalized");
+
+		const double x2 = quat_get_x(quat) + quat_get_x(quat);
+		const double y2 = quat_get_y(quat) + quat_get_y(quat);
+		const double z2 = quat_get_z(quat) + quat_get_z(quat);
+		const double xx = quat_get_x(quat) * x2;
+		const double xy = quat_get_x(quat) * y2;
+		const double xz = quat_get_x(quat) * z2;
+		const double yy = quat_get_y(quat) * y2;
+		const double yz = quat_get_y(quat) * z2;
+		const double zz = quat_get_z(quat) * z2;
+		const double wx = quat_get_w(quat) * x2;
+		const double wy = quat_get_w(quat) * y2;
+		const double wz = quat_get_w(quat) * z2;
+
+		const scalard scale_s = scalar_set(scale);
+
+		const vector4d x_axis = vector_mul(vector_set(1.0 - (yy + zz), xy + wz, xz - wy, 0.0), scale_s);
+		const vector4d y_axis = vector_mul(vector_set(xy - wz, 1.0 - (xx + zz), yz + wx, 0.0), scale_s);
+		const vector4d z_axis = vector_mul(vector_set(xz + wy, yz - wx, 1.0 - (xx + yy), 0.0), scale_s);
+		return matrix3x4d{ x_axis, y_axis, z_axis, translation };
+	}
+
+	//////////////////////////////////////////////////////////////////////////
+	// Converts a QVS transform into a 3x4 affine matrix.
+	//////////////////////////////////////////////////////////////////////////
+	RTM_DISABLE_SECURITY_COOKIE_CHECK inline matrix3x4d matrix_from_qvs(const qvsd& transform) RTM_NO_EXCEPT
+	{
+		return matrix_from_qvs(transform.rotation, transform.translation_scale, qvs_get_scale(transform));
 	}
 
 	//////////////////////////////////////////////////////////////////////////

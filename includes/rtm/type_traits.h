@@ -47,6 +47,7 @@ namespace rtm
 		using quat = quatf;
 
 		using qv = qvf;
+		using qvs = qvsf;
 		using qvv = qvvf;
 
 		using matrix3x3 = matrix3x3f;
@@ -71,6 +72,7 @@ namespace rtm
 		using quat = quatd;
 
 		using qv = qvd;
+		using qvs = qvsd;
 		using qvv = qvvd;
 
 		using matrix3x3 = matrix3x3d;
