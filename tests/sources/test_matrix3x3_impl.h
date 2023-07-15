@@ -212,6 +212,18 @@ static void test_matrix3x3_misc(const FloatType threshold)
 	{
 		QuatType rotation_around_z = quat_from_euler(scalar_deg_to_rad(FloatType(0.0)), scalar_deg_to_rad(FloatType(90.0)), scalar_deg_to_rad(FloatType(0.0)));
 		Vector4Type translation = vector_set(FloatType(1.0), FloatType(2.0), FloatType(3.0));
+		FloatType scale = FloatType(4.0);
+		Matrix3x4Type mtx0_3x4 = matrix_from_qvs(rotation_around_z, translation, scale);
+		Matrix3x3Type mtx0 = matrix_cast(mtx0_3x4);
+		Matrix3x3Type mtx0_no_scale = matrix_remove_scale(mtx0);
+		CHECK(vector_all_near_equal3(vector_set(FloatType(0.0), FloatType(1.0), FloatType(0.0)), mtx0_no_scale.x_axis, threshold));
+		CHECK(vector_all_near_equal3(vector_set(FloatType(-1.0), FloatType(0.0), FloatType(0.0)), mtx0_no_scale.y_axis, threshold));
+		CHECK(vector_all_near_equal3(vector_set(FloatType(0.0), FloatType(0.0), FloatType(1.0)), mtx0_no_scale.z_axis, threshold));
+	}
+
+	{
+		QuatType rotation_around_z = quat_from_euler(scalar_deg_to_rad(FloatType(0.0)), scalar_deg_to_rad(FloatType(90.0)), scalar_deg_to_rad(FloatType(0.0)));
+		Vector4Type translation = vector_set(FloatType(1.0), FloatType(2.0), FloatType(3.0));
 		Vector4Type scale = vector_set(FloatType(4.0), FloatType(5.0), FloatType(6.0));
 		Matrix3x4Type mtx0_3x4 = matrix_from_qvv(rotation_around_z, translation, scale);
 		Matrix3x3Type mtx0 = matrix_cast(mtx0_3x4);

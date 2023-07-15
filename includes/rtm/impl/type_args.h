@@ -94,6 +94,10 @@ namespace rtm
 	using qvf_arg1 = const qvf;
 	using qvf_argn = const qvf&;
 
+	using qvsf_arg0 = const qvsf;
+	using qvsf_arg1 = const qvsf;
+	using qvsf_argn = const qvsf&;
+
 	using qvvf_arg0 = const qvvf;
 	using qvvf_arg1 = const qvvf;
 	using qvvf_argn = const qvvf&;
@@ -171,6 +175,10 @@ namespace rtm
 	using qvf_arg1 = const qvf;
 	using qvf_argn = const qvf&;
 
+	using qvsf_arg0 = const qvsf;
+	using qvsf_arg1 = const qvsf;
+	using qvsf_argn = const qvsf&;
+
 	using qvvf_arg0 = const qvvf;
 	using qvvf_arg1 = const qvvf;
 	using qvvf_argn = const qvvf&;
@@ -246,6 +254,10 @@ namespace rtm
 	using qvf_arg1 = const qvf&;
 	using qvf_argn = const qvf&;
 
+	using qvsf_arg0 = const qvsf&;
+	using qvsf_arg1 = const qvsf&;
+	using qvsf_argn = const qvsf&;
+
 	using qvvf_arg0 = const qvvf&;
 	using qvvf_arg1 = const qvvf&;
 	using qvvf_argn = const qvvf&;
@@ -320,6 +332,10 @@ namespace rtm
 	using qvf_arg0 = const qvf&;
 	using qvf_arg1 = const qvf&;
 	using qvf_argn = const qvf&;
+
+	using qvsf_arg0 = const qvsf&;
+	using qvsf_arg1 = const qvsf&;
+	using qvsf_argn = const qvsf&;
 
 	using qvvf_arg0 = const qvvf&;
 	using qvvf_arg1 = const qvvf&;
@@ -401,6 +417,10 @@ namespace rtm
 	using qvf_arg1 = const qvf&;
 	using qvf_argn = const qvf&;
 
+	using qvsf_arg0 = const qvsf&;
+	using qvsf_arg1 = const qvsf&;
+	using qvsf_argn = const qvsf&;
+
 	using qvvf_arg0 = const qvvf&;
 	using qvvf_arg1 = const qvvf&;
 	using qvvf_argn = const qvvf&;
@@ -471,6 +491,10 @@ namespace rtm
 	using qvf_arg0 = const qvf&;
 	using qvf_arg1 = const qvf&;
 	using qvf_argn = const qvf&;
+
+	using qvsf_arg0 = const qvsf&;
+	using qvsf_arg1 = const qvsf&;
+	using qvsf_argn = const qvsf&;
 
 	using qvvf_arg0 = const qvvf&;
 	using qvvf_arg1 = const qvvf&;
