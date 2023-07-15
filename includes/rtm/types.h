@@ -346,7 +346,7 @@ namespace rtm
 	struct qvf
 	{
 		quatf		rotation;
-		vector4f	translation;
+		vector4f	translation;	// [w] is undefined
 	};
 
 	//////////////////////////////////////////////////////////////////////////
@@ -355,7 +355,7 @@ namespace rtm
 	struct qvd
 	{
 		quatd		rotation;
-		vector4d	translation;
+		vector4d	translation;	// [w] is undefined
 	};
 
 	//////////////////////////////////////////////////////////////////////////
@@ -367,8 +367,8 @@ namespace rtm
 	struct qvvf
 	{
 		quatf		rotation;
-		vector4f	translation;
-		vector4f	scale;
+		vector4f	translation;	// [w] is undefined
+		vector4f	scale;			// [w] is undefined
 	};
 
 	//////////////////////////////////////////////////////////////////////////
@@ -380,8 +380,8 @@ namespace rtm
 	struct qvvd
 	{
 		quatd		rotation;
-		vector4d	translation;
-		vector4d	scale;
+		vector4d	translation;	// [w] is undefined
+		vector4d	scale;			// [w] is undefined
 	};
 
 	//////////////////////////////////////////////////////////////////////////
