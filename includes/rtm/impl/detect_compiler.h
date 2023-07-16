@@ -37,6 +37,7 @@
 	#define RTM_COMPILER_MSVC_2015	1900
 	#define RTM_COMPILER_MSVC_2017	1910
 	#define RTM_COMPILER_MSVC_2019	1920
+	#define RTM_COMPILER_MSVC_2022	1930
 
 	#if RTM_COMPILER_MSVC < RTM_COMPILER_MSVC_2015
 		#pragma message("Warning: This version of visual studio isn't officially supported")
