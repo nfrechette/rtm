@@ -155,12 +155,14 @@ static void test_qvs_impl(const TransformType& identity, const FloatType thresho
 		Vector4Type x_axis = vector_set(FloatType(1.0), FloatType(0.0), FloatType(0.0));
 		QuatType rotation_around_z = quat_from_euler(scalar_deg_to_rad(FloatType(0.0)), scalar_deg_to_rad(FloatType(90.0)), scalar_deg_to_rad(FloatType(0.0)));
 		TransformType transform_a = qvs_set(rotation_around_z, x_axis, FloatType(1.0));
-		CHECK(quat_is_normalized(qvs_normalize(transform_a).rotation, threshold));
+		transform_a = qvs_normalize(transform_a);
+		CHECK(quat_is_normalized(transform_a.rotation, threshold));
 
 		QuatType quat = quat_set(FloatType(-0.001138), FloatType(0.91623), FloatType(-1.624598), FloatType(0.715671));
 		TransformType transform_b = qvs_set(quat, x_axis, FloatType(1.0));
 		CHECK(!quat_is_normalized(transform_b.rotation, threshold));
-		CHECK(quat_is_normalized(qvs_normalize(transform_b).rotation, threshold));
+		transform_b = qvs_normalize(transform_b);
+		CHECK(quat_is_normalized(transform_b.rotation, threshold));
 	}
 
 	{
