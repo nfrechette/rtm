@@ -33,6 +33,8 @@
 #include "rtm/impl/scalar_common.h"
 
 #include <algorithm>
+#include <cmath>
+#include <limits>
 
 RTM_IMPL_FILE_PRAGMA_PUSH
 

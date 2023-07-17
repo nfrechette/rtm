@@ -33,6 +33,8 @@
 #include "rtm/impl/memory_utils.h"
 #include "rtm/impl/quat_common.h"
 
+#include <limits>
+
 RTM_IMPL_FILE_PRAGMA_PUSH
 
 namespace rtm

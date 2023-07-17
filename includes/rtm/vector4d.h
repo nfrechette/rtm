@@ -32,6 +32,9 @@
 #include "rtm/impl/memory_utils.h"
 #include "rtm/impl/vector_common.h"
 
+#include <cstring>
+#include <limits>
+
 RTM_IMPL_FILE_PRAGMA_PUSH
 
 namespace rtm
