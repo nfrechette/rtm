@@ -42,7 +42,7 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	// Casts a QVV transform float32 variant to a float64 variant.
 	//////////////////////////////////////////////////////////////////////////
-	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE qvvd qvv_cast(const qvvf& input) RTM_NO_EXCEPT
+	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE qvvd RTM_SIMD_CALL qvv_cast(qvvf_arg0 input) RTM_NO_EXCEPT
 	{
 		return qvvd{ quat_cast(input.rotation), vector_cast(input.translation), vector_cast(input.scale) };
 	}
