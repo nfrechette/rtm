@@ -124,11 +124,28 @@ namespace rtm
 
 	//////////////////////////////////////////////////////////////////////////
 	// Returns the inverse of the input QVV transform.
+	// If zero scale is contained, the result is undefined.
+	// For a safe alternative, supply a fallback scale value and a threshold.
 	//////////////////////////////////////////////////////////////////////////
 	RTM_DISABLE_SECURITY_COOKIE_CHECK inline qvvf RTM_SIMD_CALL qvv_inverse(qvvf_arg0 input) RTM_NO_EXCEPT
 	{
 		const quatf inv_rotation = quat_conjugate(input.rotation);
 		const vector4f inv_scale = vector_reciprocal(input.scale);
+		const vector4f inv_translation = vector_neg(quat_mul_vector3(vector_mul(input.translation, inv_scale), inv_rotation));
+		return qvv_set(inv_rotation, inv_translation, inv_scale);
+	}
+
+	//////////////////////////////////////////////////////////////////////////
+	// Returns the inverse of the input QVV transform.
+	// If the input scale has an absolute value below the supplied threshold, the
+	// fallback value is used instead.
+	//////////////////////////////////////////////////////////////////////////
+	RTM_DISABLE_SECURITY_COOKIE_CHECK inline qvvf RTM_SIMD_CALL qvv_inverse(qvvf_arg0 input, vector4f_arg3 fallback_scale, float threshold = 1.0E-8F) RTM_NO_EXCEPT
+	{
+		const quatf inv_rotation = quat_conjugate(input.rotation);
+		const mask4f is_scale_zero = vector_less_equal(vector_abs(input.scale), vector_set(threshold));
+		const vector4f scale = vector_select(is_scale_zero, fallback_scale, input.scale);
+		const vector4f inv_scale = vector_reciprocal(scale);
 		const vector4f inv_translation = vector_neg(quat_mul_vector3(vector_mul(input.translation, inv_scale), inv_rotation));
 		return qvv_set(inv_rotation, inv_translation, inv_scale);
 	}
