@@ -44,7 +44,7 @@ static void test_qvs_impl(const TransformType& identity, const FloatType thresho
 		TransformType tmp = qvs_set(q_identity, zero, one);
 		CHECK(quat_near_equal(identity.rotation, tmp.rotation, threshold));
 		CHECK(vector_all_near_equal(identity.translation_scale, tmp.translation_scale, threshold));
-		CHECK(quat_near_equal(q_identity, tmp.rotation, threshold));
+		CHECK(quat_near_equal(q_identity, qvs_get_rotation(tmp), threshold));
 		CHECK(vector_all_near_equal3(zero, qvs_get_translation(tmp), threshold));
 		CHECK(scalar_near_equal(one, qvs_get_scale(tmp), threshold));
 	}
