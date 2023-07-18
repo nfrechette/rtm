@@ -38,7 +38,7 @@ namespace rtm
 	RTM_IMPL_VERSION_NAMESPACE_BEGIN
 
 	//////////////////////////////////////////////////////////////////////////
-	// Casts a QVS transform float64 variant to a float32 variant.
+	// Casts a QVS transform float32 variant to a float64 variant.
 	//////////////////////////////////////////////////////////////////////////
 	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE qvsd RTM_SIMD_CALL qvs_cast(qvsf_arg0 input) RTM_NO_EXCEPT
 	{
