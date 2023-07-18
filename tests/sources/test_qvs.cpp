@@ -122,6 +122,7 @@ static void test_qvs_impl(const TransformType& identity, const FloatType thresho
 		Vector4Type x_axis = vector_set(FloatType(1.0), FloatType(0.0), FloatType(0.0));
 		FloatType test_scale1 = FloatType(1.2);
 		FloatType test_scale2 = FloatType(-1.2);
+		FloatType test_scale3 = FloatType(0.0);
 
 		QuatType rotation_around_z = quat_from_euler(scalar_deg_to_rad(FloatType(0.0)), scalar_deg_to_rad(FloatType(90.0)), scalar_deg_to_rad(FloatType(0.0)));
 		TransformType transform_a = qvs_set(rotation_around_z, x_axis, test_scale1);
@@ -137,6 +138,10 @@ static void test_qvs_impl(const TransformType& identity, const FloatType thresho
 		CHECK(quat_near_equal(identity.rotation, transform_ab.rotation, threshold));
 		CHECK(vector_all_near_equal3(qvs_get_translation(identity), qvs_get_translation(transform_ab), threshold));
 		CHECK(scalar_near_equal(qvs_get_scale(identity), qvs_get_scale(transform_ab), threshold));
+
+		transform_a = qvs_set(rotation_around_z, x_axis, test_scale3);
+		transform_b = qvs_inverse(transform_a, FloatType(1.0));
+		CHECK(qvs_is_finite(transform_b));
 	}
 
 	{

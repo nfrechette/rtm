@@ -120,11 +120,31 @@ namespace rtm
 
 	//////////////////////////////////////////////////////////////////////////
 	// Returns the inverse of the input QVS transform.
+	// If zero scale is contained, the result is undefined.
+	// For a safe alternative, supply a fallback scale value and a threshold.
 	//////////////////////////////////////////////////////////////////////////
 	RTM_DISABLE_SECURITY_COOKIE_CHECK inline qvsf RTM_SIMD_CALL qvs_inverse(qvsf_arg0 input) RTM_NO_EXCEPT
 	{
 		const quatf inv_rotation = quat_conjugate(input.rotation);
 		const vector4f inv_scale_w = vector_reciprocal(input.translation_scale);
+		const vector4f inv_scale = vector_dup_w(inv_scale_w);
+		const vector4f inv_translation = vector_neg(quat_mul_vector3(vector_mul(input.translation_scale, inv_scale), inv_rotation));
+		const vector4f inv_translation_scale = vector_mix<mix4::x, mix4::y, mix4::z, mix4::d>(inv_translation, inv_scale_w);
+
+		return qvsf{ inv_rotation, inv_translation_scale };
+	}
+
+	//////////////////////////////////////////////////////////////////////////
+	// Returns the inverse of the input QVS transform.
+	// If the input scale has an absolute value below the supplied threshold, the
+	// fallback value is used instead.
+	//////////////////////////////////////////////////////////////////////////
+	RTM_DISABLE_SECURITY_COOKIE_CHECK inline qvsf RTM_SIMD_CALL qvs_inverse(qvsf_arg0 input, float fallback_scale, float threshold = 1.0E-8F) RTM_NO_EXCEPT
+	{
+		const quatf inv_rotation = quat_conjugate(input.rotation);
+		const mask4f is_scale_w_zero = vector_less_equal(vector_abs(input.translation_scale), vector_set(threshold));
+		const vector4f scale_w = vector_select(is_scale_w_zero, vector_set(fallback_scale), input.translation_scale);
+		const vector4f inv_scale_w = vector_reciprocal(scale_w);
 		const vector4f inv_scale = vector_dup_w(inv_scale_w);
 		const vector4f inv_translation = vector_neg(quat_mul_vector3(vector_mul(input.translation_scale, inv_scale), inv_rotation));
 		const vector4f inv_translation_scale = vector_mix<mix4::x, mix4::y, mix4::z, mix4::d>(inv_translation, inv_scale_w);
