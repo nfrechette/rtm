@@ -360,7 +360,7 @@ namespace rtm
 
 	//////////////////////////////////////////////////////////////////////////
 	// A QVS transform represents a 3D rotation (quaternion), a 3D translation (vector),
-	// and a single scalar scale value.
+	// and a single scalar uniform scale value.
 	//////////////////////////////////////////////////////////////////////////
 	struct qvsf
 	{
@@ -370,7 +370,7 @@ namespace rtm
 
 	//////////////////////////////////////////////////////////////////////////
 	// A QVS transform represents a 3D rotation (quaternion), a 3D translation (vector),
-	// and a single scalar scale value.
+	// and a single scalar uniform scale value.
 	//////////////////////////////////////////////////////////////////////////
 	struct qvsd
 	{
@@ -379,7 +379,7 @@ namespace rtm
 	};
 
 	//////////////////////////////////////////////////////////////////////////
-	// A QVV transform represents a 3D rotation (quaternion), 3D translation (vector), and 3D scale (vector).
+	// A QVV transform represents a 3D rotation (quaternion), 3D translation (vector), and 3D non-uniform scale (vector).
 	// It properly handles positive scaling but negative scaling is a bit more problematic.
 	// A best effort is made by converting the quaternion to a matrix during those operations.
 	// If scale fidelity is important, consider using an affine matrix 3x4 instead.
@@ -392,7 +392,7 @@ namespace rtm
 	};
 
 	//////////////////////////////////////////////////////////////////////////
-	// A QVV transform represents a 3D rotation (quaternion), 3D translation (vector), and 3D scale (vector).
+	// A QVV transform represents a 3D rotation (quaternion), 3D translation (vector), and 3D non-uniform scale (vector).
 	// It properly handles positive scaling but negative scaling is a bit more problematic.
 	// A best effort is made by converting the quaternion to a matrix during those operations.
 	// If scale fidelity is important, consider using an affine matrix 3x4 instead.
