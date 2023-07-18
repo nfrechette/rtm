@@ -46,6 +46,14 @@ namespace rtm
 	}
 
 	//////////////////////////////////////////////////////////////////////////
+	// Converts a QVVS transform into a QVS transform, stripping the non-uniform scale.
+	//////////////////////////////////////////////////////////////////////////
+	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE qvsf RTM_SIMD_CALL qvs_from_qvvs(qvvsf_arg0 input) RTM_NO_EXCEPT
+	{
+		return qvsf{ input.rotation, input.translation_uniform_scale };
+	}
+
+	//////////////////////////////////////////////////////////////////////////
 	// Returns the rotation part of a QVS transform.
 	//////////////////////////////////////////////////////////////////////////
 	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE quatf RTM_SIMD_CALL qvs_get_rotation(qvsf_arg0 input) RTM_NO_EXCEPT

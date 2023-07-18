@@ -405,6 +405,78 @@ namespace rtm
 	};
 
 	//////////////////////////////////////////////////////////////////////////
+	// A QVVS transform represents:
+	//    - A 3D rotation (quaternion), 3D translation (vector), and a single scalar uniform scale value.
+	//    - A 3D non-uniform scale (vector).
+	// It packages a QVS transform with a non-uniform local scale transform. The QVS portion behaves normaly
+	// and it combines through multiplication the way matrices would. However, the non-uniform local scale transform
+	// does not. The non-uniform scale applies only locally. This allows for local scaling in a joint chain
+	// without needing to compensate for it in children that do not wish to be scaled.
+	//////////////////////////////////////////////////////////////////////////
+	struct qvvsf
+	{
+		quatf		rotation;
+		vector4f	translation_uniform_scale;	// [xyz] for translation, [w] for scale
+		vector4f	non_uniform_scale;			// [w] is undefined
+	};
+
+	//////////////////////////////////////////////////////////////////////////
+	// A QVVS transform represents:
+	//    - A 3D rotation (quaternion), 3D translation (vector), and a single scalar uniform scale value.
+	//    - A 3D non-uniform scale (vector).
+	// It packages a QVS transform with a non-uniform local scale transform. The QVS portion behaves normaly
+	// and it combines through multiplication the way matrices would. However, the non-uniform local scale transform
+	// does not. The non-uniform scale applies only locally. This allows for local scaling in a joint chain
+	// without needing to compensate for it in children that do not wish to be scaled.
+	//
+	// Expressed in 3x4 matrix form, a QVVS represents:
+	//    - (Non-Uniform Scale Mtx) * (Uniform Scale Mtx) * (Translation Mtx) * (Rotation Mtx)
+	//    - NUS * US * R * T
+	// Multiplying by a vector3, we get:
+	//    - Point * (Non-Uniform Scale Mtx) * (Uniform Scale Mtx) * (Translation Mtx) * (Rotation Mtx)
+	//    - Point * NUS * US * R * T
+	// Multiplying two QVVS transforms, we get:
+	//    - (NUS0 * US0 * R0 * T0) * (NUS1 * US1 * R1 * T1)
+	// We want to represent this result as a QVVS.
+	// Translation is easy, we simply apply all the matrices that impact it to the right:
+	//    - T2 = T0 * NSU1 * US1 * R1 * T1
+	// It will factor in the uniform and non-uniform scale of the RHS, its rotation, and translation.
+	// Rotation needs to be a pure 3x3 rotation matrix where we leave the scale part separate:
+	//    - R2 = R0 * R1
+	// Uniform scale combines similarly:
+	//    - US2 = US0 * US1
+	// Non-uniform scale does not combine:
+	//    - NUS2 = NUS0
+	//
+	// Inverting a QVVS works as follows, using ' for inverse notation and ` for transpose notation:
+	//    - Transform' = (NUS * US * R * T)'
+	//    - T' * R' * US' * NUS' (per distribution)
+	//
+	// The inverse of a diagonal matrix is equivalent to a diagonal matrix with the reciprocal of each element.
+	// Under multiplication, diagonal matrices are communative (A * B = B * A).
+	// Our scale matrices are diagonal matrices.
+	//    - US' = inverted diagonal
+	//    - NUS' = inverted diagonal
+	//
+	// Pure rotation matrices are orthogonal and for them A' = A` (inverse equals transpose).
+	//    - R' = R` (transposed)
+	//
+	// Our translation matrix is the 3x4 identity where XYZ of the bottom row holds the translation. Its
+	// inverse is the negation of the XYZ translation part.
+	// Rearranging, we get:
+	//    - T' * R' * NUS' * US'
+	//
+	// Multiplying a QVVS with its inverse thus yields:
+	//    - (NUS * US * R * T) * (NUS1 * US1 * R1 * T1)
+	//////////////////////////////////////////////////////////////////////////
+	struct qvvsd
+	{
+		quatd		rotation;
+		vector4d	translation_uniform_scale;	// [xyz] for translation, [w] for scale
+		vector4d	non_uniform_scale;			// [w] is undefined
+	};
+
+	//////////////////////////////////////////////////////////////////////////
 	// A generic 3x3 matrix.
 	// Note: The [w] component of every column vector is undefined.
 	//////////////////////////////////////////////////////////////////////////

@@ -102,6 +102,10 @@ namespace rtm
 	using qvvf_arg1 = const qvvf;
 	using qvvf_argn = const qvvf&;
 
+	using qvvsf_arg0 = const qvvsf;
+	using qvvsf_arg1 = const qvvsf;
+	using qvvsf_argn = const qvvsf&;
+
 	using matrix3x3f_arg0 = const matrix3x3f;
 	using matrix3x3f_arg1 = const matrix3x3f&;
 	using matrix3x3f_argn = const matrix3x3f&;
@@ -183,6 +187,10 @@ namespace rtm
 	using qvvf_arg1 = const qvvf;
 	using qvvf_argn = const qvvf&;
 
+	using qvvsf_arg0 = const qvvsf;
+	using qvvsf_arg1 = const qvvsf;
+	using qvvsf_argn = const qvvsf&;
+
 	using matrix3x3f_arg0 = const matrix3x3f;
 	using matrix3x3f_arg1 = const matrix3x3f;
 	using matrix3x3f_argn = const matrix3x3f&;
@@ -262,6 +270,10 @@ namespace rtm
 	using qvvf_arg1 = const qvvf&;
 	using qvvf_argn = const qvvf&;
 
+	using qvvsf_arg0 = const qvvsf&;
+	using qvvsf_arg1 = const qvvsf&;
+	using qvvsf_argn = const qvvsf&;
+
 	using matrix3x3f_arg0 = const matrix3x3f&;
 	using matrix3x3f_arg1 = const matrix3x3f&;
 	using matrix3x3f_argn = const matrix3x3f&;
@@ -340,6 +352,10 @@ namespace rtm
 	using qvvf_arg0 = const qvvf&;
 	using qvvf_arg1 = const qvvf&;
 	using qvvf_argn = const qvvf&;
+
+	using qvvsf_arg0 = const qvvsf&;
+	using qvvsf_arg1 = const qvvsf&;
+	using qvvsf_argn = const qvvsf&;
 
 	using matrix3x3f_arg0 = const matrix3x3f&;
 	using matrix3x3f_arg1 = const matrix3x3f&;
@@ -425,6 +441,10 @@ namespace rtm
 	using qvvf_arg1 = const qvvf&;
 	using qvvf_argn = const qvvf&;
 
+	using qvvsf_arg0 = const qvvsf&;
+	using qvvsf_arg1 = const qvvsf&;
+	using qvvsf_argn = const qvvsf&;
+
 	using matrix3x3f_arg0 = const matrix3x3f&;
 	using matrix3x3f_arg1 = const matrix3x3f&;
 	using matrix3x3f_argn = const matrix3x3f&;
@@ -499,6 +519,10 @@ namespace rtm
 	using qvvf_arg0 = const qvvf&;
 	using qvvf_arg1 = const qvvf&;
 	using qvvf_argn = const qvvf&;
+
+	using qvvsf_arg0 = const qvvsf&;
+	using qvvsf_arg1 = const qvvsf&;
+	using qvvsf_argn = const qvvsf&;
 
 	using matrix3x3f_arg0 = const matrix3x3f&;
 	using matrix3x3f_arg1 = const matrix3x3f&;

@@ -40,6 +40,14 @@ A QVS represents an affine transform in three distinct parts: a rotation quatern
 
 A QVV represents an affine transform in three distinct parts: a rotation quaternion, a vector3 translation, and a vector3 non-uniform scale. This type is commonly used in video games as it is very fast to work with and more compact than a full affine matrix. It properly handles positive non-uniform scaling but negative scaling is a bit more problematic. A best effort is made by converting the quaternion to a matrix when necessary. If scale fidelity is important, consider using an affine matrix 3x4 instead. When multiplying transforms of this type, scale combines as it would with matrices.
 
+## QVVS (quaternion-vector-vector-scalar)
+
+A QVVS represents two affine transforms in four distinct parts:
+*  A rotation quaternion, a vector3 translation, and a scalar uniform scale
+*  A vector3 non-uniform scale
+
+This type isn't commonly used. The idea is to package a QVS along with a non-uniform 3D scale value. A very common use case for scale in video games (and other realtime graphics applications) is to use it to manipulate a single joint in a chain. For example, we might want to scale a whole arm by a factor of two by setting the scale accordingly on the shoulder joint. The scale then propagates along the chain when child joint transforms are multiplied with their parent transform. However, if we only want to scale part of the arm, the joint where scaling stops propagating needs to contain an inverse scale value to compensate. For small scale values, this is generally fine but issues arise when very small (near zero) or very large scale values are used. Scale propagation impacts both the scale and translation components and it can lead to loss of precision. To avoid this, the non-uniform scale value can be used to control scaling per joint without propagation: with QVVS, the uniform scale value propagates through multiplication while the non-uniform scale value does not. This allows for local joint scaling that does not impact the rest of the joint chain with no loss of precision. For that reason, scale does not combine as it would with matrices as a QVVS cannot be represented by a single matrix, we would need two: one for the local scale transformation, and another for the normal QVS transformation.
+
 ## Matrix 3x3
 
 A generic 3x3 matrix. Suitable to represent rotations mixed with 3D scale or anything else that might fit.

@@ -1,0 +1,320 @@
+////////////////////////////////////////////////////////////////////////////////
+// The MIT License (MIT)
+//
+// Copyright (c) 2023 Nicholas Frechette & Realtime Math contributors
+//
+// Permission is hereby granted, free of charge, to any person obtaining a copy
+// of this software and associated documentation files (the "Software"), to deal
+// in the Software without restriction, including without limitation the rights
+// to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+// copies of the Software, and to permit persons to whom the Software is
+// furnished to do so, subject to the following conditions:
+//
+// The above copyright notice and this permission notice shall be included in all
+// copies or substantial portions of the Software.
+//
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+// AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+// OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+// SOFTWARE.
+////////////////////////////////////////////////////////////////////////////////
+
+#include <catch2/catch.hpp>
+
+#include <rtm/qvvsf.h>
+#include <rtm/qvvsd.h>
+#include <rtm/type_traits.h>
+
+using namespace rtm;
+
+template<typename TransformType, typename FloatType>
+static void test_qvvs_impl(const TransformType& identity, const FloatType threshold)
+{
+	using QuatType = typename float_traits<FloatType>::quat;
+	using Vector4Type = typename float_traits<FloatType>::vector4;
+	//using ScalarType = typename float_traits<FloatType>::scalar;
+
+	{
+		Vector4Type zero = vector_set(FloatType(0.0));
+		Vector4Type one = vector_set(FloatType(1.0));
+		QuatType q_identity = quat_set(FloatType(0.0), FloatType(0.0), FloatType(0.0), FloatType(1.0));
+		TransformType tmp = qvvs_set(q_identity, zero, FloatType(1.0), one);
+		CHECK(quat_near_equal(identity.rotation, tmp.rotation, threshold));
+		CHECK(vector_all_near_equal(identity.translation_uniform_scale, tmp.translation_uniform_scale, threshold));
+		CHECK(vector_all_near_equal3(identity.non_uniform_scale, tmp.non_uniform_scale, threshold));
+		CHECK(quat_near_equal(q_identity, qvvs_get_rotation(tmp), threshold));
+		CHECK(vector_all_near_equal3(zero, qvvs_get_translation(tmp), threshold));
+		CHECK(scalar_near_equal(FloatType(1.0), qvvs_get_uniform_scale(tmp), threshold));
+		CHECK(vector_all_near_equal3(one, qvvs_get_non_uniform_scale(tmp), threshold));
+	}
+
+	{
+		Vector4Type x_axis = vector_set(FloatType(1.0), FloatType(0.0), FloatType(0.0));
+		Vector4Type y_axis = vector_set(FloatType(0.0), FloatType(1.0), FloatType(0.0));
+		FloatType test_uniform_scale = FloatType(1.1);
+		Vector4Type test_non_uniform_scale = vector_set(FloatType(1.2));
+
+		QuatType rotation_around_z = quat_from_euler(scalar_deg_to_rad(FloatType(0.0)), scalar_deg_to_rad(FloatType(90.0)), scalar_deg_to_rad(FloatType(0.0)));
+		TransformType transform_a = qvvs_set(rotation_around_z, x_axis, test_uniform_scale, test_non_uniform_scale);
+		Vector4Type result = qvvs_mul_point3(x_axis, transform_a);
+		CHECK(vector_all_near_equal3(result, vector_set(FloatType(1.0), FloatType(1.32), FloatType(0.0)), threshold));
+		result = qvvs_mul_point3(y_axis, transform_a);
+		CHECK(vector_all_near_equal3(result, vector_set(FloatType(-0.32), FloatType(0.0), FloatType(0.0)), threshold));
+
+		QuatType rotation_around_x = quat_from_euler(scalar_deg_to_rad(FloatType(0.0)), scalar_deg_to_rad(FloatType(0.0)), scalar_deg_to_rad(FloatType(90.0)));
+		TransformType transform_b = qvvs_set(rotation_around_x, y_axis, test_uniform_scale, test_non_uniform_scale);
+		result = qvvs_mul_point3(x_axis, transform_b);
+		CHECK(vector_all_near_equal3(result, vector_set(FloatType(1.32), FloatType(1.0), FloatType(0.0)), threshold));
+		result = qvvs_mul_point3(y_axis, transform_b);
+		CHECK(vector_all_near_equal3(result, vector_set(FloatType(0.0), FloatType(1.0), FloatType(-1.32)), threshold));
+
+		TransformType transform_ab = qvvs_mul(transform_a, transform_b);
+		TransformType transform_ba = qvvs_mul(transform_b, transform_a);
+		result = qvvs_mul_point3(x_axis, transform_ab);
+		CHECK(vector_all_near_equal3(result, vector_set(FloatType(1.1), FloatType(1.0), FloatType(-1.452)), threshold));
+		CHECK(vector_all_near_equal3(result, qvs_mul_point3(qvvs_mul_point3(x_axis, transform_a), qvs_from_qvvs(transform_b)), threshold));
+		result = qvvs_mul_point3(y_axis, transform_ab);
+		CHECK(vector_all_near_equal3(result, vector_set(FloatType(-0.352), FloatType(1.0), FloatType(0.0)), threshold));
+		CHECK(vector_all_near_equal3(result, qvs_mul_point3(qvvs_mul_point3(y_axis, transform_a), qvs_from_qvvs(transform_b)), threshold));
+		result = qvvs_mul_point3(x_axis, transform_ba);
+		CHECK(vector_all_near_equal3(result, vector_set(FloatType(-0.1), FloatType(1.452), FloatType(0.0)), threshold));
+		CHECK(vector_all_near_equal3(result, qvs_mul_point3(qvvs_mul_point3(x_axis, transform_b), qvs_from_qvvs(transform_a)), threshold));
+		result = qvvs_mul_point3(y_axis, transform_ba);
+		CHECK(vector_all_near_equal3(result, vector_set(FloatType(-0.1), FloatType(0.0), FloatType(-1.452)), threshold));
+		CHECK(vector_all_near_equal3(result, qvs_mul_point3(qvvs_mul_point3(y_axis, transform_b), qvs_from_qvvs(transform_a)), threshold));
+	}
+
+	{
+		Vector4Type x_axis = vector_set(FloatType(1.0), FloatType(0.0), FloatType(0.0));
+		Vector4Type y_axis = vector_set(FloatType(0.0), FloatType(1.0), FloatType(0.0));
+
+		QuatType rotation_around_z = quat_from_euler(scalar_deg_to_rad(FloatType(0.0)), scalar_deg_to_rad(FloatType(90.0)), scalar_deg_to_rad(FloatType(0.0)));
+		TransformType transform_a = qvvs_set(rotation_around_z, x_axis, FloatType(1.0), vector_set(FloatType(1.0)));
+		Vector4Type result = qvvs_mul_point3_no_scale(x_axis, transform_a);
+		CHECK(vector_all_near_equal3(result, vector_set(FloatType(1.0), FloatType(1.0), FloatType(0.0)), threshold));
+		result = qvvs_mul_point3_no_scale(y_axis, transform_a);
+		CHECK(vector_all_near_equal3(result, vector_set(FloatType(0.0), FloatType(0.0), FloatType(0.0)), threshold));
+
+		QuatType rotation_around_x = quat_from_euler(scalar_deg_to_rad(FloatType(0.0)), scalar_deg_to_rad(FloatType(0.0)), scalar_deg_to_rad(FloatType(90.0)));
+		TransformType transform_b = qvvs_set(rotation_around_x, y_axis, FloatType(1.0), vector_set(FloatType(1.0)));
+		result = qvvs_mul_point3_no_scale(x_axis, transform_b);
+		CHECK(vector_all_near_equal3(result, vector_set(FloatType(1.0), FloatType(1.0), FloatType(0.0)), threshold));
+		result = qvvs_mul_point3_no_scale(y_axis, transform_b);
+		CHECK(vector_all_near_equal3(result, vector_set(FloatType(0.0), FloatType(1.0), FloatType(-1.0)), threshold));
+
+		TransformType transform_ab = qvvs_mul_no_scale(transform_a, transform_b);
+		TransformType transform_ba = qvvs_mul_no_scale(transform_b, transform_a);
+		result = qvvs_mul_point3_no_scale(x_axis, transform_ab);
+		CHECK(vector_all_near_equal3(result, vector_set(FloatType(1.0), FloatType(1.0), FloatType(-1.0)), threshold));
+		CHECK(vector_all_near_equal3(result, qvvs_mul_point3_no_scale(qvvs_mul_point3_no_scale(x_axis, transform_a), transform_b), threshold));
+		result = qvvs_mul_point3_no_scale(y_axis, transform_ab);
+		CHECK(vector_all_near_equal3(result, vector_set(FloatType(0.0), FloatType(1.0), FloatType(0.0)), threshold));
+		CHECK(vector_all_near_equal3(result, qvvs_mul_point3_no_scale(qvvs_mul_point3_no_scale(y_axis, transform_a), transform_b), threshold));
+		result = qvvs_mul_point3_no_scale(x_axis, transform_ba);
+		CHECK(vector_all_near_equal3(result, vector_set(FloatType(0.0), FloatType(1.0), FloatType(0.0)), threshold));
+		CHECK(vector_all_near_equal3(result, qvvs_mul_point3_no_scale(qvvs_mul_point3_no_scale(x_axis, transform_b), transform_a), threshold));
+		result = qvvs_mul_point3_no_scale(y_axis, transform_ba);
+		CHECK(vector_all_near_equal3(result, vector_set(FloatType(0.0), FloatType(0.0), FloatType(-1.0)), threshold));
+		CHECK(vector_all_near_equal3(result, qvvs_mul_point3_no_scale(qvvs_mul_point3_no_scale(y_axis, transform_b), transform_a), threshold));
+	}
+
+	{
+		Vector4Type x_axis = vector_set(FloatType(1.0), FloatType(0.0), FloatType(0.0));
+		Vector4Type test_scale1 = vector_set(FloatType(1.2));
+		Vector4Type test_scale2 = vector_set(FloatType(-1.2));
+
+		QuatType rotation_around_z = quat_from_euler(scalar_deg_to_rad(FloatType(0.0)), scalar_deg_to_rad(FloatType(90.0)), scalar_deg_to_rad(FloatType(0.0)));
+		TransformType transform_a = qvvs_set(rotation_around_z, x_axis, FloatType(1.2), test_scale1);
+		TransformType transform_b = qvvs_inverse(transform_a);
+
+		Vector4Type result = qvvs_mul_point3(qvvs_mul_point3(x_axis, transform_a), transform_b);
+		CHECK(vector_all_near_equal3(x_axis, result, threshold));
+		TransformType transform_ab = qvvs_mul(transform_a, transform_b);
+		//{
+			INFO((FloatType)vector_get_x(qvvs_get_translation(transform_b)));
+			INFO((FloatType)vector_get_y(qvvs_get_translation(transform_b)));
+			INFO((FloatType)vector_get_z(qvvs_get_translation(transform_b)));
+			INFO((FloatType)qvvs_get_uniform_scale(transform_b));
+			INFO((FloatType)vector_get_x(qvvs_get_non_uniform_scale(transform_b)));
+			INFO((FloatType)vector_get_y(qvvs_get_non_uniform_scale(transform_b)));
+			INFO((FloatType)vector_get_z(qvvs_get_non_uniform_scale(transform_b)));
+		//}
+		//{
+			INFO((FloatType)vector_get_x(qvvs_get_translation(transform_ab)));
+			INFO((FloatType)vector_get_y(qvvs_get_translation(transform_ab)));
+			INFO((FloatType)vector_get_z(qvvs_get_translation(transform_ab)));
+			INFO((FloatType)qvvs_get_uniform_scale(transform_ab));
+			INFO((FloatType)vector_get_x(qvvs_get_non_uniform_scale(transform_ab)));
+			INFO((FloatType)vector_get_y(qvvs_get_non_uniform_scale(transform_ab)));
+			INFO((FloatType)vector_get_z(qvvs_get_non_uniform_scale(transform_ab)));
+		//}
+		CHECK(quat_near_equal(qvvs_get_rotation(identity), qvvs_get_rotation(transform_ab), threshold));
+		CHECK(vector_all_near_equal3(qvvs_get_translation(identity), qvvs_get_translation(transform_ab), threshold));
+		CHECK(scalar_near_equal(qvvs_get_uniform_scale(identity), qvvs_get_uniform_scale(transform_ab), threshold));
+		CHECK(vector_all_near_equal3(qvvs_get_non_uniform_scale(transform_a), qvvs_get_non_uniform_scale(transform_ab), threshold));
+
+		transform_a = qvvs_set(rotation_around_z, x_axis, FloatType(-1.2), test_scale2);
+		transform_b = qvvs_inverse(transform_a);
+		transform_ab = qvvs_mul(transform_a, transform_b);
+		CHECK(quat_near_equal(qvvs_get_rotation(identity), qvvs_get_rotation(transform_ab), threshold));
+		CHECK(vector_all_near_equal3(qvvs_get_translation(identity), qvvs_get_translation(transform_ab), threshold));
+		CHECK(scalar_near_equal(qvvs_get_uniform_scale(identity), qvvs_get_uniform_scale(transform_ab), threshold));
+		CHECK(vector_all_near_equal3(qvvs_get_non_uniform_scale(identity), qvvs_get_non_uniform_scale(transform_ab), threshold));
+	}
+#if 0
+	{
+		Vector4Type x_axis = vector_set(FloatType(1.0), FloatType(0.0), FloatType(0.0));
+
+		QuatType rotation_around_z = quat_from_euler(scalar_deg_to_rad(FloatType(0.0)), scalar_deg_to_rad(FloatType(90.0)), scalar_deg_to_rad(FloatType(0.0)));
+		TransformType transform_a = qvv_set(rotation_around_z, x_axis, vector_set(FloatType(1.0)));
+		TransformType transform_b = qvv_inverse_no_scale(transform_a);
+		TransformType transform_ab = qvv_mul_no_scale(transform_a, transform_b);
+		CHECK(quat_near_equal(identity.rotation, transform_ab.rotation, threshold));
+		CHECK(vector_all_near_equal3(identity.translation, transform_ab.translation, threshold));
+		CHECK(vector_all_near_equal3(identity.scale, transform_ab.scale, threshold));
+	}
+
+	{
+		Vector4Type x_axis = vector_set(FloatType(1.0), FloatType(0.0), FloatType(0.0));
+		QuatType rotation_around_z = quat_from_euler(scalar_deg_to_rad(FloatType(0.0)), scalar_deg_to_rad(FloatType(90.0)), scalar_deg_to_rad(FloatType(0.0)));
+		TransformType transform_a = qvv_set(rotation_around_z, x_axis, vector_set(FloatType(1.0)));
+		CHECK(quat_is_normalized(qvv_normalize(transform_a).rotation, threshold));
+
+		QuatType quat = quat_set(FloatType(-0.001138), FloatType(0.91623), FloatType(-1.624598), FloatType(0.715671));
+		TransformType transform_b = qvv_set(quat, x_axis, vector_set(FloatType(1.0)));
+		CHECK(!quat_is_normalized(transform_b.rotation, threshold));
+		CHECK(quat_is_normalized(qvv_normalize(transform_b).rotation, threshold));
+	}
+
+	{
+		FloatType alpha = FloatType(0.33);
+		ScalarType alpha_s = scalar_set(alpha);
+		QuatType quat0 = quat_normalize(quat_from_euler(scalar_deg_to_rad(FloatType(30.0)), scalar_deg_to_rad(FloatType(-45.0)), scalar_deg_to_rad(FloatType(90.0))));
+		QuatType quat1 = quat_normalize(quat_from_euler(scalar_deg_to_rad(FloatType(45.0)), scalar_deg_to_rad(FloatType(60.0)), scalar_deg_to_rad(FloatType(120.0))));
+
+		QuatType quat_ref_lerp = quat_lerp(quat0, quat1, alpha);
+		QuatType quat_ref_lerp_s = quat_lerp(quat0, quat1, alpha_s);
+		QuatType quat_ref_slerp = quat_slerp(quat0, quat1, alpha);
+		QuatType quat_ref_slerp_s = quat_slerp(quat0, quat1, alpha_s);
+
+		Vector4Type trans0 = vector_set(FloatType(-0.001138), FloatType(0.91623), FloatType(-1.624598));
+		Vector4Type trans1 = vector_set(FloatType(-0.001138), FloatType(0.91623), FloatType(-1.624598));
+
+		Vector4Type trans_ref = vector_lerp(trans0, trans1, alpha);
+		Vector4Type trans_ref_s = vector_lerp(trans0, trans1, alpha_s);
+
+		Vector4Type scale0 = vector_set(FloatType(-1.915), FloatType(0.23656), FloatType(-3.7811));
+		Vector4Type scale1 = vector_set(FloatType(-0.2113), FloatType(12.22335), FloatType(-1.7261));
+
+		Vector4Type scale_ref = vector_lerp(scale0, scale1, alpha);
+		Vector4Type scale_ref_s = vector_lerp(scale0, scale1, alpha_s);
+
+		TransformType transform0 = qvv_set(quat0, trans0, scale0);
+		TransformType transform1 = qvv_set(quat1, trans1, scale1);
+
+		TransformType transform_ref_lerp = qvv_set(quat_ref_lerp, trans_ref, scale_ref);
+		TransformType transform_ref_slerp = qvv_set(quat_ref_slerp, trans_ref, scale_ref);
+
+		TransformType transform_ref_lerp_s = qvv_set(quat_ref_lerp_s, trans_ref_s, scale_ref_s);
+		TransformType transform_ref_slerp_s = qvv_set(quat_ref_slerp_s, trans_ref_s, scale_ref_s);
+
+		TransformType transform_lerp = qvv_lerp(transform0, transform1, alpha);
+		TransformType transform_lerp_s = qvv_lerp(transform0, transform1, alpha_s);
+
+		TransformType transform_slerp = qvv_slerp(transform0, transform1, alpha);
+		TransformType transform_slerp_s = qvv_slerp(transform0, transform1, alpha_s);
+
+		TransformType transform_lerp_no_scale = qvv_lerp_no_scale(transform0, transform1, alpha);
+		TransformType transform_lerp_no_scale_s = qvv_lerp_no_scale(transform0, transform1, alpha_s);
+
+		TransformType transform_slerp_no_scale = qvv_slerp_no_scale(transform0, transform1, alpha);
+		TransformType transform_slerp_no_scale_s = qvv_slerp_no_scale(transform0, transform1, alpha_s);
+
+		CHECK(quat_near_equal(transform_lerp.rotation, transform_ref_lerp.rotation, threshold));
+		CHECK(quat_near_equal(transform_lerp_s.rotation, transform_ref_lerp_s.rotation, threshold));
+		CHECK(vector_all_near_equal3(transform_lerp.translation, transform_ref_lerp.translation, threshold));
+		CHECK(vector_all_near_equal3(transform_lerp_s.translation, transform_ref_lerp_s.translation, threshold));
+		CHECK(vector_all_near_equal3(transform_lerp.scale, transform_ref_lerp.scale, threshold));
+		CHECK(vector_all_near_equal3(transform_lerp_s.scale, transform_ref_lerp_s.scale, threshold));
+
+		CHECK(quat_near_equal(transform_slerp.rotation, transform_ref_slerp.rotation, threshold));
+		CHECK(quat_near_equal(transform_slerp_s.rotation, transform_ref_slerp_s.rotation, threshold));
+		CHECK(vector_all_near_equal3(transform_slerp.translation, transform_ref_slerp.translation, threshold));
+		CHECK(vector_all_near_equal3(transform_slerp_s.translation, transform_ref_slerp_s.translation, threshold));
+		CHECK(vector_all_near_equal3(transform_slerp.scale, transform_ref_slerp.scale, threshold));
+		CHECK(vector_all_near_equal3(transform_slerp_s.scale, transform_ref_slerp_s.scale, threshold));
+
+		CHECK(quat_near_equal(transform_lerp_no_scale.rotation, transform_ref_lerp.rotation, threshold));
+		CHECK(quat_near_equal(transform_lerp_no_scale_s.rotation, transform_ref_lerp_s.rotation, threshold));
+		CHECK(vector_all_near_equal3(transform_lerp_no_scale.translation, transform_ref_lerp.translation, threshold));
+		CHECK(vector_all_near_equal3(transform_lerp_no_scale_s.translation, transform_ref_lerp_s.translation, threshold));
+		CHECK(vector_all_near_equal3(transform_lerp_no_scale.scale, transform0.scale, threshold));
+		CHECK(vector_all_near_equal3(transform_lerp_no_scale_s.scale, transform0.scale, threshold));
+
+		CHECK(quat_near_equal(transform_slerp_no_scale.rotation, transform_ref_slerp.rotation, threshold));
+		CHECK(quat_near_equal(transform_slerp_no_scale_s.rotation, transform_ref_slerp_s.rotation, threshold));
+		CHECK(vector_all_near_equal3(transform_slerp_no_scale.translation, transform_ref_slerp.translation, threshold));
+		CHECK(vector_all_near_equal3(transform_slerp_no_scale_s.translation, transform_ref_slerp_s.translation, threshold));
+		CHECK(vector_all_near_equal3(transform_slerp_no_scale.scale, transform0.scale, threshold));
+		CHECK(vector_all_near_equal3(transform_slerp_no_scale_s.scale, transform0.scale, threshold));
+	}
+
+	{
+		const FloatType inf = std::numeric_limits<FloatType>::infinity();
+		const FloatType nan = std::numeric_limits<FloatType>::quiet_NaN();
+
+		const QuatType quat0 = quat_normalize(quat_from_euler(scalar_deg_to_rad(FloatType(30.0)), scalar_deg_to_rad(FloatType(-45.0)), scalar_deg_to_rad(FloatType(90.0))));
+		const QuatType quat_inf = quat_set(inf, inf, inf, inf);
+		const QuatType quat_nan = quat_set(nan, nan, nan, nan);
+
+		const Vector4Type trans0 = vector_set(FloatType(-0.001138), FloatType(0.91623), FloatType(-1.624598));
+		const Vector4Type scale0 = vector_set(FloatType(-1.915), FloatType(0.23656), FloatType(-3.7811));
+		const Vector4Type vec_inf = vector_set(inf, inf, inf, inf);
+		const Vector4Type vec_nan = vector_set(nan, nan, nan, nan);
+
+		CHECK(qvv_is_finite(identity) == true);
+		CHECK(qvv_is_finite(qvv_set(quat0, trans0, scale0)) == true);
+		CHECK(qvv_is_finite(qvv_set(quat_inf, trans0, scale0)) == false);
+		CHECK(qvv_is_finite(qvv_set(quat_nan, trans0, scale0)) == false);
+		CHECK(qvv_is_finite(qvv_set(quat0, vec_inf, scale0)) == false);
+		CHECK(qvv_is_finite(qvv_set(quat0, vec_nan, scale0)) == false);
+		CHECK(qvv_is_finite(qvv_set(quat0, trans0, vec_inf)) == false);
+		CHECK(qvv_is_finite(qvv_set(quat0, trans0, vec_nan)) == false);
+		CHECK(qvv_is_finite(qvv_set(quat_inf, vec_inf, vec_inf)) == false);
+		CHECK(qvv_is_finite(qvv_set(quat_nan, vec_nan, vec_nan)) == false);
+	}
+#endif
+}
+
+TEST_CASE("qvvsf math", "[math][qvvs]")
+{
+	test_qvvs_impl<qvvsf, float>(qvvs_identity(), 1.0E-4F);
+
+	const quatf src_rotation = quat_set(0.39564531008956383F, 0.044254239301713752F, 0.22768840967675355F, 0.88863059760894492F);
+	const vector4f src_translation = vector_set(-2.65F, 2.996113F, 0.68123521F);
+	const float src_uniform_scale = 1.1F;
+	const vector4f src_non_uniform_scale = vector_set(1.2F, 0.8F, 2.1F);
+	const qvvsf src = qvvs_set(src_rotation, src_translation, src_uniform_scale, src_non_uniform_scale);
+	const qvvsd dst = qvvs_cast(src);
+	CHECK(quat_near_equal(src.rotation, quat_cast(dst.rotation), 1.0E-6F));
+	CHECK(vector_all_near_equal(src.translation_uniform_scale, vector_cast(dst.translation_uniform_scale), 1.0E-6F));
+	CHECK(vector_all_near_equal3(src.non_uniform_scale, vector_cast(dst.non_uniform_scale), 1.0E-6F));
+}
+
+TEST_CASE("qvvsd math", "[math][qvvs]")
+{
+	test_qvvs_impl<qvvsd, double>(qvvs_identity(), 1.0E-6);
+
+	const quatd src_rotation = quat_set(0.39564531008956383, 0.044254239301713752, 0.22768840967675355, 0.88863059760894492);
+	const vector4d src_translation = vector_set(-2.65, 2.996113, 0.68123521);
+	const double src_uniform_scale = 1.1;
+	const vector4d src_non_uniform_scale = vector_set(1.2, 0.8, 2.1);
+	const qvvsd src = qvvs_set(src_rotation, src_translation, src_uniform_scale, src_non_uniform_scale);
+	const qvvsf dst = qvvs_cast(src);
+	CHECK(quat_near_equal(src.rotation, quat_cast(dst.rotation), 1.0E-6));
+	CHECK(vector_all_near_equal(src.translation_uniform_scale, vector_cast(dst.translation_uniform_scale), 1.0E-6));
+	CHECK(vector_all_near_equal3(src.non_uniform_scale, vector_cast(dst.non_uniform_scale), 1.0E-6));
+}
