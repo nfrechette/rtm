@@ -375,7 +375,12 @@ def do_build(args):
 		if args.compiler == 'android':
 			cmake_cmd += ' --config {}'.format(config)
 		else:
-			cmake_cmd += ' --config {} --target INSTALL'.format(config)
+			if os.path.sep == '\\':
+				# Native Windows
+				cmake_cmd += ' --config {} --target INSTALL'.format(config)
+			else:
+				# MSYS2 or Cygwin
+				cmake_cmd += ' --config {} --target install'.format(config)
 	elif platform.system() == 'Darwin':
 		if args.compiler == 'ios':
 			cmake_cmd += ' --config {}'.format(config)
