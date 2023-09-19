@@ -61,7 +61,7 @@ namespace rtm
 
 			RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE RTM_SIMD_CALL operator matrix3x4f() const RTM_NO_EXCEPT
 			{
-				return matrix3x4f{ mtx.x_axis, mtx.y_axis, mtx.z_axis, vector_zero() };
+				return matrix3x4f{ mtx.x_axis, mtx.y_axis, mtx.z_axis, (vector4f)vector_zero() };
 			}
 
 			RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE RTM_SIMD_CALL operator matrix3x4d() const RTM_NO_EXCEPT
@@ -107,7 +107,7 @@ namespace rtm
 
 			RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE RTM_SIMD_CALL operator matrix3x4d() const RTM_NO_EXCEPT
 			{
-				return matrix3x4d{ mtx.x_axis, mtx.y_axis, mtx.z_axis, vector_zero() };
+				return matrix3x4d{ mtx.x_axis, mtx.y_axis, mtx.z_axis, (vector4d)vector_zero() };
 			}
 
 			RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE RTM_SIMD_CALL operator matrix4x4f() const RTM_NO_EXCEPT
