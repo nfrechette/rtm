@@ -430,7 +430,7 @@ namespace rtm
 	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE quatf RTM_SIMD_CALL quat_conjugate(quatf_arg0 input) RTM_NO_EXCEPT
 	{
 #if defined(RTM_SSE2_INTRINSICS)
-		constexpr __m128 signs = { -0.0F, -0.0F, -0.0F, 0.0F };
+		constexpr __m128 signs = RTM_VECTOR4F_MAKE(-0.0F, -0.0F, -0.0F, 0.0F);
 		return _mm_xor_ps(input, signs);
 #else
 		// On ARMv7 the scalar version performs best or among the best while on ARM64 it beats the others.
@@ -447,10 +447,10 @@ namespace rtm
 	{
 #if defined(RTM_SSE4_INTRINSICS) && 0
 		// TODO: Profile this, the accuracy is the same as with SSE2, should be binary exact
-		constexpr __m128 signs_x = { 1.0F,  1.0F,  1.0F, -1.0F };
-		constexpr __m128 signs_y = { 1.0F, -1.0F,  1.0F,  1.0F };
-		constexpr __m128 signs_z = { 1.0F,  1.0F, -1.0F,  1.0F };
-		constexpr __m128 signs_w = { 1.0F, -1.0F, -1.0F, -1.0F };
+		constexpr __m128 signs_x = RTM_VECTOR4F_MAKE(1.0F,  1.0F,  1.0F, -1.0F);
+		constexpr __m128 signs_y = RTM_VECTOR4F_MAKE(1.0F, -1.0F,  1.0F,  1.0F);
+		constexpr __m128 signs_z = RTM_VECTOR4F_MAKE(1.0F,  1.0F, -1.0F,  1.0F);
+		constexpr __m128 signs_w = RTM_VECTOR4F_MAKE(1.0F, -1.0F, -1.0F, -1.0F);
 		// x = dot(rhs.wxyz, lhs.xwzy * signs_x)
 		// y = dot(rhs.wxyz, lhs.yzwx * signs_y)
 		// z = dot(rhs.wxyz, lhs.zyxw * signs_z)
@@ -468,9 +468,9 @@ namespace rtm
 		__m128 zzww = _mm_shuffle_ps(z, w, _MM_SHUFFLE(0, 0, 0, 0));
 		return _mm_shuffle_ps(xxyy, zzww, _MM_SHUFFLE(2, 0, 2, 0));
 #elif defined(RTM_SSE2_INTRINSICS)
-		constexpr __m128 control_wzyx = {  0.0F, -0.0F,  0.0F, -0.0F };
-		constexpr __m128 control_zwxy = {  0.0F,  0.0F, -0.0F, -0.0F };
-		constexpr __m128 control_yxwz = { -0.0F,  0.0F,  0.0F, -0.0F };
+		constexpr __m128 control_wzyx = RTM_VECTOR4F_MAKE(0.0F, -0.0F,  0.0F, -0.0F);
+		constexpr __m128 control_zwxy = RTM_VECTOR4F_MAKE(0.0F,  0.0F, -0.0F, -0.0F);
+		constexpr __m128 control_yxwz = RTM_VECTOR4F_MAKE(-0.0F,  0.0F,  0.0F, -0.0F);
 
 		const __m128 r_xxxx = _mm_shuffle_ps(rhs, rhs, _MM_SHUFFLE(0, 0, 0, 0));
 		const __m128 r_yyyy = _mm_shuffle_ps(rhs, rhs, _MM_SHUFFLE(1, 1, 1, 1));
@@ -1188,7 +1188,7 @@ namespace rtm
 	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE quatf RTM_SIMD_CALL quat_neg(quatf_arg0 input) RTM_NO_EXCEPT
 	{
 #if defined(RTM_SSE2_INTRINSICS)
-		constexpr __m128 signs = { -0.0F, -0.0F, -0.0F, -0.0F };
+		constexpr __m128 signs = RTM_VECTOR4F_MAKE(-0.0F, -0.0F, -0.0F, -0.0F);
 		return _mm_xor_ps(input, signs);
 #elif defined(RTM_NEON_INTRINSICS)
 		return vnegq_f32(input);

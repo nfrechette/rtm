@@ -873,7 +873,7 @@ namespace rtm
 	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE vector4f RTM_SIMD_CALL vector_neg(vector4f_arg0 input) RTM_NO_EXCEPT
 	{
 #if defined(RTM_SSE2_INTRINSICS)
-		constexpr __m128 signs = { -0.0F, -0.0F, -0.0F, -0.0F };
+		constexpr __m128 signs = RTM_VECTOR4F_MAKE(-0.0F, -0.0F, -0.0F, -0.0F);
 		return _mm_xor_ps(input, signs);
 #elif defined(RTM_NEON_INTRINSICS)
 		return vnegq_f32(input);
@@ -2845,8 +2845,8 @@ namespace rtm
 	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE vector4f RTM_SIMD_CALL vector_sign(vector4f_arg0 input) RTM_NO_EXCEPT
 	{
 #if defined(RTM_SSE2_INTRINSICS)
-		constexpr __m128 signs = { -0.0F, -0.0F, -0.0F, -0.0F };
-		constexpr __m128 one = { 1.0F, 1.0F, 1.0F, 1.0F };
+		constexpr __m128 signs = RTM_VECTOR4F_MAKE(-0.0F, -0.0F, -0.0F, -0.0F);
+		constexpr __m128 one = RTM_VECTOR4F_MAKE(1.0F, 1.0F, 1.0F, 1.0F);
 		const __m128 sign_bits = _mm_and_ps(input, signs);	// Mask out the sign bit
 		return _mm_or_ps(sign_bits, one);					// Copy the sign bit onto +-1.0f
 #else
