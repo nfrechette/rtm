@@ -46,7 +46,7 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE matrix3x4d RTM_SIMD_CALL matrix_from_rotation(const matrix3x3d& rotation) RTM_NO_EXCEPT
 	{
-		return matrix3x4d{ rotation.x_axis, rotation.y_axis, rotation.z_axis, vector_zero() };
+		return matrix3x4d{ rotation.x_axis, rotation.y_axis, rotation.z_axis, (vector4d)vector_zero() };
 	}
 
 	//////////////////////////////////////////////////////////////////////////

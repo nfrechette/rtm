@@ -42,10 +42,10 @@ namespace rtm
 	{
 #if defined(RTM_SSE2_INTRINSICS)
 #if defined(RTM_ARCH_X64)
-		return _mm_cvtsi128_si64(input.xy);
+		return static_cast<uint64_t>(_mm_cvtsi128_si64(input.xy));
 #else
 		// Just sign extend on 32bit systems
-		return (uint64_t)_mm_cvtsi128_si32(input.xy);
+		return static_cast<uint64_t>(_mm_cvtsi128_si32(input.xy));
 #endif
 #else
 		return input.x;
@@ -59,10 +59,10 @@ namespace rtm
 	{
 #if defined(RTM_SSE2_INTRINSICS)
 #if defined(RTM_ARCH_X64)
-		return _mm_cvtsi128_si64(_mm_shuffle_epi32(input.xy, _MM_SHUFFLE(3, 2, 3, 2)));
+		return static_cast<uint64_t>(_mm_cvtsi128_si64(_mm_shuffle_epi32(input.xy, _MM_SHUFFLE(3, 2, 3, 2))));
 #else
 		// Just sign extend on 32bit systems
-		return (uint64_t)_mm_cvtsi128_si32(_mm_shuffle_epi32(input.xy, _MM_SHUFFLE(3, 2, 3, 2)));
+		return static_cast<uint64_t>(_mm_cvtsi128_si32(_mm_shuffle_epi32(input.xy, _MM_SHUFFLE(3, 2, 3, 2))));
 #endif
 #else
 		return input.y;
@@ -76,10 +76,10 @@ namespace rtm
 	{
 #if defined(RTM_SSE2_INTRINSICS)
 #if defined(RTM_ARCH_X64)
-		return _mm_cvtsi128_si64(input.zw);
+		return static_cast<uint64_t>(_mm_cvtsi128_si64(input.zw));
 #else
 		// Just sign extend on 32bit systems
-		return (uint64_t)_mm_cvtsi128_si32(input.zw);
+		return static_cast<uint64_t>(_mm_cvtsi128_si32(input.zw));
 #endif
 #else
 		return input.z;
@@ -93,10 +93,10 @@ namespace rtm
 	{
 #if defined(RTM_SSE2_INTRINSICS)
 #if defined(RTM_ARCH_X64)
-		return _mm_cvtsi128_si64(_mm_shuffle_epi32(input.zw, _MM_SHUFFLE(3, 2, 3, 2)));
+		return static_cast<uint64_t>(_mm_cvtsi128_si64(_mm_shuffle_epi32(input.zw, _MM_SHUFFLE(3, 2, 3, 2))));
 #else
 		// Just sign extend on 32bit systems
-		return (uint64_t)_mm_cvtsi128_si32(_mm_shuffle_epi32(input.zw, _MM_SHUFFLE(3, 2, 3, 2)));
+		return static_cast<uint64_t>(_mm_cvtsi128_si32(_mm_shuffle_epi32(input.zw, _MM_SHUFFLE(3, 2, 3, 2))));
 #endif
 #else
 		return input.w;

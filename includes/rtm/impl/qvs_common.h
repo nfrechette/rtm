@@ -90,12 +90,12 @@ namespace rtm
 		{
 			RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE RTM_SIMD_CALL operator qvsd() const RTM_NO_EXCEPT
 			{
-				return qvsd{ quat_identity(), vector_set(0.0, 0.0, 0.0, 1.0) };
+				return qvsd{ (quatd)quat_identity(), vector_set(0.0, 0.0, 0.0, 1.0) };
 			}
 
 			RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE RTM_SIMD_CALL operator qvsf() const RTM_NO_EXCEPT
 			{
-				return qvsf{ quat_identity(), vector_set(0.0F, 0.0F, 0.0F, 1.0F) };
+				return qvsf{ (quatf)quat_identity(), vector_set(0.0F, 0.0F, 0.0F, 1.0F) };
 			}
 		};
 	}
