@@ -190,4 +190,22 @@ RTM_IMPL_FILE_PRAGMA_PUSH
 	// Macros not defined for scalar code path
 #endif
 
+#if defined(RTM_SSE2_INTRINSICS)
+	#if defined(RTM_COMPILER_MSVC)
+		//////////////////////////////////////////////////////////////////////////
+		// Creates a vector constant from its 4 components
+		//////////////////////////////////////////////////////////////////////////
+		#define RTM_VECTOR4F_MAKE(x, y, z, w) { { x, y, z, w } }
+	#else
+		//////////////////////////////////////////////////////////////////////////
+		// Creates a vector constant from its 4 components
+		//////////////////////////////////////////////////////////////////////////
+		#define RTM_VECTOR4F_MAKE(x, y, z, w) { x, y, z, w }
+	#endif
+#elif defined(RTM_NEON_INTRINSICS)
+	// RTM_VECTOR2D_SELECT not defined for NEON yet, TODO
+#else
+	// Macros not defined for scalar code path
+#endif
+
 RTM_IMPL_FILE_PRAGMA_POP

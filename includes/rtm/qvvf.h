@@ -67,7 +67,7 @@ namespace rtm
 			result_mtx = matrix_remove_scale(result_mtx);
 
 #if defined(RTM_SSE2_INTRINSICS)
-			constexpr __m128 signs = { -0.0F, -0.0F, -0.0F, -0.0F };
+			constexpr __m128 signs = RTM_VECTOR4F_MAKE(-0.0F, -0.0F, -0.0F, -0.0F);
 			const __m128 sign_bits = _mm_and_ps(scale, signs);	// Mask out the sign bit
 
 			result_mtx.x_axis = _mm_xor_ps(result_mtx.x_axis, _mm_shuffle_ps(sign_bits, sign_bits, _MM_SHUFFLE(0, 0, 0, 0)));

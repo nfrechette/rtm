@@ -43,7 +43,7 @@ namespace rtm
 	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE quatf RTM_SIMD_CALL quat_ensure_positive_w(quatf_arg0 input) RTM_NO_EXCEPT
 	{
 #if defined(RTM_SSE2_INTRINSICS)
-		constexpr __m128 sign_bit = { -0.0F, -0.0F, -0.0F, -0.0F };
+		constexpr __m128 sign_bit = RTM_VECTOR4F_MAKE(-0.0F, -0.0F, -0.0F, -0.0F);
 		const __m128 input_sign = _mm_and_ps(input, sign_bit);
 		const __m128 bias = _mm_shuffle_ps(input_sign, input_sign, _MM_SHUFFLE(3, 3, 3, 3));
 		return _mm_xor_ps(input, bias);
