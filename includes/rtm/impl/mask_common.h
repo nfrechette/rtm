@@ -210,7 +210,7 @@ namespace rtm
 				const uint32_t z_mask = z ? 0xFFFFFFFFU : 0;
 				const uint32_t w_mask = w ? 0xFFFFFFFFU : 0;
 
-				return mask4d{ _mm_castsi128_pd(_mm_set_epi32(y_mask, y_mask, x_mask, x_mask)), _mm_castsi128_pd(_mm_set_epi32(w_mask, w_mask, z_mask, z_mask)) };
+				return mask4d{ _mm_castsi128_pd(_mm_set_epi32(static_cast<int32_t>(y_mask), static_cast<int32_t>(y_mask), static_cast<int32_t>(x_mask), static_cast<int32_t>(x_mask))), _mm_castsi128_pd(_mm_set_epi32(static_cast<int32_t>(w_mask), static_cast<int32_t>(w_mask), static_cast<int32_t>(z_mask), static_cast<int32_t>(z_mask))) };
 	#else
 				return mask4d{ _mm_castsi128_pd(_mm_set_epi64x(static_cast<int64_t>(y), static_cast<int64_t>(x))), _mm_castsi128_pd(_mm_set_epi64x(static_cast<int64_t>(w), static_cast<int64_t>(z))) };
 	#endif
@@ -235,7 +235,7 @@ namespace rtm
 				const uint32_t z_mask = z ? 0xFFFFFFFFU : 0;
 				const uint32_t w_mask = w ? 0xFFFFFFFFU : 0;
 
-				return mask4q{ _mm_set_epi32(y_mask, y_mask, x_mask, x_mask), _mm_set_epi32(w_mask, w_mask, z_mask, z_mask) };
+				return mask4q{ _mm_set_epi32(static_cast<int32_t>(y_mask), static_cast<int32_t>(y_mask), static_cast<int32_t>(x_mask), static_cast<int32_t>(x_mask)), _mm_set_epi32(static_cast<int32_t>(w_mask), static_cast<int32_t>(w_mask), static_cast<int32_t>(z_mask), static_cast<int32_t>(z_mask)) };
 	#else
 				return mask4q{ _mm_set_epi64x(static_cast<int64_t>(y), static_cast<int64_t>(x)), _mm_set_epi64x(static_cast<int64_t>(w), static_cast<int64_t>(z)) };
 	#endif
