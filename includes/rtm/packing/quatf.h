@@ -52,7 +52,13 @@ namespace rtm
 		const uint32x4_t sign_bit = *reinterpret_cast<const uint32x4_t*>(&sign_bit_i[0]);
 		const uint32x4_t input_u32 = vreinterpretq_u32_f32(input);
 		const uint32x4_t input_sign = vandq_u32(input_u32, sign_bit);
-		const uint32x4_t bias = vmovq_n_u32(vgetq_lane_u32(input_sign, 3));
+		const uint32_t input_sign_w = vgetq_lane_u32(input_sign, 3);
+#if defined(RTM_COMPILER_MSVC)
+		// MSVC's intrinsic is an alias to the unsigned variant
+		const uint32x4_t bias = vmovq_n_u32(static_cast<int32_t>(input_sign_w));
+#else
+		const uint32x4_t bias = vmovq_n_u32(input_sign_w);
+#endif
 		return vreinterpretq_f32_u32(veorq_u32(input_u32, bias));
 #else
 		return quat_get_w(input) >= 0.f ? input : quat_neg(input);
