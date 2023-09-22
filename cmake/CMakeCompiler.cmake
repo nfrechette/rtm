@@ -4,7 +4,7 @@ macro(setup_default_compiler_flags _project_name)
 	if(MSVC) # That's also clang-cl
 		# Replace some default compiler switches and add new ones
 		STRING(REPLACE "/GR" "" CMAKE_CXX_FLAGS ${CMAKE_CXX_FLAGS})			# Disable RTTI
-		if(CMAKE_CXX_COMPILER_ID MATCHES "Clang")
+		if(CMAKE_CXX_COMPILER_ID MATCHES "Clang" OR BUILD_BENCHMARK_EXE)
 			STRING(REPLACE "/W3" "/W4" CMAKE_CXX_FLAGS ${CMAKE_CXX_FLAGS})			# Enable level 4 warnings
 		else()
 			if(MSVC_VERSION GREATER 1920)
