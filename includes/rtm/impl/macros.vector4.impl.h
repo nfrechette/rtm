@@ -183,7 +183,7 @@ RTM_IMPL_FILE_PRAGMA_PUSH
 	//////////////////////////////////////////////////////////////////////////
 	// Per component selection depending on the mask: mask != 0 ? if_true : if_false
 	//////////////////////////////////////////////////////////////////////////
-	#define RTM_VECTOR4F_SELECT(mask, if_true, if_false) vbslq_f32(vreinterpretq_u32_f32(mask), if_true, if_false)
+	#define RTM_VECTOR4F_SELECT(mask, if_true, if_false) vbslq_f32(mask, if_true, if_false)
 
 	// RTM_VECTOR2D_SELECT not defined for NEON yet, TODO
 #else
