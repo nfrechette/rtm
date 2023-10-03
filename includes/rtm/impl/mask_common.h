@@ -92,9 +92,9 @@ namespace rtm
 #if defined(RTM_SSE2_INTRINSICS)
 				return _mm_castsi128_ps(_mm_set_epi32(static_cast<int32_t>(w_mask), static_cast<int32_t>(z_mask), static_cast<int32_t>(y_mask), static_cast<int32_t>(x_mask)));
 #elif defined(RTM_NEON_INTRINSICS)
-				float32x2_t V0 = vcreate_f32(((uint64_t)x_mask) | ((uint64_t)(y_mask) << 32));
-				float32x2_t V1 = vcreate_f32(((uint64_t)z_mask) | ((uint64_t)(w_mask) << 32));
-				return vcombine_f32(V0, V1);
+				uint32x2_t V0 = vcreate_u32(((uint64_t)x_mask) | ((uint64_t)(y_mask) << 32));
+				uint32x2_t V1 = vcreate_u32(((uint64_t)z_mask) | ((uint64_t)(w_mask) << 32));
+				return vcombine_u32(V0, V1);
 #else
 				return mask4f{ x_mask, y_mask, z_mask, w_mask };
 #endif
@@ -148,9 +148,9 @@ namespace rtm
 #if defined(RTM_SSE2_INTRINSICS)
 				return _mm_castsi128_ps(_mm_set_epi32(static_cast<int32_t>(w), static_cast<int32_t>(z), static_cast<int32_t>(y), static_cast<int32_t>(x)));
 #elif defined(RTM_NEON_INTRINSICS)
-				float32x2_t V0 = vcreate_f32(((uint64_t)x) | ((uint64_t)(y) << 32));
-				float32x2_t V1 = vcreate_f32(((uint64_t)z) | ((uint64_t)(w) << 32));
-				return vcombine_f32(V0, V1);
+				uint32x2_t V0 = vcreate_u32(((uint64_t)x) | ((uint64_t)(y) << 32));
+				uint32x2_t V1 = vcreate_u32(((uint64_t)z) | ((uint64_t)(w) << 32));
+				return vcombine_u32(V0, V1);
 #else
 				return mask4f{ x, y, z, w };
 #endif

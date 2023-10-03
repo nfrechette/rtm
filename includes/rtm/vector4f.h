@@ -1607,7 +1607,7 @@ namespace rtm
 #if defined(RTM_SSE2_INTRINSICS)
 		return _mm_cmpeq_ps(lhs, rhs);
 #elif defined(RTM_NEON_INTRINSICS)
-		return vreinterpretq_f32_u32(vceqq_f32(lhs, rhs));
+		return vceqq_f32(lhs, rhs);
 #else
 		return mask4f{ rtm_impl::get_mask_value(lhs.x == rhs.x), rtm_impl::get_mask_value(lhs.y == rhs.y), rtm_impl::get_mask_value(lhs.z == rhs.z), rtm_impl::get_mask_value(lhs.w == rhs.w) };
 #endif
@@ -1621,7 +1621,7 @@ namespace rtm
 #if defined(RTM_SSE2_INTRINSICS)
 		return _mm_cmplt_ps(lhs, rhs);
 #elif defined(RTM_NEON_INTRINSICS)
-		return vreinterpretq_f32_u32(vcltq_f32(lhs, rhs));
+		return vcltq_f32(lhs, rhs);
 #else
 		return mask4f{ rtm_impl::get_mask_value(lhs.x < rhs.x), rtm_impl::get_mask_value(lhs.y < rhs.y), rtm_impl::get_mask_value(lhs.z < rhs.z), rtm_impl::get_mask_value(lhs.w < rhs.w) };
 #endif
@@ -1635,7 +1635,7 @@ namespace rtm
 #if defined(RTM_SSE2_INTRINSICS)
 		return _mm_cmple_ps(lhs, rhs);
 #elif defined(RTM_NEON_INTRINSICS)
-		return vreinterpretq_f32_u32(vcleq_f32(lhs, rhs));
+		return vcleq_f32(lhs, rhs);
 #else
 		return mask4f{ rtm_impl::get_mask_value(lhs.x <= rhs.x), rtm_impl::get_mask_value(lhs.y <= rhs.y), rtm_impl::get_mask_value(lhs.z <= rhs.z), rtm_impl::get_mask_value(lhs.w <= rhs.w) };
 #endif
@@ -1649,7 +1649,7 @@ namespace rtm
 #if defined(RTM_SSE2_INTRINSICS)
 		return _mm_cmpgt_ps(lhs, rhs);
 #elif defined(RTM_NEON_INTRINSICS)
-		return vreinterpretq_f32_u32(vcgtq_f32(lhs, rhs));
+		return vcgtq_f32(lhs, rhs);
 #else
 		return mask4f{ rtm_impl::get_mask_value(lhs.x > rhs.x), rtm_impl::get_mask_value(lhs.y > rhs.y), rtm_impl::get_mask_value(lhs.z > rhs.z), rtm_impl::get_mask_value(lhs.w > rhs.w) };
 #endif
@@ -1663,7 +1663,7 @@ namespace rtm
 #if defined(RTM_SSE2_INTRINSICS)
 		return _mm_cmpge_ps(lhs, rhs);
 #elif defined(RTM_NEON_INTRINSICS)
-		return vreinterpretq_f32_u32(vcgeq_f32(lhs, rhs));
+		return vcgeq_f32(lhs, rhs);
 #else
 		return mask4f{ rtm_impl::get_mask_value(lhs.x >= rhs.x), rtm_impl::get_mask_value(lhs.y >= rhs.y), rtm_impl::get_mask_value(lhs.z >= rhs.z), rtm_impl::get_mask_value(lhs.w >= rhs.w) };
 #endif
