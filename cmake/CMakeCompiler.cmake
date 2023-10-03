@@ -90,7 +90,13 @@ macro(setup_default_compiler_flags _project_name)
 		target_compile_options(${_project_name} PRIVATE -Werror)			# Treat warnings as errors
 
 		# Disable various warnings that are harmless
-		target_compile_options(${_project_name} PRIVATE -Wno-c++98-compat)	# No need to support C++98
+		if(CMAKE_CXX_COMPILER_ID MATCHES "Clang")
+			target_compile_options(${_project_name} PRIVATE -Wno-c++98-compat)	# No need to support C++98
+		elseif(CMAKE_CXX_COMPILER_ID MATCHES "GNU")
+			if(CMAKE_CXX_COMPILER_VERSION VERSION_LESS 9)
+				target_compile_options(${_project_name} PRIVATE -Wno-attributes)	# False positive with earlier versions of GCC
+			endif()
+		endif()
 
 		target_compile_options(${_project_name} PRIVATE -g)					# Enable debug symbols
 	endif()
