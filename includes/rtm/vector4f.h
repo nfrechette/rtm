@@ -29,6 +29,7 @@
 #include "rtm/math.h"
 #include "rtm/scalarf.h"
 #include "rtm/version.h"
+#include "rtm/impl/bit_cast.impl.h"
 #include "rtm/impl/compiler_utils.h"
 #include "rtm/impl/macros.mask4.impl.h"
 #include "rtm/impl/memory_utils.h"
@@ -82,7 +83,7 @@ namespace rtm
 	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE vector4f RTM_SIMD_CALL vector_load2(const float* input) RTM_NO_EXCEPT
 	{
 #if defined(RTM_SSE2_INTRINSICS)
-		return _mm_castpd_ps(_mm_load_sd(reinterpret_cast<const double*>(input)));
+		return _mm_castpd_ps(_mm_load_sd(rtm_impl::bit_cast<const double*>(input)));
 #elif defined(RTM_NEON_INTRINSICS)
 		const float32x2_t xy = vld1_f32(input);
 		return vcombine_f32(xy, vdup_n_f32(0.0F));
@@ -97,7 +98,7 @@ namespace rtm
 	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE vector4f RTM_SIMD_CALL vector_load3(const float* input) RTM_NO_EXCEPT
 	{
 #if defined(RTM_SSE2_INTRINSICS)
-		const __m128 xy = _mm_castpd_ps(_mm_load_sd(reinterpret_cast<const double*>(input)));
+		const __m128 xy = _mm_castpd_ps(_mm_load_sd(rtm_impl::bit_cast<const double*>(input)));
 		const __m128 z = _mm_load_ss(input + 2);
 		return _mm_movelh_ps(xy, z);
 #elif defined(RTM_NEON_INTRINSICS)
@@ -129,7 +130,7 @@ namespace rtm
 	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE vector4f RTM_SIMD_CALL vector_load2(const float2f* input) RTM_NO_EXCEPT
 	{
 #if defined(RTM_SSE2_INTRINSICS)
-		return _mm_castpd_ps(_mm_load_sd(reinterpret_cast<const double*>(&input->x)));
+		return _mm_castpd_ps(_mm_load_sd(rtm_impl::bit_cast<const double*>(&input->x)));
 #elif defined(RTM_NEON_INTRINSICS)
 		const float32x2_t xy = vld1_f32(&input->x);
 		return vcombine_f32(xy, vdup_n_f32(0.0F));
@@ -144,7 +145,7 @@ namespace rtm
 	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE vector4f RTM_SIMD_CALL vector_load3(const float3f* input) RTM_NO_EXCEPT
 	{
 #if defined(RTM_SSE2_INTRINSICS)
-		const __m128 xy = _mm_castpd_ps(_mm_load_sd(reinterpret_cast<const double*>(&input->x)));
+		const __m128 xy = _mm_castpd_ps(_mm_load_sd(rtm_impl::bit_cast<const double*>(&input->x)));
 		const __m128 z = _mm_load_ss(&input->z);
 		return _mm_movelh_ps(xy, z);
 #elif defined(RTM_NEON_INTRINSICS)
@@ -607,7 +608,7 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE const float* RTM_SIMD_CALL vector_to_pointer(const vector4f& input) RTM_NO_EXCEPT
 	{
-		return reinterpret_cast<const float*>(&input);
+		return rtm_impl::bit_cast<const float*>(&input);
 	}
 
 	//////////////////////////////////////////////////////////////////////////
@@ -2742,11 +2743,11 @@ namespace rtm
 	#pragma GCC diagnostic ignored "-Wuninitialized"
 #endif
 
-		const uint32_t* input0_ = reinterpret_cast<const uint32_t*>(&input0);
-		const uint32_t* input1_ = reinterpret_cast<const uint32_t*>(&input1);
+		const uint32_t* input0_ = rtm_impl::bit_cast<const uint32_t*>(&input0);
+		const uint32_t* input1_ = rtm_impl::bit_cast<const uint32_t*>(&input1);
 
 		vector4f result;
-		uint32_t* result_ = reinterpret_cast<uint32_t*>(&result);
+		uint32_t* result_ = rtm_impl::bit_cast<uint32_t*>(&result);
 
 		result_[0] = input0_[0] & input1_[0];
 		result_[1] = input0_[1] & input1_[1];
@@ -2778,11 +2779,11 @@ namespace rtm
 	#pragma GCC diagnostic ignored "-Wuninitialized"
 #endif
 
-		const uint32_t* input0_ = reinterpret_cast<const uint32_t*>(&input0);
-		const uint32_t* input1_ = reinterpret_cast<const uint32_t*>(&input1);
+		const uint32_t* input0_ = rtm_impl::bit_cast<const uint32_t*>(&input0);
+		const uint32_t* input1_ = rtm_impl::bit_cast<const uint32_t*>(&input1);
 
 		vector4f result;
-		uint32_t* result_ = reinterpret_cast<uint32_t*>(&result);
+		uint32_t* result_ = rtm_impl::bit_cast<uint32_t*>(&result);
 
 		result_[0] = input0_[0] | input1_[0];
 		result_[1] = input0_[1] | input1_[1];
@@ -2814,11 +2815,11 @@ namespace rtm
 	#pragma GCC diagnostic ignored "-Wuninitialized"
 #endif
 
-		const uint32_t* input0_ = reinterpret_cast<const uint32_t*>(&input0);
-		const uint32_t* input1_ = reinterpret_cast<const uint32_t*>(&input1);
+		const uint32_t* input0_ = rtm_impl::bit_cast<const uint32_t*>(&input0);
+		const uint32_t* input1_ = rtm_impl::bit_cast<const uint32_t*>(&input1);
 
 		vector4f result;
-		uint32_t* result_ = reinterpret_cast<uint32_t*>(&result);
+		uint32_t* result_ = rtm_impl::bit_cast<uint32_t*>(&result);
 
 		result_[0] = input0_[0] ^ input1_[0];
 		result_[1] = input0_[1] ^ input1_[1];

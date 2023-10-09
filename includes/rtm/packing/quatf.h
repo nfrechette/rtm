@@ -28,6 +28,7 @@
 #include "rtm/quatf.h"
 #include "rtm/vector4f.h"
 #include "rtm/version.h"
+#include "rtm/impl/bit_cast.impl.h"
 #include "rtm/impl/compiler_utils.h"
 
 RTM_IMPL_FILE_PRAGMA_PUSH
@@ -49,7 +50,7 @@ namespace rtm
 		return _mm_xor_ps(input, bias);
 #elif defined(RTM_NEON_INTRINSICS)
 		alignas(16) constexpr uint32_t sign_bit_i[4] = { 0x80000000U, 0x80000000U, 0x80000000U, 0x80000000U };
-		const uint32x4_t sign_bit = *reinterpret_cast<const uint32x4_t*>(&sign_bit_i[0]);
+		const uint32x4_t sign_bit = *rtm_impl::bit_cast<const uint32x4_t*>(&sign_bit_i[0]);
 		const uint32x4_t input_u32 = vreinterpretq_u32_f32(input);
 		const uint32x4_t input_sign = vandq_u32(input_u32, sign_bit);
 		const uint32_t input_sign_w = vgetq_lane_u32(input_sign, 3);

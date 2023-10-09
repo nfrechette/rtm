@@ -25,6 +25,7 @@
 #include <benchmark/benchmark.h>
 
 #include <rtm/quatf.h>
+#include <rtm/impl/bit_cast.impl.h>
 
 using namespace rtm;
 
@@ -45,7 +46,7 @@ RTM_FORCE_NOINLINE quatf RTM_SIMD_CALL quat_conjugate_mul(quatf_arg0 input) RTM_
 	return _mm_mul_ps(input, signs);
 #elif defined(RTM_NEON_INTRINSICS)
 	alignas(16) constexpr float signs_f[4] = { -1.0f, -1.0f, -1.0f, 1.0f };
-	const float32x4_t signs = *reinterpret_cast<const float32x4_t*>(&signs_f[0]);
+	const float32x4_t signs = *rtm_impl::bit_cast<const float32x4_t*>(&signs_f[0]);
 	return vmulq_f32(input, signs);
 #else
 	return quat_set(quat_get_x(input) * -1.0f, quat_get_y(input) * -1.0f, quat_get_z(input) * -1.0f, quat_get_w(input));
@@ -67,7 +68,7 @@ RTM_FORCE_NOINLINE quatf RTM_SIMD_CALL quat_conjugate_xor(quatf_arg0 input) RTM_
 	return _mm_xor_ps(input, signs);
 #elif defined(RTM_NEON_INTRINSICS)
 	alignas(16) constexpr uint32_t signs_u[4] = { 0x80000000U, 0x80000000U, 0x80000000U, 0 };
-	const uint32x4_t signs = *reinterpret_cast<const uint32x4_t*>(&signs_u[0]);
+	const uint32x4_t signs = *rtm_impl::bit_cast<const uint32x4_t*>(&signs_u[0]);
 	return vreinterpretq_f32_u32(veorq_u32(vreinterpretq_u32_f32(input), signs));
 #else
 	#error not implemented

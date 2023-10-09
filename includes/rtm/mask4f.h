@@ -26,6 +26,7 @@
 
 #include "rtm/math.h"
 #include "rtm/version.h"
+#include "rtm/impl/bit_cast.impl.h"
 #include "rtm/impl/compiler_utils.h"
 #include "rtm/impl/macros.mask4.impl.h"
 #include "rtm/impl/mask_common.h"
@@ -284,8 +285,8 @@ namespace rtm
 #elif defined(RTM_NEON_INTRINSICS)
 		return vandq_u32(lhs, rhs);
 #else
-		const uint32_t* lhs_ = reinterpret_cast<const uint32_t*>(&lhs);
-		const uint32_t* rhs_ = reinterpret_cast<const uint32_t*>(&rhs);
+		const uint32_t* lhs_ = rtm_impl::bit_cast<const uint32_t*>(&lhs);
+		const uint32_t* rhs_ = rtm_impl::bit_cast<const uint32_t*>(&rhs);
 
 		union
 		{
@@ -312,8 +313,8 @@ namespace rtm
 #elif defined(RTM_NEON_INTRINSICS)
 		return vorrq_u32(lhs, rhs);
 #else
-		const uint32_t* lhs_ = reinterpret_cast<const uint32_t*>(&lhs);
-		const uint32_t* rhs_ = reinterpret_cast<const uint32_t*>(&rhs);
+		const uint32_t* lhs_ = rtm_impl::bit_cast<const uint32_t*>(&lhs);
+		const uint32_t* rhs_ = rtm_impl::bit_cast<const uint32_t*>(&rhs);
 
 		union
 		{
@@ -340,8 +341,8 @@ namespace rtm
 #elif defined(RTM_NEON_INTRINSICS)
 		return veorq_u32(lhs, rhs);
 #else
-		const uint32_t* lhs_ = reinterpret_cast<const uint32_t*>(&lhs);
-		const uint32_t* rhs_ = reinterpret_cast<const uint32_t*>(&rhs);
+		const uint32_t* lhs_ = rtm_impl::bit_cast<const uint32_t*>(&lhs);
+		const uint32_t* rhs_ = rtm_impl::bit_cast<const uint32_t*>(&rhs);
 
 		union
 		{

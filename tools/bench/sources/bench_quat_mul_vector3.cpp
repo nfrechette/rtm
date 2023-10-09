@@ -25,6 +25,7 @@
 #include <benchmark/benchmark.h>
 
 #include <rtm/quatf.h>
+#include <rtm/impl/bit_cast.impl.h>
 
 using namespace rtm;
 
@@ -309,9 +310,9 @@ RTM_FORCE_NOINLINE vector4f RTM_SIMD_CALL quat_mul_vector3_neon_mul(vector4f_arg
 	alignas(16) constexpr float control_zwxy_f[4] = { 1.0f, 1.0f, -1.0f, -1.0f };
 	alignas(16) constexpr float control_yxwz_f[4] = { -1.0f, 1.0f, 1.0f, -1.0f };
 
-	const float32x4_t control_wzyx = *reinterpret_cast<const float32x4_t*>(&control_wzyx_f[0]);
-	const float32x4_t control_zwxy = *reinterpret_cast<const float32x4_t*>(&control_zwxy_f[0]);
-	const float32x4_t control_yxwz = *reinterpret_cast<const float32x4_t*>(&control_yxwz_f[0]);
+	const float32x4_t control_wzyx = *rtm_impl::bit_cast<const float32x4_t*>(&control_wzyx_f[0]);
+	const float32x4_t control_zwxy = *rtm_impl::bit_cast<const float32x4_t*>(&control_zwxy_f[0]);
+	const float32x4_t control_yxwz = *rtm_impl::bit_cast<const float32x4_t*>(&control_yxwz_f[0]);
 
 	const float32x4_t inv_rotation = quat_conjugate(rotation);
 

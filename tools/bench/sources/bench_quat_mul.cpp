@@ -25,6 +25,7 @@
 #include <benchmark/benchmark.h>
 
 #include <rtm/quatf.h>
+#include <rtm/impl/bit_cast.impl.h>
 
 using namespace rtm;
 
@@ -188,9 +189,9 @@ RTM_FORCE_NOINLINE quatf RTM_SIMD_CALL quat_mul_neon_mul(quatf_arg0 lhs, quatf_a
 	alignas(16) constexpr float control_zwxy_f[4] = { 1.0f, 1.0f, -1.0f, -1.0f };
 	alignas(16) constexpr float control_yxwz_f[4] = { -1.0f, 1.0f, 1.0f, -1.0f };
 
-	const float32x4_t control_wzyx = *reinterpret_cast<const float32x4_t*>(&control_wzyx_f[0]);
-	const float32x4_t control_zwxy = *reinterpret_cast<const float32x4_t*>(&control_zwxy_f[0]);
-	const float32x4_t control_yxwz = *reinterpret_cast<const float32x4_t*>(&control_yxwz_f[0]);
+	const float32x4_t control_wzyx = *rtm_impl::bit_cast<const float32x4_t*>(&control_wzyx_f[0]);
+	const float32x4_t control_zwxy = *rtm_impl::bit_cast<const float32x4_t*>(&control_zwxy_f[0]);
+	const float32x4_t control_yxwz = *rtm_impl::bit_cast<const float32x4_t*>(&control_yxwz_f[0]);
 
 	const float32x2_t r_xy = vget_low_f32(rhs);
 	const float32x2_t r_zw = vget_high_f32(rhs);
@@ -224,9 +225,9 @@ RTM_FORCE_NOINLINE quatf RTM_SIMD_CALL quat_mul_neon_xor(quatf_arg0 lhs, quatf_a
 	alignas(16) constexpr uint32x4_t control_zwxy_f[4] = { 0, 0, 0x80000000U, 0x80000000U };
 	alignas(16) constexpr uint32x4_t control_yxwz_f[4] = { 0x80000000U, 0, 0, 0x80000000U };
 
-	const uint32x4_t control_wzyx = *reinterpret_cast<const uint32x4_t*>(&control_wzyx_f[0]);
-	const uint32x4_t control_zwxy = *reinterpret_cast<const uint32x4_t*>(&control_zwxy_f[0]);
-	const uint32x4_t control_yxwz = *reinterpret_cast<const uint32x4_t*>(&control_yxwz_f[0]);
+	const uint32x4_t control_wzyx = *rtm_impl::bit_cast<const uint32x4_t*>(&control_wzyx_f[0]);
+	const uint32x4_t control_zwxy = *rtm_impl::bit_cast<const uint32x4_t*>(&control_zwxy_f[0]);
+	const uint32x4_t control_yxwz = *rtm_impl::bit_cast<const uint32x4_t*>(&control_yxwz_f[0]);
 
 	float32x2_t r_xy = vget_low_f32(rhs);
 	float32x2_t r_zw = vget_high_f32(rhs);

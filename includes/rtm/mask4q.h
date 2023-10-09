@@ -26,6 +26,7 @@
 
 #include "rtm/math.h"
 #include "rtm/version.h"
+#include "rtm/impl/bit_cast.impl.h"
 #include "rtm/impl/compiler_utils.h"
 #include "rtm/impl/mask_common.h"
 
@@ -289,8 +290,8 @@ namespace rtm
 		__m128i zw = _mm_and_si128(lhs.zw, rhs.zw);
 		return mask4q{ xy, zw };
 #else
-		const uint64_t* lhs_ = reinterpret_cast<const uint64_t*>(&lhs);
-		const uint64_t* rhs_ = reinterpret_cast<const uint64_t*>(&rhs);
+		const uint64_t* lhs_ = rtm_impl::bit_cast<const uint64_t*>(&lhs);
+		const uint64_t* rhs_ = rtm_impl::bit_cast<const uint64_t*>(&rhs);
 
 		union
 		{
@@ -317,8 +318,8 @@ namespace rtm
 		__m128i zw = _mm_or_si128(lhs.zw, rhs.zw);
 		return mask4q{ xy, zw };
 #else
-		const uint64_t* lhs_ = reinterpret_cast<const uint64_t*>(&lhs);
-		const uint64_t* rhs_ = reinterpret_cast<const uint64_t*>(&rhs);
+		const uint64_t* lhs_ = rtm_impl::bit_cast<const uint64_t*>(&lhs);
+		const uint64_t* rhs_ = rtm_impl::bit_cast<const uint64_t*>(&rhs);
 
 		union
 		{
@@ -345,8 +346,8 @@ namespace rtm
 		__m128i zw = _mm_xor_si128(lhs.zw, rhs.zw);
 		return mask4q{ xy, zw };
 #else
-		const uint64_t* lhs_ = reinterpret_cast<const uint64_t*>(&lhs);
-		const uint64_t* rhs_ = reinterpret_cast<const uint64_t*>(&rhs);
+		const uint64_t* lhs_ = rtm_impl::bit_cast<const uint64_t*>(&lhs);
+		const uint64_t* rhs_ = rtm_impl::bit_cast<const uint64_t*>(&rhs);
 
 		union
 		{
