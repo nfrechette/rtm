@@ -25,6 +25,7 @@
 #include <benchmark/benchmark.h>
 
 #include <rtm/packing/quatf.h>
+#include <rtm/impl/bit_cast.impl.h>
 
 using namespace rtm;
 
@@ -47,7 +48,7 @@ RTM_FORCE_NOINLINE quatf RTM_SIMD_CALL quat_ensure_positive_w_sse2(quatf_arg0 in
 RTM_FORCE_NOINLINE quatf RTM_SIMD_CALL quat_ensure_positive_w_neon(quatf_arg0 input) RTM_NO_EXCEPT
 {
 	alignas(16) constexpr uint32_t sign_bit_i[4] = { 0x80000000U, 0x80000000U, 0x80000000U, 0x80000000U };
-	const uint32x4_t sign_bit = *reinterpret_cast<const uint32x4_t*>(&sign_bit_i[0]);
+	const uint32x4_t sign_bit = *rtm_impl::bit_cast<const uint32x4_t*>(&sign_bit_i[0]);
 	const uint32x4_t input_u32 = vreinterpretq_u32_f32(input);
 	const uint32x4_t input_sign = vandq_u32(input_u32, sign_bit);
 	const uint32x4_t bias = vmovq_n_u32(vgetq_lane_u32(input_sign, 3));

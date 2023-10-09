@@ -26,6 +26,7 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 #include "rtm/version.h"
+#include "rtm/impl/bit_cast.impl.h"
 #include "rtm/impl/compiler_utils.h"
 #include "rtm/impl/error.h"
 
@@ -84,7 +85,7 @@ namespace rtm
 		RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE bool is_aligned_to(PtrType* value, size_t alignment) RTM_NO_EXCEPT
 		{
 			RTM_ASSERT(is_power_of_two(alignment), "Alignment value must be a power of two");
-			return (reinterpret_cast<intptr_t>(value) & (alignment - 1)) == 0;
+			return (bit_cast<intptr_t>(value) & (alignment - 1)) == 0;
 		}
 
 		//////////////////////////////////////////////////////////////////////////
@@ -113,7 +114,7 @@ namespace rtm
 		RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE PtrType* align_to(PtrType* value, size_t alignment) RTM_NO_EXCEPT
 		{
 			RTM_ASSERT(is_power_of_two(alignment), "Alignment value must be a power of two");
-			return reinterpret_cast<PtrType*>((reinterpret_cast<intptr_t>(value) + (alignment - 1)) & ~(alignment - 1));
+			return bit_cast<PtrType*>((bit_cast<intptr_t>(value) + (alignment - 1)) & ~(alignment - 1));
 		}
 
 		//////////////////////////////////////////////////////////////////////////
@@ -140,8 +141,8 @@ namespace rtm
 		{
 			RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE static DestPtrType* cast(SrcType* input) RTM_NO_EXCEPT
 			{
-				RTM_ASSERT(is_aligned_to(input, alignof(DestPtrType)), "reinterpret_cast would result in an unaligned pointer");
-				return reinterpret_cast<DestPtrType*>(input);
+				RTM_ASSERT(is_aligned_to(input, alignof(DestPtrType)), "Cast would result in an unaligned pointer");
+				return bit_cast<DestPtrType*>(input);
 			}
 		};
 
@@ -156,15 +157,15 @@ namespace rtm
 		{
 			RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE static DestPtrType* cast(SrcType input) RTM_NO_EXCEPT
 			{
-				RTM_ASSERT(is_aligned_to(input, alignof(DestPtrType)), "reinterpret_cast would result in an unaligned pointer");
-				return reinterpret_cast<DestPtrType*>(input);
+				RTM_ASSERT(is_aligned_to(input, alignof(DestPtrType)), "Cast would result in an unaligned pointer");
+				return bit_cast<DestPtrType*>(input);
 			}
 		};
 
 		template<typename SrcType>
 		struct safe_int_to_ptr_cast_impl<void, SrcType>
 		{
-			RTM_DISABLE_SECURITY_COOKIE_CHECK static RTM_FORCE_INLINE constexpr void* cast(SrcType input) RTM_NO_EXCEPT { return reinterpret_cast<void*>(input); }
+			RTM_DISABLE_SECURITY_COOKIE_CHECK static RTM_FORCE_INLINE constexpr void* cast(SrcType input) RTM_NO_EXCEPT { return bit_cast<void*>(input); }
 		};
 
 		template<typename DestPtrType, typename SrcType>

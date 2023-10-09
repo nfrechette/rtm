@@ -28,6 +28,7 @@
 #include "rtm/math.h"
 #include "rtm/scalard.h"
 #include "rtm/version.h"
+#include "rtm/impl/bit_cast.impl.h"
 #include "rtm/impl/compiler_utils.h"
 #include "rtm/impl/memory_utils.h"
 #include "rtm/impl/vector_common.h"
@@ -506,7 +507,7 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE const double* vector_to_pointer(const vector4d& input) RTM_NO_EXCEPT
 	{
-		return reinterpret_cast<const double*>(&input);
+		return rtm_impl::bit_cast<const double*>(&input);
 	}
 
 	//////////////////////////////////////////////////////////////////////////
@@ -2020,11 +2021,11 @@ namespace rtm
 		__m128d zw = _mm_and_pd(input0.zw, input1.zw);
 		return vector4d{ xy, zw };
 #else
-		const uint64_t* input0_ = reinterpret_cast<const uint64_t*>(&input0);
-		const uint64_t* input1_ = reinterpret_cast<const uint64_t*>(&input1);
+		const uint64_t* input0_ = rtm_impl::bit_cast<const uint64_t*>(&input0);
+		const uint64_t* input1_ = rtm_impl::bit_cast<const uint64_t*>(&input1);
 
 		vector4d result = input0;
-		uint64_t* result_ = reinterpret_cast<uint64_t*>(&result);
+		uint64_t* result_ = rtm_impl::bit_cast<uint64_t*>(&result);
 
 		result_[0] = input0_[0] & input1_[0];
 		result_[1] = input0_[1] & input1_[1];
@@ -2045,11 +2046,11 @@ namespace rtm
 		__m128d zw = _mm_or_pd(input0.zw, input1.zw);
 		return vector4d{ xy, zw };
 #else
-		const uint64_t* input0_ = reinterpret_cast<const uint64_t*>(&input0);
-		const uint64_t* input1_ = reinterpret_cast<const uint64_t*>(&input1);
+		const uint64_t* input0_ = rtm_impl::bit_cast<const uint64_t*>(&input0);
+		const uint64_t* input1_ = rtm_impl::bit_cast<const uint64_t*>(&input1);
 
 		vector4d result = input0;
-		uint64_t* result_ = reinterpret_cast<uint64_t*>(&result);
+		uint64_t* result_ = rtm_impl::bit_cast<uint64_t*>(&result);
 
 		result_[0] = input0_[0] | input1_[0];
 		result_[1] = input0_[1] | input1_[1];
@@ -2070,11 +2071,11 @@ namespace rtm
 		__m128d zw = _mm_xor_pd(input0.zw, input1.zw);
 		return vector4d{ xy, zw };
 #else
-		const uint64_t* input0_ = reinterpret_cast<const uint64_t*>(&input0);
-		const uint64_t* input1_ = reinterpret_cast<const uint64_t*>(&input1);
+		const uint64_t* input0_ = rtm_impl::bit_cast<const uint64_t*>(&input0);
+		const uint64_t* input1_ = rtm_impl::bit_cast<const uint64_t*>(&input1);
 
 		vector4d result = input0;
-		uint64_t* result_ = reinterpret_cast<uint64_t*>(&result);
+		uint64_t* result_ = rtm_impl::bit_cast<uint64_t*>(&result);
 
 		result_[0] = input0_[0] ^ input1_[0];
 		result_[1] = input0_[1] ^ input1_[1];
