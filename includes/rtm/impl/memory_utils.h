@@ -199,9 +199,9 @@ namespace rtm
 			{
 				using SrcRealType = typename safe_underlying_type<SrcType, std::is_enum<SrcType>::value>::type;
 
-				if (static_condition<(std::is_signed<DstType>::value == std::is_signed<SrcRealType>::value)>::test())
+				if (static_condition<std::is_signed<DstType>::value == std::is_signed<SrcRealType>::value>::test())
 					return SrcType(DstType(input)) == input;
-				else if (static_condition<(std::is_signed<SrcRealType>::value)>::test())
+				else if (static_condition<std::is_signed<SrcRealType>::value>::test())
 					return int64_t(input) >= 0 && SrcType(DstType(input)) == input;
 				else
 					return uint64_t(input) <= uint64_t(std::numeric_limits<DstType>::max());
@@ -221,7 +221,7 @@ namespace rtm
 		RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE bool is_static_cast_safe(SrcType input) RTM_NO_EXCEPT
 		{
 			// TODO: In C++17 this should be folded to constexpr if
-			return is_static_cast_safe_s<DstType, SrcType, static_condition<(std::is_floating_point<SrcType>::value || std::is_floating_point<DstType>::value)>::test()>::test(input);
+			return is_static_cast_safe_s<DstType, SrcType, static_condition<std::is_floating_point<SrcType>::value || std::is_floating_point<DstType>::value>::test()>::test(input);
 		}
 
 		template<typename DstType, typename SrcType>
