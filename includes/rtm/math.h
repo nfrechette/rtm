@@ -84,6 +84,7 @@
 
 #if defined(RTM_SSE3_INTRINSICS)
 	#include <pmmintrin.h>
+	#include <tmmintrin.h>
 #endif
 
 #if defined(RTM_SSE4_INTRINSICS)
