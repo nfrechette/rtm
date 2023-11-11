@@ -1,5 +1,20 @@
 # Significant changes per release
 
+## 2.2.0
+
+*  Added support for Clang 15
+*  Added support for GCC 12 and 13
+*  Added support for XCode 14
+*  Added support for VS2022
+*  CI now uses docker where possible
+*  Updated Catch2 to 2.13.7
+*  Tons of static analysis fixes and polish
+*  Added new QV transform type
+*  Added new QVS transform type
+*  Tons of new minor additions
+*  Tons of optimizations, especially on ARM64
+*  Many other improvements and cleanup
+
 ## 2.1.5
 
 *  Force macro expansion in version namespace identifier
