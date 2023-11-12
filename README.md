@@ -5,7 +5,7 @@
 [![Sonar Status](https://sonarcloud.io/api/project_badges/measure?project=nfrechette_rtm&metric=alert_status)](https://sonarcloud.io/dashboard?id=nfrechette_rtm)
 [![GitHub release](https://img.shields.io/github/release/nfrechette/rtm.svg)](https://github.com/nfrechette/rtm/releases)
 [![GitHub license](https://img.shields.io/badge/license-MIT-blue.svg)](https://raw.githubusercontent.com/nfrechette/rtm/master/LICENSE)
-[![Conan](https://img.shields.io/badge/on-conan-blue.svg)](https://conan.io/center/rtm)
+[![Conan](https://img.shields.io/conan/v/rtm)](https://conan.io/center/recipes/rtm)
 [![Discord](https://img.shields.io/discord/691048241864769647?label=discord)](https://discord.gg/UERt4bS)
 
 # Realtime Math
@@ -43,7 +43,7 @@ The above supported platform list is only what is tested every release but if it
 
 This library is **100%** headers as such you just need to include them in your own project to start using it. However, if you wish to run the unit tests or to contribute to RTM head on over to the [getting started](./docs/getting_started.md) section in order to setup your environment and make sure to check out the [contributing guidelines](CONTRIBUTING.md).
 
-You can install `rtm` with [Conan](https://conan.io/center/rtm).
+You can install `rtm` with [Conan](https://conan.io/center/recipes/rtm).
 
 ## External dependencies
 
