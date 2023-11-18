@@ -967,6 +967,55 @@ namespace rtm
 		// type differs. Implicit coercion is used to return the desired value
 		// at the call site.
 		//////////////////////////////////////////////////////////////////////////
+		struct vector4d_vector_dot2
+		{
+			RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE RTM_SIMD_CALL operator double() const RTM_NO_EXCEPT
+			{
+#if defined(RTM_SSE2_INTRINSICS)
+				__m128d x2_y2 = _mm_mul_pd(lhs.xy, rhs.xy);
+				__m128d y2 = _mm_shuffle_pd(x2_y2, x2_y2, 1);
+				return _mm_cvtsd_f64(_mm_add_sd(x2_y2, y2));
+#else
+				return (vector_get_x(lhs) * vector_get_x(rhs)) + (vector_get_y(lhs) * vector_get_y(rhs));
+#endif
+			}
+
+#if defined(RTM_SSE2_INTRINSICS)
+			RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE RTM_SIMD_CALL operator scalard() const RTM_NO_EXCEPT
+			{
+				__m128d x2_y2 = _mm_mul_pd(lhs.xy, rhs.xy);
+				__m128d y2 = _mm_shuffle_pd(x2_y2, x2_y2, 1);
+				return scalard{ _mm_add_sd(x2_y2, y2) };
+			}
+#endif
+
+			RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE RTM_SIMD_CALL operator vector4d() const RTM_NO_EXCEPT
+			{
+				const scalard dot = *this;
+				return vector_set(dot);
+			}
+
+			vector4d lhs;
+			vector4d rhs;
+		};
+	}
+
+	//////////////////////////////////////////////////////////////////////////
+	// 2D dot product: lhs . rhs
+	//////////////////////////////////////////////////////////////////////////
+	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE constexpr rtm_impl::vector4d_vector_dot2 vector_dot2(const vector4d& lhs, const vector4d& rhs) RTM_NO_EXCEPT
+	{
+		return rtm_impl::vector4d_vector_dot2{ lhs, rhs };
+	}
+
+	namespace rtm_impl
+	{
+		//////////////////////////////////////////////////////////////////////////
+		// This is a helper struct to allow a single consistent API between
+		// various vector types when the semantics are identical but the return
+		// type differs. Implicit coercion is used to return the desired value
+		// at the call site.
+		//////////////////////////////////////////////////////////////////////////
 		struct vector4d_vector_dot3
 		{
 			RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE RTM_SIMD_CALL operator double() const RTM_NO_EXCEPT
