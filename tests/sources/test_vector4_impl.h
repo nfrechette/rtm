@@ -107,6 +107,19 @@ inline FloatType scalar_dot2(const Vector4Type& lhs, const Vector4Type& rhs)
 }
 
 template<typename Vector4Type, typename FloatType>
+inline Vector4Type scalar_normalize2(const Vector4Type& input, const Vector4Type& fallback, FloatType threshold)
+{
+	FloatType len_sq = scalar_dot2<Vector4Type, FloatType>(input, input);
+	if (len_sq >= threshold)
+	{
+		FloatType inv_len = rtm::scalar_sqrt_reciprocal(len_sq);
+		return vector_set(vector_get_x(input) * inv_len, vector_get_y(input) * inv_len, (FloatType)0.0);
+	}
+	else
+		return fallback;
+}
+
+template<typename Vector4Type, typename FloatType>
 inline Vector4Type scalar_normalize3(const Vector4Type& input, const Vector4Type& fallback, FloatType threshold)
 {
 	FloatType len_sq = scalar_dot3<Vector4Type, FloatType>(input, input);
@@ -576,6 +589,20 @@ void test_vector4_arithmetic_impl(const FloatType threshold)
 	CHECK(scalar_near_equal(rtm::scalar_sqrt(scalar_dot3<Vector4Type, FloatType>(test_value_diff, test_value_diff)), vector_distance3_result, threshold));
 	const ScalarType vector_distance3_result_scalar = vector_distance3(test_value0, test_value1);
 	CHECK(scalar_equal(vector_distance3_result, scalar_cast(vector_distance3_result_scalar)));
+
+	const Vector4Type scalar_normalize2_result = scalar_normalize2<Vector4Type, FloatType>(test_value0, zero, threshold);
+	const Vector4Type vector_normalize2_result = vector_normalize2(test_value0);
+	CHECK(scalar_near_equal(vector_get_x(vector_normalize2_result), vector_get_x(scalar_normalize2_result), threshold));
+	CHECK(scalar_near_equal(vector_get_y(vector_normalize2_result), vector_get_y(scalar_normalize2_result), threshold));
+
+	const Vector4Type vector_normalize2_result_safe = vector_normalize2(test_value0, zero, threshold);
+	CHECK(scalar_near_equal(vector_get_x(vector_normalize2_result_safe), vector_get_x(scalar_normalize2_result), threshold));
+	CHECK(scalar_near_equal(vector_get_y(vector_normalize2_result_safe), vector_get_y(scalar_normalize2_result), threshold));
+
+	const Vector4Type scalar_normalize2_result0 = scalar_normalize2<Vector4Type, FloatType>(zero, zero, threshold);
+	const Vector4Type vector_normalize2_result0 = vector_normalize2(zero, zero, threshold);
+	CHECK(scalar_near_equal(vector_get_x(vector_normalize2_result0), vector_get_x(scalar_normalize2_result0), threshold));
+	CHECK(scalar_near_equal(vector_get_y(vector_normalize2_result0), vector_get_y(scalar_normalize2_result0), threshold));
 
 	const Vector4Type scalar_normalize3_result = scalar_normalize3<Vector4Type, FloatType>(test_value0, zero, threshold);
 	const Vector4Type vector_normalize3_result = vector_normalize3(test_value0);
