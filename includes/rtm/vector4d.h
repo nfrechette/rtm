@@ -1070,6 +1070,14 @@ namespace rtm
 	}
 
 	//////////////////////////////////////////////////////////////////////////
+	// Returns the squared length/norm of the vector2.
+	//////////////////////////////////////////////////////////////////////////
+	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE constexpr rtm_impl::vector4d_vector_dot2 vector_length_squared2(const vector4d& input) RTM_NO_EXCEPT
+	{
+		return rtm_impl::vector4d_vector_dot2{ input, input };
+	}
+
+	//////////////////////////////////////////////////////////////////////////
 	// Returns the squared length/norm of the vector3.
 	//////////////////////////////////////////////////////////////////////////
 	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE constexpr rtm_impl::vector4d_vector_dot3 vector_length_squared3(const vector4d& input) RTM_NO_EXCEPT
