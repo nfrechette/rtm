@@ -1275,6 +1275,33 @@ namespace rtm
 	}
 
 	//////////////////////////////////////////////////////////////////////////
+	// Returns a normalized vector2.
+	// If the length of the input is not finite or zero, the result is undefined.
+	// For a safe alternative, supply a fallback value and a threshold.
+	//////////////////////////////////////////////////////////////////////////
+	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE vector4d vector_normalize2(const vector4d& input) RTM_NO_EXCEPT
+	{
+		// Reciprocal is more accurate to normalize with
+		const scalard len_sq = vector_length_squared2(input);
+		return vector_mul(input, scalar_sqrt_reciprocal(len_sq));
+	}
+
+	//////////////////////////////////////////////////////////////////////////
+	// Returns a normalized vector2.
+	// If the length of the input is below the supplied threshold, the
+	// fall back value is returned instead.
+	//////////////////////////////////////////////////////////////////////////
+	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE vector4d vector_normalize2(const vector4d& input, const vector4d& fallback, double threshold = 1.0E-8) RTM_NO_EXCEPT
+	{
+		// Reciprocal is more accurate to normalize with
+		const scalard len_sq = vector_length_squared2(input);
+		if (scalar_cast(len_sq) >= threshold)
+			return vector_mul(input, scalar_sqrt_reciprocal(len_sq));
+		else
+			return fallback;
+	}
+
+	//////////////////////////////////////////////////////////////////////////
 	// Returns a normalized vector3.
 	// If the length of the input is not finite or zero, the result is undefined.
 	// For a safe alternative, supply a fallback value and a threshold.
