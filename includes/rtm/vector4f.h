@@ -1209,6 +1209,79 @@ namespace rtm
 		// type differs. Implicit coercion is used to return the desired value
 		// at the call site.
 		//////////////////////////////////////////////////////////////////////////
+		struct vector4f_vector_dot2
+		{
+			RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE RTM_SIMD_CALL operator float() const RTM_NO_EXCEPT
+			{
+#if defined(RTM_SSE4_INTRINSICS) && 0
+				// SSE4 dot product instruction appears slower on Zen2, is it the case elsewhere as well?
+				return _mm_cvtss_f32(_mm_dp_ps(lhs, rhs, 0x7F));
+#elif defined(RTM_SSE2_INTRINSICS)
+				__m128 x2_y2_z2_w2 = _mm_mul_ps(lhs, rhs);
+				__m128 y2_0_0_0 = _mm_shuffle_ps(x2_y2_z2_w2, x2_y2_z2_w2, _MM_SHUFFLE(0, 0, 0, 1));
+				__m128 x2y2_0_0_0 = _mm_add_ss(x2_y2_z2_w2, y2_0_0_0);
+				return _mm_cvtss_f32(x2y2_0_0_0);
+#elif defined(RTM_NEON_INTRINSICS)
+				float32x4_t x2_y2_z2_w2 = vmulq_f32(lhs, rhs);
+				float32x2_t x2_y2 = vget_low_f32(x2_y2_z2_w2);
+				float32x2_t x2y2_x2y2 = vpadd_f32(x2_y2, x2_y2);
+				return vget_lane_f32(x2y2_x2y2, 0);
+#else
+				return (vector_get_x(lhs) * vector_get_x(rhs)) + (vector_get_y(lhs) * vector_get_y(rhs));
+#endif
+			}
+
+#if defined(RTM_SSE2_INTRINSICS)
+			RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE RTM_SIMD_CALL operator scalarf() const RTM_NO_EXCEPT
+			{
+				__m128 x2_y2_z2_w2 = _mm_mul_ps(lhs, rhs);
+				__m128 y2_0_0_0 = _mm_shuffle_ps(x2_y2_z2_w2, x2_y2_z2_w2, _MM_SHUFFLE(0, 0, 0, 1));
+				return scalarf{ _mm_add_ss(x2_y2_z2_w2, y2_0_0_0) };
+			}
+#endif
+
+			RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE RTM_SIMD_CALL operator vector4f() const RTM_NO_EXCEPT
+			{
+#if defined(RTM_SSE4_INTRINSICS) && 0
+				// SSE4 dot product instruction appears slower on Zen2, is it the case elsewhere as well?
+				return _mm_cvtss_f32(_mm_dp_ps(lhs, rhs, 0xFF));
+#elif defined(RTM_SSE2_INTRINSICS)
+				__m128 x2_y2_z2_w2 = _mm_mul_ps(lhs, rhs);
+				__m128 y2_0_0_0 = _mm_shuffle_ps(x2_y2_z2_w2, x2_y2_z2_w2, _MM_SHUFFLE(0, 0, 0, 1));
+				__m128 x2y2_0_0_0 = _mm_add_ss(x2_y2_z2_w2, y2_0_0_0);
+				return _mm_shuffle_ps(x2y2_0_0_0, x2y2_0_0_0, _MM_SHUFFLE(0, 0, 0, 0));
+#elif defined(RTM_NEON_INTRINSICS)
+				float32x4_t x2_y2_z2_w2 = vmulq_f32(lhs, rhs);
+				float32x2_t x2_y2 = vget_low_f32(x2_y2_z2_w2);
+				float32x2_t x2y2_x2y2 = vpadd_f32(x2_y2, x2_y2);
+				return vcombine_f32(x2y2_x2y2, x2y2_x2y2);
+#else
+				scalarf result = *this;
+				return vector_set(result);
+#endif
+			}
+
+			vector4f lhs;
+			vector4f rhs;
+		};
+	}
+
+	//////////////////////////////////////////////////////////////////////////
+	// 2D dot product: lhs . rhs
+	//////////////////////////////////////////////////////////////////////////
+	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE constexpr rtm_impl::vector4f_vector_dot2 RTM_SIMD_CALL vector_dot2(vector4f_arg0 lhs, vector4f_arg1 rhs) RTM_NO_EXCEPT
+	{
+		return rtm_impl::vector4f_vector_dot2{ lhs, rhs };
+	}
+
+	namespace rtm_impl
+	{
+		//////////////////////////////////////////////////////////////////////////
+		// This is a helper struct to allow a single consistent API between
+		// various vector types when the semantics are identical but the return
+		// type differs. Implicit coercion is used to return the desired value
+		// at the call site.
+		//////////////////////////////////////////////////////////////////////////
 		struct vector4f_vector_dot3
 		{
 			RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE RTM_SIMD_CALL operator float() const RTM_NO_EXCEPT

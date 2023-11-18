@@ -97,6 +97,16 @@ inline FloatType scalar_dot3(const Vector4Type& lhs, const Vector4Type& rhs)
 }
 
 template<typename Vector4Type, typename FloatType>
+inline FloatType scalar_dot2(const Vector4Type& lhs, const Vector4Type& rhs)
+{
+	const FloatType lhs_x = vector_get_x(lhs);
+	const FloatType lhs_y = vector_get_y(lhs);
+	const FloatType rhs_x = vector_get_x(rhs);
+	const FloatType rhs_y = vector_get_y(rhs);
+	return (lhs_x * rhs_x) + (lhs_y * rhs_y);
+}
+
+template<typename Vector4Type, typename FloatType>
 inline Vector4Type scalar_normalize3(const Vector4Type& input, const Vector4Type& fallback, FloatType threshold)
 {
 	FloatType len_sq = scalar_dot3<Vector4Type, FloatType>(input, input);
@@ -517,6 +527,17 @@ void test_vector4_arithmetic_impl(const FloatType threshold)
 	CHECK(scalar_equal(vector_dot3_result, (FloatType)vector_get_y(vector_dot3_result_vec)));
 	CHECK(scalar_equal(vector_dot3_result, (FloatType)vector_get_z(vector_dot3_result_vec)));
 	CHECK(scalar_equal(vector_dot3_result, (FloatType)vector_get_w(vector_dot3_result_vec)));
+
+	const FloatType scalar_dot2_result = scalar_dot2<Vector4Type, FloatType>(test_value10, test_value11);
+	const FloatType vector_dot2_result = vector_dot2(test_value10, test_value11);
+	CHECK(scalar_near_equal(vector_dot2_result, scalar_dot2_result, threshold));
+	const ScalarType vector_dot2_result_scalar = vector_dot2(test_value10, test_value11);
+	CHECK(scalar_equal(vector_dot2_result, scalar_cast(vector_dot2_result_scalar)));
+	const Vector4Type vector_dot2_result_vec = vector_dot2(test_value10, test_value11);
+	CHECK(scalar_equal(vector_dot2_result, (FloatType)vector_get_x(vector_dot2_result_vec)));
+	CHECK(scalar_equal(vector_dot2_result, (FloatType)vector_get_y(vector_dot2_result_vec)));
+	CHECK(scalar_equal(vector_dot2_result, (FloatType)vector_get_z(vector_dot2_result_vec)));
+	CHECK(scalar_equal(vector_dot2_result, (FloatType)vector_get_w(vector_dot2_result_vec)));
 
 	const ScalarType vector_sdot_result = vector_dot(test_value10, test_value11);
 	CHECK(scalar_near_equal(scalar_cast(vector_sdot_result), scalar_dot_result, threshold));
