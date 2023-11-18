@@ -1505,6 +1505,42 @@ namespace rtm
 		// type differs. Implicit coercion is used to return the desired value
 		// at the call site.
 		//////////////////////////////////////////////////////////////////////////
+		struct vector4f_vector_length_reciprocal2
+		{
+			RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE RTM_SIMD_CALL operator float() const RTM_NO_EXCEPT
+			{
+				const scalarf len_sq = vector_length_squared2(input);
+				return scalar_cast(scalar_sqrt_reciprocal(len_sq));
+			}
+
+#if defined(RTM_SSE2_INTRINSICS)
+			RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE RTM_SIMD_CALL operator scalarf() const RTM_NO_EXCEPT
+			{
+				const scalarf len_sq = vector_length_squared2(input);
+				return scalar_sqrt_reciprocal(len_sq);
+			}
+#endif
+
+			vector4f input;
+		};
+	}
+
+	//////////////////////////////////////////////////////////////////////////
+	// Returns the reciprocal length/norm of the vector2.
+	//////////////////////////////////////////////////////////////////////////
+	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE constexpr rtm_impl::vector4f_vector_length_reciprocal2 RTM_SIMD_CALL vector_length_reciprocal2(vector4f_arg0 input) RTM_NO_EXCEPT
+	{
+		return rtm_impl::vector4f_vector_length_reciprocal2{ input };
+	}
+
+	namespace rtm_impl
+	{
+		//////////////////////////////////////////////////////////////////////////
+		// This is a helper struct to allow a single consistent API between
+		// various vector types when the semantics are identical but the return
+		// type differs. Implicit coercion is used to return the desired value
+		// at the call site.
+		//////////////////////////////////////////////////////////////////////////
 		struct vector4f_vector_length_reciprocal3
 		{
 			RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE RTM_SIMD_CALL operator float() const RTM_NO_EXCEPT
