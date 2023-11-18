@@ -132,6 +132,19 @@ inline Vector4Type scalar_normalize3(const Vector4Type& input, const Vector4Type
 		return fallback;
 }
 
+template<typename Vector4Type, typename FloatType>
+inline Vector4Type scalar_normalize4(const Vector4Type& input, const Vector4Type& fallback, FloatType threshold)
+{
+	FloatType len_sq = scalar_dot4<Vector4Type, FloatType>(input, input);
+	if (len_sq >= threshold)
+	{
+		FloatType inv_len = rtm::scalar_sqrt_reciprocal(len_sq);
+		return vector_set(vector_get_x(input) * inv_len, vector_get_y(input) * inv_len, vector_get_z(input) * inv_len, vector_get_w(input) * inv_len);
+	}
+	else
+		return fallback;
+}
+
 template<typename FloatType>
 void test_vector4_getset_impl()
 {
@@ -620,6 +633,26 @@ void test_vector4_arithmetic_impl(const FloatType threshold)
 	CHECK(scalar_near_equal(vector_get_x(vector_normalize3_result0), vector_get_x(scalar_normalize3_result0), threshold));
 	CHECK(scalar_near_equal(vector_get_y(vector_normalize3_result0), vector_get_y(scalar_normalize3_result0), threshold));
 	CHECK(scalar_near_equal(vector_get_z(vector_normalize3_result0), vector_get_z(scalar_normalize3_result0), threshold));
+
+	const Vector4Type scalar_normalize4_result = scalar_normalize4<Vector4Type, FloatType>(test_value0, zero, threshold);
+	const Vector4Type vector_normalize4_result = vector_normalize(test_value0);
+	CHECK(scalar_near_equal(vector_get_x(vector_normalize4_result), vector_get_x(scalar_normalize4_result), threshold));
+	CHECK(scalar_near_equal(vector_get_y(vector_normalize4_result), vector_get_y(scalar_normalize4_result), threshold));
+	CHECK(scalar_near_equal(vector_get_z(vector_normalize4_result), vector_get_z(scalar_normalize4_result), threshold));
+	CHECK(scalar_near_equal(vector_get_w(vector_normalize4_result), vector_get_w(scalar_normalize4_result), threshold));
+
+	const Vector4Type vector_normalize4_result_safe = vector_normalize(test_value0, zero, threshold);
+	CHECK(scalar_near_equal(vector_get_x(vector_normalize4_result_safe), vector_get_x(scalar_normalize4_result), threshold));
+	CHECK(scalar_near_equal(vector_get_y(vector_normalize4_result_safe), vector_get_y(scalar_normalize4_result), threshold));
+	CHECK(scalar_near_equal(vector_get_z(vector_normalize4_result_safe), vector_get_z(scalar_normalize4_result), threshold));
+	CHECK(scalar_near_equal(vector_get_w(vector_normalize4_result_safe), vector_get_w(scalar_normalize4_result), threshold));
+
+	const Vector4Type scalar_normalize4_result0 = scalar_normalize4<Vector4Type, FloatType>(zero, zero, threshold);
+	const Vector4Type vector_normalize4_result0 = vector_normalize(zero, zero, threshold);
+	CHECK(scalar_near_equal(vector_get_x(vector_normalize4_result0), vector_get_x(scalar_normalize4_result0), threshold));
+	CHECK(scalar_near_equal(vector_get_y(vector_normalize4_result0), vector_get_y(scalar_normalize4_result0), threshold));
+	CHECK(scalar_near_equal(vector_get_z(vector_normalize4_result0), vector_get_z(scalar_normalize4_result0), threshold));
+	CHECK(scalar_near_equal(vector_get_w(vector_normalize4_result0), vector_get_w(scalar_normalize4_result0), threshold));
 
 	CHECK(scalar_near_equal(vector_get_x(vector_lerp(test_value10, test_value11, FloatType(0.33))), ((test_value11_flt[0] - test_value10_flt[0]) * FloatType(0.33)) + test_value10_flt[0], threshold));
 	CHECK(scalar_near_equal(vector_get_y(vector_lerp(test_value10, test_value11, FloatType(0.33))), ((test_value11_flt[1] - test_value10_flt[1]) * FloatType(0.33)) + test_value10_flt[1], threshold));

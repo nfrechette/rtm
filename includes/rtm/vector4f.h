@@ -1633,6 +1633,33 @@ namespace rtm
 	}
 
 	//////////////////////////////////////////////////////////////////////////
+	// Returns a normalized vector4.
+	// If the length of the input is not finite or zero, the result is undefined.
+	// For a safe alternative, supply a fallback value and a threshold.
+	//////////////////////////////////////////////////////////////////////////
+	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE vector4f RTM_SIMD_CALL vector_normalize(vector4f_arg0 input) RTM_NO_EXCEPT
+	{
+		// Reciprocal is more accurate to normalize with
+		const scalarf len_sq = vector_length_squared(input);
+		return vector_mul(input, scalar_sqrt_reciprocal(len_sq));
+	}
+
+	//////////////////////////////////////////////////////////////////////////
+	// Returns a normalized vector4.
+	// If the length of the input is below the supplied threshold, the
+	// fall back value is returned instead.
+	//////////////////////////////////////////////////////////////////////////
+	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE vector4f RTM_SIMD_CALL vector_normalize(vector4f_arg0 input, vector4f_arg1 fallback, float threshold = 1.0E-8F) RTM_NO_EXCEPT
+	{
+		// Reciprocal is more accurate to normalize with
+		const scalarf len_sq = vector_length_squared(input);
+		if (scalar_cast(len_sq) >= threshold)
+			return vector_mul(input, scalar_sqrt_reciprocal(len_sq));
+		else
+			return fallback;
+	}
+
+	//////////////////////////////////////////////////////////////////////////
 	// Returns per component the fractional part of the input.
 	//////////////////////////////////////////////////////////////////////////
 	RTM_DISABLE_SECURITY_COOKIE_CHECK inline vector4f RTM_SIMD_CALL vector_fraction(vector4f_arg0 input) RTM_NO_EXCEPT
