@@ -76,6 +76,7 @@ Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/d
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/operasfantom"><img src="https://avatars.githubusercontent.com/u/31903947?v=4?s=100" width="100px;" alt="Pavel Iatchenii"/><br /><sub><b>Pavel Iatchenii</b></sub></a><br /><a href="https://github.com/nfrechette/rtm/commits?author=operasfantom" title="Code">💻</a> <a href="#maintenance-operasfantom" title="Maintenance">🚧</a></td>
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/GermanAizek"><img src="https://avatars.githubusercontent.com/u/21138600?v=4?s=100" width="100px;" alt="Herman Semenov"/><br /><sub><b>Herman Semenov</b></sub></a><br /><a href="https://github.com/nfrechette/rtm/commits?author=GermanAizek" title="Code">💻</a></td>
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/valgur"><img src="https://avatars.githubusercontent.com/u/1778160?v=4?s=100" width="100px;" alt="Martin Valgur"/><br /><sub><b>Martin Valgur</b></sub></a><br /><a href="https://github.com/nfrechette/rtm/commits?author=valgur" title="Code">💻</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="https://github.com/Kethers"><img src="https://avatars.githubusercontent.com/u/49612587?v=4?s=100" width="100px;" alt="Kethers"/><br /><sub><b>Kethers</b></sub></a><br /><a href="https://github.com/nfrechette/rtm/commits?author=Kethers" title="Code">💻</a></td>
     </tr>
   </tbody>
 </table>
