@@ -46,3 +46,6 @@ if(WITH_VECTOR_MIX_TESTS)
 	# Enable vector_mix unit tests
 	add_definitions(-DRTM_IMPL_WITH_VECTOR_MIX_TESTS)
 endif()
+
+# Set XCode properties
+set_property(TARGET ${PROJECT_NAME} PROPERTY XCODE_ATTRIBUTE_PRODUCT_BUNDLE_IDENTIFIER "com.rtm.rtm-unit-tests")

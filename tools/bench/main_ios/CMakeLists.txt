@@ -43,3 +43,6 @@ target_link_libraries(${PROJECT_NAME} PRIVATE benchmark)    # Link Google Benchm
 if(NOT USE_SIMD_INSTRUCTIONS)
 	add_definitions(-DRTM_NO_INTRINSICS)
 endif()
+
+# Set XCode properties
+set_property(TARGET ${PROJECT_NAME} PROPERTY XCODE_ATTRIBUTE_PRODUCT_BUNDLE_IDENTIFIER "com.rtm.rtm-bench")
