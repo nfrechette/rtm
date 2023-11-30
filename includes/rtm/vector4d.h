@@ -302,34 +302,32 @@ namespace rtm
 		// type differs. Implicit coercion is used to return the desired value
 		// at the call site.
 		//////////////////////////////////////////////////////////////////////////
-		template<mix4 component>
+		template<component4 component>
 		struct vector4d_vector_get_component_static
 		{
 			RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE RTM_SIMD_CALL operator double() const RTM_NO_EXCEPT
 			{
-				const mix4 xyzw = mix4(int(component) % 4);
-				if (rtm_impl::static_condition<xyzw == mix4::x>::test())
-					return vector_get_x(input);
-				else if (rtm_impl::static_condition<xyzw == mix4::y>::test())
-					return vector_get_y(input);
-				else if (rtm_impl::static_condition<xyzw == mix4::z>::test())
-					return vector_get_z(input);
-				else
-					return vector_get_w(input);
+				switch (component)
+				{
+					default:
+					case component4::x:	return vector_get_x(input);
+					case component4::y:	return vector_get_y(input);
+					case component4::z:	return vector_get_z(input);
+					case component4::w:	return vector_get_w(input);
+				}
 			}
 
 #if defined(RTM_SSE2_INTRINSICS)
 			RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE RTM_SIMD_CALL operator scalard() const RTM_NO_EXCEPT
 			{
-				const mix4 xyzw = mix4(int(component) % 4);
-				if (rtm_impl::static_condition<xyzw == mix4::x>::test())
-					return vector_get_x(input);
-				else if (rtm_impl::static_condition<xyzw == mix4::y>::test())
-					return vector_get_y(input);
-				else if (rtm_impl::static_condition<xyzw == mix4::z>::test())
-					return vector_get_z(input);
-				else
-					return vector_get_w(input);
+				switch (component)
+				{
+					default:
+					case component4::x:	return vector_get_x(input);
+					case component4::y:	return vector_get_y(input);
+					case component4::z:	return vector_get_z(input);
+					case component4::w:	return vector_get_w(input);
+				}
 			}
 #endif
 
@@ -341,6 +339,16 @@ namespace rtm
 	// Returns the vector4 desired component.
 	//////////////////////////////////////////////////////////////////////////
 	template<mix4 component>
+	RTM_DEPRECATED("Use the variant that takes a component4 as input instead. To be removed in 2.3")
+	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE constexpr rtm_impl::vector4d_vector_get_component_static<static_cast<component4>(static_cast<int32_t>(component) % 4)> vector_get_component(const vector4d& input) RTM_NO_EXCEPT
+	{
+		return rtm_impl::vector4d_vector_get_component_static<static_cast<component4>(static_cast<int32_t>(component) % 4)>{ input };
+	}
+
+	//////////////////////////////////////////////////////////////////////////
+	// Returns the vector4 desired component.
+	//////////////////////////////////////////////////////////////////////////
+	template<component4 component>
 	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE constexpr rtm_impl::vector4d_vector_get_component_static<component> vector_get_component(const vector4d& input) RTM_NO_EXCEPT
 	{
 		return rtm_impl::vector4d_vector_get_component_static<component>{ input };
@@ -358,42 +366,49 @@ namespace rtm
 		{
 			RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE RTM_SIMD_CALL operator double() const RTM_NO_EXCEPT
 			{
-				const mix4 xyzw = mix4(int(component) % 4);
-				if (xyzw == mix4::x)
-					return vector_get_x(input);
-				else if (xyzw == mix4::y)
-					return vector_get_y(input);
-				else if (xyzw == mix4::z)
-					return vector_get_z(input);
-				else
-					return vector_get_w(input);
+				switch (component)
+				{
+					default:
+					case component4::x:	return vector_get_x(input);
+					case component4::y:	return vector_get_y(input);
+					case component4::z:	return vector_get_z(input);
+					case component4::w:	return vector_get_w(input);
+				}
 			}
 
 #if defined(RTM_SSE2_INTRINSICS)
 			RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE RTM_SIMD_CALL operator scalard() const RTM_NO_EXCEPT
 			{
-				const mix4 xyzw = mix4(int(component) % 4);
-				if (xyzw == mix4::x)
-					return vector_get_x(input);
-				else if (xyzw == mix4::y)
-					return vector_get_y(input);
-				else if (xyzw == mix4::z)
-					return vector_get_z(input);
-				else
-					return vector_get_w(input);
+				switch (component)
+				{
+					default:
+					case component4::x:	return vector_get_x(input);
+					case component4::y:	return vector_get_y(input);
+					case component4::z:	return vector_get_z(input);
+					case component4::w:	return vector_get_w(input);
+				}
 			}
 #endif
 
 			vector4d input;
-			mix4 component;
-			int padding[3];
+			component4 component;
+			int32_t padding[3];
 		};
 	}
 
 	//////////////////////////////////////////////////////////////////////////
 	// Returns the vector4 desired component.
 	//////////////////////////////////////////////////////////////////////////
+	RTM_DEPRECATED("Use the variant that takes a component4 as input instead. To be removed in 2.3")
 	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE constexpr rtm_impl::vector4d_vector_get_component vector_get_component(const vector4d& input, mix4 component) RTM_NO_EXCEPT
+	{
+		return rtm_impl::vector4d_vector_get_component{ input, static_cast<component4>(static_cast<int32_t>(component) % 4), { 0 } };
+	}
+
+	//////////////////////////////////////////////////////////////////////////
+	// Returns the vector4 desired component.
+	//////////////////////////////////////////////////////////////////////////
+	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE constexpr rtm_impl::vector4d_vector_get_component vector_get_component(const vector4d& input, component4 component) RTM_NO_EXCEPT
 	{
 		return rtm_impl::vector4d_vector_get_component{ input, component, { 0 } };
 	}
@@ -2126,10 +2141,16 @@ namespace rtm
 	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE vector4d vector_mix(const vector4d& input0, const vector4d& input1) RTM_NO_EXCEPT
 	{
 		// Slow code path, not yet optimized or not using intrinsics
-		const double x = rtm_impl::is_mix_xyzw(comp0) ? vector_get_component<comp0>(input0) : vector_get_component<comp0>(input1);
-		const double y = rtm_impl::is_mix_xyzw(comp1) ? vector_get_component<comp1>(input0) : vector_get_component<comp1>(input1);
-		const double z = rtm_impl::is_mix_xyzw(comp2) ? vector_get_component<comp2>(input0) : vector_get_component<comp2>(input1);
-		const double w = rtm_impl::is_mix_xyzw(comp3) ? vector_get_component<comp3>(input0) : vector_get_component<comp3>(input1);
+		constexpr component4 component0 = static_cast<component4>(static_cast<int32_t>(comp0) % 4);
+		constexpr component4 component1 = static_cast<component4>(static_cast<int32_t>(comp1) % 4);
+		constexpr component4 component2 = static_cast<component4>(static_cast<int32_t>(comp2) % 4);
+		constexpr component4 component3 = static_cast<component4>(static_cast<int32_t>(comp3) % 4);
+
+		const double x = rtm_impl::is_mix_xyzw(comp0) ? vector_get_component<component0>(input0) : vector_get_component<component0>(input1);
+		const double y = rtm_impl::is_mix_xyzw(comp1) ? vector_get_component<component1>(input0) : vector_get_component<component1>(input1);
+		const double z = rtm_impl::is_mix_xyzw(comp2) ? vector_get_component<component2>(input0) : vector_get_component<component2>(input1);
+		const double w = rtm_impl::is_mix_xyzw(comp3) ? vector_get_component<component3>(input0) : vector_get_component<component3>(input1);
+
 		return vector_set(x, y, z, w);
 	}
 
