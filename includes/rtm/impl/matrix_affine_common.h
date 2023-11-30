@@ -190,20 +190,20 @@ namespace rtm
 			}
 			else
 			{
-				// Note that axis3::xyz have the same values as mix4::xyz
+				// Note that axis3::xyz have the same values as component4::xyz
 				int32_t best_axis = (int32_t)axis4::x;
 				if (y_axis_y > x_axis_x)
 					best_axis = (int32_t)axis4::y;
-				if (z_axis_z > vector_get_component(matrix_get_axis(x_axis, y_axis, z_axis, axis3(best_axis)), mix4(best_axis)))
+				if (z_axis_z > vector_get_component(matrix_get_axis(x_axis, y_axis, z_axis, axis3(best_axis)), component4(best_axis)))
 					best_axis = (int32_t)axis4::z;
 
 				const int32_t next_best_axis = (best_axis + 1) % 3;
 				const int32_t next_next_best_axis = (next_best_axis + 1) % 3;
 
 				const float mtx_pseudo_trace = 1.0F +
-					vector_get_component(matrix_get_axis(x_axis, y_axis, z_axis, axis3(best_axis)), mix4(best_axis)) -
-					vector_get_component(matrix_get_axis(x_axis, y_axis, z_axis, axis3(next_best_axis)), mix4(next_best_axis)) -
-					vector_get_component(matrix_get_axis(x_axis, y_axis, z_axis, axis3(next_next_best_axis)), mix4(next_next_best_axis));
+					vector_get_component(matrix_get_axis(x_axis, y_axis, z_axis, axis3(best_axis)), component4(best_axis)) -
+					vector_get_component(matrix_get_axis(x_axis, y_axis, z_axis, axis3(next_best_axis)), component4(next_best_axis)) -
+					vector_get_component(matrix_get_axis(x_axis, y_axis, z_axis, axis3(next_next_best_axis)), component4(next_next_best_axis));
 
 				const float inv_pseudo_trace = scalar_sqrt_reciprocal(mtx_pseudo_trace);
 				const float half_inv_pseudo_trace = inv_pseudo_trace * 0.5F;
@@ -211,14 +211,14 @@ namespace rtm
 				float quat_values[4];
 				quat_values[best_axis] = scalar_reciprocal(inv_pseudo_trace) * 0.5F;
 				quat_values[next_best_axis] = half_inv_pseudo_trace *
-					(vector_get_component(matrix_get_axis(x_axis, y_axis, z_axis, axis3(best_axis)), mix4(next_best_axis)) +
-						vector_get_component(matrix_get_axis(x_axis, y_axis, z_axis, axis3(next_best_axis)), mix4(best_axis)));
+					(vector_get_component(matrix_get_axis(x_axis, y_axis, z_axis, axis3(best_axis)), component4(next_best_axis)) +
+						vector_get_component(matrix_get_axis(x_axis, y_axis, z_axis, axis3(next_best_axis)), component4(best_axis)));
 				quat_values[next_next_best_axis] = half_inv_pseudo_trace *
-					(vector_get_component(matrix_get_axis(x_axis, y_axis, z_axis, axis3(best_axis)), mix4(next_next_best_axis)) +
-						vector_get_component(matrix_get_axis(x_axis, y_axis, z_axis, axis3(next_next_best_axis)), mix4(best_axis)));
+					(vector_get_component(matrix_get_axis(x_axis, y_axis, z_axis, axis3(best_axis)), component4(next_next_best_axis)) +
+						vector_get_component(matrix_get_axis(x_axis, y_axis, z_axis, axis3(next_next_best_axis)), component4(best_axis)));
 				quat_values[3] = half_inv_pseudo_trace *
-					(vector_get_component(matrix_get_axis(x_axis, y_axis, z_axis, axis3(next_best_axis)), mix4(next_next_best_axis)) -
-						vector_get_component(matrix_get_axis(x_axis, y_axis, z_axis, axis3(next_next_best_axis)), mix4(next_best_axis)));
+					(vector_get_component(matrix_get_axis(x_axis, y_axis, z_axis, axis3(next_best_axis)), component4(next_next_best_axis)) -
+						vector_get_component(matrix_get_axis(x_axis, y_axis, z_axis, axis3(next_next_best_axis)), component4(next_best_axis)));
 
 				return quat_normalize(quat_load(&quat_values[0]));
 			}
@@ -261,20 +261,20 @@ namespace rtm
 			}
 			else
 			{
-				// Note that axis3::xyz have the same values as mix4::xyz
+				// Note that axis3::xyz have the same values as component4::xyz
 				int32_t best_axis = (int32_t)axis3::x;
 				if (y_axis_y > x_axis_x)
 					best_axis = (int32_t)axis3::y;
-				if (z_axis_z > vector_get_component(matrix_get_axis(x_axis, y_axis, z_axis, axis3(best_axis)), mix4(best_axis)))
+				if (z_axis_z > vector_get_component(matrix_get_axis(x_axis, y_axis, z_axis, axis3(best_axis)), component4(best_axis)))
 					best_axis = (int32_t)axis3::z;
 
 				const int32_t next_best_axis = (best_axis + 1) % 3;
 				const int32_t next_next_best_axis = (next_best_axis + 1) % 3;
 
 				const double mtx_pseudo_trace = 1.0 +
-					vector_get_component(matrix_get_axis(x_axis, y_axis, z_axis, axis3(best_axis)), mix4(best_axis)) -
-					vector_get_component(matrix_get_axis(x_axis, y_axis, z_axis, axis3(next_best_axis)), mix4(next_best_axis)) -
-					vector_get_component(matrix_get_axis(x_axis, y_axis, z_axis, axis3(next_next_best_axis)), mix4(next_next_best_axis));
+					vector_get_component(matrix_get_axis(x_axis, y_axis, z_axis, axis3(best_axis)), component4(best_axis)) -
+					vector_get_component(matrix_get_axis(x_axis, y_axis, z_axis, axis3(next_best_axis)), component4(next_best_axis)) -
+					vector_get_component(matrix_get_axis(x_axis, y_axis, z_axis, axis3(next_next_best_axis)), component4(next_next_best_axis));
 
 				const double inv_pseudo_trace = scalar_sqrt_reciprocal(mtx_pseudo_trace);
 				const double half_inv_pseudo_trace = inv_pseudo_trace * 0.5;
@@ -282,14 +282,14 @@ namespace rtm
 				double quat_values[4];
 				quat_values[best_axis] = scalar_reciprocal(inv_pseudo_trace) * 0.5;
 				quat_values[next_best_axis] = half_inv_pseudo_trace *
-					(vector_get_component(matrix_get_axis(x_axis, y_axis, z_axis, axis3(best_axis)), mix4(next_best_axis)) +
-						vector_get_component(matrix_get_axis(x_axis, y_axis, z_axis, axis3(next_best_axis)), mix4(best_axis)));
+					(vector_get_component(matrix_get_axis(x_axis, y_axis, z_axis, axis3(best_axis)), component4(next_best_axis)) +
+						vector_get_component(matrix_get_axis(x_axis, y_axis, z_axis, axis3(next_best_axis)), component4(best_axis)));
 				quat_values[next_next_best_axis] = half_inv_pseudo_trace *
-					(vector_get_component(matrix_get_axis(x_axis, y_axis, z_axis, axis3(best_axis)), mix4(next_next_best_axis)) +
-						vector_get_component(matrix_get_axis(x_axis, y_axis, z_axis, axis3(next_next_best_axis)), mix4(best_axis)));
+					(vector_get_component(matrix_get_axis(x_axis, y_axis, z_axis, axis3(best_axis)), component4(next_next_best_axis)) +
+						vector_get_component(matrix_get_axis(x_axis, y_axis, z_axis, axis3(next_next_best_axis)), component4(best_axis)));
 				quat_values[3] = half_inv_pseudo_trace *
-					(vector_get_component(matrix_get_axis(x_axis, y_axis, z_axis, axis3(next_best_axis)), mix4(next_next_best_axis)) -
-						vector_get_component(matrix_get_axis(x_axis, y_axis, z_axis, axis3(next_next_best_axis)), mix4(next_best_axis)));
+					(vector_get_component(matrix_get_axis(x_axis, y_axis, z_axis, axis3(next_best_axis)), component4(next_next_best_axis)) -
+						vector_get_component(matrix_get_axis(x_axis, y_axis, z_axis, axis3(next_next_best_axis)), component4(next_best_axis)));
 
 				return quat_normalize(quat_load(&quat_values[0]));
 			}
