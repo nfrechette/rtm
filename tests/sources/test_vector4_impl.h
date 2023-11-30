@@ -381,6 +381,26 @@ void test_vector4_getset_impl()
 	CHECK(vector_all_near_equal(vector_set_z(zero, scalar_set(FloatType(4.0))), vector_set(FloatType(0.0), FloatType(0.0), FloatType(4.0), FloatType(0.0)), FloatType(0.0)));
 	CHECK(vector_all_near_equal(vector_set_w(zero, scalar_set(FloatType(4.0))), vector_set(FloatType(0.0), FloatType(0.0), FloatType(0.0), FloatType(4.0)), FloatType(0.0)));
 
+	CHECK(vector_all_near_equal(vector_set_component<component4::x>(zero, FloatType(4.0)), vector_set(FloatType(4.0), FloatType(0.0), FloatType(0.0), FloatType(0.0)), FloatType(0.0)));
+	CHECK(vector_all_near_equal(vector_set_component<component4::y>(zero, FloatType(4.0)), vector_set(FloatType(0.0), FloatType(4.0), FloatType(0.0), FloatType(0.0)), FloatType(0.0)));
+	CHECK(vector_all_near_equal(vector_set_component<component4::z>(zero, FloatType(4.0)), vector_set(FloatType(0.0), FloatType(0.0), FloatType(4.0), FloatType(0.0)), FloatType(0.0)));
+	CHECK(vector_all_near_equal(vector_set_component<component4::w>(zero, FloatType(4.0)), vector_set(FloatType(0.0), FloatType(0.0), FloatType(0.0), FloatType(4.0)), FloatType(0.0)));
+
+	CHECK(vector_all_near_equal(vector_set_component<component4::x>(zero, scalar_set(FloatType(4.0))), vector_set(FloatType(4.0), FloatType(0.0), FloatType(0.0), FloatType(0.0)), FloatType(0.0)));
+	CHECK(vector_all_near_equal(vector_set_component<component4::y>(zero, scalar_set(FloatType(4.0))), vector_set(FloatType(0.0), FloatType(4.0), FloatType(0.0), FloatType(0.0)), FloatType(0.0)));
+	CHECK(vector_all_near_equal(vector_set_component<component4::z>(zero, scalar_set(FloatType(4.0))), vector_set(FloatType(0.0), FloatType(0.0), FloatType(4.0), FloatType(0.0)), FloatType(0.0)));
+	CHECK(vector_all_near_equal(vector_set_component<component4::w>(zero, scalar_set(FloatType(4.0))), vector_set(FloatType(0.0), FloatType(0.0), FloatType(0.0), FloatType(4.0)), FloatType(0.0)));
+
+	CHECK(vector_all_near_equal(vector_set_component(zero, FloatType(4.0), component4::x), vector_set(FloatType(4.0), FloatType(0.0), FloatType(0.0), FloatType(0.0)), FloatType(0.0)));
+	CHECK(vector_all_near_equal(vector_set_component(zero, FloatType(4.0), component4::y), vector_set(FloatType(0.0), FloatType(4.0), FloatType(0.0), FloatType(0.0)), FloatType(0.0)));
+	CHECK(vector_all_near_equal(vector_set_component(zero, FloatType(4.0), component4::z), vector_set(FloatType(0.0), FloatType(0.0), FloatType(4.0), FloatType(0.0)), FloatType(0.0)));
+	CHECK(vector_all_near_equal(vector_set_component(zero, FloatType(4.0), component4::w), vector_set(FloatType(0.0), FloatType(0.0), FloatType(0.0), FloatType(4.0)), FloatType(0.0)));
+
+	CHECK(vector_all_near_equal(vector_set_component(zero, scalar_set(FloatType(4.0)), component4::x), vector_set(FloatType(4.0), FloatType(0.0), FloatType(0.0), FloatType(0.0)), FloatType(0.0)));
+	CHECK(vector_all_near_equal(vector_set_component(zero, scalar_set(FloatType(4.0)), component4::y), vector_set(FloatType(0.0), FloatType(4.0), FloatType(0.0), FloatType(0.0)), FloatType(0.0)));
+	CHECK(vector_all_near_equal(vector_set_component(zero, scalar_set(FloatType(4.0)), component4::z), vector_set(FloatType(0.0), FloatType(0.0), FloatType(4.0), FloatType(0.0)), FloatType(0.0)));
+	CHECK(vector_all_near_equal(vector_set_component(zero, scalar_set(FloatType(4.0)), component4::w), vector_set(FloatType(0.0), FloatType(0.0), FloatType(0.0), FloatType(4.0)), FloatType(0.0)));
+
 	CHECK((FloatType)vector_as_scalar(test_value1) == FloatType(vector_get_x(test_value1)));
 	CHECK(scalar_equal(vector_as_scalar(test_value1), scalar_set(vector_get_x(test_value1))));
 }
