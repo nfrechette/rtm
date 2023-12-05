@@ -340,9 +340,9 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	template<mix4 component>
 	RTM_DEPRECATED("Use the variant that takes a component4 as input instead. To be removed in 2.3")
-	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE constexpr rtm_impl::vector4d_vector_get_component_static<static_cast<component4>(static_cast<int32_t>(component) % 4)> vector_get_component(const vector4d& input) RTM_NO_EXCEPT
+	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE constexpr rtm_impl::vector4d_vector_get_component_static<rtm_impl::mix_to_component(component)> vector_get_component(const vector4d& input) RTM_NO_EXCEPT
 	{
-		return rtm_impl::vector4d_vector_get_component_static<static_cast<component4>(static_cast<int32_t>(component) % 4)>{ input };
+		return rtm_impl::vector4d_vector_get_component_static<rtm_impl::mix_to_component(component)>{ input };
 	}
 
 	//////////////////////////////////////////////////////////////////////////
@@ -402,7 +402,7 @@ namespace rtm
 	RTM_DEPRECATED("Use the variant that takes a component4 as input instead. To be removed in 2.3")
 	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE constexpr rtm_impl::vector4d_vector_get_component vector_get_component(const vector4d& input, mix4 component) RTM_NO_EXCEPT
 	{
-		return rtm_impl::vector4d_vector_get_component{ input, static_cast<component4>(static_cast<int32_t>(component) % 4), { 0 } };
+		return rtm_impl::vector4d_vector_get_component{ input, rtm_impl::mix_to_component(component), { 0 } };
 	}
 
 	//////////////////////////////////////////////////////////////////////////
@@ -2207,10 +2207,10 @@ namespace rtm
 	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE vector4d vector_mix(const vector4d& input0, const vector4d& input1) RTM_NO_EXCEPT
 	{
 		// Slow code path, not yet optimized or not using intrinsics
-		constexpr component4 component0 = static_cast<component4>(static_cast<int32_t>(comp0) % 4);
-		constexpr component4 component1 = static_cast<component4>(static_cast<int32_t>(comp1) % 4);
-		constexpr component4 component2 = static_cast<component4>(static_cast<int32_t>(comp2) % 4);
-		constexpr component4 component3 = static_cast<component4>(static_cast<int32_t>(comp3) % 4);
+		constexpr component4 component0 = rtm_impl::mix_to_component(comp0);
+		constexpr component4 component1 = rtm_impl::mix_to_component(comp1);
+		constexpr component4 component2 = rtm_impl::mix_to_component(comp2);
+		constexpr component4 component3 = rtm_impl::mix_to_component(comp3);
 
 		const double x = rtm_impl::is_mix_xyzw(comp0) ? vector_get_component<component0>(input0) : vector_get_component<component0>(input1);
 		const double y = rtm_impl::is_mix_xyzw(comp1) ? vector_get_component<component1>(input0) : vector_get_component<component1>(input1);
