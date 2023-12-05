@@ -196,6 +196,11 @@ namespace rtm
 		RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE constexpr bool is_mix_abcd(mix4 arg) RTM_NO_EXCEPT { return uint32_t(arg) >= uint32_t(mix4::a); }
 
 		//////////////////////////////////////////////////////////////////////////
+		// Converts a mix4 value to a component4 value
+		//////////////////////////////////////////////////////////////////////////
+		RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE constexpr component4 mix_to_component(mix4 arg) RTM_NO_EXCEPT { return static_cast<component4>(static_cast<uint32_t>(arg) % 4); }
+
+		//////////////////////////////////////////////////////////////////////////
 		// This is a helper struct to help manipulate SIMD masks.
 		//////////////////////////////////////////////////////////////////////////
 		union mask_converter
