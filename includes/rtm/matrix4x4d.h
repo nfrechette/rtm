@@ -116,22 +116,27 @@ namespace rtm
 		vector4d tmp = vector_mul(vector_dup_x(lhs.x_axis), rhs.x_axis);
 		tmp = vector_mul_add(vector_dup_y(lhs.x_axis), rhs.y_axis, tmp);
 		tmp = vector_mul_add(vector_dup_z(lhs.x_axis), rhs.z_axis, tmp);
+		tmp = vector_mul_add(vector_dup_w(lhs.x_axis), rhs.w_axis, tmp);
 		vector4d x_axis = tmp;
 
 		tmp = vector_mul(vector_dup_x(lhs.y_axis), rhs.x_axis);
 		tmp = vector_mul_add(vector_dup_y(lhs.y_axis), rhs.y_axis, tmp);
 		tmp = vector_mul_add(vector_dup_z(lhs.y_axis), rhs.z_axis, tmp);
+		tmp = vector_mul_add(vector_dup_w(lhs.y_axis), rhs.w_axis, tmp);
 		vector4d y_axis = tmp;
 
 		tmp = vector_mul(vector_dup_x(lhs.z_axis), rhs.x_axis);
 		tmp = vector_mul_add(vector_dup_y(lhs.z_axis), rhs.y_axis, tmp);
 		tmp = vector_mul_add(vector_dup_z(lhs.z_axis), rhs.z_axis, tmp);
+		tmp = vector_mul_add(vector_dup_w(lhs.z_axis), rhs.w_axis, tmp);
 		vector4d z_axis = tmp;
 
 		tmp = vector_mul(vector_dup_x(lhs.w_axis), rhs.x_axis);
 		tmp = vector_mul_add(vector_dup_y(lhs.w_axis), rhs.y_axis, tmp);
 		tmp = vector_mul_add(vector_dup_z(lhs.w_axis), rhs.z_axis, tmp);
-		vector4d w_axis = vector_add(rhs.w_axis, tmp);
+		tmp = vector_mul_add(vector_dup_w(lhs.w_axis), rhs.w_axis, tmp);
+		vector4d w_axis = tmp;
+
 		return matrix4x4d{ x_axis, y_axis, z_axis, w_axis };
 	}
 
