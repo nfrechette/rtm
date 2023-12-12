@@ -43,6 +43,9 @@
 	#pragma warning(disable : 5267)	// Implicit copy constructor deprecated due to user destructor
 #endif
 
+// Don't let Catch2 override the Windows NOMINMAX macro
+#define CATCH_CONFIG_NO_NOMINMAX
+
 #include <catch2/catch.hpp>
 
 #if defined(_MSC_VER) && !defined(__clang__)
