@@ -59,6 +59,18 @@ static void test_matrix4x4_setters(const FloatType threshold)
 		CHECK(vector_all_near_equal(vector_set(FloatType(0.0), FloatType(0.0), FloatType(1.0), FloatType(0.0)), identity.z_axis, threshold));
 		CHECK(vector_all_near_equal(vector_set(FloatType(0.0), FloatType(0.0), FloatType(0.0), FloatType(1.0)), identity.w_axis, threshold));
 	}
+
+	{
+		Vector4Type x_axis = vector_set(FloatType(1.0), FloatType(2.0), FloatType(3.0), FloatType(0.0));
+		Vector4Type y_axis = vector_set(FloatType(4.0), FloatType(5.0), FloatType(6.0), FloatType(0.0));
+		Vector4Type z_axis = vector_set(FloatType(7.0), FloatType(8.0), FloatType(9.0), FloatType(0.0));
+		Vector4Type w_axis = vector_set(FloatType(10.0), FloatType(11.0), FloatType(12.0), FloatType(1.0));
+		Matrix4x4Type mtx = matrix_set(x_axis, y_axis, z_axis, w_axis);
+		CHECK(vector_all_near_equal(matrix_get_axis(mtx, axis4::x), mtx.x_axis, threshold));
+		CHECK(vector_all_near_equal(matrix_get_axis(mtx, axis4::y), mtx.y_axis, threshold));
+		CHECK(vector_all_near_equal(matrix_get_axis(mtx, axis4::z), mtx.z_axis, threshold));
+		CHECK(vector_all_near_equal(matrix_get_axis(mtx, axis4::w), mtx.w_axis, threshold));
+	}
 }
 
 template<typename FloatType>
