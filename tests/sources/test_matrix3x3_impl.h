@@ -80,6 +80,14 @@ static void test_matrix3x3_setters(const FloatType threshold)
 		CHECK(vector_all_near_equal3(vector_set(FloatType(0.0), FloatType(5.0), FloatType(0.0)), mtx.y_axis, threshold));
 		CHECK(vector_all_near_equal3(vector_set(FloatType(0.0), FloatType(0.0), FloatType(6.0)), mtx.z_axis, threshold));
 	}
+
+	{
+		QuatType rotation_around_z = quat_from_euler(scalar_deg_to_rad(FloatType(0.0)), scalar_deg_to_rad(FloatType(90.0)), scalar_deg_to_rad(FloatType(0.0)));
+		Matrix3x3Type mtx = matrix_from_rotation(rotation_around_z);
+		CHECK(vector_all_near_equal3(matrix_get_axis(mtx, axis3::x), mtx.x_axis, threshold));
+		CHECK(vector_all_near_equal3(matrix_get_axis(mtx, axis3::y), mtx.y_axis, threshold));
+		CHECK(vector_all_near_equal3(matrix_get_axis(mtx, axis3::z), mtx.z_axis, threshold));
+	}
 }
 
 template<typename FloatType>
