@@ -47,6 +47,21 @@ namespace rtm
 	}
 
 	//////////////////////////////////////////////////////////////////////////
+	// Returns a new 4x4 matrix where the specified axis has been replaced on the input matrix.
+	//////////////////////////////////////////////////////////////////////////
+	RTM_DISABLE_SECURITY_COOKIE_CHECK inline matrix4x4f RTM_SIMD_CALL matrix_set_axis(matrix4x4f_arg0 input, vector4f_arg5 axis_value, axis4 axis) RTM_NO_EXCEPT
+	{
+		switch (axis)
+		{
+			default:
+			case axis4::x:	return matrix4x4f{ axis_value, input.y_axis, input.z_axis, input.w_axis };
+			case axis4::y:	return matrix4x4f{ input.x_axis, axis_value, input.z_axis, input.w_axis };
+			case axis4::z:	return matrix4x4f{ input.x_axis, input.y_axis, axis_value, input.w_axis };
+			case axis4::w:	return matrix4x4f{ input.x_axis, input.y_axis, input.z_axis, axis_value };
+		}
+	}
+
+	//////////////////////////////////////////////////////////////////////////
 	// Multiplies two 4x4 matrices.
 	// Multiplication order is as follow: local_to_world = matrix_mul(local_to_object, object_to_world)
 	//////////////////////////////////////////////////////////////////////////
