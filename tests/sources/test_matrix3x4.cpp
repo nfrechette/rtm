@@ -201,12 +201,23 @@ static void test_affine_matrix_setters(const FloatType threshold)
 		CHECK(vector_all_near_equal3(matrix_get_axis(mtx, axis4::y), mtx.y_axis, threshold));
 		CHECK(vector_all_near_equal3(matrix_get_axis(mtx, axis4::z), mtx.z_axis, threshold));
 		CHECK(vector_all_near_equal3(matrix_get_axis(mtx, axis4::w), mtx.w_axis, threshold));
+	}
 
-		const Matrix3x4Type mtx2 = mtx;
-		CHECK(vector_all_near_equal3(matrix_get_axis(mtx2, axis4::x), mtx2.x_axis, threshold));
-		CHECK(vector_all_near_equal3(matrix_get_axis(mtx2, axis4::y), mtx2.y_axis, threshold));
-		CHECK(vector_all_near_equal3(matrix_get_axis(mtx2, axis4::z), mtx2.z_axis, threshold));
-		CHECK(vector_all_near_equal3(matrix_get_axis(mtx2, axis4::w), mtx2.w_axis, threshold));
+	{
+		QuatType rotation_around_z = quat_from_euler(scalar_deg_to_rad(FloatType(0.0)), scalar_deg_to_rad(FloatType(90.0)), scalar_deg_to_rad(FloatType(0.0)));
+		Vector4Type translation = vector_set(FloatType(1.0), FloatType(2.0), FloatType(3.0));
+		Vector4Type scale = vector_set(FloatType(4.0), FloatType(5.0), FloatType(6.0));
+		Matrix3x4Type mtx = matrix_from_qvv(rotation_around_z, translation, scale);
+
+		Matrix3x4Type mtx2 = identity;
+		mtx2 = matrix_set_axis(mtx2, mtx.x_axis, axis4::x);
+		mtx2 = matrix_set_axis(mtx2, mtx.y_axis, axis4::y);
+		mtx2 = matrix_set_axis(mtx2, mtx.z_axis, axis4::z);
+		mtx2 = matrix_set_axis(mtx2, mtx.w_axis, axis4::w);
+		CHECK(vector_all_near_equal3(mtx2.x_axis, mtx.x_axis, threshold));
+		CHECK(vector_all_near_equal3(mtx2.y_axis, mtx.y_axis, threshold));
+		CHECK(vector_all_near_equal3(mtx2.z_axis, mtx.z_axis, threshold));
+		CHECK(vector_all_near_equal3(mtx2.w_axis, mtx.w_axis, threshold));
 	}
 }
 
