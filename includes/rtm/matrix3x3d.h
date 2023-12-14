@@ -46,6 +46,20 @@ namespace rtm
 	}
 
 	//////////////////////////////////////////////////////////////////////////
+	// Returns a new 3x3 matrix where the specified axis has been replaced on the input matrix.
+	//////////////////////////////////////////////////////////////////////////
+	RTM_DISABLE_SECURITY_COOKIE_CHECK inline matrix3x3d RTM_SIMD_CALL matrix_set_axis(const matrix3x3d& input, const vector4d& axis_value, axis3 axis) RTM_NO_EXCEPT
+	{
+		switch (axis)
+		{
+			default:
+			case axis3::x:	return matrix3x3d{ axis_value, input.y_axis, input.z_axis };
+			case axis3::y:	return matrix3x3d{ input.x_axis, axis_value, input.z_axis };
+			case axis3::z:	return matrix3x3d{ input.x_axis, input.y_axis, axis_value };
+		}
+	}
+
+	//////////////////////////////////////////////////////////////////////////
 	// Converts a 3x3 matrix into a rotation quaternion.
 	//////////////////////////////////////////////////////////////////////////
 	RTM_DISABLE_SECURITY_COOKIE_CHECK inline quatd quat_from_matrix(const matrix3x3d& input) RTM_NO_EXCEPT
