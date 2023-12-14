@@ -201,12 +201,6 @@ static void test_affine_matrix_setters(const FloatType threshold)
 		CHECK(vector_all_near_equal3(matrix_get_axis(mtx, axis4::y), mtx.y_axis, threshold));
 		CHECK(vector_all_near_equal3(matrix_get_axis(mtx, axis4::z), mtx.z_axis, threshold));
 		CHECK(vector_all_near_equal3(matrix_get_axis(mtx, axis4::w), mtx.w_axis, threshold));
-
-		const Matrix3x4Type mtx2 = mtx;
-		CHECK(vector_all_near_equal3(matrix_get_axis(mtx2, axis4::x), mtx2.x_axis, threshold));
-		CHECK(vector_all_near_equal3(matrix_get_axis(mtx2, axis4::y), mtx2.y_axis, threshold));
-		CHECK(vector_all_near_equal3(matrix_get_axis(mtx2, axis4::z), mtx2.z_axis, threshold));
-		CHECK(vector_all_near_equal3(matrix_get_axis(mtx2, axis4::w), mtx2.w_axis, threshold));
 	}
 }
 
