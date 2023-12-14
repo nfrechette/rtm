@@ -228,7 +228,7 @@ namespace rtm
 #if defined(RTM_SSE2_INTRINSICS)
 		return _mm_cvtss_f32(_mm_min_ss(_mm_max_ss(_mm_set_ps1(input), _mm_set_ps1(min)), _mm_set_ps1(max)));
 #else
-		return std::min(std::max(input, min), max);
+		return (std::min)((std::max)(input, min), max);
 #endif
 	}
 
@@ -508,7 +508,7 @@ namespace rtm
 #if defined(RTM_SSE2_INTRINSICS)
 		return _mm_cvtss_f32(_mm_min_ss(_mm_set_ps1(left), _mm_set_ps1(right)));
 #else
-		return std::min(left, right);
+		return (std::min)(left, right);
 #endif
 	}
 
@@ -530,7 +530,7 @@ namespace rtm
 #if defined(RTM_SSE2_INTRINSICS)
 		return _mm_cvtss_f32(_mm_max_ss(_mm_set_ps1(left), _mm_set_ps1(right)));
 #else
-		return std::max(left, right);
+		return (std::max)(left, right);
 #endif
 	}
 
