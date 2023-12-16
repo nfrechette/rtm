@@ -3106,10 +3106,21 @@ namespace rtm
 		constexpr component4 component2 = rtm_impl::mix_to_component(comp2);
 		constexpr component4 component3 = rtm_impl::mix_to_component(comp3);
 
-		const float x = rtm_impl::is_mix_xyzw(comp0) ? vector_get_component(input0, component0) : vector_get_component(input1, component0);
-		const float y = rtm_impl::is_mix_xyzw(comp1) ? vector_get_component(input0, component1) : vector_get_component(input1, component1);
-		const float z = rtm_impl::is_mix_xyzw(comp2) ? vector_get_component(input0, component2) : vector_get_component(input1, component2);
-		const float w = rtm_impl::is_mix_xyzw(comp3) ? vector_get_component(input0, component3) : vector_get_component(input1, component3);
+		const float x0 = vector_get_component(input0, component0);
+		const float x1 = vector_get_component(input1, component0);
+		const float x = rtm_impl::is_mix_xyzw(comp0) ? x0 : x1;
+
+		const float y0 = vector_get_component(input0, component1);
+		const float y1 = vector_get_component(input1, component1);
+		const float y = rtm_impl::is_mix_xyzw(comp1) ? y0 : y1;
+
+		const float z0 = vector_get_component(input0, component2);
+		const float z1 = vector_get_component(input1, component2);
+		const float z = rtm_impl::is_mix_xyzw(comp2) ? z0 : z1;
+
+		const float w0 = vector_get_component(input0, component3);
+		const float w1 = vector_get_component(input1, component3);
+		const float w = rtm_impl::is_mix_xyzw(comp3) ? w0 : w1;
 
 		return vector_set(x, y, z, w);
 	}
