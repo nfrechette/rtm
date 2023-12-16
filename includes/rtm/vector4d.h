@@ -340,7 +340,7 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	template<mix4 component>
 	RTM_DEPRECATED("Use the variant that takes a component4 as input instead. To be removed in 2.3")
-	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE constexpr rtm_impl::vector4d_vector_get_component_static<rtm_impl::mix_to_component(component)> vector_get_component(const vector4d& input) RTM_NO_EXCEPT
+	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE constexpr auto vector_get_component(const vector4d& input) RTM_NO_EXCEPT
 	{
 		return rtm_impl::vector4d_vector_get_component_static<rtm_impl::mix_to_component(component)>{ input };
 	}
@@ -349,7 +349,7 @@ namespace rtm
 	// Returns the vector2 desired component.
 	//////////////////////////////////////////////////////////////////////////
 	template<component2 component>
-	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE constexpr rtm_impl::vector4d_vector_get_component_static<static_cast<component4>(component)> vector_get_component2(const vector4d& input) RTM_NO_EXCEPT
+	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE constexpr auto vector_get_component2(const vector4d& input) RTM_NO_EXCEPT
 	{
 		return rtm_impl::vector4d_vector_get_component_static<static_cast<component4>(component)>{ input };
 	}
@@ -358,7 +358,7 @@ namespace rtm
 	// Returns the vector3 desired component.
 	//////////////////////////////////////////////////////////////////////////
 	template<component3 component>
-	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE constexpr rtm_impl::vector4d_vector_get_component_static<static_cast<component4>(component)> vector_get_component3(const vector4d& input) RTM_NO_EXCEPT
+	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE constexpr auto vector_get_component3(const vector4d& input) RTM_NO_EXCEPT
 	{
 		return rtm_impl::vector4d_vector_get_component_static<static_cast<component4>(component)>{ input };
 	}
@@ -367,7 +367,7 @@ namespace rtm
 	// Returns the vector4 desired component.
 	//////////////////////////////////////////////////////////////////////////
 	template<component4 component>
-	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE constexpr rtm_impl::vector4d_vector_get_component_static<component> vector_get_component(const vector4d& input) RTM_NO_EXCEPT
+	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE constexpr auto vector_get_component(const vector4d& input) RTM_NO_EXCEPT
 	{
 		return rtm_impl::vector4d_vector_get_component_static<component>{ input };
 	}
@@ -2366,18 +2366,10 @@ namespace rtm
 		constexpr component4 component2 = rtm_impl::mix_to_component(comp2);
 		constexpr component4 component3 = rtm_impl::mix_to_component(comp3);
 
-#if RTM_COMPILER_MSVC > RTM_COMPILER_MSVC_2015
-		const double x = rtm_impl::is_mix_xyzw(comp0) ? vector_get_component<component0>(input0) : vector_get_component<component0>(input1);
-		const double y = rtm_impl::is_mix_xyzw(comp1) ? vector_get_component<component1>(input0) : vector_get_component<component1>(input1);
-		const double z = rtm_impl::is_mix_xyzw(comp2) ? vector_get_component<component2>(input0) : vector_get_component<component2>(input1);
-		const double w = rtm_impl::is_mix_xyzw(comp3) ? vector_get_component<component3>(input0) : vector_get_component<component3>(input1);
-#else
-		// VS2015 has issues compiling the code above and as a result it must resort to even worse codegen
 		const double x = rtm_impl::is_mix_xyzw(comp0) ? vector_get_component(input0, component0) : vector_get_component(input1, component0);
 		const double y = rtm_impl::is_mix_xyzw(comp1) ? vector_get_component(input0, component1) : vector_get_component(input1, component1);
 		const double z = rtm_impl::is_mix_xyzw(comp2) ? vector_get_component(input0, component2) : vector_get_component(input1, component2);
 		const double w = rtm_impl::is_mix_xyzw(comp3) ? vector_get_component(input0, component3) : vector_get_component(input1, component3);
-#endif
 
 		return vector_set(x, y, z, w);
 	}
