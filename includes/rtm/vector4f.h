@@ -653,6 +653,68 @@ namespace rtm
 #endif
 
 	//////////////////////////////////////////////////////////////////////////
+	// Sets the desired vector2 component and returns the new value.
+	//////////////////////////////////////////////////////////////////////////
+	template<component2 component>
+	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE vector4f RTM_SIMD_CALL vector_set_component2(vector4f_arg0 input, float lane_value) RTM_NO_EXCEPT
+	{
+		switch (component)
+		{
+			default:
+			case component2::x:	return vector_set_x(input, lane_value);
+			case component2::y:	return vector_set_y(input, lane_value);
+		}
+	}
+
+#if defined(RTM_SSE2_INTRINSICS)
+	//////////////////////////////////////////////////////////////////////////
+	// Sets the desired vector2 component and returns the new value.
+	//////////////////////////////////////////////////////////////////////////
+	template<component2 component>
+	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE vector4f RTM_SIMD_CALL vector_set_component2(vector4f_arg0 input, scalarf_arg1 lane_value) RTM_NO_EXCEPT
+	{
+		switch (component)
+		{
+			default:
+			case component2::x:	return vector_set_x(input, lane_value);
+			case component2::y:	return vector_set_y(input, lane_value);
+		}
+	}
+#endif
+
+	//////////////////////////////////////////////////////////////////////////
+	// Sets the desired vector3 component and returns the new value.
+	//////////////////////////////////////////////////////////////////////////
+	template<component3 component>
+	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE vector4f RTM_SIMD_CALL vector_set_component3(vector4f_arg0 input, float lane_value) RTM_NO_EXCEPT
+	{
+		switch (component)
+		{
+			default:
+			case component3::x:	return vector_set_x(input, lane_value);
+			case component3::y:	return vector_set_y(input, lane_value);
+			case component3::z:	return vector_set_z(input, lane_value);
+		}
+	}
+
+#if defined(RTM_SSE2_INTRINSICS)
+	//////////////////////////////////////////////////////////////////////////
+	// Sets the desired vector3 component and returns the new value.
+	//////////////////////////////////////////////////////////////////////////
+	template<component3 component>
+	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE vector4f RTM_SIMD_CALL vector_set_component3(vector4f_arg0 input, scalarf_arg1 lane_value) RTM_NO_EXCEPT
+	{
+		switch (component)
+		{
+			default:
+			case component3::x:	return vector_set_x(input, lane_value);
+			case component3::y:	return vector_set_y(input, lane_value);
+			case component3::z:	return vector_set_z(input, lane_value);
+		}
+	}
+#endif
+
+	//////////////////////////////////////////////////////////////////////////
 	// Sets the desired vector4 component and returns the new value.
 	//////////////////////////////////////////////////////////////////////////
 	template<component4 component>
@@ -682,6 +744,64 @@ namespace rtm
 			case component4::y:	return vector_set_y(input, lane_value);
 			case component4::z:	return vector_set_z(input, lane_value);
 			case component4::w:	return vector_set_w(input, lane_value);
+		}
+	}
+#endif
+
+	//////////////////////////////////////////////////////////////////////////
+	// Sets the desired vector2 component and returns the new value.
+	//////////////////////////////////////////////////////////////////////////
+	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE vector4f RTM_SIMD_CALL vector_set_component2(vector4f_arg0 input, float lane_value, component2 component) RTM_NO_EXCEPT
+	{
+		switch (component)
+		{
+			default:
+			case component2::x:	return vector_set_x(input, lane_value);
+			case component2::y:	return vector_set_y(input, lane_value);
+		}
+	}
+
+#if defined(RTM_SSE2_INTRINSICS)
+	//////////////////////////////////////////////////////////////////////////
+	// Sets the desired vector2 component and returns the new value.
+	//////////////////////////////////////////////////////////////////////////
+	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE vector4f RTM_SIMD_CALL vector_set_component2(vector4f_arg0 input, scalarf_arg1 lane_value, component2 component) RTM_NO_EXCEPT
+	{
+		switch (component)
+		{
+			default:
+			case component2::x:	return vector_set_x(input, lane_value);
+			case component2::y:	return vector_set_y(input, lane_value);
+		}
+	}
+#endif
+
+	//////////////////////////////////////////////////////////////////////////
+	// Sets the desired vector3 component and returns the new value.
+	//////////////////////////////////////////////////////////////////////////
+	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE vector4f RTM_SIMD_CALL vector_set_component3(vector4f_arg0 input, float lane_value, component3 component) RTM_NO_EXCEPT
+	{
+		switch (component)
+		{
+			default:
+			case component3::x:	return vector_set_x(input, lane_value);
+			case component3::y:	return vector_set_y(input, lane_value);
+			case component3::z:	return vector_set_z(input, lane_value);
+		}
+	}
+
+#if defined(RTM_SSE2_INTRINSICS)
+	//////////////////////////////////////////////////////////////////////////
+	// Sets the desired vector3 component and returns the new value.
+	//////////////////////////////////////////////////////////////////////////
+	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE vector4f RTM_SIMD_CALL vector_set_component3(vector4f_arg0 input, scalarf_arg1 lane_value, component3 component) RTM_NO_EXCEPT
+	{
+		switch (component)
+		{
+			default:
+			case component3::x:	return vector_set_x(input, lane_value);
+			case component3::y:	return vector_set_y(input, lane_value);
+			case component3::z:	return vector_set_z(input, lane_value);
 		}
 	}
 #endif
