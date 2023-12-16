@@ -288,20 +288,48 @@ void test_vector4_getset_impl()
 	CHECK(FloatType(vector_get_z(quat_to_vector(identity))) == FloatType(quat_get_z(identity)));
 	CHECK(FloatType(vector_get_w(quat_to_vector(identity))) == FloatType(quat_get_w(identity)));
 
+	CHECK(FloatType(vector_get_component2<component2::x>(vector_set(FloatType(0.0), FloatType(2.34), FloatType(-3.12), FloatType(10000.0)))) == FloatType(0.0));
+	CHECK(FloatType(vector_get_component2<component2::y>(vector_set(FloatType(0.0), FloatType(2.34), FloatType(-3.12), FloatType(10000.0)))) == FloatType(2.34));
+
+	CHECK(FloatType(vector_get_component3<component3::x>(vector_set(FloatType(0.0), FloatType(2.34), FloatType(-3.12), FloatType(10000.0)))) == FloatType(0.0));
+	CHECK(FloatType(vector_get_component3<component3::y>(vector_set(FloatType(0.0), FloatType(2.34), FloatType(-3.12), FloatType(10000.0)))) == FloatType(2.34));
+	CHECK(FloatType(vector_get_component3<component3::z>(vector_set(FloatType(0.0), FloatType(2.34), FloatType(-3.12), FloatType(10000.0)))) == FloatType(-3.12));
+
 	CHECK(FloatType(vector_get_component<component4::x>(vector_set(FloatType(0.0), FloatType(2.34), FloatType(-3.12), FloatType(10000.0)))) == FloatType(0.0));
 	CHECK(FloatType(vector_get_component<component4::y>(vector_set(FloatType(0.0), FloatType(2.34), FloatType(-3.12), FloatType(10000.0)))) == FloatType(2.34));
 	CHECK(FloatType(vector_get_component<component4::z>(vector_set(FloatType(0.0), FloatType(2.34), FloatType(-3.12), FloatType(10000.0)))) == FloatType(-3.12));
 	CHECK(FloatType(vector_get_component<component4::w>(vector_set(FloatType(0.0), FloatType(2.34), FloatType(-3.12), FloatType(10000.0)))) == FloatType(10000.0));
+
+	CHECK(scalar_cast(vector_get_component2<component2::x>(vector_set(FloatType(0.0), FloatType(2.34), FloatType(-3.12), FloatType(10000.0)))) == FloatType(0.0));
+	CHECK(scalar_cast(vector_get_component2<component2::y>(vector_set(FloatType(0.0), FloatType(2.34), FloatType(-3.12), FloatType(10000.0)))) == FloatType(2.34));
+
+	CHECK(scalar_cast(vector_get_component3<component3::x>(vector_set(FloatType(0.0), FloatType(2.34), FloatType(-3.12), FloatType(10000.0)))) == FloatType(0.0));
+	CHECK(scalar_cast(vector_get_component3<component3::y>(vector_set(FloatType(0.0), FloatType(2.34), FloatType(-3.12), FloatType(10000.0)))) == FloatType(2.34));
+	CHECK(scalar_cast(vector_get_component3<component3::z>(vector_set(FloatType(0.0), FloatType(2.34), FloatType(-3.12), FloatType(10000.0)))) == FloatType(-3.12));
 
 	CHECK(scalar_cast(vector_get_component<component4::x>(vector_set(FloatType(0.0), FloatType(2.34), FloatType(-3.12), FloatType(10000.0)))) == FloatType(0.0));
 	CHECK(scalar_cast(vector_get_component<component4::y>(vector_set(FloatType(0.0), FloatType(2.34), FloatType(-3.12), FloatType(10000.0)))) == FloatType(2.34));
 	CHECK(scalar_cast(vector_get_component<component4::z>(vector_set(FloatType(0.0), FloatType(2.34), FloatType(-3.12), FloatType(10000.0)))) == FloatType(-3.12));
 	CHECK(scalar_cast(vector_get_component<component4::w>(vector_set(FloatType(0.0), FloatType(2.34), FloatType(-3.12), FloatType(10000.0)))) == FloatType(10000.0));
 
+	CHECK(FloatType(vector_get_component2(vector_set(FloatType(0.0), FloatType(2.34), FloatType(-3.12), FloatType(10000.0)), component2::x)) == FloatType(0.0));
+	CHECK(FloatType(vector_get_component2(vector_set(FloatType(0.0), FloatType(2.34), FloatType(-3.12), FloatType(10000.0)), component2::y)) == FloatType(2.34));
+
+	CHECK(FloatType(vector_get_component3(vector_set(FloatType(0.0), FloatType(2.34), FloatType(-3.12), FloatType(10000.0)), component3::x)) == FloatType(0.0));
+	CHECK(FloatType(vector_get_component3(vector_set(FloatType(0.0), FloatType(2.34), FloatType(-3.12), FloatType(10000.0)), component3::y)) == FloatType(2.34));
+	CHECK(FloatType(vector_get_component3(vector_set(FloatType(0.0), FloatType(2.34), FloatType(-3.12), FloatType(10000.0)), component3::z)) == FloatType(-3.12));
+
 	CHECK(FloatType(vector_get_component(vector_set(FloatType(0.0), FloatType(2.34), FloatType(-3.12), FloatType(10000.0)), component4::x)) == FloatType(0.0));
 	CHECK(FloatType(vector_get_component(vector_set(FloatType(0.0), FloatType(2.34), FloatType(-3.12), FloatType(10000.0)), component4::y)) == FloatType(2.34));
 	CHECK(FloatType(vector_get_component(vector_set(FloatType(0.0), FloatType(2.34), FloatType(-3.12), FloatType(10000.0)), component4::z)) == FloatType(-3.12));
 	CHECK(FloatType(vector_get_component(vector_set(FloatType(0.0), FloatType(2.34), FloatType(-3.12), FloatType(10000.0)), component4::w)) == FloatType(10000.0));
+
+	CHECK(scalar_cast(vector_get_component2(vector_set(FloatType(0.0), FloatType(2.34), FloatType(-3.12), FloatType(10000.0)), component2::x)) == FloatType(0.0));
+	CHECK(scalar_cast(vector_get_component2(vector_set(FloatType(0.0), FloatType(2.34), FloatType(-3.12), FloatType(10000.0)), component2::y)) == FloatType(2.34));
+
+	CHECK(scalar_cast(vector_get_component3(vector_set(FloatType(0.0), FloatType(2.34), FloatType(-3.12), FloatType(10000.0)), component3::x)) == FloatType(0.0));
+	CHECK(scalar_cast(vector_get_component3(vector_set(FloatType(0.0), FloatType(2.34), FloatType(-3.12), FloatType(10000.0)), component3::y)) == FloatType(2.34));
+	CHECK(scalar_cast(vector_get_component3(vector_set(FloatType(0.0), FloatType(2.34), FloatType(-3.12), FloatType(10000.0)), component3::z)) == FloatType(-3.12));
 
 	CHECK(scalar_cast(vector_get_component(vector_set(FloatType(0.0), FloatType(2.34), FloatType(-3.12), FloatType(10000.0)), component4::x)) == FloatType(0.0));
 	CHECK(scalar_cast(vector_get_component(vector_set(FloatType(0.0), FloatType(2.34), FloatType(-3.12), FloatType(10000.0)), component4::y)) == FloatType(2.34));

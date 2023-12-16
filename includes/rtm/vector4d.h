@@ -346,6 +346,24 @@ namespace rtm
 	}
 
 	//////////////////////////////////////////////////////////////////////////
+	// Returns the vector2 desired component.
+	//////////////////////////////////////////////////////////////////////////
+	template<component2 component>
+	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE constexpr rtm_impl::vector4d_vector_get_component_static<static_cast<component4>(component)> vector_get_component2(const vector4d& input) RTM_NO_EXCEPT
+	{
+		return rtm_impl::vector4d_vector_get_component_static<static_cast<component4>(component)>{ input };
+	}
+
+	//////////////////////////////////////////////////////////////////////////
+	// Returns the vector3 desired component.
+	//////////////////////////////////////////////////////////////////////////
+	template<component3 component>
+	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE constexpr rtm_impl::vector4d_vector_get_component_static<static_cast<component4>(component)> vector_get_component3(const vector4d& input) RTM_NO_EXCEPT
+	{
+		return rtm_impl::vector4d_vector_get_component_static<static_cast<component4>(component)>{ input };
+	}
+
+	//////////////////////////////////////////////////////////////////////////
 	// Returns the vector4 desired component.
 	//////////////////////////////////////////////////////////////////////////
 	template<component4 component>
@@ -403,6 +421,22 @@ namespace rtm
 	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE constexpr rtm_impl::vector4d_vector_get_component vector_get_component(const vector4d& input, mix4 component) RTM_NO_EXCEPT
 	{
 		return rtm_impl::vector4d_vector_get_component{ input, rtm_impl::mix_to_component(component), { 0 } };
+	}
+
+	//////////////////////////////////////////////////////////////////////////
+	// Returns the vector2 desired component.
+	//////////////////////////////////////////////////////////////////////////
+	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE constexpr rtm_impl::vector4d_vector_get_component vector_get_component2(const vector4d& input, component2 component) RTM_NO_EXCEPT
+	{
+		return rtm_impl::vector4d_vector_get_component{ input, static_cast<component4>(component), { 0 } };
+	}
+
+	//////////////////////////////////////////////////////////////////////////
+	// Returns the vector3 desired component.
+	//////////////////////////////////////////////////////////////////////////
+	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE constexpr rtm_impl::vector4d_vector_get_component vector_get_component3(const vector4d& input, component3 component) RTM_NO_EXCEPT
+	{
+		return rtm_impl::vector4d_vector_get_component{ input, static_cast<component4>(component), { 0 } };
 	}
 
 	//////////////////////////////////////////////////////////////////////////
