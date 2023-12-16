@@ -403,7 +403,7 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	template<mix4 component>
 	RTM_DEPRECATED("Use the variant that takes a component4 as input instead. To be removed in 2.3")
-	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE constexpr auto RTM_SIMD_CALL vector_get_component(vector4f_arg0 input) RTM_NO_EXCEPT
+	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE constexpr rtm_impl::vector4f_vector_get_component_static<rtm_impl::mix_to_component(component)> RTM_SIMD_CALL vector_get_component(vector4f_arg0 input) RTM_NO_EXCEPT
 	{
 		return rtm_impl::vector4f_vector_get_component_static<rtm_impl::mix_to_component(component)>{ input };
 	}
@@ -411,26 +411,26 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	// Returns the vector2 desired component.
 	//////////////////////////////////////////////////////////////////////////
-	template<component2 component>
-	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE constexpr auto RTM_SIMD_CALL vector_get_component2(vector4f_arg0 input) RTM_NO_EXCEPT
+	template<component2 component, component4 component_ = static_cast<component4>(component)>
+	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE constexpr rtm_impl::vector4f_vector_get_component_static<component_> RTM_SIMD_CALL vector_get_component2(vector4f_arg0 input) RTM_NO_EXCEPT
 	{
-		return rtm_impl::vector4f_vector_get_component_static<static_cast<component4>(component)>{ input };
+		return rtm_impl::vector4f_vector_get_component_static<component_>{ input };
 	}
 
 	//////////////////////////////////////////////////////////////////////////
 	// Returns the vector3 desired component.
 	//////////////////////////////////////////////////////////////////////////
-	template<component3 component>
-	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE constexpr auto RTM_SIMD_CALL vector_get_component3(vector4f_arg0 input) RTM_NO_EXCEPT
+	template<component3 component, component4 component_ = static_cast<component4>(component)>
+	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE constexpr rtm_impl::vector4f_vector_get_component_static<component_> RTM_SIMD_CALL vector_get_component3(vector4f_arg0 input) RTM_NO_EXCEPT
 	{
-		return rtm_impl::vector4f_vector_get_component_static<static_cast<component4>(component)>{ input };
+		return rtm_impl::vector4f_vector_get_component_static<component_>{ input };
 	}
 
 	//////////////////////////////////////////////////////////////////////////
 	// Returns the vector4 desired component.
 	//////////////////////////////////////////////////////////////////////////
 	template<component4 component>
-	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE constexpr auto RTM_SIMD_CALL vector_get_component(vector4f_arg0 input) RTM_NO_EXCEPT
+	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE constexpr rtm_impl::vector4f_vector_get_component_static<component> RTM_SIMD_CALL vector_get_component(vector4f_arg0 input) RTM_NO_EXCEPT
 	{
 		return rtm_impl::vector4f_vector_get_component_static<component>{ input };
 	}
