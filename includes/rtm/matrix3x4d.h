@@ -189,6 +189,53 @@ namespace rtm
 	}
 
 	//////////////////////////////////////////////////////////////////////////
+	// Returns the desired 3x4 matrix component from the specified axis.
+	//////////////////////////////////////////////////////////////////////////
+	RTM_DISABLE_SECURITY_COOKIE_CHECK inline rtm_impl::vector4d_vector_get_component RTM_SIMD_CALL matrix_get_component(const matrix3x4d& input, axis4 axis, component3 component) RTM_NO_EXCEPT
+	{
+		switch (axis)
+		{
+			default:
+			case axis4::x:	return vector_get_component3(input.x_axis, component);
+			case axis4::y:	return vector_get_component3(input.y_axis, component);
+			case axis4::z:	return vector_get_component3(input.z_axis, component);
+			case axis4::w:	return vector_get_component3(input.w_axis, component);
+		}
+	}
+
+	//////////////////////////////////////////////////////////////////////////
+	// Returns a new 3x4 matrix where the specified axis/component has been replaced on the input matrix.
+	//////////////////////////////////////////////////////////////////////////
+	RTM_DISABLE_SECURITY_COOKIE_CHECK inline matrix3x4d RTM_SIMD_CALL matrix_set_component(const matrix3x4d& input, double component_value, axis4 axis, component3 component) RTM_NO_EXCEPT
+	{
+		switch (axis)
+		{
+			default:
+			case axis4::x:	return matrix3x4d{ vector_set_component3(input.x_axis, component_value, component), input.y_axis, input.z_axis, input.w_axis };
+			case axis4::y:	return matrix3x4d{ input.x_axis, vector_set_component3(input.y_axis, component_value, component), input.z_axis, input.w_axis };
+			case axis4::z:	return matrix3x4d{ input.x_axis, input.y_axis, vector_set_component3(input.z_axis, component_value, component), input.w_axis };
+			case axis4::w:	return matrix3x4d{ input.x_axis, input.y_axis, input.z_axis, vector_set_component3(input.w_axis, component_value, component) };
+		}
+	}
+
+#if defined(RTM_SSE2_INTRINSICS)
+	//////////////////////////////////////////////////////////////////////////
+	// Returns a new 3x4 matrix where the specified axis/component has been replaced on the input matrix.
+	//////////////////////////////////////////////////////////////////////////
+	RTM_DISABLE_SECURITY_COOKIE_CHECK inline matrix3x4d RTM_SIMD_CALL matrix_set_component(const matrix3x4d& input, const scalard& component_value, axis4 axis, component3 component) RTM_NO_EXCEPT
+	{
+		switch (axis)
+		{
+			default:
+			case axis4::x:	return matrix3x4d{ vector_set_component3(input.x_axis, component_value, component), input.y_axis, input.z_axis };
+			case axis4::y:	return matrix3x4d{ input.x_axis, vector_set_component3(input.y_axis, component_value, component), input.z_axis };
+			case axis4::z:	return matrix3x4d{ input.x_axis, input.y_axis, vector_set_component3(input.z_axis, component_value, component) };
+			case axis4::w:	return matrix3x4d{ input.x_axis, input.y_axis, input.z_axis, vector_set_component3(input.w_axis, component_value, component) };
+		}
+	}
+#endif
+
+	//////////////////////////////////////////////////////////////////////////
 	// Converts a 3x4 affine matrix into a rotation quaternion.
 	//////////////////////////////////////////////////////////////////////////
 	RTM_DISABLE_SECURITY_COOKIE_CHECK inline quatd quat_from_matrix(const matrix3x4d& input) RTM_NO_EXCEPT
