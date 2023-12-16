@@ -1,5 +1,9 @@
 # Significant changes per release
 
+## 2.2.1
+
+*  Fix matrix 4x4 multiplication and add unit tests
+
 ## 2.2.0
 
 *  Added support for Clang 15

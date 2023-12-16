@@ -219,6 +219,83 @@ static void test_affine_matrix_setters(const FloatType threshold)
 		CHECK(vector_all_near_equal3(mtx2.z_axis, mtx.z_axis, threshold));
 		CHECK(vector_all_near_equal3(mtx2.w_axis, mtx.w_axis, threshold));
 	}
+
+	{
+		Vector4Type x_axis = vector_set(FloatType(1.0), FloatType(2.0), FloatType(3.0), FloatType(0.0));
+		Vector4Type y_axis = vector_set(FloatType(4.0), FloatType(5.0), FloatType(6.0), FloatType(0.0));
+		Vector4Type z_axis = vector_set(FloatType(7.0), FloatType(8.0), FloatType(9.0), FloatType(0.0));
+		Vector4Type w_axis = vector_set(FloatType(10.0), FloatType(11.0), FloatType(12.0), FloatType(0.0));
+		Matrix3x4Type mtx = matrix_set(x_axis, y_axis, z_axis, w_axis);
+		CHECK(FloatType(matrix_get_component(mtx, axis4::x, component3::x)) == FloatType(1.0));
+		CHECK(FloatType(matrix_get_component(mtx, axis4::x, component3::y)) == FloatType(2.0));
+		CHECK(FloatType(matrix_get_component(mtx, axis4::x, component3::z)) == FloatType(3.0));
+		CHECK(FloatType(matrix_get_component(mtx, axis4::y, component3::x)) == FloatType(4.0));
+		CHECK(FloatType(matrix_get_component(mtx, axis4::y, component3::y)) == FloatType(5.0));
+		CHECK(FloatType(matrix_get_component(mtx, axis4::y, component3::z)) == FloatType(6.0));
+		CHECK(FloatType(matrix_get_component(mtx, axis4::z, component3::x)) == FloatType(7.0));
+		CHECK(FloatType(matrix_get_component(mtx, axis4::z, component3::y)) == FloatType(8.0));
+		CHECK(FloatType(matrix_get_component(mtx, axis4::z, component3::z)) == FloatType(9.0));
+		CHECK(FloatType(matrix_get_component(mtx, axis4::w, component3::x)) == FloatType(10.0));
+		CHECK(FloatType(matrix_get_component(mtx, axis4::w, component3::y)) == FloatType(11.0));
+		CHECK(FloatType(matrix_get_component(mtx, axis4::w, component3::z)) == FloatType(12.0));
+
+		CHECK(scalar_cast(matrix_get_component(mtx, axis4::x, component3::x)) == FloatType(1.0));
+		CHECK(scalar_cast(matrix_get_component(mtx, axis4::x, component3::y)) == FloatType(2.0));
+		CHECK(scalar_cast(matrix_get_component(mtx, axis4::x, component3::z)) == FloatType(3.0));
+		CHECK(scalar_cast(matrix_get_component(mtx, axis4::y, component3::x)) == FloatType(4.0));
+		CHECK(scalar_cast(matrix_get_component(mtx, axis4::y, component3::y)) == FloatType(5.0));
+		CHECK(scalar_cast(matrix_get_component(mtx, axis4::y, component3::z)) == FloatType(6.0));
+		CHECK(scalar_cast(matrix_get_component(mtx, axis4::z, component3::x)) == FloatType(7.0));
+		CHECK(scalar_cast(matrix_get_component(mtx, axis4::z, component3::y)) == FloatType(8.0));
+		CHECK(scalar_cast(matrix_get_component(mtx, axis4::z, component3::z)) == FloatType(9.0));
+		CHECK(scalar_cast(matrix_get_component(mtx, axis4::w, component3::x)) == FloatType(10.0));
+		CHECK(scalar_cast(matrix_get_component(mtx, axis4::w, component3::y)) == FloatType(11.0));
+		CHECK(scalar_cast(matrix_get_component(mtx, axis4::w, component3::z)) == FloatType(12.0));
+	}
+
+	{
+		Vector4Type x_axis = vector_set(FloatType(1.0), FloatType(2.0), FloatType(3.0), FloatType(0.0));
+		Vector4Type y_axis = vector_set(FloatType(4.0), FloatType(5.0), FloatType(6.0), FloatType(0.0));
+		Vector4Type z_axis = vector_set(FloatType(7.0), FloatType(8.0), FloatType(9.0), FloatType(0.0));
+		Vector4Type w_axis = vector_set(FloatType(10.0), FloatType(11.0), FloatType(12.0), FloatType(0.0));
+		Matrix3x4Type mtx = matrix_set(x_axis, y_axis, z_axis, w_axis);
+
+		Matrix3x4Type mtx2 = identity;
+		mtx2 = matrix_set_component(mtx2, FloatType(1.0), axis4::x, component3::x);
+		mtx2 = matrix_set_component(mtx2, FloatType(2.0), axis4::x, component3::y);
+		mtx2 = matrix_set_component(mtx2, FloatType(3.0), axis4::x, component3::z);
+		mtx2 = matrix_set_component(mtx2, FloatType(4.0), axis4::y, component3::x);
+		mtx2 = matrix_set_component(mtx2, FloatType(5.0), axis4::y, component3::y);
+		mtx2 = matrix_set_component(mtx2, FloatType(6.0), axis4::y, component3::z);
+		mtx2 = matrix_set_component(mtx2, FloatType(7.0), axis4::z, component3::x);
+		mtx2 = matrix_set_component(mtx2, FloatType(8.0), axis4::z, component3::y);
+		mtx2 = matrix_set_component(mtx2, FloatType(9.0), axis4::z, component3::z);
+		mtx2 = matrix_set_component(mtx2, FloatType(10.0), axis4::w, component3::x);
+		mtx2 = matrix_set_component(mtx2, FloatType(11.0), axis4::w, component3::y);
+		mtx2 = matrix_set_component(mtx2, FloatType(12.0), axis4::w, component3::z);
+		CHECK(vector_all_near_equal3(mtx2.x_axis, mtx.x_axis, threshold));
+		CHECK(vector_all_near_equal3(mtx2.y_axis, mtx.y_axis, threshold));
+		CHECK(vector_all_near_equal3(mtx2.z_axis, mtx.z_axis, threshold));
+		CHECK(vector_all_near_equal3(mtx2.w_axis, mtx.w_axis, threshold));
+
+		mtx2 = identity;
+		mtx2 = matrix_set_component(mtx2, scalar_set(FloatType(1.0)), axis4::x, component3::x);
+		mtx2 = matrix_set_component(mtx2, scalar_set(FloatType(2.0)), axis4::x, component3::y);
+		mtx2 = matrix_set_component(mtx2, scalar_set(FloatType(3.0)), axis4::x, component3::z);
+		mtx2 = matrix_set_component(mtx2, scalar_set(FloatType(4.0)), axis4::y, component3::x);
+		mtx2 = matrix_set_component(mtx2, scalar_set(FloatType(5.0)), axis4::y, component3::y);
+		mtx2 = matrix_set_component(mtx2, scalar_set(FloatType(6.0)), axis4::y, component3::z);
+		mtx2 = matrix_set_component(mtx2, scalar_set(FloatType(7.0)), axis4::z, component3::x);
+		mtx2 = matrix_set_component(mtx2, scalar_set(FloatType(8.0)), axis4::z, component3::y);
+		mtx2 = matrix_set_component(mtx2, scalar_set(FloatType(9.0)), axis4::z, component3::z);
+		mtx2 = matrix_set_component(mtx2, scalar_set(FloatType(10.0)), axis4::w, component3::x);
+		mtx2 = matrix_set_component(mtx2, scalar_set(FloatType(11.0)), axis4::w, component3::y);
+		mtx2 = matrix_set_component(mtx2, scalar_set(FloatType(12.0)), axis4::w, component3::z);
+		CHECK(vector_all_near_equal3(mtx2.x_axis, mtx.x_axis, threshold));
+		CHECK(vector_all_near_equal3(mtx2.y_axis, mtx.y_axis, threshold));
+		CHECK(vector_all_near_equal3(mtx2.z_axis, mtx.z_axis, threshold));
+		CHECK(vector_all_near_equal3(mtx2.w_axis, mtx.w_axis, threshold));
+	}
 }
 
 template<typename FloatType>

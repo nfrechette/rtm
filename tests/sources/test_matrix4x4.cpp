@@ -89,6 +89,99 @@ static void test_matrix4x4_setters(const FloatType threshold)
 		CHECK(vector_all_near_equal(mtx2.z_axis, mtx.z_axis, threshold));
 		CHECK(vector_all_near_equal(mtx2.w_axis, mtx.w_axis, threshold));
 	}
+
+	{
+		Vector4Type x_axis = vector_set(FloatType(1.0), FloatType(2.0), FloatType(3.0), FloatType(13.0));
+		Vector4Type y_axis = vector_set(FloatType(4.0), FloatType(5.0), FloatType(6.0), FloatType(14.0));
+		Vector4Type z_axis = vector_set(FloatType(7.0), FloatType(8.0), FloatType(9.0), FloatType(15.0));
+		Vector4Type w_axis = vector_set(FloatType(10.0), FloatType(11.0), FloatType(12.0), FloatType(16.0));
+		Matrix4x4Type mtx = matrix_set(x_axis, y_axis, z_axis, w_axis);
+		CHECK(FloatType(matrix_get_component(mtx, axis4::x, component4::x)) == FloatType(1.0));
+		CHECK(FloatType(matrix_get_component(mtx, axis4::x, component4::y)) == FloatType(2.0));
+		CHECK(FloatType(matrix_get_component(mtx, axis4::x, component4::z)) == FloatType(3.0));
+		CHECK(FloatType(matrix_get_component(mtx, axis4::x, component4::w)) == FloatType(13.0));
+		CHECK(FloatType(matrix_get_component(mtx, axis4::y, component4::x)) == FloatType(4.0));
+		CHECK(FloatType(matrix_get_component(mtx, axis4::y, component4::y)) == FloatType(5.0));
+		CHECK(FloatType(matrix_get_component(mtx, axis4::y, component4::z)) == FloatType(6.0));
+		CHECK(FloatType(matrix_get_component(mtx, axis4::y, component4::w)) == FloatType(14.0));
+		CHECK(FloatType(matrix_get_component(mtx, axis4::z, component4::x)) == FloatType(7.0));
+		CHECK(FloatType(matrix_get_component(mtx, axis4::z, component4::y)) == FloatType(8.0));
+		CHECK(FloatType(matrix_get_component(mtx, axis4::z, component4::z)) == FloatType(9.0));
+		CHECK(FloatType(matrix_get_component(mtx, axis4::z, component4::w)) == FloatType(15.0));
+		CHECK(FloatType(matrix_get_component(mtx, axis4::w, component4::x)) == FloatType(10.0));
+		CHECK(FloatType(matrix_get_component(mtx, axis4::w, component4::y)) == FloatType(11.0));
+		CHECK(FloatType(matrix_get_component(mtx, axis4::w, component4::z)) == FloatType(12.0));
+		CHECK(FloatType(matrix_get_component(mtx, axis4::w, component4::w)) == FloatType(16.0));
+
+		CHECK(scalar_cast(matrix_get_component(mtx, axis4::x, component4::x)) == FloatType(1.0));
+		CHECK(scalar_cast(matrix_get_component(mtx, axis4::x, component4::y)) == FloatType(2.0));
+		CHECK(scalar_cast(matrix_get_component(mtx, axis4::x, component4::z)) == FloatType(3.0));
+		CHECK(scalar_cast(matrix_get_component(mtx, axis4::x, component4::w)) == FloatType(13.0));
+		CHECK(scalar_cast(matrix_get_component(mtx, axis4::y, component4::x)) == FloatType(4.0));
+		CHECK(scalar_cast(matrix_get_component(mtx, axis4::y, component4::y)) == FloatType(5.0));
+		CHECK(scalar_cast(matrix_get_component(mtx, axis4::y, component4::z)) == FloatType(6.0));
+		CHECK(scalar_cast(matrix_get_component(mtx, axis4::y, component4::w)) == FloatType(14.0));
+		CHECK(scalar_cast(matrix_get_component(mtx, axis4::z, component4::x)) == FloatType(7.0));
+		CHECK(scalar_cast(matrix_get_component(mtx, axis4::z, component4::y)) == FloatType(8.0));
+		CHECK(scalar_cast(matrix_get_component(mtx, axis4::z, component4::z)) == FloatType(9.0));
+		CHECK(scalar_cast(matrix_get_component(mtx, axis4::z, component4::w)) == FloatType(15.0));
+		CHECK(scalar_cast(matrix_get_component(mtx, axis4::w, component4::x)) == FloatType(10.0));
+		CHECK(scalar_cast(matrix_get_component(mtx, axis4::w, component4::y)) == FloatType(11.0));
+		CHECK(scalar_cast(matrix_get_component(mtx, axis4::w, component4::z)) == FloatType(12.0));
+		CHECK(scalar_cast(matrix_get_component(mtx, axis4::w, component4::w)) == FloatType(16.0));
+	}
+
+	{
+		Vector4Type x_axis = vector_set(FloatType(1.0), FloatType(2.0), FloatType(3.0), FloatType(13.0));
+		Vector4Type y_axis = vector_set(FloatType(4.0), FloatType(5.0), FloatType(6.0), FloatType(14.0));
+		Vector4Type z_axis = vector_set(FloatType(7.0), FloatType(8.0), FloatType(9.0), FloatType(15.0));
+		Vector4Type w_axis = vector_set(FloatType(10.0), FloatType(11.0), FloatType(12.0), FloatType(16.0));
+		Matrix4x4Type mtx = matrix_set(x_axis, y_axis, z_axis, w_axis);
+
+		Matrix4x4Type mtx2 = identity;
+		mtx2 = matrix_set_component(mtx2, FloatType(1.0), axis4::x, component4::x);
+		mtx2 = matrix_set_component(mtx2, FloatType(2.0), axis4::x, component4::y);
+		mtx2 = matrix_set_component(mtx2, FloatType(3.0), axis4::x, component4::z);
+		mtx2 = matrix_set_component(mtx2, FloatType(13.0), axis4::x, component4::w);
+		mtx2 = matrix_set_component(mtx2, FloatType(4.0), axis4::y, component4::x);
+		mtx2 = matrix_set_component(mtx2, FloatType(5.0), axis4::y, component4::y);
+		mtx2 = matrix_set_component(mtx2, FloatType(6.0), axis4::y, component4::z);
+		mtx2 = matrix_set_component(mtx2, FloatType(14.0), axis4::y, component4::w);
+		mtx2 = matrix_set_component(mtx2, FloatType(7.0), axis4::z, component4::x);
+		mtx2 = matrix_set_component(mtx2, FloatType(8.0), axis4::z, component4::y);
+		mtx2 = matrix_set_component(mtx2, FloatType(9.0), axis4::z, component4::z);
+		mtx2 = matrix_set_component(mtx2, FloatType(15.0), axis4::z, component4::w);
+		mtx2 = matrix_set_component(mtx2, FloatType(10.0), axis4::w, component4::x);
+		mtx2 = matrix_set_component(mtx2, FloatType(11.0), axis4::w, component4::y);
+		mtx2 = matrix_set_component(mtx2, FloatType(12.0), axis4::w, component4::z);
+		mtx2 = matrix_set_component(mtx2, FloatType(16.0), axis4::w, component4::w);
+		CHECK(vector_all_near_equal(mtx2.x_axis, mtx.x_axis, threshold));
+		CHECK(vector_all_near_equal(mtx2.y_axis, mtx.y_axis, threshold));
+		CHECK(vector_all_near_equal(mtx2.z_axis, mtx.z_axis, threshold));
+		CHECK(vector_all_near_equal(mtx2.w_axis, mtx.w_axis, threshold));
+
+		mtx2 = identity;
+		mtx2 = matrix_set_component(mtx2, scalar_set(FloatType(1.0)), axis4::x, component4::x);
+		mtx2 = matrix_set_component(mtx2, scalar_set(FloatType(2.0)), axis4::x, component4::y);
+		mtx2 = matrix_set_component(mtx2, scalar_set(FloatType(3.0)), axis4::x, component4::z);
+		mtx2 = matrix_set_component(mtx2, scalar_set(FloatType(13.0)), axis4::x, component4::w);
+		mtx2 = matrix_set_component(mtx2, scalar_set(FloatType(4.0)), axis4::y, component4::x);
+		mtx2 = matrix_set_component(mtx2, scalar_set(FloatType(5.0)), axis4::y, component4::y);
+		mtx2 = matrix_set_component(mtx2, scalar_set(FloatType(6.0)), axis4::y, component4::z);
+		mtx2 = matrix_set_component(mtx2, scalar_set(FloatType(14.0)), axis4::y, component4::w);
+		mtx2 = matrix_set_component(mtx2, scalar_set(FloatType(7.0)), axis4::z, component4::x);
+		mtx2 = matrix_set_component(mtx2, scalar_set(FloatType(8.0)), axis4::z, component4::y);
+		mtx2 = matrix_set_component(mtx2, scalar_set(FloatType(9.0)), axis4::z, component4::z);
+		mtx2 = matrix_set_component(mtx2, scalar_set(FloatType(15.0)), axis4::z, component4::w);
+		mtx2 = matrix_set_component(mtx2, scalar_set(FloatType(10.0)), axis4::w, component4::x);
+		mtx2 = matrix_set_component(mtx2, scalar_set(FloatType(11.0)), axis4::w, component4::y);
+		mtx2 = matrix_set_component(mtx2, scalar_set(FloatType(12.0)), axis4::w, component4::z);
+		mtx2 = matrix_set_component(mtx2, scalar_set(FloatType(16.0)), axis4::w, component4::w);
+		CHECK(vector_all_near_equal(mtx2.x_axis, mtx.x_axis, threshold));
+		CHECK(vector_all_near_equal(mtx2.y_axis, mtx.y_axis, threshold));
+		CHECK(vector_all_near_equal(mtx2.z_axis, mtx.z_axis, threshold));
+		CHECK(vector_all_near_equal(mtx2.w_axis, mtx.w_axis, threshold));
+	}
 }
 
 template<typename FloatType>
@@ -133,6 +226,23 @@ static void test_matrix4x4_arithmetic(const FloatType threshold)
 		result = matrix_mul_vector(y_axis, mtx_ba);
 		CHECK(vector_all_near_equal3(result, vector_set(FloatType(0.0), FloatType(0.0), FloatType(-1.0), FloatType(0.0)), threshold));
 		CHECK(vector_all_near_equal3(result, matrix_mul_vector(matrix_mul_vector(y_axis, mtx_b), mtx_a), threshold));
+	}
+
+	{
+		Vector4Type x_axis = vector_set(FloatType(1.0), FloatType(2.0), FloatType(3.0), FloatType(0.2));
+		Vector4Type y_axis = vector_set(FloatType(4.0), FloatType(5.0), FloatType(6.0), FloatType(0.5));
+		Vector4Type z_axis = vector_set(FloatType(7.0), FloatType(8.0), FloatType(9.0), FloatType(0.8));
+		Vector4Type w_axis = vector_set(FloatType(10.0), FloatType(11.0), FloatType(12.0), FloatType(1.2));
+		Matrix4x4Type mtx = matrix_set(x_axis, y_axis, z_axis, w_axis);
+		Matrix4x4Type mtx_squared = matrix_mul(mtx, mtx);
+		CHECK(vector_all_near_equal(vector_set(FloatType(32.0), FloatType(38.2), FloatType(44.4), FloatType(3.84)), mtx_squared.x_axis, threshold));
+		CHECK(vector_all_near_equal(vector_set(FloatType(71.0), FloatType(86.5), FloatType(102.0), FloatType(8.7)), mtx_squared.y_axis, threshold));
+		CHECK(vector_all_near_equal(vector_set(FloatType(110.0), FloatType(134.8), FloatType(159.6), FloatType(13.56)), mtx_squared.z_axis, threshold));
+		CHECK(vector_all_near_equal(vector_set(FloatType(150.0), FloatType(184.2), FloatType(218.4), FloatType(18.54)), mtx_squared.w_axis, threshold));
+
+		Vector4Type some_vector = vector_set(FloatType(0.8), FloatType(2.4), FloatType(1.5), FloatType(10.24));
+		Vector4Type result = matrix_mul_vector(some_vector, mtx);
+		CHECK(vector_all_near_equal(vector_set(FloatType(123.3), FloatType(138.24), FloatType(153.18), FloatType(14.848)), result, threshold));
 	}
 }
 
@@ -194,6 +304,19 @@ static void test_matrix4x4_transformations(const FloatType threshold)
 		CHECK(vector_all_near_equal(vector_set(FloatType(0.0), FloatType(1.0), FloatType(0.0), FloatType(0.0)), result.y_axis, threshold));
 		CHECK(vector_all_near_equal(vector_set(FloatType(0.0), FloatType(0.0), FloatType(1.0), FloatType(0.0)), result.z_axis, threshold));
 		CHECK(vector_all_near_equal(vector_set(FloatType(0.0), FloatType(0.0), FloatType(0.0), FloatType(1.0)), result.w_axis, threshold));
+	}
+
+	{
+		Vector4Type x_axis = vector_set(FloatType(0.1), FloatType(0.6), FloatType(0.123), FloatType(0.23));
+		Vector4Type y_axis = vector_set(FloatType(0.512), FloatType(0.661), FloatType(0.133), FloatType(0.5));
+		Vector4Type z_axis = vector_set(FloatType(0.14), FloatType(0.88), FloatType(0.193), FloatType(0.8));
+		Vector4Type w_axis = vector_set(FloatType(0.2), FloatType(1.1), FloatType(2.4), FloatType(1.2));
+		Matrix4x4Type mtx = matrix_set(x_axis, y_axis, z_axis, w_axis);
+		Matrix4x4Type inv_mtx = matrix_inverse(mtx);
+		CHECK(vector_all_near_equal(vector_set(FloatType(-0.782157), FloatType(2.46605), FloatType(-1.33225), FloatType(0.0105605)), inv_mtx.x_axis, threshold));
+		CHECK(vector_all_near_equal(vector_set(FloatType(2.95727), FloatType(-0.418418), FloatType(-0.450484), FloatType(-0.0921463)), inv_mtx.y_axis, threshold));
+		CHECK(vector_all_near_equal(vector_set(FloatType(0.304562), FloatType(-0.0319315), FloatType(-0.764003), FloatType(0.464266)), inv_mtx.z_axis, threshold));
+		CHECK(vector_all_near_equal(vector_set(FloatType(-3.18959), FloatType(0.0364035), FloatType(2.16299), FloatType(-0.0124914)), inv_mtx.w_axis, threshold));
 	}
 
 	{

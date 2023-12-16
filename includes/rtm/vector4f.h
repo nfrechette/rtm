@@ -409,6 +409,24 @@ namespace rtm
 	}
 
 	//////////////////////////////////////////////////////////////////////////
+	// Returns the vector2 desired component.
+	//////////////////////////////////////////////////////////////////////////
+	template<component2 component, component4 component_ = static_cast<component4>(component)>
+	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE constexpr rtm_impl::vector4f_vector_get_component_static<component_> RTM_SIMD_CALL vector_get_component2(vector4f_arg0 input) RTM_NO_EXCEPT
+	{
+		return rtm_impl::vector4f_vector_get_component_static<component_>{ input };
+	}
+
+	//////////////////////////////////////////////////////////////////////////
+	// Returns the vector3 desired component.
+	//////////////////////////////////////////////////////////////////////////
+	template<component3 component, component4 component_ = static_cast<component4>(component)>
+	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE constexpr rtm_impl::vector4f_vector_get_component_static<component_> RTM_SIMD_CALL vector_get_component3(vector4f_arg0 input) RTM_NO_EXCEPT
+	{
+		return rtm_impl::vector4f_vector_get_component_static<component_>{ input };
+	}
+
+	//////////////////////////////////////////////////////////////////////////
 	// Returns the vector4 desired component.
 	//////////////////////////////////////////////////////////////////////////
 	template<component4 component>
@@ -466,6 +484,22 @@ namespace rtm
 	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE constexpr rtm_impl::vector4f_vector_get_component RTM_SIMD_CALL vector_get_component(vector4f_arg0 input, mix4 component) RTM_NO_EXCEPT
 	{
 		return rtm_impl::vector4f_vector_get_component{ input, rtm_impl::mix_to_component(component), { 0 } };
+	}
+
+	//////////////////////////////////////////////////////////////////////////
+	// Returns the vector2 desired component.
+	//////////////////////////////////////////////////////////////////////////
+	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE constexpr rtm_impl::vector4f_vector_get_component RTM_SIMD_CALL vector_get_component2(vector4f_arg0 input, component2 component) RTM_NO_EXCEPT
+	{
+		return rtm_impl::vector4f_vector_get_component{ input, static_cast<component4>(component), { 0 } };
+	}
+
+	//////////////////////////////////////////////////////////////////////////
+	// Returns the vector3 desired component.
+	//////////////////////////////////////////////////////////////////////////
+	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE constexpr rtm_impl::vector4f_vector_get_component RTM_SIMD_CALL vector_get_component3(vector4f_arg0 input, component3 component) RTM_NO_EXCEPT
+	{
+		return rtm_impl::vector4f_vector_get_component{ input, static_cast<component4>(component), { 0 } };
 	}
 
 	//////////////////////////////////////////////////////////////////////////
@@ -619,6 +653,68 @@ namespace rtm
 #endif
 
 	//////////////////////////////////////////////////////////////////////////
+	// Sets the desired vector2 component and returns the new value.
+	//////////////////////////////////////////////////////////////////////////
+	template<component2 component>
+	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE vector4f RTM_SIMD_CALL vector_set_component2(vector4f_arg0 input, float lane_value) RTM_NO_EXCEPT
+	{
+		switch (component)
+		{
+			default:
+			case component2::x:	return vector_set_x(input, lane_value);
+			case component2::y:	return vector_set_y(input, lane_value);
+		}
+	}
+
+#if defined(RTM_SSE2_INTRINSICS)
+	//////////////////////////////////////////////////////////////////////////
+	// Sets the desired vector2 component and returns the new value.
+	//////////////////////////////////////////////////////////////////////////
+	template<component2 component>
+	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE vector4f RTM_SIMD_CALL vector_set_component2(vector4f_arg0 input, scalarf_arg1 lane_value) RTM_NO_EXCEPT
+	{
+		switch (component)
+		{
+			default:
+			case component2::x:	return vector_set_x(input, lane_value);
+			case component2::y:	return vector_set_y(input, lane_value);
+		}
+	}
+#endif
+
+	//////////////////////////////////////////////////////////////////////////
+	// Sets the desired vector3 component and returns the new value.
+	//////////////////////////////////////////////////////////////////////////
+	template<component3 component>
+	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE vector4f RTM_SIMD_CALL vector_set_component3(vector4f_arg0 input, float lane_value) RTM_NO_EXCEPT
+	{
+		switch (component)
+		{
+			default:
+			case component3::x:	return vector_set_x(input, lane_value);
+			case component3::y:	return vector_set_y(input, lane_value);
+			case component3::z:	return vector_set_z(input, lane_value);
+		}
+	}
+
+#if defined(RTM_SSE2_INTRINSICS)
+	//////////////////////////////////////////////////////////////////////////
+	// Sets the desired vector3 component and returns the new value.
+	//////////////////////////////////////////////////////////////////////////
+	template<component3 component>
+	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE vector4f RTM_SIMD_CALL vector_set_component3(vector4f_arg0 input, scalarf_arg1 lane_value) RTM_NO_EXCEPT
+	{
+		switch (component)
+		{
+			default:
+			case component3::x:	return vector_set_x(input, lane_value);
+			case component3::y:	return vector_set_y(input, lane_value);
+			case component3::z:	return vector_set_z(input, lane_value);
+		}
+	}
+#endif
+
+	//////////////////////////////////////////////////////////////////////////
 	// Sets the desired vector4 component and returns the new value.
 	//////////////////////////////////////////////////////////////////////////
 	template<component4 component>
@@ -648,6 +744,64 @@ namespace rtm
 			case component4::y:	return vector_set_y(input, lane_value);
 			case component4::z:	return vector_set_z(input, lane_value);
 			case component4::w:	return vector_set_w(input, lane_value);
+		}
+	}
+#endif
+
+	//////////////////////////////////////////////////////////////////////////
+	// Sets the desired vector2 component and returns the new value.
+	//////////////////////////////////////////////////////////////////////////
+	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE vector4f RTM_SIMD_CALL vector_set_component2(vector4f_arg0 input, float lane_value, component2 component) RTM_NO_EXCEPT
+	{
+		switch (component)
+		{
+			default:
+			case component2::x:	return vector_set_x(input, lane_value);
+			case component2::y:	return vector_set_y(input, lane_value);
+		}
+	}
+
+#if defined(RTM_SSE2_INTRINSICS)
+	//////////////////////////////////////////////////////////////////////////
+	// Sets the desired vector2 component and returns the new value.
+	//////////////////////////////////////////////////////////////////////////
+	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE vector4f RTM_SIMD_CALL vector_set_component2(vector4f_arg0 input, scalarf_arg1 lane_value, component2 component) RTM_NO_EXCEPT
+	{
+		switch (component)
+		{
+			default:
+			case component2::x:	return vector_set_x(input, lane_value);
+			case component2::y:	return vector_set_y(input, lane_value);
+		}
+	}
+#endif
+
+	//////////////////////////////////////////////////////////////////////////
+	// Sets the desired vector3 component and returns the new value.
+	//////////////////////////////////////////////////////////////////////////
+	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE vector4f RTM_SIMD_CALL vector_set_component3(vector4f_arg0 input, float lane_value, component3 component) RTM_NO_EXCEPT
+	{
+		switch (component)
+		{
+			default:
+			case component3::x:	return vector_set_x(input, lane_value);
+			case component3::y:	return vector_set_y(input, lane_value);
+			case component3::z:	return vector_set_z(input, lane_value);
+		}
+	}
+
+#if defined(RTM_SSE2_INTRINSICS)
+	//////////////////////////////////////////////////////////////////////////
+	// Sets the desired vector3 component and returns the new value.
+	//////////////////////////////////////////////////////////////////////////
+	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE vector4f RTM_SIMD_CALL vector_set_component3(vector4f_arg0 input, scalarf_arg1 lane_value, component3 component) RTM_NO_EXCEPT
+	{
+		switch (component)
+		{
+			default:
+			case component3::x:	return vector_set_x(input, lane_value);
+			case component3::y:	return vector_set_y(input, lane_value);
+			case component3::z:	return vector_set_z(input, lane_value);
 		}
 	}
 #endif
@@ -2952,18 +3106,21 @@ namespace rtm
 		constexpr component4 component2 = rtm_impl::mix_to_component(comp2);
 		constexpr component4 component3 = rtm_impl::mix_to_component(comp3);
 
-#if RTM_COMPILER_MSVC > RTM_COMPILER_MSVC_2015
-		const float x = rtm_impl::is_mix_xyzw(comp0) ? vector_get_component<component0>(input0) : vector_get_component<component0>(input1);
-		const float y = rtm_impl::is_mix_xyzw(comp1) ? vector_get_component<component1>(input0) : vector_get_component<component1>(input1);
-		const float z = rtm_impl::is_mix_xyzw(comp2) ? vector_get_component<component2>(input0) : vector_get_component<component2>(input1);
-		const float w = rtm_impl::is_mix_xyzw(comp3) ? vector_get_component<component3>(input0) : vector_get_component<component3>(input1);
-#else
-		// VS2015 has issues compiling the code above and as a result it must resort to even worse codegen
-		const float x = rtm_impl::is_mix_xyzw(comp0) ? vector_get_component(input0, component0) : vector_get_component(input1, component0);
-		const float y = rtm_impl::is_mix_xyzw(comp1) ? vector_get_component(input0, component1) : vector_get_component(input1, component1);
-		const float z = rtm_impl::is_mix_xyzw(comp2) ? vector_get_component(input0, component2) : vector_get_component(input1, component2);
-		const float w = rtm_impl::is_mix_xyzw(comp3) ? vector_get_component(input0, component3) : vector_get_component(input1, component3);
-#endif
+		const float x0 = vector_get_component(input0, component0);
+		const float x1 = vector_get_component(input1, component0);
+		const float x = rtm_impl::is_mix_xyzw(comp0) ? x0 : x1;
+
+		const float y0 = vector_get_component(input0, component1);
+		const float y1 = vector_get_component(input1, component1);
+		const float y = rtm_impl::is_mix_xyzw(comp1) ? y0 : y1;
+
+		const float z0 = vector_get_component(input0, component2);
+		const float z1 = vector_get_component(input1, component2);
+		const float z = rtm_impl::is_mix_xyzw(comp2) ? z0 : z1;
+
+		const float w0 = vector_get_component(input0, component3);
+		const float w1 = vector_get_component(input1, component3);
+		const float w = rtm_impl::is_mix_xyzw(comp3) ? w0 : w1;
 
 		return vector_set(x, y, z, w);
 	}
