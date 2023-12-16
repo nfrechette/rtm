@@ -62,6 +62,53 @@ namespace rtm
 	}
 
 	//////////////////////////////////////////////////////////////////////////
+	// Returns the desired 4x4 matrix component from the specified axis.
+	//////////////////////////////////////////////////////////////////////////
+	RTM_DISABLE_SECURITY_COOKIE_CHECK inline rtm_impl::vector4f_vector_get_component RTM_SIMD_CALL matrix_get_component(matrix4x4f_arg0 input, axis4 axis, component4 component) RTM_NO_EXCEPT
+	{
+		switch (axis)
+		{
+			default:
+			case axis4::x:	return vector_get_component(input.x_axis, component);
+			case axis4::y:	return vector_get_component(input.y_axis, component);
+			case axis4::z:	return vector_get_component(input.z_axis, component);
+			case axis4::w:	return vector_get_component(input.w_axis, component);
+		}
+	}
+
+	//////////////////////////////////////////////////////////////////////////
+	// Returns a new 4x4 matrix where the specified axis/component has been replaced on the input matrix.
+	//////////////////////////////////////////////////////////////////////////
+	RTM_DISABLE_SECURITY_COOKIE_CHECK inline matrix4x4f RTM_SIMD_CALL matrix_set_component(matrix4x4f_arg0 input, float component_value, axis4 axis, component4 component) RTM_NO_EXCEPT
+	{
+		switch (axis)
+		{
+			default:
+			case axis4::x:	return matrix4x4f{ vector_set_component(input.x_axis, component_value, component), input.y_axis, input.z_axis, input.w_axis };
+			case axis4::y:	return matrix4x4f{ input.x_axis, vector_set_component(input.y_axis, component_value, component), input.z_axis, input.w_axis };
+			case axis4::z:	return matrix4x4f{ input.x_axis, input.y_axis, vector_set_component(input.z_axis, component_value, component), input.w_axis };
+			case axis4::w:	return matrix4x4f{ input.x_axis, input.y_axis, input.z_axis, vector_set_component(input.w_axis, component_value, component) };
+		}
+	}
+
+#if defined(RTM_SSE2_INTRINSICS)
+	//////////////////////////////////////////////////////////////////////////
+	// Returns a new 4x4 matrix where the specified axis/component has been replaced on the input matrix.
+	//////////////////////////////////////////////////////////////////////////
+	RTM_DISABLE_SECURITY_COOKIE_CHECK inline matrix4x4f RTM_SIMD_CALL matrix_set_component(matrix4x4f_arg0 input, scalarf_arg4 component_value, axis4 axis, component4 component) RTM_NO_EXCEPT
+	{
+		switch (axis)
+		{
+			default:
+			case axis4::x:	return matrix4x4f{ vector_set_component(input.x_axis, component_value, component), input.y_axis, input.z_axis, input.w_axis };
+			case axis4::y:	return matrix4x4f{ input.x_axis, vector_set_component(input.y_axis, component_value, component), input.z_axis, input.w_axis };
+			case axis4::z:	return matrix4x4f{ input.x_axis, input.y_axis, vector_set_component(input.z_axis, component_value, component), input.w_axis };
+			case axis4::w:	return matrix4x4f{ input.x_axis, input.y_axis, input.z_axis, vector_set_component(input.w_axis, component_value, component) };
+		}
+	}
+#endif
+
+	//////////////////////////////////////////////////////////////////////////
 	// Multiplies two 4x4 matrices.
 	// Multiplication order is as follow: local_to_world = matrix_mul(local_to_object, object_to_world)
 	//////////////////////////////////////////////////////////////////////////
