@@ -61,6 +61,50 @@ namespace rtm
 	}
 
 	//////////////////////////////////////////////////////////////////////////
+	// Returns the desired 3x3 matrix component from the specified axis.
+	//////////////////////////////////////////////////////////////////////////
+	RTM_DISABLE_SECURITY_COOKIE_CHECK inline rtm_impl::vector4f_vector_get_component RTM_SIMD_CALL matrix_get_component(matrix3x3f_arg0 input, axis3 axis, component3 component) RTM_NO_EXCEPT
+	{
+		switch (axis)
+		{
+			default:
+			case axis3::x:	return vector_get_component3(input.x_axis, component);
+			case axis3::y:	return vector_get_component3(input.y_axis, component);
+			case axis3::z:	return vector_get_component3(input.z_axis, component);
+		}
+	}
+
+	//////////////////////////////////////////////////////////////////////////
+	// Returns a new 3x3 matrix where the specified axis/component has been replaced on the input matrix.
+	//////////////////////////////////////////////////////////////////////////
+	RTM_DISABLE_SECURITY_COOKIE_CHECK inline matrix3x3f RTM_SIMD_CALL matrix_set_component(matrix3x3f_arg0 input, float component_value, axis3 axis, component3 component) RTM_NO_EXCEPT
+	{
+		switch (axis)
+		{
+			default:
+			case axis3::x:	return matrix3x3f{ vector_set_component3(input.x_axis, component_value, component), input.y_axis, input.z_axis };
+			case axis3::y:	return matrix3x3f{ input.x_axis, vector_set_component3(input.y_axis, component_value, component), input.z_axis };
+			case axis3::z:	return matrix3x3f{ input.x_axis, input.y_axis, vector_set_component3(input.z_axis, component_value, component) };
+		}
+	}
+
+#if defined(RTM_SSE2_INTRINSICS)
+	//////////////////////////////////////////////////////////////////////////
+	// Returns a new 3x3 matrix where the specified axis/component has been replaced on the input matrix.
+	//////////////////////////////////////////////////////////////////////////
+	RTM_DISABLE_SECURITY_COOKIE_CHECK inline matrix3x3f RTM_SIMD_CALL matrix_set_component(matrix3x3f_arg0 input, scalarf_arg4 component_value, axis3 axis, component3 component) RTM_NO_EXCEPT
+	{
+		switch (axis)
+		{
+			default:
+			case axis3::x:	return matrix3x3f{ vector_set_component3(input.x_axis, component_value, component), input.y_axis, input.z_axis };
+			case axis3::y:	return matrix3x3f{ input.x_axis, vector_set_component3(input.y_axis, component_value, component), input.z_axis };
+			case axis3::z:	return matrix3x3f{ input.x_axis, input.y_axis, vector_set_component3(input.z_axis, component_value, component) };
+		}
+	}
+#endif
+
+	//////////////////////////////////////////////////////////////////////////
 	// Converts a 3x3 matrix into a rotation quaternion.
 	//////////////////////////////////////////////////////////////////////////
 	RTM_DISABLE_SECURITY_COOKIE_CHECK inline quatf RTM_SIMD_CALL quat_from_matrix(matrix3x3f_arg0 input) RTM_NO_EXCEPT
