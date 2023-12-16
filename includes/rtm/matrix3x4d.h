@@ -227,9 +227,9 @@ namespace rtm
 		switch (axis)
 		{
 			default:
-			case axis4::x:	return matrix3x4d{ vector_set_component3(input.x_axis, component_value, component), input.y_axis, input.z_axis };
-			case axis4::y:	return matrix3x4d{ input.x_axis, vector_set_component3(input.y_axis, component_value, component), input.z_axis };
-			case axis4::z:	return matrix3x4d{ input.x_axis, input.y_axis, vector_set_component3(input.z_axis, component_value, component) };
+			case axis4::x:	return matrix3x4d{ vector_set_component3(input.x_axis, component_value, component), input.y_axis, input.z_axis, input.w_axis };
+			case axis4::y:	return matrix3x4d{ input.x_axis, vector_set_component3(input.y_axis, component_value, component), input.z_axis, input.w_axis };
+			case axis4::z:	return matrix3x4d{ input.x_axis, input.y_axis, vector_set_component3(input.z_axis, component_value, component), input.w_axis };
 			case axis4::w:	return matrix3x4d{ input.x_axis, input.y_axis, input.z_axis, vector_set_component3(input.w_axis, component_value, component) };
 		}
 	}
