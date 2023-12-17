@@ -341,16 +341,12 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE float RTM_SIMD_CALL scalar_reciprocal(float input) RTM_NO_EXCEPT
 	{
-#if defined(RTM_SSE2_INTRINSICS)
-		return scalar_cast(scalar_reciprocal(scalar_set(input)));
-#else
 		// Performance note:
 		// With modern out-of-order executing processors, it is typically faster to use
 		// a full division instead of a reciprocal estimate + Newton-Raphson iterations
 		// because the resulting code is more dense and is more likely to inline and
 		// as it uses fewer instructions.
 		return 1.0F / input;
-#endif
 	}
 
 #if defined(RTM_SSE2_INTRINSICS)
