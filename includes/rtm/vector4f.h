@@ -1166,6 +1166,19 @@ namespace rtm
 	}
 
 	//////////////////////////////////////////////////////////////////////////
+	// Per component reciprocal square root of the input: 1.0 / sqrt(input)
+	//////////////////////////////////////////////////////////////////////////
+	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE vector4f RTM_SIMD_CALL vector_sqrt_reciprocal(vector4f_arg0 input) RTM_NO_EXCEPT
+	{
+		// Performance note:
+		// With modern out-of-order executing processors, it is typically faster to use
+		// a full division/square root instead of a reciprocal estimate + Newton-Raphson iterations
+		// because the resulting code is more dense and is more likely to inline and
+		// as it uses fewer instructions.
+		return vector_reciprocal(vector_sqrt(input));
+	}
+
+	//////////////////////////////////////////////////////////////////////////
 	// Per component returns the smallest integer value not less than the input (round towards positive infinity).
 	// vector_ceil([1.8, 1.0, -1.8, -1.0]) = [2.0, 1.0, -1.0, -1.0]
 	//////////////////////////////////////////////////////////////////////////
