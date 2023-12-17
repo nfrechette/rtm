@@ -344,7 +344,7 @@ namespace rtm
 #if defined(RTM_SSE2_INTRINSICS)
 		return scalar_cast(scalar_reciprocal(scalar_set(input)));
 #else
-		return 1.0f / input;
+		return 1.0F / input;
 #endif
 	}
 
