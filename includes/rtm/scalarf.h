@@ -1352,15 +1352,18 @@ namespace rtm
 		// If X < 0.0, we return atan(y/x) + sign(Y) * PI
 		// See: https://en.wikipedia.org/wiki/Atan2#Definition_and_computation
 
+		const __m128 y_value = y.value;
+		const __m128 x_value = x.value;
+
 		const __m128 zero = _mm_setzero_ps();
-		__m128 is_x_zero = _mm_cmpeq_ss(x.value, zero);
-		__m128 is_y_zero = _mm_cmpeq_ss(y.value, zero);
+		__m128 is_x_zero = _mm_cmpeq_ss(x_value, zero);
+		__m128 is_y_zero = _mm_cmpeq_ss(y_value, zero);
 		__m128 inputs_are_zero = _mm_and_ps(is_x_zero, is_y_zero);
 
-		__m128 is_x_positive = _mm_cmpgt_ss(x.value, zero);
+		__m128 is_x_positive = _mm_cmpgt_ss(x_value, zero);
 
 		const __m128 sign_mask = _mm_set_ps(-0.0F, -0.0F, -0.0F, -0.0F);
-		__m128 y_sign = _mm_and_ps(y.value, sign_mask);
+		__m128 y_sign = _mm_and_ps(y_value, sign_mask);
 
 		// If X == 0.0, our offset is PI/2 otherwise it is PI both with the sign of Y
 		__m128 half_pi = _mm_set_ps1(constants::half_pi());
@@ -1374,8 +1377,10 @@ namespace rtm
 		// If X == 0.0 and Y == 0.0, our offset is 0.0
 		offset = _mm_andnot_ps(inputs_are_zero, offset);
 
-		__m128 angle = _mm_div_ss(y.value, x.value);
-		__m128 value = scalar_atan(scalarf{ angle }).value;
+		__m128 angle = _mm_div_ss(y_value, x_value);
+		scalarf angle_s = scalarf{ angle };
+		scalarf value_s = scalar_atan(angle_s);
+		__m128 value = value_s.value;
 
 		// If X == 0.0, our value is 0.0 otherwise it is atan(y/x)
 		value = _mm_or_ps(_mm_and_ps(is_x_zero, zero), _mm_andnot_ps(is_x_zero, value));
