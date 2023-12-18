@@ -1123,6 +1123,11 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE vector4f RTM_SIMD_CALL vector_reciprocal(vector4f_arg0 input) RTM_NO_EXCEPT
 	{
+		// Performance note:
+		// With modern out-of-order executing processors, it is typically faster to use
+		// a full division instead of a reciprocal estimate + Newton-Raphson iterations
+		// because the resulting code is more dense and is more likely to inline and
+		// as it uses fewer instructions.
 #if defined(RTM_SSE2_INTRINSICS)
 		return _mm_div_ps(_mm_set_ps1(1.0F), input);
 #elif defined(RTM_NEON64_INTRINSICS)
@@ -1158,6 +1163,19 @@ namespace rtm
 		scalarf w = vector_get_w(input);
 		return vector_set(scalar_sqrt(x), scalar_sqrt(y), scalar_sqrt(z), scalar_sqrt(w));
 #endif
+	}
+
+	//////////////////////////////////////////////////////////////////////////
+	// Per component reciprocal square root of the input: 1.0 / sqrt(input)
+	//////////////////////////////////////////////////////////////////////////
+	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE vector4f RTM_SIMD_CALL vector_sqrt_reciprocal(vector4f_arg0 input) RTM_NO_EXCEPT
+	{
+		// Performance note:
+		// With modern out-of-order executing processors, it is typically faster to use
+		// a full division/square root instead of a reciprocal estimate + Newton-Raphson iterations
+		// because the resulting code is more dense and is more likely to inline and
+		// as it uses fewer instructions.
+		return vector_reciprocal(vector_sqrt(input));
 	}
 
 	//////////////////////////////////////////////////////////////////////////

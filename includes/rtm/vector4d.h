@@ -977,6 +977,11 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE vector4d vector_reciprocal(const vector4d& input) RTM_NO_EXCEPT
 	{
+		// Performance note:
+		// With modern out-of-order executing processors, it is typically faster to use
+		// a full division instead of a reciprocal estimate + Newton-Raphson iterations
+		// because the resulting code is more dense and is more likely to inline and
+		// as it uses fewer instructions.
 		return vector_div(vector_set(1.0), input);
 	}
 
@@ -994,6 +999,19 @@ namespace rtm
 		scalard w = vector_get_w(input);
 		return vector_set(scalar_sqrt(x), scalar_sqrt(y), scalar_sqrt(z), scalar_sqrt(w));
 #endif
+	}
+
+	//////////////////////////////////////////////////////////////////////////
+	// Per component reciprocal square root of the input: 1.0 / sqrt(input)
+	//////////////////////////////////////////////////////////////////////////
+	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE vector4d vector_sqrt_reciprocal(const vector4d& input) RTM_NO_EXCEPT
+	{
+		// Performance note:
+		// With modern out-of-order executing processors, it is typically faster to use
+		// a full division/square root instead of a reciprocal estimate + Newton-Raphson iterations
+		// because the resulting code is more dense and is more likely to inline and
+		// as it uses fewer instructions.
+		return vector_reciprocal(vector_sqrt(input));
 	}
 
 	//////////////////////////////////////////////////////////////////////////
