@@ -1267,8 +1267,9 @@ namespace rtm
 		__m128 abs_value = _mm_and_ps(value.value, _mm_castsi128_ps(abs_mask));
 
 		// Compute our value
-		__m128 is_larger_than_one = _mm_cmpgt_ss(abs_value, _mm_set_ps1(1.0F));
-		__m128 reciprocal = scalar_reciprocal(scalarf{ abs_value }).value;
+		const __m128 one = _mm_set_ps1(1.0F);
+		__m128 is_larger_than_one = _mm_cmpgt_ss(abs_value, one);
+		__m128 reciprocal = _mm_div_ss(one, abs_value);
 
 		__m128 x = RTM_VECTOR4F_SELECT(is_larger_than_one, reciprocal, abs_value);
 
