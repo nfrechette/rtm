@@ -212,7 +212,7 @@ namespace rtm
 		rotation_axes[third_largest_scale_component_i] = third_largest_scale_axis;
 
 		// Now that we have built the ortho-normal basis part of our rotation, we check its winding
-		const float determinant = matrix_determinant(rotation);
+		const float determinant = scalar_cast(matrix_determinant(rotation));
 		if (determinant < 0.0F)
 		{
 			// Our winding is reversed meaning our three scale axes contain reflection
