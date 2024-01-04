@@ -35,6 +35,8 @@ static void test_qv_impl(const TransformType& identity, const FloatType threshol
 	using QuatType = decltype(TransformType::rotation);
 	using Vector4Type = decltype(TransformType::translation);
 	using ScalarType = typename float_traits<FloatType>::scalar;
+	using Matrix3x3Type = typename float_traits<FloatType>::matrix3x3;
+	using Matrix3x4Type = typename float_traits<FloatType>::matrix3x4;
 
 	{
 		Vector4Type zero = vector_set(FloatType(0.0));
@@ -44,6 +46,23 @@ static void test_qv_impl(const TransformType& identity, const FloatType threshol
 		CHECK(vector_all_near_equal3(identity.translation, tmp.translation, threshold));
 		CHECK(quat_near_equal(q_identity, tmp.rotation, threshold));
 		CHECK(vector_all_near_equal3(zero, tmp.translation, threshold));
+	}
+
+	{
+		QuatType rotation_around_z = quat_from_euler(scalar_deg_to_rad(FloatType(0.0)), scalar_deg_to_rad(FloatType(90.0)), scalar_deg_to_rad(FloatType(0.0)));
+		Matrix3x3Type mtx = matrix_from_quat(rotation_around_z);
+		TransformType transform = qv_from_matrix(mtx);
+		CHECK(quat_near_equal(rotation_around_z, transform.rotation, threshold));
+		CHECK(vector_all_near_equal3(identity.translation, transform.translation, threshold));
+	}
+
+	{
+		QuatType rotation_around_z = quat_from_euler(scalar_deg_to_rad(FloatType(0.0)), scalar_deg_to_rad(FloatType(90.0)), scalar_deg_to_rad(FloatType(0.0)));
+		Vector4Type translation = vector_set(FloatType(1.0), FloatType(2.0), FloatType(3.0));
+		Matrix3x4Type mtx = matrix_from_qv(rotation_around_z, translation);
+		TransformType transform = qv_from_matrix(mtx);
+		CHECK(quat_near_equal(rotation_around_z, transform.rotation, threshold));
+		CHECK(vector_all_near_equal3(translation, transform.translation, threshold));
 	}
 
 	{
