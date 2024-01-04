@@ -49,6 +49,7 @@ namespace rtm
 
 	//////////////////////////////////////////////////////////////////////////
 	// Converts a rotation 3x3 matrix into a QVS transform.
+	// The translation/scale will be the identity.
 	//////////////////////////////////////////////////////////////////////////
 	RTM_DISABLE_SECURITY_COOKIE_CHECK inline qvsd qvs_from_matrix(const matrix3x3d& input) RTM_NO_EXCEPT
 	{
