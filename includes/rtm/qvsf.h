@@ -163,7 +163,9 @@ namespace rtm
 		{
 			// The largest scale value is zero which means all three are zero
 			// We'll return the identity rotation since its value is not recoverable
-			return qvsf{ quat_identity(), vector_set_w(translation, largest_scale) };
+			const quatf rotation_q = quat_identity();
+			const vector4f translation_scale = vector_set_w(translation, largest_scale);
+			return qvsf{ rotation_q, translation_scale };
 		}
 
 		// Normalize the largest scale axis which is non-zero

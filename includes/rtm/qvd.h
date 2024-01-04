@@ -55,7 +55,8 @@ namespace rtm
 	RTM_DISABLE_SECURITY_COOKIE_CHECK inline qvd qv_from_matrix(const matrix3x3d& input) RTM_NO_EXCEPT
 	{
 		const quatd rotation = rtm_impl::quat_from_matrix(input.x_axis, input.y_axis, input.z_axis);
-		return qvd{ rotation, vector_zero() };
+		const vector4d translation = vector_zero();
+		return qvd{ rotation, translation };
 	}
 
 	//////////////////////////////////////////////////////////////////////////
@@ -162,7 +163,8 @@ namespace rtm
 		{
 			// The largest scale value is zero which means all three are zero
 			// We'll return the identity rotation since its value is not recoverable
-			return qvd{ quat_identity(), translation };
+			const quatd rotation_q = quat_identity();
+			return qvd{ rotation_q, translation };
 		}
 
 		// Normalize the largest scale axis which is non-zero
