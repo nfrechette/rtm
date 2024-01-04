@@ -150,6 +150,9 @@ namespace rtm
 		const scalard z_scale = vector_length3(input.z_axis);
 		vector4d scale = vector_set(x_scale, y_scale, z_scale);
 
+		// Grab a pointer to the first scale value, we'll index into it
+		double* scale_ptr = rtm_impl::bit_cast<double*>(&scale);
+
 		// Next, we find the largest scale components and sort them from largest to smallest
 		component3 largest_scale_component;
 		component3 second_largest_scale_component;
@@ -227,7 +230,7 @@ namespace rtm
 		// We use a threshold to test for zero because division with near zero values is imprecise
 		// and might not yield a normalized result
 		const double zero_scale_threshold = 1.0E-8;
-		double largest_scale = vector_get_component3(scale, largest_scale_component);
+		double largest_scale = scale_ptr[largest_scale_component_i];
 		if (largest_scale < zero_scale_threshold)
 		{
 			// The largest scale value is zero which means all three are zero
@@ -240,7 +243,7 @@ namespace rtm
 		largest_scale_axis = vector_div(largest_scale_axis, vector_set(largest_scale));
 
 		vector4d second_largest_scale_axis = rotation_axes[second_largest_scale_component_i];
-		double second_largest_scale = vector_get_component3(scale, second_largest_scale_component);
+		double second_largest_scale = scale_ptr[second_largest_scale_component_i];
 		if (second_largest_scale < zero_scale_threshold)
 		{
 			// The second largest scale value is zero which means the two smallest axes are zero
@@ -260,7 +263,7 @@ namespace rtm
 		second_largest_scale_axis = vector_div(second_largest_scale_axis, vector_set(second_largest_scale));
 
 		vector4d third_largest_scale_axis = rotation_axes[third_largest_scale_component_i];
-		double third_largest_scale = vector_get_component3(scale, third_largest_scale_component);
+		double third_largest_scale = scale_ptr[third_largest_scale_component_i];
 		if (third_largest_scale < zero_scale_threshold)
 		{
 			// The third largest scale value is zero
@@ -291,7 +294,7 @@ namespace rtm
 
 			// Update our scale output and rotation basis
 			rotation_axes[largest_scale_component_i] = largest_scale_axis;
-			scale = vector_set_component3(scale, largest_scale, largest_scale_component);
+			scale_ptr[largest_scale_component_i] = largest_scale;
 		}
 
 		// Build a quaternion from the ortho-normal basis we found
