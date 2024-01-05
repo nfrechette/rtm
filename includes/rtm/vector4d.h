@@ -336,16 +336,6 @@ namespace rtm
 	}
 
 	//////////////////////////////////////////////////////////////////////////
-	// Returns the vector4 desired component.
-	//////////////////////////////////////////////////////////////////////////
-	template<mix4 component>
-	RTM_DEPRECATED("Use the variant that takes a component4 as input instead. To be removed in 2.3")
-	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE constexpr rtm_impl::vector4d_vector_get_component_static<rtm_impl::mix_to_component(component)> vector_get_component(const vector4d& input) RTM_NO_EXCEPT
-	{
-		return rtm_impl::vector4d_vector_get_component_static<rtm_impl::mix_to_component(component)>{ input };
-	}
-
-	//////////////////////////////////////////////////////////////////////////
 	// Returns the vector2 desired component.
 	//////////////////////////////////////////////////////////////////////////
 	template<component2 component, component4 component_ = static_cast<component4>(component)>
@@ -412,15 +402,6 @@ namespace rtm
 			component4 component;
 			int32_t padding[3];
 		};
-	}
-
-	//////////////////////////////////////////////////////////////////////////
-	// Returns the vector4 desired component.
-	//////////////////////////////////////////////////////////////////////////
-	RTM_DEPRECATED("Use the variant that takes a component4 as input instead. To be removed in 2.3")
-	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE constexpr rtm_impl::vector4d_vector_get_component vector_get_component(const vector4d& input, mix4 component) RTM_NO_EXCEPT
-	{
-		return rtm_impl::vector4d_vector_get_component{ input, rtm_impl::mix_to_component(component), { 0 } };
 	}
 
 	//////////////////////////////////////////////////////////////////////////
