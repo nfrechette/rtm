@@ -32,6 +32,14 @@ namespace rtm
 {
 	RTM_IMPL_VERSION_NAMESPACE_BEGIN
 
+#if defined(RTM_COMPILER_GCC)
+	#pragma GCC diagnostic push
+	// GCC complains that the alignment attribute is ignored, we don't care with type traits
+	#pragma GCC diagnostic ignored "-Wignored-attributes"
+	// GCC complains that the type is deprecated when we specialize it, we don't care
+	#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
+#endif
+
 	//////////////////////////////////////////////////////////////////////////
 	// Returns the proper types for a floating point type.
 	//////////////////////////////////////////////////////////////////////////
@@ -190,6 +198,10 @@ namespace rtm
 	// scalard is an alias of double
 #else
 	// scalard is an alias of double
+#endif
+
+#if defined(RTM_COMPILER_GCC)
+	#pragma GCC diagnostic pop
 #endif
 
 	RTM_IMPL_VERSION_NAMESPACE_END
