@@ -143,5 +143,54 @@ namespace rtm
 
 		using int1 = uint64_t;
 	};
+
+	// Alias all related float types
+	template<> struct related_types<mask4f> : related_types<float> {};
+	template<> struct related_types<vector4f> : related_types<float> {};
+	template<> struct related_types<qvf> : related_types<float> {};
+	template<> struct related_types<qvsf> : related_types<float> {};
+	template<> struct related_types<qvvf> : related_types<float> {};
+	template<> struct related_types<matrix3x3f> : related_types<float> {};
+	template<> struct related_types<matrix3x4f> : related_types<float> {};
+	template<> struct related_types<matrix4x4f> : related_types<float> {};
+	template<> struct related_types<float2f> : related_types<float> {};
+	template<> struct related_types<float3f> : related_types<float> {};
+	template<> struct related_types<float4f> : related_types<float> {};
+
+#if defined(RTM_SSE2_INTRINSICS)
+	// quatf is an alias of vector4f
+	template<> struct related_types<scalarf> : related_types<float> {};
+#elif defined(RTM_NEON_INTRINSICS)
+	// scalarf is an alias of float
+	// quatf is an alias of vector4f
+#else
+	// scalarf is an alias of float
+	template<> struct related_types<quatf> : related_types<float> {};
+#endif
+
+	// Alias all related double types
+	template<> struct related_types<mask4d> : related_types<double> {};
+	template<> struct related_types<vector4d> : related_types<double> {};
+	template<> struct related_types<qvd> : related_types<double> {};
+	template<> struct related_types<qvsd> : related_types<double> {};
+	template<> struct related_types<qvvd> : related_types<double> {};
+	template<> struct related_types<matrix3x3d> : related_types<double> {};
+	template<> struct related_types<matrix3x4d> : related_types<double> {};
+	template<> struct related_types<matrix4x4d> : related_types<double> {};
+	template<> struct related_types<float2d> : related_types<double> {};
+	template<> struct related_types<float3d> : related_types<double> {};
+	template<> struct related_types<float4d> : related_types<double> {};
+
+#if defined(RTM_SSE2_INTRINSICS)
+	// quatd is an alias of vector4d
+	template<> struct related_types<scalard> : related_types<double> {};
+#elif defined(RTM_NEON_INTRINSICS)
+	// scalard is an alias of double
+	// quatd is an alias of vector4d
+#else
+	// scalard is an alias of double
+	template<> struct related_types<quatd> : related_types<double> {};
+#endif
+
 	RTM_IMPL_VERSION_NAMESPACE_END
 }
