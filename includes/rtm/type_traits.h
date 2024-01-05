@@ -145,7 +145,6 @@ namespace rtm
 	};
 
 	// Alias all related float types
-	template<> struct related_types<mask4f> : related_types<float> {};
 	template<> struct related_types<vector4f> : related_types<float> {};
 	template<> struct related_types<qvf> : related_types<float> {};
 	template<> struct related_types<qvsf> : related_types<float> {};
@@ -158,13 +157,16 @@ namespace rtm
 	template<> struct related_types<float4f> : related_types<float> {};
 
 #if defined(RTM_SSE2_INTRINSICS)
+	// mask4f is an alias of vector4f
 	// quatf is an alias of vector4f
 	template<> struct related_types<scalarf> : related_types<float> {};
 #elif defined(RTM_NEON_INTRINSICS)
 	// scalarf is an alias of float
 	// quatf is an alias of vector4f
+	template<> struct related_types<mask4f> : related_types<float> {};
 #else
 	// scalarf is an alias of float
+	template<> struct related_types<mask4f> : related_types<float> {};
 	template<> struct related_types<quatf> : related_types<float> {};
 #endif
 
