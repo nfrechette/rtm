@@ -93,10 +93,10 @@ static QuatType scalar_lerp(const QuatType& start, const QuatType& end, FloatTyp
 template<typename FloatType>
 static void test_quat_impl(const FloatType threshold)
 {
-	using QuatType = typename float_traits<FloatType>::quat;
-	using Vector4Type = typename float_traits<FloatType>::vector4;
-	using Float4Type = typename float_traits<FloatType>::float4;
-	using ScalarType = typename float_traits<FloatType>::scalar;
+	using QuatType = typename related_types<FloatType>::quat;
+	using Vector4Type = typename related_types<FloatType>::vector4;
+	using Float4Type = typename related_types<FloatType>::float4;
+	using ScalarType = typename related_types<FloatType>::scalar;
 
 	const Vector4Type zero = vector_zero();
 	const QuatType identity = quat_identity();

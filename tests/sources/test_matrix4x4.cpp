@@ -36,8 +36,8 @@ using namespace rtm;
 template<typename FloatType>
 static void test_matrix4x4_setters(const FloatType threshold)
 {
-	using Vector4Type = typename float_traits<FloatType>::vector4;
-	using Matrix4x4Type = typename float_traits<FloatType>::matrix4x4;
+	using Vector4Type = typename related_types<FloatType>::vector4;
+	using Matrix4x4Type = typename related_types<FloatType>::matrix4x4;
 
 	const Matrix4x4Type identity = matrix_identity();
 
@@ -187,10 +187,10 @@ static void test_matrix4x4_setters(const FloatType threshold)
 template<typename FloatType>
 static void test_matrix4x4_arithmetic(const FloatType threshold)
 {
-	using QuatType = typename float_traits<FloatType>::quat;
-	using Vector4Type = typename float_traits<FloatType>::vector4;
-	using Matrix3x4Type = typename float_traits<FloatType>::matrix3x4;
-	using Matrix4x4Type = typename float_traits<FloatType>::matrix4x4;
+	using QuatType = typename related_types<FloatType>::quat;
+	using Vector4Type = typename related_types<FloatType>::vector4;
+	using Matrix3x4Type = typename related_types<FloatType>::matrix3x4;
+	using Matrix4x4Type = typename related_types<FloatType>::matrix4x4;
 
 	{
 		Vector4Type x_axis = vector_set(FloatType(1.0), FloatType(0.0), FloatType(0.0));
@@ -249,10 +249,10 @@ static void test_matrix4x4_arithmetic(const FloatType threshold)
 template<typename FloatType>
 static void test_matrix4x4_transformations(const FloatType threshold)
 {
-	using QuatType = typename float_traits<FloatType>::quat;
-	using Vector4Type = typename float_traits<FloatType>::vector4;
-	using Matrix3x4Type = typename float_traits<FloatType>::matrix3x4;
-	using Matrix4x4Type = typename float_traits<FloatType>::matrix4x4;
+	using QuatType = typename related_types<FloatType>::quat;
+	using Vector4Type = typename related_types<FloatType>::vector4;
+	using Matrix3x4Type = typename related_types<FloatType>::matrix3x4;
+	using Matrix4x4Type = typename related_types<FloatType>::matrix4x4;
 
 	const Matrix4x4Type identity = matrix_identity();
 	const Vector4Type zero = vector_zero();
@@ -332,8 +332,8 @@ static void test_matrix4x4_transformations(const FloatType threshold)
 template<typename FloatType>
 static void test_matrix4x4_misc(const FloatType threshold)
 {
-	using Vector4Type = typename float_traits<FloatType>::vector4;
-	using Matrix4x4Type = typename float_traits<FloatType>::matrix4x4;
+	using Vector4Type = typename related_types<FloatType>::vector4;
+	using Matrix4x4Type = typename related_types<FloatType>::matrix4x4;
 
 	{
 		Vector4Type x_axis = vector_set(FloatType(1.65424), FloatType(0.22921), FloatType(5.73038), FloatType(4.46541));

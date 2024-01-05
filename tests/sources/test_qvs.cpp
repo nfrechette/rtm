@@ -37,11 +37,11 @@ using namespace rtm;
 template<typename TransformType, typename FloatType>
 static void test_qvs_impl(const TransformType& identity, const FloatType threshold)
 {
-	using QuatType = typename float_traits<FloatType>::quat;
-	using Vector4Type = typename float_traits<FloatType>::vector4;
-	using ScalarType = typename float_traits<FloatType>::scalar;
-	using Matrix3x3Type = typename float_traits<FloatType>::matrix3x3;
-	using Matrix3x4Type = typename float_traits<FloatType>::matrix3x4;
+	using QuatType = typename related_types<FloatType>::quat;
+	using Vector4Type = typename related_types<FloatType>::vector4;
+	using ScalarType = typename related_types<FloatType>::scalar;
+	using Matrix3x3Type = typename related_types<FloatType>::matrix3x3;
+	using Matrix3x4Type = typename related_types<FloatType>::matrix3x4;
 
 	{
 		Vector4Type zero = vector_set(FloatType(0.0));

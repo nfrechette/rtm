@@ -225,7 +225,7 @@ static void test_scalar_impl(const FloatType threshold, const FloatType trig_thr
 	CHECK(scalar_near_equal(scalar_lerp(scalar_set(values[0]), scalar_set(values[1]), scalar_set(FloatType(0.0))), scalar_set(values[0]), scalar_set(FloatType(0.0))));
 	CHECK(scalar_near_equal(scalar_lerp(scalar_set(values[0]), scalar_set(values[1]), scalar_set(FloatType(1.0))), scalar_set(values[1]), scalar_set(FloatType(0.0))));
 
-	using Vector4Type = typename float_traits<FloatType>::vector4;
+	using Vector4Type = typename related_types<FloatType>::vector4;
 
 	const FloatType half_pi = FloatType(rtm::constants::half_pi());
 	const FloatType pi = FloatType(rtm::constants::pi());
