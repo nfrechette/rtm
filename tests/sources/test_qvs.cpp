@@ -27,6 +27,10 @@
 #include <rtm/qvsf.h>
 #include <rtm/qvsd.h>
 #include <rtm/type_traits.h>
+#include <rtm/matrix3x3f.h>
+#include <rtm/matrix3x3d.h>
+#include <rtm/matrix3x4f.h>
+#include <rtm/matrix3x4d.h>
 
 using namespace rtm;
 
@@ -36,6 +40,8 @@ static void test_qvs_impl(const TransformType& identity, const FloatType thresho
 	using QuatType = typename float_traits<FloatType>::quat;
 	using Vector4Type = typename float_traits<FloatType>::vector4;
 	using ScalarType = typename float_traits<FloatType>::scalar;
+	using Matrix3x3Type = typename float_traits<FloatType>::matrix3x3;
+	using Matrix3x4Type = typename float_traits<FloatType>::matrix3x4;
 
 	{
 		Vector4Type zero = vector_set(FloatType(0.0));
@@ -47,6 +53,63 @@ static void test_qvs_impl(const TransformType& identity, const FloatType thresho
 		CHECK(quat_near_equal(q_identity, qvs_get_rotation(tmp), threshold));
 		CHECK(vector_all_near_equal3(zero, qvs_get_translation(tmp), threshold));
 		CHECK(scalar_near_equal(one, qvs_get_scale(tmp), threshold));
+	}
+
+	{
+		QuatType rotation_around_z = quat_from_euler(scalar_deg_to_rad(FloatType(0.0)), scalar_deg_to_rad(FloatType(90.0)), scalar_deg_to_rad(FloatType(0.0)));
+		FloatType one = FloatType(1.0);
+		Matrix3x3Type mtx = matrix_from_quat(rotation_around_z);
+		TransformType transform = qvs_from_matrix(mtx);
+		CHECK(quat_near_equal(rotation_around_z, transform.rotation, threshold));
+		CHECK(vector_all_near_equal3(qvs_get_translation(identity), qvs_get_translation(transform), threshold));
+		CHECK(scalar_near_equal(one, qvs_get_scale(transform), threshold));
+	}
+
+	{
+		QuatType rotation_around_z = quat_from_euler(scalar_deg_to_rad(FloatType(0.0)), scalar_deg_to_rad(FloatType(90.0)), scalar_deg_to_rad(FloatType(0.0)));
+		Vector4Type translation = vector_set(FloatType(1.0), FloatType(2.0), FloatType(3.0));
+		FloatType one = FloatType(1.0);
+
+		// Default scale
+		Matrix3x4Type mtx = matrix_from_qv(rotation_around_z, translation);
+		TransformType transform = qvs_from_matrix(mtx);
+		CHECK(quat_near_equal(rotation_around_z, transform.rotation, threshold));
+		CHECK(vector_all_near_equal3(translation, qvs_get_translation(transform), threshold));
+		CHECK(scalar_near_equal(one, qvs_get_scale(transform), threshold));
+
+		// Positive scale
+		FloatType scale = FloatType(1.6);
+		mtx = matrix_from_qvs(rotation_around_z, translation, scale);
+		transform = qvs_from_matrix(mtx);
+		CHECK(quat_near_equal(rotation_around_z, transform.rotation, threshold));
+		CHECK(vector_all_near_equal3(translation, qvs_get_translation(transform), threshold));
+		CHECK(scalar_near_equal(scale, qvs_get_scale(transform), threshold));
+
+		// Zero scale
+		scale = FloatType(0.0);
+		mtx = matrix_from_qvs(rotation_around_z, translation, scale);
+		transform = qvs_from_matrix(mtx);
+		Matrix3x4Type mtx2 = matrix_from_qvs(transform);
+		CHECK(quat_near_equal(identity.rotation, transform.rotation, threshold));
+		CHECK(vector_all_near_equal3(translation, qvs_get_translation(transform), threshold));
+		CHECK(scalar_near_equal(scale, qvs_get_scale(transform), threshold));
+		CHECK(vector_all_near_equal3(mtx.x_axis, mtx2.x_axis, threshold));
+		CHECK(vector_all_near_equal3(mtx.y_axis, mtx2.y_axis, threshold));
+		CHECK(vector_all_near_equal3(mtx.z_axis, mtx2.z_axis, threshold));
+		CHECK(vector_all_near_equal3(mtx.w_axis, mtx2.w_axis, threshold));
+
+		// Negative scale
+		scale = FloatType(-1.6);
+		mtx = matrix_from_qvs(rotation_around_z, translation, scale);
+		transform = qvs_from_matrix(mtx);
+		mtx2 = matrix_from_qvs(transform);
+		CHECK(quat_near_equal(rotation_around_z, transform.rotation, threshold));
+		CHECK(vector_all_near_equal3(translation, qvs_get_translation(transform), threshold));
+		CHECK(scalar_near_equal(scale, qvs_get_scale(transform), threshold));
+		CHECK(vector_all_near_equal3(mtx.x_axis, mtx2.x_axis, threshold));
+		CHECK(vector_all_near_equal3(mtx.y_axis, mtx2.y_axis, threshold));
+		CHECK(vector_all_near_equal3(mtx.z_axis, mtx2.z_axis, threshold));
+		CHECK(vector_all_near_equal3(mtx.w_axis, mtx2.w_axis, threshold));
 	}
 
 	{
