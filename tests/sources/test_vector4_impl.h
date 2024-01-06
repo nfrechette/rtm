@@ -148,12 +148,12 @@ inline Vector4Type scalar_normalize4(const Vector4Type& input, const Vector4Type
 template<typename FloatType>
 void test_vector4_getset_impl()
 {
-	using QuatType = typename float_traits<FloatType>::quat;
-	using Vector4Type = typename float_traits<FloatType>::vector4;
-	using ScalarType = typename float_traits<FloatType>::scalar;
-	using Float2Type = typename float_traits<FloatType>::float2;
-	using Float3Type = typename float_traits<FloatType>::float3;
-	using Float4Type = typename float_traits<FloatType>::float4;
+	using QuatType = typename related_types<FloatType>::quat;
+	using Vector4Type = typename related_types<FloatType>::vector4;
+	using ScalarType = typename related_types<FloatType>::scalar;
+	using Float2Type = typename related_types<FloatType>::float2;
+	using Float3Type = typename related_types<FloatType>::float3;
+	using Float4Type = typename related_types<FloatType>::float4;
 
 	const Vector4Type zero = vector_zero();
 	const QuatType identity = quat_identity();
@@ -464,8 +464,8 @@ void test_vector4_getset_impl()
 template<typename FloatType>
 void test_vector4_arithmetic_impl(const FloatType threshold)
 {
-	using Vector4Type = typename float_traits<FloatType>::vector4;
-	using ScalarType = typename float_traits<FloatType>::scalar;
+	using Vector4Type = typename related_types<FloatType>::vector4;
+	using ScalarType = typename related_types<FloatType>::scalar;
 
 	const Vector4Type zero = vector_zero();
 	const Vector4Type infinity = vector_set(std::numeric_limits<FloatType>::infinity());
@@ -778,7 +778,7 @@ void test_vector4_arithmetic_impl(const FloatType threshold)
 template<typename FloatType>
 void test_vector4_relational_impl(const FloatType threshold)
 {
-	using Vector4Type = typename float_traits<FloatType>::vector4;
+	using Vector4Type = typename related_types<FloatType>::vector4;
 
 	const Vector4Type zero = vector_zero();
 
@@ -1151,7 +1151,7 @@ void test_vector4_relational_impl(const FloatType threshold)
 template<typename FloatType, typename Vector4Type>
 inline Vector4Type reference_vector_and(const Vector4Type& input0, const Vector4Type& input1)
 {
-	using Int1Type = typename float_traits<FloatType>::int1;
+	using Int1Type = typename related_types<FloatType>::int1;
 
 	Int1Type input0_[4];
 	Int1Type input1_[4];
@@ -1175,7 +1175,7 @@ inline Vector4Type reference_vector_and(const Vector4Type& input0, const Vector4
 template<typename FloatType, typename Vector4Type>
 inline Vector4Type reference_vector_or(const Vector4Type& input0, const Vector4Type& input1)
 {
-	using Int1Type = typename float_traits<FloatType>::int1;
+	using Int1Type = typename related_types<FloatType>::int1;
 
 	Int1Type input0_[4];
 	Int1Type input1_[4];
@@ -1199,7 +1199,7 @@ inline Vector4Type reference_vector_or(const Vector4Type& input0, const Vector4T
 template<typename FloatType, typename Vector4Type>
 inline Vector4Type reference_vector_xor(const Vector4Type& input0, const Vector4Type& input1)
 {
-	using Int1Type = typename float_traits<FloatType>::int1;
+	using Int1Type = typename related_types<FloatType>::int1;
 
 	Int1Type input0_[4];
 	Int1Type input1_[4];
@@ -1223,7 +1223,7 @@ inline Vector4Type reference_vector_xor(const Vector4Type& input0, const Vector4
 template<typename FloatType>
 void test_vector4_logical_impl()
 {
-	using Vector4Type = typename float_traits<FloatType>::vector4;
+	using Vector4Type = typename related_types<FloatType>::vector4;
 
 	const FloatType test_value0_flt[4] = { FloatType(2.0), FloatType(9.34), FloatType(-54.12), FloatType(6000.0) };
 	const FloatType test_value1_flt[4] = { FloatType(0.75), FloatType(-4.52), FloatType(44.68), FloatType(-54225.0) };
@@ -1248,7 +1248,7 @@ void test_vector4_logical_impl()
 template<typename FloatType>
 void test_vector4_impl(const FloatType threshold)
 {
-	using Vector4Type = typename float_traits<FloatType>::vector4;
+	using Vector4Type = typename related_types<FloatType>::vector4;
 
 	const Vector4Type zero = vector_zero();
 

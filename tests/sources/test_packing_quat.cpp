@@ -33,8 +33,8 @@ using namespace rtm;
 template<typename FloatType>
 static void test_quat_impl(const FloatType threshold)
 {
-	using QuatType = typename float_traits<FloatType>::quat;
-	using Vector4Type = typename float_traits<FloatType>::vector4;
+	using QuatType = typename related_types<FloatType>::quat;
+	using Vector4Type = typename related_types<FloatType>::vector4;
 
 	{
 		QuatType quat0 = quat_set(FloatType(0.39564531008956383), FloatType(0.044254239301713752), FloatType(0.22768840967675355), FloatType(-0.88863059760894492));

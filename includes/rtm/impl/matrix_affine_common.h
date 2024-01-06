@@ -49,10 +49,10 @@ namespace rtm
 		template<typename float_type>
 		struct matrix_from_quat_helper
 		{
-			using quat = typename float_traits<float_type>::quat;
-			using vector4 = typename float_traits<float_type>::vector4;
-			using matrix3x3 = typename float_traits<float_type>::matrix3x3;
-			using matrix3x4 = typename float_traits<float_type>::matrix3x4;
+			using quat = typename related_types<float_type>::quat;
+			using vector4 = typename related_types<float_type>::vector4;
+			using matrix3x3 = typename related_types<float_type>::matrix3x3;
+			using matrix3x4 = typename related_types<float_type>::matrix3x4;
 
 			RTM_DISABLE_SECURITY_COOKIE_CHECK inline RTM_SIMD_CALL operator matrix3x3() const RTM_NO_EXCEPT
 			{
@@ -112,9 +112,9 @@ namespace rtm
 		template<typename float_type>
 		struct matrix_from_scale_helper
 		{
-			using vector4 = typename float_traits<float_type>::vector4;
-			using matrix3x3 = typename float_traits<float_type>::matrix3x3;
-			using matrix3x4 = typename float_traits<float_type>::matrix3x4;
+			using vector4 = typename related_types<float_type>::vector4;
+			using matrix3x3 = typename related_types<float_type>::matrix3x3;
+			using matrix3x4 = typename related_types<float_type>::matrix3x4;
 
 			RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE RTM_SIMD_CALL operator matrix3x3() const RTM_NO_EXCEPT
 			{

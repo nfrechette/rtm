@@ -87,7 +87,7 @@ namespace rtm
 		template<typename float_type>
 		struct matrix_setter4x4
 		{
-			using vector4 = typename float_traits<float_type>::vector4;
+			using vector4 = typename related_types<float_type>::vector4;
 
 			//////////////////////////////////////////////////////////////////////////
 			// Sets all 4 axes and creates a 3x4 affine matrix.

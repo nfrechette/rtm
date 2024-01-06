@@ -32,6 +32,10 @@
 #include "rtm/impl/compiler_utils.h"
 #include "rtm/impl/scalar_common.h"
 
+#if defined(RTM_SSE2_INTRINSICS)
+#include "rtm/macros.h"
+#endif
+
 #include <algorithm>
 #include <limits>
 

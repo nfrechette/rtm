@@ -35,9 +35,9 @@ static void test_qvv_impl(const TransformType& identity, const FloatType thresho
 {
 	using QuatType = decltype(TransformType::rotation);
 	using Vector4Type = decltype(TransformType::translation);
-	using ScalarType = typename float_traits<FloatType>::scalar;
-	using Matrix3x3Type = typename float_traits<FloatType>::matrix3x3;
-	using Matrix3x4Type = typename float_traits<FloatType>::matrix3x4;
+	using ScalarType = typename related_types<FloatType>::scalar;
+	using Matrix3x3Type = typename related_types<FloatType>::matrix3x3;
+	using Matrix3x4Type = typename related_types<FloatType>::matrix3x4;
 
 	{
 		Vector4Type zero = vector_set(FloatType(0.0));
