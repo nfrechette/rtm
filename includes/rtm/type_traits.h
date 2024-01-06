@@ -171,7 +171,10 @@ namespace rtm
 #elif defined(RTM_NEON_INTRINSICS)
 	// scalarf is an alias of float
 	// quatf is an alias of vector4f
+#if !defined(RTM_COMPILER_MSVC)
+	// MSVC aliases uint32x4_t and float32x4_t
 	template<> struct related_types<mask4f> : related_types<float> {};
+#endif
 #else
 	// scalarf is an alias of float
 	template<> struct related_types<mask4f> : related_types<float> {};
