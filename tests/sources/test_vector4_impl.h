@@ -537,6 +537,31 @@ void test_vector4_arithmetic_impl(const FloatType threshold)
 	CHECK(scalar_near_equal(vector_get_z(vector_neg(test_value0)), -test_value0_flt[2], threshold));
 	CHECK(scalar_near_equal(vector_get_w(vector_neg(test_value0)), -test_value0_flt[3], threshold));
 
+	CHECK(scalar_near_equal(vector_get_x(vector_neg<true, false, false, false>(test_value0)), -test_value0_flt[0], threshold));
+	CHECK(scalar_near_equal(vector_get_y(vector_neg<true, false, false, false>(test_value0)), test_value0_flt[1], threshold));
+	CHECK(scalar_near_equal(vector_get_z(vector_neg<true, false, false, false>(test_value0)), test_value0_flt[2], threshold));
+	CHECK(scalar_near_equal(vector_get_w(vector_neg<true, false, false, false>(test_value0)), test_value0_flt[3], threshold));
+
+	CHECK(scalar_near_equal(vector_get_x(vector_neg<false, true, false, false>(test_value0)), test_value0_flt[0], threshold));
+	CHECK(scalar_near_equal(vector_get_y(vector_neg<false, true, false, false>(test_value0)), -test_value0_flt[1], threshold));
+	CHECK(scalar_near_equal(vector_get_z(vector_neg<false, true, false, false>(test_value0)), test_value0_flt[2], threshold));
+	CHECK(scalar_near_equal(vector_get_w(vector_neg<false, true, false, false>(test_value0)), test_value0_flt[3], threshold));
+
+	CHECK(scalar_near_equal(vector_get_x(vector_neg<false, false, true, false>(test_value0)), test_value0_flt[0], threshold));
+	CHECK(scalar_near_equal(vector_get_y(vector_neg<false, false, true, false>(test_value0)), test_value0_flt[1], threshold));
+	CHECK(scalar_near_equal(vector_get_z(vector_neg<false, false, true, false>(test_value0)), -test_value0_flt[2], threshold));
+	CHECK(scalar_near_equal(vector_get_w(vector_neg<false, false, true, false>(test_value0)), test_value0_flt[3], threshold));
+
+	CHECK(scalar_near_equal(vector_get_x(vector_neg<false, false, false, true>(test_value0)), test_value0_flt[0], threshold));
+	CHECK(scalar_near_equal(vector_get_y(vector_neg<false, false, false, true>(test_value0)), test_value0_flt[1], threshold));
+	CHECK(scalar_near_equal(vector_get_z(vector_neg<false, false, false, true>(test_value0)), test_value0_flt[2], threshold));
+	CHECK(scalar_near_equal(vector_get_w(vector_neg<false, false, false, true>(test_value0)), -test_value0_flt[3], threshold));
+
+	CHECK(scalar_near_equal(vector_get_x(vector_neg<true, true, true, true>(test_value0)), -test_value0_flt[0], threshold));
+	CHECK(scalar_near_equal(vector_get_y(vector_neg<true, true, true, true>(test_value0)), -test_value0_flt[1], threshold));
+	CHECK(scalar_near_equal(vector_get_z(vector_neg<true, true, true, true>(test_value0)), -test_value0_flt[2], threshold));
+	CHECK(scalar_near_equal(vector_get_w(vector_neg<true, true, true, true>(test_value0)), -test_value0_flt[3], threshold));
+
 	CHECK(scalar_near_equal(vector_get_x(vector_reciprocal(test_value0)), scalar_reciprocal(test_value0_flt[0]), threshold));
 	CHECK(scalar_near_equal(vector_get_y(vector_reciprocal(test_value0)), scalar_reciprocal(test_value0_flt[1]), threshold));
 	CHECK(scalar_near_equal(vector_get_z(vector_reciprocal(test_value0)), scalar_reciprocal(test_value0_flt[2]), threshold));

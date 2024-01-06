@@ -1100,6 +1100,32 @@ namespace rtm
 	}
 
 	//////////////////////////////////////////////////////////////////////////
+	// Per component negation of the input: -input
+	// Each template argument controls whether a SIMD lane should be negated (true) or not (false).
+	//////////////////////////////////////////////////////////////////////////
+	template<bool x, bool y, bool z, bool w>
+	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE vector4f RTM_SIMD_CALL vector_neg(vector4f_arg0 input) RTM_NO_EXCEPT
+	{
+#if defined(RTM_SSE2_INTRINSICS)
+		constexpr __m128 signs = RTM_VECTOR4F_MAKE(x ? -0.0F : 0.0F, y ? -0.0F : 0.0F, z ? -0.0F : 0.0F, w ? -0.0F : 0.0F);
+		return _mm_xor_ps(input, signs);
+#elif defined(RTM_NEON_INTRINSICS)
+		alignas(16) constexpr uint32_t sign_bit_i[4] =
+		{
+			x ? 0x80000000U : 0,
+			y ? 0x80000000U : 0,
+			z ? 0x80000000U : 0,
+			w ? 0x80000000U : 0,
+		};
+		const uint32x4_t sign_bit = *rtm_impl::bit_cast<const uint32x4_t*>(&sign_bit_i[0]);
+		return vreinterpretq_f32_u32(veorq_u32(vreinterpretq_u32_f32(input), sign_bit));
+#else
+		const vector4f signs = vector_set(x ? -1.0F : 1.0F, y ? -1.0F : 1.0F, z ? -1.0F : 1.0F, w ? -1.0F : 1.0F);
+		return vector_mul(input, signs);
+#endif
+	}
+
+	//////////////////////////////////////////////////////////////////////////
 	// Per component reciprocal of the input: 1.0 / input
 	//////////////////////////////////////////////////////////////////////////
 	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE vector4f RTM_SIMD_CALL vector_reciprocal(vector4f_arg0 input) RTM_NO_EXCEPT
