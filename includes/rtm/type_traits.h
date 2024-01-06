@@ -34,8 +34,10 @@ namespace rtm
 
 #if defined(RTM_COMPILER_GCC)
 	#pragma GCC diagnostic push
+#if __GNUC__ > 5
 	// GCC complains that the alignment attribute is ignored, we don't care with type traits
 	#pragma GCC diagnostic ignored "-Wignored-attributes"
+#endif
 	// GCC complains that the type is deprecated when we specialize it, we don't care
 	#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
 #endif
