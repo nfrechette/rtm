@@ -954,6 +954,23 @@ namespace rtm
 	}
 
 	//////////////////////////////////////////////////////////////////////////
+	// Per component negation of the input: -input
+	// Each template argument controls whether a SIMD lane should be negated (true) or not (false).
+	//////////////////////////////////////////////////////////////////////////
+	template<bool x, bool y, bool z, bool w>
+	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE vector4d vector_neg(const vector4d& input) RTM_NO_EXCEPT
+	{
+#if defined(RTM_SSE2_INTRINSICS)
+		constexpr __m128d signs_xy = RTM_VECTOR2D_MAKE(x ? -0.0 : 0.0, y ? -0.0 : 0.0);
+		constexpr __m128d signs_zw = RTM_VECTOR2D_MAKE(z ? -0.0 : 0.0, w ? -0.0 : 0.0);
+		return vector4d{ _mm_xor_pd(input.xy, signs_xy), _mm_xor_pd(input.zw, signs_zw) };
+#else
+		const vector4d signs = vector_set(x ? -1.0 : 1.0, y ? -1.0 : 1.0, z ? -1.0 : 1.0, w ? -1.0 : 1.0);
+		return vector_mul(input, signs);
+#endif
+	}
+
+	//////////////////////////////////////////////////////////////////////////
 	// Per component reciprocal of the input: 1.0 / input
 	//////////////////////////////////////////////////////////////////////////
 	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE vector4d vector_reciprocal(const vector4d& input) RTM_NO_EXCEPT
