@@ -69,6 +69,16 @@ namespace rtm
 	using scalarf_arg7 = const scalarf;
 	using scalarf_argn = const scalarf;
 
+	using scalard_arg0 = const scalard;
+	using scalard_arg1 = const scalard;
+	using scalard_arg2 = const scalard;
+	using scalard_arg3 = const scalard;
+	using scalard_arg4 = const scalard;
+	using scalard_arg5 = const scalard;
+	using scalard_arg6 = const scalard;
+	using scalard_arg7 = const scalard;
+	using scalard_argn = const scalard;
+
 	using mask4f_arg0 = const mask4f;
 	using mask4f_arg1 = const mask4f;
 	using mask4f_arg2 = const mask4f;
@@ -92,30 +102,95 @@ namespace rtm
 	// With ARM64 NEON, vector aggregates are also passed by register but the whole aggregate
 	// must fit in the number of registers available (e.g. we can pass 2x qvvf but not 3x).
 	// A qvvf can also be returned by register.
+	// Non-scalar types using doubles are aggregate types
+
+	using vector4d_arg0 = const vector4d;
+	using vector4d_arg1 = const vector4d;
+	using vector4d_arg2 = const vector4d;
+	using vector4d_arg3 = const vector4d;
+	using vector4d_arg4 = const vector4d&;
+	using vector4d_arg5 = const vector4d&;
+	using vector4d_arg6 = const vector4d&;
+	using vector4d_arg7 = const vector4d&;
+	using vector4d_argn = const vector4d&;
+
+	using quatd_arg0 = const quatd;
+	using quatd_arg1 = const quatd;
+	using quatd_arg2 = const quatd;
+	using quatd_arg3 = const quatd;
+	using quatd_arg4 = const quatd&;
+	using quatd_arg5 = const quatd&;
+	using quatd_arg6 = const quatd&;
+	using quatd_arg7 = const quatd&;
+	using quatd_argn = const quatd&;
+
+	using mask4d_arg0 = const mask4d;
+	using mask4d_arg1 = const mask4d;
+	using mask4d_arg2 = const mask4d;
+	using mask4d_arg3 = const mask4d;
+	using mask4d_arg4 = const mask4d&;
+	using mask4d_arg5 = const mask4d&;
+	using mask4d_arg6 = const mask4d&;
+	using mask4d_arg7 = const mask4d&;
+	using mask4d_argn = const mask4d&;
+
+	using mask4q_arg0 = const mask4q;
+	using mask4q_arg1 = const mask4q;
+	using mask4q_arg2 = const mask4q;
+	using mask4q_arg3 = const mask4q;
+	using mask4q_arg4 = const mask4q&;
+	using mask4q_arg5 = const mask4q&;
+	using mask4q_arg6 = const mask4q&;
+	using mask4q_arg7 = const mask4q&;
+	using mask4q_argn = const mask4q&;
 
 	using qvf_arg0 = const qvf;
 	using qvf_arg1 = const qvf;
 	using qvf_argn = const qvf&;
 
+	using qvd_arg0 = const qvd;
+	using qvd_arg1 = const qvd&;
+	using qvd_argn = const qvd&;
+
 	using qvsf_arg0 = const qvsf;
 	using qvsf_arg1 = const qvsf;
 	using qvsf_argn = const qvsf&;
+
+	using qvsd_arg0 = const qvsd;
+	using qvsd_arg1 = const qvsd&;
+	using qvsd_argn = const qvsd&;
 
 	using qvvf_arg0 = const qvvf;
 	using qvvf_arg1 = const qvvf;
 	using qvvf_argn = const qvvf&;
 
+	using qvvd_arg0 = const qvvd;
+	using qvvd_arg1 = const qvvd&;
+	using qvvd_argn = const qvvd&;
+
 	using matrix3x3f_arg0 = const matrix3x3f;
 	using matrix3x3f_arg1 = const matrix3x3f;
 	using matrix3x3f_argn = const matrix3x3f&;
+
+	using matrix3x3d_arg0 = const matrix3x3d;
+	using matrix3x3d_arg1 = const matrix3x3d&;
+	using matrix3x3d_argn = const matrix3x3d&;
 
 	using matrix3x4f_arg0 = const matrix3x4f;
 	using matrix3x4f_arg1 = const matrix3x4f;
 	using matrix3x4f_argn = const matrix3x4f&;
 
+	using matrix3x4d_arg0 = const matrix3x4d;
+	using matrix3x4d_arg1 = const matrix3x4d&;
+	using matrix3x4d_argn = const matrix3x4d&;
+
 	using matrix4x4f_arg0 = const matrix4x4f;
 	using matrix4x4f_arg1 = const matrix4x4f;
 	using matrix4x4f_argn = const matrix4x4f&;
+
+	using matrix4x4d_arg0 = const matrix4x4d;
+	using matrix4x4d_arg1 = const matrix4x4d&;
+	using matrix4x4d_argn = const matrix4x4d&;
 #endif
 
 	RTM_IMPL_VERSION_NAMESPACE_END
