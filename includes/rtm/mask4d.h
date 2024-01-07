@@ -319,7 +319,7 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	// Per component logical AND between the inputs: lhs & rhs
 	//////////////////////////////////////////////////////////////////////////
-	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE mask4d mask_and(mask4d_arg0 lhs, mask4d_arg1 rhs) RTM_NO_EXCEPT
+	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE mask4d RTM_SIMD_CALL mask_and(mask4d_arg0 lhs, mask4d_arg1 rhs) RTM_NO_EXCEPT
 	{
 #if defined(RTM_SSE2_INTRINSICS)
 		__m128d xy = _mm_and_pd(lhs.xy, rhs.xy);
@@ -347,7 +347,7 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	// Per component logical OR between the inputs: lhs | rhs
 	//////////////////////////////////////////////////////////////////////////
-	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE mask4d mask_or(mask4d_arg0 lhs, mask4d_arg1 rhs) RTM_NO_EXCEPT
+	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE mask4d RTM_SIMD_CALL mask_or(mask4d_arg0 lhs, mask4d_arg1 rhs) RTM_NO_EXCEPT
 	{
 #if defined(RTM_SSE2_INTRINSICS)
 		__m128d xy = _mm_or_pd(lhs.xy, rhs.xy);
@@ -375,7 +375,7 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	// Per component logical XOR between the inputs: lhs ^ rhs
 	//////////////////////////////////////////////////////////////////////////
-	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE mask4d mask_xor(mask4d_arg0 lhs, mask4d_arg1 rhs) RTM_NO_EXCEPT
+	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE mask4d RTM_SIMD_CALL mask_xor(mask4d_arg0 lhs, mask4d_arg1 rhs) RTM_NO_EXCEPT
 	{
 #if defined(RTM_SSE2_INTRINSICS)
 		__m128d xy = _mm_xor_pd(lhs.xy, rhs.xy);
