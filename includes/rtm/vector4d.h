@@ -2418,7 +2418,7 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	// Per component logical AND between the inputs: input0 & input1
 	//////////////////////////////////////////////////////////////////////////
-	inline vector4d RTM_SIMD_CALL vector_and(vector4d_arg0 input0, vector4d_arg1 input1) RTM_NO_EXCEPT
+	RTM_DISABLE_SECURITY_COOKIE_CHECK inline vector4d RTM_SIMD_CALL vector_and(vector4d_arg0 input0, vector4d_arg1 input1) RTM_NO_EXCEPT
 	{
 #if defined(RTM_SSE2_INTRINSICS)
 		__m128d xy = _mm_and_pd(input0.xy, input1.xy);
@@ -2443,7 +2443,7 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	// Per component logical OR between the inputs: input0 | input1
 	//////////////////////////////////////////////////////////////////////////
-	inline vector4d RTM_SIMD_CALL vector_or(vector4d_arg0 input0, vector4d_arg1 input1) RTM_NO_EXCEPT
+	RTM_DISABLE_SECURITY_COOKIE_CHECK inline vector4d RTM_SIMD_CALL vector_or(vector4d_arg0 input0, vector4d_arg1 input1) RTM_NO_EXCEPT
 	{
 #if defined(RTM_SSE2_INTRINSICS)
 		__m128d xy = _mm_or_pd(input0.xy, input1.xy);
@@ -2468,7 +2468,7 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	// Per component logical XOR between the inputs: input0 ^ input1
 	//////////////////////////////////////////////////////////////////////////
-	inline vector4d RTM_SIMD_CALL vector_xor(vector4d_arg0 input0, vector4d_arg1 input1) RTM_NO_EXCEPT
+	RTM_DISABLE_SECURITY_COOKIE_CHECK inline vector4d RTM_SIMD_CALL vector_xor(vector4d_arg0 input0, vector4d_arg1 input1) RTM_NO_EXCEPT
 	{
 #if defined(RTM_SSE2_INTRINSICS)
 		__m128d xy = _mm_xor_pd(input0.xy, input1.xy);
