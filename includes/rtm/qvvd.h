@@ -52,7 +52,7 @@ namespace rtm
 	// Converts a pure rotation 3x3 matrix into a QVV transform.
 	// The translation/scale will be the identity.
 	//////////////////////////////////////////////////////////////////////////
-	RTM_DISABLE_SECURITY_COOKIE_CHECK inline qvvd qvv_from_matrix(const matrix3x3d& input) RTM_NO_EXCEPT
+	RTM_DISABLE_SECURITY_COOKIE_CHECK inline qvvd qvv_from_matrix(matrix3x3d_arg0 input) RTM_NO_EXCEPT
 	{
 		const quatd rotation = rtm_impl::quat_from_matrix(input.x_axis, input.y_axis, input.z_axis);
 		const vector4d translation = vector_zero();
@@ -63,7 +63,7 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	// Converts a 3x4 affine matrix into a QVV transform.
 	//////////////////////////////////////////////////////////////////////////
-	RTM_DISABLE_SECURITY_COOKIE_CHECK inline qvvd qvv_from_matrix(const matrix3x4d& input) RTM_NO_EXCEPT
+	RTM_DISABLE_SECURITY_COOKIE_CHECK inline qvvd qvv_from_matrix(matrix3x4d_arg0 input) RTM_NO_EXCEPT
 	{
 		// Let us define the following:
 		// A = S * R * T
@@ -312,7 +312,7 @@ namespace rtm
 	// NOTE: When scale is present, multiplication will not properly handle skew/shear,
 	// use affine matrices if you have issues.
 	//////////////////////////////////////////////////////////////////////////
-	RTM_DISABLE_SECURITY_COOKIE_CHECK inline qvvd qvv_mul(const qvvd& lhs, const qvvd& rhs) RTM_NO_EXCEPT
+	RTM_DISABLE_SECURITY_COOKIE_CHECK inline qvvd qvv_mul(qvvd_arg0 lhs, qvvd_arg1 rhs) RTM_NO_EXCEPT
 	{
 		const vector4d min_scale = vector_min(lhs.scale, rhs.scale);
 		const vector4d scale = vector_mul(lhs.scale, rhs.scale);
@@ -347,7 +347,7 @@ namespace rtm
 	// The resulting QVV transform will have the LHS scale.
 	// Multiplication order is as follow: local_to_world = qvv_mul(local_to_object, object_to_world)
 	//////////////////////////////////////////////////////////////////////////
-	RTM_DISABLE_SECURITY_COOKIE_CHECK inline qvvd qvv_mul_no_scale(const qvvd& lhs, const qvvd& rhs) RTM_NO_EXCEPT
+	RTM_DISABLE_SECURITY_COOKIE_CHECK inline qvvd qvv_mul_no_scale(qvvd_arg0 lhs, qvvd_arg1 rhs) RTM_NO_EXCEPT
 	{
 		const quatd rotation = quat_mul(lhs.rotation, rhs.rotation);
 		const vector4d translation = vector_add(quat_mul_vector3(lhs.translation, rhs.rotation), rhs.translation);
@@ -358,7 +358,7 @@ namespace rtm
 	// Multiplies a QVV transform and a 3D point.
 	// Multiplication order is as follow: world_position = qvv_mul_point3(local_position, local_to_world)
 	//////////////////////////////////////////////////////////////////////////
-	RTM_DISABLE_SECURITY_COOKIE_CHECK inline vector4d qvv_mul_point3(const vector4d& point, const qvvd& qvv) RTM_NO_EXCEPT
+	RTM_DISABLE_SECURITY_COOKIE_CHECK inline vector4d qvv_mul_point3(vector4d_arg0 point, qvvd_arg1 qvv) RTM_NO_EXCEPT
 	{
 		return vector_add(quat_mul_vector3(vector_mul(point, qvv.scale), qvv.rotation), qvv.translation);
 	}
@@ -367,7 +367,7 @@ namespace rtm
 	// Multiplies a QVV transform and a 3D point ignoring 3D scale.
 	// Multiplication order is as follow: world_position = qvv_mul_point3_no_scale(local_position, local_to_world)
 	//////////////////////////////////////////////////////////////////////////
-	RTM_DISABLE_SECURITY_COOKIE_CHECK inline vector4d qvv_mul_point3_no_scale(const vector4d& point, const qvvd& qvv) RTM_NO_EXCEPT
+	RTM_DISABLE_SECURITY_COOKIE_CHECK inline vector4d qvv_mul_point3_no_scale(vector4d_arg0 point, qvvd_arg1 qvv) RTM_NO_EXCEPT
 	{
 		return vector_add(quat_mul_vector3(point, qvv.rotation), qvv.translation);
 	}
@@ -377,7 +377,7 @@ namespace rtm
 	// If zero scale is contained, the result is undefined.
 	// For a safe alternative, supply a fallback scale value and a threshold.
 	//////////////////////////////////////////////////////////////////////////
-	RTM_DISABLE_SECURITY_COOKIE_CHECK inline qvvd qvv_inverse(const qvvd& input) RTM_NO_EXCEPT
+	RTM_DISABLE_SECURITY_COOKIE_CHECK inline qvvd qvv_inverse(qvvd_arg0 input) RTM_NO_EXCEPT
 	{
 		const quatd inv_rotation = quat_conjugate(input.rotation);
 		const vector4d inv_scale = vector_reciprocal(input.scale);
@@ -390,7 +390,7 @@ namespace rtm
 	// If the input scale has an absolute value below the supplied threshold, the
 	// fallback value is used instead.
 	//////////////////////////////////////////////////////////////////////////
-	RTM_DISABLE_SECURITY_COOKIE_CHECK inline qvvd qvv_inverse(const qvvd& input, const vector4d& fallback_scale, double threshold = 1.0E-8) RTM_NO_EXCEPT
+	RTM_DISABLE_SECURITY_COOKIE_CHECK inline qvvd qvv_inverse(qvvd_arg0 input, vector4d_arg3 fallback_scale, double threshold = 1.0E-8) RTM_NO_EXCEPT
 	{
 		const quatd inv_rotation = quat_conjugate(input.rotation);
 		const mask4d is_scale_zero = vector_less_equal(vector_abs(input.scale), vector_set(threshold));
@@ -404,7 +404,7 @@ namespace rtm
 	// Returns the inverse of the input QVV transform ignoring 3D scale.
 	// The resulting QVV transform will have the input scale.
 	//////////////////////////////////////////////////////////////////////////
-	RTM_DISABLE_SECURITY_COOKIE_CHECK inline qvvd qvv_inverse_no_scale(const qvvd& input) RTM_NO_EXCEPT
+	RTM_DISABLE_SECURITY_COOKIE_CHECK inline qvvd qvv_inverse_no_scale(qvvd_arg0 input) RTM_NO_EXCEPT
 	{
 		const quatd inv_rotation = quat_conjugate(input.rotation);
 		const vector4d inv_translation = vector_neg(quat_mul_vector3(input.translation, inv_rotation));
@@ -414,7 +414,7 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	// Returns a QVV transforms with the rotation part normalized.
 	//////////////////////////////////////////////////////////////////////////
-	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE qvvd qvv_normalize(const qvvd& input) RTM_NO_EXCEPT
+	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE qvvd qvv_normalize(qvvd_arg0 input) RTM_NO_EXCEPT
 	{
 		const quatd rotation = quat_normalize(input.rotation);
 		return qvv_set(rotation, input.translation, input.scale);
@@ -427,7 +427,7 @@ namespace rtm
 	// This is the same instruction count when FMA is present but it might be slightly slower
 	// due to the extra multiplication compared to: start + (alpha * (end - start)).
 	//////////////////////////////////////////////////////////////////////////
-	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE qvvd qvv_lerp(const qvvd& start, const qvvd& end, double alpha) RTM_NO_EXCEPT
+	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE qvvd qvv_lerp(qvvd_arg0 start, qvvd_arg1 end, double alpha) RTM_NO_EXCEPT
 	{
 		const quatd rotation = quat_lerp(start.rotation, end.rotation, alpha);
 		const vector4d translation = vector_lerp(start.translation, end.translation, alpha);
@@ -443,7 +443,7 @@ namespace rtm
 	// This is the same instruction count when FMA is present but it might be slightly slower
 	// due to the extra multiplication compared to: start + (alpha * (end - start)).
 	//////////////////////////////////////////////////////////////////////////
-	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE qvvd qvv_lerp(const qvvd& start, const qvvd& end, const scalard& alpha) RTM_NO_EXCEPT
+	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE qvvd qvv_lerp(qvvd_arg0 start, qvvd_arg1 end, scalard_argn alpha) RTM_NO_EXCEPT
 	{
 		const quatd rotation = quat_lerp(start.rotation, end.rotation, alpha);
 		const vector4d translation = vector_lerp(start.translation, end.translation, alpha);
@@ -460,7 +460,7 @@ namespace rtm
 	// due to the extra multiplication compared to: start + (alpha * (end - start)).
 	// The resulting QVV transform will have the start scale.
 	//////////////////////////////////////////////////////////////////////////
-	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE qvvd qvv_lerp_no_scale(const qvvd& start, const qvvd& end, double alpha) RTM_NO_EXCEPT
+	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE qvvd qvv_lerp_no_scale(qvvd_arg0 start, qvvd_arg1 end, double alpha) RTM_NO_EXCEPT
 	{
 		const quatd rotation = quat_lerp(start.rotation, end.rotation, alpha);
 		const vector4d translation = vector_lerp(start.translation, end.translation, alpha);
@@ -476,7 +476,7 @@ namespace rtm
 	// due to the extra multiplication compared to: start + (alpha * (end - start)).
 	// The resulting QVV transform will have the start scale.
 	//////////////////////////////////////////////////////////////////////////
-	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE qvvd qvv_lerp_no_scale(const qvvd& start, const qvvd& end, const scalard& alpha) RTM_NO_EXCEPT
+	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE qvvd qvv_lerp_no_scale(qvvd_arg0 start, qvvd_arg1 end, scalard_argn alpha) RTM_NO_EXCEPT
 	{
 		const quatd rotation = quat_lerp(start.rotation, end.rotation, alpha);
 		const vector4d translation = vector_lerp(start.translation, end.translation, alpha);
@@ -488,7 +488,7 @@ namespace rtm
 	// Per component spherical interpolation of the two inputs at the specified alpha.
 	// See quat_slerp(..)
 	//////////////////////////////////////////////////////////////////////////
-	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE qvvd qvv_slerp(const qvvd& start, const qvvd& end, double alpha) RTM_NO_EXCEPT
+	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE qvvd qvv_slerp(qvvd_arg0 start, qvvd_arg1 end, double alpha) RTM_NO_EXCEPT
 	{
 		const quatd rotation = quat_slerp(start.rotation, end.rotation, alpha);
 		const vector4d translation = vector_lerp(start.translation, end.translation, alpha);
@@ -501,7 +501,7 @@ namespace rtm
 	// Per component spherical interpolation of the two inputs at the specified alpha.
 	// See quat_slerp(..)
 	//////////////////////////////////////////////////////////////////////////
-	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE qvvd qvv_slerp(const qvvd& start, const qvvd& end, const scalard& alpha) RTM_NO_EXCEPT
+	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE qvvd qvv_slerp(qvvd_arg0 start, qvvd_arg1 end, scalard_argn alpha) RTM_NO_EXCEPT
 	{
 		const quatd rotation = quat_slerp(start.rotation, end.rotation, alpha);
 		const vector4d translation = vector_lerp(start.translation, end.translation, alpha);
@@ -514,7 +514,7 @@ namespace rtm
 	// Per component spherical interpolation of the two inputs at the specified alpha.
 	// See quat_slerp(..)
 	//////////////////////////////////////////////////////////////////////////
-	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE qvvd qvv_slerp_no_scale(const qvvd& start, const qvvd& end, double alpha) RTM_NO_EXCEPT
+	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE qvvd qvv_slerp_no_scale(qvvd_arg0 start, qvvd_arg1 end, double alpha) RTM_NO_EXCEPT
 	{
 		const quatd rotation = quat_slerp(start.rotation, end.rotation, alpha);
 		const vector4d translation = vector_lerp(start.translation, end.translation, alpha);
@@ -526,7 +526,7 @@ namespace rtm
 	// Per component spherical interpolation of the two inputs at the specified alpha.
 	// See quat_slerp(..)
 	//////////////////////////////////////////////////////////////////////////
-	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE qvvd qvv_slerp_no_scale(const qvvd& start, const qvvd& end, const scalard& alpha) RTM_NO_EXCEPT
+	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE qvvd qvv_slerp_no_scale(qvvd_arg0 start, qvvd_arg1 end, scalard_argn alpha) RTM_NO_EXCEPT
 	{
 		const quatd rotation = quat_slerp(start.rotation, end.rotation, alpha);
 		const vector4d translation = vector_lerp(start.translation, end.translation, alpha);
@@ -537,7 +537,7 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	// Returns true if the input QVV does not contain any NaN or Inf, otherwise false.
 	//////////////////////////////////////////////////////////////////////////
-	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE bool qvv_is_finite(const qvvd& input) RTM_NO_EXCEPT
+	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE bool qvv_is_finite(qvvd_arg0 input) RTM_NO_EXCEPT
 	{
 		return quat_is_finite(input.rotation) && vector_is_finite3(input.translation) && vector_is_finite3(input.scale);
 	}
