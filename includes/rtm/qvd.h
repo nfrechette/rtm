@@ -315,7 +315,7 @@ namespace rtm
 	// Per component spherical interpolation of the two inputs at the specified alpha.
 	// See quat_slerp(..)
 	//////////////////////////////////////////////////////////////////////////
-	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE qvd RTM_SIMD_CALL qv_slerp(cqvd_arg0 start, qvd_arg1 end, scalard_argn alpha) RTM_NO_EXCEPT
+	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE qvd RTM_SIMD_CALL qv_slerp(qvd_arg0 start, qvd_arg1 end, scalard_argn alpha) RTM_NO_EXCEPT
 	{
 		const quatd rotation = quat_slerp(start.rotation, end.rotation, alpha);
 		const vector4d translation = vector_lerp(start.translation, end.translation, alpha);
