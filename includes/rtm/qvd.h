@@ -245,7 +245,7 @@ namespace rtm
 	// Multiplies a QV transform and a 3D point.
 	// Multiplication order is as follow: world_position = qv_mul_point3(local_position, local_to_world)
 	//////////////////////////////////////////////////////////////////////////
-	RTM_DISABLE_SECURITY_COOKIE_CHECK inline vector4d RTM_SIMD_CALL qv_mul_point3(vector4d_arg0 point, qvd_argn qv) RTM_NO_EXCEPT
+	RTM_DISABLE_SECURITY_COOKIE_CHECK inline vector4d RTM_SIMD_CALL qv_mul_point3(vector4d_arg0 point, qvd_arg1 qv) RTM_NO_EXCEPT
 	{
 		return vector_add(quat_mul_vector3(point, qv.rotation), qv.translation);
 	}
