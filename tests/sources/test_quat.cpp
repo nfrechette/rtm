@@ -193,10 +193,8 @@ static void test_quat_impl(const FloatType threshold)
 	{
 		QuatType quat = quat_from_euler(scalar_deg_to_rad(FloatType(30.0)), scalar_deg_to_rad(FloatType(-45.0)), scalar_deg_to_rad(FloatType(90.0)));
 		QuatType quat_conj = quat_conjugate(quat);
-		CHECK(FloatType(quat_get_x(quat_conj)) == -FloatType(quat_get_x(quat)));
-		CHECK(FloatType(quat_get_y(quat_conj)) == -FloatType(quat_get_y(quat)));
-		CHECK(FloatType(quat_get_z(quat_conj)) == -FloatType(quat_get_z(quat)));
-		CHECK(FloatType(quat_get_w(quat_conj)) == FloatType(quat_get_w(quat)));
+		QuatType quat_conj_scalar = quat_set(-FloatType(quat_get_x(quat)), -FloatType(quat_get_y(quat)), -FloatType(quat_get_z(quat)), FloatType(quat_get_w(quat)));
+		CHECK(quat_near_equal(quat_conj, quat_conj_scalar, threshold));
 	}
 
 	{

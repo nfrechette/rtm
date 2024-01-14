@@ -118,7 +118,7 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	// Creates a vector4 from all 4 components.
 	//////////////////////////////////////////////////////////////////////////
-	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE vector4d vector_set(double x, double y, double z, double w) RTM_NO_EXCEPT
+	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE vector4d RTM_SIMD_CALL vector_set(double x, double y, double z, double w) RTM_NO_EXCEPT
 	{
 #if defined(RTM_SSE2_INTRINSICS)
 		return vector4d{ _mm_set_pd(y, x), _mm_set_pd(w, z) };
@@ -130,7 +130,7 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	// Creates a vector4 from the [xyz] components and sets [w] to 0.0.
 	//////////////////////////////////////////////////////////////////////////
-	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE vector4d vector_set(double x, double y, double z) RTM_NO_EXCEPT
+	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE vector4d RTM_SIMD_CALL vector_set(double x, double y, double z) RTM_NO_EXCEPT
 	{
 #if defined(RTM_SSE2_INTRINSICS)
 		return vector4d{ _mm_set_pd(y, x), _mm_set_pd(0.0, z) };
@@ -142,7 +142,7 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	// Creates a vector4 from a single value for all 4 components.
 	//////////////////////////////////////////////////////////////////////////
-	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE vector4d vector_set(double xyzw) RTM_NO_EXCEPT
+	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE vector4d RTM_SIMD_CALL vector_set(double xyzw) RTM_NO_EXCEPT
 	{
 #if defined(RTM_SSE2_INTRINSICS)
 		const __m128d xyzw_pd = _mm_set1_pd(xyzw);
@@ -156,7 +156,7 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	// Creates a vector4 from all 4 components.
 	//////////////////////////////////////////////////////////////////////////
-	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE vector4d RTM_SIMD_CALL vector_set(scalard x, scalard y, scalard z, scalard w) RTM_NO_EXCEPT
+	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE vector4d RTM_SIMD_CALL vector_set(scalard_arg0 x, scalard_arg1 y, scalard_arg2 z, scalard_arg3 w) RTM_NO_EXCEPT
 	{
 		const __m128d xy = _mm_unpacklo_pd(x.value, y.value);
 		const __m128d zw = _mm_unpacklo_pd(z.value, w.value);
@@ -166,7 +166,7 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	// Creates a vector4 from the [xyz] components and sets [w] to 0.0.
 	//////////////////////////////////////////////////////////////////////////
-	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE vector4d RTM_SIMD_CALL vector_set(scalard x, scalard y, scalard z) RTM_NO_EXCEPT
+	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE vector4d RTM_SIMD_CALL vector_set(scalard_arg0 x, scalard_arg1 y, scalard_arg2 z) RTM_NO_EXCEPT
 	{
 		const __m128d xy = _mm_unpacklo_pd(x.value, y.value);
 		const __m128d zw = _mm_unpacklo_pd(z.value, _mm_setzero_pd());
@@ -176,7 +176,7 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	// Creates a vector4 from a single value for all 4 components.
 	//////////////////////////////////////////////////////////////////////////
-	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE vector4d RTM_SIMD_CALL vector_set(scalard xyzw) RTM_NO_EXCEPT
+	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE vector4d RTM_SIMD_CALL vector_set(scalard_arg0 xyzw) RTM_NO_EXCEPT
 	{
 		const __m128d xyzw_pd = _mm_shuffle_pd(xyzw.value, xyzw.value, 0);
 		return vector4d{ xyzw_pd, xyzw_pd };
@@ -225,7 +225,7 @@ namespace rtm
 		//////////////////////////////////////////////////////////////////////////
 		// Selects if_false if the SIMD mask value is 0, otherwise if_true.
 		//////////////////////////////////////////////////////////////////////////
-		RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE constexpr double select(uint64_t mask, double if_true, double if_false) RTM_NO_EXCEPT
+		RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE constexpr double RTM_SIMD_CALL select(uint64_t mask, double if_true, double if_false) RTM_NO_EXCEPT
 		{
 			return mask == 0 ? if_false : if_true;
 		}
@@ -233,7 +233,7 @@ namespace rtm
 		//////////////////////////////////////////////////////////////////////////
 		// Selects if_false if the SIMD mask value is 0, otherwise if_true.
 		//////////////////////////////////////////////////////////////////////////
-		RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE constexpr float select(uint32_t mask, float if_true, float if_false) RTM_NO_EXCEPT
+		RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE constexpr float RTM_SIMD_CALL select(uint32_t mask, float if_true, float if_false) RTM_NO_EXCEPT
 		{
 			return mask == 0 ? if_false : if_true;
 		}
@@ -601,7 +601,7 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	// Coerces an vector4 input into a scalar by grabbing the first SIMD lane.
 	//////////////////////////////////////////////////////////////////////////
-	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE constexpr rtm_impl::vector4d_to_scalard RTM_SIMD_CALL vector_as_scalar(const vector4d& input) RTM_NO_EXCEPT
+	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE constexpr rtm_impl::vector4d_to_scalard RTM_SIMD_CALL vector_as_scalar(vector4d_arg0 input) RTM_NO_EXCEPT
 	{
 		return rtm_impl::vector4d_to_scalard{ input };
 	}
