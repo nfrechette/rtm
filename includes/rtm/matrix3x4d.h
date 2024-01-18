@@ -315,12 +315,10 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE matrix3x3d RTM_SIMD_CALL matrix_transpose(matrix3x4d_arg0 input) RTM_NO_EXCEPT
 	{
-		const vector4d v00_v01_v10_v11 = vector_mix<mix4::x, mix4::y, mix4::a, mix4::b>(input.x_axis, input.y_axis);
-		const vector4d v02_v03_v12_v13 = vector_mix<mix4::z, mix4::w, mix4::c, mix4::d>(input.x_axis, input.y_axis);
-
-		const vector4d x_axis = vector_mix<mix4::x, mix4::z, mix4::a, mix4::c>(v00_v01_v10_v11, input.z_axis);
-		const vector4d y_axis = vector_mix<mix4::y, mix4::w, mix4::b, mix4::d>(v00_v01_v10_v11, input.z_axis);
-		const vector4d z_axis = vector_mix<mix4::x, mix4::z, mix4::c, mix4::c>(v02_v03_v12_v13, input.z_axis);
+		vector4d x_axis;
+		vector4d y_axis;
+		vector4d z_axis;
+		RTM_MATRIXD_TRANSPOSE_3X3(input.x_axis, input.y_axis, input.z_axis, x_axis, y_axis, z_axis);
 		return matrix3x3d{ x_axis, y_axis, z_axis };
 	}
 
