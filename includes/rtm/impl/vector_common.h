@@ -266,6 +266,52 @@ namespace rtm
 			}
 		};
 
+		enum class vector_constant
+		{
+			zero,
+			one,
+		};
+
+		RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE constexpr float get_constant32(vector_constant constant)
+		{
+			return constant == vector_constant::zero ? 0.0F : 1.0F;
+		}
+
+		RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE constexpr double get_constant64(vector_constant constant)
+		{
+			return constant == vector_constant::zero ? 0.0 : 1.0;
+		}
+
+		//////////////////////////////////////////////////////////////////////////
+		// This is a helper struct to allow a single consistent API between
+		// various vector types when the semantics are identical but the return
+		// type differs. Implicit coercion is used to return the desired value
+		// at the call site.
+		//////////////////////////////////////////////////////////////////////////
+		template<vector_constant x, vector_constant y, vector_constant z, vector_constant w>
+		struct vector_constant_impl
+		{
+			RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE RTM_SIMD_CALL operator vector4d() const RTM_NO_EXCEPT
+			{
+#if defined(RTM_SSE2_INTRINSICS)
+				constexpr __m128d constant_xy = RTM_VECTOR2D_MAKE(get_constant64(x), get_constant64(y));
+				constexpr __m128d constant_zw = RTM_VECTOR2D_MAKE(get_constant64(z), get_constant64(w));
+				return vector4d{ constant_xy, constant_zw };
+#else
+				return vector_set(get_constant64(x), get_constant64(y), get_constant64(z), get_constant64(w));
+#endif
+			}
+
+			RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE RTM_SIMD_CALL operator vector4f() const RTM_NO_EXCEPT
+			{
+#if defined(RTM_SSE2_INTRINSICS)
+				return RTM_VECTOR4F_MAKE(get_constant32(x), get_constant32(y), get_constant32(z), get_constant32(w));
+#else
+				return vector_set(get_constant32(x), get_constant32(y), get_constant32(z), get_constant32(w));
+#endif
+			}
+		};
+
 		//////////////////////////////////////////////////////////////////////////
 		// Various vector widths we can load
 		//////////////////////////////////////////////////////////////////////////
@@ -556,6 +602,42 @@ namespace rtm
 	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE constexpr rtm_impl::vector_zero_impl RTM_SIMD_CALL vector_zero() RTM_NO_EXCEPT
 	{
 		return rtm_impl::vector_zero_impl();
+	}
+
+	//////////////////////////////////////////////////////////////////////////
+	// Returns a unit vector pointing in the forward direction of the default coordinate system (Z+).
+	//////////////////////////////////////////////////////////////////////////
+	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE constexpr rtm_impl::vector_constant_impl<rtm_impl::vector_constant::zero, rtm_impl::vector_constant::zero, rtm_impl::vector_constant::one, rtm_impl::vector_constant::zero> RTM_SIMD_CALL vector_coord_forward() RTM_NO_EXCEPT
+	{
+		return rtm_impl::vector_constant_impl<
+			rtm_impl::vector_constant::zero,
+			rtm_impl::vector_constant::zero,
+			rtm_impl::vector_constant::one,
+			rtm_impl::vector_constant::zero>();
+	}
+
+	//////////////////////////////////////////////////////////////////////////
+	// Returns a unit vector pointing in the up direction of the default coordinate system (Y+).
+	//////////////////////////////////////////////////////////////////////////
+	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE constexpr rtm_impl::vector_constant_impl<rtm_impl::vector_constant::zero, rtm_impl::vector_constant::one, rtm_impl::vector_constant::zero, rtm_impl::vector_constant::zero> RTM_SIMD_CALL vector_coord_up() RTM_NO_EXCEPT
+	{
+		return rtm_impl::vector_constant_impl<
+			rtm_impl::vector_constant::zero,
+			rtm_impl::vector_constant::one,
+			rtm_impl::vector_constant::zero,
+			rtm_impl::vector_constant::zero>();
+	}
+
+	//////////////////////////////////////////////////////////////////////////
+	// Returns a unit vector pointing in the cross direction of the default coordinate system (X+).
+	//////////////////////////////////////////////////////////////////////////
+	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE constexpr rtm_impl::vector_constant_impl<rtm_impl::vector_constant::one, rtm_impl::vector_constant::zero, rtm_impl::vector_constant::zero, rtm_impl::vector_constant::zero> RTM_SIMD_CALL vector_coord_cross() RTM_NO_EXCEPT
+	{
+		return rtm_impl::vector_constant_impl<
+			rtm_impl::vector_constant::one,
+			rtm_impl::vector_constant::zero,
+			rtm_impl::vector_constant::zero,
+			rtm_impl::vector_constant::zero>();
 	}
 
 	//////////////////////////////////////////////////////////////////////////
