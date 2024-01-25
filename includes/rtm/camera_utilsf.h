@@ -204,7 +204,7 @@ namespace rtm
 
 		float sin_fov;
 		float cos_fov;
-		scalar_sincos(fov_angle_y * 0.5, sin_fov, cos_fov);
+		scalar_sincos(fov_angle_y * 0.5F, sin_fov, cos_fov);
 
 		float scaled_view_height = cos_fov / sin_fov;
 		float scaled_view_width = scaled_view_height / aspect_ratio;
