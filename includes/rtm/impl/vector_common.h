@@ -305,7 +305,8 @@ namespace rtm
 			RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE RTM_SIMD_CALL operator vector4f() const RTM_NO_EXCEPT
 			{
 #if defined(RTM_SSE2_INTRINSICS)
-				return RTM_VECTOR4F_MAKE(get_constant32(x), get_constant32(y), get_constant32(z), get_constant32(w));
+				constexpr __m128 constant = RTM_VECTOR4F_MAKE(get_constant32(x), get_constant32(y), get_constant32(z), get_constant32(w));
+				return constant;
 #else
 				return vector_set(get_constant32(x), get_constant32(y), get_constant32(z), get_constant32(w));
 #endif
