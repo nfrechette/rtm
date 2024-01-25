@@ -218,6 +218,21 @@ void test_vector4_getset_impl()
 	CHECK(FloatType(vector_get_z(zero)) == FloatType(0.0));
 	CHECK(FloatType(vector_get_w(zero)) == FloatType(0.0));
 
+	CHECK(FloatType(vector_get_x((Vector4Type)vector_coord_forward())) == FloatType(0.0));
+	CHECK(FloatType(vector_get_y((Vector4Type)vector_coord_forward())) == FloatType(0.0));
+	CHECK(FloatType(vector_get_z((Vector4Type)vector_coord_forward())) == FloatType(1.0));
+	CHECK(FloatType(vector_get_w((Vector4Type)vector_coord_forward())) == FloatType(0.0));
+
+	CHECK(FloatType(vector_get_x((Vector4Type)vector_coord_up())) == FloatType(0.0));
+	CHECK(FloatType(vector_get_y((Vector4Type)vector_coord_up())) == FloatType(1.0));
+	CHECK(FloatType(vector_get_z((Vector4Type)vector_coord_up())) == FloatType(0.0));
+	CHECK(FloatType(vector_get_w((Vector4Type)vector_coord_up())) == FloatType(0.0));
+
+	CHECK(FloatType(vector_get_x((Vector4Type)vector_coord_cross())) == FloatType(1.0));
+	CHECK(FloatType(vector_get_y((Vector4Type)vector_coord_cross())) == FloatType(0.0));
+	CHECK(FloatType(vector_get_z((Vector4Type)vector_coord_cross())) == FloatType(0.0));
+	CHECK(FloatType(vector_get_w((Vector4Type)vector_coord_cross())) == FloatType(0.0));
+
 	CHECK(FloatType(vector_get_x((Vector4Type)vector_load(&tmp.values[0]))) == tmp.values[0]);
 	CHECK(FloatType(vector_get_y((Vector4Type)vector_load(&tmp.values[0]))) == tmp.values[1]);
 	CHECK(FloatType(vector_get_z((Vector4Type)vector_load(&tmp.values[0]))) == tmp.values[2]);
