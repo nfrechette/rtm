@@ -38,6 +38,30 @@ namespace rtm
 	RTM_IMPL_VERSION_NAMESPACE_BEGIN
 
 	//////////////////////////////////////////////////////////////////////////
+	// Returns the axis pointing in the forward direction of the default coordinate system (Z+).
+	//////////////////////////////////////////////////////////////////////////
+	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE constexpr vector4d RTM_SIMD_CALL matrix_get_coord_forward(matrix3x3d_arg0 input) RTM_NO_EXCEPT
+	{
+		return input.z_axis;
+	}
+
+	//////////////////////////////////////////////////////////////////////////
+	// Returns the axis pointing in the up direction of the default coordinate system (Y+).
+	//////////////////////////////////////////////////////////////////////////
+	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE constexpr vector4d RTM_SIMD_CALL matrix_get_coord_up(matrix3x3d_arg0 input) RTM_NO_EXCEPT
+	{
+		return input.y_axis;
+	}
+
+	//////////////////////////////////////////////////////////////////////////
+	// Returns the axis pointing in the cross direction of the default coordinate system (X+).
+	//////////////////////////////////////////////////////////////////////////
+	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE constexpr vector4d RTM_SIMD_CALL matrix_get_coord_cross(matrix3x3d_arg0 input) RTM_NO_EXCEPT
+	{
+		return input.x_axis;
+	}
+
+	//////////////////////////////////////////////////////////////////////////
 	// Returns the desired 3x3 matrix axis.
 	//////////////////////////////////////////////////////////////////////////
 	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE constexpr vector4d RTM_SIMD_CALL matrix_get_axis(matrix3x3d_arg0 input, axis3 axis) RTM_NO_EXCEPT
