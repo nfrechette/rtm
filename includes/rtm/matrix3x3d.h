@@ -98,6 +98,20 @@ namespace rtm
 	}
 
 	//////////////////////////////////////////////////////////////////////////
+	// Returns the desired 3x3 matrix component from the specified axis.
+	//////////////////////////////////////////////////////////////////////////
+	RTM_DISABLE_SECURITY_COOKIE_CHECK inline scalard RTM_SIMD_CALL matrix_get_component_as_scalar(matrix3x3d_arg0 input, axis3 axis, component3 component) RTM_NO_EXCEPT
+	{
+		switch (axis)
+		{
+			default:
+			case axis3::x:	return vector_get_component3_as_scalar(input.x_axis, component);
+			case axis3::y:	return vector_get_component3_as_scalar(input.y_axis, component);
+			case axis3::z:	return vector_get_component3_as_scalar(input.z_axis, component);
+		}
+	}
+
+	//////////////////////////////////////////////////////////////////////////
 	// Returns a new 3x3 matrix where the specified axis/component has been replaced on the input matrix.
 	//////////////////////////////////////////////////////////////////////////
 	RTM_DISABLE_SECURITY_COOKIE_CHECK inline matrix3x3d RTM_SIMD_CALL matrix_set_component(matrix3x3d_arg0 input, double component_value, axis3 axis, component3 component) RTM_NO_EXCEPT

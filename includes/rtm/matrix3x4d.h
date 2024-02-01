@@ -236,6 +236,21 @@ namespace rtm
 	}
 
 	//////////////////////////////////////////////////////////////////////////
+	// Returns the desired 3x4 matrix component from the specified axis.
+	//////////////////////////////////////////////////////////////////////////
+	RTM_DISABLE_SECURITY_COOKIE_CHECK inline scalard RTM_SIMD_CALL matrix_get_component_as_scalar(matrix3x4d_arg0 input, axis4 axis, component3 component) RTM_NO_EXCEPT
+	{
+		switch (axis)
+		{
+			default:
+			case axis4::x:	return vector_get_component3_as_scalar(input.x_axis, component);
+			case axis4::y:	return vector_get_component3_as_scalar(input.y_axis, component);
+			case axis4::z:	return vector_get_component3_as_scalar(input.z_axis, component);
+			case axis4::w:	return vector_get_component3_as_scalar(input.w_axis, component);
+		}
+	}
+
+	//////////////////////////////////////////////////////////////////////////
 	// Returns a new 3x4 matrix where the specified axis/component has been replaced on the input matrix.
 	//////////////////////////////////////////////////////////////////////////
 	RTM_DISABLE_SECURITY_COOKIE_CHECK inline matrix3x4d RTM_SIMD_CALL matrix_set_component(matrix3x4d_arg0 input, double component_value, axis4 axis, component3 component) RTM_NO_EXCEPT
