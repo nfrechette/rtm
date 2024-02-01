@@ -147,9 +147,9 @@ namespace rtm
 		const double wy = quat_get_w(quat) * y2;
 		const double wz = quat_get_w(quat) * z2;
 
-		const scalard scale_x = vector_get_x(scale);
-		const scalard scale_y = vector_get_y(scale);
-		const scalard scale_z = vector_get_z(scale);
+		const scalard scale_x = vector_get_x_as_scalar(scale);
+		const scalard scale_y = vector_get_y_as_scalar(scale);
+		const scalard scale_z = vector_get_z_as_scalar(scale);
 
 		const vector4d x_axis = vector_mul(vector_set(1.0 - (yy + zz), xy + wz, xz - wy, 0.0), scale_x);
 		const vector4d y_axis = vector_mul(vector_set(xy - wz, 1.0 - (xx + zz), yz + wx, 0.0), scale_y);
@@ -416,7 +416,7 @@ namespace rtm
 		const vector4d o00_o00_o10_o10 = vector_mix<mix4::x, mix4::x, mix4::a, mix4::a>(x_axis, y_axis);
 		const vector4d o00_o10_o20 = vector_mix<mix4::x, mix4::z, mix4::a, mix4::a>(o00_o00_o10_o10, z_axis);
 
-		const scalard det = vector_dot3(o00_o10_o20, input.x_axis);
+		const scalard det = vector_dot3_as_scalar(o00_o10_o20, input.x_axis);
 		const scalard inv_det_s = scalar_reciprocal(det);
 		const vector4d inv_det = vector_set(inv_det_s);
 
@@ -479,7 +479,7 @@ namespace rtm
 		const vector4d o00_o00_o10_o10 = vector_mix<mix4::x, mix4::x, mix4::a, mix4::a>(x_axis, y_axis);
 		const vector4d o00_o10_o20 = vector_mix<mix4::x, mix4::z, mix4::a, mix4::a>(o00_o00_o10_o10, z_axis);
 
-		const scalard det = vector_dot3(o00_o10_o20, input.x_axis);
+		const scalard det = vector_dot3_as_scalar(o00_o10_o20, input.x_axis);
 		if (scalar_cast(scalar_abs(det)) < threshold)
 			return fallback;
 
@@ -542,7 +542,7 @@ namespace rtm
 		const vector4d o00_o00_o10_o10 = vector_mix<mix4::x, mix4::x, mix4::a, mix4::a>(x_axis, y_axis);
 		const vector4d o00_o10_o20 = vector_mix<mix4::x, mix4::z, mix4::a, mix4::a>(o00_o00_o10_o10, z_axis);
 
-		return vector_dot3(o00_o10_o20, input.x_axis);
+		return vector_dot3_as_scalar(o00_o10_o20, input.x_axis);
 	}
 
 	//////////////////////////////////////////////////////////////////////////
@@ -593,11 +593,11 @@ namespace rtm
 
 		// Extract the one we need
 		if (column == axis3::x)
-			return vector_get_z(determinants);
+			return vector_get_z_as_scalar(determinants);
 		else if (column == axis3::y)
-			return vector_get_y(determinants);
+			return vector_get_y_as_scalar(determinants);
 		else
-			return vector_get_x(determinants);
+			return vector_get_x_as_scalar(determinants);
 	}
 
 	//////////////////////////////////////////////////////////////////////////

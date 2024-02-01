@@ -302,7 +302,7 @@ namespace rtm
 		vector4d z_axis = vector_mix<mix4::x, mix4::b, mix4::z, mix4::d>(c4, c5);
 		vector4d w_axis = vector_mix<mix4::x, mix4::b, mix4::z, mix4::d>(c6, c7);
 
-		const scalard det = vector_dot(x_axis, input_transposed.x_axis);
+		const scalard det = vector_dot_as_scalar(x_axis, input_transposed.x_axis);
 		const scalard inv_det_s = scalar_reciprocal(det);
 		vector4d inv_det = vector_set(inv_det_s);
 
@@ -396,7 +396,7 @@ namespace rtm
 		vector4d z_axis = vector_mix<mix4::x, mix4::b, mix4::z, mix4::d>(c4, c5);
 		vector4d w_axis = vector_mix<mix4::x, mix4::b, mix4::z, mix4::d>(c6, c7);
 
-		scalard det = vector_dot(x_axis, input_transposed.x_axis);
+		scalard det = vector_dot_as_scalar(x_axis, input_transposed.x_axis);
 		if (scalar_cast(scalar_abs(det)) < threshold)
 			return fallback;
 
@@ -485,7 +485,7 @@ namespace rtm
 
 		vector4d x_axis = vector_mix<mix4::x, mix4::b, mix4::z, mix4::d>(c0, c1);
 
-		return vector_dot(x_axis, input_transposed.x_axis);
+		return vector_dot_as_scalar(x_axis, input_transposed.x_axis);
 	}
 
 	//////////////////////////////////////////////////////////////////////////

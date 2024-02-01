@@ -109,10 +109,10 @@ static void test_quat_impl(const FloatType threshold)
 	CHECK(FloatType(quat_get_z(quat_set(FloatType(0.0), FloatType(2.34), FloatType(-3.12), FloatType(10000.0)))) == FloatType(-3.12));
 	CHECK(FloatType(quat_get_w(quat_set(FloatType(0.0), FloatType(2.34), FloatType(-3.12), FloatType(10000.0)))) == FloatType(10000.0));
 
-	CHECK(scalar_cast(quat_get_x(quat_set(FloatType(0.0), FloatType(2.34), FloatType(-3.12), FloatType(10000.0)))) == FloatType(0.0));
-	CHECK(scalar_cast(quat_get_y(quat_set(FloatType(0.0), FloatType(2.34), FloatType(-3.12), FloatType(10000.0)))) == FloatType(2.34));
-	CHECK(scalar_cast(quat_get_z(quat_set(FloatType(0.0), FloatType(2.34), FloatType(-3.12), FloatType(10000.0)))) == FloatType(-3.12));
-	CHECK(scalar_cast(quat_get_w(quat_set(FloatType(0.0), FloatType(2.34), FloatType(-3.12), FloatType(10000.0)))) == FloatType(10000.0));
+	CHECK(scalar_cast(quat_get_x_as_scalar(quat_set(FloatType(0.0), FloatType(2.34), FloatType(-3.12), FloatType(10000.0)))) == FloatType(0.0));
+	CHECK(scalar_cast(quat_get_y_as_scalar(quat_set(FloatType(0.0), FloatType(2.34), FloatType(-3.12), FloatType(10000.0)))) == FloatType(2.34));
+	CHECK(scalar_cast(quat_get_z_as_scalar(quat_set(FloatType(0.0), FloatType(2.34), FloatType(-3.12), FloatType(10000.0)))) == FloatType(-3.12));
+	CHECK(scalar_cast(quat_get_w_as_scalar(quat_set(FloatType(0.0), FloatType(2.34), FloatType(-3.12), FloatType(10000.0)))) == FloatType(10000.0));
 
 	CHECK(FloatType(quat_get_x(identity)) == FloatType(0.0));
 	CHECK(FloatType(quat_get_y(identity)) == FloatType(0.0));
@@ -281,7 +281,7 @@ static void test_quat_impl(const FloatType threshold)
 		const FloatType scalar_dot_result = scalar_dot<QuatType, FloatType>(test_value10, test_value11);
 		const FloatType quat_dot_result = quat_dot(test_value10, test_value11);
 		CHECK(scalar_near_equal(quat_dot_result, scalar_dot_result, threshold));
-		const ScalarType quat_sdot_result = quat_dot(test_value10, test_value11);
+		const ScalarType quat_sdot_result = quat_dot_as_scalar(test_value10, test_value11);
 		CHECK(scalar_near_equal(scalar_cast(quat_sdot_result), scalar_dot_result, threshold));
 	}
 
@@ -290,11 +290,11 @@ static void test_quat_impl(const FloatType threshold)
 		Vector4Type vec = quat_to_vector(quat);
 
 		CHECK(scalar_near_equal(FloatType(quat_length_squared(quat)), FloatType(vector_length_squared(vec)), threshold));
-		CHECK(scalar_near_equal(scalar_cast(quat_length_squared(quat)), scalar_cast(vector_length_squared(vec)), threshold));
+		CHECK(scalar_near_equal(scalar_cast(quat_length_squared_as_scalar(quat)), scalar_cast(vector_length_squared_as_scalar(vec)), threshold));
 		CHECK(scalar_near_equal(FloatType(quat_length(quat)), FloatType(vector_length(vec)), threshold));
-		CHECK(scalar_near_equal(scalar_cast(quat_length(quat)), scalar_cast(vector_length(vec)), threshold));
+		CHECK(scalar_near_equal(scalar_cast(quat_length_as_scalar(quat)), scalar_cast(vector_length_as_scalar(vec)), threshold));
 		CHECK(scalar_near_equal(FloatType(quat_length_reciprocal(quat)), FloatType(vector_length_reciprocal(vec)), threshold));
-		CHECK(scalar_near_equal(scalar_cast(quat_length_reciprocal(quat)), scalar_cast(vector_length_reciprocal(vec)), threshold));
+		CHECK(scalar_near_equal(scalar_cast(quat_length_reciprocal_as_scalar(quat)), scalar_cast(vector_length_reciprocal_as_scalar(vec)), threshold));
 	}
 
 	{

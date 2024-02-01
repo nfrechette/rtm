@@ -1326,14 +1326,14 @@ namespace rtm
 		{
 			RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE RTM_SIMD_CALL operator double() const RTM_NO_EXCEPT
 			{
-				const scalard lhs_x = vector_get_x(lhs);
-				const scalard lhs_y = vector_get_y(lhs);
-				const scalard lhs_z = vector_get_z(lhs);
-				const scalard lhs_w = vector_get_w(lhs);
-				const scalard rhs_x = vector_get_x(rhs);
-				const scalard rhs_y = vector_get_y(rhs);
-				const scalard rhs_z = vector_get_z(rhs);
-				const scalard rhs_w = vector_get_w(rhs);
+				const scalard lhs_x = vector_get_x_as_scalar(lhs);
+				const scalard lhs_y = vector_get_y_as_scalar(lhs);
+				const scalard lhs_z = vector_get_z_as_scalar(lhs);
+				const scalard lhs_w = vector_get_w_as_scalar(lhs);
+				const scalard rhs_x = vector_get_x_as_scalar(rhs);
+				const scalard rhs_y = vector_get_y_as_scalar(rhs);
+				const scalard rhs_z = vector_get_z_as_scalar(rhs);
+				const scalard rhs_w = vector_get_w_as_scalar(rhs);
 				const scalard xx = scalar_mul(lhs_x, rhs_x);
 				const scalard yy = scalar_mul(lhs_y, rhs_y);
 				const scalard zz = scalar_mul(lhs_z, rhs_z);
@@ -1645,7 +1645,7 @@ namespace rtm
 		{
 			RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE RTM_SIMD_CALL operator double() const RTM_NO_EXCEPT
 			{
-				const scalard len_sq = vector_length_squared(input);
+				const scalard len_sq = vector_length_squared_as_scalar(input);
 				return scalar_cast(scalar_sqrt(len_sq));
 			}
 
@@ -1691,7 +1691,7 @@ namespace rtm
 		{
 			RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE RTM_SIMD_CALL operator double() const RTM_NO_EXCEPT
 			{
-				const scalard len_sq = vector_length_squared3(input);
+				const scalard len_sq = vector_length_squared3_as_scalar(input);
 				return scalar_cast(scalar_sqrt(len_sq));
 			}
 
@@ -1737,7 +1737,7 @@ namespace rtm
 		{
 			RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE RTM_SIMD_CALL operator double() const RTM_NO_EXCEPT
 			{
-				const scalard len_sq = vector_length_squared(input);
+				const scalard len_sq = vector_length_squared_as_scalar(input);
 				return scalar_cast(scalar_sqrt_reciprocal(len_sq));
 			}
 
@@ -1783,7 +1783,7 @@ namespace rtm
 		{
 			RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE RTM_SIMD_CALL operator double() const RTM_NO_EXCEPT
 			{
-				const scalard len_sq = vector_length_squared2(input);
+				const scalard len_sq = vector_length_squared2_as_scalar(input);
 				return scalar_cast(scalar_sqrt_reciprocal(len_sq));
 			}
 
@@ -1829,7 +1829,7 @@ namespace rtm
 		{
 			RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE RTM_SIMD_CALL operator double() const RTM_NO_EXCEPT
 			{
-				const scalard len_sq = vector_length_squared3(input);
+				const scalard len_sq = vector_length_squared3_as_scalar(input);
 				return scalar_cast(scalar_sqrt_reciprocal(len_sq));
 			}
 
@@ -1889,7 +1889,7 @@ namespace rtm
 	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE vector4d RTM_SIMD_CALL vector_normalize2(vector4d_arg0 input) RTM_NO_EXCEPT
 	{
 		// Reciprocal is more accurate to normalize with
-		const scalard len_sq = vector_length_squared2(input);
+		const scalard len_sq = vector_length_squared2_as_scalar(input);
 		return vector_mul(input, scalar_sqrt_reciprocal(len_sq));
 	}
 
@@ -1901,7 +1901,7 @@ namespace rtm
 	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE vector4d RTM_SIMD_CALL vector_normalize2(vector4d_arg0 input, vector4d_arg1 fallback, double threshold = 1.0E-8) RTM_NO_EXCEPT
 	{
 		// Reciprocal is more accurate to normalize with
-		const scalard len_sq = vector_length_squared2(input);
+		const scalard len_sq = vector_length_squared2_as_scalar(input);
 		if (scalar_cast(len_sq) >= threshold)
 			return vector_mul(input, scalar_sqrt_reciprocal(len_sq));
 		else
@@ -1916,7 +1916,7 @@ namespace rtm
 	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE vector4d RTM_SIMD_CALL vector_normalize3(vector4d_arg0 input) RTM_NO_EXCEPT
 	{
 		// Reciprocal is more accurate to normalize with
-		const scalard len_sq = vector_length_squared3(input);
+		const scalard len_sq = vector_length_squared3_as_scalar(input);
 		return vector_mul(input, scalar_sqrt_reciprocal(len_sq));
 	}
 
@@ -1928,7 +1928,7 @@ namespace rtm
 	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE vector4d RTM_SIMD_CALL vector_normalize3(vector4d_arg0 input, vector4d_arg1 fallback, double threshold = 1.0E-8) RTM_NO_EXCEPT
 	{
 		// Reciprocal is more accurate to normalize with
-		const scalard len_sq = vector_length_squared3(input);
+		const scalard len_sq = vector_length_squared3_as_scalar(input);
 		if (scalar_cast(len_sq) >= threshold)
 			return vector_mul(input, scalar_sqrt_reciprocal(len_sq));
 		else
@@ -1943,7 +1943,7 @@ namespace rtm
 	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE vector4d RTM_SIMD_CALL vector_normalize(vector4d_arg0 input) RTM_NO_EXCEPT
 	{
 		// Reciprocal is more accurate to normalize with
-		const scalard len_sq = vector_length_squared(input);
+		const scalard len_sq = vector_length_squared_as_scalar(input);
 		return vector_mul(input, scalar_sqrt_reciprocal(len_sq));
 	}
 
@@ -1955,7 +1955,7 @@ namespace rtm
 	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE vector4d RTM_SIMD_CALL vector_normalize(vector4d_arg0 input, vector4d_arg1 fallback, double threshold = 1.0E-8) RTM_NO_EXCEPT
 	{
 		// Reciprocal is more accurate to normalize with
-		const scalard len_sq = vector_length_squared(input);
+		const scalard len_sq = vector_length_squared_as_scalar(input);
 		if (scalar_cast(len_sq) >= threshold)
 			return vector_mul(input, scalar_sqrt_reciprocal(len_sq));
 		else
@@ -3027,10 +3027,10 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	RTM_DISABLE_SECURITY_COOKIE_CHECK inline vector4d RTM_SIMD_CALL vector_sin(vector4d_arg0 input) RTM_NO_EXCEPT
 	{
-		scalard x = scalar_sin(scalard(vector_get_x(input)));
-		scalard y = scalar_sin(scalard(vector_get_y(input)));
-		scalard z = scalar_sin(scalard(vector_get_z(input)));
-		scalard w = scalar_sin(scalard(vector_get_w(input)));
+		scalard x = scalar_sin(vector_get_x_as_scalar(input));
+		scalard y = scalar_sin(vector_get_y_as_scalar(input));
+		scalard z = scalar_sin(vector_get_z_as_scalar(input));
+		scalard w = scalar_sin(vector_get_w_as_scalar(input));
 		return vector_set(x, y, z, w);
 	}
 
@@ -3040,10 +3040,10 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	RTM_DISABLE_SECURITY_COOKIE_CHECK inline vector4d RTM_SIMD_CALL vector_asin(vector4d_arg0 input) RTM_NO_EXCEPT
 	{
-		scalard x = scalar_asin(scalard(vector_get_x(input)));
-		scalard y = scalar_asin(scalard(vector_get_y(input)));
-		scalard z = scalar_asin(scalard(vector_get_z(input)));
-		scalard w = scalar_asin(scalard(vector_get_w(input)));
+		scalard x = scalar_asin(vector_get_x_as_scalar(input));
+		scalard y = scalar_asin(vector_get_y_as_scalar(input));
+		scalard z = scalar_asin(vector_get_z_as_scalar(input));
+		scalard w = scalar_asin(vector_get_w_as_scalar(input));
 		return vector_set(x, y, z, w);
 	}
 
@@ -3052,10 +3052,10 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	RTM_DISABLE_SECURITY_COOKIE_CHECK inline vector4d RTM_SIMD_CALL vector_cos(vector4d_arg0 input) RTM_NO_EXCEPT
 	{
-		scalard x = scalar_cos(scalard(vector_get_x(input)));
-		scalard y = scalar_cos(scalard(vector_get_y(input)));
-		scalard z = scalar_cos(scalard(vector_get_z(input)));
-		scalard w = scalar_cos(scalard(vector_get_w(input)));
+		scalard x = scalar_cos(vector_get_x_as_scalar(input));
+		scalard y = scalar_cos(vector_get_y_as_scalar(input));
+		scalard z = scalar_cos(vector_get_z_as_scalar(input));
+		scalard w = scalar_cos(vector_get_w_as_scalar(input));
 		return vector_set(x, y, z, w);
 	}
 
@@ -3065,10 +3065,10 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	RTM_DISABLE_SECURITY_COOKIE_CHECK inline vector4d RTM_SIMD_CALL vector_acos(vector4d_arg0 input) RTM_NO_EXCEPT
 	{
-		scalard x = scalar_acos(scalard(vector_get_x(input)));
-		scalard y = scalar_acos(scalard(vector_get_y(input)));
-		scalard z = scalar_acos(scalard(vector_get_z(input)));
-		scalard w = scalar_acos(scalard(vector_get_w(input)));
+		scalard x = scalar_acos(vector_get_x_as_scalar(input));
+		scalard y = scalar_acos(vector_get_y_as_scalar(input));
+		scalard z = scalar_acos(vector_get_z_as_scalar(input));
+		scalard w = scalar_acos(vector_get_w_as_scalar(input));
 		return vector_set(x, y, z, w);
 	}
 
@@ -3077,10 +3077,10 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	RTM_DISABLE_SECURITY_COOKIE_CHECK inline void RTM_SIMD_CALL vector_sincos(vector4d_arg0 input, vector4d& out_sine, vector4d& out_cosine) RTM_NO_EXCEPT
 	{
-		const vector4d x = scalar_sincos(scalard(vector_get_x(input)));
-		const vector4d y = scalar_sincos(scalard(vector_get_y(input)));
-		const vector4d z = scalar_sincos(scalard(vector_get_z(input)));
-		const vector4d w = scalar_sincos(scalard(vector_get_w(input)));
+		const vector4d x = scalar_sincos(vector_get_x_as_scalar(input));
+		const vector4d y = scalar_sincos(vector_get_y_as_scalar(input));
+		const vector4d z = scalar_sincos(vector_get_z_as_scalar(input));
+		const vector4d w = scalar_sincos(vector_get_w_as_scalar(input));
 
 		const vector4d cos_xy = vector_mix<mix4::y, mix4::b, mix4::y, mix4::b>(x, y);
 		const vector4d cos_zw = vector_mix<mix4::y, mix4::b, mix4::y, mix4::b>(z, w);
@@ -3114,10 +3114,10 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	RTM_DISABLE_SECURITY_COOKIE_CHECK inline vector4d RTM_SIMD_CALL vector_atan(vector4d_arg0 input) RTM_NO_EXCEPT
 	{
-		scalard x = scalar_atan(scalard(vector_get_x(input)));
-		scalard y = scalar_atan(scalard(vector_get_y(input)));
-		scalard z = scalar_atan(scalard(vector_get_z(input)));
-		scalard w = scalar_atan(scalard(vector_get_w(input)));
+		scalard x = scalar_atan(vector_get_x_as_scalar(input));
+		scalard y = scalar_atan(vector_get_y_as_scalar(input));
+		scalard z = scalar_atan(vector_get_z_as_scalar(input));
+		scalard w = scalar_atan(vector_get_w_as_scalar(input));
 		return vector_set(x, y, z, w);
 	}
 
@@ -3129,10 +3129,10 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	RTM_DISABLE_SECURITY_COOKIE_CHECK inline vector4d RTM_SIMD_CALL vector_atan2(vector4d_arg0 y, vector4d_arg1 x) RTM_NO_EXCEPT
 	{
-		scalard x_ = scalar_atan2(scalard(vector_get_x(y)), scalard(vector_get_x(x)));
-		scalard y_ = scalar_atan2(scalard(vector_get_y(y)), scalard(vector_get_y(x)));
-		scalard z_ = scalar_atan2(scalard(vector_get_z(y)), scalard(vector_get_z(x)));
-		scalard w_ = scalar_atan2(scalard(vector_get_w(y)), scalard(vector_get_w(x)));
+		scalard x_ = scalar_atan2(vector_get_x_as_scalar(y), vector_get_x_as_scalar(x));
+		scalard y_ = scalar_atan2(vector_get_y_as_scalar(y), vector_get_y_as_scalar(x));
+		scalard z_ = scalar_atan2(vector_get_z_as_scalar(y), vector_get_z_as_scalar(x));
+		scalard w_ = scalar_atan2(vector_get_w_as_scalar(y), vector_get_w_as_scalar(x));
 		return vector_set(x_, y_, z_, w_);
 	}
 

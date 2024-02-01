@@ -147,9 +147,9 @@ namespace rtm
 		const vector4f translation = input.w_axis;
 
 		// First, we compute our absolute scale values
-		const scalarf x_scale = vector_length3(input.x_axis);
-		const scalarf y_scale = vector_length3(input.y_axis);
-		const scalarf z_scale = vector_length3(input.z_axis);
+		const scalarf x_scale = vector_length3_as_scalar(input.x_axis);
+		const scalarf y_scale = vector_length3_as_scalar(input.y_axis);
+		const scalarf z_scale = vector_length3_as_scalar(input.z_axis);
 		vector4f scale = vector_set(x_scale, y_scale, z_scale);
 
 		// Grab a pointer to the first scale value, we'll index into it
