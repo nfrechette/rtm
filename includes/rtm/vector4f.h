@@ -646,8 +646,8 @@ namespace rtm
 	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE scalarf RTM_SIMD_CALL vector_get_min_component_as_scalar(vector4f_arg0 input) RTM_NO_EXCEPT
 	{
 #if defined(RTM_SSE2_INTRINSICS)
-		__m128 zwzw = _mm_movehl_ps(value, value);
-		__m128 xz_yw_zz_ww = _mm_min_ps(value, zwzw);
+		__m128 zwzw = _mm_movehl_ps(input, input);
+		__m128 xz_yw_zz_ww = _mm_min_ps(input, zwzw);
 		__m128 yw_yw_yw_yw = _mm_shuffle_ps(xz_yw_zz_ww, xz_yw_zz_ww, _MM_SHUFFLE(1, 1, 1, 1));
 		return scalarf{ _mm_min_ps(xz_yw_zz_ww, yw_yw_yw_yw) };
 #else
@@ -669,8 +669,8 @@ namespace rtm
 	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE scalarf RTM_SIMD_CALL vector_get_max_component_as_scalar(vector4f_arg0 input) RTM_NO_EXCEPT
 	{
 #if defined(RTM_SSE2_INTRINSICS)
-		__m128 zwzw = _mm_movehl_ps(value, value);
-		__m128 xz_yw_zz_ww = _mm_max_ps(value, zwzw);
+		__m128 zwzw = _mm_movehl_ps(input, input);
+		__m128 xz_yw_zz_ww = _mm_max_ps(input, zwzw);
 		__m128 yw_yw_yw_yw = _mm_shuffle_ps(xz_yw_zz_ww, xz_yw_zz_ww, _MM_SHUFFLE(1, 1, 1, 1));
 		return scalarf{ _mm_max_ps(xz_yw_zz_ww, yw_yw_yw_yw) };
 #else

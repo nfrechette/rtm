@@ -99,7 +99,7 @@ namespace rtm
 	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE scalarf RTM_SIMD_CALL scalar_load_as_scalar(const float* input) RTM_NO_EXCEPT
 	{
 #if defined(RTM_SSE2_INTRINSICS)
-		return scalarf{ _mm_load_ss(ptr) };
+		return scalarf{ _mm_load_ss(input) };
 #else
 		return scalar_load(input);
 #endif
@@ -119,7 +119,7 @@ namespace rtm
 	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE scalard RTM_SIMD_CALL scalar_load_as_scalar(const double* input) RTM_NO_EXCEPT
 	{
 #if defined(RTM_SSE2_INTRINSICS)
-		return scalard{ _mm_load_sd(ptr) };
+		return scalard{ _mm_load_sd(input) };
 #else
 		return scalar_load(input);
 #endif

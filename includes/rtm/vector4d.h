@@ -583,7 +583,7 @@ namespace rtm
 	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE scalard RTM_SIMD_CALL vector_get_min_component_as_scalar(vector4d_arg0 input) RTM_NO_EXCEPT
 	{
 #if defined(RTM_SSE2_INTRINSICS)
-		__m128d xz_yw = _mm_min_pd(value.xy, value.zw);
+		__m128d xz_yw = _mm_min_pd(input.xy, input.zw);
 		__m128d yw_yw = _mm_shuffle_pd(xz_yw, xz_yw, 1);
 		return scalard{ _mm_min_pd(xz_yw, yw_yw) };
 #else
@@ -605,7 +605,7 @@ namespace rtm
 	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE scalard RTM_SIMD_CALL vector_get_max_component_as_scalar(vector4d_arg0 input) RTM_NO_EXCEPT
 	{
 #if defined(RTM_SSE2_INTRINSICS)
-		__m128d xz_yw = _mm_max_pd(value.xy, value.zw);
+		__m128d xz_yw = _mm_max_pd(input.xy, input.zw);
 		__m128d yw_yw = _mm_shuffle_pd(xz_yw, xz_yw, 1);
 		return scalard{ _mm_max_pd(xz_yw, yw_yw) };
 #else
