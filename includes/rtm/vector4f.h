@@ -1684,8 +1684,7 @@ namespace rtm
 		float32x2_t x2y2z2w2 = vpadd_f32(x2z2_y2w2, x2z2_y2w2);
 		return vcombine_f32(x2y2z2w2, x2y2z2w2);
 #else
-		scalarf result = *this;
-		return vector_set(result);
+		return vector_set(vector_dot_as_scalar(lhs, rhs));
 #endif
 	}
 
@@ -1797,8 +1796,7 @@ namespace rtm
 		float32x2_t x2y2_x2y2 = vpadd_f32(x2_y2, x2_y2);
 		return vcombine_f32(x2y2_x2y2, x2y2_x2y2);
 #else
-		scalarf result = *this;
-		return vector_set(result);
+		return vector_set(vector_dot2_as_scalar(lhs, rhs));
 #endif
 	}
 
@@ -1941,8 +1939,7 @@ namespace rtm
 		float32x2_t x2y2z2_x2y2z2 = vadd_f32(x2y2_x2y2, z2_z2);
 		return vdupq_lane_f32(x2y2z2_x2y2z2, 0);
 #else
-		scalarf result = *this;
-		return vector_set(result);
+		return vector_set(vector_dot3_as_scalar(lhs, rhs));
 #endif
 	}
 
