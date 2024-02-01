@@ -647,9 +647,9 @@ void test_vector4_arithmetic_impl(const FloatType threshold)
 	const FloatType scalar_dot3_result = scalar_dot3<Vector4Type, FloatType>(test_value10, test_value11);
 	const FloatType vector_dot3_result = vector_dot3(test_value10, test_value11);
 	CHECK(scalar_near_equal(vector_dot3_result, scalar_dot3_result, threshold));
-	const ScalarType vector_dot3_result_scalar = vector_dot3(test_value10, test_value11);
+	const ScalarType vector_dot3_result_scalar = vector_dot3_as_scalar(test_value10, test_value11);
 	CHECK(scalar_equal(vector_dot3_result, scalar_cast(vector_dot3_result_scalar)));
-	const Vector4Type vector_dot3_result_vec = vector_dot3(test_value10, test_value11);
+	const Vector4Type vector_dot3_result_vec = vector_dot3_as_vector(test_value10, test_value11);
 	CHECK(scalar_equal(vector_dot3_result, (FloatType)vector_get_x(vector_dot3_result_vec)));
 	CHECK(scalar_equal(vector_dot3_result, (FloatType)vector_get_y(vector_dot3_result_vec)));
 	CHECK(scalar_equal(vector_dot3_result, (FloatType)vector_get_z(vector_dot3_result_vec)));
@@ -658,22 +658,22 @@ void test_vector4_arithmetic_impl(const FloatType threshold)
 	const FloatType scalar_dot2_result = scalar_dot2<Vector4Type, FloatType>(test_value10, test_value11);
 	const FloatType vector_dot2_result = vector_dot2(test_value10, test_value11);
 	CHECK(scalar_near_equal(vector_dot2_result, scalar_dot2_result, threshold));
-	const ScalarType vector_dot2_result_scalar = vector_dot2(test_value10, test_value11);
+	const ScalarType vector_dot2_result_scalar = vector_dot2_as_scalar(test_value10, test_value11);
 	CHECK(scalar_equal(vector_dot2_result, scalar_cast(vector_dot2_result_scalar)));
-	const Vector4Type vector_dot2_result_vec = vector_dot2(test_value10, test_value11);
+	const Vector4Type vector_dot2_result_vec = vector_dot2_as_vector(test_value10, test_value11);
 	CHECK(scalar_equal(vector_dot2_result, (FloatType)vector_get_x(vector_dot2_result_vec)));
 	CHECK(scalar_equal(vector_dot2_result, (FloatType)vector_get_y(vector_dot2_result_vec)));
 	CHECK(scalar_equal(vector_dot2_result, (FloatType)vector_get_z(vector_dot2_result_vec)));
 	CHECK(scalar_equal(vector_dot2_result, (FloatType)vector_get_w(vector_dot2_result_vec)));
 
-	const ScalarType vector_sdot_result = vector_dot(test_value10, test_value11);
+	const ScalarType vector_sdot_result = vector_dot_as_scalar(test_value10, test_value11);
 	CHECK(scalar_near_equal(scalar_cast(vector_sdot_result), scalar_dot_result, threshold));
 
-	const Vector4Type vector_vdot_result = vector_dot(test_value10, test_value11);
-	CHECK(scalar_near_equal(vector_get_x(vector_vdot_result), scalar_dot_result, threshold));
-	CHECK(scalar_near_equal(vector_get_y(vector_vdot_result), scalar_dot_result, threshold));
-	CHECK(scalar_near_equal(vector_get_z(vector_vdot_result), scalar_dot_result, threshold));
-	CHECK(scalar_near_equal(vector_get_w(vector_vdot_result), scalar_dot_result, threshold));
+	const Vector4Type vector_vdot_result = vector_dot_as_vector(test_value10, test_value11);
+	CHECK(scalar_near_equal((FloatType)vector_get_x(vector_vdot_result), scalar_dot_result, threshold));
+	CHECK(scalar_near_equal((FloatType)vector_get_y(vector_vdot_result), scalar_dot_result, threshold));
+	CHECK(scalar_near_equal((FloatType)vector_get_z(vector_vdot_result), scalar_dot_result, threshold));
+	CHECK(scalar_near_equal((FloatType)vector_get_w(vector_vdot_result), scalar_dot_result, threshold));
 
 	const FloatType length_squared_threshold = FloatType(30.0);	// Input W has large values
 	CHECK(scalar_near_equal(scalar_dot4<Vector4Type, FloatType>(test_value0, test_value0), vector_length_squared(test_value0), length_squared_threshold));

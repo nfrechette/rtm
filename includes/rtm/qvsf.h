@@ -178,7 +178,7 @@ namespace rtm
 		{
 			// The second largest scale value is zero which means the two smallest axes are zero
 			// We'll use the largest axis and build an orthogonal basis around it
-			const vector4f largest_y_dot = vector_dot3(largest_scale_axis, identity3x3.y_axis);
+			const vector4f largest_y_dot = vector_dot3_as_vector(largest_scale_axis, identity3x3.y_axis);
 			const mask4f is_largest_parallel_to_y = vector_greater_equal(vector_abs(largest_y_dot), vector_set(1.0F - zero_scale_threshold));
 			const vector4f orthogonal_axis = vector_select(is_largest_parallel_to_y, identity3x3.z_axis, identity3x3.y_axis);
 
