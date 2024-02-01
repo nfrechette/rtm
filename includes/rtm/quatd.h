@@ -486,14 +486,14 @@ namespace rtm
 			RTM_DEPRECATED("Use 'as_scalar' suffix instead. To be removed in 2.4.")
 			RTM_DISABLE_SECURITY_COOKIE_CHECK inline RTM_SIMD_CALL operator scalard() const RTM_NO_EXCEPT
 			{
-				const scalard lhs_x = quat_get_x(lhs);
-				const scalard lhs_y = quat_get_y(lhs);
-				const scalard lhs_z = quat_get_z(lhs);
-				const scalard lhs_w = quat_get_w(lhs);
-				const scalard rhs_x = quat_get_x(rhs);
-				const scalard rhs_y = quat_get_y(rhs);
-				const scalard rhs_z = quat_get_z(rhs);
-				const scalard rhs_w = quat_get_w(rhs);
+				const scalard lhs_x = quat_get_x_as_scalar(lhs);
+				const scalard lhs_y = quat_get_y_as_scalar(lhs);
+				const scalard lhs_z = quat_get_z_as_scalar(lhs);
+				const scalard lhs_w = quat_get_w_as_scalar(lhs);
+				const scalard rhs_x = quat_get_x_as_scalar(rhs);
+				const scalard rhs_y = quat_get_y_as_scalar(rhs);
+				const scalard rhs_z = quat_get_z_as_scalar(rhs);
+				const scalard rhs_w = quat_get_w_as_scalar(rhs);
 				const scalard xx = scalar_mul(lhs_x, rhs_x);
 				const scalard yy = scalar_mul(lhs_y, rhs_y);
 				const scalard zz = scalar_mul(lhs_z, rhs_z);
@@ -571,7 +571,7 @@ namespace rtm
 			RTM_DEPRECATED("Use 'as_scalar' suffix instead. To be removed in 2.4.")
 			RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE RTM_SIMD_CALL operator scalard() const RTM_NO_EXCEPT
 			{
-				const scalard len_sq = quat_length_squared(input);
+				const scalard len_sq = quat_length_squared_as_scalar(input);
 				return scalar_sqrt(len_sq);
 			}
 #endif
@@ -617,7 +617,7 @@ namespace rtm
 			RTM_DEPRECATED("Use 'as_scalar' suffix instead. To be removed in 2.4.")
 			RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE RTM_SIMD_CALL operator scalard() const RTM_NO_EXCEPT
 			{
-				const scalard len_sq = quat_length_squared(input);
+				const scalard len_sq = quat_length_squared_as_scalar(input);
 				return scalar_sqrt_reciprocal(len_sq);
 			}
 #endif

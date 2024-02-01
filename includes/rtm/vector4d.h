@@ -376,10 +376,10 @@ namespace rtm
 				switch (component)
 				{
 					default:
-					case component4::x:	return vector_get_x(input);
-					case component4::y:	return vector_get_y(input);
-					case component4::z:	return vector_get_z(input);
-					case component4::w:	return vector_get_w(input);
+					case component4::x:	return vector_get_x_as_scalar(input);
+					case component4::y:	return vector_get_y_as_scalar(input);
+					case component4::z:	return vector_get_z_as_scalar(input);
+					case component4::w:	return vector_get_w_as_scalar(input);
 				}
 			}
 #endif
@@ -489,10 +489,10 @@ namespace rtm
 				switch (component)
 				{
 					default:
-					case component4::x:	return vector_get_x(input);
-					case component4::y:	return vector_get_y(input);
-					case component4::z:	return vector_get_z(input);
-					case component4::w:	return vector_get_w(input);
+					case component4::x:	return vector_get_x_as_scalar(input);
+					case component4::y:	return vector_get_y_as_scalar(input);
+					case component4::z:	return vector_get_z_as_scalar(input);
+					case component4::w:	return vector_get_w_as_scalar(input);
 				}
 			}
 #endif
@@ -1345,14 +1345,14 @@ namespace rtm
 			RTM_DEPRECATED("Use 'as_scalar' suffix instead. To be removed in 2.4.")
 			RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE RTM_SIMD_CALL operator scalard() const RTM_NO_EXCEPT
 			{
-				const scalard lhs_x = vector_get_x(lhs);
-				const scalard lhs_y = vector_get_y(lhs);
-				const scalard lhs_z = vector_get_z(lhs);
-				const scalard lhs_w = vector_get_w(lhs);
-				const scalard rhs_x = vector_get_x(rhs);
-				const scalard rhs_y = vector_get_y(rhs);
-				const scalard rhs_z = vector_get_z(rhs);
-				const scalard rhs_w = vector_get_w(rhs);
+				const scalard lhs_x = vector_get_x_as_scalar(lhs);
+				const scalard lhs_y = vector_get_y_as_scalar(lhs);
+				const scalard lhs_z = vector_get_z_as_scalar(lhs);
+				const scalard lhs_w = vector_get_w_as_scalar(lhs);
+				const scalard rhs_x = vector_get_x_as_scalar(rhs);
+				const scalard rhs_y = vector_get_y_as_scalar(rhs);
+				const scalard rhs_z = vector_get_z_as_scalar(rhs);
+				const scalard rhs_w = vector_get_w_as_scalar(rhs);
 				const scalard xx = scalar_mul(lhs_x, rhs_x);
 				const scalard yy = scalar_mul(lhs_y, rhs_y);
 				const scalard zz = scalar_mul(lhs_z, rhs_z);
@@ -1364,7 +1364,7 @@ namespace rtm
 			RTM_DEPRECATED("Use 'as_vector' suffix instead. To be removed in 2.4.")
 			RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE RTM_SIMD_CALL operator vector4d() const RTM_NO_EXCEPT
 			{
-				const scalard dot = *this;
+				const double dot = *this;
 				return vector_set(dot);
 			}
 
@@ -1443,7 +1443,7 @@ namespace rtm
 			RTM_DEPRECATED("Use 'as_vector' suffix instead. To be removed in 2.4.")
 			RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE RTM_SIMD_CALL operator vector4d() const RTM_NO_EXCEPT
 			{
-				const scalard dot = *this;
+				const double dot = *this;
 				return vector_set(dot);
 			}
 
@@ -1520,7 +1520,7 @@ namespace rtm
 			RTM_DEPRECATED("Use 'as_vector' suffix instead. To be removed in 2.4.")
 			RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE RTM_SIMD_CALL operator vector4d() const RTM_NO_EXCEPT
 			{
-				const scalard dot = *this;
+				const double dot = *this;
 				return vector_set(dot);
 			}
 
@@ -1653,7 +1653,7 @@ namespace rtm
 			RTM_DEPRECATED("Use 'as_scalar' suffix instead. To be removed in 2.4.")
 			RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE RTM_SIMD_CALL operator scalard() const RTM_NO_EXCEPT
 			{
-				const scalard len_sq = vector_length_squared(input);
+				const scalard len_sq = vector_length_squared_as_scalar(input);
 				return scalar_sqrt(len_sq);
 			}
 #endif
@@ -1699,7 +1699,7 @@ namespace rtm
 			RTM_DEPRECATED("Use 'as_scalar' suffix instead. To be removed in 2.4.")
 			RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE RTM_SIMD_CALL operator scalard() const RTM_NO_EXCEPT
 			{
-				const scalard len_sq = vector_length_squared3(input);
+				const scalard len_sq = vector_length_squared3_as_scalar(input);
 				return scalar_sqrt(len_sq);
 			}
 #endif
@@ -1745,7 +1745,7 @@ namespace rtm
 			RTM_DEPRECATED("Use 'as_scalar' suffix instead. To be removed in 2.4.")
 			RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE RTM_SIMD_CALL operator scalard() const RTM_NO_EXCEPT
 			{
-				const scalard len_sq = vector_length_squared(input);
+				const scalard len_sq = vector_length_squared_as_scalar(input);
 				return scalar_sqrt_reciprocal(len_sq);
 			}
 #endif
@@ -1791,7 +1791,7 @@ namespace rtm
 			RTM_DEPRECATED("Use 'as_scalar' suffix instead. To be removed in 2.4.")
 			RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE RTM_SIMD_CALL operator scalard() const RTM_NO_EXCEPT
 			{
-				const scalard len_sq = vector_length_squared2(input);
+				const scalard len_sq = vector_length_squared2_as_scalar(input);
 				return scalar_sqrt_reciprocal(len_sq);
 			}
 #endif
@@ -1837,7 +1837,7 @@ namespace rtm
 			RTM_DEPRECATED("Use 'as_scalar' suffix instead. To be removed in 2.4.")
 			RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE RTM_SIMD_CALL operator scalard() const RTM_NO_EXCEPT
 			{
-				const scalard len_sq = vector_length_squared3(input);
+				const scalard len_sq = vector_length_squared3_as_scalar(input);
 				return scalar_sqrt_reciprocal(len_sq);
 			}
 #endif
