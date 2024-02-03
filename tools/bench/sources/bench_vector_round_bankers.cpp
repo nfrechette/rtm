@@ -30,10 +30,10 @@ using namespace rtm;
 
 RTM_FORCE_NOINLINE vector4f RTM_SIMD_CALL vector_round_bankers_scalar(vector4f_arg0 input) RTM_NO_EXCEPT
 {
-	scalarf x = scalar_round_bankers(scalarf(vector_get_x(input)));
-	scalarf y = scalar_round_bankers(scalarf(vector_get_y(input)));
-	scalarf z = scalar_round_bankers(scalarf(vector_get_z(input)));
-	scalarf w = scalar_round_bankers(scalarf(vector_get_w(input)));
+	scalarf x = scalar_round_bankers(vector_get_x_as_scalar(input));
+	scalarf y = scalar_round_bankers(vector_get_y_as_scalar(input));
+	scalarf z = scalar_round_bankers(vector_get_z_as_scalar(input));
+	scalarf w = scalar_round_bankers(vector_get_w_as_scalar(input));
 	return vector_set(x, y, z, w);
 }
 
