@@ -126,9 +126,9 @@ namespace rtm
 		// Negate the position to invert it
 		vector4f neg_position = vector_neg(position);
 
-		scalarf pos_x = vector_dot3(right_axis, neg_position);
-		scalarf pos_y = vector_dot3(up_axis, neg_position);
-		scalarf pos_z = vector_dot3(forward_axis, neg_position);
+		scalarf pos_x = vector_dot3_as_scalar(right_axis, neg_position);
+		scalarf pos_y = vector_dot3_as_scalar(up_axis, neg_position);
+		scalarf pos_z = vector_dot3_as_scalar(forward_axis, neg_position);
 		vector4f position_axis = vector_set(pos_x, pos_y, pos_z);
 
 		// Transpose in place to invert the rotation

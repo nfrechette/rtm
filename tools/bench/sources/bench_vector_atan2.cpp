@@ -30,10 +30,10 @@ using namespace rtm;
 
 RTM_FORCE_NOINLINE vector4f RTM_SIMD_CALL vector_atan2_scalar(vector4f_arg0 y, vector4f_arg1 x) RTM_NO_EXCEPT
 {
-	scalarf x_ = scalar_atan2(scalarf(vector_get_x(y)), scalarf(vector_get_x(x)));
-	scalarf y_ = scalar_atan2(scalarf(vector_get_y(y)), scalarf(vector_get_y(x)));
-	scalarf z = scalar_atan2(scalarf(vector_get_z(y)), scalarf(vector_get_z(x)));
-	scalarf w = scalar_atan2(scalarf(vector_get_w(y)), scalarf(vector_get_w(x)));
+	scalarf x_ = scalar_atan2(vector_get_x_as_scalar(y), vector_get_x_as_scalar(x));
+	scalarf y_ = scalar_atan2(vector_get_y_as_scalar(y), vector_get_y_as_scalar(x));
+	scalarf z = scalar_atan2(vector_get_z_as_scalar(y), vector_get_z_as_scalar(x));
+	scalarf w = scalar_atan2(vector_get_w_as_scalar(y), vector_get_w_as_scalar(x));
 	return vector_set(x_, y_, z, w);
 }
 

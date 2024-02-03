@@ -183,10 +183,10 @@ void test_vector4_getset_impl()
 	CHECK(FloatType(vector_get_z(vector_set(FloatType(0.0), FloatType(2.34), FloatType(-3.12), FloatType(10000.0)))) == FloatType(-3.12));
 	CHECK(FloatType(vector_get_w(vector_set(FloatType(0.0), FloatType(2.34), FloatType(-3.12), FloatType(10000.0)))) == FloatType(10000.0));
 
-	CHECK(scalar_cast(vector_get_x(vector_set(FloatType(0.0), FloatType(2.34), FloatType(-3.12), FloatType(10000.0)))) == FloatType(0.0));
-	CHECK(scalar_cast(vector_get_y(vector_set(FloatType(0.0), FloatType(2.34), FloatType(-3.12), FloatType(10000.0)))) == FloatType(2.34));
-	CHECK(scalar_cast(vector_get_z(vector_set(FloatType(0.0), FloatType(2.34), FloatType(-3.12), FloatType(10000.0)))) == FloatType(-3.12));
-	CHECK(scalar_cast(vector_get_w(vector_set(FloatType(0.0), FloatType(2.34), FloatType(-3.12), FloatType(10000.0)))) == FloatType(10000.0));
+	CHECK(scalar_cast(vector_get_x_as_scalar(vector_set(FloatType(0.0), FloatType(2.34), FloatType(-3.12), FloatType(10000.0)))) == FloatType(0.0));
+	CHECK(scalar_cast(vector_get_y_as_scalar(vector_set(FloatType(0.0), FloatType(2.34), FloatType(-3.12), FloatType(10000.0)))) == FloatType(2.34));
+	CHECK(scalar_cast(vector_get_z_as_scalar(vector_set(FloatType(0.0), FloatType(2.34), FloatType(-3.12), FloatType(10000.0)))) == FloatType(-3.12));
+	CHECK(scalar_cast(vector_get_w_as_scalar(vector_set(FloatType(0.0), FloatType(2.34), FloatType(-3.12), FloatType(10000.0)))) == FloatType(10000.0));
 
 	CHECK(FloatType(vector_get_x(vector_set(scalar_set(FloatType(0.0)), scalar_set(FloatType(2.34)), scalar_set(FloatType(-3.12)), scalar_set(FloatType(10000.0))))) == FloatType(0.0));
 	CHECK(FloatType(vector_get_y(vector_set(scalar_set(FloatType(0.0)), scalar_set(FloatType(2.34)), scalar_set(FloatType(-3.12)), scalar_set(FloatType(10000.0))))) == FloatType(2.34));
@@ -315,17 +315,17 @@ void test_vector4_getset_impl()
 	CHECK(FloatType(vector_get_component<component4::z>(vector_set(FloatType(0.0), FloatType(2.34), FloatType(-3.12), FloatType(10000.0)))) == FloatType(-3.12));
 	CHECK(FloatType(vector_get_component<component4::w>(vector_set(FloatType(0.0), FloatType(2.34), FloatType(-3.12), FloatType(10000.0)))) == FloatType(10000.0));
 
-	CHECK(scalar_cast(vector_get_component2<component2::x>(vector_set(FloatType(0.0), FloatType(2.34), FloatType(-3.12), FloatType(10000.0)))) == FloatType(0.0));
-	CHECK(scalar_cast(vector_get_component2<component2::y>(vector_set(FloatType(0.0), FloatType(2.34), FloatType(-3.12), FloatType(10000.0)))) == FloatType(2.34));
+	CHECK(scalar_cast(vector_get_component2_as_scalar<component2::x>(vector_set(FloatType(0.0), FloatType(2.34), FloatType(-3.12), FloatType(10000.0)))) == FloatType(0.0));
+	CHECK(scalar_cast(vector_get_component2_as_scalar<component2::y>(vector_set(FloatType(0.0), FloatType(2.34), FloatType(-3.12), FloatType(10000.0)))) == FloatType(2.34));
 
-	CHECK(scalar_cast(vector_get_component3<component3::x>(vector_set(FloatType(0.0), FloatType(2.34), FloatType(-3.12), FloatType(10000.0)))) == FloatType(0.0));
-	CHECK(scalar_cast(vector_get_component3<component3::y>(vector_set(FloatType(0.0), FloatType(2.34), FloatType(-3.12), FloatType(10000.0)))) == FloatType(2.34));
-	CHECK(scalar_cast(vector_get_component3<component3::z>(vector_set(FloatType(0.0), FloatType(2.34), FloatType(-3.12), FloatType(10000.0)))) == FloatType(-3.12));
+	CHECK(scalar_cast(vector_get_component3_as_scalar<component3::x>(vector_set(FloatType(0.0), FloatType(2.34), FloatType(-3.12), FloatType(10000.0)))) == FloatType(0.0));
+	CHECK(scalar_cast(vector_get_component3_as_scalar<component3::y>(vector_set(FloatType(0.0), FloatType(2.34), FloatType(-3.12), FloatType(10000.0)))) == FloatType(2.34));
+	CHECK(scalar_cast(vector_get_component3_as_scalar<component3::z>(vector_set(FloatType(0.0), FloatType(2.34), FloatType(-3.12), FloatType(10000.0)))) == FloatType(-3.12));
 
-	CHECK(scalar_cast(vector_get_component<component4::x>(vector_set(FloatType(0.0), FloatType(2.34), FloatType(-3.12), FloatType(10000.0)))) == FloatType(0.0));
-	CHECK(scalar_cast(vector_get_component<component4::y>(vector_set(FloatType(0.0), FloatType(2.34), FloatType(-3.12), FloatType(10000.0)))) == FloatType(2.34));
-	CHECK(scalar_cast(vector_get_component<component4::z>(vector_set(FloatType(0.0), FloatType(2.34), FloatType(-3.12), FloatType(10000.0)))) == FloatType(-3.12));
-	CHECK(scalar_cast(vector_get_component<component4::w>(vector_set(FloatType(0.0), FloatType(2.34), FloatType(-3.12), FloatType(10000.0)))) == FloatType(10000.0));
+	CHECK(scalar_cast(vector_get_component_as_scalar<component4::x>(vector_set(FloatType(0.0), FloatType(2.34), FloatType(-3.12), FloatType(10000.0)))) == FloatType(0.0));
+	CHECK(scalar_cast(vector_get_component_as_scalar<component4::y>(vector_set(FloatType(0.0), FloatType(2.34), FloatType(-3.12), FloatType(10000.0)))) == FloatType(2.34));
+	CHECK(scalar_cast(vector_get_component_as_scalar<component4::z>(vector_set(FloatType(0.0), FloatType(2.34), FloatType(-3.12), FloatType(10000.0)))) == FloatType(-3.12));
+	CHECK(scalar_cast(vector_get_component_as_scalar<component4::w>(vector_set(FloatType(0.0), FloatType(2.34), FloatType(-3.12), FloatType(10000.0)))) == FloatType(10000.0));
 
 	CHECK(FloatType(vector_get_component2(vector_set(FloatType(0.0), FloatType(2.34), FloatType(-3.12), FloatType(10000.0)), component2::x)) == FloatType(0.0));
 	CHECK(FloatType(vector_get_component2(vector_set(FloatType(0.0), FloatType(2.34), FloatType(-3.12), FloatType(10000.0)), component2::y)) == FloatType(2.34));
@@ -339,17 +339,17 @@ void test_vector4_getset_impl()
 	CHECK(FloatType(vector_get_component(vector_set(FloatType(0.0), FloatType(2.34), FloatType(-3.12), FloatType(10000.0)), component4::z)) == FloatType(-3.12));
 	CHECK(FloatType(vector_get_component(vector_set(FloatType(0.0), FloatType(2.34), FloatType(-3.12), FloatType(10000.0)), component4::w)) == FloatType(10000.0));
 
-	CHECK(scalar_cast(vector_get_component2(vector_set(FloatType(0.0), FloatType(2.34), FloatType(-3.12), FloatType(10000.0)), component2::x)) == FloatType(0.0));
-	CHECK(scalar_cast(vector_get_component2(vector_set(FloatType(0.0), FloatType(2.34), FloatType(-3.12), FloatType(10000.0)), component2::y)) == FloatType(2.34));
+	CHECK(scalar_cast(vector_get_component2_as_scalar(vector_set(FloatType(0.0), FloatType(2.34), FloatType(-3.12), FloatType(10000.0)), component2::x)) == FloatType(0.0));
+	CHECK(scalar_cast(vector_get_component2_as_scalar(vector_set(FloatType(0.0), FloatType(2.34), FloatType(-3.12), FloatType(10000.0)), component2::y)) == FloatType(2.34));
 
-	CHECK(scalar_cast(vector_get_component3(vector_set(FloatType(0.0), FloatType(2.34), FloatType(-3.12), FloatType(10000.0)), component3::x)) == FloatType(0.0));
-	CHECK(scalar_cast(vector_get_component3(vector_set(FloatType(0.0), FloatType(2.34), FloatType(-3.12), FloatType(10000.0)), component3::y)) == FloatType(2.34));
-	CHECK(scalar_cast(vector_get_component3(vector_set(FloatType(0.0), FloatType(2.34), FloatType(-3.12), FloatType(10000.0)), component3::z)) == FloatType(-3.12));
+	CHECK(scalar_cast(vector_get_component3_as_scalar(vector_set(FloatType(0.0), FloatType(2.34), FloatType(-3.12), FloatType(10000.0)), component3::x)) == FloatType(0.0));
+	CHECK(scalar_cast(vector_get_component3_as_scalar(vector_set(FloatType(0.0), FloatType(2.34), FloatType(-3.12), FloatType(10000.0)), component3::y)) == FloatType(2.34));
+	CHECK(scalar_cast(vector_get_component3_as_scalar(vector_set(FloatType(0.0), FloatType(2.34), FloatType(-3.12), FloatType(10000.0)), component3::z)) == FloatType(-3.12));
 
-	CHECK(scalar_cast(vector_get_component(vector_set(FloatType(0.0), FloatType(2.34), FloatType(-3.12), FloatType(10000.0)), component4::x)) == FloatType(0.0));
-	CHECK(scalar_cast(vector_get_component(vector_set(FloatType(0.0), FloatType(2.34), FloatType(-3.12), FloatType(10000.0)), component4::y)) == FloatType(2.34));
-	CHECK(scalar_cast(vector_get_component(vector_set(FloatType(0.0), FloatType(2.34), FloatType(-3.12), FloatType(10000.0)), component4::z)) == FloatType(-3.12));
-	CHECK(scalar_cast(vector_get_component(vector_set(FloatType(0.0), FloatType(2.34), FloatType(-3.12), FloatType(10000.0)), component4::w)) == FloatType(10000.0));
+	CHECK(scalar_cast(vector_get_component_as_scalar(vector_set(FloatType(0.0), FloatType(2.34), FloatType(-3.12), FloatType(10000.0)), component4::x)) == FloatType(0.0));
+	CHECK(scalar_cast(vector_get_component_as_scalar(vector_set(FloatType(0.0), FloatType(2.34), FloatType(-3.12), FloatType(10000.0)), component4::y)) == FloatType(2.34));
+	CHECK(scalar_cast(vector_get_component_as_scalar(vector_set(FloatType(0.0), FloatType(2.34), FloatType(-3.12), FloatType(10000.0)), component4::z)) == FloatType(-3.12));
+	CHECK(scalar_cast(vector_get_component_as_scalar(vector_set(FloatType(0.0), FloatType(2.34), FloatType(-3.12), FloatType(10000.0)), component4::w)) == FloatType(10000.0));
 
 	CHECK((vector_as_float_ptr_raw<Vector4Type, FloatType>(vector_load(&tmp.values[0]))[0] == tmp.values[0]));
 	CHECK((vector_as_float_ptr_raw<Vector4Type, FloatType>(vector_load(&tmp.values[0]))[1] == tmp.values[1]));
@@ -410,9 +410,9 @@ void test_vector4_getset_impl()
 	CHECK((FloatType)vector_get_min_component(test_value0) == FloatType(vector_get_z(test_value0)));
 	CHECK((FloatType)vector_get_min_component(test_value3) == FloatType(vector_get_y(test_value3)));
 	CHECK((FloatType)vector_get_max_component(test_value0) == FloatType(vector_get_w(test_value0)));
-	CHECK(scalar_equal(vector_get_min_component(test_value0), (ScalarType)vector_as_scalar(vector_dup_z(test_value0))));
-	CHECK(scalar_equal(vector_get_min_component(test_value3), (ScalarType)vector_as_scalar(vector_dup_y(test_value3))));
-	CHECK(scalar_equal(vector_get_max_component(test_value0), (ScalarType)vector_as_scalar(vector_dup_w(test_value0))));
+	CHECK(scalar_equal(vector_get_min_component_as_scalar(test_value0), (ScalarType)vector_as_scalar(vector_dup_z(test_value0))));
+	CHECK(scalar_equal(vector_get_min_component_as_scalar(test_value3), (ScalarType)vector_as_scalar(vector_dup_y(test_value3))));
+	CHECK(scalar_equal(vector_get_max_component_as_scalar(test_value0), (ScalarType)vector_as_scalar(vector_dup_w(test_value0))));
 
 	CHECK(vector_all_near_equal(vector_set_x(zero, FloatType(4.0)), vector_set(FloatType(4.0), FloatType(0.0), FloatType(0.0), FloatType(0.0)), FloatType(0.0)));
 	CHECK(vector_all_near_equal(vector_set_y(zero, FloatType(4.0)), vector_set(FloatType(0.0), FloatType(4.0), FloatType(0.0), FloatType(0.0)), FloatType(0.0)));
@@ -510,7 +510,7 @@ void test_vector4_arithmetic_impl(const FloatType threshold)
 	CHECK(scalar_near_equal(vector_get_y(vector_mul(test_value0, test_value1)), test_value0_flt[1] * test_value1_flt[1], threshold));
 	CHECK(scalar_near_equal(vector_get_z(vector_mul(test_value0, test_value1)), test_value0_flt[2] * test_value1_flt[2], threshold));
 	// We have a strange codegen bug with gcc5, use the Catch near equal impl instead
-	CHECK(scalar_cast(vector_get_w(vector_mul(test_value0, test_value1))) == Approx(test_value0_flt[3] * test_value1_flt[3]).margin(threshold));
+	CHECK(scalar_cast(vector_get_w_as_scalar(vector_mul(test_value0, test_value1))) == Approx(test_value0_flt[3] * test_value1_flt[3]).margin(threshold));
 
 	CHECK(scalar_near_equal(vector_get_x(vector_mul(test_value0, FloatType(2.34))), test_value0_flt[0] * FloatType(2.34), threshold));
 	CHECK(scalar_near_equal(vector_get_y(vector_mul(test_value0, FloatType(2.34))), test_value0_flt[1] * FloatType(2.34), threshold));
@@ -647,9 +647,9 @@ void test_vector4_arithmetic_impl(const FloatType threshold)
 	const FloatType scalar_dot3_result = scalar_dot3<Vector4Type, FloatType>(test_value10, test_value11);
 	const FloatType vector_dot3_result = vector_dot3(test_value10, test_value11);
 	CHECK(scalar_near_equal(vector_dot3_result, scalar_dot3_result, threshold));
-	const ScalarType vector_dot3_result_scalar = vector_dot3(test_value10, test_value11);
+	const ScalarType vector_dot3_result_scalar = vector_dot3_as_scalar(test_value10, test_value11);
 	CHECK(scalar_equal(vector_dot3_result, scalar_cast(vector_dot3_result_scalar)));
-	const Vector4Type vector_dot3_result_vec = vector_dot3(test_value10, test_value11);
+	const Vector4Type vector_dot3_result_vec = vector_dot3_as_vector(test_value10, test_value11);
 	CHECK(scalar_equal(vector_dot3_result, (FloatType)vector_get_x(vector_dot3_result_vec)));
 	CHECK(scalar_equal(vector_dot3_result, (FloatType)vector_get_y(vector_dot3_result_vec)));
 	CHECK(scalar_equal(vector_dot3_result, (FloatType)vector_get_z(vector_dot3_result_vec)));
@@ -658,50 +658,50 @@ void test_vector4_arithmetic_impl(const FloatType threshold)
 	const FloatType scalar_dot2_result = scalar_dot2<Vector4Type, FloatType>(test_value10, test_value11);
 	const FloatType vector_dot2_result = vector_dot2(test_value10, test_value11);
 	CHECK(scalar_near_equal(vector_dot2_result, scalar_dot2_result, threshold));
-	const ScalarType vector_dot2_result_scalar = vector_dot2(test_value10, test_value11);
+	const ScalarType vector_dot2_result_scalar = vector_dot2_as_scalar(test_value10, test_value11);
 	CHECK(scalar_equal(vector_dot2_result, scalar_cast(vector_dot2_result_scalar)));
-	const Vector4Type vector_dot2_result_vec = vector_dot2(test_value10, test_value11);
+	const Vector4Type vector_dot2_result_vec = vector_dot2_as_vector(test_value10, test_value11);
 	CHECK(scalar_equal(vector_dot2_result, (FloatType)vector_get_x(vector_dot2_result_vec)));
 	CHECK(scalar_equal(vector_dot2_result, (FloatType)vector_get_y(vector_dot2_result_vec)));
 	CHECK(scalar_equal(vector_dot2_result, (FloatType)vector_get_z(vector_dot2_result_vec)));
 	CHECK(scalar_equal(vector_dot2_result, (FloatType)vector_get_w(vector_dot2_result_vec)));
 
-	const ScalarType vector_sdot_result = vector_dot(test_value10, test_value11);
+	const ScalarType vector_sdot_result = vector_dot_as_scalar(test_value10, test_value11);
 	CHECK(scalar_near_equal(scalar_cast(vector_sdot_result), scalar_dot_result, threshold));
 
-	const Vector4Type vector_vdot_result = vector_dot(test_value10, test_value11);
-	CHECK(scalar_near_equal(vector_get_x(vector_vdot_result), scalar_dot_result, threshold));
-	CHECK(scalar_near_equal(vector_get_y(vector_vdot_result), scalar_dot_result, threshold));
-	CHECK(scalar_near_equal(vector_get_z(vector_vdot_result), scalar_dot_result, threshold));
-	CHECK(scalar_near_equal(vector_get_w(vector_vdot_result), scalar_dot_result, threshold));
+	const Vector4Type vector_vdot_result = vector_dot_as_vector(test_value10, test_value11);
+	CHECK(scalar_near_equal((FloatType)vector_get_x(vector_vdot_result), scalar_dot_result, threshold));
+	CHECK(scalar_near_equal((FloatType)vector_get_y(vector_vdot_result), scalar_dot_result, threshold));
+	CHECK(scalar_near_equal((FloatType)vector_get_z(vector_vdot_result), scalar_dot_result, threshold));
+	CHECK(scalar_near_equal((FloatType)vector_get_w(vector_vdot_result), scalar_dot_result, threshold));
 
 	const FloatType length_squared_threshold = FloatType(30.0);	// Input W has large values
 	CHECK(scalar_near_equal(scalar_dot4<Vector4Type, FloatType>(test_value0, test_value0), vector_length_squared(test_value0), length_squared_threshold));
-	CHECK(scalar_near_equal(scalar_dot4<Vector4Type, FloatType>(test_value0, test_value0), scalar_cast(vector_length_squared(test_value0)), length_squared_threshold));
+	CHECK(scalar_near_equal(scalar_dot4<Vector4Type, FloatType>(test_value0, test_value0), scalar_cast(vector_length_squared_as_scalar(test_value0)), length_squared_threshold));
 	const FloatType vector_length_squared3_ref = scalar_dot3<Vector4Type, FloatType>(test_value0, test_value0);
 	const FloatType vector_length_squared3_result = vector_length_squared3(test_value0);
 	CHECK(scalar_near_equal(vector_length_squared3_ref, vector_length_squared3_result, threshold));
-	const ScalarType vector_length_squared3_result_scalar = vector_length_squared3(test_value0);
+	const ScalarType vector_length_squared3_result_scalar = vector_length_squared3_as_scalar(test_value0);
 	CHECK(scalar_equal(vector_length_squared3_result, scalar_cast(vector_length_squared3_result_scalar)));
 
 	CHECK(scalar_near_equal(rtm::scalar_sqrt(scalar_dot4<Vector4Type, FloatType>(test_value0, test_value0)), vector_length(test_value0), threshold));
-	CHECK(scalar_near_equal(rtm::scalar_sqrt(scalar_dot4<Vector4Type, FloatType>(test_value0, test_value0)), scalar_cast(vector_length(test_value0)), threshold));
+	CHECK(scalar_near_equal(rtm::scalar_sqrt(scalar_dot4<Vector4Type, FloatType>(test_value0, test_value0)), scalar_cast(vector_length_as_scalar(test_value0)), threshold));
 	const FloatType vector_length3_result = vector_length3(test_value0);
 	CHECK(scalar_near_equal(rtm::scalar_sqrt(scalar_dot3<Vector4Type, FloatType>(test_value0, test_value0)), vector_length3_result, threshold));
-	const ScalarType vector_length3_result_scalar = vector_length3(test_value0);
+	const ScalarType vector_length3_result_scalar = vector_length3_as_scalar(test_value0);
 	CHECK(scalar_equal(vector_length3_result, scalar_cast(vector_length3_result_scalar)));
 
 	CHECK(scalar_near_equal(rtm::scalar_sqrt_reciprocal(scalar_dot4<Vector4Type, FloatType>(test_value0, test_value0)), vector_length_reciprocal(test_value0), threshold));
-	CHECK(scalar_near_equal(rtm::scalar_sqrt_reciprocal(scalar_dot4<Vector4Type, FloatType>(test_value0, test_value0)), scalar_cast(vector_length_reciprocal(test_value0)), threshold));
+	CHECK(scalar_near_equal(rtm::scalar_sqrt_reciprocal(scalar_dot4<Vector4Type, FloatType>(test_value0, test_value0)), scalar_cast(vector_length_reciprocal_as_scalar(test_value0)), threshold));
 	CHECK(scalar_near_equal(rtm::scalar_sqrt_reciprocal(scalar_dot3<Vector4Type, FloatType>(test_value0, test_value0)), vector_length_reciprocal3(test_value0), threshold));
-	CHECK(scalar_near_equal(rtm::scalar_sqrt_reciprocal(scalar_dot3<Vector4Type, FloatType>(test_value0, test_value0)), scalar_cast(vector_length_reciprocal3(test_value0)), threshold));
+	CHECK(scalar_near_equal(rtm::scalar_sqrt_reciprocal(scalar_dot3<Vector4Type, FloatType>(test_value0, test_value0)), scalar_cast(vector_length_reciprocal3_as_scalar(test_value0)), threshold));
 	CHECK(scalar_near_equal(rtm::scalar_sqrt_reciprocal(scalar_dot2<Vector4Type, FloatType>(test_value0, test_value0)), vector_length_reciprocal2(test_value0), threshold));
-	CHECK(scalar_near_equal(rtm::scalar_sqrt_reciprocal(scalar_dot2<Vector4Type, FloatType>(test_value0, test_value0)), scalar_cast(vector_length_reciprocal2(test_value0)), threshold));
+	CHECK(scalar_near_equal(rtm::scalar_sqrt_reciprocal(scalar_dot2<Vector4Type, FloatType>(test_value0, test_value0)), scalar_cast(vector_length_reciprocal2_as_scalar(test_value0)), threshold));
 
 	const Vector4Type test_value_diff = vector_sub(test_value0, test_value1);
 	const FloatType vector_distance3_result = vector_distance3(test_value0, test_value1);
 	CHECK(scalar_near_equal(rtm::scalar_sqrt(scalar_dot3<Vector4Type, FloatType>(test_value_diff, test_value_diff)), vector_distance3_result, threshold));
-	const ScalarType vector_distance3_result_scalar = vector_distance3(test_value0, test_value1);
+	const ScalarType vector_distance3_result_scalar = vector_distance3_as_scalar(test_value0, test_value1);
 	CHECK(scalar_equal(vector_distance3_result, scalar_cast(vector_distance3_result_scalar)));
 
 	const Vector4Type scalar_normalize2_result = scalar_normalize2<Vector4Type, FloatType>(test_value0, zero, threshold);

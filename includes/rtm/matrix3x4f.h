@@ -148,9 +148,9 @@ namespace rtm
 		const float wy = quat_get_w(quat) * y2;
 		const float wz = quat_get_w(quat) * z2;
 
-		const scalarf scale_x = vector_get_x(scale);
-		const scalarf scale_y = vector_get_y(scale);
-		const scalarf scale_z = vector_get_z(scale);
+		const scalarf scale_x = vector_get_x_as_scalar(scale);
+		const scalarf scale_y = vector_get_y_as_scalar(scale);
+		const scalarf scale_z = vector_get_z_as_scalar(scale);
 
 		const vector4f x_axis = vector_mul(vector_set(1.0F - (yy + zz), xy + wz, xz - wy, 0.0F), scale_x);
 		const vector4f y_axis = vector_mul(vector_set(xy - wz, 1.0F - (xx + zz), yz + wx, 0.0F), scale_y);
@@ -233,6 +233,21 @@ namespace rtm
 			case axis4::y:	return vector_get_component3(input.y_axis, component);
 			case axis4::z:	return vector_get_component3(input.z_axis, component);
 			case axis4::w:	return vector_get_component3(input.w_axis, component);
+		}
+	}
+
+	//////////////////////////////////////////////////////////////////////////
+	// Returns the desired 3x4 matrix component from the specified axis.
+	//////////////////////////////////////////////////////////////////////////
+	RTM_DISABLE_SECURITY_COOKIE_CHECK inline scalarf RTM_SIMD_CALL matrix_get_component_as_scalar(matrix3x4f_arg0 input, axis4 axis, component3 component) RTM_NO_EXCEPT
+	{
+		switch (axis)
+		{
+			default:
+			case axis4::x:	return vector_get_component3_as_scalar(input.x_axis, component);
+			case axis4::y:	return vector_get_component3_as_scalar(input.y_axis, component);
+			case axis4::z:	return vector_get_component3_as_scalar(input.z_axis, component);
+			case axis4::w:	return vector_get_component3_as_scalar(input.w_axis, component);
 		}
 	}
 
@@ -402,7 +417,7 @@ namespace rtm
 		const vector4f o00_o00_o10_o10 = vector_mix<mix4::x, mix4::x, mix4::a, mix4::a>(x_axis, y_axis);
 		const vector4f o00_o10_o20 = vector_mix<mix4::x, mix4::z, mix4::a, mix4::a>(o00_o00_o10_o10, z_axis);
 
-		const scalarf det = vector_dot3(o00_o10_o20, input.x_axis);
+		const scalarf det = vector_dot3_as_scalar(o00_o10_o20, input.x_axis);
 		const scalarf inv_det_s = scalar_reciprocal(det);
 		const vector4f inv_det = vector_set(inv_det_s);
 
@@ -465,7 +480,7 @@ namespace rtm
 		const vector4f o00_o00_o10_o10 = vector_mix<mix4::x, mix4::x, mix4::a, mix4::a>(x_axis, y_axis);
 		const vector4f o00_o10_o20 = vector_mix<mix4::x, mix4::z, mix4::a, mix4::a>(o00_o00_o10_o10, z_axis);
 
-		const scalarf det = vector_dot3(o00_o10_o20, input.x_axis);
+		const scalarf det = vector_dot3_as_scalar(o00_o10_o20, input.x_axis);
 		if (scalar_cast(scalar_abs(det)) < threshold)
 			return fallback;
 
@@ -528,7 +543,7 @@ namespace rtm
 		const vector4f o00_o00_o10_o10 = vector_mix<mix4::x, mix4::x, mix4::a, mix4::a>(x_axis, y_axis);
 		const vector4f o00_o10_o20 = vector_mix<mix4::x, mix4::z, mix4::a, mix4::a>(o00_o00_o10_o10, z_axis);
 
-		return vector_dot3(o00_o10_o20, input.x_axis);
+		return vector_dot3_as_scalar(o00_o10_o20, input.x_axis);
 	}
 
 	//////////////////////////////////////////////////////////////////////////
@@ -579,11 +594,11 @@ namespace rtm
 
 		// Extract the one we need
 		if (column == axis3::x)
-			return vector_get_z(determinants);
+			return vector_get_z_as_scalar(determinants);
 		else if (column == axis3::y)
-			return vector_get_y(determinants);
+			return vector_get_y_as_scalar(determinants);
 		else
-			return vector_get_x(determinants);
+			return vector_get_x_as_scalar(determinants);
 	}
 
 	//////////////////////////////////////////////////////////////////////////

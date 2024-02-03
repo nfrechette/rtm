@@ -44,7 +44,7 @@ static void test_scalar_impl(const FloatType threshold, const FloatType trig_thr
 	CHECK(scalar_cast(scalar_set(FloatType(0.2345))) == FloatType(0.2345));
 
 	const FloatType value = FloatType(0.2345);
-	CHECK(scalar_equal(scalar_load(&value), scalar_set(value)));
+	CHECK(scalar_equal(scalar_load_as_scalar(&value), scalar_set(value)));
 	CHECK(scalar_load(&value) == FloatType(0.2345));
 
 	FloatType tmp = FloatType(0.0);

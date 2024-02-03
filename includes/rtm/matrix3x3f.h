@@ -99,6 +99,20 @@ namespace rtm
 	}
 
 	//////////////////////////////////////////////////////////////////////////
+	// Returns the desired 3x3 matrix component from the specified axis.
+	//////////////////////////////////////////////////////////////////////////
+	RTM_DISABLE_SECURITY_COOKIE_CHECK inline scalarf RTM_SIMD_CALL matrix_get_component_as_scalar(matrix3x3f_arg0 input, axis3 axis, component3 component) RTM_NO_EXCEPT
+	{
+		switch (axis)
+		{
+			default:
+			case axis3::x:	return vector_get_component3_as_scalar(input.x_axis, component);
+			case axis3::y:	return vector_get_component3_as_scalar(input.y_axis, component);
+			case axis3::z:	return vector_get_component3_as_scalar(input.z_axis, component);
+		}
+	}
+
+	//////////////////////////////////////////////////////////////////////////
 	// Returns a new 3x3 matrix where the specified axis/component has been replaced on the input matrix.
 	//////////////////////////////////////////////////////////////////////////
 	RTM_DISABLE_SECURITY_COOKIE_CHECK inline matrix3x3f RTM_SIMD_CALL matrix_set_component(matrix3x3f_arg0 input, float component_value, axis3 axis, component3 component) RTM_NO_EXCEPT
@@ -236,7 +250,7 @@ namespace rtm
 		const vector4f o00_o00_o10_o10 = vector_mix<mix4::x, mix4::x, mix4::a, mix4::a>(x_axis, y_axis);
 		const vector4f o00_o10_o20 = vector_mix<mix4::x, mix4::z, mix4::a, mix4::a>(o00_o00_o10_o10, z_axis);
 
-		const scalarf det = vector_dot3(o00_o10_o20, input.x_axis);
+		const scalarf det = vector_dot3_as_scalar(o00_o10_o20, input.x_axis);
 		const vector4f inv_det = vector_set(scalar_reciprocal(det));
 
 		x_axis = vector_mul(x_axis, inv_det);
@@ -292,7 +306,7 @@ namespace rtm
 		const vector4f o00_o00_o10_o10 = vector_mix<mix4::x, mix4::x, mix4::a, mix4::a>(x_axis, y_axis);
 		const vector4f o00_o10_o20 = vector_mix<mix4::x, mix4::z, mix4::a, mix4::a>(o00_o00_o10_o10, z_axis);
 
-		const scalarf det = vector_dot3(o00_o10_o20, input.x_axis);
+		const scalarf det = vector_dot3_as_scalar(o00_o10_o20, input.x_axis);
 		if (scalar_cast(scalar_abs(det)) < threshold)
 			return fallback;
 
@@ -349,7 +363,7 @@ namespace rtm
 		const vector4f o00_o00_o10_o10 = vector_mix<mix4::x, mix4::x, mix4::a, mix4::a>(x_axis, y_axis);
 		const vector4f o00_o10_o20 = vector_mix<mix4::x, mix4::z, mix4::a, mix4::a>(o00_o00_o10_o10, z_axis);
 
-		return vector_dot3(o00_o10_o20, input.x_axis);
+		return vector_dot3_as_scalar(o00_o10_o20, input.x_axis);
 	}
 
 	//////////////////////////////////////////////////////////////////////////
@@ -400,11 +414,11 @@ namespace rtm
 
 		// Extract the one we need
 		if (column == axis3::x)
-			return vector_get_z(determinants);
+			return vector_get_z_as_scalar(determinants);
 		else if (column == axis3::y)
-			return vector_get_y(determinants);
+			return vector_get_y_as_scalar(determinants);
 		else
-			return vector_get_x(determinants);
+			return vector_get_x_as_scalar(determinants);
 	}
 
 	//////////////////////////////////////////////////////////////////////////

@@ -239,18 +239,18 @@ static void test_affine_matrix_setters(const FloatType threshold)
 		CHECK(FloatType(matrix_get_component(mtx, axis4::w, component3::y)) == FloatType(11.0));
 		CHECK(FloatType(matrix_get_component(mtx, axis4::w, component3::z)) == FloatType(12.0));
 
-		CHECK(scalar_cast(matrix_get_component(mtx, axis4::x, component3::x)) == FloatType(1.0));
-		CHECK(scalar_cast(matrix_get_component(mtx, axis4::x, component3::y)) == FloatType(2.0));
-		CHECK(scalar_cast(matrix_get_component(mtx, axis4::x, component3::z)) == FloatType(3.0));
-		CHECK(scalar_cast(matrix_get_component(mtx, axis4::y, component3::x)) == FloatType(4.0));
-		CHECK(scalar_cast(matrix_get_component(mtx, axis4::y, component3::y)) == FloatType(5.0));
-		CHECK(scalar_cast(matrix_get_component(mtx, axis4::y, component3::z)) == FloatType(6.0));
-		CHECK(scalar_cast(matrix_get_component(mtx, axis4::z, component3::x)) == FloatType(7.0));
-		CHECK(scalar_cast(matrix_get_component(mtx, axis4::z, component3::y)) == FloatType(8.0));
-		CHECK(scalar_cast(matrix_get_component(mtx, axis4::z, component3::z)) == FloatType(9.0));
-		CHECK(scalar_cast(matrix_get_component(mtx, axis4::w, component3::x)) == FloatType(10.0));
-		CHECK(scalar_cast(matrix_get_component(mtx, axis4::w, component3::y)) == FloatType(11.0));
-		CHECK(scalar_cast(matrix_get_component(mtx, axis4::w, component3::z)) == FloatType(12.0));
+		CHECK(scalar_cast(matrix_get_component_as_scalar(mtx, axis4::x, component3::x)) == FloatType(1.0));
+		CHECK(scalar_cast(matrix_get_component_as_scalar(mtx, axis4::x, component3::y)) == FloatType(2.0));
+		CHECK(scalar_cast(matrix_get_component_as_scalar(mtx, axis4::x, component3::z)) == FloatType(3.0));
+		CHECK(scalar_cast(matrix_get_component_as_scalar(mtx, axis4::y, component3::x)) == FloatType(4.0));
+		CHECK(scalar_cast(matrix_get_component_as_scalar(mtx, axis4::y, component3::y)) == FloatType(5.0));
+		CHECK(scalar_cast(matrix_get_component_as_scalar(mtx, axis4::y, component3::z)) == FloatType(6.0));
+		CHECK(scalar_cast(matrix_get_component_as_scalar(mtx, axis4::z, component3::x)) == FloatType(7.0));
+		CHECK(scalar_cast(matrix_get_component_as_scalar(mtx, axis4::z, component3::y)) == FloatType(8.0));
+		CHECK(scalar_cast(matrix_get_component_as_scalar(mtx, axis4::z, component3::z)) == FloatType(9.0));
+		CHECK(scalar_cast(matrix_get_component_as_scalar(mtx, axis4::w, component3::x)) == FloatType(10.0));
+		CHECK(scalar_cast(matrix_get_component_as_scalar(mtx, axis4::w, component3::y)) == FloatType(11.0));
+		CHECK(scalar_cast(matrix_get_component_as_scalar(mtx, axis4::w, component3::z)) == FloatType(12.0));
 	}
 
 	{
@@ -517,25 +517,25 @@ static void test_affine_matrix_misc(const FloatType threshold)
 		Matrix3x4Type mtx = matrix_set(x_axis, y_axis, z_axis, x_axis);
 		Matrix3x3Type cof = matrix_cofactor(mtx);
 
-		FloatType cof_xx = scalar_cast(vector_get_x(cof.x_axis));
+		FloatType cof_xx = scalar_cast(vector_get_x_as_scalar(cof.x_axis));
 		CHECK(scalar_near_equal(cof_xx, FloatType(38.4967), threshold));
-		FloatType cof_xy = scalar_cast(vector_get_y(cof.x_axis));
+		FloatType cof_xy = scalar_cast(vector_get_y_as_scalar(cof.x_axis));
 		CHECK(scalar_near_equal(cof_xy, FloatType(55.2182), threshold));
-		FloatType cof_xz = scalar_cast(vector_get_z(cof.x_axis));
+		FloatType cof_xz = scalar_cast(vector_get_z_as_scalar(cof.x_axis));
 		CHECK(scalar_near_equal(cof_xz, FloatType(-62.0643), threshold));
 
-		FloatType cof_yx = scalar_cast(vector_get_x(cof.y_axis));
+		FloatType cof_yx = scalar_cast(vector_get_x_as_scalar(cof.y_axis));
 		CHECK(scalar_near_equal(cof_yx, FloatType(-49.9981), threshold));
-		FloatType cof_yy = scalar_cast(vector_get_y(cof.y_axis));
+		FloatType cof_yy = scalar_cast(vector_get_y_as_scalar(cof.y_axis));
 		CHECK(scalar_near_equal(cof_yy, FloatType(12.5136), threshold));
-		FloatType cof_yz = scalar_cast(vector_get_z(cof.y_axis));
+		FloatType cof_yz = scalar_cast(vector_get_z_as_scalar(cof.y_axis));
 		CHECK(scalar_near_equal(cof_yz, FloatType(41.7163), threshold));
 
-		FloatType cof_zx = scalar_cast(vector_get_x(cof.z_axis));
+		FloatType cof_zx = scalar_cast(vector_get_x_as_scalar(cof.z_axis));
 		CHECK(scalar_near_equal(cof_zx, FloatType(22.7625), threshold));
-		FloatType cof_zy = scalar_cast(vector_get_y(cof.z_axis));
+		FloatType cof_zy = scalar_cast(vector_get_y_as_scalar(cof.z_axis));
 		CHECK(scalar_near_equal(cof_zy, FloatType(-39.085), threshold));
-		FloatType cof_zz = scalar_cast(vector_get_z(cof.z_axis));
+		FloatType cof_zz = scalar_cast(vector_get_z_as_scalar(cof.z_axis));
 		CHECK(scalar_near_equal(cof_zz, FloatType(41.4168), threshold));
 	}
 
@@ -546,25 +546,25 @@ static void test_affine_matrix_misc(const FloatType threshold)
 		Matrix3x4Type mtx = matrix_set(x_axis, y_axis, z_axis, x_axis);
 		Matrix3x3Type adj = matrix_adjugate(mtx);
 
-		FloatType adj_xx = scalar_cast(vector_get_x(adj.x_axis));
+		FloatType adj_xx = scalar_cast(vector_get_x_as_scalar(adj.x_axis));
 		CHECK(scalar_near_equal(adj_xx, FloatType(38.4967), threshold));
-		FloatType adj_xy = scalar_cast(vector_get_y(adj.x_axis));
+		FloatType adj_xy = scalar_cast(vector_get_y_as_scalar(adj.x_axis));
 		CHECK(scalar_near_equal(adj_xy, FloatType(-49.9981), threshold));
-		FloatType adj_xz = scalar_cast(vector_get_z(adj.x_axis));
+		FloatType adj_xz = scalar_cast(vector_get_z_as_scalar(adj.x_axis));
 		CHECK(scalar_near_equal(adj_xz, FloatType(22.7625), threshold));
 
-		FloatType adj_yx = scalar_cast(vector_get_x(adj.y_axis));
+		FloatType adj_yx = scalar_cast(vector_get_x_as_scalar(adj.y_axis));
 		CHECK(scalar_near_equal(adj_yx, FloatType(55.2182), threshold));
-		FloatType adj_yy = scalar_cast(vector_get_y(adj.y_axis));
+		FloatType adj_yy = scalar_cast(vector_get_y_as_scalar(adj.y_axis));
 		CHECK(scalar_near_equal(adj_yy, FloatType(12.5136), threshold));
-		FloatType adj_yz = scalar_cast(vector_get_z(adj.y_axis));
+		FloatType adj_yz = scalar_cast(vector_get_z_as_scalar(adj.y_axis));
 		CHECK(scalar_near_equal(adj_yz, FloatType(-39.085), threshold));
 
-		FloatType adj_zx = scalar_cast(vector_get_x(adj.z_axis));
+		FloatType adj_zx = scalar_cast(vector_get_x_as_scalar(adj.z_axis));
 		CHECK(scalar_near_equal(adj_zx, FloatType(-62.0643), threshold));
-		FloatType adj_zy = scalar_cast(vector_get_y(adj.z_axis));
+		FloatType adj_zy = scalar_cast(vector_get_y_as_scalar(adj.z_axis));
 		CHECK(scalar_near_equal(adj_zy, FloatType(41.7163), threshold));
-		FloatType adj_zz = scalar_cast(vector_get_z(adj.z_axis));
+		FloatType adj_zz = scalar_cast(vector_get_z_as_scalar(adj.z_axis));
 		CHECK(scalar_near_equal(adj_zz, FloatType(41.4168), threshold));
 	}
 }

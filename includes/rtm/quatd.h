@@ -109,6 +109,7 @@ namespace rtm
 			}
 
 #if defined(RTM_SSE2_INTRINSICS)
+			RTM_DEPRECATED("Use 'as_scalar' suffix instead. To be removed in 2.4.")
 			RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE RTM_SIMD_CALL operator scalard() const RTM_NO_EXCEPT
 			{
 				return scalard{ input.xy };
@@ -125,6 +126,18 @@ namespace rtm
 	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE constexpr rtm_impl::quatd_quat_get_x RTM_SIMD_CALL quat_get_x(quatd_arg0 input) RTM_NO_EXCEPT
 	{
 		return rtm_impl::quatd_quat_get_x{ input };
+	}
+
+	//////////////////////////////////////////////////////////////////////////
+	// Returns the quaternion [x] component (real part).
+	//////////////////////////////////////////////////////////////////////////
+	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE scalard RTM_SIMD_CALL quat_get_x_as_scalar(quatd_arg0 input) RTM_NO_EXCEPT
+	{
+#if defined(RTM_SSE2_INTRINSICS)
+		return scalard{ input.xy };
+#else
+		return quat_get_x(input);
+#endif
 	}
 
 	namespace rtm_impl
@@ -147,6 +160,7 @@ namespace rtm
 			}
 
 #if defined(RTM_SSE2_INTRINSICS)
+			RTM_DEPRECATED("Use 'as_scalar' suffix instead. To be removed in 2.4.")
 			RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE RTM_SIMD_CALL operator scalard() const RTM_NO_EXCEPT
 			{
 				return scalard{ _mm_shuffle_pd(input.xy, input.xy, 1) };
@@ -163,6 +177,18 @@ namespace rtm
 	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE constexpr rtm_impl::quatd_quat_get_y RTM_SIMD_CALL quat_get_y(quatd_arg0 input) RTM_NO_EXCEPT
 	{
 		return rtm_impl::quatd_quat_get_y{ input };
+	}
+
+	//////////////////////////////////////////////////////////////////////////
+	// Returns the quaternion [y] component (real part).
+	//////////////////////////////////////////////////////////////////////////
+	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE scalard RTM_SIMD_CALL quat_get_y_as_scalar(quatd_arg0 input) RTM_NO_EXCEPT
+	{
+#if defined(RTM_SSE2_INTRINSICS)
+		return scalard{ _mm_shuffle_pd(input.xy, input.xy, 1) };
+#else
+		return quat_get_y(input);
+#endif
 	}
 
 	namespace rtm_impl
@@ -185,6 +211,7 @@ namespace rtm
 			}
 
 #if defined(RTM_SSE2_INTRINSICS)
+			RTM_DEPRECATED("Use 'as_scalar' suffix instead. To be removed in 2.4.")
 			RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE RTM_SIMD_CALL operator scalard() const RTM_NO_EXCEPT
 			{
 				return scalard{ input.zw };
@@ -201,6 +228,18 @@ namespace rtm
 	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE constexpr rtm_impl::quatd_quat_get_z RTM_SIMD_CALL quat_get_z(quatd_arg0 input) RTM_NO_EXCEPT
 	{
 		return rtm_impl::quatd_quat_get_z{ input };
+	}
+
+	//////////////////////////////////////////////////////////////////////////
+	// Returns the quaternion [z] component (real part).
+	//////////////////////////////////////////////////////////////////////////
+	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE scalard RTM_SIMD_CALL quat_get_z_as_scalar(quatd_arg0 input) RTM_NO_EXCEPT
+	{
+#if defined(RTM_SSE2_INTRINSICS)
+		return scalard{ input.zw };
+#else
+		return quat_get_z(input);
+#endif
 	}
 
 	namespace rtm_impl
@@ -223,6 +262,7 @@ namespace rtm
 			}
 
 #if defined(RTM_SSE2_INTRINSICS)
+			RTM_DEPRECATED("Use 'as_scalar' suffix instead. To be removed in 2.4.")
 			RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE RTM_SIMD_CALL operator scalard() const RTM_NO_EXCEPT
 			{
 				return scalard{ _mm_shuffle_pd(input.zw, input.zw, 1) };
@@ -239,6 +279,18 @@ namespace rtm
 	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE constexpr rtm_impl::quatd_quat_get_w RTM_SIMD_CALL quat_get_w(quatd_arg0 input) RTM_NO_EXCEPT
 	{
 		return rtm_impl::quatd_quat_get_w{ input };
+	}
+
+	//////////////////////////////////////////////////////////////////////////
+	// Returns the quaternion [w] component (imaginary part).
+	//////////////////////////////////////////////////////////////////////////
+	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE scalard RTM_SIMD_CALL quat_get_w_as_scalar(quatd_arg0 input) RTM_NO_EXCEPT
+	{
+#if defined(RTM_SSE2_INTRINSICS)
+		return scalard{ _mm_shuffle_pd(input.zw, input.zw, 1) };
+#else
+		return quat_get_w(input);
+#endif
 	}
 
 	//////////////////////////////////////////////////////////////////////////
@@ -415,14 +467,14 @@ namespace rtm
 		{
 			RTM_DISABLE_SECURITY_COOKIE_CHECK inline RTM_SIMD_CALL operator double() const RTM_NO_EXCEPT
 			{
-				const scalard lhs_x = quat_get_x(lhs);
-				const scalard lhs_y = quat_get_y(lhs);
-				const scalard lhs_z = quat_get_z(lhs);
-				const scalard lhs_w = quat_get_w(lhs);
-				const scalard rhs_x = quat_get_x(rhs);
-				const scalard rhs_y = quat_get_y(rhs);
-				const scalard rhs_z = quat_get_z(rhs);
-				const scalard rhs_w = quat_get_w(rhs);
+				const scalard lhs_x = quat_get_x_as_scalar(lhs);
+				const scalard lhs_y = quat_get_y_as_scalar(lhs);
+				const scalard lhs_z = quat_get_z_as_scalar(lhs);
+				const scalard lhs_w = quat_get_w_as_scalar(lhs);
+				const scalard rhs_x = quat_get_x_as_scalar(rhs);
+				const scalard rhs_y = quat_get_y_as_scalar(rhs);
+				const scalard rhs_z = quat_get_z_as_scalar(rhs);
+				const scalard rhs_w = quat_get_w_as_scalar(rhs);
 				const scalard xx = scalar_mul(lhs_x, rhs_x);
 				const scalard yy = scalar_mul(lhs_y, rhs_y);
 				const scalard zz = scalar_mul(lhs_z, rhs_z);
@@ -431,16 +483,17 @@ namespace rtm
 			}
 
 #if defined(RTM_SSE2_INTRINSICS)
+			RTM_DEPRECATED("Use 'as_scalar' suffix instead. To be removed in 2.4.")
 			RTM_DISABLE_SECURITY_COOKIE_CHECK inline RTM_SIMD_CALL operator scalard() const RTM_NO_EXCEPT
 			{
-				const scalard lhs_x = quat_get_x(lhs);
-				const scalard lhs_y = quat_get_y(lhs);
-				const scalard lhs_z = quat_get_z(lhs);
-				const scalard lhs_w = quat_get_w(lhs);
-				const scalard rhs_x = quat_get_x(rhs);
-				const scalard rhs_y = quat_get_y(rhs);
-				const scalard rhs_z = quat_get_z(rhs);
-				const scalard rhs_w = quat_get_w(rhs);
+				const scalard lhs_x = quat_get_x_as_scalar(lhs);
+				const scalard lhs_y = quat_get_y_as_scalar(lhs);
+				const scalard lhs_z = quat_get_z_as_scalar(lhs);
+				const scalard lhs_w = quat_get_w_as_scalar(lhs);
+				const scalard rhs_x = quat_get_x_as_scalar(rhs);
+				const scalard rhs_y = quat_get_y_as_scalar(rhs);
+				const scalard rhs_z = quat_get_z_as_scalar(rhs);
+				const scalard rhs_w = quat_get_w_as_scalar(rhs);
 				const scalard xx = scalar_mul(lhs_x, rhs_x);
 				const scalard yy = scalar_mul(lhs_y, rhs_y);
 				const scalard zz = scalar_mul(lhs_z, rhs_z);
@@ -463,11 +516,39 @@ namespace rtm
 	}
 
 	//////////////////////////////////////////////////////////////////////////
+	// Quaternion dot product: lhs . rhs
+	//////////////////////////////////////////////////////////////////////////
+	RTM_DISABLE_SECURITY_COOKIE_CHECK inline scalard RTM_SIMD_CALL quat_dot_as_scalar(quatd_arg0 lhs, quatd_arg1 rhs) RTM_NO_EXCEPT
+	{
+		const scalard lhs_x = quat_get_x_as_scalar(lhs);
+		const scalard lhs_y = quat_get_y_as_scalar(lhs);
+		const scalard lhs_z = quat_get_z_as_scalar(lhs);
+		const scalard lhs_w = quat_get_w_as_scalar(lhs);
+		const scalard rhs_x = quat_get_x_as_scalar(rhs);
+		const scalard rhs_y = quat_get_y_as_scalar(rhs);
+		const scalard rhs_z = quat_get_z_as_scalar(rhs);
+		const scalard rhs_w = quat_get_w_as_scalar(rhs);
+		const scalard xx = scalar_mul(lhs_x, rhs_x);
+		const scalard yy = scalar_mul(lhs_y, rhs_y);
+		const scalard zz = scalar_mul(lhs_z, rhs_z);
+		const scalard ww = scalar_mul(lhs_w, rhs_w);
+		return scalar_add(scalar_add(xx, yy), scalar_add(zz, ww));
+	}
+
+	//////////////////////////////////////////////////////////////////////////
 	// Returns the squared length/norm of the quaternion.
 	//////////////////////////////////////////////////////////////////////////
 	RTM_DISABLE_SECURITY_COOKIE_CHECK constexpr rtm_impl::quatd_quat_dot RTM_SIMD_CALL quat_length_squared(quatd_arg0 input) RTM_NO_EXCEPT
 	{
 		return rtm_impl::quatd_quat_dot{ input, input };
+	}
+
+	//////////////////////////////////////////////////////////////////////////
+	// Returns the squared length/norm of the quaternion.
+	//////////////////////////////////////////////////////////////////////////
+	RTM_DISABLE_SECURITY_COOKIE_CHECK inline scalard RTM_SIMD_CALL quat_length_squared_as_scalar(quatd_arg0 input) RTM_NO_EXCEPT
+	{
+		return quat_dot_as_scalar(input, input);
 	}
 
 	namespace rtm_impl
@@ -482,14 +563,15 @@ namespace rtm
 		{
 			RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE RTM_SIMD_CALL operator double() const RTM_NO_EXCEPT
 			{
-				const scalard len_sq = quat_length_squared(input);
+				const scalard len_sq = quat_length_squared_as_scalar(input);
 				return scalar_cast(scalar_sqrt(len_sq));
 			}
 
 #if defined(RTM_SSE2_INTRINSICS)
+			RTM_DEPRECATED("Use 'as_scalar' suffix instead. To be removed in 2.4.")
 			RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE RTM_SIMD_CALL operator scalard() const RTM_NO_EXCEPT
 			{
-				const scalard len_sq = quat_length_squared(input);
+				const scalard len_sq = quat_length_squared_as_scalar(input);
 				return scalar_sqrt(len_sq);
 			}
 #endif
@@ -506,6 +588,15 @@ namespace rtm
 		return rtm_impl::quatd_quat_length{ input };
 	}
 
+	//////////////////////////////////////////////////////////////////////////
+	// Returns the length/norm of the quaternion.
+	//////////////////////////////////////////////////////////////////////////
+	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE scalard RTM_SIMD_CALL quat_length_as_scalar(quatd_arg0 input) RTM_NO_EXCEPT
+	{
+		const scalard len_sq = quat_length_squared_as_scalar(input);
+		return scalar_sqrt(len_sq);
+	}
+
 	namespace rtm_impl
 	{
 		//////////////////////////////////////////////////////////////////////////
@@ -518,14 +609,15 @@ namespace rtm
 		{
 			RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE RTM_SIMD_CALL operator double() const RTM_NO_EXCEPT
 			{
-				const scalard len_sq = quat_length_squared(input);
+				const scalard len_sq = quat_length_squared_as_scalar(input);
 				return scalar_cast(scalar_sqrt_reciprocal(len_sq));
 			}
 
 #if defined(RTM_SSE2_INTRINSICS)
+			RTM_DEPRECATED("Use 'as_scalar' suffix instead. To be removed in 2.4.")
 			RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE RTM_SIMD_CALL operator scalard() const RTM_NO_EXCEPT
 			{
-				const scalard len_sq = quat_length_squared(input);
+				const scalard len_sq = quat_length_squared_as_scalar(input);
 				return scalar_sqrt_reciprocal(len_sq);
 			}
 #endif
@@ -540,6 +632,15 @@ namespace rtm
 	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE constexpr rtm_impl::quatd_quat_length_reciprocal RTM_SIMD_CALL quat_length_reciprocal(quatd_arg0 input) RTM_NO_EXCEPT
 	{
 		return rtm_impl::quatd_quat_length_reciprocal{ input };
+	}
+
+	//////////////////////////////////////////////////////////////////////////
+	// Returns the reciprocal length/norm of the quaternion.
+	//////////////////////////////////////////////////////////////////////////
+	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE scalard RTM_SIMD_CALL quat_length_reciprocal_as_scalar(quatd_arg0 input) RTM_NO_EXCEPT
+	{
+		const scalard len_sq = quat_length_squared_as_scalar(input);
+		return scalar_sqrt_reciprocal(len_sq);
 	}
 
 	//////////////////////////////////////////////////////////////////////////
@@ -645,7 +746,7 @@ namespace rtm
 		vector4d start_v = quat_to_vector(start);
 		vector4d end_v = quat_to_vector(end);
 
-		vector4d cos_half_angle_v = vector_dot(start_v, end_v);
+		vector4d cos_half_angle_v = vector_dot_as_vector(start_v, end_v);
 		mask4d is_angle_negative = vector_less_than(cos_half_angle_v, vector_zero());
 
 		// If the two input quaternions aren't on the same half of the hypersphere, flip one and the angle sign
@@ -655,7 +756,7 @@ namespace rtm
 		// Clamp our half angle cosine
 		cos_half_angle_v = vector_clamp(cos_half_angle_v, vector_set(-1.0), vector_set(1.0));
 
-		scalard cos_half_angle = vector_get_x(cos_half_angle_v);
+		scalard cos_half_angle = vector_get_x_as_scalar(cos_half_angle_v);
 		scalard half_angle = scalar_acos(cos_half_angle);
 		scalard sin_half_angle = scalar_sqrt(scalar_sub(scalar_set(1.0), scalar_mul(cos_half_angle, cos_half_angle)));
 		scalard inv_sin_half_angle = scalar_reciprocal(sin_half_angle);
@@ -683,7 +784,7 @@ namespace rtm
 		vector4d end_v = quat_to_vector(end);
 		scalard alpha_s = scalar_set(alpha);
 
-		vector4d cos_half_angle_v = vector_dot(start_v, end_v);
+		vector4d cos_half_angle_v = vector_dot_as_vector(start_v, end_v);
 		mask4d is_angle_negative = vector_less_than(cos_half_angle_v, vector_zero());
 
 		// If the two input quaternions aren't on the same half of the hypersphere, flip one and the angle sign
@@ -693,7 +794,7 @@ namespace rtm
 		// Clamp our half angle cosine
 		cos_half_angle_v = vector_clamp(cos_half_angle_v, vector_set(-1.0), vector_set(1.0));
 
-		scalard cos_half_angle = vector_get_x(cos_half_angle_v);
+		scalard cos_half_angle = vector_get_x_as_scalar(cos_half_angle_v);
 		scalard half_angle = scalar_acos(cos_half_angle);
 		scalard sin_half_angle = scalar_sqrt(scalar_sub(scalar_set(1.0), scalar_mul(cos_half_angle, cos_half_angle)));
 		scalard inv_sin_half_angle = scalar_reciprocal(sin_half_angle);
@@ -738,9 +839,9 @@ namespace rtm
 		// If our quaternion isn't normalized, more math is required
 
 		const vector4d input_v = quat_to_vector(input);
-		const scalard input_w = scalar_clamp((scalard)quat_get_w(input), scalar_set(-1.0), scalar_set(1.0));
+		const scalard input_w = scalar_clamp(quat_get_w_as_scalar(input), scalar_set(-1.0), scalar_set(1.0));
 		const scalard half_angle = scalar_acos(input_w);
-		const scalard xyz_inv_len = vector_length_reciprocal3(input_v);
+		const scalard xyz_inv_len = vector_length_reciprocal3_as_scalar(input_v);
 		vector4d result_xyz = vector_mul(input_v, scalar_mul(xyz_inv_len, half_angle));
 
 		// If we are near the identity, xyz will be set to our input xyz which should be near zero
@@ -774,7 +875,7 @@ namespace rtm
 		// If our output quaternion does not represent a rotation, more math is required
 
 		const vector4d input_v = quat_to_vector(input);
-		const scalard input_len = vector_length3(input_v);
+		const scalard input_len = vector_length3_as_scalar(input_v);
 		const vector4d input_len_v = vector_set(input_len);
 		const vector4d input_normalized = vector_div(input_v, input_len_v);
 		const vector4d sincos = scalar_sincos(input_len);
@@ -807,7 +908,7 @@ namespace rtm
 		constexpr double epsilon = 1.0E-8;
 		constexpr double epsilon_squared = epsilon * epsilon;
 
-		const scalard input_w = scalar_clamp((scalard)quat_get_w(input), scalar_set(-1.0), scalar_set(1.0));
+		const scalard input_w = scalar_clamp(quat_get_w_as_scalar(input), scalar_set(-1.0), scalar_set(1.0));
 		out_angle = scalar_cast(scalar_acos(input_w)) * 2.0;
 
 		const double scale_sq = scalar_max(1.0 - quat_get_w(input) * quat_get_w(input), 0.0);
@@ -831,7 +932,7 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	RTM_DISABLE_SECURITY_COOKIE_CHECK inline double RTM_SIMD_CALL quat_get_angle(quatd_arg0 input) RTM_NO_EXCEPT
 	{
-		const scalard input_w = scalar_clamp((scalard)quat_get_w(input), scalar_set(-1.0), scalar_set(1.0));
+		const scalard input_w = scalar_clamp(quat_get_w_as_scalar(input), scalar_set(-1.0), scalar_set(1.0));
 		return scalar_cast(scalar_acos(input_w)) * 2.0;
 	}
 
@@ -842,7 +943,7 @@ namespace rtm
 	{
 		vector4d sincos_ = scalar_sincos(0.5 * angle);
 		vector4d sin_ = vector_dup_x(sincos_);
-		scalard cos_ = vector_get_y(sincos_);
+		scalard cos_ = vector_get_y_as_scalar(sincos_);
 
 		return vector_to_quat(vector_set_w(vector_mul(sin_, axis), cos_));
 	}
@@ -944,7 +1045,7 @@ namespace rtm
 	RTM_DISABLE_SECURITY_COOKIE_CHECK inline bool RTM_SIMD_CALL quat_near_identity(quatd_arg0 input, double threshold_angle = 0.00284714461) RTM_NO_EXCEPT
 	{
 		// See the quatf version of quat_near_identity for details.
-		const scalard input_w = quat_get_w(input);
+		const scalard input_w = quat_get_w_as_scalar(input);
 		const scalard input_abs_w = scalar_min(scalar_abs(input_w), scalar_set(1.0));
 		const double positive_w_angle = scalar_acos(scalar_cast(input_abs_w)) * 2.0;
 		return positive_w_angle <= threshold_angle;

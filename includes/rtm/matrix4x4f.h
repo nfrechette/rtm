@@ -109,6 +109,21 @@ namespace rtm
 	}
 
 	//////////////////////////////////////////////////////////////////////////
+	// Returns the desired 4x4 matrix component from the specified axis.
+	//////////////////////////////////////////////////////////////////////////
+	RTM_DISABLE_SECURITY_COOKIE_CHECK inline scalarf RTM_SIMD_CALL matrix_get_component_as_scalar(matrix4x4f_arg0 input, axis4 axis, component4 component) RTM_NO_EXCEPT
+	{
+		switch (axis)
+		{
+			default:
+			case axis4::x:	return vector_get_component_as_scalar(input.x_axis, component);
+			case axis4::y:	return vector_get_component_as_scalar(input.y_axis, component);
+			case axis4::z:	return vector_get_component_as_scalar(input.z_axis, component);
+			case axis4::w:	return vector_get_component_as_scalar(input.w_axis, component);
+		}
+	}
+
+	//////////////////////////////////////////////////////////////////////////
 	// Returns a new 4x4 matrix where the specified axis/component has been replaced on the input matrix.
 	//////////////////////////////////////////////////////////////////////////
 	RTM_DISABLE_SECURITY_COOKIE_CHECK inline matrix4x4f RTM_SIMD_CALL matrix_set_component(matrix4x4f_arg0 input, float component_value, axis4 axis, component4 component) RTM_NO_EXCEPT
@@ -284,7 +299,7 @@ namespace rtm
 		vector4f z_axis = vector_mix<mix4::x, mix4::b, mix4::z, mix4::d>(c4, c5);
 		vector4f w_axis = vector_mix<mix4::x, mix4::b, mix4::z, mix4::d>(c6, c7);
 
-		const scalarf det = vector_dot(x_axis, input_transposed.x_axis);
+		const scalarf det = vector_dot_as_scalar(x_axis, input_transposed.x_axis);
 		const scalarf inv_det_s = scalar_reciprocal(det);
 		const vector4f inv_det = vector_set(inv_det_s);
 
@@ -378,7 +393,7 @@ namespace rtm
 		vector4f z_axis = vector_mix<mix4::x, mix4::b, mix4::z, mix4::d>(c4, c5);
 		vector4f w_axis = vector_mix<mix4::x, mix4::b, mix4::z, mix4::d>(c6, c7);
 
-		const scalarf det = vector_dot(x_axis, input_transposed.x_axis);
+		const scalarf det = vector_dot_as_scalar(x_axis, input_transposed.x_axis);
 		if (scalar_cast(scalar_abs(det)) < threshold)
 			return fallback;
 
@@ -434,7 +449,7 @@ namespace rtm
 
 		vector4f x_axis = vector_mix<mix4::x, mix4::b, mix4::z, mix4::d>(c0, c1);
 
-		return vector_dot(x_axis, input_transposed.x_axis);
+		return vector_dot_as_scalar(x_axis, input_transposed.x_axis);
 	}
 
 	//////////////////////////////////////////////////////////////////////////

@@ -162,6 +162,7 @@ namespace rtm
 			}
 
 #if defined(RTM_SSE2_INTRINSICS)
+			RTM_DEPRECATED("Use 'as_scalar' suffix instead. To be removed in 2.4.")
 			RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE RTM_SIMD_CALL operator scalard() const RTM_NO_EXCEPT
 			{
 				return scalard{ input.xy };
@@ -178,6 +179,18 @@ namespace rtm
 	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE constexpr rtm_impl::vector4d_vector_get_x RTM_SIMD_CALL vector_get_x(vector4d_arg0 input) RTM_NO_EXCEPT
 	{
 		return rtm_impl::vector4d_vector_get_x{ input };
+	}
+
+	//////////////////////////////////////////////////////////////////////////
+	// Returns the vector4 [x] component.
+	//////////////////////////////////////////////////////////////////////////
+	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE scalard RTM_SIMD_CALL vector_get_x_as_scalar(vector4d_arg0 input) RTM_NO_EXCEPT
+	{
+#if defined(RTM_SSE2_INTRINSICS)
+		return scalard{ input.xy };
+#else
+		return vector_get_x(input);
+#endif
 	}
 
 	namespace rtm_impl
@@ -200,6 +213,7 @@ namespace rtm
 			}
 
 #if defined(RTM_SSE2_INTRINSICS)
+			RTM_DEPRECATED("Use 'as_scalar' suffix instead. To be removed in 2.4.")
 			RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE RTM_SIMD_CALL operator scalard() const RTM_NO_EXCEPT
 			{
 				return scalard{ _mm_shuffle_pd(input.xy, input.xy, 1) };
@@ -216,6 +230,18 @@ namespace rtm
 	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE constexpr rtm_impl::vector4d_vector_get_y RTM_SIMD_CALL vector_get_y(vector4d_arg0 input) RTM_NO_EXCEPT
 	{
 		return rtm_impl::vector4d_vector_get_y{ input };
+	}
+
+	//////////////////////////////////////////////////////////////////////////
+	// Returns the vector4 [y] component.
+	//////////////////////////////////////////////////////////////////////////
+	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE scalard RTM_SIMD_CALL vector_get_y_as_scalar(vector4d_arg0 input) RTM_NO_EXCEPT
+	{
+#if defined(RTM_SSE2_INTRINSICS)
+		return scalard{ _mm_shuffle_pd(input.xy, input.xy, 1) };
+#else
+		return vector_get_y(input);
+#endif
 	}
 
 	namespace rtm_impl
@@ -238,6 +264,7 @@ namespace rtm
 			}
 
 #if defined(RTM_SSE2_INTRINSICS)
+			RTM_DEPRECATED("Use 'as_scalar' suffix instead. To be removed in 2.4.")
 			RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE RTM_SIMD_CALL operator scalard() const RTM_NO_EXCEPT
 			{
 				return scalard{ input.zw };
@@ -254,6 +281,18 @@ namespace rtm
 	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE constexpr rtm_impl::vector4d_vector_get_z RTM_SIMD_CALL vector_get_z(vector4d_arg0 input) RTM_NO_EXCEPT
 	{
 		return rtm_impl::vector4d_vector_get_z{ input };
+	}
+
+	//////////////////////////////////////////////////////////////////////////
+	// Returns the vector4 [z] component.
+	//////////////////////////////////////////////////////////////////////////
+	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE scalard RTM_SIMD_CALL vector_get_z_as_scalar(vector4d_arg0 input) RTM_NO_EXCEPT
+	{
+#if defined(RTM_SSE2_INTRINSICS)
+		return scalard{ input.zw };
+#else
+		return vector_get_z(input);
+#endif
 	}
 
 	namespace rtm_impl
@@ -276,6 +315,7 @@ namespace rtm
 			}
 
 #if defined(RTM_SSE2_INTRINSICS)
+			RTM_DEPRECATED("Use 'as_scalar' suffix instead. To be removed in 2.4.")
 			RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE RTM_SIMD_CALL operator scalard() const RTM_NO_EXCEPT
 			{
 				return scalard{ _mm_shuffle_pd(input.zw, input.zw, 1) };
@@ -292,6 +332,18 @@ namespace rtm
 	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE constexpr rtm_impl::vector4d_vector_get_w RTM_SIMD_CALL vector_get_w(vector4d_arg0 input) RTM_NO_EXCEPT
 	{
 		return rtm_impl::vector4d_vector_get_w{ input };
+	}
+
+	//////////////////////////////////////////////////////////////////////////
+	// Returns the vector4 [w] component.
+	//////////////////////////////////////////////////////////////////////////
+	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE scalard RTM_SIMD_CALL vector_get_w_as_scalar(vector4d_arg0 input) RTM_NO_EXCEPT
+	{
+#if defined(RTM_SSE2_INTRINSICS)
+		return scalard{ _mm_shuffle_pd(input.zw, input.zw, 1) };
+#else
+		return vector_get_w(input);
+#endif
 	}
 
 	namespace rtm_impl
@@ -318,15 +370,16 @@ namespace rtm
 			}
 
 #if defined(RTM_SSE2_INTRINSICS)
+			RTM_DEPRECATED("Use 'as_scalar' suffix instead. To be removed in 2.4.")
 			RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE RTM_SIMD_CALL operator scalard() const RTM_NO_EXCEPT
 			{
 				switch (component)
 				{
 					default:
-					case component4::x:	return vector_get_x(input);
-					case component4::y:	return vector_get_y(input);
-					case component4::z:	return vector_get_z(input);
-					case component4::w:	return vector_get_w(input);
+					case component4::x:	return vector_get_x_as_scalar(input);
+					case component4::y:	return vector_get_y_as_scalar(input);
+					case component4::z:	return vector_get_z_as_scalar(input);
+					case component4::w:	return vector_get_w_as_scalar(input);
 				}
 			}
 #endif
@@ -345,6 +398,20 @@ namespace rtm
 	}
 
 	//////////////////////////////////////////////////////////////////////////
+	// Returns the vector2 desired component.
+	//////////////////////////////////////////////////////////////////////////
+	template<component2 component>
+	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE scalard RTM_SIMD_CALL vector_get_component2_as_scalar(vector4d_arg0 input) RTM_NO_EXCEPT
+	{
+		switch (component)
+		{
+			default:
+			case component2::x:	return vector_get_x_as_scalar(input);
+			case component2::y:	return vector_get_y_as_scalar(input);
+		}
+	}
+
+	//////////////////////////////////////////////////////////////////////////
 	// Returns the vector3 desired component.
 	//////////////////////////////////////////////////////////////////////////
 	template<component3 component, component4 component_ = static_cast<component4>(component)>
@@ -354,12 +421,43 @@ namespace rtm
 	}
 
 	//////////////////////////////////////////////////////////////////////////
+	// Returns the vector3 desired component.
+	//////////////////////////////////////////////////////////////////////////
+	template<component3 component>
+	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE scalard RTM_SIMD_CALL vector_get_component3_as_scalar(vector4d_arg0 input) RTM_NO_EXCEPT
+	{
+		switch (component)
+		{
+			default:
+			case component3::x:	return vector_get_x_as_scalar(input);
+			case component3::y:	return vector_get_y_as_scalar(input);
+			case component3::z:	return vector_get_z_as_scalar(input);
+		}
+	}
+
+	//////////////////////////////////////////////////////////////////////////
 	// Returns the vector4 desired component.
 	//////////////////////////////////////////////////////////////////////////
 	template<component4 component>
 	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE constexpr rtm_impl::vector4d_vector_get_component_static<component> RTM_SIMD_CALL vector_get_component(vector4d_arg0 input) RTM_NO_EXCEPT
 	{
 		return rtm_impl::vector4d_vector_get_component_static<component>{ input };
+	}
+
+	//////////////////////////////////////////////////////////////////////////
+	// Returns the vector4 desired component.
+	//////////////////////////////////////////////////////////////////////////
+	template<component4 component>
+	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE scalard RTM_SIMD_CALL vector_get_component_as_scalar(vector4d_arg0 input) RTM_NO_EXCEPT
+	{
+		switch (component)
+		{
+			default:
+			case component4::x:	return vector_get_x_as_scalar(input);
+			case component4::y:	return vector_get_y_as_scalar(input);
+			case component4::z:	return vector_get_z_as_scalar(input);
+			case component4::w:	return vector_get_w_as_scalar(input);
+		}
 	}
 
 	namespace rtm_impl
@@ -385,15 +483,16 @@ namespace rtm
 			}
 
 #if defined(RTM_SSE2_INTRINSICS)
+			RTM_DEPRECATED("Use 'as_scalar' suffix instead. To be removed in 2.4.")
 			RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE RTM_SIMD_CALL operator scalard() const RTM_NO_EXCEPT
 			{
 				switch (component)
 				{
 					default:
-					case component4::x:	return vector_get_x(input);
-					case component4::y:	return vector_get_y(input);
-					case component4::z:	return vector_get_z(input);
-					case component4::w:	return vector_get_w(input);
+					case component4::x:	return vector_get_x_as_scalar(input);
+					case component4::y:	return vector_get_y_as_scalar(input);
+					case component4::z:	return vector_get_z_as_scalar(input);
+					case component4::w:	return vector_get_w_as_scalar(input);
 				}
 			}
 #endif
@@ -413,11 +512,38 @@ namespace rtm
 	}
 
 	//////////////////////////////////////////////////////////////////////////
+	// Returns the vector2 desired component.
+	//////////////////////////////////////////////////////////////////////////
+	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE scalard RTM_SIMD_CALL vector_get_component2_as_scalar(vector4d_arg0 input, component2 component) RTM_NO_EXCEPT
+	{
+		switch (component)
+		{
+			default:
+			case component2::x:	return vector_get_x_as_scalar(input);
+			case component2::y:	return vector_get_y_as_scalar(input);
+		}
+	}
+
+	//////////////////////////////////////////////////////////////////////////
 	// Returns the vector3 desired component.
 	//////////////////////////////////////////////////////////////////////////
 	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE constexpr rtm_impl::vector4d_vector_get_component RTM_SIMD_CALL vector_get_component3(vector4d_arg0 input, component3 component) RTM_NO_EXCEPT
 	{
 		return rtm_impl::vector4d_vector_get_component{ input, static_cast<component4>(component), { 0 } };
+	}
+
+	//////////////////////////////////////////////////////////////////////////
+	// Returns the vector3 desired component.
+	//////////////////////////////////////////////////////////////////////////
+	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE scalard RTM_SIMD_CALL vector_get_component3_as_scalar(vector4d_arg0 input, component3 component) RTM_NO_EXCEPT
+	{
+		switch (component)
+		{
+			default:
+			case component3::x:	return vector_get_x_as_scalar(input);
+			case component3::y:	return vector_get_y_as_scalar(input);
+			case component3::z:	return vector_get_z_as_scalar(input);
+		}
 	}
 
 	//////////////////////////////////////////////////////////////////////////
@@ -429,6 +555,21 @@ namespace rtm
 	}
 
 	//////////////////////////////////////////////////////////////////////////
+	// Returns the vector4 desired component.
+	//////////////////////////////////////////////////////////////////////////
+	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE scalard RTM_SIMD_CALL vector_get_component_as_scalar(vector4d_arg0 input, component4 component) RTM_NO_EXCEPT
+	{
+		switch (component)
+		{
+			default:
+			case component4::x:	return vector_get_x_as_scalar(input);
+			case component4::y:	return vector_get_y_as_scalar(input);
+			case component4::z:	return vector_get_z_as_scalar(input);
+			case component4::w:	return vector_get_w_as_scalar(input);
+		}
+	}
+
+	//////////////////////////////////////////////////////////////////////////
 	// Returns the smallest component in the input vector as a scalar.
 	//////////////////////////////////////////////////////////////////////////
 	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE constexpr rtm_impl::vector4d_get_min_component RTM_SIMD_CALL vector_get_min_component(vector4d_arg0 input) RTM_NO_EXCEPT
@@ -437,11 +578,39 @@ namespace rtm
 	}
 
 	//////////////////////////////////////////////////////////////////////////
+	// Returns the smallest component in the input vector as a scalar.
+	//////////////////////////////////////////////////////////////////////////
+	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE scalard RTM_SIMD_CALL vector_get_min_component_as_scalar(vector4d_arg0 input) RTM_NO_EXCEPT
+	{
+#if defined(RTM_SSE2_INTRINSICS)
+		__m128d xz_yw = _mm_min_pd(input.xy, input.zw);
+		__m128d yw_yw = _mm_shuffle_pd(xz_yw, xz_yw, 1);
+		return scalard{ _mm_min_pd(xz_yw, yw_yw) };
+#else
+		return vector_get_min_component(input);
+#endif
+	}
+
+	//////////////////////////////////////////////////////////////////////////
 	// Returns the largest component in the input vector as a scalar.
 	//////////////////////////////////////////////////////////////////////////
 	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE constexpr rtm_impl::vector4d_get_max_component RTM_SIMD_CALL vector_get_max_component(vector4d_arg0 input) RTM_NO_EXCEPT
 	{
 		return rtm_impl::vector4d_get_max_component{ input };
+	}
+
+	//////////////////////////////////////////////////////////////////////////
+	// Returns the largest component in the input vector as a scalar.
+	//////////////////////////////////////////////////////////////////////////
+	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE scalard RTM_SIMD_CALL vector_get_max_component_as_scalar(vector4d_arg0 input) RTM_NO_EXCEPT
+	{
+#if defined(RTM_SSE2_INTRINSICS)
+		__m128d xz_yw = _mm_max_pd(input.xy, input.zw);
+		__m128d yw_yw = _mm_shuffle_pd(xz_yw, xz_yw, 1);
+		return scalard{ _mm_max_pd(xz_yw, yw_yw) };
+#else
+		return vector_get_max_component(input);
+#endif
 	}
 
 	//////////////////////////////////////////////////////////////////////////
@@ -1157,14 +1326,14 @@ namespace rtm
 		{
 			RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE RTM_SIMD_CALL operator double() const RTM_NO_EXCEPT
 			{
-				const scalard lhs_x = vector_get_x(lhs);
-				const scalard lhs_y = vector_get_y(lhs);
-				const scalard lhs_z = vector_get_z(lhs);
-				const scalard lhs_w = vector_get_w(lhs);
-				const scalard rhs_x = vector_get_x(rhs);
-				const scalard rhs_y = vector_get_y(rhs);
-				const scalard rhs_z = vector_get_z(rhs);
-				const scalard rhs_w = vector_get_w(rhs);
+				const scalard lhs_x = vector_get_x_as_scalar(lhs);
+				const scalard lhs_y = vector_get_y_as_scalar(lhs);
+				const scalard lhs_z = vector_get_z_as_scalar(lhs);
+				const scalard lhs_w = vector_get_w_as_scalar(lhs);
+				const scalard rhs_x = vector_get_x_as_scalar(rhs);
+				const scalard rhs_y = vector_get_y_as_scalar(rhs);
+				const scalard rhs_z = vector_get_z_as_scalar(rhs);
+				const scalard rhs_w = vector_get_w_as_scalar(rhs);
 				const scalard xx = scalar_mul(lhs_x, rhs_x);
 				const scalard yy = scalar_mul(lhs_y, rhs_y);
 				const scalard zz = scalar_mul(lhs_z, rhs_z);
@@ -1173,16 +1342,17 @@ namespace rtm
 			}
 
 #if defined(RTM_SSE2_INTRINSICS)
+			RTM_DEPRECATED("Use 'as_scalar' suffix instead. To be removed in 2.4.")
 			RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE RTM_SIMD_CALL operator scalard() const RTM_NO_EXCEPT
 			{
-				const scalard lhs_x = vector_get_x(lhs);
-				const scalard lhs_y = vector_get_y(lhs);
-				const scalard lhs_z = vector_get_z(lhs);
-				const scalard lhs_w = vector_get_w(lhs);
-				const scalard rhs_x = vector_get_x(rhs);
-				const scalard rhs_y = vector_get_y(rhs);
-				const scalard rhs_z = vector_get_z(rhs);
-				const scalard rhs_w = vector_get_w(rhs);
+				const scalard lhs_x = vector_get_x_as_scalar(lhs);
+				const scalard lhs_y = vector_get_y_as_scalar(lhs);
+				const scalard lhs_z = vector_get_z_as_scalar(lhs);
+				const scalard lhs_w = vector_get_w_as_scalar(lhs);
+				const scalard rhs_x = vector_get_x_as_scalar(rhs);
+				const scalard rhs_y = vector_get_y_as_scalar(rhs);
+				const scalard rhs_z = vector_get_z_as_scalar(rhs);
+				const scalard rhs_w = vector_get_w_as_scalar(rhs);
 				const scalard xx = scalar_mul(lhs_x, rhs_x);
 				const scalard yy = scalar_mul(lhs_y, rhs_y);
 				const scalard zz = scalar_mul(lhs_z, rhs_z);
@@ -1191,9 +1361,10 @@ namespace rtm
 			}
 #endif
 
+			RTM_DEPRECATED("Use 'as_vector' suffix instead. To be removed in 2.4.")
 			RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE RTM_SIMD_CALL operator vector4d() const RTM_NO_EXCEPT
 			{
-				const scalard dot = *this;
+				const double dot = *this;
 				return vector_set(dot);
 			}
 
@@ -1208,6 +1379,34 @@ namespace rtm
 	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE constexpr rtm_impl::vector4d_vector_dot RTM_SIMD_CALL vector_dot(vector4d_arg0 lhs, vector4d_arg1 rhs) RTM_NO_EXCEPT
 	{
 		return rtm_impl::vector4d_vector_dot{ lhs, rhs };
+	}
+
+	//////////////////////////////////////////////////////////////////////////
+	// 4D dot product: lhs . rhs
+	//////////////////////////////////////////////////////////////////////////
+	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE scalard RTM_SIMD_CALL vector_dot_as_scalar(vector4d_arg0 lhs, vector4d_arg1 rhs) RTM_NO_EXCEPT
+	{
+		const scalard lhs_x = vector_get_x_as_scalar(lhs);
+		const scalard lhs_y = vector_get_y_as_scalar(lhs);
+		const scalard lhs_z = vector_get_z_as_scalar(lhs);
+		const scalard lhs_w = vector_get_w_as_scalar(lhs);
+		const scalard rhs_x = vector_get_x_as_scalar(rhs);
+		const scalard rhs_y = vector_get_y_as_scalar(rhs);
+		const scalard rhs_z = vector_get_z_as_scalar(rhs);
+		const scalard rhs_w = vector_get_w_as_scalar(rhs);
+		const scalard xx = scalar_mul(lhs_x, rhs_x);
+		const scalard yy = scalar_mul(lhs_y, rhs_y);
+		const scalard zz = scalar_mul(lhs_z, rhs_z);
+		const scalard ww = scalar_mul(lhs_w, rhs_w);
+		return scalar_add(scalar_add(xx, yy), scalar_add(zz, ww));
+	}
+
+	//////////////////////////////////////////////////////////////////////////
+	// 4D dot product: lhs . rhs
+	//////////////////////////////////////////////////////////////////////////
+	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE vector4d RTM_SIMD_CALL vector_dot_as_vector(vector4d_arg0 lhs, vector4d_arg1 rhs) RTM_NO_EXCEPT
+	{
+		return vector_set(vector_dot_as_scalar(lhs, rhs));
 	}
 
 	namespace rtm_impl
@@ -1232,6 +1431,7 @@ namespace rtm
 			}
 
 #if defined(RTM_SSE2_INTRINSICS)
+			RTM_DEPRECATED("Use 'as_scalar' suffix instead. To be removed in 2.4.")
 			RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE RTM_SIMD_CALL operator scalard() const RTM_NO_EXCEPT
 			{
 				__m128d x2_y2 = _mm_mul_pd(lhs.xy, rhs.xy);
@@ -1240,9 +1440,10 @@ namespace rtm
 			}
 #endif
 
+			RTM_DEPRECATED("Use 'as_vector' suffix instead. To be removed in 2.4.")
 			RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE RTM_SIMD_CALL operator vector4d() const RTM_NO_EXCEPT
 			{
-				const scalard dot = *this;
+				const double dot = *this;
 				return vector_set(dot);
 			}
 
@@ -1257,6 +1458,28 @@ namespace rtm
 	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE constexpr rtm_impl::vector4d_vector_dot2 RTM_SIMD_CALL vector_dot2(vector4d_arg0 lhs, vector4d_arg1 rhs) RTM_NO_EXCEPT
 	{
 		return rtm_impl::vector4d_vector_dot2{ lhs, rhs };
+	}
+
+	//////////////////////////////////////////////////////////////////////////
+	// 2D dot product: lhs . rhs
+	//////////////////////////////////////////////////////////////////////////
+	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE scalard RTM_SIMD_CALL vector_dot2_as_scalar(vector4d_arg0 lhs, vector4d_arg1 rhs) RTM_NO_EXCEPT
+	{
+#if defined(RTM_SSE2_INTRINSICS)
+		__m128d x2_y2 = _mm_mul_pd(lhs.xy, rhs.xy);
+		__m128d y2 = _mm_shuffle_pd(x2_y2, x2_y2, 1);
+		return scalard{ _mm_add_sd(x2_y2, y2) };
+#else
+		return vector_dot2(lhs, rhs);
+#endif
+	}
+
+	//////////////////////////////////////////////////////////////////////////
+	// 2D dot product: lhs . rhs
+	//////////////////////////////////////////////////////////////////////////
+	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE vector4d RTM_SIMD_CALL vector_dot2_as_vector(vector4d_arg0 lhs, vector4d_arg1 rhs) RTM_NO_EXCEPT
+	{
+		return vector_set(vector_dot2_as_scalar(lhs, rhs));
 	}
 
 	namespace rtm_impl
@@ -1283,6 +1506,7 @@ namespace rtm
 			}
 
 #if defined(RTM_SSE2_INTRINSICS)
+			RTM_DEPRECATED("Use 'as_scalar' suffix instead. To be removed in 2.4.")
 			RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE RTM_SIMD_CALL operator scalard() const RTM_NO_EXCEPT
 			{
 				__m128d x2_y2 = _mm_mul_pd(lhs.xy, rhs.xy);
@@ -1293,9 +1517,10 @@ namespace rtm
 			}
 #endif
 
+			RTM_DEPRECATED("Use 'as_vector' suffix instead. To be removed in 2.4.")
 			RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE RTM_SIMD_CALL operator vector4d() const RTM_NO_EXCEPT
 			{
-				const scalard dot = *this;
+				const double dot = *this;
 				return vector_set(dot);
 			}
 
@@ -1313,11 +1538,51 @@ namespace rtm
 	}
 
 	//////////////////////////////////////////////////////////////////////////
+	// 3D dot product: lhs . rhs
+	//////////////////////////////////////////////////////////////////////////
+	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE scalard RTM_SIMD_CALL vector_dot3_as_scalar(vector4d_arg0 lhs, vector4d_arg1 rhs) RTM_NO_EXCEPT
+	{
+#if defined(RTM_SSE2_INTRINSICS)
+		__m128d x2_y2 = _mm_mul_pd(lhs.xy, rhs.xy);
+		__m128d z2_w2 = _mm_mul_pd(lhs.zw, rhs.zw);
+		__m128d y2 = _mm_shuffle_pd(x2_y2, x2_y2, 1);
+		__m128d x2y2 = _mm_add_sd(x2_y2, y2);
+		return scalard{ _mm_add_sd(x2y2, z2_w2) };
+#else
+		return vector_dot3(lhs, rhs);
+#endif
+	}
+
+	//////////////////////////////////////////////////////////////////////////
+	// 3D dot product: lhs . rhs
+	//////////////////////////////////////////////////////////////////////////
+	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE vector4d RTM_SIMD_CALL vector_dot3_as_vector(vector4d_arg0 lhs, vector4d_arg1 rhs) RTM_NO_EXCEPT
+	{
+		return vector_set(vector_dot3_as_scalar(lhs, rhs));
+	}
+
+	//////////////////////////////////////////////////////////////////////////
 	// Returns the squared length/norm of the vector4.
 	//////////////////////////////////////////////////////////////////////////
 	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE constexpr rtm_impl::vector4d_vector_dot RTM_SIMD_CALL vector_length_squared(vector4d_arg0 input) RTM_NO_EXCEPT
 	{
 		return rtm_impl::vector4d_vector_dot{ input, input };
+	}
+
+	//////////////////////////////////////////////////////////////////////////
+	// Returns the squared length/norm of the vector4.
+	//////////////////////////////////////////////////////////////////////////
+	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE scalard RTM_SIMD_CALL vector_length_squared_as_scalar(vector4d_arg0 input) RTM_NO_EXCEPT
+	{
+		return vector_dot_as_scalar(input, input);
+	}
+
+	//////////////////////////////////////////////////////////////////////////
+	// Returns the squared length/norm of the vector4.
+	//////////////////////////////////////////////////////////////////////////
+	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE vector4d RTM_SIMD_CALL vector_length_squared_as_vector(vector4d_arg0 input) RTM_NO_EXCEPT
+	{
+		return vector_dot_as_vector(input, input);
 	}
 
 	//////////////////////////////////////////////////////////////////////////
@@ -1329,11 +1594,43 @@ namespace rtm
 	}
 
 	//////////////////////////////////////////////////////////////////////////
+	// Returns the squared length/norm of the vector2.
+	//////////////////////////////////////////////////////////////////////////
+	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE scalard RTM_SIMD_CALL vector_length_squared2_as_scalar(vector4d_arg0 input) RTM_NO_EXCEPT
+	{
+		return vector_dot2_as_scalar(input, input);
+	}
+
+	//////////////////////////////////////////////////////////////////////////
+	// Returns the squared length/norm of the vector2.
+	//////////////////////////////////////////////////////////////////////////
+	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE vector4d RTM_SIMD_CALL vector_length_squared2_as_vector(vector4d_arg0 input) RTM_NO_EXCEPT
+	{
+		return vector_dot2_as_vector(input, input);
+	}
+
+	//////////////////////////////////////////////////////////////////////////
 	// Returns the squared length/norm of the vector3.
 	//////////////////////////////////////////////////////////////////////////
 	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE constexpr rtm_impl::vector4d_vector_dot3 RTM_SIMD_CALL vector_length_squared3(vector4d_arg0 input) RTM_NO_EXCEPT
 	{
 		return rtm_impl::vector4d_vector_dot3{ input, input };
+	}
+
+	//////////////////////////////////////////////////////////////////////////
+	// Returns the squared length/norm of the vector3.
+	//////////////////////////////////////////////////////////////////////////
+	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE scalard RTM_SIMD_CALL vector_length_squared3_as_scalar(vector4d_arg0 input) RTM_NO_EXCEPT
+	{
+		return vector_dot3_as_scalar(input, input);
+	}
+
+	//////////////////////////////////////////////////////////////////////////
+	// Returns the squared length/norm of the vector3.
+	//////////////////////////////////////////////////////////////////////////
+	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE vector4d RTM_SIMD_CALL vector_length_squared3_as_vector(vector4d_arg0 input) RTM_NO_EXCEPT
+	{
+		return vector_dot3_as_vector(input, input);
 	}
 
 	namespace rtm_impl
@@ -1348,14 +1645,15 @@ namespace rtm
 		{
 			RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE RTM_SIMD_CALL operator double() const RTM_NO_EXCEPT
 			{
-				const scalard len_sq = vector_length_squared(input);
+				const scalard len_sq = vector_length_squared_as_scalar(input);
 				return scalar_cast(scalar_sqrt(len_sq));
 			}
 
 #if defined(RTM_SSE2_INTRINSICS)
+			RTM_DEPRECATED("Use 'as_scalar' suffix instead. To be removed in 2.4.")
 			RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE RTM_SIMD_CALL operator scalard() const RTM_NO_EXCEPT
 			{
-				const scalard len_sq = vector_length_squared(input);
+				const scalard len_sq = vector_length_squared_as_scalar(input);
 				return scalar_sqrt(len_sq);
 			}
 #endif
@@ -1372,6 +1670,15 @@ namespace rtm
 		return rtm_impl::vector4d_vector_length{ input };
 	}
 
+	//////////////////////////////////////////////////////////////////////////
+	// Returns the length/norm of the vector4.
+	//////////////////////////////////////////////////////////////////////////
+	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE scalard RTM_SIMD_CALL vector_length_as_scalar(vector4d_arg0 input) RTM_NO_EXCEPT
+	{
+		const scalard len_sq = vector_length_squared_as_scalar(input);
+		return scalar_sqrt(len_sq);
+	}
+
 	namespace rtm_impl
 	{
 		//////////////////////////////////////////////////////////////////////////
@@ -1384,14 +1691,15 @@ namespace rtm
 		{
 			RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE RTM_SIMD_CALL operator double() const RTM_NO_EXCEPT
 			{
-				const scalard len_sq = vector_length_squared3(input);
+				const scalard len_sq = vector_length_squared3_as_scalar(input);
 				return scalar_cast(scalar_sqrt(len_sq));
 			}
 
 #if defined(RTM_SSE2_INTRINSICS)
+			RTM_DEPRECATED("Use 'as_scalar' suffix instead. To be removed in 2.4.")
 			RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE RTM_SIMD_CALL operator scalard() const RTM_NO_EXCEPT
 			{
-				const scalard len_sq = vector_length_squared3(input);
+				const scalard len_sq = vector_length_squared3_as_scalar(input);
 				return scalar_sqrt(len_sq);
 			}
 #endif
@@ -1408,6 +1716,15 @@ namespace rtm
 		return rtm_impl::vector4d_vector_length3{ input };
 	}
 
+	//////////////////////////////////////////////////////////////////////////
+	// Returns the length/norm of the vector3.
+	//////////////////////////////////////////////////////////////////////////
+	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE scalard RTM_SIMD_CALL vector_length3_as_scalar(vector4d_arg0 input) RTM_NO_EXCEPT
+	{
+		const scalard len_sq = vector_length_squared3_as_scalar(input);
+		return scalar_sqrt(len_sq);
+	}
+
 	namespace rtm_impl
 	{
 		//////////////////////////////////////////////////////////////////////////
@@ -1420,14 +1737,15 @@ namespace rtm
 		{
 			RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE RTM_SIMD_CALL operator double() const RTM_NO_EXCEPT
 			{
-				const scalard len_sq = vector_length_squared(input);
+				const scalard len_sq = vector_length_squared_as_scalar(input);
 				return scalar_cast(scalar_sqrt_reciprocal(len_sq));
 			}
 
 #if defined(RTM_SSE2_INTRINSICS)
+			RTM_DEPRECATED("Use 'as_scalar' suffix instead. To be removed in 2.4.")
 			RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE RTM_SIMD_CALL operator scalard() const RTM_NO_EXCEPT
 			{
-				const scalard len_sq = vector_length_squared(input);
+				const scalard len_sq = vector_length_squared_as_scalar(input);
 				return scalar_sqrt_reciprocal(len_sq);
 			}
 #endif
@@ -1444,6 +1762,15 @@ namespace rtm
 		return rtm_impl::vector4d_vector_length_reciprocal{ input };
 	}
 
+	//////////////////////////////////////////////////////////////////////////
+	// Returns the reciprocal length/norm of the vector4.
+	//////////////////////////////////////////////////////////////////////////
+	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE scalard RTM_SIMD_CALL vector_length_reciprocal_as_scalar(vector4d_arg0 input) RTM_NO_EXCEPT
+	{
+		const scalard len_sq = vector_length_squared_as_scalar(input);
+		return scalar_sqrt_reciprocal(len_sq);
+	}
+
 	namespace rtm_impl
 	{
 		//////////////////////////////////////////////////////////////////////////
@@ -1456,14 +1783,15 @@ namespace rtm
 		{
 			RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE RTM_SIMD_CALL operator double() const RTM_NO_EXCEPT
 			{
-				const scalard len_sq = vector_length_squared2(input);
+				const scalard len_sq = vector_length_squared2_as_scalar(input);
 				return scalar_cast(scalar_sqrt_reciprocal(len_sq));
 			}
 
 #if defined(RTM_SSE2_INTRINSICS)
+			RTM_DEPRECATED("Use 'as_scalar' suffix instead. To be removed in 2.4.")
 			RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE RTM_SIMD_CALL operator scalard() const RTM_NO_EXCEPT
 			{
-				const scalard len_sq = vector_length_squared2(input);
+				const scalard len_sq = vector_length_squared2_as_scalar(input);
 				return scalar_sqrt_reciprocal(len_sq);
 			}
 #endif
@@ -1480,6 +1808,15 @@ namespace rtm
 		return rtm_impl::vector4d_vector_length_reciprocal2{ input };
 	}
 
+	//////////////////////////////////////////////////////////////////////////
+	// Returns the reciprocal length/norm of the vector2.
+	//////////////////////////////////////////////////////////////////////////
+	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE scalard RTM_SIMD_CALL vector_length_reciprocal2_as_scalar(vector4d_arg0 input) RTM_NO_EXCEPT
+	{
+		const scalard len_sq = vector_length_squared2_as_scalar(input);
+		return scalar_sqrt_reciprocal(len_sq);
+	}
+
 	namespace rtm_impl
 	{
 		//////////////////////////////////////////////////////////////////////////
@@ -1492,14 +1829,15 @@ namespace rtm
 		{
 			RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE RTM_SIMD_CALL operator double() const RTM_NO_EXCEPT
 			{
-				const scalard len_sq = vector_length_squared3(input);
+				const scalard len_sq = vector_length_squared3_as_scalar(input);
 				return scalar_cast(scalar_sqrt_reciprocal(len_sq));
 			}
 
 #if defined(RTM_SSE2_INTRINSICS)
+			RTM_DEPRECATED("Use 'as_scalar' suffix instead. To be removed in 2.4.")
 			RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE RTM_SIMD_CALL operator scalard() const RTM_NO_EXCEPT
 			{
-				const scalard len_sq = vector_length_squared3(input);
+				const scalard len_sq = vector_length_squared3_as_scalar(input);
 				return scalar_sqrt_reciprocal(len_sq);
 			}
 #endif
@@ -1517,12 +1855,30 @@ namespace rtm
 	}
 
 	//////////////////////////////////////////////////////////////////////////
+	// Returns the reciprocal length/norm of the vector3.
+	//////////////////////////////////////////////////////////////////////////
+	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE scalard RTM_SIMD_CALL vector_length_reciprocal3_as_scalar(vector4d_arg0 input) RTM_NO_EXCEPT
+	{
+		const scalard len_sq = vector_length_squared3_as_scalar(input);
+		return scalar_sqrt_reciprocal(len_sq);
+	}
+
+	//////////////////////////////////////////////////////////////////////////
 	// Returns the distance between two 3D points.
 	//////////////////////////////////////////////////////////////////////////
 	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE rtm_impl::vector4d_vector_length3 RTM_SIMD_CALL vector_distance3(vector4d_arg0 lhs, vector4d_arg1 rhs) RTM_NO_EXCEPT
 	{
 		const vector4d difference = vector_sub(lhs, rhs);
 		return rtm_impl::vector4d_vector_length3{ difference };
+	}
+
+	//////////////////////////////////////////////////////////////////////////
+	// Returns the distance between two 3D points.
+	//////////////////////////////////////////////////////////////////////////
+	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE scalard RTM_SIMD_CALL vector_distance3_as_scalar(vector4d_arg0 lhs, vector4d_arg1 rhs) RTM_NO_EXCEPT
+	{
+		const vector4d difference = vector_sub(lhs, rhs);
+		return vector_length3_as_scalar(difference);
 	}
 
 	//////////////////////////////////////////////////////////////////////////
@@ -1533,7 +1889,7 @@ namespace rtm
 	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE vector4d RTM_SIMD_CALL vector_normalize2(vector4d_arg0 input) RTM_NO_EXCEPT
 	{
 		// Reciprocal is more accurate to normalize with
-		const scalard len_sq = vector_length_squared2(input);
+		const scalard len_sq = vector_length_squared2_as_scalar(input);
 		return vector_mul(input, scalar_sqrt_reciprocal(len_sq));
 	}
 
@@ -1545,7 +1901,7 @@ namespace rtm
 	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE vector4d RTM_SIMD_CALL vector_normalize2(vector4d_arg0 input, vector4d_arg1 fallback, double threshold = 1.0E-8) RTM_NO_EXCEPT
 	{
 		// Reciprocal is more accurate to normalize with
-		const scalard len_sq = vector_length_squared2(input);
+		const scalard len_sq = vector_length_squared2_as_scalar(input);
 		if (scalar_cast(len_sq) >= threshold)
 			return vector_mul(input, scalar_sqrt_reciprocal(len_sq));
 		else
@@ -1560,7 +1916,7 @@ namespace rtm
 	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE vector4d RTM_SIMD_CALL vector_normalize3(vector4d_arg0 input) RTM_NO_EXCEPT
 	{
 		// Reciprocal is more accurate to normalize with
-		const scalard len_sq = vector_length_squared3(input);
+		const scalard len_sq = vector_length_squared3_as_scalar(input);
 		return vector_mul(input, scalar_sqrt_reciprocal(len_sq));
 	}
 
@@ -1572,7 +1928,7 @@ namespace rtm
 	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE vector4d RTM_SIMD_CALL vector_normalize3(vector4d_arg0 input, vector4d_arg1 fallback, double threshold = 1.0E-8) RTM_NO_EXCEPT
 	{
 		// Reciprocal is more accurate to normalize with
-		const scalard len_sq = vector_length_squared3(input);
+		const scalard len_sq = vector_length_squared3_as_scalar(input);
 		if (scalar_cast(len_sq) >= threshold)
 			return vector_mul(input, scalar_sqrt_reciprocal(len_sq));
 		else
@@ -1587,7 +1943,7 @@ namespace rtm
 	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE vector4d RTM_SIMD_CALL vector_normalize(vector4d_arg0 input) RTM_NO_EXCEPT
 	{
 		// Reciprocal is more accurate to normalize with
-		const scalard len_sq = vector_length_squared(input);
+		const scalard len_sq = vector_length_squared_as_scalar(input);
 		return vector_mul(input, scalar_sqrt_reciprocal(len_sq));
 	}
 
@@ -1599,7 +1955,7 @@ namespace rtm
 	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE vector4d RTM_SIMD_CALL vector_normalize(vector4d_arg0 input, vector4d_arg1 fallback, double threshold = 1.0E-8) RTM_NO_EXCEPT
 	{
 		// Reciprocal is more accurate to normalize with
-		const scalard len_sq = vector_length_squared(input);
+		const scalard len_sq = vector_length_squared_as_scalar(input);
 		if (scalar_cast(len_sq) >= threshold)
 			return vector_mul(input, scalar_sqrt_reciprocal(len_sq));
 		else
@@ -2671,10 +3027,10 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	RTM_DISABLE_SECURITY_COOKIE_CHECK inline vector4d RTM_SIMD_CALL vector_sin(vector4d_arg0 input) RTM_NO_EXCEPT
 	{
-		scalard x = scalar_sin(scalard(vector_get_x(input)));
-		scalard y = scalar_sin(scalard(vector_get_y(input)));
-		scalard z = scalar_sin(scalard(vector_get_z(input)));
-		scalard w = scalar_sin(scalard(vector_get_w(input)));
+		scalard x = scalar_sin(vector_get_x_as_scalar(input));
+		scalard y = scalar_sin(vector_get_y_as_scalar(input));
+		scalard z = scalar_sin(vector_get_z_as_scalar(input));
+		scalard w = scalar_sin(vector_get_w_as_scalar(input));
 		return vector_set(x, y, z, w);
 	}
 
@@ -2684,10 +3040,10 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	RTM_DISABLE_SECURITY_COOKIE_CHECK inline vector4d RTM_SIMD_CALL vector_asin(vector4d_arg0 input) RTM_NO_EXCEPT
 	{
-		scalard x = scalar_asin(scalard(vector_get_x(input)));
-		scalard y = scalar_asin(scalard(vector_get_y(input)));
-		scalard z = scalar_asin(scalard(vector_get_z(input)));
-		scalard w = scalar_asin(scalard(vector_get_w(input)));
+		scalard x = scalar_asin(vector_get_x_as_scalar(input));
+		scalard y = scalar_asin(vector_get_y_as_scalar(input));
+		scalard z = scalar_asin(vector_get_z_as_scalar(input));
+		scalard w = scalar_asin(vector_get_w_as_scalar(input));
 		return vector_set(x, y, z, w);
 	}
 
@@ -2696,10 +3052,10 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	RTM_DISABLE_SECURITY_COOKIE_CHECK inline vector4d RTM_SIMD_CALL vector_cos(vector4d_arg0 input) RTM_NO_EXCEPT
 	{
-		scalard x = scalar_cos(scalard(vector_get_x(input)));
-		scalard y = scalar_cos(scalard(vector_get_y(input)));
-		scalard z = scalar_cos(scalard(vector_get_z(input)));
-		scalard w = scalar_cos(scalard(vector_get_w(input)));
+		scalard x = scalar_cos(vector_get_x_as_scalar(input));
+		scalard y = scalar_cos(vector_get_y_as_scalar(input));
+		scalard z = scalar_cos(vector_get_z_as_scalar(input));
+		scalard w = scalar_cos(vector_get_w_as_scalar(input));
 		return vector_set(x, y, z, w);
 	}
 
@@ -2709,10 +3065,10 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	RTM_DISABLE_SECURITY_COOKIE_CHECK inline vector4d RTM_SIMD_CALL vector_acos(vector4d_arg0 input) RTM_NO_EXCEPT
 	{
-		scalard x = scalar_acos(scalard(vector_get_x(input)));
-		scalard y = scalar_acos(scalard(vector_get_y(input)));
-		scalard z = scalar_acos(scalard(vector_get_z(input)));
-		scalard w = scalar_acos(scalard(vector_get_w(input)));
+		scalard x = scalar_acos(vector_get_x_as_scalar(input));
+		scalard y = scalar_acos(vector_get_y_as_scalar(input));
+		scalard z = scalar_acos(vector_get_z_as_scalar(input));
+		scalard w = scalar_acos(vector_get_w_as_scalar(input));
 		return vector_set(x, y, z, w);
 	}
 
@@ -2721,10 +3077,10 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	RTM_DISABLE_SECURITY_COOKIE_CHECK inline void RTM_SIMD_CALL vector_sincos(vector4d_arg0 input, vector4d& out_sine, vector4d& out_cosine) RTM_NO_EXCEPT
 	{
-		const vector4d x = scalar_sincos(scalard(vector_get_x(input)));
-		const vector4d y = scalar_sincos(scalard(vector_get_y(input)));
-		const vector4d z = scalar_sincos(scalard(vector_get_z(input)));
-		const vector4d w = scalar_sincos(scalard(vector_get_w(input)));
+		const vector4d x = scalar_sincos(vector_get_x_as_scalar(input));
+		const vector4d y = scalar_sincos(vector_get_y_as_scalar(input));
+		const vector4d z = scalar_sincos(vector_get_z_as_scalar(input));
+		const vector4d w = scalar_sincos(vector_get_w_as_scalar(input));
 
 		const vector4d cos_xy = vector_mix<mix4::y, mix4::b, mix4::y, mix4::b>(x, y);
 		const vector4d cos_zw = vector_mix<mix4::y, mix4::b, mix4::y, mix4::b>(z, w);
@@ -2758,10 +3114,10 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	RTM_DISABLE_SECURITY_COOKIE_CHECK inline vector4d RTM_SIMD_CALL vector_atan(vector4d_arg0 input) RTM_NO_EXCEPT
 	{
-		scalard x = scalar_atan(scalard(vector_get_x(input)));
-		scalard y = scalar_atan(scalard(vector_get_y(input)));
-		scalard z = scalar_atan(scalard(vector_get_z(input)));
-		scalard w = scalar_atan(scalard(vector_get_w(input)));
+		scalard x = scalar_atan(vector_get_x_as_scalar(input));
+		scalard y = scalar_atan(vector_get_y_as_scalar(input));
+		scalard z = scalar_atan(vector_get_z_as_scalar(input));
+		scalard w = scalar_atan(vector_get_w_as_scalar(input));
 		return vector_set(x, y, z, w);
 	}
 
@@ -2773,10 +3129,10 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	RTM_DISABLE_SECURITY_COOKIE_CHECK inline vector4d RTM_SIMD_CALL vector_atan2(vector4d_arg0 y, vector4d_arg1 x) RTM_NO_EXCEPT
 	{
-		scalard x_ = scalar_atan2(scalard(vector_get_x(y)), scalard(vector_get_x(x)));
-		scalard y_ = scalar_atan2(scalard(vector_get_y(y)), scalard(vector_get_y(x)));
-		scalard z_ = scalar_atan2(scalard(vector_get_z(y)), scalard(vector_get_z(x)));
-		scalard w_ = scalar_atan2(scalard(vector_get_w(y)), scalard(vector_get_w(x)));
+		scalard x_ = scalar_atan2(vector_get_x_as_scalar(y), vector_get_x_as_scalar(x));
+		scalard y_ = scalar_atan2(vector_get_y_as_scalar(y), vector_get_y_as_scalar(x));
+		scalard z_ = scalar_atan2(vector_get_z_as_scalar(y), vector_get_z_as_scalar(x));
+		scalard w_ = scalar_atan2(vector_get_w_as_scalar(y), vector_get_w_as_scalar(x));
 		return vector_set(x_, y_, z_, w_);
 	}
 

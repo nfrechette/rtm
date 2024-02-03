@@ -30,10 +30,10 @@ using namespace rtm;
 
 RTM_FORCE_NOINLINE vector4f RTM_SIMD_CALL vector_abs_scalar(vector4f_arg0 input) RTM_NO_EXCEPT
 {
-	scalarf x = vector_get_x(input);
-	scalarf y = vector_get_y(input);
-	scalarf z = vector_get_z(input);
-	scalarf w = vector_get_w(input);
+	scalarf x = vector_get_x_as_scalar(input);
+	scalarf y = vector_get_y_as_scalar(input);
+	scalarf z = vector_get_z_as_scalar(input);
+	scalarf w = vector_get_w_as_scalar(input);
 	return vector_set(scalar_abs(x), scalar_abs(y), scalar_abs(z), scalar_abs(w));
 }
 

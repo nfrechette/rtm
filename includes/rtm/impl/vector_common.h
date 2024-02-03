@@ -486,6 +486,7 @@ namespace rtm
 			}
 
 #if defined(RTM_SSE2_INTRINSICS)
+			RTM_DEPRECATED("Use 'as_scalar' suffix instead. To be removed in 2.4.")
 			RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE RTM_SIMD_CALL operator scalarf() const RTM_NO_EXCEPT
 			{
 				__m128 zwzw = _mm_movehl_ps(value, value);
@@ -522,6 +523,7 @@ namespace rtm
 			}
 
 #if defined(RTM_SSE2_INTRINSICS)
+			RTM_DEPRECATED("Use 'as_scalar' suffix instead. To be removed in 2.4.")
 			RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE RTM_SIMD_CALL operator scalarf() const RTM_NO_EXCEPT
 			{
 				__m128 zwzw = _mm_movehl_ps(value, value);
@@ -554,6 +556,7 @@ namespace rtm
 			}
 
 #if defined(RTM_SSE2_INTRINSICS)
+			RTM_DEPRECATED("Use 'as_scalar' suffix instead. To be removed in 2.4.")
 			RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE RTM_SIMD_CALL operator scalard() const RTM_NO_EXCEPT
 			{
 				__m128d xz_yw = _mm_min_pd(value.xy, value.zw);
@@ -585,6 +588,7 @@ namespace rtm
 			}
 
 #if defined(RTM_SSE2_INTRINSICS)
+			RTM_DEPRECATED("Use 'as_scalar' suffix instead. To be removed in 2.4.")
 			RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE RTM_SIMD_CALL operator scalard() const RTM_NO_EXCEPT
 			{
 				__m128d xz_yw = _mm_max_pd(value.xy, value.zw);
