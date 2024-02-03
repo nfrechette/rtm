@@ -1,5 +1,18 @@
 # Significant changes per release
 
+## 2.3.0
+
+*  Added missing 2D/4D variants of some vector arithmetic
+*  Added support for Windows min/max macros
+*  Added vector_get_component/vector_set_component
+*  Added matrix_get_axis/matrix_set_axis and component versions
+*  Added qv/qvs/qvv from matrix
+*  Improved type traits
+*  Improved code generation for float64 types
+*  Added camera related matrix utilities
+*  Deprecated scalar/vector coersion for some arithmetic functions in favor of `as_scalar` and `as_vector` suffixes
+*  Other improvements and cleanup
+
 ## 2.2.1
 
 *  Fix matrix 4x4 multiplication and add unit tests
