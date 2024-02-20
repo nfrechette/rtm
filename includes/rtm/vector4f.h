@@ -1523,6 +1523,23 @@ namespace rtm
 
 		// cross(a, b) = ((a * b.yzx) - (a.yzx * b)).yzx
 		return _mm_shuffle_ps(tmp_zxy, tmp_zxy, _MM_SHUFFLE(3, 0, 2, 1));
+#elif defined(RTM_NEON_INTRINSICS)
+		// cross(a, b) = (a.yzx * b.zxy) - (a.zxy * b.yzx)
+		float32x4_t lhs_yzwx = vextq_f32(lhs, lhs, 1);
+		float32x4_t rhs_wxyz = vextq_f32(rhs, rhs, 3);
+
+		float32x4_t lhs_yzx = vsetq_lane_f32(vgetq_lane_f32(lhs, 0), lhs_yzwx, 2);
+		float32x4_t rhs_zxy = vsetq_lane_f32(vgetq_lane_f32(rhs, 2), rhs_wxyz, 0);
+
+		// part_a = (a.yzx * b.zxy)
+		float32x4_t part_a = vmulq_f32(lhs_yzx, rhs_zxy);
+
+		float32x4_t lhs_wxyz = vextq_f32(lhs, lhs, 3);
+		float32x4_t rhs_yzwx = vextq_f32(rhs, rhs, 1);
+		float32x4_t lhs_zxy = vsetq_lane_f32(vgetq_lane_f32(lhs, 2), lhs_wxyz, 0);
+		float32x4_t rhs_yzx = vsetq_lane_f32(vgetq_lane_f32(rhs, 0), rhs_yzwx, 2);
+
+		return vmlsq_f32(part_a, lhs_zxy, rhs_yzx);
 #else
 		// cross(a, b) = (a.yzx * b.zxy) - (a.zxy * b.yzx)
 		const float lhs_x = vector_get_x(lhs);
