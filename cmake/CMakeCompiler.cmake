@@ -17,7 +17,8 @@ macro(setup_default_compiler_flags _project_name)
 		target_compile_options(${_project_name} PRIVATE /Zi)				# Add debug info
 		target_compile_options(${_project_name} PRIVATE /Oi)				# Generate intrinsic functions
 		target_compile_options(${_project_name} PRIVATE /WX)				# Treat warnings as errors
-		if (CMAKE_CXX_COMPILER_ID MATCHES "MSVC") # no Clang no Intel
+
+		if (CMAKE_CXX_COMPILER_ID MATCHES "MSVC" OR CMAKE_CXX_COMPILER_ID MATCHES "Clang") # no Intel
 			target_compile_options(${_project_name} PRIVATE /MP)            # Enable parallel compilation
 		endif ()
 
