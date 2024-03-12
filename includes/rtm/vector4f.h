@@ -1539,7 +1539,7 @@ namespace rtm
 		float32x4_t lhs_zxy = vsetq_lane_f32(vgetq_lane_f32(lhs, 2), lhs_wxyz, 0);
 		float32x4_t rhs_yzx = vsetq_lane_f32(vgetq_lane_f32(rhs, 0), rhs_yzwx, 2);
 
-		return vmlsq_f32(part_a, lhs_zxy, rhs_yzx);
+		return vsetq_lane_f32(0, vmlsq_f32(part_a, lhs_zxy, rhs_yzx), 3);
 #else
 		// cross(a, b) = (a.yzx * b.zxy) - (a.zxy * b.yzx)
 		const float lhs_x = vector_get_x(lhs);
