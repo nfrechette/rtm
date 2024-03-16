@@ -1,5 +1,9 @@
 # Significant changes per release
 
+## 2.3.1
+
+*  Fix missing macro error when deprecation is disabled
+
 ## 2.3.0
 
 *  Added missing 2D/4D variants of some vector arithmetic
