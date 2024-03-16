@@ -198,10 +198,13 @@ RTM_IMPL_FILE_PRAGMA_PUSH
 			#define RTM_DEPRECATED(msg) __attribute__((deprecated))
 		#elif defined(RTM_COMPILER_MSVC)
 			#define RTM_DEPRECATED(msg) __declspec(deprecated)
-		#else
-			#define RTM_DEPRECATED(msg)
 		#endif
 	#endif
+#endif
+
+// If not defined, suppress all deprecation warnings
+#if !defined(RTM_DEPRECATED)
+	#define RTM_DEPRECATED(msg)
 #endif
 
 RTM_IMPL_FILE_PRAGMA_POP
