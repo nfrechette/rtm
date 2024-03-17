@@ -19,7 +19,7 @@ def parse_argv():
 	actions.add_argument('-pull_bench', action='store_true')	# Android only
 
 	target = parser.add_argument_group(title='Target')
-	target.add_argument('-compiler', choices=['vs2015', 'vs2017', 'vs2019', 'vs2019-clang', 'vs2022', 'vs2022-clang', 'android', 'clang4', 'clang5', 'clang6', 'clang7', 'clang8', 'clang9', 'clang10', 'clang11', 'clang12', 'clang13', 'clang14', 'clang15', 'gcc5', 'gcc6', 'gcc7', 'gcc8', 'gcc9', 'gcc10', 'gcc11', 'gcc12', 'gcc13', 'osx', 'ios', 'emscripten'], help='Defaults to the host system\'s default compiler')
+	target.add_argument('-compiler', choices=['vs2015', 'vs2017', 'vs2019', 'vs2019-clang', 'vs2022', 'vs2022-clang', 'android', 'clang4', 'clang5', 'clang6', 'clang7', 'clang8', 'clang9', 'clang10', 'clang11', 'clang12', 'clang13', 'clang14', 'clang15', 'clang16', 'clang17', 'clang18', 'gcc5', 'gcc6', 'gcc7', 'gcc8', 'gcc9', 'gcc10', 'gcc11', 'gcc12', 'gcc13', 'osx', 'ios', 'emscripten'], help='Defaults to the host system\'s default compiler')
 	target.add_argument('-config', choices=['Debug', 'Release'], type=str.capitalize)
 	target.add_argument('-cpu', choices=['x86', 'x64', 'armv7', 'arm64', 'wasm'], help='Defaults to the host system\'s architecture')
 	target.add_argument('-cpp_version', choices=['11', '14', '17', '20'], help='Defaults to C++11')
@@ -260,6 +260,15 @@ def set_compiler_env(compiler, args):
 		elif compiler == 'clang15':
 			os.environ['CC'] = 'clang-15'
 			os.environ['CXX'] = 'clang++-15'
+		elif compiler == 'clang16':
+			os.environ['CC'] = 'clang-16'
+			os.environ['CXX'] = 'clang++-16'
+		elif compiler == 'clang17':
+			os.environ['CC'] = 'clang-17'
+			os.environ['CXX'] = 'clang++-17'
+		elif compiler == 'clang18':
+			os.environ['CC'] = 'clang-18'
+			os.environ['CXX'] = 'clang++-18'
 		elif compiler == 'gcc5':
 			os.environ['CC'] = 'gcc-5'
 			os.environ['CXX'] = 'g++-5'
