@@ -28,10 +28,12 @@ Much thought was put into designing the library for it to be as flexible and pow
 Continuous integration tests a variety of platforms and configurations but it generally runs as-is anywhere where C++11 (or later) is supported. CI currently tests:
 
 *  Windows VS2022: x86, x64, ARM64, ARM64EC
-*  Linux GCC 12+: x86, x64
-*  Linux Clang 15+: x86, x64
+*  Linux GCC 12+: x86, x64, riscv64 (generic scalar path)
+*  Linux Clang 15+: x86, x64, riscv64 (generic scalar path)
 *  OS X XCode 15+: ARM64
 *  Emscripten 1.39.11: WASM
+
+RISC-V/riscv64 currently uses the generic scalar path and does not enable SSE/AVX/NEON intrinsics. Native `make.py -cpu riscv64` builds are supported on Linux `riscv64` hosts; cross-compilation should be performed with CMake and a proper RISC-V toolchain file.
 
 Each releases is also manually tested on iOS and Android.
 

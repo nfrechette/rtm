@@ -34,27 +34,29 @@
 //////////////////////////////////////////////////////////////////////////
 
 #if !defined(RTM_NO_INTRINSICS)
-	#if defined(__AVX2__)
-		#define RTM_AVX2_INTRINSICS
-		#define RTM_FMA_INTRINSICS
-		#define RTM_AVX_INTRINSICS
-		#define RTM_SSE4_INTRINSICS
-		#define RTM_SSE3_INTRINSICS
-		#define RTM_SSE2_INTRINSICS
-	#elif defined(__AVX__)
-		#define RTM_AVX_INTRINSICS
-		#define RTM_SSE4_INTRINSICS
-		#define RTM_SSE3_INTRINSICS
-		#define RTM_SSE2_INTRINSICS
-	#elif defined(__SSE4_1__)
-		#define RTM_SSE4_INTRINSICS
-		#define RTM_SSE3_INTRINSICS
-		#define RTM_SSE2_INTRINSICS
-	#elif defined(__SSSE3__)
-		#define RTM_SSE3_INTRINSICS
-		#define RTM_SSE2_INTRINSICS
-	#elif defined(__SSE2__) || defined(RTM_ARCH_X86) || defined(RTM_ARCH_X64)
-		#define RTM_SSE2_INTRINSICS
+	#if defined(RTM_ARCH_X86) || defined(RTM_ARCH_X64)
+		#if defined(__AVX2__)
+			#define RTM_AVX2_INTRINSICS
+			#define RTM_FMA_INTRINSICS
+			#define RTM_AVX_INTRINSICS
+			#define RTM_SSE4_INTRINSICS
+			#define RTM_SSE3_INTRINSICS
+			#define RTM_SSE2_INTRINSICS
+		#elif defined(__AVX__)
+			#define RTM_AVX_INTRINSICS
+			#define RTM_SSE4_INTRINSICS
+			#define RTM_SSE3_INTRINSICS
+			#define RTM_SSE2_INTRINSICS
+		#elif defined(__SSE4_1__)
+			#define RTM_SSE4_INTRINSICS
+			#define RTM_SSE3_INTRINSICS
+			#define RTM_SSE2_INTRINSICS
+		#elif defined(__SSSE3__)
+			#define RTM_SSE3_INTRINSICS
+			#define RTM_SSE2_INTRINSICS
+		else
+			#define RTM_SSE2_INTRINSICS
+		#endif
 	#endif
 
 	#if defined(RTM_ARCH_ARM64)

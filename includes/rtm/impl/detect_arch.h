@@ -34,6 +34,13 @@
 	#define RTM_ARCH_ARM64
 #elif defined(_M_ARM) || defined(__ARM_NEON)
 	#define RTM_ARCH_ARM
+#elif defined(__riscv)
+	#define RTM_ARCH_RISCV
+	#if defined(__riscv_xlen) && (__riscv_xlen == 64)
+		#define RTM_ARCH_RISCV64
+	#elif defined(__riscv_xlen) && (__riscv_xlen == 32)
+		#define RTM_ARCH_RISCV32
+	#endif
 #elif defined(_M_X64) || defined(__x86_64__)
 	#define RTM_ARCH_X64
 #elif defined(_M_IX86) || defined(__i386__)
