@@ -40,6 +40,8 @@
 		#define RTM_ARCH_RISCV64
 	#elif defined(__riscv_xlen) && (__riscv_xlen == 32)
 		#define RTM_ARCH_RISCV32
+	#else
+		#error Unsupported bit width
 	#endif
 #elif defined(_M_X64) || defined(__x86_64__)
 	#define RTM_ARCH_X64

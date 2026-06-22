@@ -54,7 +54,7 @@
 		#elif defined(__SSSE3__)
 			#define RTM_SSE3_INTRINSICS
 			#define RTM_SSE2_INTRINSICS
-		else
+		#else
 			#define RTM_SSE2_INTRINSICS
 		#endif
 	#endif
