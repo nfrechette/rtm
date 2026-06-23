@@ -6,6 +6,12 @@ import shutil
 import subprocess
 import sys
 
+def is_arm64_host():
+	return platform.machine() == 'arm64' or platform.machine() == 'aarch64'
+
+def is_riscv64_host():
+	return platform.machine() == 'riscv64'
+
 def parse_argv():
 	parser = argparse.ArgumentParser(add_help=False)
 
@@ -21,7 +27,7 @@ def parse_argv():
 	target = parser.add_argument_group(title='Target')
 	target.add_argument('-compiler', choices=['vs2015', 'vs2017', 'vs2019', 'vs2019-clang', 'vs2022', 'vs2022-clang', 'android', 'clang4', 'clang5', 'clang6', 'clang7', 'clang8', 'clang9', 'clang10', 'clang11', 'clang12', 'clang13', 'clang14', 'clang15', 'clang16', 'clang17', 'clang18', 'gcc5', 'gcc6', 'gcc7', 'gcc8', 'gcc9', 'gcc10', 'gcc11', 'gcc12', 'gcc13', 'osx', 'ios', 'emscripten'], help='Defaults to the host system\'s default compiler')
 	target.add_argument('-config', choices=['Debug', 'Release'], type=str.capitalize)
-	target.add_argument('-cpu', choices=['x86', 'x64', 'armv7', 'arm64', 'arm64ec', 'wasm'], help='Defaults to the host system\'s architecture')
+	target.add_argument('-cpu', choices=['x86', 'x64', 'armv7', 'arm64', 'arm64ec', 'riscv64', 'wasm'], help='Defaults to the host system\'s architecture')
 	target.add_argument('-cpp_version', choices=['11', '14', '17', '20'], help='Defaults to C++11')
 
 	misc = parser.add_argument_group(title='Miscellaneous')
@@ -47,9 +53,8 @@ def parse_argv():
 
 	args = parser.parse_args()
 
-	is_arm64_cpu = False
-	if platform.machine() == 'arm64' or platform.machine() == 'aarch64':
-		is_arm64_cpu = True
+	is_arm64_cpu = is_arm64_host()
+	is_riscv64_cpu = is_riscv64_host()
 
 	# Sanitize and validate our options
 	if (args.use_avx or args.use_avx2) and not args.use_simd:
@@ -110,6 +115,8 @@ def parse_argv():
 		if not args.cpu:
 			if is_arm64_cpu:
 				args.cpu = 'arm64'
+			elif is_riscv64_cpu:
+				args.cpu = 'riscv64'
 			else:
 				args.cpu = 'x64'
 
@@ -136,6 +143,10 @@ def parse_argv():
 	elif args.cpu == 'armv7':
 		if not args.compiler == 'android':
 			print('armv7 is only supported with Android')
+			sys.exit(1)
+	elif args.cpu == 'riscv64':
+		if not platform.system() == 'Linux' or not is_riscv64_cpu:
+			print('riscv64 is only supported natively on Linux hosts with a riscv64 compiler target; use CMake directly with a proper toolchain file for cross-compilation')
 			sys.exit(1)
 	elif args.cpu == 'wasm':
 		if not args.compiler == 'emscripten':
@@ -313,9 +324,7 @@ def do_generate_solution(build_dir, cmake_script_dir, args):
 	cpu = args.cpu
 	config = args.config
 
-	is_arm64_cpu = False
-	if platform.machine() == 'arm64' or platform.machine() == 'aarch64':
-		is_arm64_cpu = True
+	is_arm64_cpu = is_arm64_host()
 
 	if compiler:
 		set_compiler_env(compiler, args)

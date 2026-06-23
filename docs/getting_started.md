@@ -16,6 +16,12 @@ In order to contribute to RTM you will first need to setup your environment.
 
 On all three platforms, *AVX* support can be enabled by using the `-avx` switch and *AVX2* with `-avx2`. Intrinsic usage can be turned off with `-nosimd`.
 
+### Linux riscv64
+
+For native *Linux on riscv64*, the steps are identical to *x86 and x64* and the generic scalar path is selected automatically. You can generate build files with: `python make.py -cpu riscv64`
+
+Cross-compilation to `riscv64` is not handled by `make.py`. Use CMake directly with a proper RISC-V compiler and toolchain file instead.
+
 ### Windows ARM64
 
 For *Windows on ARM64*, the steps are identical to *x86 and x64* but you will need *CMake 3.13 or higher* and you must provide the architecture on the command line: `python make.py -compiler vs2017 -cpu arm64`

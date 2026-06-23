@@ -33,6 +33,8 @@ Continuous integration tests a variety of platforms and configurations but it ge
 *  OS X XCode 15+: ARM64
 *  Emscripten 1.39.11: WASM
 
+RISC-V/riscv64 currently uses the generic scalar path and does not enable SSE/AVX/NEON intrinsics. Native `make.py -cpu riscv64` builds are supported on Linux `riscv64` hosts; cross-compilation should be performed with CMake and a proper RISC-V toolchain file.
+
 Each releases is also manually tested on iOS and Android.
 
 ## Getting started
