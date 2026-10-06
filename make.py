@@ -38,6 +38,7 @@ def parse_argv():
 	misc.add_argument('-num_threads', help='No. to use while compiling and regressing')
 	misc.add_argument('-tests_matching', help='Only run tests whose names match this regex')
 	misc.add_argument('-vector_mix_test', action='store_true', help='Enable the vector_mix unit tests')
+	misc.add_argument('-fast_math', action='store_true', help='Compile the include validation with fast math')
 	misc.add_argument('-ci', action='store_true', help='Whether or not this is a Continuous Integration build')
 	misc.add_argument('-help', action='help', help='Display this usage information')
 
@@ -48,7 +49,7 @@ def parse_argv():
 		num_threads = 4
 
 	parser.set_defaults(build=False, clean=False, clean_only=False, unit_test=False,
-		compiler=None, config='Release', cpu=None, cpp_version='11', use_avx=False, use_avx2=False, use_simd=True, num_threads=num_threads, tests_matching='', vector_mix_test=False,
+		compiler=None, config='Release', cpu=None, cpp_version='11', use_avx=False, use_avx2=False, use_simd=True, num_threads=num_threads, tests_matching='', vector_mix_test=False, fast_math=False,
 		bench=False, run_bench=False, pull_bench=False)
 
 	args = parser.parse_args()
@@ -352,6 +353,10 @@ def do_generate_solution(build_dir, cmake_script_dir, args):
 	if args.vector_mix_test:
 		print('Enabling vector_mix unit tests')
 		extra_switches.append('-DWITH_VECTOR_MIX_TESTS:BOOL=true')
+
+	if args.fast_math:
+		print('Enabling fast math for the include validation')
+		extra_switches.append('-DUSE_FAST_MATH:BOOL=true')
 
 	if args.bench:
 		extra_switches.append('-DBUILD_BENCHMARK_EXE:BOOL=true')
