@@ -283,6 +283,26 @@ void test_vector4_getset_impl()
 	CHECK(FloatType(vector_get_z((Vector4Type)vector_broadcast(&tmp.values[0]))) == tmp.values[0]);
 	CHECK(FloatType(vector_get_w((Vector4Type)vector_broadcast(&tmp.values[0]))) == tmp.values[0]);
 
+	CHECK(FloatType(vector_get_x(vector_dup_x((Vector4Type)vector_load(&tmp.values[0])))) == tmp.values[0]);
+	CHECK(FloatType(vector_get_y(vector_dup_x((Vector4Type)vector_load(&tmp.values[0])))) == tmp.values[0]);
+	CHECK(FloatType(vector_get_z(vector_dup_x((Vector4Type)vector_load(&tmp.values[0])))) == tmp.values[0]);
+	CHECK(FloatType(vector_get_w(vector_dup_x((Vector4Type)vector_load(&tmp.values[0])))) == tmp.values[0]);
+
+	CHECK(FloatType(vector_get_x(vector_dup_y((Vector4Type)vector_load(&tmp.values[0])))) == tmp.values[1]);
+	CHECK(FloatType(vector_get_y(vector_dup_y((Vector4Type)vector_load(&tmp.values[0])))) == tmp.values[1]);
+	CHECK(FloatType(vector_get_z(vector_dup_y((Vector4Type)vector_load(&tmp.values[0])))) == tmp.values[1]);
+	CHECK(FloatType(vector_get_w(vector_dup_y((Vector4Type)vector_load(&tmp.values[0])))) == tmp.values[1]);
+
+	CHECK(FloatType(vector_get_x(vector_dup_z((Vector4Type)vector_load(&tmp.values[0])))) == tmp.values[2]);
+	CHECK(FloatType(vector_get_y(vector_dup_z((Vector4Type)vector_load(&tmp.values[0])))) == tmp.values[2]);
+	CHECK(FloatType(vector_get_z(vector_dup_z((Vector4Type)vector_load(&tmp.values[0])))) == tmp.values[2]);
+	CHECK(FloatType(vector_get_w(vector_dup_z((Vector4Type)vector_load(&tmp.values[0])))) == tmp.values[2]);
+
+	CHECK(FloatType(vector_get_x(vector_dup_w((Vector4Type)vector_load(&tmp.values[0])))) == tmp.values[3]);
+	CHECK(FloatType(vector_get_y(vector_dup_w((Vector4Type)vector_load(&tmp.values[0])))) == tmp.values[3]);
+	CHECK(FloatType(vector_get_z(vector_dup_w((Vector4Type)vector_load(&tmp.values[0])))) == tmp.values[3]);
+	CHECK(FloatType(vector_get_w(vector_dup_w((Vector4Type)vector_load(&tmp.values[0])))) == tmp.values[3]);
+
 	CHECK(FloatType(vector_get_x(quat_to_vector(identity))) == FloatType(quat_get_x(identity)));
 	CHECK(FloatType(vector_get_y(quat_to_vector(identity))) == FloatType(quat_get_y(identity)));
 	CHECK(FloatType(vector_get_z(quat_to_vector(identity))) == FloatType(quat_get_z(identity)));
@@ -668,6 +688,29 @@ void test_vector4_arithmetic_impl(const FloatType threshold)
 	CHECK(scalar_near_equal(vector_length_squared3_ref, vector_length_squared3_result, threshold));
 	const ScalarType vector_length_squared3_result_scalar = vector_length_squared3_as_scalar(test_value0);
 	CHECK(scalar_equal(vector_length_squared3_result, scalar_cast(vector_length_squared3_result_scalar)));
+	const Vector4Type vector_length_squared3_result_vec = vector_length_squared3_as_vector(test_value0);
+	CHECK(scalar_near_equal(vector_length_squared3_ref, (FloatType)vector_get_x(vector_length_squared3_result_vec), threshold));
+	CHECK(scalar_near_equal(vector_length_squared3_ref, (FloatType)vector_get_y(vector_length_squared3_result_vec), threshold));
+	CHECK(scalar_near_equal(vector_length_squared3_ref, (FloatType)vector_get_z(vector_length_squared3_result_vec), threshold));
+	CHECK(scalar_near_equal(vector_length_squared3_ref, (FloatType)vector_get_w(vector_length_squared3_result_vec), threshold));
+
+	const FloatType vector_length_squared_ref = scalar_dot4<Vector4Type, FloatType>(test_value0, test_value0);
+	const Vector4Type vector_length_squared_result_vec = vector_length_squared_as_vector(test_value0);
+	CHECK(scalar_near_equal(vector_length_squared_ref, (FloatType)vector_get_x(vector_length_squared_result_vec), length_squared_threshold));
+	CHECK(scalar_near_equal(vector_length_squared_ref, (FloatType)vector_get_y(vector_length_squared_result_vec), length_squared_threshold));
+	CHECK(scalar_near_equal(vector_length_squared_ref, (FloatType)vector_get_z(vector_length_squared_result_vec), length_squared_threshold));
+	CHECK(scalar_near_equal(vector_length_squared_ref, (FloatType)vector_get_w(vector_length_squared_result_vec), length_squared_threshold));
+
+	const FloatType vector_length_squared2_ref = scalar_dot2<Vector4Type, FloatType>(test_value0, test_value0);
+	const FloatType vector_length_squared2_result = vector_length_squared2(test_value0);
+	CHECK(scalar_near_equal(vector_length_squared2_ref, vector_length_squared2_result, threshold));
+	const ScalarType vector_length_squared2_result_scalar = vector_length_squared2_as_scalar(test_value0);
+	CHECK(scalar_equal(vector_length_squared2_result, scalar_cast(vector_length_squared2_result_scalar)));
+	const Vector4Type vector_length_squared2_result_vec = vector_length_squared2_as_vector(test_value0);
+	CHECK(scalar_near_equal(vector_length_squared2_ref, (FloatType)vector_get_x(vector_length_squared2_result_vec), threshold));
+	CHECK(scalar_near_equal(vector_length_squared2_ref, (FloatType)vector_get_y(vector_length_squared2_result_vec), threshold));
+	CHECK(scalar_near_equal(vector_length_squared2_ref, (FloatType)vector_get_z(vector_length_squared2_result_vec), threshold));
+	CHECK(scalar_near_equal(vector_length_squared2_ref, (FloatType)vector_get_w(vector_length_squared2_result_vec), threshold));
 
 	CHECK(scalar_near_equal(rtm::scalar_sqrt(scalar_dot4<Vector4Type, FloatType>(test_value0, test_value0)), vector_length(test_value0), threshold));
 	CHECK(scalar_near_equal(rtm::scalar_sqrt(scalar_dot4<Vector4Type, FloatType>(test_value0, test_value0)), scalar_cast(vector_length_as_scalar(test_value0)), threshold));
