@@ -31,6 +31,7 @@
 //#include <rtm/vector4f.h>
 //#include <rtm/vector4d.h>
 
+#include <cmath>
 #include <cstring>
 #include <limits>
 #include <utility>
@@ -367,18 +368,28 @@ void test_vector4_getset_impl()
 	CHECK(FloatType(vector_get_z(test_value0)) == tmp.values[2]);
 	CHECK(FloatType(vector_get_w(test_value0)) == tmp.values[3]);
 
+	// Before each partial store, write other values to the destination
+	// Thus, a store that does nothing fails, and the checks find a store that changes too many lanes
+	vector_store(test_value1, &tmp.values[0]);
 	vector_store1(test_value0, &tmp.values[0]);
-	CHECK(FloatType(vector_get_x(test_value0)) == tmp.values[0]);
+	CHECK(tmp.values[0] == test_value0_flt[0]);
+	CHECK(tmp.values[1] == test_value1_flt[1]);
+	CHECK(tmp.values[2] == test_value1_flt[2]);
+	CHECK(tmp.values[3] == test_value1_flt[3]);
 
+	vector_store(test_value1, &tmp.values[0]);
 	vector_store2(test_value0, &tmp.values[0]);
-	CHECK(FloatType(vector_get_x(test_value0)) == tmp.values[0]);
-	CHECK(FloatType(vector_get_y(test_value0)) == tmp.values[1]);
+	CHECK(tmp.values[0] == test_value0_flt[0]);
+	CHECK(tmp.values[1] == test_value0_flt[1]);
+	CHECK(tmp.values[2] == test_value1_flt[2]);
+	CHECK(tmp.values[3] == test_value1_flt[3]);
 
+	vector_store(test_value0, &tmp.values[0]);
 	vector_store3(test_value1, &tmp.values[0]);
-	CHECK(FloatType(vector_get_x(test_value1)) == tmp.values[0]);
-	CHECK(FloatType(vector_get_y(test_value1)) == tmp.values[1]);
-	CHECK(FloatType(vector_get_z(test_value1)) == tmp.values[2]);
-	CHECK(FloatType(vector_get_w(test_value0)) == tmp.values[3]);
+	CHECK(tmp.values[0] == test_value1_flt[0]);
+	CHECK(tmp.values[1] == test_value1_flt[1]);
+	CHECK(tmp.values[2] == test_value1_flt[2]);
+	CHECK(tmp.values[3] == test_value0_flt[3]);
 
 	vector_store(test_value1, &buffer[1]);
 	CHECK(FloatType(vector_get_x(test_value1)) == FloatType(vector_get_x((Vector4Type)vector_load(&buffer[1]))));
@@ -386,16 +397,26 @@ void test_vector4_getset_impl()
 	CHECK(FloatType(vector_get_z(test_value1)) == FloatType(vector_get_z((Vector4Type)vector_load(&buffer[1]))));
 	CHECK(FloatType(vector_get_w(test_value1)) == FloatType(vector_get_w((Vector4Type)vector_load(&buffer[1]))));
 
+	vector_store(test_value0, &buffer[1]);
 	vector_store1(test_value1, &buffer[1]);
-	CHECK(FloatType(vector_get_x(test_value1)) == FloatType(vector_get_x((Vector4Type)vector_load1(&buffer[1]))));
+	CHECK(FloatType(vector_get_x((Vector4Type)vector_load(&buffer[1]))) == test_value1_flt[0]);
+	CHECK(FloatType(vector_get_y((Vector4Type)vector_load(&buffer[1]))) == test_value0_flt[1]);
+	CHECK(FloatType(vector_get_z((Vector4Type)vector_load(&buffer[1]))) == test_value0_flt[2]);
+	CHECK(FloatType(vector_get_w((Vector4Type)vector_load(&buffer[1]))) == test_value0_flt[3]);
 
+	vector_store(test_value0, &buffer[1]);
 	vector_store2(test_value1, &buffer[1]);
-	CHECK(FloatType(vector_get_x(test_value1)) == FloatType(vector_get_x((Vector4Type)vector_load2(&buffer[1]))));
+	CHECK(FloatType(vector_get_x((Vector4Type)vector_load(&buffer[1]))) == test_value1_flt[0]);
+	CHECK(FloatType(vector_get_y((Vector4Type)vector_load(&buffer[1]))) == test_value1_flt[1]);
+	CHECK(FloatType(vector_get_z((Vector4Type)vector_load(&buffer[1]))) == test_value0_flt[2]);
+	CHECK(FloatType(vector_get_w((Vector4Type)vector_load(&buffer[1]))) == test_value0_flt[3]);
 
+	vector_store(test_value0, &buffer[1]);
 	vector_store3(test_value1, &buffer[1]);
-	CHECK(FloatType(vector_get_x(test_value1)) == FloatType(vector_get_x((Vector4Type)vector_load3(&buffer[1]))));
-	CHECK(FloatType(vector_get_y(test_value1)) == FloatType(vector_get_y((Vector4Type)vector_load3(&buffer[1]))));
-	CHECK(FloatType(vector_get_z(test_value1)) == FloatType(vector_get_z((Vector4Type)vector_load3(&buffer[1]))));
+	CHECK(FloatType(vector_get_x((Vector4Type)vector_load(&buffer[1]))) == test_value1_flt[0]);
+	CHECK(FloatType(vector_get_y((Vector4Type)vector_load(&buffer[1]))) == test_value1_flt[1]);
+	CHECK(FloatType(vector_get_z((Vector4Type)vector_load(&buffer[1]))) == test_value1_flt[2]);
+	CHECK(FloatType(vector_get_w((Vector4Type)vector_load(&buffer[1]))) == test_value0_flt[3]);
 
 	vector_store(test_value1, &tmpf4);
 	CHECK(FloatType(vector_get_x(test_value1)) == tmpf4.x);
@@ -599,6 +620,7 @@ void test_vector4_arithmetic_impl(const FloatType threshold)
 
 	const Vector4Type neg_zero = vector_set(FloatType(-0.0));
 	CHECK(FloatType(vector_get_x(vector_floor(neg_zero))) == scalar_floor(FloatType(-0.0)));
+	CHECK(std::signbit(FloatType(vector_get_x(vector_floor(neg_zero)))) == std::signbit(scalar_floor(FloatType(-0.0))));
 	CHECK(FloatType(vector_get_x(vector_floor(test_value0))) == scalar_floor(test_value0_flt[0]));
 	CHECK(FloatType(vector_get_y(vector_floor(test_value0))) == scalar_floor(test_value0_flt[1]));
 	CHECK(FloatType(vector_get_z(vector_floor(test_value0))) == scalar_floor(test_value0_flt[2]));
@@ -617,10 +639,10 @@ void test_vector4_arithmetic_impl(const FloatType threshold)
 	CHECK(std::isnan(FloatType(vector_get_w(vector_floor(nan)))));
 
 	CHECK(FloatType(vector_get_x(vector_ceil(neg_zero))) == scalar_ceil(FloatType(-0.0)));
-	CHECK(FloatType(vector_get_x(vector_ceil(test_value0)) == scalar_ceil(test_value0_flt[0])));
-	CHECK(FloatType(vector_get_y(vector_ceil(test_value0)) == scalar_ceil(test_value0_flt[1])));
-	CHECK(FloatType(vector_get_z(vector_ceil(test_value0)) == scalar_ceil(test_value0_flt[2])));
-	CHECK(FloatType(vector_get_w(vector_ceil(test_value0)) == scalar_ceil(test_value0_flt[3])));
+	CHECK(FloatType(vector_get_x(vector_ceil(test_value0))) == scalar_ceil(test_value0_flt[0]));
+	CHECK(FloatType(vector_get_y(vector_ceil(test_value0))) == scalar_ceil(test_value0_flt[1]));
+	CHECK(FloatType(vector_get_z(vector_ceil(test_value0))) == scalar_ceil(test_value0_flt[2]));
+	CHECK(FloatType(vector_get_w(vector_ceil(test_value0))) == scalar_ceil(test_value0_flt[3]));
 	CHECK(FloatType(vector_get_x(vector_ceil(infinity))) == scalar_ceil(FloatType(vector_get_x(infinity))));
 	CHECK(FloatType(vector_get_y(vector_ceil(infinity))) == scalar_ceil(FloatType(vector_get_y(infinity))));
 	CHECK(FloatType(vector_get_z(vector_ceil(infinity))) == scalar_ceil(FloatType(vector_get_z(infinity))));
@@ -737,6 +759,9 @@ void test_vector4_arithmetic_impl(const FloatType threshold)
 	const ScalarType vector_distance_squared3_result_scalar = vector_distance_squared3_as_scalar(test_value0, test_value1);
 	CHECK(scalar_equal(vector_distance_squared3_result, scalar_cast(vector_distance_squared3_result_scalar)));
 
+	// The fallback differs from the zero input, thus the checks find a function that returns its input
+	const Vector4Type fallback = vector_set(FloatType(1.0), FloatType(2.0), FloatType(3.0), FloatType(4.0));
+
 	const Vector4Type scalar_normalize2_result = scalar_normalize2<Vector4Type, FloatType>(test_value0, zero, threshold);
 	const Vector4Type vector_normalize2_result = vector_normalize2(test_value0);
 	CHECK(scalar_near_equal(vector_get_x(vector_normalize2_result), vector_get_x(scalar_normalize2_result), threshold));
@@ -746,8 +771,8 @@ void test_vector4_arithmetic_impl(const FloatType threshold)
 	CHECK(scalar_near_equal(vector_get_x(vector_normalize2_result_safe), vector_get_x(scalar_normalize2_result), threshold));
 	CHECK(scalar_near_equal(vector_get_y(vector_normalize2_result_safe), vector_get_y(scalar_normalize2_result), threshold));
 
-	const Vector4Type scalar_normalize2_result0 = scalar_normalize2<Vector4Type, FloatType>(zero, zero, threshold);
-	const Vector4Type vector_normalize2_result0 = vector_normalize2(zero, zero, threshold);
+	const Vector4Type scalar_normalize2_result0 = scalar_normalize2<Vector4Type, FloatType>(zero, fallback, threshold);
+	const Vector4Type vector_normalize2_result0 = vector_normalize2(zero, fallback, threshold);
 	CHECK(scalar_near_equal(vector_get_x(vector_normalize2_result0), vector_get_x(scalar_normalize2_result0), threshold));
 	CHECK(scalar_near_equal(vector_get_y(vector_normalize2_result0), vector_get_y(scalar_normalize2_result0), threshold));
 
@@ -762,8 +787,8 @@ void test_vector4_arithmetic_impl(const FloatType threshold)
 	CHECK(scalar_near_equal(vector_get_y(vector_normalize3_result_safe), vector_get_y(scalar_normalize3_result), threshold));
 	CHECK(scalar_near_equal(vector_get_z(vector_normalize3_result_safe), vector_get_z(scalar_normalize3_result), threshold));
 
-	const Vector4Type scalar_normalize3_result0 = scalar_normalize3<Vector4Type, FloatType>(zero, zero, threshold);
-	const Vector4Type vector_normalize3_result0 = vector_normalize3(zero, zero, threshold);
+	const Vector4Type scalar_normalize3_result0 = scalar_normalize3<Vector4Type, FloatType>(zero, fallback, threshold);
+	const Vector4Type vector_normalize3_result0 = vector_normalize3(zero, fallback, threshold);
 	CHECK(scalar_near_equal(vector_get_x(vector_normalize3_result0), vector_get_x(scalar_normalize3_result0), threshold));
 	CHECK(scalar_near_equal(vector_get_y(vector_normalize3_result0), vector_get_y(scalar_normalize3_result0), threshold));
 	CHECK(scalar_near_equal(vector_get_z(vector_normalize3_result0), vector_get_z(scalar_normalize3_result0), threshold));
@@ -781,8 +806,8 @@ void test_vector4_arithmetic_impl(const FloatType threshold)
 	CHECK(scalar_near_equal(vector_get_z(vector_normalize4_result_safe), vector_get_z(scalar_normalize4_result), threshold));
 	CHECK(scalar_near_equal(vector_get_w(vector_normalize4_result_safe), vector_get_w(scalar_normalize4_result), threshold));
 
-	const Vector4Type scalar_normalize4_result0 = scalar_normalize4<Vector4Type, FloatType>(zero, zero, threshold);
-	const Vector4Type vector_normalize4_result0 = vector_normalize(zero, zero, threshold);
+	const Vector4Type scalar_normalize4_result0 = scalar_normalize4<Vector4Type, FloatType>(zero, fallback, threshold);
+	const Vector4Type vector_normalize4_result0 = vector_normalize(zero, fallback, threshold);
 	CHECK(scalar_near_equal(vector_get_x(vector_normalize4_result0), vector_get_x(scalar_normalize4_result0), threshold));
 	CHECK(scalar_near_equal(vector_get_y(vector_normalize4_result0), vector_get_y(scalar_normalize4_result0), threshold));
 	CHECK(scalar_near_equal(vector_get_z(vector_normalize4_result0), vector_get_z(scalar_normalize4_result0), threshold));
@@ -812,6 +837,7 @@ void test_vector4_arithmetic_impl(const FloatType threshold)
 	CHECK(vector_all_near_equal(vector_lerp(test_value10, test_value11, vector_set(FloatType(1.0))), test_value11, FloatType(0.0)));
 
 	CHECK(FloatType(vector_get_x(vector_fraction(neg_zero))) == scalar_fraction(FloatType(-0.0)));
+	CHECK(std::signbit(FloatType(vector_get_x(vector_fraction(neg_zero)))) == std::signbit(scalar_fraction(FloatType(-0.0))));
 	CHECK(scalar_near_equal(vector_get_x(vector_fraction(test_value0)), scalar_fraction(test_value0_flt[0]), threshold));
 	CHECK(scalar_near_equal(vector_get_y(vector_fraction(test_value0)), scalar_fraction(test_value0_flt[1]), threshold));
 	CHECK(scalar_near_equal(vector_get_z(vector_fraction(test_value0)), scalar_fraction(test_value0_flt[2]), threshold));
@@ -846,6 +872,26 @@ void test_vector4_arithmetic_impl(const FloatType threshold)
 	CHECK(scalar_near_equal(vector_get_y(vector_neg_mul_sub(test_value10, scalar_set(test_value11_flt[0]), test_value2)), (test_value10_flt[1] * -test_value11_flt[0]) + test_value2_flt[1], threshold));
 	CHECK(scalar_near_equal(vector_get_z(vector_neg_mul_sub(test_value10, scalar_set(test_value11_flt[0]), test_value2)), (test_value10_flt[2] * -test_value11_flt[0]) + test_value2_flt[2], threshold));
 	CHECK(scalar_near_equal(vector_get_w(vector_neg_mul_sub(test_value10, scalar_set(test_value11_flt[0]), test_value2)), (test_value10_flt[3] * -test_value11_flt[0]) + test_value2_flt[3], threshold));
+}
+
+inline bool reference_all_lanes(const bool* lanes, uint32_t num_lanes)
+{
+	for (uint32_t lane_index = 0; lane_index < num_lanes; ++lane_index)
+	{
+		if (!lanes[lane_index])
+			return false;
+	}
+	return true;
+}
+
+inline bool reference_any_lanes(const bool* lanes, uint32_t num_lanes)
+{
+	for (uint32_t lane_index = 0; lane_index < num_lanes; ++lane_index)
+	{
+		if (lanes[lane_index])
+			return true;
+	}
+	return false;
 }
 
 template<typename FloatType>
@@ -1294,6 +1340,97 @@ void test_vector4_relational_impl(const FloatType threshold)
 	CHECK(vector_any_near_equal3(zero, vector_set(FloatType(2.0), FloatType(1.0), FloatType(2.0), FloatType(2.0)), FloatType(1.0)) == true);
 	CHECK(vector_any_near_equal3(zero, vector_set(FloatType(2.0), FloatType(2.0), FloatType(1.0), FloatType(2.0)), FloatType(1.0)) == true);
 	CHECK(vector_any_near_equal3(zero, vector_set(FloatType(1.0), FloatType(1.0), FloatType(1.0), FloatType(2.0)), FloatType(0.9999)) == false);
+
+	// Test all the combinations of the values 0.0 and 1.0 in the lanes of the two inputs
+	// Thus, each lane must decide the result alone, and the functions with fewer lanes must ignore the other lanes
+	const FloatType near_equal_threshold = FloatType(0.5);
+	for (uint32_t lhs_bits = 0; lhs_bits < 16; ++lhs_bits)
+	{
+		for (uint32_t rhs_bits = 0; rhs_bits < 16; ++rhs_bits)
+		{
+			FloatType lhs_flt[4];
+			FloatType rhs_flt[4];
+			bool less_than[4];
+			bool less_equal[4];
+			bool greater_than[4];
+			bool greater_equal[4];
+			bool equal[4];
+			bool not_equal[4];
+			bool near_equal[4];
+
+			for (uint32_t lane_index = 0; lane_index < 4; ++lane_index)
+			{
+				// Use integer logic for the reference results, not the floating point comparisons under test
+				const bool lhs_bit = ((lhs_bits >> lane_index) & 1) != 0;
+				const bool rhs_bit = ((rhs_bits >> lane_index) & 1) != 0;
+
+				lhs_flt[lane_index] = lhs_bit ? FloatType(1.0) : FloatType(0.0);
+				rhs_flt[lane_index] = rhs_bit ? FloatType(1.0) : FloatType(0.0);
+				less_than[lane_index] = !lhs_bit && rhs_bit;
+				less_equal[lane_index] = !lhs_bit || rhs_bit;
+				greater_than[lane_index] = lhs_bit && !rhs_bit;
+				greater_equal[lane_index] = lhs_bit || !rhs_bit;
+				equal[lane_index] = lhs_bit == rhs_bit;
+				not_equal[lane_index] = lhs_bit != rhs_bit;
+				near_equal[lane_index] = lhs_bit == rhs_bit;	// The difference is 0.0 or 1.0, and the threshold is 0.5
+			}
+
+			const Vector4Type lhs = vector_set(lhs_flt[0], lhs_flt[1], lhs_flt[2], lhs_flt[3]);
+			const Vector4Type rhs = vector_set(rhs_flt[0], rhs_flt[1], rhs_flt[2], rhs_flt[3]);
+
+			INFO("lhs: [" << lhs_flt[0] << ", " << lhs_flt[1] << ", " << lhs_flt[2] << ", " << lhs_flt[3] << "]");
+			INFO("rhs: [" << rhs_flt[0] << ", " << rhs_flt[1] << ", " << rhs_flt[2] << ", " << rhs_flt[3] << "]");
+
+			CHECK(vector_all_less_than(lhs, rhs) == reference_all_lanes(less_than, 4));
+			CHECK(vector_all_less_than2(lhs, rhs) == reference_all_lanes(less_than, 2));
+			CHECK(vector_all_less_than3(lhs, rhs) == reference_all_lanes(less_than, 3));
+			CHECK(vector_any_less_than(lhs, rhs) == reference_any_lanes(less_than, 4));
+			CHECK(vector_any_less_than2(lhs, rhs) == reference_any_lanes(less_than, 2));
+			CHECK(vector_any_less_than3(lhs, rhs) == reference_any_lanes(less_than, 3));
+
+			CHECK(vector_all_less_equal(lhs, rhs) == reference_all_lanes(less_equal, 4));
+			CHECK(vector_all_less_equal2(lhs, rhs) == reference_all_lanes(less_equal, 2));
+			CHECK(vector_all_less_equal3(lhs, rhs) == reference_all_lanes(less_equal, 3));
+			CHECK(vector_any_less_equal(lhs, rhs) == reference_any_lanes(less_equal, 4));
+			CHECK(vector_any_less_equal2(lhs, rhs) == reference_any_lanes(less_equal, 2));
+			CHECK(vector_any_less_equal3(lhs, rhs) == reference_any_lanes(less_equal, 3));
+
+			CHECK(vector_all_greater_than(lhs, rhs) == reference_all_lanes(greater_than, 4));
+			CHECK(vector_all_greater_than2(lhs, rhs) == reference_all_lanes(greater_than, 2));
+			CHECK(vector_all_greater_than3(lhs, rhs) == reference_all_lanes(greater_than, 3));
+			CHECK(vector_any_greater_than(lhs, rhs) == reference_any_lanes(greater_than, 4));
+			CHECK(vector_any_greater_than2(lhs, rhs) == reference_any_lanes(greater_than, 2));
+			CHECK(vector_any_greater_than3(lhs, rhs) == reference_any_lanes(greater_than, 3));
+
+			CHECK(vector_all_greater_equal(lhs, rhs) == reference_all_lanes(greater_equal, 4));
+			CHECK(vector_all_greater_equal2(lhs, rhs) == reference_all_lanes(greater_equal, 2));
+			CHECK(vector_all_greater_equal3(lhs, rhs) == reference_all_lanes(greater_equal, 3));
+			CHECK(vector_any_greater_equal(lhs, rhs) == reference_any_lanes(greater_equal, 4));
+			CHECK(vector_any_greater_equal2(lhs, rhs) == reference_any_lanes(greater_equal, 2));
+			CHECK(vector_any_greater_equal3(lhs, rhs) == reference_any_lanes(greater_equal, 3));
+
+			CHECK(vector_all_equal(lhs, rhs) == reference_all_lanes(equal, 4));
+			CHECK(vector_all_equal2(lhs, rhs) == reference_all_lanes(equal, 2));
+			CHECK(vector_all_equal3(lhs, rhs) == reference_all_lanes(equal, 3));
+			CHECK(vector_any_equal(lhs, rhs) == reference_any_lanes(equal, 4));
+			CHECK(vector_any_equal2(lhs, rhs) == reference_any_lanes(equal, 2));
+			CHECK(vector_any_equal3(lhs, rhs) == reference_any_lanes(equal, 3));
+
+			CHECK(vector_all_not_equal(lhs, rhs) == reference_all_lanes(not_equal, 4));
+			CHECK(vector_all_not_equal2(lhs, rhs) == reference_all_lanes(not_equal, 2));
+			CHECK(vector_all_not_equal3(lhs, rhs) == reference_all_lanes(not_equal, 3));
+			CHECK(vector_any_not_equal(lhs, rhs) == reference_any_lanes(not_equal, 4));
+			CHECK(vector_any_not_equal2(lhs, rhs) == reference_any_lanes(not_equal, 2));
+			CHECK(vector_any_not_equal3(lhs, rhs) == reference_any_lanes(not_equal, 3));
+
+			CHECK(vector_all_near_equal(lhs, rhs, near_equal_threshold) == reference_all_lanes(near_equal, 4));
+			CHECK(vector_all_near_equal2(lhs, rhs, near_equal_threshold) == reference_all_lanes(near_equal, 2));
+			CHECK(vector_all_near_equal3(lhs, rhs, near_equal_threshold) == reference_all_lanes(near_equal, 3));
+			CHECK(vector_any_near_equal(lhs, rhs, near_equal_threshold) == reference_any_lanes(near_equal, 4));
+			CHECK(vector_any_near_equal2(lhs, rhs, near_equal_threshold) == reference_any_lanes(near_equal, 2));
+			CHECK(vector_any_near_equal3(lhs, rhs, near_equal_threshold) == reference_any_lanes(near_equal, 3));
+		}
+	}
 }
 
 template<typename FloatType, typename Vector4Type>
@@ -1464,6 +1601,22 @@ void test_vector4_impl(const FloatType threshold)
 	CHECK(scalar_near_equal(vector_get_z(vector_select(vector_less_than(vector_set(FloatType(1.0)), zero), test_value0, test_value1)), test_value1_flt[2], threshold));
 	CHECK(scalar_near_equal(vector_get_w(vector_select(vector_less_than(vector_set(FloatType(1.0)), zero), test_value0, test_value1)), test_value1_flt[3], threshold));
 
+	{
+		// A mask with different lanes, thus each lane must select its own input
+		const Vector4Type mask_input = vector_set(FloatType(1.0), FloatType(-1.0), FloatType(-1.0), FloatType(1.0));
+		const Vector4Type select_result0 = vector_select(vector_less_than(zero, mask_input), test_value0, test_value1);
+		CHECK(FloatType(vector_get_x(select_result0)) == test_value0_flt[0]);
+		CHECK(FloatType(vector_get_y(select_result0)) == test_value1_flt[1]);
+		CHECK(FloatType(vector_get_z(select_result0)) == test_value1_flt[2]);
+		CHECK(FloatType(vector_get_w(select_result0)) == test_value0_flt[3]);
+
+		const Vector4Type select_result1 = vector_select(vector_less_than(mask_input, zero), test_value0, test_value1);
+		CHECK(FloatType(vector_get_x(select_result1)) == test_value1_flt[0]);
+		CHECK(FloatType(vector_get_y(select_result1)) == test_value0_flt[1]);
+		CHECK(FloatType(vector_get_z(select_result1)) == test_value0_flt[2]);
+		CHECK(FloatType(vector_get_w(select_result1)) == test_value1_flt[3]);
+	}
+
 	//////////////////////////////////////////////////////////////////////////
 	// Misc
 
@@ -1523,6 +1676,7 @@ void test_vector4_impl(const FloatType threshold)
 		CHECK(FloatType(vector_get_w(result4)) == scalar_round_symmetric(FloatType(vector_get_w(input4))));
 
 		CHECK(FloatType(vector_get_x(result6)) == scalar_round_symmetric(FloatType(-0.0)));
+		CHECK(std::signbit(FloatType(vector_get_x(result6))) == std::signbit(scalar_round_symmetric(FloatType(-0.0))));
 
 		CHECK(std::isnan(FloatType(vector_get_x(result5))));
 		CHECK(std::isnan(FloatType(vector_get_y(result5))));
@@ -1549,7 +1703,7 @@ void test_vector4_impl(const FloatType threshold)
 		const Vector4Type result4 = vector_round_bankers(input4);
 		const Vector4Type result5 = vector_round_bankers(input5);
 		const Vector4Type result6 = vector_round_bankers(input6);
-		const Vector4Type result7 = vector_round_symmetric(vector_set(FloatType(-0.0)));
+		const Vector4Type result7 = vector_round_bankers(vector_set(FloatType(-0.0)));
 
 		CHECK(FloatType(vector_get_x(result0)) == scalar_round_bankers(FloatType(vector_get_x(input0))));
 		CHECK(FloatType(vector_get_y(result0)) == scalar_round_bankers(FloatType(vector_get_y(input0))));
@@ -1586,7 +1740,8 @@ void test_vector4_impl(const FloatType threshold)
 		CHECK(FloatType(vector_get_z(result6)) == scalar_round_bankers(FloatType(vector_get_z(input6))));
 		CHECK(FloatType(vector_get_w(result6)) == scalar_round_bankers(FloatType(vector_get_w(input6))));
 
-		CHECK(FloatType(vector_get_x(result7)) == scalar_round_symmetric(FloatType(-0.0)));
+		CHECK(FloatType(vector_get_x(result7)) == scalar_round_bankers(FloatType(-0.0)));
+		CHECK(std::signbit(FloatType(vector_get_x(result7))) == std::signbit(scalar_round_bankers(FloatType(-0.0))));
 	}
 
 	{
@@ -1697,6 +1852,54 @@ void test_vector4_impl(const FloatType threshold)
 			CHECK(scalar_near_equal(FloatType(vector_get_y(vector_atan2(angle_y, angle_x))), scalar_atan2(angles_.first, angles_.second), threshold));
 			CHECK(scalar_near_equal(FloatType(vector_get_z(vector_atan2(angle_y, angle_x))), scalar_atan2(angles_.first, angles_.second), threshold));
 			CHECK(scalar_near_equal(FloatType(vector_get_w(vector_atan2(angle_y, angle_x))), scalar_atan2(angles_.first, angles_.second), threshold));
+		}
+
+		{
+			// A different input in each lane, thus each lane must use its own input
+			const FloatType lane_angles[4] = { FloatType(0.5), FloatType(-32.5), half_pi * FloatType(0.5), FloatType(-0.25) };
+			const FloatType lane_ratios[4] = { FloatType(0.25), FloatType(-0.75), FloatType(0.5), FloatType(-0.1) };
+			const FloatType lane_x[4] = { FloatType(-2.0), FloatType(1.0), FloatType(-0.5), FloatType(3.0) };
+			const Vector4Type angles_v = vector_set(lane_angles[0], lane_angles[1], lane_angles[2], lane_angles[3]);
+			const Vector4Type ratios_v = vector_set(lane_ratios[0], lane_ratios[1], lane_ratios[2], lane_ratios[3]);
+			const Vector4Type x_v = vector_set(lane_x[0], lane_x[1], lane_x[2], lane_x[3]);
+
+			Vector4Type sin_v;
+			Vector4Type cos_v;
+			vector_sincos(angles_v, sin_v, cos_v);
+
+			FloatType rtm_sin[4];
+			FloatType rtm_cos[4];
+			FloatType rtm_sin2[4];
+			FloatType rtm_cos2[4];
+			FloatType rtm_tan[4];
+			FloatType rtm_asin[4];
+			FloatType rtm_acos[4];
+			FloatType rtm_atan[4];
+			FloatType rtm_atan2[4];
+			vector_store(vector_sin(angles_v), &rtm_sin[0]);
+			vector_store(vector_cos(angles_v), &rtm_cos[0]);
+			vector_store(sin_v, &rtm_sin2[0]);
+			vector_store(cos_v, &rtm_cos2[0]);
+			vector_store(vector_tan(angles_v), &rtm_tan[0]);
+			vector_store(vector_asin(ratios_v), &rtm_asin[0]);
+			vector_store(vector_acos(ratios_v), &rtm_acos[0]);
+			vector_store(vector_atan(ratios_v), &rtm_atan[0]);
+			vector_store(vector_atan2(ratios_v, x_v), &rtm_atan2[0]);
+
+			for (uint32_t lane_index = 0; lane_index < 4; ++lane_index)
+			{
+				INFO("lane: " << lane_index);
+
+				CHECK(scalar_near_equal(rtm_sin[lane_index], scalar_sin(lane_angles[lane_index]), threshold));
+				CHECK(scalar_near_equal(rtm_cos[lane_index], scalar_cos(lane_angles[lane_index]), threshold));
+				CHECK(scalar_near_equal(rtm_sin2[lane_index], scalar_sin(lane_angles[lane_index]), threshold));
+				CHECK(scalar_near_equal(rtm_cos2[lane_index], scalar_cos(lane_angles[lane_index]), threshold));
+				CHECK(scalar_near_equal(rtm_tan[lane_index], scalar_tan(lane_angles[lane_index]), threshold));
+				CHECK(scalar_near_equal(rtm_asin[lane_index], scalar_asin(lane_ratios[lane_index]), threshold));
+				CHECK(scalar_near_equal(rtm_acos[lane_index], scalar_acos(lane_ratios[lane_index]), threshold));
+				CHECK(scalar_near_equal(rtm_atan[lane_index], scalar_atan(lane_ratios[lane_index]), threshold));
+				CHECK(scalar_near_equal(rtm_atan2[lane_index], scalar_atan2(lane_ratios[lane_index], lane_x[lane_index]), threshold));
+			}
 		}
 	}
 }
