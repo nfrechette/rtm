@@ -90,6 +90,36 @@ static void test_vqm_impl(const FloatType threshold)
 		CHECK(vector_all_near_equal3(vqm_get_translation(tx), translation, threshold));
 	}
 
+	// Addition
+	{
+		QuatType rotation0 = quat_from_euler(scalar_deg_to_rad(FloatType(10.1)), scalar_deg_to_rad(FloatType(41.6)), scalar_deg_to_rad(FloatType(-12.7)));
+		Vector4Type translation0 = vector_set(FloatType(1.0), FloatType(2.0), FloatType(3.0));
+		Vector4Type scale0 = vector_set(FloatType(4.0), FloatType(5.0), FloatType(6.0));
+		TransformType tx0 = vqm_set(translation0, rotation0, scale0);
+
+		QuatType rotation1 = quat_from_euler(scalar_deg_to_rad(FloatType(-35.2)), scalar_deg_to_rad(FloatType(5.3)), scalar_deg_to_rad(FloatType(72.4)));
+		Vector4Type translation1 = vector_set(FloatType(-8.5), FloatType(0.25), FloatType(14.0));
+		Vector4Type scale1 = vector_set(FloatType(0.5), FloatType(-2.0), FloatType(3.5));
+		TransformType tx1 = vqm_set(translation1, rotation1, scale1);
+
+		// The function adds each component of the two transforms
+		TransformType add_result = vqm_add(tx0, tx1);
+		CHECK(vector_all_near_equal(quat_to_vector(add_result.rotation), vector_add(quat_to_vector(tx0.rotation), quat_to_vector(tx1.rotation)), threshold));
+		CHECK(vector_all_near_equal3(add_result.translation, vector_add(translation0, translation1), threshold));
+		CHECK(vector_all_near_equal3(add_result.x_axis, vector_add(tx0.x_axis, tx1.x_axis), threshold));
+		CHECK(vector_all_near_equal3(add_result.y_axis, vector_add(tx0.y_axis, tx1.y_axis), threshold));
+		CHECK(vector_all_near_equal3(add_result.z_axis, vector_add(tx0.z_axis, tx1.z_axis), threshold));
+
+		// The sum of a transform with itself is equal to the product of the transform and 2
+		TransformType add_itself_result = vqm_add(tx0, tx0);
+		TransformType mul_scalar_result = vqm_mul(tx0, FloatType(2.0));
+		CHECK(vector_all_near_equal(quat_to_vector(add_itself_result.rotation), quat_to_vector(mul_scalar_result.rotation), threshold));
+		CHECK(vector_all_near_equal3(add_itself_result.translation, mul_scalar_result.translation, threshold));
+		CHECK(vector_all_near_equal3(add_itself_result.x_axis, mul_scalar_result.x_axis, threshold));
+		CHECK(vector_all_near_equal3(add_itself_result.y_axis, mul_scalar_result.y_axis, threshold));
+		CHECK(vector_all_near_equal3(add_itself_result.z_axis, mul_scalar_result.z_axis, threshold));
+	}
+
 	// Matrix conversion validation
 	{
 		QuatType rotation = quat_from_euler(scalar_deg_to_rad(FloatType(10.1)), scalar_deg_to_rad(FloatType(41.6)), scalar_deg_to_rad(FloatType(-12.7)));
