@@ -137,22 +137,23 @@ jobs:
         with:
           submodules: 'recursive'
       - name: Build (debug)
-        uses: docker://ghcr.io/nfrechette/toolchain-amd64-linux-emscripten:v1
+        uses: docker://emscripten/emsdk:6.0.11
         with:
           args: 'python3 make.py -ci -compiler emscripten -config debug -build'
-# Don't run debug unit tests, they are too slow and sometime time out
-#     - name: Unit tests (debug)
-#       run: python3 make.py -ci -compiler emscripten -config debug -unit_test
+      - name: Unit tests (debug)
+        uses: docker://emscripten/emsdk:6.0.11
+        with:
+          args: 'python3 make.py -ci -compiler emscripten -config debug -unit_test'
       - name: Clean
-        uses: docker://ghcr.io/nfrechette/toolchain-amd64-linux-emscripten:v1
+        uses: docker://emscripten/emsdk:6.0.11
         with:
           args: 'python3 make.py -ci -clean_only'
       - name: Build (release)
-        uses: docker://ghcr.io/nfrechette/toolchain-amd64-linux-emscripten:v1
+        uses: docker://emscripten/emsdk:6.0.11
         with:
           args: 'python3 make.py -ci -compiler emscripten -config release -build'
       - name: Unit tests (release)
-        uses: docker://ghcr.io/nfrechette/toolchain-amd64-linux-emscripten:v1
+        uses: docker://emscripten/emsdk:6.0.11
         with:
           args: 'python3 make.py -ci -compiler emscripten -config release -unit_test'
 

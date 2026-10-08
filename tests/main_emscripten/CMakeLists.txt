@@ -27,16 +27,16 @@ target_compile_options(${PROJECT_NAME} PRIVATE -Wall -Wextra)		# Enable all warn
 target_compile_options(${PROJECT_NAME} PRIVATE -Wshadow)			# Enable shadowing warnings
 target_compile_options(${PROJECT_NAME} PRIVATE -Werror)				# Treat warnings as errors
 
-# Exceptions are not enabled by default, enable them
-target_compile_options(${PROJECT_NAME} PRIVATE -fexceptions)
-target_link_libraries(${PROJECT_NAME} PRIVATE "-s DISABLE_EXCEPTION_CATCHING=0")
+# Exceptions are not enabled by default, enable native WebAssembly exception handling
+target_compile_options(${PROJECT_NAME} PRIVATE -fwasm-exceptions)
+target_link_libraries(${PROJECT_NAME} PRIVATE -fwasm-exceptions)
 
 target_link_libraries(${PROJECT_NAME} PRIVATE "-s NODERAWFS=1")				# Enable the raw node file system
-target_link_libraries(${PROJECT_NAME} PRIVATE -lnodefs.js)					# Link the node file system
 
 target_link_libraries(${PROJECT_NAME} PRIVATE "-s ENVIRONMENT=node")		# Force the environment to node
 
 target_link_libraries(${PROJECT_NAME} PRIVATE "-s ALLOW_MEMORY_GROWTH=1")	# Allow dynamic memory allocation
+target_link_libraries(${PROJECT_NAME} PRIVATE "-s STACK_SIZE=5MB")			# The 64 KB default is too small for the debug tests
 
 # Setup Catch2 so we can find and execute the unit tests with CTest
 set(OptionalCatchTestLauncher node)
