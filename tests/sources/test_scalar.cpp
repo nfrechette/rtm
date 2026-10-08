@@ -483,6 +483,17 @@ TEST_CASE("scalarf math", "[math][scalar]")
 	CHECK(scalar_round_bankers(-1073741824.5F) == -1073741824.0F);
 	CHECK(scalar_cast(scalar_round_bankers(scalar_set(1073741824.5F))) == 1073741824.0F);
 	CHECK(scalar_cast(scalar_round_bankers(scalar_set(-1073741824.5F))) == -1073741824.0F);
+
+	CHECK(scalar_safe_to_float(int32_t(0)) == 0.0F);
+	CHECK(scalar_safe_to_float(int32_t(-7)) == -7.0F);
+	CHECK(scalar_safe_to_float(uint8_t(255)) == 255.0F);
+	CHECK(scalar_safe_to_float(int32_t(16777216)) == 16777216.0F);
+	CHECK(scalar_safe_to_float(int64_t(-16777216)) == -16777216.0F);
+	CHECK(scalar_safe_to_float(uint32_t(4294967040U)) == 4294967040.0F);
+
+	// A float32 cannot represent 2^24 + 1
+	CHECK_THROWS(scalar_safe_to_float(int32_t(16777217)));
+	CHECK_THROWS(scalar_safe_to_float(int64_t(-16777217)));
 }
 
 TEST_CASE("scalard math", "[math][scalar]")
@@ -508,4 +519,16 @@ TEST_CASE("scalard math", "[math][scalar]")
 	CHECK(scalar_round_bankers(-36028797018963968.5) == -36028797018963968.5);
 	CHECK(scalar_cast(scalar_round_bankers(scalar_set(36028797018963968.5))) == 36028797018963968.5);
 	CHECK(scalar_cast(scalar_round_bankers(scalar_set(-36028797018963968.5))) == -36028797018963968.5);
+
+	CHECK(scalar_safe_to_double(int32_t(0)) == 0.0);
+	CHECK(scalar_safe_to_double(int32_t(-7)) == -7.0);
+	CHECK(scalar_safe_to_double(uint8_t(255)) == 255.0);
+	CHECK(scalar_safe_to_double(int32_t(2147483647)) == 2147483647.0);
+	CHECK(scalar_safe_to_double(uint32_t(4294967295U)) == 4294967295.0);
+	CHECK(scalar_safe_to_double(int64_t(9007199254740992LL)) == 9007199254740992.0);
+	CHECK(scalar_safe_to_double(int64_t(-9007199254740992LL)) == -9007199254740992.0);
+
+	// A float64 cannot represent 2^53 + 1
+	CHECK_THROWS(scalar_safe_to_double(int64_t(9007199254740993LL)));
+	CHECK_THROWS(scalar_safe_to_double(int64_t(-9007199254740993LL)));
 }
