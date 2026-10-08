@@ -198,7 +198,8 @@ static void test_quat_impl(const FloatType threshold)
 			uint8_t padding1[8];	// 32 | 48
 		};
 
-		Tmp tmp = { { 0 }, { FloatType(0.0), FloatType(2.34), FloatType(-3.12), FloatType(10000.0) }, {} };
+		// The destination holds other values, thus a store that does nothing fails
+		Tmp tmp = { { 0 }, { FloatType(-1.0), FloatType(-1.0), FloatType(-1.0), FloatType(-1.0) }, {} };
 		quat_store(quat_set(FloatType(0.0), FloatType(2.34), FloatType(-3.12), FloatType(10000.0)), &tmp.values[0]);
 		CHECK(tmp.values[0] == FloatType(0.0));
 		CHECK(tmp.values[1] == FloatType(2.34));
@@ -545,6 +546,12 @@ static void test_quat_impl(const FloatType threshold)
 		CHECK(quat_near_equal(identity, quat_set(FloatType(0.0), FloatType(0.0), FloatType(0.0), FloatType(2.0)), FloatType(1.0001)) == true);
 		CHECK(quat_near_equal(identity, quat_set(FloatType(0.0), FloatType(0.0), FloatType(0.0), FloatType(2.0)), FloatType(1.0)) == true);
 		CHECK(quat_near_equal(identity, quat_set(FloatType(0.0), FloatType(0.0), FloatType(0.0), FloatType(2.0)), FloatType(0.9999)) == false);
+
+		// Each lane must decide the result alone
+		CHECK(quat_near_equal(identity, quat_set(FloatType(1.0), FloatType(0.0), FloatType(0.0), FloatType(1.0)), FloatType(0.5)) == false);
+		CHECK(quat_near_equal(identity, quat_set(FloatType(0.0), FloatType(1.0), FloatType(0.0), FloatType(1.0)), FloatType(0.5)) == false);
+		CHECK(quat_near_equal(identity, quat_set(FloatType(0.0), FloatType(0.0), FloatType(1.0), FloatType(1.0)), FloatType(0.5)) == false);
+		CHECK(quat_near_equal(identity, quat_set(FloatType(0.0), FloatType(0.0), FloatType(0.0), FloatType(0.0)), FloatType(0.5)) == false);
 	}
 
 	{
@@ -562,6 +569,14 @@ static void test_quat_impl(const FloatType threshold)
 
 		CHECK(quat_are_equal(quat_select(all_true, quat0, quat1), quat0));
 		CHECK(quat_are_equal(quat_select(all_false, quat0, quat1), quat1));
+
+		// A mask with different lanes, thus each lane must select its own input
+		const MaskType mixed_mask = mask_set(true, false, false, true);
+		const QuatType mixed_result = quat_select(mixed_mask, quat0, quat1);
+		CHECK(FloatType(quat_get_x(mixed_result)) == FloatType(quat_get_x(quat0)));
+		CHECK(FloatType(quat_get_y(mixed_result)) == FloatType(quat_get_y(quat1)));
+		CHECK(FloatType(quat_get_z(mixed_result)) == FloatType(quat_get_z(quat1)));
+		CHECK(FloatType(quat_get_w(mixed_result)) == FloatType(quat_get_w(quat0)));
 	}
 }
 
