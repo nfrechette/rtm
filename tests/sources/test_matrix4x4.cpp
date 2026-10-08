@@ -70,6 +70,11 @@ static void test_matrix4x4_setters(const FloatType threshold)
 		CHECK(vector_all_near_equal(matrix_get_axis(mtx, axis4::y), mtx.y_axis, threshold));
 		CHECK(vector_all_near_equal(matrix_get_axis(mtx, axis4::z), mtx.z_axis, threshold));
 		CHECK(vector_all_near_equal(matrix_get_axis(mtx, axis4::w), mtx.w_axis, threshold));
+
+		CHECK(vector_all_near_equal(matrix_get_coord_cross(mtx), mtx.x_axis, threshold));
+		CHECK(vector_all_near_equal(matrix_get_coord_up(mtx), mtx.y_axis, threshold));
+		CHECK(vector_all_near_equal(matrix_get_coord_forward(mtx), mtx.z_axis, threshold));
+		CHECK(vector_all_near_equal(matrix_get_coord_position(mtx), mtx.w_axis, threshold));
 	}
 
 	{

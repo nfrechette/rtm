@@ -87,6 +87,10 @@ static void test_matrix3x3_setters(const FloatType threshold)
 		CHECK(vector_all_near_equal3(matrix_get_axis(mtx, axis3::x), mtx.x_axis, threshold));
 		CHECK(vector_all_near_equal3(matrix_get_axis(mtx, axis3::y), mtx.y_axis, threshold));
 		CHECK(vector_all_near_equal3(matrix_get_axis(mtx, axis3::z), mtx.z_axis, threshold));
+
+		CHECK(vector_all_near_equal3(matrix_get_coord_cross(mtx), mtx.x_axis, threshold));
+		CHECK(vector_all_near_equal3(matrix_get_coord_up(mtx), mtx.y_axis, threshold));
+		CHECK(vector_all_near_equal3(matrix_get_coord_forward(mtx), mtx.z_axis, threshold));
 	}
 
 	{
