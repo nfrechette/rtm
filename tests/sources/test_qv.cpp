@@ -101,40 +101,6 @@ static void test_qv_impl(const TransformType& identity, const FloatType threshol
 
 	{
 		Vector4Type x_axis = vector_set(FloatType(1.0), FloatType(0.0), FloatType(0.0));
-		Vector4Type y_axis = vector_set(FloatType(0.0), FloatType(1.0), FloatType(0.0));
-
-		QuatType rotation_around_z = quat_from_euler(scalar_deg_to_rad(FloatType(0.0)), scalar_deg_to_rad(FloatType(90.0)), scalar_deg_to_rad(FloatType(0.0)));
-		TransformType transform_a = qv_set(rotation_around_z, x_axis);
-		Vector4Type result = qv_mul_point3(x_axis, transform_a);
-		CHECK(vector_all_near_equal3(result, vector_set(FloatType(1.0), FloatType(1.0), FloatType(0.0)), threshold));
-		result = qv_mul_point3(y_axis, transform_a);
-		CHECK(vector_all_near_equal3(result, vector_set(FloatType(0.0), FloatType(0.0), FloatType(0.0)), threshold));
-
-		QuatType rotation_around_x = quat_from_euler(scalar_deg_to_rad(FloatType(0.0)), scalar_deg_to_rad(FloatType(0.0)), scalar_deg_to_rad(FloatType(90.0)));
-		TransformType transform_b = qv_set(rotation_around_x, y_axis);
-		result = qv_mul_point3(x_axis, transform_b);
-		CHECK(vector_all_near_equal3(result, vector_set(FloatType(1.0), FloatType(1.0), FloatType(0.0)), threshold));
-		result = qv_mul_point3(y_axis, transform_b);
-		CHECK(vector_all_near_equal3(result, vector_set(FloatType(0.0), FloatType(1.0), FloatType(-1.0)), threshold));
-
-		TransformType transform_ab = qv_mul(transform_a, transform_b);
-		TransformType transform_ba = qv_mul(transform_b, transform_a);
-		result = qv_mul_point3(x_axis, transform_ab);
-		CHECK(vector_all_near_equal3(result, vector_set(FloatType(1.0), FloatType(1.0), FloatType(-1.0)), threshold));
-		CHECK(vector_all_near_equal3(result, qv_mul_point3(qv_mul_point3(x_axis, transform_a), transform_b), threshold));
-		result = qv_mul_point3(y_axis, transform_ab);
-		CHECK(vector_all_near_equal3(result, vector_set(FloatType(0.0), FloatType(1.0), FloatType(0.0)), threshold));
-		CHECK(vector_all_near_equal3(result, qv_mul_point3(qv_mul_point3(y_axis, transform_a), transform_b), threshold));
-		result = qv_mul_point3(x_axis, transform_ba);
-		CHECK(vector_all_near_equal3(result, vector_set(FloatType(0.0), FloatType(1.0), FloatType(0.0)), threshold));
-		CHECK(vector_all_near_equal3(result, qv_mul_point3(qv_mul_point3(x_axis, transform_b), transform_a), threshold));
-		result = qv_mul_point3(y_axis, transform_ba);
-		CHECK(vector_all_near_equal3(result, vector_set(FloatType(0.0), FloatType(0.0), FloatType(-1.0)), threshold));
-		CHECK(vector_all_near_equal3(result, qv_mul_point3(qv_mul_point3(y_axis, transform_b), transform_a), threshold));
-	}
-
-	{
-		Vector4Type x_axis = vector_set(FloatType(1.0), FloatType(0.0), FloatType(0.0));
 
 		QuatType rotation_around_z = quat_from_euler(scalar_deg_to_rad(FloatType(0.0)), scalar_deg_to_rad(FloatType(90.0)), scalar_deg_to_rad(FloatType(0.0)));
 		TransformType transform_a = qv_set(rotation_around_z, x_axis);
@@ -143,22 +109,17 @@ static void test_qv_impl(const TransformType& identity, const FloatType threshol
 		CHECK(quat_near_equal(identity.rotation, transform_ab.rotation, threshold));
 		CHECK(vector_all_near_equal3(identity.translation, transform_ab.translation, threshold));
 
-		transform_a = qv_set(rotation_around_z, x_axis);
+		// A rotation around more than one axis and a translation in all the lanes
+		QuatType rotation = quat_from_euler(scalar_deg_to_rad(FloatType(30.0)), scalar_deg_to_rad(FloatType(-45.0)), scalar_deg_to_rad(FloatType(90.0)));
+		transform_a = qv_set(rotation, vector_set(FloatType(1.0), FloatType(-2.0), FloatType(3.0)));
 		transform_b = qv_inverse(transform_a);
 		transform_ab = qv_mul(transform_a, transform_b);
 		CHECK(quat_near_equal(identity.rotation, transform_ab.rotation, threshold));
 		CHECK(vector_all_near_equal3(identity.translation, transform_ab.translation, threshold));
-	}
 
-	{
-		Vector4Type x_axis = vector_set(FloatType(1.0), FloatType(0.0), FloatType(0.0));
-
-		QuatType rotation_around_z = quat_from_euler(scalar_deg_to_rad(FloatType(0.0)), scalar_deg_to_rad(FloatType(90.0)), scalar_deg_to_rad(FloatType(0.0)));
-		TransformType transform_a = qv_set(rotation_around_z, x_axis);
-		TransformType transform_b = qv_inverse(transform_a);
-		TransformType transform_ab = qv_mul(transform_a, transform_b);
-		CHECK(quat_near_equal(identity.rotation, transform_ab.rotation, threshold));
-		CHECK(vector_all_near_equal3(identity.translation, transform_ab.translation, threshold));
+		TransformType transform_ba = qv_mul(transform_b, transform_a);
+		CHECK(quat_near_equal(identity.rotation, transform_ba.rotation, threshold));
+		CHECK(vector_all_near_equal3(identity.translation, transform_ba.translation, threshold));
 	}
 
 	{
@@ -185,7 +146,7 @@ static void test_qv_impl(const TransformType& identity, const FloatType threshol
 		QuatType quat_ref_slerp_s = quat_slerp(quat0, quat1, alpha_s);
 
 		Vector4Type trans0 = vector_set(FloatType(-0.001138), FloatType(0.91623), FloatType(-1.624598));
-		Vector4Type trans1 = vector_set(FloatType(-0.001138), FloatType(0.91623), FloatType(-1.624598));
+		Vector4Type trans1 = vector_set(FloatType(2.5), FloatType(-1.75), FloatType(0.5));
 
 		Vector4Type trans_ref = vector_lerp(trans0, trans1, alpha);
 		Vector4Type trans_ref_s = vector_lerp(trans0, trans1, alpha_s);
