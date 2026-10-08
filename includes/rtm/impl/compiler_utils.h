@@ -44,6 +44,7 @@
 #elif defined(RTM_COMPILER_CLANG)
 	// Clang supports this pragma only on some targets: x86 and x64, AArch64 (clang 16+), and RISC-V (clang 18+).
 	// On other targets, clang ignores the pragma and gives a warning. We disable that warning.
+	// Clang 10 and earlier do not know the pragma and give a different warning. We also disable that warning.
 	// See: https://github.com/llvm/llvm-project/issues/55392
 	//
 	// Limits of the pragma under clang:
@@ -53,12 +54,14 @@
 	#define RTM_IMPL_FILE_PRAGMA_PUSH \
 		_Pragma("clang diagnostic push") \
 		_Pragma("clang diagnostic ignored \"-Wignored-pragmas\"") \
+		_Pragma("clang diagnostic ignored \"-Wunknown-pragmas\"") \
 		_Pragma("float_control(precise, on, push)") \
 		_Pragma("clang diagnostic pop")
 
 	#define RTM_IMPL_FILE_PRAGMA_POP \
 		_Pragma("clang diagnostic push") \
 		_Pragma("clang diagnostic ignored \"-Wignored-pragmas\"") \
+		_Pragma("clang diagnostic ignored \"-Wunknown-pragmas\"") \
 		_Pragma("float_control(pop)") \
 		_Pragma("clang diagnostic pop")
 #elif defined(RTM_COMPILER_GCC)
