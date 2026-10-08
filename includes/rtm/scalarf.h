@@ -834,7 +834,7 @@ namespace rtm
 	}
 
 	//////////////////////////////////////////////////////////////////////////
-	// Safely casts an integral input into a float64 output.
+	// Safely casts an integral input into a float32 output.
 	//////////////////////////////////////////////////////////////////////////
 	template<typename SrcIntegralType>
 	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE float scalar_safe_to_float(SrcIntegralType input) RTM_NO_EXCEPT
