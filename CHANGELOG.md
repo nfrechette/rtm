@@ -1,5 +1,9 @@
 # Significant changes per release
 
+## Unreleased
+
+*  Disable fast math with `float_control` pragma under Clang where the target supports it
+
 ## 2.3.1
 
 *  Fix missing macro error when deprecation is disabled
