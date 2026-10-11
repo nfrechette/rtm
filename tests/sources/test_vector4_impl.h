@@ -621,6 +621,7 @@ void test_vector4_arithmetic_impl(const FloatType threshold)
 	const Vector4Type neg_zero = vector_set(FloatType(-0.0));
 	CHECK(FloatType(vector_get_x(vector_floor(neg_zero))) == scalar_floor(FloatType(-0.0)));
 	CHECK(std::signbit(FloatType(vector_get_x(vector_floor(neg_zero)))) == std::signbit(scalar_floor(FloatType(-0.0))));
+	CHECK(std::signbit(FloatType(vector_get_x(vector_floor(neg_zero)))) == std::signbit(std::floor(FloatType(-0.0))));
 	CHECK(FloatType(vector_get_x(vector_floor(test_value0))) == scalar_floor(test_value0_flt[0]));
 	CHECK(FloatType(vector_get_y(vector_floor(test_value0))) == scalar_floor(test_value0_flt[1]));
 	CHECK(FloatType(vector_get_z(vector_floor(test_value0))) == scalar_floor(test_value0_flt[2]));
@@ -639,6 +640,8 @@ void test_vector4_arithmetic_impl(const FloatType threshold)
 	CHECK(std::isnan(FloatType(vector_get_w(vector_floor(nan)))));
 
 	CHECK(FloatType(vector_get_x(vector_ceil(neg_zero))) == scalar_ceil(FloatType(-0.0)));
+	CHECK(std::signbit(FloatType(vector_get_x(vector_ceil(neg_zero)))) == std::signbit(std::ceil(FloatType(-0.0))));
+	CHECK(std::signbit(FloatType(vector_get_x(vector_ceil(vector_set(FloatType(-0.5)))))) == std::signbit(std::ceil(FloatType(-0.5))));
 	CHECK(FloatType(vector_get_x(vector_ceil(test_value0))) == scalar_ceil(test_value0_flt[0]));
 	CHECK(FloatType(vector_get_y(vector_ceil(test_value0))) == scalar_ceil(test_value0_flt[1]));
 	CHECK(FloatType(vector_get_z(vector_ceil(test_value0))) == scalar_ceil(test_value0_flt[2]));
@@ -655,6 +658,36 @@ void test_vector4_arithmetic_impl(const FloatType threshold)
 	CHECK(std::isnan(FloatType(vector_get_y(vector_ceil(nan)))));
 	CHECK(std::isnan(FloatType(vector_get_z(vector_ceil(nan)))));
 	CHECK(std::isnan(FloatType(vector_get_w(vector_ceil(nan)))));
+
+	{
+		// The largest values that have a fractional part, thus each lane is near the limit of the precision
+		// A conversion to a 32 bit integer overflows for the float64 values
+		const FloatType largest_fraction = FloatType(std::ldexp(FloatType(1.0), std::numeric_limits<FloatType>::digits - 1)) - FloatType(0.5);
+		const FloatType large_flt[4] = { largest_fraction, -largest_fraction, largest_fraction - FloatType(1.0), -(largest_fraction - FloatType(1.0)) };
+		const Vector4Type large = vector_set(large_flt[0], large_flt[1], large_flt[2], large_flt[3]);
+
+		FloatType floor_result[4];
+		FloatType ceil_result[4];
+		FloatType round_symmetric_result[4];
+		FloatType round_bankers_result[4];
+		FloatType fraction_result[4];
+		vector_store(vector_floor(large), &floor_result[0]);
+		vector_store(vector_ceil(large), &ceil_result[0]);
+		vector_store(vector_round_symmetric(large), &round_symmetric_result[0]);
+		vector_store(vector_round_bankers(large), &round_bankers_result[0]);
+		vector_store(vector_fraction(large), &fraction_result[0]);
+
+		for (uint32_t lane_index = 0; lane_index < 4; ++lane_index)
+		{
+			INFO("input: " << large_flt[lane_index]);
+
+			CHECK(floor_result[lane_index] == std::floor(large_flt[lane_index]));
+			CHECK(ceil_result[lane_index] == std::ceil(large_flt[lane_index]));
+			CHECK(round_symmetric_result[lane_index] == std::round(large_flt[lane_index]));
+			CHECK(round_bankers_result[lane_index] == std::nearbyint(large_flt[lane_index]));
+			CHECK(fraction_result[lane_index] == FloatType(0.5));
+		}
+	}
 
 	const Vector4Type scalar_cross3_result = scalar_cross3<Vector4Type, FloatType>(test_value0, test_value1);
 	const Vector4Type vector_cross3_result = vector_cross3(test_value0, test_value1);
