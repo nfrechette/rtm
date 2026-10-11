@@ -1435,6 +1435,10 @@ namespace rtm
 		// Subtract our bias to properly handle positive values
 		integer_part = _mm_sub_ps(integer_part, bias);
 
+		// Keep the sign of the input as the other code paths do, thus floor(-0.0) = -0.0 and ceil(-0.5) = -0.0
+		const __m128 sign_mask = _mm_set_ps1(-0.0F);
+		integer_part = _mm_or_ps(integer_part, _mm_and_ps(input, sign_mask));
+
 		return _mm_or_ps(_mm_and_ps(use_original_input, input), _mm_andnot_ps(use_original_input, integer_part));
 #elif defined(RTM_NEON64_INTRINSICS)
 		return vrndpq_f32(input);
@@ -1511,6 +1515,10 @@ namespace rtm
 
 		// Add our bias to properly handle negative values
 		integer_part = _mm_add_ps(integer_part, bias);
+
+		// Keep the sign of the input as the other code paths do, thus floor(-0.0) = -0.0 and ceil(-0.5) = -0.0
+		const __m128 sign_mask = _mm_set_ps1(-0.0F);
+		integer_part = _mm_or_ps(integer_part, _mm_and_ps(input, sign_mask));
 
 		return _mm_or_ps(_mm_and_ps(use_original_input, input), _mm_andnot_ps(use_original_input, integer_part));
 #elif defined(RTM_NEON64_INTRINSICS)

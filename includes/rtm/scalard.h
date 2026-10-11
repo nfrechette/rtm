@@ -98,7 +98,7 @@ namespace rtm
 #if defined(RTM_SSE4_INTRINSICS)
 		return scalard{ _mm_round_sd(input.value, input.value, 0x9) };
 #else
-		// NaN, +- Infinity, and numbers larger or equal to 2^23 remain unchanged
+		// NaN, +- Infinity, and numbers larger or equal to 2^52 remain unchanged
 		// since they have no fractional part.
 
 		const __m128i abs_mask = _mm_set_epi64x(0x7FFFFFFFFFFFFFFFULL, 0x7FFFFFFFFFFFFFFFULL);
@@ -115,19 +115,20 @@ namespace rtm
 		// Combine our masks to determine if we should return the original value
 		__m128d use_original_input = _mm_or_pd(is_input_large, is_nan);
 
-		// Convert to an integer and back. This does banker's rounding by default
-		__m128d integer_part = _mm_cvtepi32_pd(_mm_cvtpd_epi32(input.value));
+		// Round to the nearest integer: add and subtract 2^52 with the sign of the input.
+		// A 64 bit float cannot keep a fractional part at 2^52, thus IEEE 754 rounds the sum.
+		// A conversion to a 32 bit integer would overflow for the values between 2^31 and 2^52.
+		const __m128d sign_mask = _mm_set_pd(-0.0, -0.0);
+		__m128d sign = _mm_and_pd(input.value, sign_mask);
+		__m128d truncating_offset = _mm_or_pd(sign, fractional_limit);
+		__m128d rounded = _mm_sub_sd(_mm_add_sd(input.value, truncating_offset), truncating_offset);
 
-		// Test if the returned value is greater than the original.
-		// A negative input will round towards zero and be greater when we need it to be smaller.
-		__m128d is_negative = _mm_cmpgt_sd(integer_part, input.value);
+		// If the rounded value is greater than the input, subtract 1.0
+		__m128d is_greater = _mm_cmpgt_sd(rounded, input.value);
+		__m128d integer_part = _mm_sub_sd(rounded, _mm_and_pd(is_greater, _mm_set1_pd(1.0)));
 
-		// Convert our mask to a float, ~0 yields -1.0 since it is a valid signed integer
-		// Positive values will yield a 0.0 bias
-		__m128d bias = _mm_cvtepi32_pd(_mm_castpd_si128(is_negative));
-
-		// Add our bias to properly handle negative values
-		integer_part = _mm_add_sd(integer_part, bias);
+		// Keep the sign of the input as the other code paths do, thus floor(-0.0) = -0.0 and ceil(-0.5) = -0.0
+		integer_part = _mm_or_pd(integer_part, sign);
 
 		__m128d result = _mm_or_pd(_mm_and_pd(use_original_input, input.value), _mm_andnot_pd(use_original_input, integer_part));
 		return scalard{ result };
@@ -160,7 +161,7 @@ namespace rtm
 #if defined(RTM_SSE4_INTRINSICS)
 		return scalard{ _mm_round_sd(input.value, input.value, 0xA) };
 #else
-		// NaN, +- Infinity, and numbers larger or equal to 2^23 remain unchanged
+		// NaN, +- Infinity, and numbers larger or equal to 2^52 remain unchanged
 		// since they have no fractional part.
 
 		const __m128i abs_mask = _mm_set_epi64x(0x7FFFFFFFFFFFFFFFULL, 0x7FFFFFFFFFFFFFFFULL);
@@ -177,19 +178,20 @@ namespace rtm
 		// Combine our masks to determine if we should return the original value
 		__m128d use_original_input = _mm_or_pd(is_input_large, is_nan);
 
-		// Convert to an integer and back. This does banker's rounding by default
-		__m128d integer_part = _mm_cvtepi32_pd(_mm_cvtpd_epi32(input.value));
+		// Round to the nearest integer: add and subtract 2^52 with the sign of the input.
+		// A 64 bit float cannot keep a fractional part at 2^52, thus IEEE 754 rounds the sum.
+		// A conversion to a 32 bit integer would overflow for the values between 2^31 and 2^52.
+		const __m128d sign_mask = _mm_set_pd(-0.0, -0.0);
+		__m128d sign = _mm_and_pd(input.value, sign_mask);
+		__m128d truncating_offset = _mm_or_pd(sign, fractional_limit);
+		__m128d rounded = _mm_sub_sd(_mm_add_sd(input.value, truncating_offset), truncating_offset);
 
-		// Test if the returned value is smaller than the original.
-		// A positive input will round towards zero and be lower when we need it to be greater.
-		__m128d is_positive = _mm_cmplt_sd(integer_part, input.value);
+		// If the rounded value is smaller than the input, add 1.0
+		__m128d is_smaller = _mm_cmplt_sd(rounded, input.value);
+		__m128d integer_part = _mm_add_sd(rounded, _mm_and_pd(is_smaller, _mm_set1_pd(1.0)));
 
-		// Convert our mask to a float, ~0 yields -1.0 since it is a valid signed integer
-		// Negative values will yield a 0.0 bias
-		__m128d bias = _mm_cvtepi32_pd(_mm_castpd_si128(is_positive));
-
-		// Subtract our bias to properly handle positive values
-		integer_part = _mm_sub_sd(integer_part, bias);
+		// Keep the sign of the input as the other code paths do, thus floor(-0.0) = -0.0 and ceil(-0.5) = -0.0
+		integer_part = _mm_or_pd(integer_part, sign);
 
 		__m128d result = _mm_or_pd(_mm_and_pd(use_original_input, input.value), _mm_andnot_pd(use_original_input, integer_part));
 		return scalard{ result };
@@ -695,8 +697,14 @@ namespace rtm
 		__m128d bias = _mm_or_pd(sign, _mm_set1_pd(0.5));
 		__m128d biased_input = _mm_add_sd(input.value, bias);
 
-		// Convert to an integer with truncation and back, this rounds towards zero.
-		__m128d integer_part = _mm_cvtepi32_pd(_mm_cvttpd_epi32(biased_input));
+		// Truncate towards zero: round the absolute value with 2^52, then subtract 1.0 if the result is greater.
+		// A conversion to a 32 bit integer would overflow for the values between 2^31 and 2^52.
+		__m128d abs_biased_input = _mm_and_pd(biased_input, _mm_castsi128_pd(abs_mask));
+		__m128d rounded = _mm_sub_sd(_mm_add_sd(abs_biased_input, fractional_limit), fractional_limit);
+		rounded = _mm_sub_sd(rounded, _mm_and_pd(_mm_cmpgt_sd(rounded, abs_biased_input), _mm_set1_pd(1.0)));
+
+		// Restore the sign, then add 0.0 to return 0.0 and not -0.0 for a zero result
+		__m128d integer_part = _mm_add_sd(_mm_or_pd(rounded, sign), _mm_setzero_pd());
 
 		__m128d result = _mm_or_pd(_mm_and_pd(use_original_input, input.value), _mm_andnot_pd(use_original_input, integer_part));
 

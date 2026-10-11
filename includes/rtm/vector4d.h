@@ -1273,8 +1273,10 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	RTM_DISABLE_SECURITY_COOKIE_CHECK inline vector4d RTM_SIMD_CALL vector_ceil(vector4d_arg0 input) RTM_NO_EXCEPT
 	{
-#if defined(RTM_SSE2_INTRINSICS)
-		// NaN, +- Infinity, and numbers larger or equal to 2^23 remain unchanged
+#if defined(RTM_SSE4_INTRINSICS)
+		return vector4d{ _mm_ceil_pd(input.xy), _mm_ceil_pd(input.zw) };
+#elif defined(RTM_SSE2_INTRINSICS)
+		// NaN, +- Infinity, and numbers larger or equal to 2^52 remain unchanged
 		// since they have no fractional part.
 
 		const __m128i abs_mask = _mm_set_epi64x(0x7FFFFFFFFFFFFFFFULL, 0x7FFFFFFFFFFFFFFFULL);
@@ -1295,27 +1297,25 @@ namespace rtm
 		__m128d use_original_input_xy = _mm_or_pd(is_input_large_xy, is_nan_xy);
 		__m128d use_original_input_zw = _mm_or_pd(is_input_large_zw, is_nan_zw);
 
-		// Convert to an integer and back
-		__m128d integer_part_xy = _mm_cvtepi32_pd(_mm_cvtpd_epi32(input.xy));
-		__m128d integer_part_zw = _mm_cvtepi32_pd(_mm_cvtpd_epi32(input.zw));
+		// Round to the nearest integer: add and subtract 2^52 with the sign of the input.
+		// A 64 bit float cannot keep a fractional part at 2^52, thus IEEE 754 rounds the sum.
+		// A conversion to a 32 bit integer would overflow for the values between 2^31 and 2^52.
+		const __m128d sign_mask = _mm_set_pd(-0.0, -0.0);
+		__m128d sign_xy = _mm_and_pd(input.xy, sign_mask);
+		__m128d sign_zw = _mm_and_pd(input.zw, sign_mask);
+		__m128d truncating_offset_xy = _mm_or_pd(sign_xy, fractional_limit);
+		__m128d truncating_offset_zw = _mm_or_pd(sign_zw, fractional_limit);
+		__m128d rounded_xy = _mm_sub_pd(_mm_add_pd(input.xy, truncating_offset_xy), truncating_offset_xy);
+		__m128d rounded_zw = _mm_sub_pd(_mm_add_pd(input.zw, truncating_offset_zw), truncating_offset_zw);
 
-		// Test if the returned value is smaller than the original.
-		// A positive input will round towards zero and be lower when we need it to be greater.
-		__m128d is_positive_xy = _mm_cmplt_pd(integer_part_xy, input.xy);
-		__m128d is_positive_zw = _mm_cmplt_pd(integer_part_zw, input.zw);
+		// If the rounded value is smaller than the input, add 1.0
+		const __m128d one = _mm_set1_pd(1.0);
+		__m128d integer_part_xy = _mm_add_pd(rounded_xy, _mm_and_pd(_mm_cmplt_pd(rounded_xy, input.xy), one));
+		__m128d integer_part_zw = _mm_add_pd(rounded_zw, _mm_and_pd(_mm_cmplt_pd(rounded_zw, input.zw), one));
 
-		// Our mask output is 64 bit wide but to convert to a bias, we need 32 bit integers
-		is_positive_xy = _mm_castps_pd(_mm_shuffle_ps(_mm_castpd_ps(is_positive_xy), _mm_castpd_ps(is_positive_xy), _MM_SHUFFLE(2, 0, 2, 0)));
-		is_positive_zw = _mm_castps_pd(_mm_shuffle_ps(_mm_castpd_ps(is_positive_zw), _mm_castpd_ps(is_positive_zw), _MM_SHUFFLE(2, 0, 2, 0)));
-
-		// Convert our mask to a float, ~0 yields -1.0 since it is a valid signed integer
-		// Negative values will yield a 0.0 bias
-		__m128d bias_xy = _mm_cvtepi32_pd(_mm_castpd_si128(is_positive_xy));
-		__m128d bias_zw = _mm_cvtepi32_pd(_mm_castpd_si128(is_positive_zw));
-
-		// Subtract our bias to properly handle positive values
-		integer_part_xy = _mm_sub_pd(integer_part_xy, bias_xy);
-		integer_part_zw = _mm_sub_pd(integer_part_zw, bias_zw);
+		// Keep the sign of the input as the other code paths do, thus floor(-0.0) = -0.0 and ceil(-0.5) = -0.0
+		integer_part_xy = _mm_or_pd(integer_part_xy, sign_xy);
+		integer_part_zw = _mm_or_pd(integer_part_zw, sign_zw);
 
 		__m128d result_xy = _mm_or_pd(_mm_and_pd(use_original_input_xy, input.xy), _mm_andnot_pd(use_original_input_xy, integer_part_xy));
 		__m128d result_zw = _mm_or_pd(_mm_and_pd(use_original_input_zw, input.zw), _mm_andnot_pd(use_original_input_zw, integer_part_zw));
@@ -1334,7 +1334,7 @@ namespace rtm
 #if defined(RTM_SSE4_INTRINSICS)
 		return vector4d{ _mm_floor_pd(input.xy), _mm_floor_pd(input.zw) };
 #elif defined(RTM_SSE2_INTRINSICS)
-		// NaN, +- Infinity, and numbers larger or equal to 2^23 remain unchanged
+		// NaN, +- Infinity, and numbers larger or equal to 2^52 remain unchanged
 		// since they have no fractional part.
 
 		const __m128i abs_mask = _mm_set_epi64x(0x7FFFFFFFFFFFFFFFULL, 0x7FFFFFFFFFFFFFFFULL);
@@ -1355,27 +1355,25 @@ namespace rtm
 		__m128d use_original_input_xy = _mm_or_pd(is_input_large_xy, is_nan_xy);
 		__m128d use_original_input_zw = _mm_or_pd(is_input_large_zw, is_nan_zw);
 
-		// Convert to an integer and back
-		__m128d integer_part_xy = _mm_cvtepi32_pd(_mm_cvtpd_epi32(input.xy));
-		__m128d integer_part_zw = _mm_cvtepi32_pd(_mm_cvtpd_epi32(input.zw));
+		// Round to the nearest integer: add and subtract 2^52 with the sign of the input.
+		// A 64 bit float cannot keep a fractional part at 2^52, thus IEEE 754 rounds the sum.
+		// A conversion to a 32 bit integer would overflow for the values between 2^31 and 2^52.
+		const __m128d sign_mask = _mm_set_pd(-0.0, -0.0);
+		__m128d sign_xy = _mm_and_pd(input.xy, sign_mask);
+		__m128d sign_zw = _mm_and_pd(input.zw, sign_mask);
+		__m128d truncating_offset_xy = _mm_or_pd(sign_xy, fractional_limit);
+		__m128d truncating_offset_zw = _mm_or_pd(sign_zw, fractional_limit);
+		__m128d rounded_xy = _mm_sub_pd(_mm_add_pd(input.xy, truncating_offset_xy), truncating_offset_xy);
+		__m128d rounded_zw = _mm_sub_pd(_mm_add_pd(input.zw, truncating_offset_zw), truncating_offset_zw);
 
-		// Test if the returned value is greater than the original.
-		// A negative input will round towards zero and be greater when we need it to be smaller.
-		__m128d is_negative_xy = _mm_cmpgt_pd(integer_part_xy, input.xy);
-		__m128d is_negative_zw = _mm_cmpgt_pd(integer_part_zw, input.zw);
+		// If the rounded value is greater than the input, subtract 1.0
+		const __m128d one = _mm_set1_pd(1.0);
+		__m128d integer_part_xy = _mm_sub_pd(rounded_xy, _mm_and_pd(_mm_cmpgt_pd(rounded_xy, input.xy), one));
+		__m128d integer_part_zw = _mm_sub_pd(rounded_zw, _mm_and_pd(_mm_cmpgt_pd(rounded_zw, input.zw), one));
 
-		// Our mask output is 64 bit wide but to convert to a bias, we need 32 bit integers
-		is_negative_xy = _mm_castps_pd(_mm_shuffle_ps(_mm_castpd_ps(is_negative_xy), _mm_castpd_ps(is_negative_xy), _MM_SHUFFLE(2, 0, 2, 0)));
-		is_negative_zw = _mm_castps_pd(_mm_shuffle_ps(_mm_castpd_ps(is_negative_zw), _mm_castpd_ps(is_negative_zw), _MM_SHUFFLE(2, 0, 2, 0)));
-
-		// Convert our mask to a float, ~0 yields -1.0 since it is a valid signed integer
-		// Positive values will yield a 0.0 bias
-		__m128d bias_xy = _mm_cvtepi32_pd(_mm_castpd_si128(is_negative_xy));
-		__m128d bias_zw = _mm_cvtepi32_pd(_mm_castpd_si128(is_negative_zw));
-
-		// Add our bias to properly handle negative values
-		integer_part_xy = _mm_add_pd(integer_part_xy, bias_xy);
-		integer_part_zw = _mm_add_pd(integer_part_zw, bias_zw);
+		// Keep the sign of the input as the other code paths do, thus floor(-0.0) = -0.0 and ceil(-0.5) = -0.0
+		integer_part_xy = _mm_or_pd(integer_part_xy, sign_xy);
+		integer_part_zw = _mm_or_pd(integer_part_zw, sign_zw);
 
 		__m128d result_xy = _mm_or_pd(_mm_and_pd(use_original_input_xy, input.xy), _mm_andnot_pd(use_original_input_xy, integer_part_xy));
 		__m128d result_zw = _mm_or_pd(_mm_and_pd(use_original_input_zw, input.zw), _mm_andnot_pd(use_original_input_zw, integer_part_zw));
@@ -3887,9 +3885,20 @@ namespace rtm
 		__m128d biased_input_xy = _mm_add_pd(input.xy, bias_xy);
 		__m128d biased_input_zw = _mm_add_pd(input.zw, bias_zw);
 
-		// Convert to an integer with truncation and back, this rounds towards zero.
-		__m128d integer_part_xy = _mm_cvtepi32_pd(_mm_cvttpd_epi32(biased_input_xy));
-		__m128d integer_part_zw = _mm_cvtepi32_pd(_mm_cvttpd_epi32(biased_input_zw));
+		// Truncate towards zero: round the absolute value with 2^52, then subtract 1.0 if the result is greater.
+		// A conversion to a 32 bit integer would overflow for the values between 2^31 and 2^52.
+		const __m128d one = _mm_set1_pd(1.0);
+		__m128d abs_biased_input_xy = _mm_and_pd(biased_input_xy, _mm_castsi128_pd(abs_mask));
+		__m128d abs_biased_input_zw = _mm_and_pd(biased_input_zw, _mm_castsi128_pd(abs_mask));
+		__m128d rounded_xy = _mm_sub_pd(_mm_add_pd(abs_biased_input_xy, fractional_limit), fractional_limit);
+		__m128d rounded_zw = _mm_sub_pd(_mm_add_pd(abs_biased_input_zw, fractional_limit), fractional_limit);
+		rounded_xy = _mm_sub_pd(rounded_xy, _mm_and_pd(_mm_cmpgt_pd(rounded_xy, abs_biased_input_xy), one));
+		rounded_zw = _mm_sub_pd(rounded_zw, _mm_and_pd(_mm_cmpgt_pd(rounded_zw, abs_biased_input_zw), one));
+
+		// Restore the sign, then add 0.0 to return 0.0 and not -0.0 for a zero result
+		const __m128d zero = _mm_setzero_pd();
+		__m128d integer_part_xy = _mm_add_pd(_mm_or_pd(rounded_xy, sign_xy), zero);
+		__m128d integer_part_zw = _mm_add_pd(_mm_or_pd(rounded_zw, sign_zw), zero);
 
 		__m128d result_xy = _mm_or_pd(_mm_and_pd(use_original_input_xy, input.xy), _mm_andnot_pd(use_original_input_xy, integer_part_xy));
 		__m128d result_zw = _mm_or_pd(_mm_and_pd(use_original_input_zw, input.zw), _mm_andnot_pd(use_original_input_zw, integer_part_zw));

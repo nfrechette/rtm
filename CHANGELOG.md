@@ -3,6 +3,9 @@
 ## Unreleased
 
 *  Disable fast math with `float_control` pragma under Clang where the target supports it
+*  Fix float64 floor, ceil, and symmetric rounding for values between 2^31 and 2^52 with SSE2 without SSE4
+*  Fix floor and ceil with SSE2 without SSE4 to keep the sign of a zero result, as the other code paths do
+*  Add the SSE4 code path to vector4d ceil
 
 ## 2.3.1
 

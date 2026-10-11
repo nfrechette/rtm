@@ -126,6 +126,10 @@ namespace rtm
 		// Add our bias to properly handle negative values
 		integer_part = _mm_add_ss(integer_part, bias);
 
+		// Keep the sign of the input as the other code paths do, thus floor(-0.0) = -0.0 and ceil(-0.5) = -0.0
+		const __m128 sign_mask = _mm_set_ps1(-0.0F);
+		integer_part = _mm_or_ps(integer_part, _mm_and_ps(input.value, sign_mask));
+
 		__m128 result = _mm_or_ps(_mm_and_ps(use_original_input, input.value), _mm_andnot_ps(use_original_input, integer_part));
 		return scalarf{ result };
 #endif
@@ -187,6 +191,10 @@ namespace rtm
 
 		// Subtract our bias to properly handle positive values
 		integer_part = _mm_sub_ss(integer_part, bias);
+
+		// Keep the sign of the input as the other code paths do, thus floor(-0.0) = -0.0 and ceil(-0.5) = -0.0
+		const __m128 sign_mask = _mm_set_ps1(-0.0F);
+		integer_part = _mm_or_ps(integer_part, _mm_and_ps(input.value, sign_mask));
 
 		__m128 result = _mm_or_ps(_mm_and_ps(use_original_input, input.value), _mm_andnot_ps(use_original_input, integer_part));
 		return scalarf{ result };
