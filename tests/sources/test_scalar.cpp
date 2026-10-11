@@ -83,6 +83,7 @@ static void test_scalar_impl(const FloatType threshold, const FloatType trig_thr
 	CHECK(scalar_ceil(FloatType(0.0)) == FloatType(0.0));
 	CHECK(scalar_ceil(FloatType(-0.0)) == FloatType(0.0));
 	CHECK(std::signbit(scalar_ceil(FloatType(-0.0))) == std::signbit(std::ceil(FloatType(-0.0))));
+	CHECK(std::signbit(scalar_ceil(FloatType(-0.5))) == std::signbit(std::ceil(FloatType(-0.5))));
 	CHECK(scalar_ceil(FloatType(0.5)) == FloatType(1.0));
 	CHECK(scalar_ceil(FloatType(2.5)) == FloatType(3.0));
 	CHECK(scalar_ceil(FloatType(3.0)) == FloatType(3.0));
@@ -96,6 +97,7 @@ static void test_scalar_impl(const FloatType threshold, const FloatType trig_thr
 	CHECK(scalar_cast(scalar_ceil(scalar_set(FloatType(0.0)))) == FloatType(0.0));
 	CHECK(scalar_cast(scalar_ceil(scalar_set(FloatType(-0.0)))) == FloatType(0.0));
 	CHECK(std::signbit(scalar_cast(scalar_ceil(scalar_set(FloatType(-0.0))))) == std::signbit(std::ceil(FloatType(-0.0))));
+	CHECK(std::signbit(scalar_cast(scalar_ceil(scalar_set(FloatType(-0.5))))) == std::signbit(std::ceil(FloatType(-0.5))));
 	CHECK(scalar_cast(scalar_ceil(scalar_set(FloatType(0.5)))) == FloatType(1.0));
 	CHECK(scalar_cast(scalar_ceil(scalar_set(FloatType(2.5)))) == FloatType(3.0));
 	CHECK(scalar_cast(scalar_ceil(scalar_set(FloatType(3.0)))) == FloatType(3.0));
