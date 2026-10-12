@@ -442,6 +442,33 @@ static void test_scalar_impl(const FloatType threshold, const FloatType trig_thr
 	CHECK(scalar_cast(scalar_round_bankers(scalar_set(FloatType(1.75)))) == FloatType(2.0));
 	CHECK(scalar_cast(scalar_round_bankers(scalar_set(FloatType(2.5)))) == FloatType(2.0));
 
+	{
+		// The round functions keep the sign of the input as std::round and std::nearbyint do
+		// The large values have no fractional part, and a conversion to an integer overflows for them
+		const FloatType round_inputs[] = { FloatType(-0.0), FloatType(0.0), FloatType(-0.3), FloatType(-0.5), FloatType(0.5), FloatType(-0.7), FloatType(-2.5), FloatType(2.5), FloatType(1.0e10), FloatType(-1.0e10), FloatType(1.0e30), FloatType(-1.0e30) };
+		for (const FloatType input : round_inputs)
+		{
+			INFO("input: " << input);
+
+			const FloatType ref_symmetric = std::round(input);
+			const FloatType ref_bankers = std::nearbyint(input);
+
+			const FloatType symmetric_result = scalar_round_symmetric(input);
+			const FloatType symmetric_result_s = scalar_cast(scalar_round_symmetric(scalar_set(input)));
+			const FloatType bankers_result = scalar_round_bankers(input);
+			const FloatType bankers_result_s = scalar_cast(scalar_round_bankers(scalar_set(input)));
+
+			CHECK(symmetric_result == ref_symmetric);
+			CHECK(std::signbit(symmetric_result) == std::signbit(ref_symmetric));
+			CHECK(symmetric_result_s == ref_symmetric);
+			CHECK(std::signbit(symmetric_result_s) == std::signbit(ref_symmetric));
+			CHECK(bankers_result == ref_bankers);
+			CHECK(std::signbit(bankers_result) == std::signbit(ref_bankers));
+			CHECK(bankers_result_s == ref_bankers);
+			CHECK(std::signbit(bankers_result_s) == std::signbit(ref_bankers));
+		}
+	}
+
 	CHECK(scalar_fraction(FloatType(0.0)) == FloatType(0.0));
 	CHECK(scalar_fraction(FloatType(-0.0)) == FloatType(0.0));
 	CHECK(std::signbit(scalar_fraction(FloatType(-0.0))) == std::signbit(FloatType(-0.0) - std::floor(FloatType(-0.0))));
