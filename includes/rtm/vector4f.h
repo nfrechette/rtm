@@ -4326,7 +4326,10 @@ namespace rtm
 		__m128 floored = _mm_floor_ps(biased_input);
 		__m128 ceiled = _mm_ceil_ps(biased_input);
 
-		return vector_select(is_positive, floored, ceiled);
+		const __m128 result = vector_select(is_positive, floored, ceiled);
+
+		// Keep the sign of the input as std::round does, thus round(-0.0) = -0.0 and round(-0.3) = -0.0
+		return _mm_or_ps(result, _mm_and_ps(input, sign_mask));
 #elif defined(RTM_SSE2_INTRINSICS)
 		const __m128i abs_mask = _mm_set_epi32(0x7FFFFFFFULL, 0x7FFFFFFFULL, 0x7FFFFFFFULL, 0x7FFFFFFFULL);
 		const __m128 fractional_limit = _mm_set_ps1(8388608.0F); // 2^23
@@ -4352,6 +4355,9 @@ namespace rtm
 
 		// Convert to an integer with truncation and back, this rounds towards zero.
 		__m128 integer_part = _mm_cvtepi32_ps(_mm_cvttps_epi32(biased_input));
+
+		// Keep the sign of the input as std::round does, thus round(-0.0) = -0.0 and round(-0.3) = -0.0
+		integer_part = _mm_or_ps(integer_part, sign);
 
 		return _mm_or_ps(_mm_and_ps(use_original_input, input), _mm_andnot_ps(use_original_input, integer_part));
 #elif defined(RTM_NEON_INTRINSICS) && !defined(RTM_NEON64_INTRINSICS) // arm64 is faster with scalar code
@@ -4381,13 +4387,19 @@ namespace rtm
 		// Convert to an integer and back. This does banker's rounding by default
 		float32x4_t integer_part = vcvtq_f32_s32(vcvtq_s32_f32(biased_input));
 
+		// Keep the sign of the input as std::round does, thus round(-0.0) = -0.0 and round(-0.3) = -0.0
+		integer_part = vreinterpretq_f32_u32(vorrq_u32(vreinterpretq_u32_f32(integer_part), sign));
+
 		return vbslq_f32(use_original_input, input, integer_part);
 #else
 		const vector4f half = vector_set(0.5F);
 		const vector4f floored = vector_floor(vector_add(input, half));
 		const vector4f ceiled = vector_ceil(vector_sub(input, half));
 		const mask4f is_greater_equal = vector_greater_equal(input, vector_zero());
-		return vector_select(is_greater_equal, floored, ceiled);
+		const vector4f result = vector_select(is_greater_equal, floored, ceiled);
+
+		// Keep the sign of the input as std::round does, thus round(-0.0) = -0.0 and round(-0.3) = -0.0
+		return vector_copy_sign(result, input);
 #endif
 	}
 
@@ -4417,6 +4429,9 @@ namespace rtm
 		__m128 truncating_offset = _mm_or_ps(sign, fractional_limit);
 		__m128 integer_part = _mm_sub_ps(_mm_add_ps(input, truncating_offset), truncating_offset);
 
+		// Keep the sign of the input as std::nearbyint does, thus round(-0.0) = -0.0 and round(-0.3) = -0.0
+		integer_part = _mm_or_ps(integer_part, sign);
+
 		// If our input was so large that it had no fractional part, return it unchanged
 		// Otherwise return our integer part
 		const __m128i abs_mask = _mm_set_epi32(0x7FFFFFFFULL, 0x7FFFFFFFULL, 0x7FFFFFFFULL, 0x7FFFFFFFULL);
@@ -4437,6 +4452,9 @@ namespace rtm
 		float32x4_t fractional_limit = vdupq_n_f32(8388608.0F); // 2^23
 		float32x4_t truncating_offset = vreinterpretq_f32_u32(vorrq_u32(sign, vreinterpretq_u32_f32(fractional_limit)));
 		float32x4_t integer_part = vsubq_f32(vaddq_f32(input, truncating_offset), truncating_offset);
+
+		// Keep the sign of the input as std::nearbyint does, thus round(-0.0) = -0.0 and round(-0.3) = -0.0
+		integer_part = vreinterpretq_f32_u32(vorrq_u32(vreinterpretq_u32_f32(integer_part), sign));
 
 		// If our input was so large that it had no fractional part, return it unchanged
 		// Otherwise return our integer part

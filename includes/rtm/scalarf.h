@@ -682,6 +682,9 @@ namespace rtm
 		__m128 ceiled = _mm_ceil_ss(biased_input, biased_input);
 
 		__m128 result = RTM_VECTOR4F_SELECT(is_positive, floored, ceiled);
+
+		// Keep the sign of the input as std::round does, thus round(-0.0) = -0.0 and round(-0.3) = -0.0
+		result = _mm_or_ps(result, _mm_and_ps(input.value, sign_mask));
 		return scalarf{ result };
 #else
 		const __m128i abs_mask = _mm_set_epi32(0x7FFFFFFFULL, 0x7FFFFFFFULL, 0x7FFFFFFFULL, 0x7FFFFFFFULL);
@@ -709,6 +712,9 @@ namespace rtm
 		// Convert to an integer with truncation and back, this rounds towards zero.
 		__m128 integer_part = _mm_cvtepi32_ps(_mm_cvttps_epi32(biased_input));
 
+		// Keep the sign of the input as std::round does, thus round(-0.0) = -0.0 and round(-0.3) = -0.0
+		integer_part = _mm_or_ps(integer_part, sign);
+
 		__m128 result = _mm_or_ps(_mm_and_ps(use_original_input, input.value), _mm_andnot_ps(use_original_input, integer_part));
 
 		return scalarf{ result };
@@ -729,7 +735,8 @@ namespace rtm
 		return scalar_cast(scalar_round_symmetric(scalar_set(input)));
 #elif defined(RTM_NEON64_INTRINSICS)
 		// arm64 has floor/ceil instructions
-		return input >= 0.0F ? scalar_floor(input + 0.5F) : scalar_ceil(input - 0.5F);
+		// Keep the sign of the input as std::round does, thus round(-0.0) = -0.0 and round(-0.3) = -0.0
+		return rtm_impl::copysign(input >= 0.0F ? scalar_floor(input + 0.5F) : scalar_ceil(input - 0.5F), input);
 #else
 		// NaN, +- Infinity, and numbers larger or equal to 2^23 remain unchanged
 		// since they have no fractional part.
@@ -755,7 +762,8 @@ namespace rtm
 		// Convert to an integer with truncation and back, this rounds towards zero.
 		float integer_part = static_cast<float>(static_cast<int32_t>(biased_input));
 
-		return use_original_input ? input : integer_part;
+		// Keep the sign of the input as std::round does, thus round(-0.0) = -0.0 and round(-0.3) = -0.0
+		return use_original_input ? input : rtm_impl::copysign(integer_part, input);
 #endif
 	}
 
@@ -787,6 +795,9 @@ namespace rtm
 		__m128 truncating_offset = _mm_or_ps(sign, fractional_limit);
 		__m128 integer_part = _mm_sub_ss(_mm_add_ss(input.value, truncating_offset), truncating_offset);
 
+		// Keep the sign of the input as std::nearbyint does, thus round(-0.0) = -0.0 and round(-0.3) = -0.0
+		integer_part = _mm_or_ps(integer_part, sign);
+
 		// If our input was so large that it had no fractional part, return it unchanged
 		// Otherwise return our integer part
 		const __m128i abs_mask = _mm_set_epi32(0x7FFFFFFFULL, 0x7FFFFFFFULL, 0x7FFFFFFFULL, 0x7FFFFFFFULL);
@@ -815,21 +826,25 @@ namespace rtm
 #elif defined(RTM_NEON64_INTRINSICS) && defined(RTM_IMPL_VRNDNS_SUPPORTED)
 		return vrndns_f32(input);
 #else
-		if (!scalar_is_finite(input))
+		// NaN, +- Infinity, and numbers larger or equal to 2^23 remain unchanged
+		// since they have no fractional part. A conversion to a 32 bit integer would overflow for some of them.
+		if (!scalar_is_finite(input) || scalar_abs(input) >= 8388608.0F)
 			return input;
 
 		int32_t whole = static_cast<int32_t>(input);
 		float whole_f = static_cast<float>(whole);
 		float remainder = scalar_abs(input - whole_f);
-		if (remainder < 0.5F)
-			return whole_f;
-		if (remainder > 0.5F)
-			return input >= 0.0F ? (whole_f + 1.0F) : (whole_f - 1.0F);
 
-		if ((whole % 2) == 0)
-			return whole_f;
+		float result;
+		if (remainder < 0.5F)
+			result = whole_f;
+		else if (remainder > 0.5F || (whole % 2) != 0)
+			result = input >= 0.0F ? (whole_f + 1.0F) : (whole_f - 1.0F);
 		else
-			return input >= 0.0F ? (whole_f + 1.0F) : (whole_f - 1.0F);
+			result = whole_f;
+
+		// Keep the sign of the input as std::nearbyint does, thus round(-0.0) = -0.0 and round(-0.3) = -0.0
+		return rtm_impl::copysign(result, input);
 #endif
 	}
 

@@ -673,6 +673,9 @@ namespace rtm
 		__m128d ceiled = _mm_ceil_sd(biased_input, biased_input);
 
 		__m128d result = RTM_VECTOR2D_SELECT(is_positive, floored, ceiled);
+
+		// Keep the sign of the input as std::round does, thus round(-0.0) = -0.0 and round(-0.3) = -0.0
+		result = _mm_or_pd(result, _mm_and_pd(input.value, sign_mask));
 		return scalard{ result };
 #else
 		const __m128i abs_mask = _mm_set_epi64x(0x7FFFFFFFFFFFFFFFULL, 0x7FFFFFFFFFFFFFFFULL);
@@ -703,8 +706,8 @@ namespace rtm
 		__m128d rounded = _mm_sub_sd(_mm_add_sd(abs_biased_input, fractional_limit), fractional_limit);
 		rounded = _mm_sub_sd(rounded, _mm_and_pd(_mm_cmpgt_sd(rounded, abs_biased_input), _mm_set1_pd(1.0)));
 
-		// Restore the sign, then add 0.0 to return 0.0 and not -0.0 for a zero result
-		__m128d integer_part = _mm_add_sd(_mm_or_pd(rounded, sign), _mm_setzero_pd());
+		// Restore the sign of the input as std::round does, thus round(-0.0) = -0.0 and round(-0.3) = -0.0
+		__m128d integer_part = _mm_or_pd(rounded, sign);
 
 		__m128d result = _mm_or_pd(_mm_and_pd(use_original_input, input.value), _mm_andnot_pd(use_original_input, integer_part));
 
@@ -725,7 +728,8 @@ namespace rtm
 #if defined(RTM_SSE2_INTRINSICS)
 		return scalar_cast(scalar_round_symmetric(scalar_set(input)));
 #else
-		return input >= 0.0 ? scalar_floor(input + 0.5) : scalar_ceil(input - 0.5);
+		// Keep the sign of the input as std::round does, thus round(-0.0) = -0.0 and round(-0.3) = -0.0
+		return rtm_impl::copysign(input >= 0.0 ? scalar_floor(input + 0.5) : scalar_ceil(input - 0.5), input);
 #endif
 	}
 
@@ -759,6 +763,9 @@ namespace rtm
 		__m128d truncating_offset = _mm_or_pd(sign, fractional_limit);
 		__m128d integer_part = _mm_sub_sd(_mm_add_sd(input.value, truncating_offset), truncating_offset);
 
+		// Keep the sign of the input as std::nearbyint does, thus round(-0.0) = -0.0 and round(-0.3) = -0.0
+		integer_part = _mm_or_pd(integer_part, sign);
+
 		__m128d abs_input = _mm_and_pd(input.value, _mm_castsi128_pd(abs_mask));
 		__m128d is_input_large = _mm_cmpge_sd(abs_input, fractional_limit);
 		__m128d result = _mm_or_pd(_mm_and_pd(is_input_large, input.value), _mm_andnot_pd(is_input_large, integer_part));
@@ -782,21 +789,25 @@ namespace rtm
 #if defined(RTM_SSE2_INTRINSICS)
 		return scalar_cast(scalar_round_bankers(scalar_set(input)));
 #else
-		if (!scalar_is_finite(input))
+		// NaN, +- Infinity, and numbers larger or equal to 2^52 remain unchanged
+		// since they have no fractional part. A conversion to a 64 bit integer would overflow for some of them.
+		if (!scalar_is_finite(input) || scalar_abs(input) >= 4503599627370496.0)
 			return input;
 
 		int64_t whole = static_cast<int64_t>(input);
 		double whole_f = static_cast<double>(whole);
 		double remainder = scalar_abs(input - whole_f);
-		if (remainder < 0.5)
-			return whole_f;
-		if (remainder > 0.5)
-			return input >= 0.0 ? (whole_f + 1.0) : (whole_f - 1.0);
 
-		if ((whole % 2) == 0)
-			return whole_f;
+		double result;
+		if (remainder < 0.5)
+			result = whole_f;
+		else if (remainder > 0.5 || (whole % 2) != 0)
+			result = input >= 0.0 ? (whole_f + 1.0) : (whole_f - 1.0);
 		else
-			return input >= 0.0 ? (whole_f + 1.0) : (whole_f - 1.0);
+			result = whole_f;
+
+		// Keep the sign of the input as std::nearbyint does, thus round(-0.0) = -0.0 and round(-0.3) = -0.0
+		return rtm_impl::copysign(result, input);
 #endif
 	}
 

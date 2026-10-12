@@ -6,6 +6,8 @@
 *  Fix float64 floor, ceil, and symmetric rounding for values between 2^31 and 2^52 with SSE2 without SSE4
 *  Fix floor and ceil with SSE2 without SSE4 to keep the sign of a zero result, as the other code paths do
 *  Add the SSE4 code path to vector4d ceil
+*  Symmetric and banker's rounding keep the sign of the input as std::round and std::nearbyint do, for example round(-0.0) = -0.0
+*  Fix float32 banker's rounding for values of 2^31 and larger without SIMD
 
 ## 2.3.1
 

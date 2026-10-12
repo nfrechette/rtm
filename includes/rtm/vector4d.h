@@ -3853,6 +3853,10 @@ namespace rtm
 
 		__m128d result_xy = RTM_VECTOR2D_SELECT(is_positive_xy, floored_xy, ceiled_xy);
 		__m128d result_zw = RTM_VECTOR2D_SELECT(is_positive_zw, floored_zw, ceiled_zw);
+
+		// Keep the sign of the input as std::round does, thus round(-0.0) = -0.0 and round(-0.3) = -0.0
+		result_xy = _mm_or_pd(result_xy, _mm_and_pd(input.xy, sign_mask));
+		result_zw = _mm_or_pd(result_zw, _mm_and_pd(input.zw, sign_mask));
 		return vector4d{ result_xy, result_zw };
 #elif defined(RTM_SSE2_INTRINSICS)
 		const __m128i abs_mask = _mm_set_epi64x(0x7FFFFFFFFFFFFFFFULL, 0x7FFFFFFFFFFFFFFFULL);
@@ -3895,10 +3899,9 @@ namespace rtm
 		rounded_xy = _mm_sub_pd(rounded_xy, _mm_and_pd(_mm_cmpgt_pd(rounded_xy, abs_biased_input_xy), one));
 		rounded_zw = _mm_sub_pd(rounded_zw, _mm_and_pd(_mm_cmpgt_pd(rounded_zw, abs_biased_input_zw), one));
 
-		// Restore the sign, then add 0.0 to return 0.0 and not -0.0 for a zero result
-		const __m128d zero = _mm_setzero_pd();
-		__m128d integer_part_xy = _mm_add_pd(_mm_or_pd(rounded_xy, sign_xy), zero);
-		__m128d integer_part_zw = _mm_add_pd(_mm_or_pd(rounded_zw, sign_zw), zero);
+		// Restore the sign of the input as std::round does, thus round(-0.0) = -0.0 and round(-0.3) = -0.0
+		__m128d integer_part_xy = _mm_or_pd(rounded_xy, sign_xy);
+		__m128d integer_part_zw = _mm_or_pd(rounded_zw, sign_zw);
 
 		__m128d result_xy = _mm_or_pd(_mm_and_pd(use_original_input_xy, input.xy), _mm_andnot_pd(use_original_input_xy, integer_part_xy));
 		__m128d result_zw = _mm_or_pd(_mm_and_pd(use_original_input_zw, input.zw), _mm_andnot_pd(use_original_input_zw, integer_part_zw));
@@ -3909,7 +3912,10 @@ namespace rtm
 		const vector4d floored = vector_floor(vector_add(input, half));
 		const vector4d ceiled = vector_ceil(vector_sub(input, half));
 		const mask4d is_greater_equal = vector_greater_equal(input, vector_zero());
-		return vector_select(is_greater_equal, floored, ceiled);
+		const vector4d result = vector_select(is_greater_equal, floored, ceiled);
+
+		// Keep the sign of the input as std::round does, thus round(-0.0) = -0.0 and round(-0.3) = -0.0
+		return vector_copy_sign(result, input);
 #endif
 	}
 
@@ -3943,6 +3949,10 @@ namespace rtm
 		__m128d truncating_offset_zw = _mm_or_pd(sign_zw, fractional_limit);
 		__m128d integer_part_xy = _mm_sub_pd(_mm_add_pd(input.xy, truncating_offset_xy), truncating_offset_xy);
 		__m128d integer_part_zw = _mm_sub_pd(_mm_add_pd(input.zw, truncating_offset_zw), truncating_offset_zw);
+
+		// Keep the sign of the input as std::nearbyint does, thus round(-0.0) = -0.0 and round(-0.3) = -0.0
+		integer_part_xy = _mm_or_pd(integer_part_xy, sign_xy);
+		integer_part_zw = _mm_or_pd(integer_part_zw, sign_zw);
 
 		__m128d abs_input_xy = _mm_and_pd(input.xy, _mm_castsi128_pd(abs_mask));
 		__m128d abs_input_zw = _mm_and_pd(input.zw, _mm_castsi128_pd(abs_mask));
