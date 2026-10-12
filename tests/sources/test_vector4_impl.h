@@ -1788,7 +1788,9 @@ void test_vector4_impl(const FloatType threshold)
 
 		for (const FloatType* inputs : round_inputs)
 		{
-			const Vector4Type input_v = vector_set(inputs[0], inputs[1], inputs[2], inputs[3]);
+			// Do not use vector_set with the components of a constant array in a loop:
+			// that code causes an internal compiler error with GCC 14 and 15 on ARM64
+			const Vector4Type input_v = vector_load(inputs);
 
 			FloatType symmetric_result[4];
 			FloatType bankers_result[4];
