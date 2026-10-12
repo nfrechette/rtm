@@ -19,18 +19,6 @@ jobs:
         uses: actions/checkout@v4
         with:
           submodules: 'recursive'
-      - name: Building (debug-x86)
-        uses: docker://ghcr.io/nfrechette/toolchain-amd64-resolute:v1
-        with:
-          args: 'python3 make.py -ci -compiler ${{ matrix.compiler }} -config Debug -cpu x86 -build'
-      - name: Running unit tests (debug-x86)
-        uses: docker://ghcr.io/nfrechette/toolchain-amd64-resolute:v1
-        with:
-          args: 'python3 make.py -ci -compiler ${{ matrix.compiler }} -config Debug -cpu x86 -unit_test'
-      - name: Clean
-        uses: docker://ghcr.io/nfrechette/toolchain-amd64-resolute:v1
-        with:
-          args: 'python3 make.py -ci -clean_only'
       - name: Building (debug-x64)
         uses: docker://ghcr.io/nfrechette/toolchain-amd64-resolute:v1
         with:
@@ -39,18 +27,6 @@ jobs:
         uses: docker://ghcr.io/nfrechette/toolchain-amd64-resolute:v1
         with:
           args: 'python3 make.py -ci -compiler ${{ matrix.compiler }} -config Debug -cpu x64 -unit_test'
-      - name: Clean
-        uses: docker://ghcr.io/nfrechette/toolchain-amd64-resolute:v1
-        with:
-          args: 'python3 make.py -ci -clean_only'
-      - name: Building (release-x86)
-        uses: docker://ghcr.io/nfrechette/toolchain-amd64-resolute:v1
-        with:
-          args: 'python3 make.py -ci -compiler ${{ matrix.compiler }} -config Release -cpu x86 -build'
-      - name: Running unit tests (release-x86)
-        uses: docker://ghcr.io/nfrechette/toolchain-amd64-resolute:v1
-        with:
-          args: 'python3 make.py -ci -compiler ${{ matrix.compiler }} -config Release -cpu x86 -unit_test'
       - name: Clean
         uses: docker://ghcr.io/nfrechette/toolchain-amd64-resolute:v1
         with:
@@ -206,7 +182,7 @@ jobs:
       matrix:
         compiler: [vs2022, vs2022-clang]
         build_config: [debug, release]
-        cpu: [x86, x64, arm64, arm64ec]
+        cpu: [x64, arm64, arm64ec]
         simd: [-simd, -nosimd, -avx]
         exclude:
           # Don't run arm64 with clang
@@ -220,10 +196,6 @@ jobs:
             simd: -avx
           # Don't run AVX with arm64ec
           - cpu: arm64ec
-            simd: -avx
-          # Don't run x86 AVX with VS2022 to avoid toolchain code generation bug, see #248
-          - compiler: vs2022
-            cpu: x86
             simd: -avx
     steps:
       - name: Git checkout
