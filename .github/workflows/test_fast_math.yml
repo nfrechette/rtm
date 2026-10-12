@@ -48,11 +48,11 @@ jobs:
         with:
           args: 'python3 make.py -ci -compiler ${{ matrix.compiler }} -config Release -cpu x64 -avx -fast_math -build'
 
-  osx-14:
-    runs-on: macos-14
+  osx-15:
+    runs-on: macos-15
     strategy:
       matrix:
-        compiler: [xcode16]
+        compiler: [xcode26]
     steps:
       - name: Git checkout
         uses: actions/checkout@v4
