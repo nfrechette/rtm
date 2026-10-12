@@ -8,6 +8,15 @@ on:
       - docs/**
       - '**/*.md'
 
+permissions:
+  contents: read
+
+# Cancel the previous run of a branch when it receives new commits
+# Do not cancel on the main and release branches, test each of their commits
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: ${{ github.ref != 'refs/heads/develop' && github.ref != 'refs/heads/master' && !startsWith(github.ref, 'refs/heads/release/') }}
+
 jobs:
   linux:
     runs-on: ubuntu-latest
@@ -16,7 +25,7 @@ jobs:
         compiler: [gcc15, clang23]
     steps:
       - name: Git checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
         with:
           submodules: 'recursive'
       - name: Building (debug-x64)
@@ -71,7 +80,7 @@ jobs:
         compiler: [gcc15, clang23]
     steps:
       - name: Git checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
         with:
           submodules: 'recursive'
       - name: Building (debug-arm64)
@@ -114,7 +123,7 @@ jobs:
         compiler: [xcode26]
     steps:
       - name: Git checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
         with:
           submodules: 'recursive'
       - name: Setup ${{ matrix.compiler }} compiler
@@ -152,7 +161,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Git checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
         with:
           submodules: 'recursive'
       - name: Build (debug)
@@ -199,7 +208,7 @@ jobs:
             simd: -avx
     steps:
       - name: Git checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
         with:
           submodules: 'recursive'
       - name: Building (${{ matrix.build_config }}-${{ matrix.cpu }})
