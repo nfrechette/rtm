@@ -176,7 +176,7 @@ namespace rtm
 #if defined(RTM_SSE2_INTRINSICS)
 		return vector4d{ input.xy, input.zw };
 #elif defined(RTM_NEON64_INTRINSICS)
-		return vector_set(input.x, input.y, input.z, input.w);
+		return vector4d{ input.xy, input.zw };
 #else
 		return vector4d{ input.x, input.y, input.z, input.w };
 #endif

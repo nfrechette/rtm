@@ -95,6 +95,8 @@ namespace rtm
 	{
 #if defined(RTM_SSE2_INTRINSICS)
 		return _mm_shuffle_ps(_mm_cvtpd_ps(input.xy), _mm_cvtpd_ps(input.zw), _MM_SHUFFLE(1, 0, 1, 0));
+#elif defined(RTM_NEON64_INTRINSICS)
+		return vcvt_high_f32_f64(vcvt_f32_f64(input.xy), input.zw);
 #else
 		return quat_set(float(input.x), float(input.y), float(input.z), float(input.w));
 #endif

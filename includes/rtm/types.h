@@ -99,6 +99,17 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	using quatf = float32x4_t;
 
+#if defined(RTM_NEON64_INTRINSICS)
+	//////////////////////////////////////////////////////////////////////////
+	// A quaternion (4D complex number) where the imaginary part is the [w] component.
+	// It accurately represents a 3D rotation with no gimbal lock as long as it is kept normalized.
+	//////////////////////////////////////////////////////////////////////////
+	struct quatd
+	{
+		float64x2_t xy;
+		float64x2_t zw;
+	};
+#else
 	//////////////////////////////////////////////////////////////////////////
 	// A quaternion (4D complex number) where the imaginary part is the [w] component.
 	// It accurately represents a 3D rotation with no gimbal lock as long as it is kept normalized.
@@ -110,6 +121,7 @@ namespace rtm
 		double z;
 		double w;
 	};
+#endif
 
 	//////////////////////////////////////////////////////////////////////////
 	// A 4D vector.
