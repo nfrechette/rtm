@@ -88,6 +88,40 @@ jobs:
         with:
           args: 'python3 make.py -ci -compiler ${{ matrix.compiler }} -config Release -cpu x64 -avx -unit_test'
 
+  linux-resolute-armv7:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        compiler: [gcc15, clang22]
+    env:
+      # QEMU emulates armv7, a 'uses: docker://' step cannot select the platform
+      DOCKER_RUN: docker run --rm --platform linux/arm/v7 -v ${{ github.workspace }}:/project-src -w /project-src ghcr.io/nfrechette/toolchain-armv7-resolute:v1
+    steps:
+      - name: Git checkout
+        uses: actions/checkout@v4
+        with:
+          submodules: 'recursive'
+      - name: Setup QEMU
+        uses: docker/setup-qemu-action@v3
+        with:
+          platforms: arm
+      - name: Building (debug-armv7)
+        run: $DOCKER_RUN python3 make.py -ci -compiler ${{ matrix.compiler }} -config Debug -cpu armv7 -build
+      - name: Running unit tests (debug-armv7)
+        run: $DOCKER_RUN python3 make.py -ci -compiler ${{ matrix.compiler }} -config Debug -cpu armv7 -unit_test
+      - name: Clean
+        run: $DOCKER_RUN python3 make.py -ci -clean_only
+      - name: Building (release-armv7)
+        run: $DOCKER_RUN python3 make.py -ci -compiler ${{ matrix.compiler }} -config Release -cpu armv7 -build
+      - name: Running unit tests (release-armv7)
+        run: $DOCKER_RUN python3 make.py -ci -compiler ${{ matrix.compiler }} -config Release -cpu armv7 -unit_test
+      - name: Clean
+        run: $DOCKER_RUN python3 make.py -ci -clean_only
+      - name: Building (release-armv7 nosimd)
+        run: $DOCKER_RUN python3 make.py -ci -compiler ${{ matrix.compiler }} -config Release -cpu armv7 -nosimd -build
+      - name: Running unit tests (release-armv7 nosimd)
+        run: $DOCKER_RUN python3 make.py -ci -compiler ${{ matrix.compiler }} -config Release -cpu armv7 -nosimd -unit_test
+
   osx-14:
     runs-on: macos-14
     strategy:
