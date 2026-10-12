@@ -43,10 +43,10 @@ template<typename QuatType, typename Vector4Type, typename FloatType>
 static Vector4Type quat_rotate_scalar(const Vector4Type& vector, const QuatType& rotation)
 {
 	// (q.W*q.W-qv.qv)v + 2(qv.v)qv + 2 q.W (qv x v)
-	FloatType rotation_x = quat_get_x(rotation);
-	FloatType rotation_y = quat_get_y(rotation);
-	FloatType rotation_z = quat_get_z(rotation);
-	Vector4Type qv = vector_set(rotation_x, rotation_y, rotation_z);
+	// Do not use vector_set with the [xyz] components of the rotation: with constant rotations in a loop,
+	// that code causes an internal compiler error with GCC 14 and 15 on ARM64.
+	// vector_set_w uses a different NEON sequence and the compiler error does not occur.
+	Vector4Type qv = vector_set_w(quat_to_vector(rotation), FloatType(0.0));
 	Vector4Type vOut = vector_mul(vector_cross3(qv, vector), FloatType(2.0) * quat_get_w(rotation));
 	vOut = vector_add(vOut, vector_mul(vector, (quat_get_w(rotation) * quat_get_w(rotation)) - vector_dot(qv, qv)));
 	vOut = vector_add(vOut, vector_mul(qv, FloatType(2.0) * vector_dot(qv, vector)));
