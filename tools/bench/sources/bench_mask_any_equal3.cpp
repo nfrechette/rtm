@@ -85,6 +85,12 @@ static void bm_mask_any_equal3_scalar4f(benchmark::State& state)
 
 	for (auto _ : state)
 	{
+		// The inputs do not change: hide them from the compiler, otherwise it can move the calls out of the loop
+		benchmark::DoNotOptimize(m0);
+		benchmark::DoNotOptimize(m1);
+		benchmark::DoNotOptimize(m2);
+		benchmark::DoNotOptimize(m3);
+
 		r0 ^= mask_any_equal3_scalar4f(m0, m1);
 		r1 ^= mask_any_equal3_scalar4f(m1, m2);
 		r2 ^= mask_any_equal3_scalar4f(m2, m3);
@@ -114,6 +120,12 @@ static void bm_mask_any_equal3_ref(benchmark::State& state)
 
 	for (auto _ : state)
 	{
+		// The inputs do not change: hide them from the compiler, otherwise it can move the calls out of the loop
+		benchmark::DoNotOptimize(m0);
+		benchmark::DoNotOptimize(m1);
+		benchmark::DoNotOptimize(m2);
+		benchmark::DoNotOptimize(m3);
+
 		r0 ^= mask_any_equal3_ref(m0, m1);
 		r1 ^= mask_any_equal3_ref(m1, m2);
 		r2 ^= mask_any_equal3_ref(m2, m3);
@@ -142,6 +154,12 @@ static void bm_mask_any_equal3_shl(benchmark::State& state)
 
 	for (auto _ : state)
 	{
+		// The inputs do not change: hide them from the compiler, otherwise it can move the calls out of the loop
+		benchmark::DoNotOptimize(m0);
+		benchmark::DoNotOptimize(m1);
+		benchmark::DoNotOptimize(m2);
+		benchmark::DoNotOptimize(m3);
+
 		r0 ^= mask_any_equal3_shl(m0, m1);
 		r1 ^= mask_any_equal3_shl(m1, m2);
 		r2 ^= mask_any_equal3_shl(m2, m3);

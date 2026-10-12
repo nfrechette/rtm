@@ -117,6 +117,26 @@ RTM_IMPL_FILE_PRAGMA_PUSH
 			(output_zzzz) = RTM_IMPL_NAMESPACE::vector4d { z0z1, z2z3 }; \
 			(output_wwww) = RTM_IMPL_NAMESPACE::vector4d { w0w1, w2w3 }; \
 		} while(0)
+#elif defined(RTM_NEON64_INTRINSICS)
+	//////////////////////////////////////////////////////////////////////////
+	// Transposes a 4x4 matrix.
+	// All inputs and outputs must be rtm::vector4d.
+	//////////////////////////////////////////////////////////////////////////
+	#define RTM_MATRIXD_TRANSPOSE_4X4(input_xyzw0, input_xyzw1, input_xyzw2, input_xyzw3, output_xxxx, output_yyyy, output_zzzz, output_wwww) \
+		do { \
+			const float64x2_t x0x1 = vzip1q_f64(input_xyzw0.xy, input_xyzw1.xy); \
+			const float64x2_t y0y1 = vzip2q_f64(input_xyzw0.xy, input_xyzw1.xy); \
+			const float64x2_t x2x3 = vzip1q_f64(input_xyzw2.xy, input_xyzw3.xy); \
+			const float64x2_t y2y3 = vzip2q_f64(input_xyzw2.xy, input_xyzw3.xy); \
+			const float64x2_t z0z1 = vzip1q_f64(input_xyzw0.zw, input_xyzw1.zw); \
+			const float64x2_t w0w1 = vzip2q_f64(input_xyzw0.zw, input_xyzw1.zw); \
+			const float64x2_t z2z3 = vzip1q_f64(input_xyzw2.zw, input_xyzw3.zw); \
+			const float64x2_t w2w3 = vzip2q_f64(input_xyzw2.zw, input_xyzw3.zw); \
+			(output_xxxx) = RTM_IMPL_NAMESPACE::vector4d { x0x1, x2x3 }; \
+			(output_yyyy) = RTM_IMPL_NAMESPACE::vector4d { y0y1, y2y3 }; \
+			(output_zzzz) = RTM_IMPL_NAMESPACE::vector4d { z0z1, z2z3 }; \
+			(output_wwww) = RTM_IMPL_NAMESPACE::vector4d { w0w1, w2w3 }; \
+		} while(0)
 #else
 	//////////////////////////////////////////////////////////////////////////
 	// Transposes a 4x4 matrix.
@@ -213,6 +233,21 @@ RTM_IMPL_FILE_PRAGMA_PUSH
 			(output_yyy) = RTM_IMPL_NAMESPACE::vector4d { y0y1, y2 }; \
 			(output_zzz) = RTM_IMPL_NAMESPACE::vector4d { z0z1, input_xyz2.zw }; \
 		} while(0)
+#elif defined(RTM_NEON64_INTRINSICS)
+	//////////////////////////////////////////////////////////////////////////
+	// Transposes a 3x3 matrix.
+	// All inputs and outputs must be rtm::vector4d.
+	//////////////////////////////////////////////////////////////////////////
+	#define RTM_MATRIXD_TRANSPOSE_3X3(input_xyz0, input_xyz1, input_xyz2, output_xxx, output_yyy, output_zzz) \
+		do { \
+			const float64x2_t x0x1 = vzip1q_f64(input_xyz0.xy, input_xyz1.xy); \
+			const float64x2_t y0y1 = vzip2q_f64(input_xyz0.xy, input_xyz1.xy); \
+			const float64x2_t y2 = vzip2q_f64(input_xyz2.xy, input_xyz2.xy); \
+			const float64x2_t z0z1 = vzip1q_f64(input_xyz0.zw, input_xyz1.zw); \
+			(output_xxx) = RTM_IMPL_NAMESPACE::vector4d { x0x1, input_xyz2.xy }; \
+			(output_yyy) = RTM_IMPL_NAMESPACE::vector4d { y0y1, y2 }; \
+			(output_zzz) = RTM_IMPL_NAMESPACE::vector4d { z0z1, input_xyz2.zw }; \
+		} while(0)
 #else
 	//////////////////////////////////////////////////////////////////////////
 	// Transposes a 3x3 matrix.
@@ -294,6 +329,18 @@ RTM_IMPL_FILE_PRAGMA_PUSH
 		do { \
 			const __m128d x0x1 = _mm_unpacklo_pd((input_xy0).xy, (input_xy1).xy); \
 			const __m128d y0y1 = _mm_unpackhi_pd((input_xy0).xy, (input_xy1).xy); \
+			(output_xx) = RTM_IMPL_NAMESPACE::vector4d { x0x1, x0x1 }; \
+			(output_yy) = RTM_IMPL_NAMESPACE::vector4d { y0y1, y0y1 }; \
+		} while(0)
+#elif defined(RTM_NEON64_INTRINSICS)
+	//////////////////////////////////////////////////////////////////////////
+	// Transposes a 2x2 matrix.
+	// All inputs and outputs must be rtm::vector4d.
+	//////////////////////////////////////////////////////////////////////////
+	#define RTM_MATRIXD_TRANSPOSE_2X2(input_xy0, input_xy1, output_xx, output_yy) \
+		do { \
+			const float64x2_t x0x1 = vzip1q_f64((input_xy0).xy, (input_xy1).xy); \
+			const float64x2_t y0y1 = vzip2q_f64((input_xy0).xy, (input_xy1).xy); \
 			(output_xx) = RTM_IMPL_NAMESPACE::vector4d { x0x1, x0x1 }; \
 			(output_yy) = RTM_IMPL_NAMESPACE::vector4d { y0y1, y0y1 }; \
 		} while(0)
@@ -381,6 +428,23 @@ RTM_IMPL_FILE_PRAGMA_PUSH
 			const __m128d y2y3 = _mm_unpackhi_pd(input_xyz2.xy, input_xyz3.xy); \
 			const __m128d z0z1 = _mm_unpacklo_pd(input_xyz0.zw, input_xyz1.zw); \
 			const __m128d z2z3 = _mm_unpacklo_pd(input_xyz2.zw, input_xyz3.zw); \
+			(output_xxxx) = RTM_IMPL_NAMESPACE::vector4d { x0x1, x2x3 }; \
+			(output_yyyy) = RTM_IMPL_NAMESPACE::vector4d { y0y1, y2y3 }; \
+			(output_zzzz) = RTM_IMPL_NAMESPACE::vector4d { z0z1, z2z3 }; \
+		} while(0)
+#elif defined(RTM_NEON64_INTRINSICS)
+	//////////////////////////////////////////////////////////////////////////
+	// Transposes a 4x3 matrix.
+	// All inputs and outputs must be rtm::vector4d.
+	//////////////////////////////////////////////////////////////////////////
+	#define RTM_MATRIXD_TRANSPOSE_4X3(input_xyz0, input_xyz1, input_xyz2, input_xyz3, output_xxxx, output_yyyy, output_zzzz) \
+		do { \
+			const float64x2_t x0x1 = vzip1q_f64(input_xyz0.xy, input_xyz1.xy); \
+			const float64x2_t y0y1 = vzip2q_f64(input_xyz0.xy, input_xyz1.xy); \
+			const float64x2_t x2x3 = vzip1q_f64(input_xyz2.xy, input_xyz3.xy); \
+			const float64x2_t y2y3 = vzip2q_f64(input_xyz2.xy, input_xyz3.xy); \
+			const float64x2_t z0z1 = vzip1q_f64(input_xyz0.zw, input_xyz1.zw); \
+			const float64x2_t z2z3 = vzip1q_f64(input_xyz2.zw, input_xyz3.zw); \
 			(output_xxxx) = RTM_IMPL_NAMESPACE::vector4d { x0x1, x2x3 }; \
 			(output_yyyy) = RTM_IMPL_NAMESPACE::vector4d { y0y1, y2y3 }; \
 			(output_zzzz) = RTM_IMPL_NAMESPACE::vector4d { z0z1, z2z3 }; \
@@ -480,6 +544,24 @@ RTM_IMPL_FILE_PRAGMA_PUSH
 			const __m128d z0z1 = _mm_unpacklo_pd(input_xyzw0.zw, input_xyzw1.zw); \
 			const __m128d w0w1 = _mm_unpackhi_pd(input_xyzw0.zw, input_xyzw1.zw); \
 			const __m128d w2w2 = _mm_unpackhi_pd(input_xyzw2.zw, input_xyzw2.zw); \
+			(output_xxx) = RTM_IMPL_NAMESPACE::vector4d { x0x1, input_xyzw2.xy }; \
+			(output_yyy) = RTM_IMPL_NAMESPACE::vector4d { y0y1, y2y2 }; \
+			(output_zzz) = RTM_IMPL_NAMESPACE::vector4d { z0z1, input_xyzw2.zw }; \
+			(output_www) = RTM_IMPL_NAMESPACE::vector4d { w0w1, w2w2 }; \
+		} while(0)
+#elif defined(RTM_NEON64_INTRINSICS)
+	//////////////////////////////////////////////////////////////////////////
+	// Transposes a 3x4 matrix.
+	// All inputs and outputs must be rtm::vector4d.
+	//////////////////////////////////////////////////////////////////////////
+	#define RTM_MATRIXD_TRANSPOSE_3X4(input_xyzw0, input_xyzw1, input_xyzw2, output_xxx, output_yyy, output_zzz, output_www) \
+		do { \
+			const float64x2_t x0x1 = vzip1q_f64(input_xyzw0.xy, input_xyzw1.xy); \
+			const float64x2_t y0y1 = vzip2q_f64(input_xyzw0.xy, input_xyzw1.xy); \
+			const float64x2_t y2y2 = vzip2q_f64(input_xyzw2.xy, input_xyzw2.xy); \
+			const float64x2_t z0z1 = vzip1q_f64(input_xyzw0.zw, input_xyzw1.zw); \
+			const float64x2_t w0w1 = vzip2q_f64(input_xyzw0.zw, input_xyzw1.zw); \
+			const float64x2_t w2w2 = vzip2q_f64(input_xyzw2.zw, input_xyzw2.zw); \
 			(output_xxx) = RTM_IMPL_NAMESPACE::vector4d { x0x1, input_xyzw2.xy }; \
 			(output_yyy) = RTM_IMPL_NAMESPACE::vector4d { y0y1, y2y2 }; \
 			(output_zzz) = RTM_IMPL_NAMESPACE::vector4d { z0z1, input_xyzw2.zw }; \

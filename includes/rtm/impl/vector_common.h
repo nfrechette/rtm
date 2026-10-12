@@ -122,6 +122,8 @@ namespace rtm
 	{
 #if defined(RTM_SSE2_INTRINSICS)
 		return vector4d{ _mm_set_pd(y, x), _mm_set_pd(w, z) };
+#elif defined(RTM_NEON64_INTRINSICS)
+		return vector4d{ vcombine_f64(vdup_n_f64(x), vdup_n_f64(y)), vcombine_f64(vdup_n_f64(z), vdup_n_f64(w)) };
 #else
 		return vector4d{ x, y, z, w };
 #endif
@@ -134,6 +136,8 @@ namespace rtm
 	{
 #if defined(RTM_SSE2_INTRINSICS)
 		return vector4d{ _mm_set_pd(y, x), _mm_set_pd(0.0, z) };
+#elif defined(RTM_NEON64_INTRINSICS)
+		return vector4d{ vcombine_f64(vdup_n_f64(x), vdup_n_f64(y)), vcombine_f64(vdup_n_f64(z), vdup_n_f64(0.0)) };
 #else
 		return vector4d{ x, y, z, 0.0 };
 #endif
@@ -146,6 +150,9 @@ namespace rtm
 	{
 #if defined(RTM_SSE2_INTRINSICS)
 		const __m128d xyzw_pd = _mm_set1_pd(xyzw);
+		return vector4d{ xyzw_pd, xyzw_pd };
+#elif defined(RTM_NEON64_INTRINSICS)
+		const float64x2_t xyzw_pd = vdupq_n_f64(xyzw);
 		return vector4d{ xyzw_pd, xyzw_pd };
 #else
 		return vector4d{ xyzw, xyzw, xyzw, xyzw };
@@ -251,6 +258,9 @@ namespace rtm
 #if defined(RTM_SSE2_INTRINSICS)
 				const __m128d zero_pd = _mm_setzero_pd();
 				return vector4d{ zero_pd, zero_pd };
+#elif defined(RTM_NEON64_INTRINSICS)
+				const float64x2_t zero_pd = vdupq_n_f64(0.0);
+				return vector4d{ zero_pd, zero_pd };
 #else
 				return vector_set(0.0);
 #endif
@@ -296,6 +306,10 @@ namespace rtm
 #if defined(RTM_SSE2_INTRINSICS)
 				constexpr __m128d constant_xy = RTM_VECTOR2D_MAKE(get_constant64(x), get_constant64(y));
 				constexpr __m128d constant_zw = RTM_VECTOR2D_MAKE(get_constant64(z), get_constant64(w));
+				return vector4d{ constant_xy, constant_zw };
+#elif defined(RTM_NEON64_INTRINSICS)
+				const float64x2_t constant_xy = vcombine_f64(vdup_n_f64(get_constant64(x)), vdup_n_f64(get_constant64(y)));
+				const float64x2_t constant_zw = vcombine_f64(vdup_n_f64(get_constant64(z)), vdup_n_f64(get_constant64(w)));
 				return vector4d{ constant_xy, constant_zw };
 #else
 				return vector_set(get_constant64(x), get_constant64(y), get_constant64(z), get_constant64(w));
@@ -447,6 +461,8 @@ namespace rtm
 			{
 #if defined(RTM_SSE2_INTRINSICS)
 				return _mm_cvtsd_f64(value.xy);
+#elif defined(RTM_NEON64_INTRINSICS)
+				return vgetq_lane_f64(value.xy, 0);
 #else
 				return value.x;
 #endif
@@ -550,6 +566,10 @@ namespace rtm
 				__m128d xz_yw = _mm_min_pd(value.xy, value.zw);
 				__m128d yw_yw = _mm_shuffle_pd(xz_yw, xz_yw, 1);
 				return _mm_cvtsd_f64(_mm_min_pd(xz_yw, yw_yw));
+#elif defined(RTM_NEON64_INTRINSICS)
+				float64x2_t xz_yw = vminq_f64(value.xy, value.zw);
+				float64x2_t yw_yw = vdupq_laneq_f64(xz_yw, 1);
+				return vgetq_lane_f64(vminq_f64(xz_yw, yw_yw), 0);
 #else
 				return scalar_min(scalar_min(value.x, value.y), scalar_min(value.z, value.w));
 #endif
@@ -582,6 +602,10 @@ namespace rtm
 				__m128d xz_yw = _mm_max_pd(value.xy, value.zw);
 				__m128d yw_yw = _mm_shuffle_pd(xz_yw, xz_yw, 1);
 				return _mm_cvtsd_f64(_mm_max_pd(xz_yw, yw_yw));
+#elif defined(RTM_NEON64_INTRINSICS)
+				float64x2_t xz_yw = vmaxq_f64(value.xy, value.zw);
+				float64x2_t yw_yw = vdupq_laneq_f64(xz_yw, 1);
+				return vgetq_lane_f64(vmaxq_f64(xz_yw, yw_yw), 0);
 #else
 				return scalar_max(scalar_max(value.x, value.y), scalar_max(value.z, value.w));
 #endif

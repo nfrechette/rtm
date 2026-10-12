@@ -899,6 +899,9 @@ namespace rtm
 #if defined(RTM_SSE2_INTRINSICS)
 		__m128d xy = _mm_unpacklo_pd(sin_.value, cos_.value);
 		return vector4d{ xy, xy };
+#elif defined(RTM_NEON64_INTRINSICS)
+		const float64x2_t xy = vcombine_f64(vdup_n_f64(sin_), vdup_n_f64(cos_));
+		return vector4d{ xy, xy };
 #else
 		return vector4d{ sin_, cos_, sin_, cos_ };
 #endif

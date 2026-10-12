@@ -57,6 +57,8 @@ namespace rtm
 	{
 #if defined(RTM_SSE2_INTRINSICS)
 		return quatd{ _mm_set_pd(y, x), _mm_set_pd(w, z) };
+#elif defined(RTM_NEON64_INTRINSICS)
+		return quatd{ vcombine_f64(vdup_n_f64(x), vdup_n_f64(y)), vcombine_f64(vdup_n_f64(z), vdup_n_f64(w)) };
 #else
 		return quatd{ x, y, z, w };
 #endif

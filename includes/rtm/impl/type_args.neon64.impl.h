@@ -99,10 +99,13 @@ namespace rtm
 	using mask4i_arg7 = const mask4i;
 	using mask4i_argn = const mask4i&;
 
-	// With ARM64 NEON, vector aggregates are also passed by register but the whole aggregate
-	// must fit in the number of registers available (e.g. we can pass 2x qvvf but not 3x).
+	// With ARM64 NEON, an aggregate of up to 4 vector registers is also passed by register,
+	// but the whole aggregate must fit in the registers that remain (e.g. we can pass 2x qvvf but not 3x).
 	// A qvvf can also be returned by register.
-	// Non-scalar types using doubles are aggregate types
+	// The non-scalar types that use doubles are aggregates of 2x float64x2_t or 2x uint64x2_t.
+	// Thus, the first 4x vector4d/quatd/mask4d/mask4q arguments are passed by register.
+	// A qvd and a qvsd use 4 registers. Thus, the first 2x qvd/qvsd arguments are passed by register.
+	// A qvvd and the double matrices use more than 4 registers. Thus, they are passed in memory.
 
 	using vector4d_arg0 = const vector4d;
 	using vector4d_arg1 = const vector4d;
@@ -149,7 +152,7 @@ namespace rtm
 	using qvf_argn = const qvf&;
 
 	using qvd_arg0 = const qvd;
-	using qvd_arg1 = const qvd&;
+	using qvd_arg1 = const qvd;
 	using qvd_argn = const qvd&;
 
 	using qvsf_arg0 = const qvsf;
@@ -157,7 +160,7 @@ namespace rtm
 	using qvsf_argn = const qvsf&;
 
 	using qvsd_arg0 = const qvsd;
-	using qvsd_arg1 = const qvsd&;
+	using qvsd_arg1 = const qvsd;
 	using qvsd_argn = const qvsd&;
 
 	using qvvf_arg0 = const qvvf;

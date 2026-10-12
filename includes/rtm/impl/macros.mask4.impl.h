@@ -65,6 +65,62 @@ namespace rtm
 		}
 #endif
 #endif
+
+#if defined(RTM_NEON64_INTRINSICS)
+		//////////////////////////////////////////////////////////////////////////
+		// Returns true if the two 64 bit lanes of the mask are true, otherwise false.
+		// Each lane of the mask must be 0 or ~0.
+		//////////////////////////////////////////////////////////////////////////
+		RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE bool RTM_SIMD_CALL mask2q_all_true(uint64x2_t mask) RTM_NO_EXCEPT
+		{
+			return vget_lane_u64(vreinterpret_u64_u32(vmovn_u64(mask)), 0) == 0xFFFFFFFFFFFFFFFFULL;
+		}
+
+		//////////////////////////////////////////////////////////////////////////
+		// Returns true if one or more of the two 64 bit lanes of the mask are true, otherwise false.
+		// Each lane of the mask must be 0 or ~0.
+		//////////////////////////////////////////////////////////////////////////
+		RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE bool RTM_SIMD_CALL mask2q_any_true(uint64x2_t mask) RTM_NO_EXCEPT
+		{
+			return vget_lane_u64(vreinterpret_u64_u32(vmovn_u64(mask)), 0) != 0;
+		}
+
+		//////////////////////////////////////////////////////////////////////////
+		// Returns true if the four 64 bit lanes of the two masks are true, otherwise false.
+		// Each lane of the masks must be 0 or ~0.
+		//////////////////////////////////////////////////////////////////////////
+		RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE bool RTM_SIMD_CALL mask4q_all_true(uint64x2_t mask_xy, uint64x2_t mask_zw) RTM_NO_EXCEPT
+		{
+			return mask2q_all_true(vandq_u64(mask_xy, mask_zw));
+		}
+
+		//////////////////////////////////////////////////////////////////////////
+		// Returns true if the [xyz] 64 bit lanes of the two masks are true, otherwise false.
+		// Each lane of the masks must be 0 or ~0.
+		//////////////////////////////////////////////////////////////////////////
+		RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE bool RTM_SIMD_CALL mask4q_all_true3(uint64x2_t mask_xy, uint64x2_t mask_zw) RTM_NO_EXCEPT
+		{
+			return mask2q_all_true(vandq_u64(mask_xy, vdupq_laneq_u64(mask_zw, 0)));
+		}
+
+		//////////////////////////////////////////////////////////////////////////
+		// Returns true if one or more of the four 64 bit lanes of the two masks are true, otherwise false.
+		// Each lane of the masks must be 0 or ~0.
+		//////////////////////////////////////////////////////////////////////////
+		RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE bool RTM_SIMD_CALL mask4q_any_true(uint64x2_t mask_xy, uint64x2_t mask_zw) RTM_NO_EXCEPT
+		{
+			return mask2q_any_true(vorrq_u64(mask_xy, mask_zw));
+		}
+
+		//////////////////////////////////////////////////////////////////////////
+		// Returns true if one or more of the [xyz] 64 bit lanes of the two masks are true, otherwise false.
+		// Each lane of the masks must be 0 or ~0.
+		//////////////////////////////////////////////////////////////////////////
+		RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE bool RTM_SIMD_CALL mask4q_any_true3(uint64x2_t mask_xy, uint64x2_t mask_zw) RTM_NO_EXCEPT
+		{
+			return mask2q_any_true(vorrq_u64(mask_xy, vdupq_laneq_u64(mask_zw, 0)));
+		}
+#endif
 	}
 
 	RTM_IMPL_VERSION_NAMESPACE_END

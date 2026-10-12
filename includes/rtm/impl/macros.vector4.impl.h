@@ -185,7 +185,13 @@ RTM_IMPL_FILE_PRAGMA_PUSH
 	//////////////////////////////////////////////////////////////////////////
 	#define RTM_VECTOR4F_SELECT(mask, if_true, if_false) vbslq_f32(mask, if_true, if_false)
 
-	// RTM_VECTOR2D_SELECT not defined for NEON yet, TODO
+	#if defined(RTM_NEON64_INTRINSICS)
+		//////////////////////////////////////////////////////////////////////////
+		// Per component selection depending on the mask: mask != 0 ? if_true : if_false
+		// The mask must be a uint64x2_t and both values must be a float64x2_t.
+		//////////////////////////////////////////////////////////////////////////
+		#define RTM_VECTOR2D_SELECT(mask, if_true, if_false) vbslq_f64(mask, if_true, if_false)
+	#endif
 #else
 	// Macros not defined for scalar code path
 #endif
