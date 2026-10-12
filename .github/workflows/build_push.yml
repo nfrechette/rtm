@@ -88,6 +88,49 @@ jobs:
         with:
           args: 'python3 make.py -ci -compiler ${{ matrix.compiler }} -config Release -cpu x64 -avx -unit_test'
 
+  linux-arm64:
+    runs-on: ubuntu-24.04-arm
+    strategy:
+      matrix:
+        compiler: [gcc15, clang23]
+    steps:
+      - name: Git checkout
+        uses: actions/checkout@v4
+        with:
+          submodules: 'recursive'
+      - name: Building (debug-arm64)
+        uses: docker://ghcr.io/nfrechette/toolchain-arm64-resolute:v1
+        with:
+          args: 'python3 make.py -ci -compiler ${{ matrix.compiler }} -config Debug -cpu arm64 -build'
+      - name: Running unit tests (debug-arm64)
+        uses: docker://ghcr.io/nfrechette/toolchain-arm64-resolute:v1
+        with:
+          args: 'python3 make.py -ci -compiler ${{ matrix.compiler }} -config Debug -cpu arm64 -unit_test'
+      - name: Clean
+        uses: docker://ghcr.io/nfrechette/toolchain-arm64-resolute:v1
+        with:
+          args: 'python3 make.py -ci -clean_only'
+      - name: Building (release-arm64)
+        uses: docker://ghcr.io/nfrechette/toolchain-arm64-resolute:v1
+        with:
+          args: 'python3 make.py -ci -compiler ${{ matrix.compiler }} -config Release -cpu arm64 -build'
+      - name: Running unit tests (release-arm64)
+        uses: docker://ghcr.io/nfrechette/toolchain-arm64-resolute:v1
+        with:
+          args: 'python3 make.py -ci -compiler ${{ matrix.compiler }} -config Release -cpu arm64 -unit_test'
+      - name: Clean
+        uses: docker://ghcr.io/nfrechette/toolchain-arm64-resolute:v1
+        with:
+          args: 'python3 make.py -ci -clean_only'
+      - name: Building (release-arm64 nosimd)
+        uses: docker://ghcr.io/nfrechette/toolchain-arm64-resolute:v1
+        with:
+          args: 'python3 make.py -ci -compiler ${{ matrix.compiler }} -config Release -cpu arm64 -nosimd -build'
+      - name: Running unit tests (release-arm64 nosimd)
+        uses: docker://ghcr.io/nfrechette/toolchain-arm64-resolute:v1
+        with:
+          args: 'python3 make.py -ci -compiler ${{ matrix.compiler }} -config Release -cpu arm64 -nosimd -unit_test'
+
   osx-14:
     runs-on: macos-14
     strategy:
