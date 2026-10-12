@@ -8,94 +8,122 @@ on:
       - docs/**
       - '**/*.md'
 
+permissions:
+  contents: read
+
+# Cancel the previous run of a branch when it receives new commits
+# Do not cancel on the main and release branches, test each of their commits
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: ${{ github.ref != 'refs/heads/develop' && github.ref != 'refs/heads/master' && !startsWith(github.ref, 'refs/heads/release/') }}
+
 jobs:
   linux:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        compiler: [gcc13, clang18]
+        compiler: [gcc15, clang23]
     steps:
       - name: Git checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
         with:
           submodules: 'recursive'
-      - name: Building (debug-x86)
-        uses: docker://ghcr.io/nfrechette/toolchain-amd64-lunar:v2
-        with:
-          args: 'python3 make.py -ci -compiler ${{ matrix.compiler }} -config Debug -cpu x86 -build'
-      - name: Running unit tests (debug-x86)
-        uses: docker://ghcr.io/nfrechette/toolchain-amd64-lunar:v2
-        with:
-          args: 'python3 make.py -ci -compiler ${{ matrix.compiler }} -config Debug -cpu x86 -unit_test'
-      - name: Clean
-        uses: docker://ghcr.io/nfrechette/toolchain-amd64-lunar:v2
-        with:
-          args: 'python3 make.py -ci -clean_only'
       - name: Building (debug-x64)
-        uses: docker://ghcr.io/nfrechette/toolchain-amd64-lunar:v2
+        uses: docker://ghcr.io/nfrechette/toolchain-amd64-resolute:v1
         with:
           args: 'python3 make.py -ci -compiler ${{ matrix.compiler }} -config Debug -cpu x64 -build'
       - name: Running unit tests (debug-x64)
-        uses: docker://ghcr.io/nfrechette/toolchain-amd64-lunar:v2
+        uses: docker://ghcr.io/nfrechette/toolchain-amd64-resolute:v1
         with:
           args: 'python3 make.py -ci -compiler ${{ matrix.compiler }} -config Debug -cpu x64 -unit_test'
       - name: Clean
-        uses: docker://ghcr.io/nfrechette/toolchain-amd64-lunar:v2
-        with:
-          args: 'python3 make.py -ci -clean_only'
-      - name: Building (release-x86)
-        uses: docker://ghcr.io/nfrechette/toolchain-amd64-lunar:v2
-        with:
-          args: 'python3 make.py -ci -compiler ${{ matrix.compiler }} -config Release -cpu x86 -build'
-      - name: Running unit tests (release-x86)
-        uses: docker://ghcr.io/nfrechette/toolchain-amd64-lunar:v2
-        with:
-          args: 'python3 make.py -ci -compiler ${{ matrix.compiler }} -config Release -cpu x86 -unit_test'
-      - name: Clean
-        uses: docker://ghcr.io/nfrechette/toolchain-amd64-lunar:v2
+        uses: docker://ghcr.io/nfrechette/toolchain-amd64-resolute:v1
         with:
           args: 'python3 make.py -ci -clean_only'
       - name: Building (release-x64)
-        uses: docker://ghcr.io/nfrechette/toolchain-amd64-lunar:v2
+        uses: docker://ghcr.io/nfrechette/toolchain-amd64-resolute:v1
         with:
           args: 'python3 make.py -ci -compiler ${{ matrix.compiler }} -config Release -cpu x64 -build'
       - name: Running unit tests (release-x64)
-        uses: docker://ghcr.io/nfrechette/toolchain-amd64-lunar:v2
+        uses: docker://ghcr.io/nfrechette/toolchain-amd64-resolute:v1
         with:
           args: 'python3 make.py -ci -compiler ${{ matrix.compiler }} -config Release -cpu x64 -unit_test'
       - name: Clean
-        uses: docker://ghcr.io/nfrechette/toolchain-amd64-lunar:v2
+        uses: docker://ghcr.io/nfrechette/toolchain-amd64-resolute:v1
         with:
           args: 'python3 make.py -ci -clean_only'
       - name: Building (release-x64 nosimd)
-        uses: docker://ghcr.io/nfrechette/toolchain-amd64-lunar:v2
+        uses: docker://ghcr.io/nfrechette/toolchain-amd64-resolute:v1
         with:
           args: 'python3 make.py -ci -compiler ${{ matrix.compiler }} -config Release -cpu x64 -nosimd -build'
       - name: Running unit tests (release-x64 nosimd)
-        uses: docker://ghcr.io/nfrechette/toolchain-amd64-lunar:v2
+        uses: docker://ghcr.io/nfrechette/toolchain-amd64-resolute:v1
         with:
           args: 'python3 make.py -ci -compiler ${{ matrix.compiler }} -config Release -cpu x64 -nosimd -unit_test'
       - name: Clean
-        uses: docker://ghcr.io/nfrechette/toolchain-amd64-lunar:v2
+        uses: docker://ghcr.io/nfrechette/toolchain-amd64-resolute:v1
         with:
           args: 'python3 make.py -ci -clean_only'
       - name: Building (release-x64 AVX)
-        uses: docker://ghcr.io/nfrechette/toolchain-amd64-lunar:v2
+        uses: docker://ghcr.io/nfrechette/toolchain-amd64-resolute:v1
         with:
           args: 'python3 make.py -ci -compiler ${{ matrix.compiler }} -config Release -cpu x64 -avx -build'
       - name: Running unit tests (release-x64 AVX)
-        uses: docker://ghcr.io/nfrechette/toolchain-amd64-lunar:v2
+        uses: docker://ghcr.io/nfrechette/toolchain-amd64-resolute:v1
         with:
           args: 'python3 make.py -ci -compiler ${{ matrix.compiler }} -config Release -cpu x64 -avx -unit_test'
 
-  osx-14:
-    runs-on: macos-14
+  linux-arm64:
+    runs-on: ubuntu-24.04-arm
     strategy:
       matrix:
-        compiler: [xcode15]
+        compiler: [gcc15, clang23]
     steps:
       - name: Git checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
+        with:
+          submodules: 'recursive'
+      - name: Building (debug-arm64)
+        uses: docker://ghcr.io/nfrechette/toolchain-arm64-resolute:v1
+        with:
+          args: 'python3 make.py -ci -compiler ${{ matrix.compiler }} -config Debug -cpu arm64 -build'
+      - name: Running unit tests (debug-arm64)
+        uses: docker://ghcr.io/nfrechette/toolchain-arm64-resolute:v1
+        with:
+          args: 'python3 make.py -ci -compiler ${{ matrix.compiler }} -config Debug -cpu arm64 -unit_test'
+      - name: Clean
+        uses: docker://ghcr.io/nfrechette/toolchain-arm64-resolute:v1
+        with:
+          args: 'python3 make.py -ci -clean_only'
+      - name: Building (release-arm64)
+        uses: docker://ghcr.io/nfrechette/toolchain-arm64-resolute:v1
+        with:
+          args: 'python3 make.py -ci -compiler ${{ matrix.compiler }} -config Release -cpu arm64 -build'
+      - name: Running unit tests (release-arm64)
+        uses: docker://ghcr.io/nfrechette/toolchain-arm64-resolute:v1
+        with:
+          args: 'python3 make.py -ci -compiler ${{ matrix.compiler }} -config Release -cpu arm64 -unit_test'
+      - name: Clean
+        uses: docker://ghcr.io/nfrechette/toolchain-arm64-resolute:v1
+        with:
+          args: 'python3 make.py -ci -clean_only'
+      - name: Building (release-arm64 nosimd)
+        uses: docker://ghcr.io/nfrechette/toolchain-arm64-resolute:v1
+        with:
+          args: 'python3 make.py -ci -compiler ${{ matrix.compiler }} -config Release -cpu arm64 -nosimd -build'
+      - name: Running unit tests (release-arm64 nosimd)
+        uses: docker://ghcr.io/nfrechette/toolchain-arm64-resolute:v1
+        with:
+          args: 'python3 make.py -ci -compiler ${{ matrix.compiler }} -config Release -cpu arm64 -nosimd -unit_test'
+
+  osx-15:
+    runs-on: macos-15
+    strategy:
+      matrix:
+        compiler: [xcode26]
+    steps:
+      - name: Git checkout
+        uses: actions/checkout@v7
         with:
           submodules: 'recursive'
       - name: Setup ${{ matrix.compiler }} compiler
@@ -133,7 +161,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Git checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
         with:
           submodules: 'recursive'
       - name: Build (debug)
@@ -163,7 +191,7 @@ jobs:
       matrix:
         compiler: [vs2022, vs2022-clang]
         build_config: [debug, release]
-        cpu: [x86, x64, arm64, arm64ec]
+        cpu: [x64, arm64, arm64ec]
         simd: [-simd, -nosimd, -avx]
         exclude:
           # Don't run arm64 with clang
@@ -178,13 +206,9 @@ jobs:
           # Don't run AVX with arm64ec
           - cpu: arm64ec
             simd: -avx
-          # Don't run x86 AVX with VS2022 to avoid toolchain code generation bug, see #248
-          - compiler: vs2022
-            cpu: x86
-            simd: -avx
     steps:
       - name: Git checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
         with:
           submodules: 'recursive'
       - name: Building (${{ matrix.build_config }}-${{ matrix.cpu }})
