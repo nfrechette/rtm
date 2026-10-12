@@ -8,6 +8,14 @@ on:
       - docs/**
       - '**/*.md'
 
+permissions:
+  contents: read
+
+# Cancel the previous run of a pull request when it receives new commits
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   linux-resolute:
     runs-on: ubuntu-latest
@@ -16,7 +24,7 @@ jobs:
         compiler: [gcc14, gcc15, clang22, clang23]
     steps:
       - name: Git checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
         with:
           submodules: 'recursive'
       - name: Building (debug-x86)
@@ -90,6 +98,8 @@ jobs:
 
   linux-resolute-armv7:
     runs-on: ubuntu-latest
+    # QEMU is slow, but stop a job that does not end
+    timeout-minutes: 60
     strategy:
       matrix:
         compiler: [gcc15, clang22]
@@ -98,11 +108,11 @@ jobs:
       DOCKER_RUN: docker run --rm --platform linux/arm/v7 -v ${{ github.workspace }}:/project-src -w /project-src ghcr.io/nfrechette/toolchain-armv7-resolute:v1
     steps:
       - name: Git checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
         with:
           submodules: 'recursive'
       - name: Setup QEMU
-        uses: docker/setup-qemu-action@v3
+        uses: docker/setup-qemu-action@99012661954931238ded8c8b007157a8430204e1 # v4.4.0
         with:
           platforms: arm
       - name: Building (debug-armv7)
@@ -129,7 +139,7 @@ jobs:
         compiler: [gcc14, gcc15, clang22, clang23]
     steps:
       - name: Git checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
         with:
           submodules: 'recursive'
       - name: Building (debug-arm64)
@@ -172,7 +182,7 @@ jobs:
         compiler: [xcode16, xcode26]
     steps:
       - name: Git checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
         with:
           submodules: 'recursive'
       - name: Setup ${{ matrix.compiler }} compiler
@@ -210,7 +220,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Git checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
         with:
           submodules: 'recursive'
       - name: Build (debug)
@@ -261,7 +271,7 @@ jobs:
             simd: -avx
     steps:
       - name: Git checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
         with:
           submodules: 'recursive'
       - name: Building (${{ matrix.build_config }}-${{ matrix.cpu }})
