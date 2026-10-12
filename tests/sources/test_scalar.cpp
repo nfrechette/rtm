@@ -545,6 +545,17 @@ TEST_CASE("scalarf math", "[math][scalar]")
 	CHECK(scalar_cast(scalar_round_bankers(scalar_set(8388607.5F))) == 8388608.0F);
 	CHECK(scalar_cast(scalar_round_bankers(scalar_set(-8388607.5F))) == -8388608.0F);
 
+	// A large tie where the two round functions give different results: the nearest even value is smaller
+	CHECK(scalar_round_symmetric(8388606.5F) == 8388607.0F);
+	CHECK(scalar_round_symmetric(-8388606.5F) == -8388607.0F);
+	CHECK(scalar_cast(scalar_round_symmetric(scalar_set(8388606.5F))) == 8388607.0F);
+	CHECK(scalar_cast(scalar_round_symmetric(scalar_set(-8388606.5F))) == -8388607.0F);
+
+	CHECK(scalar_round_bankers(8388606.5F) == 8388606.0F);
+	CHECK(scalar_round_bankers(-8388606.5F) == -8388606.0F);
+	CHECK(scalar_cast(scalar_round_bankers(scalar_set(8388606.5F))) == 8388606.0F);
+	CHECK(scalar_cast(scalar_round_bankers(scalar_set(-8388606.5F))) == -8388606.0F);
+
 	CHECK(scalar_safe_to_float(int32_t(0)) == 0.0F);
 	CHECK(scalar_safe_to_float(int32_t(-7)) == -7.0F);
 	CHECK(scalar_safe_to_float(uint8_t(255)) == 255.0F);
@@ -601,6 +612,17 @@ TEST_CASE("scalard math", "[math][scalar]")
 	CHECK(scalar_round_bankers(-4503599627370495.5) == -4503599627370496.0);
 	CHECK(scalar_cast(scalar_round_bankers(scalar_set(4503599627370495.5))) == 4503599627370496.0);
 	CHECK(scalar_cast(scalar_round_bankers(scalar_set(-4503599627370495.5))) == -4503599627370496.0);
+
+	// A large tie where the two round functions give different results: the nearest even value is smaller
+	CHECK(scalar_round_symmetric(4503599627370494.5) == 4503599627370495.0);
+	CHECK(scalar_round_symmetric(-4503599627370494.5) == -4503599627370495.0);
+	CHECK(scalar_cast(scalar_round_symmetric(scalar_set(4503599627370494.5))) == 4503599627370495.0);
+	CHECK(scalar_cast(scalar_round_symmetric(scalar_set(-4503599627370494.5))) == -4503599627370495.0);
+
+	CHECK(scalar_round_bankers(4503599627370494.5) == 4503599627370494.0);
+	CHECK(scalar_round_bankers(-4503599627370494.5) == -4503599627370494.0);
+	CHECK(scalar_cast(scalar_round_bankers(scalar_set(4503599627370494.5))) == 4503599627370494.0);
+	CHECK(scalar_cast(scalar_round_bankers(scalar_set(-4503599627370494.5))) == -4503599627370494.0);
 
 	CHECK(scalar_safe_to_double(int32_t(0)) == 0.0);
 	CHECK(scalar_safe_to_double(int32_t(-7)) == -7.0);
