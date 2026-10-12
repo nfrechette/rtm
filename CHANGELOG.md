@@ -13,6 +13,9 @@
 *  Add support for native ARMv7 builds on Linux to `make.py`
 *  Add GCC 14, GCC 15, and Clang 19 to 23 to `make.py`
 *  Update Google Benchmark to 1.9.5
+*  Use float64 SIMD on ARM64: vector4d, quatd, mask4d, and mask4q are now two 2-lane registers, as with SSE2
+*  Use FMA on ARM64 for float64 multiply-add and quaternion multiplication, as float32 does: the results can differ in the last bits
+*  Pass qvd and qvsd by register on ARM64
 
 ## 2.3.1
 
