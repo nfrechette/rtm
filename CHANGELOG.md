@@ -12,6 +12,7 @@
 *  Fix vector floor and ceil on ARMv7 to keep the sign of a zero result, as the other code paths do
 *  Add support for native ARMv7 builds on Linux to `make.py`
 *  Add GCC 14, GCC 15, and Clang 19 to 23 to `make.py`
+*  Update Google Benchmark to 1.9.5
 
 ## 2.3.1
 
