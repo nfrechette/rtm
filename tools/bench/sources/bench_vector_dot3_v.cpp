@@ -134,6 +134,12 @@ static void bm_vector_dot3_scalar_v(benchmark::State& state)
 
 	for (auto _ : state)
 	{
+		// The inputs do not change: hide them from the compiler, otherwise it can move the calls out of the loop
+		benchmark::DoNotOptimize(v0);
+		benchmark::DoNotOptimize(v1);
+		benchmark::DoNotOptimize(v2);
+		benchmark::DoNotOptimize(v3);
+
 		sum0 = vector_add(sum0, vector_dot3_scalar_v(v0, v1));
 		sum1 = vector_add(sum1, vector_dot3_scalar_v(v1, v2));
 		sum2 = vector_add(sum2, vector_dot3_scalar_v(v2, v3));
@@ -163,6 +169,12 @@ static void bm_vector_dot3_neon_v(benchmark::State& state)
 
 	for (auto _ : state)
 	{
+		// The inputs do not change: hide them from the compiler, otherwise it can move the calls out of the loop
+		benchmark::DoNotOptimize(v0);
+		benchmark::DoNotOptimize(v1);
+		benchmark::DoNotOptimize(v2);
+		benchmark::DoNotOptimize(v3);
+
 		sum0 = vector_add(sum0, vector_dot3_neon_v(v0, v1));
 		sum1 = vector_add(sum1, vector_dot3_neon_v(v1, v2));
 		sum2 = vector_add(sum2, vector_dot3_neon_v(v2, v3));
@@ -193,6 +205,12 @@ static void bm_vector_dot3_neon64_v(benchmark::State& state)
 
 	for (auto _ : state)
 	{
+		// The inputs do not change: hide them from the compiler, otherwise it can move the calls out of the loop
+		benchmark::DoNotOptimize(v0);
+		benchmark::DoNotOptimize(v1);
+		benchmark::DoNotOptimize(v2);
+		benchmark::DoNotOptimize(v3);
+
 		sum0 = vector_add(sum0, vector_dot3_neon64_v(v0, v1));
 		sum1 = vector_add(sum1, vector_dot3_neon64_v(v1, v2));
 		sum2 = vector_add(sum2, vector_dot3_neon64_v(v2, v3));
@@ -221,6 +239,12 @@ static void bm_vector_dot3_neon64_paddq_v(benchmark::State& state)
 
 	for (auto _ : state)
 	{
+		// The inputs do not change: hide them from the compiler, otherwise it can move the calls out of the loop
+		benchmark::DoNotOptimize(v0);
+		benchmark::DoNotOptimize(v1);
+		benchmark::DoNotOptimize(v2);
+		benchmark::DoNotOptimize(v3);
+
 		sum0 = vector_add(sum0, vector_dot3_neon64_paddq_v(v0, v1));
 		sum1 = vector_add(sum1, vector_dot3_neon64_paddq_v(v1, v2));
 		sum2 = vector_add(sum2, vector_dot3_neon64_paddq_v(v2, v3));
@@ -251,6 +275,12 @@ static void bm_vector_dot3_sse2_v(benchmark::State& state)
 
 	for (auto _ : state)
 	{
+		// The inputs do not change: hide them from the compiler, otherwise it can move the calls out of the loop
+		benchmark::DoNotOptimize(v0);
+		benchmark::DoNotOptimize(v1);
+		benchmark::DoNotOptimize(v2);
+		benchmark::DoNotOptimize(v3);
+
 		sum0 = vector_add(sum0, vector_dot3_sse2_v(v0, v1));
 		sum1 = vector_add(sum1, vector_dot3_sse2_v(v1, v2));
 		sum2 = vector_add(sum2, vector_dot3_sse2_v(v2, v3));
@@ -281,6 +311,12 @@ static void bm_vector_dot3_sse4_v(benchmark::State& state)
 
 	for (auto _ : state)
 	{
+		// The inputs do not change: hide them from the compiler, otherwise it can move the calls out of the loop
+		benchmark::DoNotOptimize(v0);
+		benchmark::DoNotOptimize(v1);
+		benchmark::DoNotOptimize(v2);
+		benchmark::DoNotOptimize(v3);
+
 		sum0 = vector_add(sum0, vector_dot3_sse4_v(v0, v1));
 		sum1 = vector_add(sum1, vector_dot3_sse4_v(v1, v2));
 		sum2 = vector_add(sum2, vector_dot3_sse4_v(v2, v3));

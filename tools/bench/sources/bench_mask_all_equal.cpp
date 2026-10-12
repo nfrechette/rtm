@@ -119,6 +119,12 @@ static void bm_mask_all_equal_scalar4f(benchmark::State& state)
 
 	for (auto _ : state)
 	{
+		// The inputs do not change: hide them from the compiler, otherwise it can move the calls out of the loop
+		benchmark::DoNotOptimize(m0);
+		benchmark::DoNotOptimize(m1);
+		benchmark::DoNotOptimize(m2);
+		benchmark::DoNotOptimize(m3);
+
 		r0 ^= mask_all_equal_scalar4f(m0, m1);
 		r1 ^= mask_all_equal_scalar4f(m1, m2);
 		r2 ^= mask_all_equal_scalar4f(m2, m3);
@@ -147,6 +153,12 @@ static void bm_mask_all_equal_memcmp4f(benchmark::State& state)
 
 	for (auto _ : state)
 	{
+		// The inputs do not change: hide them from the compiler, otherwise it can move the calls out of the loop
+		benchmark::DoNotOptimize(m0);
+		benchmark::DoNotOptimize(m1);
+		benchmark::DoNotOptimize(m2);
+		benchmark::DoNotOptimize(m3);
+
 		r0 ^= mask_all_equal_memcmp4f(m0, m1);
 		r1 ^= mask_all_equal_memcmp4f(m1, m2);
 		r2 ^= mask_all_equal_memcmp4f(m2, m3);
@@ -176,6 +188,12 @@ static void bm_mask_all_equal_cmp4f(benchmark::State& state)
 
 	for (auto _ : state)
 	{
+		// The inputs do not change: hide them from the compiler, otherwise it can move the calls out of the loop
+		benchmark::DoNotOptimize(m0);
+		benchmark::DoNotOptimize(m1);
+		benchmark::DoNotOptimize(m2);
+		benchmark::DoNotOptimize(m3);
+
 		r0 ^= mask_all_equal_cmp4f(m0, m1);
 		r1 ^= mask_all_equal_cmp4f(m1, m2);
 		r2 ^= mask_all_equal_cmp4f(m2, m3);
@@ -204,6 +222,12 @@ static void bm_mask_all_equal_xor4f(benchmark::State& state)
 
 	for (auto _ : state)
 	{
+		// The inputs do not change: hide them from the compiler, otherwise it can move the calls out of the loop
+		benchmark::DoNotOptimize(m0);
+		benchmark::DoNotOptimize(m1);
+		benchmark::DoNotOptimize(m2);
+		benchmark::DoNotOptimize(m3);
+
 		r0 ^= mask_all_equal_xor4f(m0, m1);
 		r1 ^= mask_all_equal_xor4f(m1, m2);
 		r2 ^= mask_all_equal_xor4f(m2, m3);
@@ -233,6 +257,12 @@ static void bm_mask_all_equal_xor_movn(benchmark::State& state)
 
 	for (auto _ : state)
 	{
+		// The inputs do not change: hide them from the compiler, otherwise it can move the calls out of the loop
+		benchmark::DoNotOptimize(m0);
+		benchmark::DoNotOptimize(m1);
+		benchmark::DoNotOptimize(m2);
+		benchmark::DoNotOptimize(m3);
+
 		r0 ^= mask_all_equal_xor_movn(m0, m1);
 		r1 ^= mask_all_equal_xor_movn(m1, m2);
 		r2 ^= mask_all_equal_xor_movn(m2, m3);
