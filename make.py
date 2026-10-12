@@ -552,7 +552,7 @@ def do_run_bench_android(build_dir, args):
 def do_pull_bench_android(build_dir):
 	# Grab the android directory we wrote the results to
 	output = str(subprocess.check_output('adb logcat -s acl -e "Benchmark results will be written to:" -m 1 -d'))
-	matches = re.search('Benchmark results will be written to: ([/\.\w]+)', output)
+	matches = re.search(r'Benchmark results will be written to: ([/\.\w]+)', output)
 	if matches == None:
 		print('Failed to find Android source directory from ADB')
 		android_src_dir = '/storage/emulated/0/Android/data/com.rtm.benchmark/files'
