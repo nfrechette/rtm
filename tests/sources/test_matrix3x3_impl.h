@@ -87,6 +87,10 @@ static void test_matrix3x3_setters(const FloatType threshold)
 		CHECK(vector_all_near_equal3(matrix_get_axis(mtx, axis3::x), mtx.x_axis, threshold));
 		CHECK(vector_all_near_equal3(matrix_get_axis(mtx, axis3::y), mtx.y_axis, threshold));
 		CHECK(vector_all_near_equal3(matrix_get_axis(mtx, axis3::z), mtx.z_axis, threshold));
+
+		CHECK(vector_all_near_equal3(matrix_get_coord_cross(mtx), mtx.x_axis, threshold));
+		CHECK(vector_all_near_equal3(matrix_get_coord_up(mtx), mtx.y_axis, threshold));
+		CHECK(vector_all_near_equal3(matrix_get_coord_forward(mtx), mtx.z_axis, threshold));
 	}
 
 	{
@@ -356,7 +360,7 @@ static void test_matrix3x3_misc(const FloatType threshold)
 		Vector4Type x_axis = vector_set(FloatType(5.62565), FloatType(7.90751), FloatType(4.37048), FloatType(99999.9999));
 		Vector4Type y_axis = vector_set(FloatType(0.36345), FloatType(7.87300), FloatType(7.23000), FloatType(99999.9999));
 		Vector4Type z_axis = vector_set(FloatType(8.06413), FloatType(3.91970), FloatType(8.48928), FloatType(99999.9999));
-		Matrix3x4Type mtx = matrix_set(x_axis, y_axis, z_axis, x_axis);
+		Matrix3x3Type mtx = matrix_set(x_axis, y_axis, z_axis);
 		Matrix3x3Type cof = matrix_cofactor(mtx);
 
 		FloatType cof_xx = scalar_cast(vector_get_x_as_scalar(cof.x_axis));
@@ -385,7 +389,7 @@ static void test_matrix3x3_misc(const FloatType threshold)
 		Vector4Type x_axis = vector_set(FloatType(5.62565), FloatType(7.90751), FloatType(4.37048), FloatType(99999.9999));
 		Vector4Type y_axis = vector_set(FloatType(0.36345), FloatType(7.87300), FloatType(7.23000), FloatType(99999.9999));
 		Vector4Type z_axis = vector_set(FloatType(8.06413), FloatType(3.91970), FloatType(8.48928), FloatType(99999.9999));
-		Matrix3x4Type mtx = matrix_set(x_axis, y_axis, z_axis, x_axis);
+		Matrix3x3Type mtx = matrix_set(x_axis, y_axis, z_axis);
 		Matrix3x3Type adj = matrix_adjugate(mtx);
 
 		FloatType adj_xx = scalar_cast(vector_get_x_as_scalar(adj.x_axis));

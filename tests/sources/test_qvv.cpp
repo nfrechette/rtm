@@ -48,7 +48,7 @@ static void test_qvv_interpolation(const FloatType threshold)
 	QuatType quat_ref_slerp_s = quat_slerp(quat0, quat1, alpha_s);
 
 	Vector4Type trans0 = vector_set(FloatType(-0.001138), FloatType(0.91623), FloatType(-1.624598));
-	Vector4Type trans1 = vector_set(FloatType(-0.001138), FloatType(0.91623), FloatType(-1.624598));
+	Vector4Type trans1 = vector_set(FloatType(2.5), FloatType(-1.75), FloatType(0.5));
 
 	Vector4Type trans_ref = vector_lerp(trans0, trans1, alpha);
 	Vector4Type trans_ref_s = vector_lerp(trans0, trans1, alpha_s);
@@ -336,18 +336,51 @@ static void test_qvv_impl(const TransformType& identity, const FloatType thresho
 	}
 
 	{
+		// A non-uniform scale, thus the checks find scale lanes in the wrong order
+		const Vector4Type point = vector_set(FloatType(0.5), FloatType(-1.25), FloatType(2.0));
+		const Vector4Type scale_a = vector_set(FloatType(1.5), FloatType(0.25), FloatType(2.0));
+		const Vector4Type scale_b = vector_set(FloatType(0.5), FloatType(3.0), FloatType(1.25));
+		const Vector4Type translation_a = vector_set(FloatType(1.0), FloatType(2.0), FloatType(3.0));
+		const Vector4Type translation_b = vector_set(FloatType(-4.0), FloatType(0.5), FloatType(2.5));
+		const QuatType rotation_a = quat_from_euler(scalar_deg_to_rad(FloatType(30.0)), scalar_deg_to_rad(FloatType(-45.0)), scalar_deg_to_rad(FloatType(90.0)));
+		const QuatType rotation_b = quat_from_euler(scalar_deg_to_rad(FloatType(45.0)), scalar_deg_to_rad(FloatType(60.0)), scalar_deg_to_rad(FloatType(120.0)));
+
+		// A single transform: compare with the matrix that has the same transform
+		const TransformType transform_a = qvv_set(rotation_a, translation_a, scale_a);
+		const Matrix3x4Type matrix_a = matrix_from_qvv(rotation_a, translation_a, scale_a);
+		CHECK(vector_all_near_equal3(matrix_mul_point3(point, matrix_a), qvv_mul_point3(point, transform_a), threshold));
+
+		// A QVV transform can represent the product only when the right input has a uniform scale,
+		// or when the left input has no rotation
+		const TransformType transform_b_uniform = qvv_set(rotation_b, translation_b, vector_set(FloatType(1.5)));
+		const TransformType transform_ab = qvv_mul(transform_a, transform_b_uniform);
+		CHECK(vector_all_near_equal3(vector_mul(scale_a, vector_set(FloatType(1.5))), transform_ab.scale, threshold));
+		CHECK(vector_all_near_equal3(qvv_mul_point3(qvv_mul_point3(point, transform_a), transform_b_uniform), qvv_mul_point3(point, transform_ab), threshold));
+
+		const TransformType transform_a_no_rotation = qvv_set(identity.rotation, translation_a, scale_a);
+		const TransformType transform_b = qvv_set(rotation_b, translation_b, scale_b);
+		const TransformType transform_ab2 = qvv_mul(transform_a_no_rotation, transform_b);
+		CHECK(vector_all_near_equal3(vector_mul(scale_a, scale_b), transform_ab2.scale, threshold));
+		CHECK(vector_all_near_equal3(qvv_mul_point3(qvv_mul_point3(point, transform_a_no_rotation), transform_b), qvv_mul_point3(point, transform_ab2), threshold));
+	}
+
+	{
 		Vector4Type x_axis = vector_set(FloatType(1.0), FloatType(0.0), FloatType(0.0));
 		Vector4Type y_axis = vector_set(FloatType(0.0), FloatType(1.0), FloatType(0.0));
 
+		// The scale is not 1.0, thus a function that applies the scale fails
+		const Vector4Type ignored_scale_a = vector_set(FloatType(2.5), FloatType(0.5), FloatType(-1.5));
+		const Vector4Type ignored_scale_b = vector_set(FloatType(-0.75), FloatType(3.0), FloatType(1.25));
+
 		QuatType rotation_around_z = quat_from_euler(scalar_deg_to_rad(FloatType(0.0)), scalar_deg_to_rad(FloatType(90.0)), scalar_deg_to_rad(FloatType(0.0)));
-		TransformType transform_a = qvv_set(rotation_around_z, x_axis, vector_set(FloatType(1.0)));
+		TransformType transform_a = qvv_set(rotation_around_z, x_axis, ignored_scale_a);
 		Vector4Type result = qvv_mul_point3_no_scale(x_axis, transform_a);
 		CHECK(vector_all_near_equal3(result, vector_set(FloatType(1.0), FloatType(1.0), FloatType(0.0)), threshold));
 		result = qvv_mul_point3_no_scale(y_axis, transform_a);
 		CHECK(vector_all_near_equal3(result, vector_set(FloatType(0.0), FloatType(0.0), FloatType(0.0)), threshold));
 
 		QuatType rotation_around_x = quat_from_euler(scalar_deg_to_rad(FloatType(0.0)), scalar_deg_to_rad(FloatType(0.0)), scalar_deg_to_rad(FloatType(90.0)));
-		TransformType transform_b = qvv_set(rotation_around_x, y_axis, vector_set(FloatType(1.0)));
+		TransformType transform_b = qvv_set(rotation_around_x, y_axis, ignored_scale_b);
 		result = qvv_mul_point3_no_scale(x_axis, transform_b);
 		CHECK(vector_all_near_equal3(result, vector_set(FloatType(1.0), FloatType(1.0), FloatType(0.0)), threshold));
 		result = qvv_mul_point3_no_scale(y_axis, transform_b);
@@ -355,6 +388,11 @@ static void test_qvv_impl(const TransformType& identity, const FloatType thresho
 
 		TransformType transform_ab = qvv_mul_no_scale(transform_a, transform_b);
 		TransformType transform_ba = qvv_mul_no_scale(transform_b, transform_a);
+
+		// The result has the scale of the left input
+		CHECK(vector_all_near_equal3(ignored_scale_a, transform_ab.scale, threshold));
+		CHECK(vector_all_near_equal3(ignored_scale_b, transform_ba.scale, threshold));
+
 		result = qvv_mul_point3_no_scale(x_axis, transform_ab);
 		CHECK(vector_all_near_equal3(result, vector_set(FloatType(1.0), FloatType(1.0), FloatType(-1.0)), threshold));
 		CHECK(vector_all_near_equal3(result, qvv_mul_point3_no_scale(qvv_mul_point3_no_scale(x_axis, transform_a), transform_b), threshold));
@@ -390,21 +428,33 @@ static void test_qvv_impl(const TransformType& identity, const FloatType thresho
 		CHECK(vector_all_near_equal3(identity.translation, transform_ab.translation, threshold));
 		CHECK(vector_all_near_equal3(identity.scale, transform_ab.scale, threshold));
 
+		// The function replaces each scale lane that is zero with the fallback lane
 		transform_a = qvv_set(rotation_around_z, x_axis, test_scale3);
-		transform_b = qvv_inverse(transform_a, vector_set(FloatType(1.0)));
+		const Vector4Type fallback_scale = vector_set(FloatType(2.0), FloatType(4.0), FloatType(0.5));
+		transform_b = qvv_inverse(transform_a, fallback_scale);
 		CHECK(qvv_is_finite(transform_b));
+
+		const TransformType transform_ref = qvv_inverse(qvv_set(rotation_around_z, x_axis, vector_set(FloatType(1.2), FloatType(4.0), FloatType(-1.2))));
+		CHECK(quat_near_equal(transform_ref.rotation, transform_b.rotation, threshold));
+		CHECK(vector_all_near_equal3(transform_ref.translation, transform_b.translation, threshold));
+		CHECK(vector_all_near_equal3(transform_ref.scale, transform_b.scale, threshold));
 	}
 
 	{
 		Vector4Type x_axis = vector_set(FloatType(1.0), FloatType(0.0), FloatType(0.0));
 
 		QuatType rotation_around_z = quat_from_euler(scalar_deg_to_rad(FloatType(0.0)), scalar_deg_to_rad(FloatType(90.0)), scalar_deg_to_rad(FloatType(0.0)));
-		TransformType transform_a = qvv_set(rotation_around_z, x_axis, vector_set(FloatType(1.0)));
+		// The scale is not 1.0, thus a function that applies the scale fails
+		const Vector4Type ignored_scale = vector_set(FloatType(2.5), FloatType(0.5), FloatType(-1.5));
+		TransformType transform_a = qvv_set(rotation_around_z, x_axis, ignored_scale);
 		TransformType transform_b = qvv_inverse_no_scale(transform_a);
 		TransformType transform_ab = qvv_mul_no_scale(transform_a, transform_b);
 		CHECK(quat_near_equal(identity.rotation, transform_ab.rotation, threshold));
 		CHECK(vector_all_near_equal3(identity.translation, transform_ab.translation, threshold));
-		CHECK(vector_all_near_equal3(identity.scale, transform_ab.scale, threshold));
+
+		// The results have the scale of the input
+		CHECK(vector_all_near_equal3(ignored_scale, transform_b.scale, threshold));
+		CHECK(vector_all_near_equal3(ignored_scale, transform_ab.scale, threshold));
 	}
 
 	{

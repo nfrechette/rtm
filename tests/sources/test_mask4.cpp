@@ -30,6 +30,7 @@
 #include <rtm/mask4i.h>
 #include <rtm/mask4q.h>
 
+#include <cstdint>
 #include <cstring>
 
 using namespace rtm;
@@ -118,6 +119,26 @@ inline Mask4Type reference_mask_not(const Mask4Type& input)
 	std::memcpy(&result, &result_[0], sizeof(Mask4Type));
 
 	return result;
+}
+
+static bool reference_all_lanes(const bool* lanes, uint32_t num_lanes)
+{
+	for (uint32_t lane_index = 0; lane_index < num_lanes; ++lane_index)
+	{
+		if (!lanes[lane_index])
+			return false;
+	}
+	return true;
+}
+
+static bool reference_any_lanes(const bool* lanes, uint32_t num_lanes)
+{
+	for (uint32_t lane_index = 0; lane_index < num_lanes; ++lane_index)
+	{
+		if (lanes[lane_index])
+			return true;
+	}
+	return false;
 }
 
 template<typename MaskType, typename IntType>
@@ -300,6 +321,50 @@ static void test_mask_impl()
 		CHECK(mask_any_equal(all_false, mask_set(false, false, true, true)));
 		CHECK(mask_any_equal(all_false, mask_set(false, true, true, true)));
 		CHECK(!mask_any_equal(all_false, mask_set(true, true, true, true)));
+	}
+
+	{
+		// Test all the combinations of true and false lanes
+		// Thus, each lane must decide the result alone, and the functions with fewer lanes must ignore the other lanes
+		for (uint32_t lhs_bits = 0; lhs_bits < 16; ++lhs_bits)
+		{
+			bool lhs_lanes[4];
+			for (uint32_t lane_index = 0; lane_index < 4; ++lane_index)
+				lhs_lanes[lane_index] = ((lhs_bits >> lane_index) & 1) != 0;
+
+			const MaskType lhs = mask_set(lhs_lanes[0], lhs_lanes[1], lhs_lanes[2], lhs_lanes[3]);
+
+			INFO("lhs: [" << lhs_lanes[0] << ", " << lhs_lanes[1] << ", " << lhs_lanes[2] << ", " << lhs_lanes[3] << "]");
+
+			CHECK(mask_all_true(lhs) == reference_all_lanes(lhs_lanes, 4));
+			CHECK(mask_all_true2(lhs) == reference_all_lanes(lhs_lanes, 2));
+			CHECK(mask_all_true3(lhs) == reference_all_lanes(lhs_lanes, 3));
+			CHECK(mask_any_true(lhs) == reference_any_lanes(lhs_lanes, 4));
+			CHECK(mask_any_true2(lhs) == reference_any_lanes(lhs_lanes, 2));
+			CHECK(mask_any_true3(lhs) == reference_any_lanes(lhs_lanes, 3));
+
+			for (uint32_t rhs_bits = 0; rhs_bits < 16; ++rhs_bits)
+			{
+				bool rhs_lanes[4];
+				bool equal_lanes[4];
+				for (uint32_t lane_index = 0; lane_index < 4; ++lane_index)
+				{
+					rhs_lanes[lane_index] = ((rhs_bits >> lane_index) & 1) != 0;
+					equal_lanes[lane_index] = lhs_lanes[lane_index] == rhs_lanes[lane_index];
+				}
+
+				const MaskType rhs = mask_set(rhs_lanes[0], rhs_lanes[1], rhs_lanes[2], rhs_lanes[3]);
+
+				INFO("rhs: [" << rhs_lanes[0] << ", " << rhs_lanes[1] << ", " << rhs_lanes[2] << ", " << rhs_lanes[3] << "]");
+
+				CHECK(mask_all_equal(lhs, rhs) == reference_all_lanes(equal_lanes, 4));
+				CHECK(mask_all_equal2(lhs, rhs) == reference_all_lanes(equal_lanes, 2));
+				CHECK(mask_all_equal3(lhs, rhs) == reference_all_lanes(equal_lanes, 3));
+				CHECK(mask_any_equal(lhs, rhs) == reference_any_lanes(equal_lanes, 4));
+				CHECK(mask_any_equal2(lhs, rhs) == reference_any_lanes(equal_lanes, 2));
+				CHECK(mask_any_equal3(lhs, rhs) == reference_any_lanes(equal_lanes, 3));
+			}
+		}
 	}
 
 	{

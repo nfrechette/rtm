@@ -45,6 +45,13 @@ TEST_CASE("constants", "[math][constants]")
 	CHECK(scalar_near_equal(float(constants::pi()) - 1.0F, 3.141592653589793238462643383279502884F - 1.0F, 1.0e-6F));
 	CHECK(scalar_near_equal(float(1.0F - constants::pi()), 1.0F - 3.141592653589793238462643383279502884F, 1.0e-6F));
 
+	// Other float constants
+	CHECK(scalar_near_equal(float(constants::half_pi()), float(3.141592653589793238462643383279502884 / 2.0), 1.0e-6F));
+	CHECK(scalar_near_equal(float(constants::two_pi()), float(3.141592653589793238462643383279502884 * 2.0), 1.0e-6F));
+	CHECK(scalar_near_equal(float(constants::one_div_two_pi()), float(1.0 / (3.141592653589793238462643383279502884 * 2.0)), 1.0e-6F));
+	CHECK(scalar_near_equal(float(constants::pi_div_one_eighty()), float(3.141592653589793238462643383279502884 / 180.0), 1.0e-6F));
+	CHECK(scalar_near_equal(float(constants::one_eighty_div_pi()), float(180.0 / 3.141592653589793238462643383279502884), 1.0e-6F));
+
 	// Double
 	CHECK(scalar_near_equal(double(constants::pi()), 3.141592653589793238462643383279502884, 1.0e-6));
 	CHECK(scalar_near_equal(double(-constants::pi()), -3.141592653589793238462643383279502884, 1.0e-6));
@@ -57,4 +64,11 @@ TEST_CASE("constants", "[math][constants]")
 	CHECK(scalar_near_equal(double(1.0 + constants::pi()), 1.0 + 3.141592653589793238462643383279502884, 1.0e-6));
 	CHECK(scalar_near_equal(double(constants::pi() - 1.0), 3.141592653589793238462643383279502884 - 1.0, 1.0e-6));
 	CHECK(scalar_near_equal(double(1.0 - constants::pi()), 1.0 - 3.141592653589793238462643383279502884, 1.0e-6));
+
+	// Other double constants
+	CHECK(scalar_near_equal(double(constants::half_pi()), 3.141592653589793238462643383279502884 / 2.0, 1.0e-12));
+	CHECK(scalar_near_equal(double(constants::two_pi()), 3.141592653589793238462643383279502884 * 2.0, 1.0e-12));
+	CHECK(scalar_near_equal(double(constants::one_div_two_pi()), 1.0 / (3.141592653589793238462643383279502884 * 2.0), 1.0e-12));
+	CHECK(scalar_near_equal(double(constants::pi_div_one_eighty()), 3.141592653589793238462643383279502884 / 180.0, 1.0e-12));
+	CHECK(scalar_near_equal(double(constants::one_eighty_div_pi()), 180.0 / 3.141592653589793238462643383279502884, 1.0e-12));
 }

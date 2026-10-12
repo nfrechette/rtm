@@ -43,10 +43,10 @@ template<typename QuatType, typename Vector4Type, typename FloatType>
 static Vector4Type quat_rotate_scalar(const Vector4Type& vector, const QuatType& rotation)
 {
 	// (q.W*q.W-qv.qv)v + 2(qv.v)qv + 2 q.W (qv x v)
-	FloatType rotation_x = quat_get_x(rotation);
-	FloatType rotation_y = quat_get_y(rotation);
-	FloatType rotation_z = quat_get_z(rotation);
-	Vector4Type qv = vector_set(rotation_x, rotation_y, rotation_z);
+	// Do not use vector_set with the [xyz] components of the rotation: with constant rotations in a loop,
+	// that code causes an internal compiler error with GCC 14 and 15 on ARM64.
+	// vector_set_w uses a different NEON sequence and the compiler error does not occur.
+	Vector4Type qv = vector_set_w(quat_to_vector(rotation), FloatType(0.0));
 	Vector4Type vOut = vector_mul(vector_cross3(qv, vector), FloatType(2.0) * quat_get_w(rotation));
 	vOut = vector_add(vOut, vector_mul(vector, (quat_get_w(rotation) * quat_get_w(rotation)) - vector_dot(qv, qv)));
 	vOut = vector_add(vOut, vector_mul(qv, FloatType(2.0) * vector_dot(qv, vector)));
@@ -198,7 +198,8 @@ static void test_quat_impl(const FloatType threshold)
 			uint8_t padding1[8];	// 32 | 48
 		};
 
-		Tmp tmp = { { 0 }, { FloatType(0.0), FloatType(2.34), FloatType(-3.12), FloatType(10000.0) }, {} };
+		// The destination holds other values, thus a store that does nothing fails
+		Tmp tmp = { { 0 }, { FloatType(-1.0), FloatType(-1.0), FloatType(-1.0), FloatType(-1.0) }, {} };
 		quat_store(quat_set(FloatType(0.0), FloatType(2.34), FloatType(-3.12), FloatType(10000.0)), &tmp.values[0]);
 		CHECK(tmp.values[0] == FloatType(0.0));
 		CHECK(tmp.values[1] == FloatType(2.34));
@@ -545,6 +546,12 @@ static void test_quat_impl(const FloatType threshold)
 		CHECK(quat_near_equal(identity, quat_set(FloatType(0.0), FloatType(0.0), FloatType(0.0), FloatType(2.0)), FloatType(1.0001)) == true);
 		CHECK(quat_near_equal(identity, quat_set(FloatType(0.0), FloatType(0.0), FloatType(0.0), FloatType(2.0)), FloatType(1.0)) == true);
 		CHECK(quat_near_equal(identity, quat_set(FloatType(0.0), FloatType(0.0), FloatType(0.0), FloatType(2.0)), FloatType(0.9999)) == false);
+
+		// Each lane must decide the result alone
+		CHECK(quat_near_equal(identity, quat_set(FloatType(1.0), FloatType(0.0), FloatType(0.0), FloatType(1.0)), FloatType(0.5)) == false);
+		CHECK(quat_near_equal(identity, quat_set(FloatType(0.0), FloatType(1.0), FloatType(0.0), FloatType(1.0)), FloatType(0.5)) == false);
+		CHECK(quat_near_equal(identity, quat_set(FloatType(0.0), FloatType(0.0), FloatType(1.0), FloatType(1.0)), FloatType(0.5)) == false);
+		CHECK(quat_near_equal(identity, quat_set(FloatType(0.0), FloatType(0.0), FloatType(0.0), FloatType(0.0)), FloatType(0.5)) == false);
 	}
 
 	{
@@ -562,6 +569,14 @@ static void test_quat_impl(const FloatType threshold)
 
 		CHECK(quat_are_equal(quat_select(all_true, quat0, quat1), quat0));
 		CHECK(quat_are_equal(quat_select(all_false, quat0, quat1), quat1));
+
+		// A mask with different lanes, thus each lane must select its own input
+		const MaskType mixed_mask = mask_set(true, false, false, true);
+		const QuatType mixed_result = quat_select(mixed_mask, quat0, quat1);
+		CHECK(FloatType(quat_get_x(mixed_result)) == FloatType(quat_get_x(quat0)));
+		CHECK(FloatType(quat_get_y(mixed_result)) == FloatType(quat_get_y(quat1)));
+		CHECK(FloatType(quat_get_z(mixed_result)) == FloatType(quat_get_z(quat1)));
+		CHECK(FloatType(quat_get_w(mixed_result)) == FloatType(quat_get_w(quat0)));
 	}
 }
 
