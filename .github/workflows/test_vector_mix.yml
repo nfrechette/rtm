@@ -1,0 +1,129 @@
+name: test vector mix
+
+# The vector_mix unit tests are exhaustive and slow, start them by hand only
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+# Cancel the previous run of a branch when it starts again
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  linux:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        compiler: [gcc15, clang23]
+        cpu: [x86, x64]
+        simd: [-simd, -nosimd, -avx]
+        exclude:
+          # Don't run AVX with x86
+          - cpu: x86
+            simd: -avx
+    steps:
+      - name: Git checkout
+        uses: actions/checkout@v7
+        with:
+          submodules: 'recursive'
+      - name: Building (release-${{ matrix.cpu }} ${{ matrix.simd }})
+        uses: docker://ghcr.io/nfrechette/toolchain-amd64-resolute:v1
+        with:
+          args: 'python3 make.py -ci -compiler ${{ matrix.compiler }} -config Release -cpu ${{ matrix.cpu }} ${{ matrix.simd }} -vector_mix_test -build'
+      - name: Running unit tests (release-${{ matrix.cpu }} ${{ matrix.simd }})
+        uses: docker://ghcr.io/nfrechette/toolchain-amd64-resolute:v1
+        with:
+          args: 'python3 make.py -ci -compiler ${{ matrix.compiler }} -config Release -cpu ${{ matrix.cpu }} ${{ matrix.simd }} -vector_mix_test -unit_test'
+
+  linux-armv7:
+    runs-on: ubuntu-latest
+    # QEMU is slow, but stop a job that does not end
+    timeout-minutes: 180
+    strategy:
+      fail-fast: false
+      matrix:
+        compiler: [gcc15, clang22]
+        simd: [-simd, -nosimd]
+    env:
+      # QEMU emulates armv7, a 'uses: docker://' step cannot select the platform
+      DOCKER_RUN: docker run --rm --platform linux/arm/v7 -v ${{ github.workspace }}:/project-src -w /project-src ghcr.io/nfrechette/toolchain-armv7-resolute:v1
+    steps:
+      - name: Git checkout
+        uses: actions/checkout@v7
+        with:
+          submodules: 'recursive'
+      - name: Setup QEMU
+        uses: docker/setup-qemu-action@99012661954931238ded8c8b007157a8430204e1 # v4.4.0
+        with:
+          platforms: arm
+      - name: Building (release-armv7 ${{ matrix.simd }})
+        run: $DOCKER_RUN python3 make.py -ci -compiler ${{ matrix.compiler }} -config Release -cpu armv7 ${{ matrix.simd }} -vector_mix_test -build
+      - name: Running unit tests (release-armv7 ${{ matrix.simd }})
+        run: $DOCKER_RUN python3 make.py -ci -compiler ${{ matrix.compiler }} -config Release -cpu armv7 ${{ matrix.simd }} -vector_mix_test -unit_test
+
+  linux-arm64:
+    runs-on: ubuntu-24.04-arm
+    strategy:
+      fail-fast: false
+      matrix:
+        compiler: [gcc15, clang23]
+        simd: [-simd, -nosimd]
+    steps:
+      - name: Git checkout
+        uses: actions/checkout@v7
+        with:
+          submodules: 'recursive'
+      - name: Building (release-arm64 ${{ matrix.simd }})
+        uses: docker://ghcr.io/nfrechette/toolchain-arm64-resolute:v1
+        with:
+          args: 'python3 make.py -ci -compiler ${{ matrix.compiler }} -config Release -cpu arm64 ${{ matrix.simd }} -vector_mix_test -build'
+      - name: Running unit tests (release-arm64 ${{ matrix.simd }})
+        uses: docker://ghcr.io/nfrechette/toolchain-arm64-resolute:v1
+        with:
+          args: 'python3 make.py -ci -compiler ${{ matrix.compiler }} -config Release -cpu arm64 ${{ matrix.simd }} -vector_mix_test -unit_test'
+
+  osx-15:
+    runs-on: macos-15
+    strategy:
+      fail-fast: false
+      matrix:
+        compiler: [xcode26]
+        simd: [-simd, -nosimd]
+    steps:
+      - name: Git checkout
+        uses: actions/checkout@v7
+        with:
+          submodules: 'recursive'
+      - name: Setup ${{ matrix.compiler }} compiler
+        run: ./tools/setup_osx_compiler.sh ${{ matrix.compiler }}
+      - name: Building (release-arm64 ${{ matrix.simd }})
+        run: python3 make.py -ci -compiler osx -config Release ${{ matrix.simd }} -vector_mix_test -build
+      - name: Running unit tests (release-arm64 ${{ matrix.simd }})
+        run: python3 make.py -ci -compiler osx -config Release ${{ matrix.simd }} -vector_mix_test -unit_test
+
+  vs2022:
+    runs-on: windows-2022
+    strategy:
+      fail-fast: false
+      matrix:
+        compiler: [vs2022, vs2022-clang]
+        cpu: [x86, x64]
+        simd: [-simd, -nosimd, -avx]
+        exclude:
+          # Don't run x86 AVX with VS2022 to avoid toolchain code generation bug, see #248
+          - compiler: vs2022
+            cpu: x86
+            simd: -avx
+    steps:
+      - name: Git checkout
+        uses: actions/checkout@v7
+        with:
+          submodules: 'recursive'
+      - name: Building (release-${{ matrix.cpu }} ${{ matrix.simd }})
+        run: python3 make.py -ci -compiler ${{ matrix.compiler }} -config Release -cpu ${{ matrix.cpu }} ${{ matrix.simd }} -vector_mix_test -build
+      - name: Running unit tests (release-${{ matrix.cpu }} ${{ matrix.simd }})
+        run: python3 make.py -ci -compiler ${{ matrix.compiler }} -config Release -cpu ${{ matrix.cpu }} ${{ matrix.simd }} -vector_mix_test -unit_test
