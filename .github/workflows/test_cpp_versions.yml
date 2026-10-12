@@ -5,7 +5,16 @@ on:
     branches:
       - '**'
     paths-ignore:
+      - docs/**
       - '**/*.md'
+
+permissions:
+  contents: read
+
+# Cancel the previous run of a pull request when it receives new commits
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
   linux:
@@ -16,7 +25,7 @@ jobs:
         cpp_version: [14, 17, 20]
     steps:
       - name: Git checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
         with:
           submodules: 'recursive'
       - name: Building (release-x86)
@@ -55,7 +64,7 @@ jobs:
         cpp_version: [14, 17, 20]
     steps:
       - name: Git checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
         with:
           submodules: 'recursive'
       - name: Building (release-x86)
