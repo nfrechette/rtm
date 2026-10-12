@@ -8,6 +8,8 @@
 *  Add the SSE4 code path to vector4d ceil
 *  Symmetric and banker's rounding keep the sign of the input as std::round and std::nearbyint do, for example round(-0.0) = -0.0
 *  Fix float32 banker's rounding for values of 2^31 and larger without SIMD
+*  Fix compilation errors with GCC on ARMv7 in vector floor, vector ceil, and the 2x2 transpose macro
+*  Fix vector floor and ceil on ARMv7 to keep the sign of a zero result, as the other code paths do
 
 ## 2.3.1
 

@@ -235,7 +235,7 @@ RTM_IMPL_FILE_PRAGMA_PUSH
 		} while(0)
 #endif
 
-#if defined(RTM_NEON_INTRINSICS)
+#if defined(RTM_NEON64_INTRINSICS)
 	//////////////////////////////////////////////////////////////////////////
 	// Transposes a 2x2 matrix.
 	// All inputs and outputs must be rtm::vector4f.
@@ -243,6 +243,18 @@ RTM_IMPL_FILE_PRAGMA_PUSH
 	#define RTM_MATRIXF_TRANSPOSE_2X2(input_xy0, input_xy1, output_xx, output_yy) \
 		do { \
 			const float32x4_t x0x1y0y1 = vzip1q_f32((input_xy0), (input_xy1)); \
+			(output_xx) = x0x1y0y1; \
+			(output_yy) = vextq_f32(x0x1y0y1, x0x1y0y1, 2); \
+		} while(0)
+#elif defined(RTM_NEON_INTRINSICS)
+	//////////////////////////////////////////////////////////////////////////
+	// Transposes a 2x2 matrix.
+	// All inputs and outputs must be rtm::vector4f.
+	// vzip1q_f32 is only available with ARM64, the first half of vzipq_f32 has the same lanes.
+	//////////////////////////////////////////////////////////////////////////
+	#define RTM_MATRIXF_TRANSPOSE_2X2(input_xy0, input_xy1, output_xx, output_yy) \
+		do { \
+			const float32x4_t x0x1y0y1 = vzipq_f32((input_xy0), (input_xy1)).val[0]; \
 			(output_xx) = x0x1y0y1; \
 			(output_yy) = vextq_f32(x0x1y0y1, x0x1y0y1, 2); \
 		} while(0)

@@ -1465,10 +1465,16 @@ namespace rtm
 		// A positive input will round towards zero and be lower when we need it to be greater.
 		uint32x4_t is_positive = vcltq_f32(integer_part, input);
 
-		float32x4_t bias = vcvtq_f32_s32(is_positive);
+		// Convert our mask to a float, ~0 yields -1.0 since it is a valid signed integer
+		float32x4_t bias = vcvtq_f32_s32(vreinterpretq_s32_u32(is_positive));
 
 		// Subtract our bias to properly handle positive values
 		integer_part = vsubq_f32(integer_part, bias);
+
+		// Keep the sign of the input as the other code paths do, thus floor(-0.0) = -0.0 and ceil(-0.5) = -0.0
+		const uint32x4_t sign_mask = vreinterpretq_u32_f32(vdupq_n_f32(-0.0F));
+		const uint32x4_t sign = vandq_u32(vreinterpretq_u32_f32(input), sign_mask);
+		integer_part = vreinterpretq_f32_u32(vorrq_u32(vreinterpretq_u32_f32(integer_part), sign));
 
 		return vbslq_f32(use_original_input, input, integer_part);
 #else
@@ -1546,10 +1552,16 @@ namespace rtm
 		// A negative input will round towards zero and be greater when we need it to be smaller.
 		uint32x4_t is_negative = vcgtq_f32(integer_part, input);
 
-		float32x4_t bias = vcvtq_f32_s32(is_negative);
+		// Convert our mask to a float, ~0 yields -1.0 since it is a valid signed integer
+		float32x4_t bias = vcvtq_f32_s32(vreinterpretq_s32_u32(is_negative));
 
 		// Add our bias to properly handle negative values
 		integer_part = vaddq_f32(integer_part, bias);
+
+		// Keep the sign of the input as the other code paths do, thus floor(-0.0) = -0.0 and ceil(-0.5) = -0.0
+		const uint32x4_t sign_mask = vreinterpretq_u32_f32(vdupq_n_f32(-0.0F));
+		const uint32x4_t sign = vandq_u32(vreinterpretq_u32_f32(input), sign_mask);
+		integer_part = vreinterpretq_f32_u32(vorrq_u32(vreinterpretq_u32_f32(integer_part), sign));
 
 		return vbslq_f32(use_original_input, input, integer_part);
 #else
