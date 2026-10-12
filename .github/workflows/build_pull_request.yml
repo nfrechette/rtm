@@ -165,11 +165,11 @@ jobs:
         with:
           args: 'python3 make.py -ci -compiler ${{ matrix.compiler }} -config Release -cpu arm64 -nosimd -unit_test'
 
-  osx-14:
-    runs-on: macos-14
+  osx-15:
+    runs-on: macos-15
     strategy:
       matrix:
-        compiler: [xcode15, xcode16]
+        compiler: [xcode16, xcode26]
     steps:
       - name: Git checkout
         uses: actions/checkout@v4
