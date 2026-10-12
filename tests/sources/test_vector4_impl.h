@@ -1778,6 +1778,39 @@ void test_vector4_impl(const FloatType threshold)
 	}
 
 	{
+		// The round functions keep the sign of the input as std::round and std::nearbyint do
+		// The large value has no fractional part, and a conversion to an integer overflows for it
+		const FloatType round_inputs[2][4] =
+		{
+			{ FloatType(-0.0), FloatType(-0.3), FloatType(-0.5), FloatType(-2.5) },
+			{ FloatType(-0.7), FloatType(0.5), FloatType(1.0e30), FloatType(-1.0e30) },
+		};
+
+		for (const FloatType* inputs : round_inputs)
+		{
+			const Vector4Type input_v = vector_set(inputs[0], inputs[1], inputs[2], inputs[3]);
+
+			FloatType symmetric_result[4];
+			FloatType bankers_result[4];
+			vector_store(vector_round_symmetric(input_v), &symmetric_result[0]);
+			vector_store(vector_round_bankers(input_v), &bankers_result[0]);
+
+			for (uint32_t lane_index = 0; lane_index < 4; ++lane_index)
+			{
+				INFO("input: " << inputs[lane_index]);
+
+				const FloatType ref_symmetric = std::round(inputs[lane_index]);
+				const FloatType ref_bankers = std::nearbyint(inputs[lane_index]);
+
+				CHECK(symmetric_result[lane_index] == ref_symmetric);
+				CHECK(std::signbit(symmetric_result[lane_index]) == std::signbit(ref_symmetric));
+				CHECK(bankers_result[lane_index] == ref_bankers);
+				CHECK(std::signbit(bankers_result[lane_index]) == std::signbit(ref_bankers));
+			}
+		}
+	}
+
+	{
 		const FloatType half_pi = FloatType(rtm::constants::half_pi());
 		const FloatType pi = FloatType(rtm::constants::pi());
 
