@@ -78,6 +78,8 @@ namespace rtm
 	{
 #if defined(RTM_SSE2_INTRINSICS)
 		return quatd{ input.xy, input.zw };
+#elif defined(RTM_NEON64_INTRINSICS)
+		return quatd{ vgetq_lane_f64(input.xy, 0), vgetq_lane_f64(input.xy, 1), vgetq_lane_f64(input.zw, 0), vgetq_lane_f64(input.zw, 1) };
 #else
 		return quatd{ input.x, input.y, input.z, input.w };
 #endif
@@ -1177,6 +1179,12 @@ namespace rtm
 		__m128d xy = RTM_VECTOR2D_SELECT(mask.xy, if_true.xy, if_false.xy);
 		__m128d zw = RTM_VECTOR2D_SELECT(mask.zw, if_true.zw, if_false.zw);
 		return quatd{ xy, zw };
+#elif defined(RTM_NEON64_INTRINSICS)
+		const uint64_t mask_x = vgetq_lane_u64(mask.xy, 0);
+		const uint64_t mask_y = vgetq_lane_u64(mask.xy, 1);
+		const uint64_t mask_z = vgetq_lane_u64(mask.zw, 0);
+		const uint64_t mask_w = vgetq_lane_u64(mask.zw, 1);
+		return quatd{ rtm_impl::select(mask_x, if_true.x, if_false.x), rtm_impl::select(mask_y, if_true.y, if_false.y), rtm_impl::select(mask_z, if_true.z, if_false.z), rtm_impl::select(mask_w, if_true.w, if_false.w) };
 #else
 		return quatd{ rtm_impl::select(mask.x, if_true.x, if_false.x), rtm_impl::select(mask.y, if_true.y, if_false.y), rtm_impl::select(mask.z, if_true.z, if_false.z), rtm_impl::select(mask.w, if_true.w, if_false.w) };
 #endif

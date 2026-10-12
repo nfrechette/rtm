@@ -30,6 +30,7 @@
 #include "rtm/version.h"
 #include "rtm/impl/bit_cast.impl.h"
 #include "rtm/impl/compiler_utils.h"
+#include "rtm/impl/macros.mask4.impl.h"
 #include "rtm/impl/memory_utils.h"
 #include "rtm/impl/vector_common.h"
 
@@ -54,6 +55,8 @@ namespace rtm
 	{
 #if defined(RTM_SSE2_INTRINSICS)
 		return vector4d{ _mm_loadu_pd(input), _mm_loadu_pd(input + 2) };
+#elif defined(RTM_NEON64_INTRINSICS)
+		return vector4d{ vld1q_f64(input), vld1q_f64(input + 2) };
 #else
 		return vector_set(input[0], input[1], input[2], input[3]);
 #endif
@@ -67,6 +70,9 @@ namespace rtm
 #if defined(RTM_SSE2_INTRINSICS)
 		const __m128d zero = _mm_setzero_pd();
 		return vector4d{ _mm_loadl_pd(zero, input), zero };
+#elif defined(RTM_NEON64_INTRINSICS)
+		const float64x2_t zero = vdupq_n_f64(0.0);
+		return vector4d{ vld1q_lane_f64(input, zero, 0), zero };
 #else
 		return vector_set(input[0], 0.0, 0.0, 0.0);
 #endif
@@ -79,6 +85,8 @@ namespace rtm
 	{
 #if defined(RTM_SSE2_INTRINSICS)
 		return vector4d{ _mm_loadu_pd(input), _mm_setzero_pd() };
+#elif defined(RTM_NEON64_INTRINSICS)
+		return vector4d{ vld1q_f64(input), vdupq_n_f64(0.0) };
 #else
 		return vector_set(input[0], input[1], 0.0, 0.0);
 #endif
@@ -92,6 +100,9 @@ namespace rtm
 #if defined(RTM_SSE2_INTRINSICS)
 		const __m128d zero = _mm_setzero_pd();
 		return vector4d{ _mm_loadu_pd(input), _mm_loadl_pd(zero, input + 2) };
+#elif defined(RTM_NEON64_INTRINSICS)
+		const float64x2_t zero = vdupq_n_f64(0.0);
+		return vector4d{ vld1q_f64(input), vld1q_lane_f64(input + 2, zero, 0) };
 #else
 		return vector_set(input[0], input[1], input[2], 0.0);
 #endif
@@ -104,6 +115,8 @@ namespace rtm
 	{
 #if defined(RTM_SSE2_INTRINSICS)
 		return vector4d{ _mm_loadu_pd(&input->x), _mm_loadu_pd(&input->z) };
+#elif defined(RTM_NEON64_INTRINSICS)
+		return vector4d{ vld1q_f64(&input->x), vld1q_f64(&input->z) };
 #else
 		return vector_set(input->x, input->y, input->z, input->w);
 #endif
@@ -116,6 +129,8 @@ namespace rtm
 	{
 #if defined(RTM_SSE2_INTRINSICS)
 		return vector4d{ _mm_loadu_pd(&input->x), _mm_setzero_pd() };
+#elif defined(RTM_NEON64_INTRINSICS)
+		return vector4d{ vld1q_f64(&input->x), vdupq_n_f64(0.0) };
 #else
 		return vector_set(input->x, input->y, 0.0, 0.0);
 #endif
@@ -129,6 +144,9 @@ namespace rtm
 #if defined(RTM_SSE2_INTRINSICS)
 		const __m128d zero = _mm_setzero_pd();
 		return vector4d{ _mm_loadu_pd(&input->x), _mm_loadl_pd(zero, &input->z) };
+#elif defined(RTM_NEON64_INTRINSICS)
+		const float64x2_t zero = vdupq_n_f64(0.0);
+		return vector4d{ vld1q_f64(&input->x), vld1q_lane_f64(&input->z, zero, 0) };
 #else
 		return vector_set(input->x, input->y, input->z, 0.0);
 #endif
@@ -142,6 +160,9 @@ namespace rtm
 #if defined(RTM_SSE2_INTRINSICS)
 		const __m128d value = _mm_load1_pd(input);
 		return vector4d{ value, value };
+#elif defined(RTM_NEON64_INTRINSICS)
+		const float64x2_t value = vld1q_dup_f64(input);
+		return vector4d{ value, value };
 #else
 		return vector_set(*input);
 #endif
@@ -154,6 +175,8 @@ namespace rtm
 	{
 #if defined(RTM_SSE2_INTRINSICS)
 		return vector4d{ input.xy, input.zw };
+#elif defined(RTM_NEON64_INTRINSICS)
+		return vector_set(input.x, input.y, input.z, input.w);
 #else
 		return vector4d{ input.x, input.y, input.z, input.w };
 #endif
@@ -166,6 +189,8 @@ namespace rtm
 	{
 #if defined(RTM_SSE2_INTRINSICS)
 		return vector4d{ _mm_cvtps_pd(input), _mm_cvtps_pd(_mm_shuffle_ps(input, input, _MM_SHUFFLE(3, 2, 3, 2))) };
+#elif defined(RTM_NEON64_INTRINSICS)
+		return vector4d{ vcvt_f64_f32(vget_low_f32(input)), vcvt_high_f64_f32(input) };
 #elif defined(RTM_NEON_INTRINSICS)
 		return vector4d{ double(vgetq_lane_f32(input, 0)), double(vgetq_lane_f32(input, 1)), double(vgetq_lane_f32(input, 2)), double(vgetq_lane_f32(input, 3)) };
 #else
@@ -187,6 +212,8 @@ namespace rtm
 			{
 #if defined(RTM_SSE2_INTRINSICS)
 				return _mm_cvtsd_f64(input.xy);
+#elif defined(RTM_NEON64_INTRINSICS)
+				return vgetq_lane_f64(input.xy, 0);
 #else
 				return input.x;
 #endif
@@ -238,6 +265,8 @@ namespace rtm
 			{
 #if defined(RTM_SSE2_INTRINSICS)
 				return _mm_cvtsd_f64(_mm_shuffle_pd(input.xy, input.xy, _MM_SHUFFLE2(0, 1)));
+#elif defined(RTM_NEON64_INTRINSICS)
+				return vgetq_lane_f64(input.xy, 1);
 #else
 				return input.y;
 #endif
@@ -289,6 +318,8 @@ namespace rtm
 			{
 #if defined(RTM_SSE2_INTRINSICS)
 				return _mm_cvtsd_f64(input.zw);
+#elif defined(RTM_NEON64_INTRINSICS)
+				return vgetq_lane_f64(input.zw, 0);
 #else
 				return input.z;
 #endif
@@ -340,6 +371,8 @@ namespace rtm
 			{
 #if defined(RTM_SSE2_INTRINSICS)
 				return _mm_cvtsd_f64(_mm_shuffle_pd(input.zw, input.zw, _MM_SHUFFLE2(0, 1)));
+#elif defined(RTM_NEON64_INTRINSICS)
+				return vgetq_lane_f64(input.zw, 1);
 #else
 				return input.w;
 #endif
@@ -651,6 +684,8 @@ namespace rtm
 	{
 #if defined(RTM_SSE2_INTRINSICS)
 		return vector4d{ _mm_move_sd(input.xy, _mm_set_sd(lane_value)), input.zw };
+#elif defined(RTM_NEON64_INTRINSICS)
+		return vector4d{ vsetq_lane_f64(lane_value, input.xy, 0), input.zw };
 #else
 		return vector4d{ lane_value, input.y, input.z, input.w };
 #endif
@@ -673,6 +708,8 @@ namespace rtm
 	{
 #if defined(RTM_SSE2_INTRINSICS)
 		return vector4d{ _mm_shuffle_pd(input.xy, _mm_set_sd(lane_value), _MM_SHUFFLE2(0, 0)), input.zw };
+#elif defined(RTM_NEON64_INTRINSICS)
+		return vector4d{ vsetq_lane_f64(lane_value, input.xy, 1), input.zw };
 #else
 		return vector4d{ input.x, lane_value, input.z, input.w };
 #endif
@@ -695,6 +732,8 @@ namespace rtm
 	{
 #if defined(RTM_SSE2_INTRINSICS)
 		return vector4d{ input.xy, _mm_move_sd(input.zw, _mm_set_sd(lane_value)) };
+#elif defined(RTM_NEON64_INTRINSICS)
+		return vector4d{ input.xy, vsetq_lane_f64(lane_value, input.zw, 0) };
 #else
 		return vector4d{ input.x, input.y, lane_value, input.w };
 #endif
@@ -717,6 +756,8 @@ namespace rtm
 	{
 #if defined(RTM_SSE2_INTRINSICS)
 		return vector4d{ input.xy, _mm_shuffle_pd(input.zw, _mm_set_sd(lane_value), _MM_SHUFFLE2(0, 0)) };
+#elif defined(RTM_NEON64_INTRINSICS)
+		return vector4d{ input.xy, vsetq_lane_f64(lane_value, input.zw, 1) };
 #else
 		return vector4d{ input.x, input.y, input.z, lane_value };
 #endif
@@ -934,6 +975,9 @@ namespace rtm
 #if defined(RTM_SSE2_INTRINSICS)
 		_mm_storeu_pd(output, input.xy);
 		_mm_storeu_pd(output + 2, input.zw);
+#elif defined(RTM_NEON64_INTRINSICS)
+		vst1q_f64(output, input.xy);
+		vst1q_f64(output + 2, input.zw);
 #else
 		output[0] = vector_get_x(input);
 		output[1] = vector_get_y(input);
@@ -949,6 +993,8 @@ namespace rtm
 	{
 #if defined(RTM_SSE2_INTRINSICS)
 		_mm_store_sd(output, input.xy);
+#elif defined(RTM_NEON64_INTRINSICS)
+		vst1q_lane_f64(output, input.xy, 0);
 #else
 		output[0] = vector_get_x(input);
 #endif
@@ -961,6 +1007,8 @@ namespace rtm
 	{
 #if defined(RTM_SSE2_INTRINSICS)
 		_mm_storeu_pd(output, input.xy);
+#elif defined(RTM_NEON64_INTRINSICS)
+		vst1q_f64(output, input.xy);
 #else
 		output[0] = vector_get_x(input);
 		output[1] = vector_get_y(input);
@@ -975,6 +1023,9 @@ namespace rtm
 #if defined(RTM_SSE2_INTRINSICS)
 		_mm_storeu_pd(output, input.xy);
 		_mm_store_sd(output + 2, input.zw);
+#elif defined(RTM_NEON64_INTRINSICS)
+		vst1q_f64(output, input.xy);
+		vst1q_lane_f64(output + 2, input.zw, 0);
 #else
 		output[0] = vector_get_x(input);
 		output[1] = vector_get_y(input);
@@ -990,6 +1041,9 @@ namespace rtm
 #if defined(RTM_SSE2_INTRINSICS)
 		_mm_storeu_pd(rtm_impl::bit_cast<double*>(output), input.xy);
 		_mm_storeu_pd(rtm_impl::bit_cast<double*>(output) + 2, input.zw);
+#elif defined(RTM_NEON64_INTRINSICS)
+		vst1q_u8(output, vreinterpretq_u8_f64(input.xy));
+		vst1q_u8(output + 16, vreinterpretq_u8_f64(input.zw));
 #else
 		std::memcpy(output, &input, sizeof(vector4d));
 #endif
@@ -1002,6 +1056,8 @@ namespace rtm
 	{
 #if defined(RTM_SSE2_INTRINSICS)
 		_mm_store_sd(rtm_impl::bit_cast<double*>(output), input.xy);
+#elif defined(RTM_NEON64_INTRINSICS)
+		vst1_u8(output, vreinterpret_u8_f64(vget_low_f64(input.xy)));
 #else
 		std::memcpy(output, &input, sizeof(double) * 1);
 #endif
@@ -1014,6 +1070,8 @@ namespace rtm
 	{
 #if defined(RTM_SSE2_INTRINSICS)
 		_mm_storeu_pd(rtm_impl::bit_cast<double*>(output), input.xy);
+#elif defined(RTM_NEON64_INTRINSICS)
+		vst1q_u8(output, vreinterpretq_u8_f64(input.xy));
 #else
 		std::memcpy(output, &input, sizeof(double) * 2);
 #endif
@@ -1027,6 +1085,9 @@ namespace rtm
 #if defined(RTM_SSE2_INTRINSICS)
 		_mm_storeu_pd(rtm_impl::bit_cast<double*>(output), input.xy);
 		_mm_store_sd(rtm_impl::bit_cast<double*>(output) + 2, input.zw);
+#elif defined(RTM_NEON64_INTRINSICS)
+		vst1q_u8(output, vreinterpretq_u8_f64(input.xy));
+		vst1_u8(output + 16, vreinterpret_u8_f64(vget_low_f64(input.zw)));
 #else
 		std::memcpy(output, &input, sizeof(double) * 3);
 #endif
@@ -1040,6 +1101,9 @@ namespace rtm
 #if defined(RTM_SSE2_INTRINSICS)
 		_mm_storeu_pd(&output->x, input.xy);
 		_mm_storeu_pd(&output->z, input.zw);
+#elif defined(RTM_NEON64_INTRINSICS)
+		vst1q_f64(&output->x, input.xy);
+		vst1q_f64(&output->z, input.zw);
 #else
 		output->x = vector_get_x(input);
 		output->y = vector_get_y(input);
@@ -1055,6 +1119,8 @@ namespace rtm
 	{
 #if defined(RTM_SSE2_INTRINSICS)
 		_mm_storeu_pd(&output->x, input.xy);
+#elif defined(RTM_NEON64_INTRINSICS)
+		vst1q_f64(&output->x, input.xy);
 #else
 		output->x = vector_get_x(input);
 		output->y = vector_get_y(input);
@@ -1069,6 +1135,9 @@ namespace rtm
 #if defined(RTM_SSE2_INTRINSICS)
 		_mm_storeu_pd(&output->x, input.xy);
 		_mm_store_sd(&output->z, input.zw);
+#elif defined(RTM_NEON64_INTRINSICS)
+		vst1q_f64(&output->x, input.xy);
+		vst1q_lane_f64(&output->z, input.zw, 0);
 #else
 		output->x = vector_get_x(input);
 		output->y = vector_get_y(input);
@@ -1090,6 +1159,8 @@ namespace rtm
 	{
 #if defined(RTM_SSE2_INTRINSICS)
 		return vector4d{ _mm_add_pd(lhs.xy, rhs.xy), _mm_add_pd(lhs.zw, rhs.zw) };
+#elif defined(RTM_NEON64_INTRINSICS)
+		return vector4d{ vaddq_f64(lhs.xy, rhs.xy), vaddq_f64(lhs.zw, rhs.zw) };
 #else
 		return vector_set(lhs.x + rhs.x, lhs.y + rhs.y, lhs.z + rhs.z, lhs.w + rhs.w);
 #endif
@@ -1102,6 +1173,8 @@ namespace rtm
 	{
 #if defined(RTM_SSE2_INTRINSICS)
 		return vector4d{ _mm_sub_pd(lhs.xy, rhs.xy), _mm_sub_pd(lhs.zw, rhs.zw) };
+#elif defined(RTM_NEON64_INTRINSICS)
+		return vector4d{ vsubq_f64(lhs.xy, rhs.xy), vsubq_f64(lhs.zw, rhs.zw) };
 #else
 		return vector_set(lhs.x - rhs.x, lhs.y - rhs.y, lhs.z - rhs.z, lhs.w - rhs.w);
 #endif
@@ -1114,6 +1187,8 @@ namespace rtm
 	{
 #if defined(RTM_SSE2_INTRINSICS)
 		return vector4d{ _mm_mul_pd(lhs.xy, rhs.xy), _mm_mul_pd(lhs.zw, rhs.zw) };
+#elif defined(RTM_NEON64_INTRINSICS)
+		return vector4d{ vmulq_f64(lhs.xy, rhs.xy), vmulq_f64(lhs.zw, rhs.zw) };
 #else
 		return vector_set(lhs.x * rhs.x, lhs.y * rhs.y, lhs.z * rhs.z, lhs.w * rhs.w);
 #endif
@@ -1145,6 +1220,8 @@ namespace rtm
 	{
 #if defined(RTM_SSE2_INTRINSICS)
 		return vector4d{ _mm_div_pd(lhs.xy, rhs.xy), _mm_div_pd(lhs.zw, rhs.zw) };
+#elif defined(RTM_NEON64_INTRINSICS)
+		return vector4d{ vdivq_f64(lhs.xy, rhs.xy), vdivq_f64(lhs.zw, rhs.zw) };
 #else
 		return vector_set(lhs.x / rhs.x, lhs.y / rhs.y, lhs.z / rhs.z, lhs.w / rhs.w);
 #endif
@@ -1157,6 +1234,8 @@ namespace rtm
 	{
 #if defined(RTM_SSE2_INTRINSICS)
 		return vector4d{ _mm_max_pd(lhs.xy, rhs.xy), _mm_max_pd(lhs.zw, rhs.zw) };
+#elif defined(RTM_NEON64_INTRINSICS)
+		return vector4d{ vmaxq_f64(lhs.xy, rhs.xy), vmaxq_f64(lhs.zw, rhs.zw) };
 #else
 		return vector_set(scalar_max(lhs.x, rhs.x), scalar_max(lhs.y, rhs.y), scalar_max(lhs.z, rhs.z), scalar_max(lhs.w, rhs.w));
 #endif
@@ -1169,6 +1248,8 @@ namespace rtm
 	{
 #if defined(RTM_SSE2_INTRINSICS)
 		return vector4d{ _mm_min_pd(lhs.xy, rhs.xy), _mm_min_pd(lhs.zw, rhs.zw) };
+#elif defined(RTM_NEON64_INTRINSICS)
+		return vector4d{ vminq_f64(lhs.xy, rhs.xy), vminq_f64(lhs.zw, rhs.zw) };
 #else
 		return vector_set(scalar_min(lhs.x, rhs.x), scalar_min(lhs.y, rhs.y), scalar_min(lhs.z, rhs.z), scalar_min(lhs.w, rhs.w));
 #endif
@@ -1190,6 +1271,8 @@ namespace rtm
 #if defined(RTM_SSE2_INTRINSICS)
 		const __m128d abs_mask = _mm_castsi128_pd(_mm_set_epi64x(0x7FFFFFFFFFFFFFFFULL, 0x7FFFFFFFFFFFFFFFULL));
 		return vector4d{ _mm_and_pd(input.xy, abs_mask), _mm_and_pd(input.zw, abs_mask) };
+#elif defined(RTM_NEON64_INTRINSICS)
+		return vector4d{ vabsq_f64(input.xy), vabsq_f64(input.zw) };
 #else
 		return vector_set(scalar_abs(input.x), scalar_abs(input.y), scalar_abs(input.z), scalar_abs(input.w));
 #endif
@@ -1203,6 +1286,8 @@ namespace rtm
 #if defined(RTM_SSE2_INTRINSICS)
 		constexpr __m128d signs = RTM_VECTOR2D_MAKE(-0.0, -0.0);
 		return vector4d{ _mm_xor_pd(input.xy, signs), _mm_xor_pd(input.zw, signs) };
+#elif defined(RTM_NEON64_INTRINSICS)
+		return vector4d{ vnegq_f64(input.xy), vnegq_f64(input.zw) };
 #else
 		return vector_mul(input, -1.0);
 #endif
@@ -1219,6 +1304,19 @@ namespace rtm
 		constexpr __m128d signs_xy = RTM_VECTOR2D_MAKE(x ? -0.0 : 0.0, y ? -0.0 : 0.0);
 		constexpr __m128d signs_zw = RTM_VECTOR2D_MAKE(z ? -0.0 : 0.0, w ? -0.0 : 0.0);
 		return vector4d{ _mm_xor_pd(input.xy, signs_xy), _mm_xor_pd(input.zw, signs_zw) };
+#elif defined(RTM_NEON64_INTRINSICS)
+		alignas(16) constexpr uint64_t sign_bit_i[4] =
+		{
+			x ? 0x8000000000000000ULL : 0,
+			y ? 0x8000000000000000ULL : 0,
+			z ? 0x8000000000000000ULL : 0,
+			w ? 0x8000000000000000ULL : 0,
+		};
+		const uint64x2_t sign_bit_xy = vld1q_u64(&sign_bit_i[0]);
+		const uint64x2_t sign_bit_zw = vld1q_u64(&sign_bit_i[2]);
+		const float64x2_t xy = vreinterpretq_f64_u64(veorq_u64(vreinterpretq_u64_f64(input.xy), sign_bit_xy));
+		const float64x2_t zw = vreinterpretq_f64_u64(veorq_u64(vreinterpretq_u64_f64(input.zw), sign_bit_zw));
+		return vector4d{ xy, zw };
 #else
 		const vector4d signs = vector_set(x ? -1.0 : 1.0, y ? -1.0 : 1.0, z ? -1.0 : 1.0, w ? -1.0 : 1.0);
 		return vector_mul(input, signs);
@@ -1245,6 +1343,8 @@ namespace rtm
 	{
 #if defined(RTM_SSE2_INTRINSICS)
 		return vector4d{ _mm_sqrt_pd(input.xy), _mm_sqrt_pd(input.zw) };
+#elif defined(RTM_NEON64_INTRINSICS) && defined(RTM_IMPL_VSQRT_SUPPORTED)
+		return vector4d{ vsqrtq_f64(input.xy), vsqrtq_f64(input.zw) };
 #else
 		scalard x = vector_get_x(input);
 		scalard y = vector_get_y(input);
@@ -1320,6 +1420,8 @@ namespace rtm
 		__m128d result_xy = _mm_or_pd(_mm_and_pd(use_original_input_xy, input.xy), _mm_andnot_pd(use_original_input_xy, integer_part_xy));
 		__m128d result_zw = _mm_or_pd(_mm_and_pd(use_original_input_zw, input.zw), _mm_andnot_pd(use_original_input_zw, integer_part_zw));
 		return vector4d{ result_xy, result_zw };
+#elif defined(RTM_NEON64_INTRINSICS)
+		return vector4d{ vrndpq_f64(input.xy), vrndpq_f64(input.zw) };
 #else
 		return vector_set(scalar_ceil(vector_get_x(input)), scalar_ceil(vector_get_y(input)), scalar_ceil(vector_get_z(input)), scalar_ceil(vector_get_w(input)));
 #endif
@@ -1378,6 +1480,8 @@ namespace rtm
 		__m128d result_xy = _mm_or_pd(_mm_and_pd(use_original_input_xy, input.xy), _mm_andnot_pd(use_original_input_xy, integer_part_xy));
 		__m128d result_zw = _mm_or_pd(_mm_and_pd(use_original_input_zw, input.zw), _mm_andnot_pd(use_original_input_zw, integer_part_zw));
 		return vector4d{ result_xy, result_zw };
+#elif defined(RTM_NEON64_INTRINSICS)
+		return vector4d{ vrndmq_f64(input.xy), vrndmq_f64(input.zw) };
 #else
 		return vector_set(scalar_floor(vector_get_x(input)), scalar_floor(vector_get_y(input)), scalar_floor(vector_get_z(input)), scalar_floor(vector_get_w(input)));
 #endif
@@ -1401,6 +1505,18 @@ namespace rtm
 		// cross(a, b) = ((a * b.yzx) - (a.yzx * b)).yzx
 		__m128d result_xy = _mm_shuffle_pd(tmp_zx, tmp_y, _MM_SHUFFLE2(0, 1));
 		__m128d result_z = tmp_zx;
+		return vector4d{ result_xy, result_z };
+#elif defined(RTM_NEON64_INTRINSICS)
+		// cross(a, b).zxy = (a * b.yzx) - (a.yzx * b)
+		float64x2_t lhs_yz = vextq_f64(lhs.xy, lhs.zw, 1);
+		float64x2_t rhs_yz = vextq_f64(rhs.xy, rhs.zw, 1);
+
+		float64x2_t tmp_zx = vsubq_f64(vmulq_f64(lhs.xy, rhs_yz), vmulq_f64(lhs_yz, rhs.xy));
+		float64x2_t tmp_y = vsubq_f64(vmulq_f64(lhs.zw, rhs.xy), vmulq_f64(lhs.xy, rhs.zw));
+
+		// cross(a, b) = ((a * b.yzx) - (a.yzx * b)).yzx
+		float64x2_t result_xy = vextq_f64(tmp_zx, tmp_y, 1);
+		float64x2_t result_z = tmp_zx;
 		return vector4d{ result_xy, result_z };
 #else
 		// cross(a, b) = (a.yzx * b.zxy) - (a.zxy * b.yzx)
@@ -1433,6 +1549,11 @@ namespace rtm
 				const __m128d y2w2 = _mm_shuffle_pd(x2z2_y2w2, x2z2_y2w2, _MM_SHUFFLE2(1, 1));
 				const __m128d x2y2z2w2 = _mm_add_pd(x2z2_y2w2, y2w2);
 				return _mm_cvtsd_f64(x2y2z2w2);
+#elif defined(RTM_NEON64_INTRINSICS)
+				const float64x2_t x2_y2 = vmulq_f64(lhs.xy, rhs.xy);
+				const float64x2_t z2_w2 = vmulq_f64(lhs.zw, rhs.zw);
+				const float64x2_t x2z2_y2w2 = vaddq_f64(x2_y2, z2_w2);
+				return vgetq_lane_f64(x2z2_y2w2, 0) + vgetq_lane_f64(x2z2_y2w2, 1);
 #else
 				const scalard lhs_x = vector_get_x_as_scalar(lhs);
 				const scalard lhs_y = vector_get_y_as_scalar(lhs);
@@ -1495,6 +1616,11 @@ namespace rtm
 		const __m128d y2w2 = _mm_shuffle_pd(x2z2_y2w2, x2z2_y2w2, _MM_SHUFFLE2(1, 1));
 		const __m128d x2y2z2w2 = _mm_add_pd(x2z2_y2w2, y2w2);
 		return scalard{ x2y2z2w2 };
+#elif defined(RTM_NEON64_INTRINSICS)
+		const float64x2_t x2_y2 = vmulq_f64(lhs.xy, rhs.xy);
+		const float64x2_t z2_w2 = vmulq_f64(lhs.zw, rhs.zw);
+		const float64x2_t x2z2_y2w2 = vaddq_f64(x2_y2, z2_w2);
+		return vgetq_lane_f64(x2z2_y2w2, 0) + vgetq_lane_f64(x2z2_y2w2, 1);
 #else
 		const scalard lhs_x = vector_get_x_as_scalar(lhs);
 		const scalard lhs_y = vector_get_y_as_scalar(lhs);
@@ -1536,6 +1662,9 @@ namespace rtm
 				__m128d x2_y2 = _mm_mul_pd(lhs.xy, rhs.xy);
 				__m128d y2 = _mm_shuffle_pd(x2_y2, x2_y2, _MM_SHUFFLE2(0, 1));
 				return _mm_cvtsd_f64(_mm_add_sd(x2_y2, y2));
+#elif defined(RTM_NEON64_INTRINSICS)
+				const float64x2_t x2_y2 = vmulq_f64(lhs.xy, rhs.xy);
+				return vgetq_lane_f64(x2_y2, 0) + vgetq_lane_f64(x2_y2, 1);
 #else
 				return (vector_get_x(lhs) * vector_get_x(rhs)) + (vector_get_y(lhs) * vector_get_y(rhs));
 #endif
@@ -1611,6 +1740,10 @@ namespace rtm
 				__m128d y2 = _mm_shuffle_pd(x2_y2, x2_y2, _MM_SHUFFLE2(0, 1));
 				__m128d x2y2 = _mm_add_sd(x2_y2, y2);
 				return _mm_cvtsd_f64(_mm_add_sd(x2y2, z2_w2));
+#elif defined(RTM_NEON64_INTRINSICS)
+				const float64x2_t x2_y2 = vmulq_f64(lhs.xy, rhs.xy);
+				const float64x2_t z2_w2 = vmulq_f64(lhs.zw, rhs.zw);
+				return (vgetq_lane_f64(x2_y2, 0) + vgetq_lane_f64(x2_y2, 1)) + vgetq_lane_f64(z2_w2, 0);
 #else
 				return (vector_get_x(lhs) * vector_get_x(rhs)) + (vector_get_y(lhs) * vector_get_y(rhs)) + (vector_get_z(lhs) * vector_get_z(rhs));
 #endif
@@ -2104,7 +2237,11 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE vector4d RTM_SIMD_CALL vector_mul_add(vector4d_arg0 v0, vector4d_arg1 v1, vector4d_arg2 v2) RTM_NO_EXCEPT
 	{
+#if defined(RTM_NEON64_INTRINSICS)
+		return vector4d{ vfmaq_f64(v2.xy, v0.xy, v1.xy), vfmaq_f64(v2.zw, v0.zw, v1.zw) };
+#else
 		return vector_add(vector_mul(v0, v1), v2);
+#endif
 	}
 
 	//////////////////////////////////////////////////////////////////////////
@@ -2112,7 +2249,12 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE vector4d RTM_SIMD_CALL vector_mul_add(vector4d_arg0 v0, double s1, vector4d_arg2 v2) RTM_NO_EXCEPT
 	{
+#if defined(RTM_NEON64_INTRINSICS)
+		const float64x2_t s1_xx = vdupq_n_f64(s1);
+		return vector4d{ vfmaq_f64(v2.xy, v0.xy, s1_xx), vfmaq_f64(v2.zw, v0.zw, s1_xx) };
+#else
 		return vector_add(vector_mul(v0, s1), v2);
+#endif
 	}
 
 #if defined(RTM_SSE2_INTRINSICS)
@@ -2131,7 +2273,11 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE vector4d RTM_SIMD_CALL vector_neg_mul_sub(vector4d_arg0 v0, vector4d_arg1 v1, vector4d_arg2 v2) RTM_NO_EXCEPT
 	{
+#if defined(RTM_NEON64_INTRINSICS)
+		return vector4d{ vfmsq_f64(v2.xy, v0.xy, v1.xy), vfmsq_f64(v2.zw, v0.zw, v1.zw) };
+#else
 		return vector_sub(v2, vector_mul(v0, v1));
+#endif
 	}
 
 	//////////////////////////////////////////////////////////////////////////
@@ -2140,7 +2286,12 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE vector4d RTM_SIMD_CALL vector_neg_mul_sub(vector4d_arg0 v0, double s1, vector4d_arg2 v2) RTM_NO_EXCEPT
 	{
+#if defined(RTM_NEON64_INTRINSICS)
+		const float64x2_t s1_xx = vdupq_n_f64(s1);
+		return vector4d{ vfmsq_f64(v2.xy, v0.xy, s1_xx), vfmsq_f64(v2.zw, v0.zw, s1_xx) };
+#else
 		return vector_sub(v2, vector_mul(v0, s1));
+#endif
 	}
 
 #if defined(RTM_SSE2_INTRINSICS)
@@ -2212,6 +2363,8 @@ namespace rtm
 		__m128d xy_lt_pd = _mm_cmpeq_pd(lhs.xy, rhs.xy);
 		__m128d zw_lt_pd = _mm_cmpeq_pd(lhs.zw, rhs.zw);
 		return mask4d{ xy_lt_pd, zw_lt_pd };
+#elif defined(RTM_NEON64_INTRINSICS)
+		return mask4d{ vceqq_f64(lhs.xy, rhs.xy), vceqq_f64(lhs.zw, rhs.zw) };
 #else
 		return mask4d{ rtm_impl::get_mask_value(lhs.x == rhs.x), rtm_impl::get_mask_value(lhs.y == rhs.y), rtm_impl::get_mask_value(lhs.z == rhs.z), rtm_impl::get_mask_value(lhs.w == rhs.w) };
 #endif
@@ -2226,6 +2379,12 @@ namespace rtm
 		__m128d xy_lt_pd = _mm_cmpneq_pd(lhs.xy, rhs.xy);
 		__m128d zw_lt_pd = _mm_cmpneq_pd(lhs.zw, rhs.zw);
 		return mask4d{ xy_lt_pd, zw_lt_pd };
+#elif defined(RTM_NEON64_INTRINSICS)
+		const uint64x2_t xy_eq = vceqq_f64(lhs.xy, rhs.xy);
+		const uint64x2_t zw_eq = vceqq_f64(lhs.zw, rhs.zw);
+		const uint64x2_t xy_neq = vreinterpretq_u64_u32(vmvnq_u32(vreinterpretq_u32_u64(xy_eq)));
+		const uint64x2_t zw_neq = vreinterpretq_u64_u32(vmvnq_u32(vreinterpretq_u32_u64(zw_eq)));
+		return mask4d{ xy_neq, zw_neq };
 #else
 		return mask4d{ rtm_impl::get_mask_value(lhs.x != rhs.x), rtm_impl::get_mask_value(lhs.y != rhs.y), rtm_impl::get_mask_value(lhs.z != rhs.z), rtm_impl::get_mask_value(lhs.w != rhs.w) };
 #endif
@@ -2240,6 +2399,8 @@ namespace rtm
 		__m128d xy_lt_pd = _mm_cmplt_pd(lhs.xy, rhs.xy);
 		__m128d zw_lt_pd = _mm_cmplt_pd(lhs.zw, rhs.zw);
 		return mask4d{xy_lt_pd, zw_lt_pd};
+#elif defined(RTM_NEON64_INTRINSICS)
+		return mask4d{ vcltq_f64(lhs.xy, rhs.xy), vcltq_f64(lhs.zw, rhs.zw) };
 #else
 		return mask4d{rtm_impl::get_mask_value(lhs.x < rhs.x), rtm_impl::get_mask_value(lhs.y < rhs.y), rtm_impl::get_mask_value(lhs.z < rhs.z), rtm_impl::get_mask_value(lhs.w < rhs.w)};
 #endif
@@ -2254,6 +2415,8 @@ namespace rtm
 		__m128d xy_lt_pd = _mm_cmple_pd(lhs.xy, rhs.xy);
 		__m128d zw_lt_pd = _mm_cmple_pd(lhs.zw, rhs.zw);
 		return mask4d{ xy_lt_pd, zw_lt_pd };
+#elif defined(RTM_NEON64_INTRINSICS)
+		return mask4d{ vcleq_f64(lhs.xy, rhs.xy), vcleq_f64(lhs.zw, rhs.zw) };
 #else
 		return mask4d{ rtm_impl::get_mask_value(lhs.x <= rhs.x), rtm_impl::get_mask_value(lhs.y <= rhs.y), rtm_impl::get_mask_value(lhs.z <= rhs.z), rtm_impl::get_mask_value(lhs.w <= rhs.w) };
 #endif
@@ -2268,6 +2431,8 @@ namespace rtm
 		__m128d xy_ge_pd = _mm_cmpgt_pd(lhs.xy, rhs.xy);
 		__m128d zw_ge_pd = _mm_cmpgt_pd(lhs.zw, rhs.zw);
 		return mask4d{ xy_ge_pd, zw_ge_pd };
+#elif defined(RTM_NEON64_INTRINSICS)
+		return mask4d{ vcgtq_f64(lhs.xy, rhs.xy), vcgtq_f64(lhs.zw, rhs.zw) };
 #else
 		return mask4d{ rtm_impl::get_mask_value(lhs.x > rhs.x), rtm_impl::get_mask_value(lhs.y > rhs.y), rtm_impl::get_mask_value(lhs.z > rhs.z), rtm_impl::get_mask_value(lhs.w > rhs.w) };
 #endif
@@ -2282,6 +2447,8 @@ namespace rtm
 		__m128d xy_ge_pd = _mm_cmpge_pd(lhs.xy, rhs.xy);
 		__m128d zw_ge_pd = _mm_cmpge_pd(lhs.zw, rhs.zw);
 		return mask4d{ xy_ge_pd, zw_ge_pd };
+#elif defined(RTM_NEON64_INTRINSICS)
+		return mask4d{ vcgeq_f64(lhs.xy, rhs.xy), vcgeq_f64(lhs.zw, rhs.zw) };
 #else
 		return mask4d{ rtm_impl::get_mask_value(lhs.x >= rhs.x), rtm_impl::get_mask_value(lhs.y >= rhs.y), rtm_impl::get_mask_value(lhs.z >= rhs.z), rtm_impl::get_mask_value(lhs.w >= rhs.w) };
 #endif
@@ -2296,6 +2463,8 @@ namespace rtm
 		__m128d xy_lt_pd = _mm_cmplt_pd(lhs.xy, rhs.xy);
 		__m128d zw_lt_pd = _mm_cmplt_pd(lhs.zw, rhs.zw);
 		return (_mm_movemask_pd(xy_lt_pd) & _mm_movemask_pd(zw_lt_pd)) == 3;
+#elif defined(RTM_NEON64_INTRINSICS)
+		return rtm_impl::mask4q_all_true(vcltq_f64(lhs.xy, rhs.xy), vcltq_f64(lhs.zw, rhs.zw));
 #else
 		return lhs.x < rhs.x && lhs.y < rhs.y && lhs.z < rhs.z && lhs.w < rhs.w;
 #endif
@@ -2309,6 +2478,8 @@ namespace rtm
 #if defined(RTM_SSE2_INTRINSICS)
 		__m128d xy_lt_pd = _mm_cmplt_pd(lhs.xy, rhs.xy);
 		return _mm_movemask_pd(xy_lt_pd) == 3;
+#elif defined(RTM_NEON64_INTRINSICS)
+		return rtm_impl::mask2q_all_true(vcltq_f64(lhs.xy, rhs.xy));
 #else
 		return lhs.x < rhs.x && lhs.y < rhs.y;
 #endif
@@ -2323,6 +2494,8 @@ namespace rtm
 		__m128d xy_lt_pd = _mm_cmplt_pd(lhs.xy, rhs.xy);
 		__m128d zw_lt_pd = _mm_cmplt_pd(lhs.zw, rhs.zw);
 		return _mm_movemask_pd(xy_lt_pd) == 3 && (_mm_movemask_pd(zw_lt_pd) & 1) == 1;
+#elif defined(RTM_NEON64_INTRINSICS)
+		return rtm_impl::mask4q_all_true3(vcltq_f64(lhs.xy, rhs.xy), vcltq_f64(lhs.zw, rhs.zw));
 #else
 		return lhs.x < rhs.x && lhs.y < rhs.y && lhs.z < rhs.z;
 #endif
@@ -2337,6 +2510,8 @@ namespace rtm
 		__m128d xy_lt_pd = _mm_cmplt_pd(lhs.xy, rhs.xy);
 		__m128d zw_lt_pd = _mm_cmplt_pd(lhs.zw, rhs.zw);
 		return (_mm_movemask_pd(xy_lt_pd) | _mm_movemask_pd(zw_lt_pd)) != 0;
+#elif defined(RTM_NEON64_INTRINSICS)
+		return rtm_impl::mask4q_any_true(vcltq_f64(lhs.xy, rhs.xy), vcltq_f64(lhs.zw, rhs.zw));
 #else
 		return lhs.x < rhs.x || lhs.y < rhs.y || lhs.z < rhs.z || lhs.w < rhs.w;
 #endif
@@ -2350,6 +2525,8 @@ namespace rtm
 #if defined(RTM_SSE2_INTRINSICS)
 		__m128d xy_lt_pd = _mm_cmplt_pd(lhs.xy, rhs.xy);
 		return _mm_movemask_pd(xy_lt_pd) != 0;
+#elif defined(RTM_NEON64_INTRINSICS)
+		return rtm_impl::mask2q_any_true(vcltq_f64(lhs.xy, rhs.xy));
 #else
 		return lhs.x < rhs.x || lhs.y < rhs.y;
 #endif
@@ -2364,6 +2541,8 @@ namespace rtm
 		__m128d xy_lt_pd = _mm_cmplt_pd(lhs.xy, rhs.xy);
 		__m128d zw_lt_pd = _mm_cmplt_pd(lhs.zw, rhs.zw);
 		return _mm_movemask_pd(xy_lt_pd) != 0 || (_mm_movemask_pd(zw_lt_pd) & 0x1) != 0;
+#elif defined(RTM_NEON64_INTRINSICS)
+		return rtm_impl::mask4q_any_true3(vcltq_f64(lhs.xy, rhs.xy), vcltq_f64(lhs.zw, rhs.zw));
 #else
 		return lhs.x < rhs.x || lhs.y < rhs.y || lhs.z < rhs.z;
 #endif
@@ -2378,6 +2557,8 @@ namespace rtm
 		__m128d xy_le_pd = _mm_cmple_pd(lhs.xy, rhs.xy);
 		__m128d zw_le_pd = _mm_cmple_pd(lhs.zw, rhs.zw);
 		return (_mm_movemask_pd(xy_le_pd) & _mm_movemask_pd(zw_le_pd)) == 3;
+#elif defined(RTM_NEON64_INTRINSICS)
+		return rtm_impl::mask4q_all_true(vcleq_f64(lhs.xy, rhs.xy), vcleq_f64(lhs.zw, rhs.zw));
 #else
 		return lhs.x <= rhs.x && lhs.y <= rhs.y && lhs.z <= rhs.z && lhs.w <= rhs.w;
 #endif
@@ -2391,6 +2572,8 @@ namespace rtm
 #if defined(RTM_SSE2_INTRINSICS)
 		__m128d xy_le_pd = _mm_cmple_pd(lhs.xy, rhs.xy);
 		return _mm_movemask_pd(xy_le_pd) == 3;
+#elif defined(RTM_NEON64_INTRINSICS)
+		return rtm_impl::mask2q_all_true(vcleq_f64(lhs.xy, rhs.xy));
 #else
 		return lhs.x <= rhs.x && lhs.y <= rhs.y;
 #endif
@@ -2405,6 +2588,8 @@ namespace rtm
 		__m128d xy_le_pd = _mm_cmple_pd(lhs.xy, rhs.xy);
 		__m128d zw_le_pd = _mm_cmple_pd(lhs.zw, rhs.zw);
 		return _mm_movemask_pd(xy_le_pd) == 3 && (_mm_movemask_pd(zw_le_pd) & 1) != 0;
+#elif defined(RTM_NEON64_INTRINSICS)
+		return rtm_impl::mask4q_all_true3(vcleq_f64(lhs.xy, rhs.xy), vcleq_f64(lhs.zw, rhs.zw));
 #else
 		return lhs.x <= rhs.x && lhs.y <= rhs.y && lhs.z <= rhs.z;
 #endif
@@ -2419,6 +2604,8 @@ namespace rtm
 		__m128d xy_le_pd = _mm_cmple_pd(lhs.xy, rhs.xy);
 		__m128d zw_le_pd = _mm_cmple_pd(lhs.zw, rhs.zw);
 		return (_mm_movemask_pd(xy_le_pd) | _mm_movemask_pd(zw_le_pd)) != 0;
+#elif defined(RTM_NEON64_INTRINSICS)
+		return rtm_impl::mask4q_any_true(vcleq_f64(lhs.xy, rhs.xy), vcleq_f64(lhs.zw, rhs.zw));
 #else
 		return lhs.x <= rhs.x || lhs.y <= rhs.y || lhs.z <= rhs.z || lhs.w <= rhs.w;
 #endif
@@ -2432,6 +2619,8 @@ namespace rtm
 #if defined(RTM_SSE2_INTRINSICS)
 		__m128d xy_le_pd = _mm_cmple_pd(lhs.xy, rhs.xy);
 		return _mm_movemask_pd(xy_le_pd) != 0;
+#elif defined(RTM_NEON64_INTRINSICS)
+		return rtm_impl::mask2q_any_true(vcleq_f64(lhs.xy, rhs.xy));
 #else
 		return lhs.x <= rhs.x || lhs.y <= rhs.y;
 #endif
@@ -2446,6 +2635,8 @@ namespace rtm
 		__m128d xy_le_pd = _mm_cmple_pd(lhs.xy, rhs.xy);
 		__m128d zw_le_pd = _mm_cmple_pd(lhs.zw, rhs.zw);
 		return _mm_movemask_pd(xy_le_pd) != 0 || (_mm_movemask_pd(zw_le_pd) & 1) != 0;
+#elif defined(RTM_NEON64_INTRINSICS)
+		return rtm_impl::mask4q_any_true3(vcleq_f64(lhs.xy, rhs.xy), vcleq_f64(lhs.zw, rhs.zw));
 #else
 		return lhs.x <= rhs.x || lhs.y <= rhs.y || lhs.z <= rhs.z;
 #endif
@@ -2460,6 +2651,8 @@ namespace rtm
 		__m128d xy_ge_pd = _mm_cmpgt_pd(lhs.xy, rhs.xy);
 		__m128d zw_ge_pd = _mm_cmpgt_pd(lhs.zw, rhs.zw);
 		return (_mm_movemask_pd(xy_ge_pd) & _mm_movemask_pd(zw_ge_pd)) == 3;
+#elif defined(RTM_NEON64_INTRINSICS)
+		return rtm_impl::mask4q_all_true(vcgtq_f64(lhs.xy, rhs.xy), vcgtq_f64(lhs.zw, rhs.zw));
 #else
 		return lhs.x > rhs.x && lhs.y > rhs.y && lhs.z > rhs.z && lhs.w > rhs.w;
 #endif
@@ -2473,6 +2666,8 @@ namespace rtm
 #if defined(RTM_SSE2_INTRINSICS)
 		__m128d xy_ge_pd = _mm_cmpgt_pd(lhs.xy, rhs.xy);
 		return _mm_movemask_pd(xy_ge_pd) == 3;
+#elif defined(RTM_NEON64_INTRINSICS)
+		return rtm_impl::mask2q_all_true(vcgtq_f64(lhs.xy, rhs.xy));
 #else
 		return lhs.x > rhs.x && lhs.y > rhs.y;
 #endif
@@ -2487,6 +2682,8 @@ namespace rtm
 		__m128d xy_ge_pd = _mm_cmpgt_pd(lhs.xy, rhs.xy);
 		__m128d zw_ge_pd = _mm_cmpgt_pd(lhs.zw, rhs.zw);
 		return _mm_movemask_pd(xy_ge_pd) == 3 && (_mm_movemask_pd(zw_ge_pd) & 1) != 0;
+#elif defined(RTM_NEON64_INTRINSICS)
+		return rtm_impl::mask4q_all_true3(vcgtq_f64(lhs.xy, rhs.xy), vcgtq_f64(lhs.zw, rhs.zw));
 #else
 		return lhs.x > rhs.x && lhs.y > rhs.y && lhs.z > rhs.z;
 #endif
@@ -2501,6 +2698,8 @@ namespace rtm
 		__m128d xy_ge_pd = _mm_cmpgt_pd(lhs.xy, rhs.xy);
 		__m128d zw_ge_pd = _mm_cmpgt_pd(lhs.zw, rhs.zw);
 		return (_mm_movemask_pd(xy_ge_pd) | _mm_movemask_pd(zw_ge_pd)) != 0;
+#elif defined(RTM_NEON64_INTRINSICS)
+		return rtm_impl::mask4q_any_true(vcgtq_f64(lhs.xy, rhs.xy), vcgtq_f64(lhs.zw, rhs.zw));
 #else
 		return lhs.x > rhs.x || lhs.y > rhs.y || lhs.z > rhs.z || lhs.w > rhs.w;
 #endif
@@ -2514,6 +2713,8 @@ namespace rtm
 #if defined(RTM_SSE2_INTRINSICS)
 		__m128d xy_ge_pd = _mm_cmpgt_pd(lhs.xy, rhs.xy);
 		return _mm_movemask_pd(xy_ge_pd) != 0;
+#elif defined(RTM_NEON64_INTRINSICS)
+		return rtm_impl::mask2q_any_true(vcgtq_f64(lhs.xy, rhs.xy));
 #else
 		return lhs.x > rhs.x || lhs.y > rhs.y;
 #endif
@@ -2528,6 +2729,8 @@ namespace rtm
 		__m128d xy_ge_pd = _mm_cmpgt_pd(lhs.xy, rhs.xy);
 		__m128d zw_ge_pd = _mm_cmpgt_pd(lhs.zw, rhs.zw);
 		return _mm_movemask_pd(xy_ge_pd) != 0 || (_mm_movemask_pd(zw_ge_pd) & 1) != 0;
+#elif defined(RTM_NEON64_INTRINSICS)
+		return rtm_impl::mask4q_any_true3(vcgtq_f64(lhs.xy, rhs.xy), vcgtq_f64(lhs.zw, rhs.zw));
 #else
 		return lhs.x > rhs.x || lhs.y > rhs.y || lhs.z > rhs.z;
 #endif
@@ -2542,6 +2745,8 @@ namespace rtm
 		__m128d xy_ge_pd = _mm_cmpge_pd(lhs.xy, rhs.xy);
 		__m128d zw_ge_pd = _mm_cmpge_pd(lhs.zw, rhs.zw);
 		return (_mm_movemask_pd(xy_ge_pd) & _mm_movemask_pd(zw_ge_pd)) == 3;
+#elif defined(RTM_NEON64_INTRINSICS)
+		return rtm_impl::mask4q_all_true(vcgeq_f64(lhs.xy, rhs.xy), vcgeq_f64(lhs.zw, rhs.zw));
 #else
 		return lhs.x >= rhs.x && lhs.y >= rhs.y && lhs.z >= rhs.z && lhs.w >= rhs.w;
 #endif
@@ -2555,6 +2760,8 @@ namespace rtm
 #if defined(RTM_SSE2_INTRINSICS)
 		__m128d xy_ge_pd = _mm_cmpge_pd(lhs.xy, rhs.xy);
 		return _mm_movemask_pd(xy_ge_pd) == 3;
+#elif defined(RTM_NEON64_INTRINSICS)
+		return rtm_impl::mask2q_all_true(vcgeq_f64(lhs.xy, rhs.xy));
 #else
 		return lhs.x >= rhs.x && lhs.y >= rhs.y;
 #endif
@@ -2569,6 +2776,8 @@ namespace rtm
 		__m128d xy_ge_pd = _mm_cmpge_pd(lhs.xy, rhs.xy);
 		__m128d zw_ge_pd = _mm_cmpge_pd(lhs.zw, rhs.zw);
 		return _mm_movemask_pd(xy_ge_pd) == 3 && (_mm_movemask_pd(zw_ge_pd) & 1) != 0;
+#elif defined(RTM_NEON64_INTRINSICS)
+		return rtm_impl::mask4q_all_true3(vcgeq_f64(lhs.xy, rhs.xy), vcgeq_f64(lhs.zw, rhs.zw));
 #else
 		return lhs.x >= rhs.x && lhs.y >= rhs.y && lhs.z >= rhs.z;
 #endif
@@ -2583,6 +2792,8 @@ namespace rtm
 		__m128d xy_ge_pd = _mm_cmpge_pd(lhs.xy, rhs.xy);
 		__m128d zw_ge_pd = _mm_cmpge_pd(lhs.zw, rhs.zw);
 		return (_mm_movemask_pd(xy_ge_pd) | _mm_movemask_pd(zw_ge_pd)) != 0;
+#elif defined(RTM_NEON64_INTRINSICS)
+		return rtm_impl::mask4q_any_true(vcgeq_f64(lhs.xy, rhs.xy), vcgeq_f64(lhs.zw, rhs.zw));
 #else
 		return lhs.x >= rhs.x || lhs.y >= rhs.y || lhs.z >= rhs.z || lhs.w >= rhs.w;
 #endif
@@ -2596,6 +2807,8 @@ namespace rtm
 #if defined(RTM_SSE2_INTRINSICS)
 		__m128d xy_ge_pd = _mm_cmpge_pd(lhs.xy, rhs.xy);
 		return _mm_movemask_pd(xy_ge_pd) != 0;
+#elif defined(RTM_NEON64_INTRINSICS)
+		return rtm_impl::mask2q_any_true(vcgeq_f64(lhs.xy, rhs.xy));
 #else
 		return lhs.x >= rhs.x || lhs.y >= rhs.y;
 #endif
@@ -2610,6 +2823,8 @@ namespace rtm
 		__m128d xy_ge_pd = _mm_cmpge_pd(lhs.xy, rhs.xy);
 		__m128d zw_ge_pd = _mm_cmpge_pd(lhs.zw, rhs.zw);
 		return _mm_movemask_pd(xy_ge_pd) != 0 || (_mm_movemask_pd(zw_ge_pd) & 1) != 0;
+#elif defined(RTM_NEON64_INTRINSICS)
+		return rtm_impl::mask4q_any_true3(vcgeq_f64(lhs.xy, rhs.xy), vcgeq_f64(lhs.zw, rhs.zw));
 #else
 		return lhs.x >= rhs.x || lhs.y >= rhs.y || lhs.z >= rhs.z;
 #endif
@@ -2624,6 +2839,8 @@ namespace rtm
 		__m128d xy_eq_pd = _mm_cmpeq_pd(lhs.xy, rhs.xy);
 		__m128d zw_eq_pd = _mm_cmpeq_pd(lhs.zw, rhs.zw);
 		return (_mm_movemask_pd(xy_eq_pd) & _mm_movemask_pd(zw_eq_pd)) == 3;
+#elif defined(RTM_NEON64_INTRINSICS)
+		return rtm_impl::mask4q_all_true(vceqq_f64(lhs.xy, rhs.xy), vceqq_f64(lhs.zw, rhs.zw));
 #else
 		return lhs.x == rhs.x && lhs.y == rhs.y && lhs.z == rhs.z && lhs.w == rhs.w;
 #endif
@@ -2637,6 +2854,8 @@ namespace rtm
 #if defined(RTM_SSE2_INTRINSICS)
 		__m128d xy_eq_pd = _mm_cmpeq_pd(lhs.xy, rhs.xy);
 		return _mm_movemask_pd(xy_eq_pd) == 3;
+#elif defined(RTM_NEON64_INTRINSICS)
+		return rtm_impl::mask2q_all_true(vceqq_f64(lhs.xy, rhs.xy));
 #else
 		return lhs.x == rhs.x && lhs.y == rhs.y;
 #endif
@@ -2651,6 +2870,8 @@ namespace rtm
 		__m128d xy_eq_pd = _mm_cmpeq_pd(lhs.xy, rhs.xy);
 		__m128d zw_eq_pd = _mm_cmpeq_pd(lhs.zw, rhs.zw);
 		return _mm_movemask_pd(xy_eq_pd) == 3 && (_mm_movemask_pd(zw_eq_pd) & 1) != 0;
+#elif defined(RTM_NEON64_INTRINSICS)
+		return rtm_impl::mask4q_all_true3(vceqq_f64(lhs.xy, rhs.xy), vceqq_f64(lhs.zw, rhs.zw));
 #else
 		return lhs.x == rhs.x && lhs.y == rhs.y && lhs.z == rhs.z;
 #endif
@@ -2665,6 +2886,8 @@ namespace rtm
 		__m128d xy_eq_pd = _mm_cmpeq_pd(lhs.xy, rhs.xy);
 		__m128d zw_eq_pd = _mm_cmpeq_pd(lhs.zw, rhs.zw);
 		return (_mm_movemask_pd(xy_eq_pd) | _mm_movemask_pd(zw_eq_pd)) != 0;
+#elif defined(RTM_NEON64_INTRINSICS)
+		return rtm_impl::mask4q_any_true(vceqq_f64(lhs.xy, rhs.xy), vceqq_f64(lhs.zw, rhs.zw));
 #else
 		return lhs.x == rhs.x || lhs.y == rhs.y || lhs.z == rhs.z || lhs.w == rhs.w;
 #endif
@@ -2678,6 +2901,8 @@ namespace rtm
 #if defined(RTM_SSE2_INTRINSICS)
 		__m128d xy_eq_pd = _mm_cmpeq_pd(lhs.xy, rhs.xy);
 		return _mm_movemask_pd(xy_eq_pd) != 0;
+#elif defined(RTM_NEON64_INTRINSICS)
+		return rtm_impl::mask2q_any_true(vceqq_f64(lhs.xy, rhs.xy));
 #else
 		return lhs.x == rhs.x || lhs.y == rhs.y;
 #endif
@@ -2692,6 +2917,8 @@ namespace rtm
 		__m128d xy_eq_pd = _mm_cmpeq_pd(lhs.xy, rhs.xy);
 		__m128d zw_eq_pd = _mm_cmpeq_pd(lhs.zw, rhs.zw);
 		return _mm_movemask_pd(xy_eq_pd) != 0 || (_mm_movemask_pd(zw_eq_pd) & 1) != 0;
+#elif defined(RTM_NEON64_INTRINSICS)
+		return rtm_impl::mask4q_any_true3(vceqq_f64(lhs.xy, rhs.xy), vceqq_f64(lhs.zw, rhs.zw));
 #else
 		return lhs.x == rhs.x || lhs.y == rhs.y || lhs.z == rhs.z;
 #endif
@@ -2706,6 +2933,9 @@ namespace rtm
 		__m128d xy_eq_pd = _mm_cmpneq_pd(lhs.xy, rhs.xy);
 		__m128d zw_eq_pd = _mm_cmpneq_pd(lhs.zw, rhs.zw);
 		return (_mm_movemask_pd(xy_eq_pd) & _mm_movemask_pd(zw_eq_pd)) == 3;
+#elif defined(RTM_NEON64_INTRINSICS)
+		// All the components are not equal if none of the components are equal
+		return !rtm_impl::mask4q_any_true(vceqq_f64(lhs.xy, rhs.xy), vceqq_f64(lhs.zw, rhs.zw));
 #else
 		return lhs.x != rhs.x && lhs.y != rhs.y && lhs.z != rhs.z && lhs.w != rhs.w;
 #endif
@@ -2719,6 +2949,9 @@ namespace rtm
 #if defined(RTM_SSE2_INTRINSICS)
 		__m128d xy_eq_pd = _mm_cmpneq_pd(lhs.xy, rhs.xy);
 		return _mm_movemask_pd(xy_eq_pd) == 3;
+#elif defined(RTM_NEON64_INTRINSICS)
+		// All the components are not equal if none of the components are equal
+		return !rtm_impl::mask2q_any_true(vceqq_f64(lhs.xy, rhs.xy));
 #else
 		return lhs.x != rhs.x && lhs.y != rhs.y;
 #endif
@@ -2733,6 +2966,9 @@ namespace rtm
 		__m128d xy_eq_pd = _mm_cmpneq_pd(lhs.xy, rhs.xy);
 		__m128d zw_eq_pd = _mm_cmpneq_pd(lhs.zw, rhs.zw);
 		return _mm_movemask_pd(xy_eq_pd) == 3 && (_mm_movemask_pd(zw_eq_pd) & 1) != 0;
+#elif defined(RTM_NEON64_INTRINSICS)
+		// All the components are not equal if none of the components are equal
+		return !rtm_impl::mask4q_any_true3(vceqq_f64(lhs.xy, rhs.xy), vceqq_f64(lhs.zw, rhs.zw));
 #else
 		return lhs.x != rhs.x && lhs.y != rhs.y && lhs.z != rhs.z;
 #endif
@@ -2747,6 +2983,9 @@ namespace rtm
 		__m128d xy_eq_pd = _mm_cmpneq_pd(lhs.xy, rhs.xy);
 		__m128d zw_eq_pd = _mm_cmpneq_pd(lhs.zw, rhs.zw);
 		return (_mm_movemask_pd(xy_eq_pd) | _mm_movemask_pd(zw_eq_pd)) != 0;
+#elif defined(RTM_NEON64_INTRINSICS)
+		// One or more components are not equal if not all the components are equal
+		return !rtm_impl::mask4q_all_true(vceqq_f64(lhs.xy, rhs.xy), vceqq_f64(lhs.zw, rhs.zw));
 #else
 		return lhs.x != rhs.x || lhs.y != rhs.y || lhs.z != rhs.z || lhs.w != rhs.w;
 #endif
@@ -2760,6 +2999,9 @@ namespace rtm
 #if defined(RTM_SSE2_INTRINSICS)
 		__m128d xy_eq_pd = _mm_cmpneq_pd(lhs.xy, rhs.xy);
 		return _mm_movemask_pd(xy_eq_pd) != 0;
+#elif defined(RTM_NEON64_INTRINSICS)
+		// One or more components are not equal if not all the components are equal
+		return !rtm_impl::mask2q_all_true(vceqq_f64(lhs.xy, rhs.xy));
 #else
 		return lhs.x != rhs.x || lhs.y != rhs.y;
 #endif
@@ -2774,6 +3016,9 @@ namespace rtm
 		__m128d xy_eq_pd = _mm_cmpneq_pd(lhs.xy, rhs.xy);
 		__m128d zw_eq_pd = _mm_cmpneq_pd(lhs.zw, rhs.zw);
 		return _mm_movemask_pd(xy_eq_pd) != 0 || (_mm_movemask_pd(zw_eq_pd) & 1) != 0;
+#elif defined(RTM_NEON64_INTRINSICS)
+		// One or more components are not equal if not all the components are equal
+		return !rtm_impl::mask4q_all_true3(vceqq_f64(lhs.xy, rhs.xy), vceqq_f64(lhs.zw, rhs.zw));
 #else
 		return lhs.x != rhs.x || lhs.y != rhs.y || lhs.z != rhs.z;
 #endif
@@ -2847,6 +3092,10 @@ namespace rtm
 		__m128d is_finite_xy = _mm_andnot_pd(is_nan_xy, is_not_infinity_xy);
 		__m128d is_finite_zw = _mm_andnot_pd(is_nan_zw, is_not_infinity_zw);
 		return mask4d{ is_finite_xy, is_finite_zw };
+#elif defined(RTM_NEON64_INTRINSICS)
+		// The absolute value is less than infinity only if the value is finite: NaN and infinity are false
+		const float64x2_t infinity = vdupq_n_f64(std::numeric_limits<double>::infinity());
+		return mask4d{ vcltq_f64(vabsq_f64(input.xy), infinity), vcltq_f64(vabsq_f64(input.zw), infinity) };
 #else
 		return mask4d{
 			rtm_impl::get_mask_value(scalar_is_finite(vector_get_x(input))),
@@ -2878,6 +3127,10 @@ namespace rtm
 		__m128d is_not_finite_zw = _mm_or_pd(is_infinity_zw, is_nan_zw);
 		__m128d is_not_finite = _mm_or_pd(is_not_finite_xy, is_not_finite_zw);
 		return _mm_movemask_pd(is_not_finite) == 0x0;
+#elif defined(RTM_NEON64_INTRINSICS)
+		// The absolute value is less than infinity only if the value is finite: NaN and infinity are false
+		const float64x2_t infinity = vdupq_n_f64(std::numeric_limits<double>::infinity());
+		return rtm_impl::mask4q_all_true(vcltq_f64(vabsq_f64(input.xy), infinity), vcltq_f64(vabsq_f64(input.zw), infinity));
 #else
 		return scalar_is_finite(vector_get_x(input)) && scalar_is_finite(vector_get_y(input)) && scalar_is_finite(vector_get_z(input)) && scalar_is_finite(vector_get_w(input));
 #endif
@@ -2899,6 +3152,10 @@ namespace rtm
 
 		__m128d is_not_finite_xy = _mm_or_pd(is_infinity_xy, is_nan_xy);
 		return _mm_movemask_pd(is_not_finite_xy) == 0x0;
+#elif defined(RTM_NEON64_INTRINSICS)
+		// The absolute value is less than infinity only if the value is finite: NaN and infinity are false
+		const float64x2_t infinity = vdupq_n_f64(std::numeric_limits<double>::infinity());
+		return rtm_impl::mask2q_all_true(vcltq_f64(vabsq_f64(input.xy), infinity));
 #else
 		return scalar_is_finite(vector_get_x(input)) && scalar_is_finite(vector_get_y(input));
 #endif
@@ -2924,6 +3181,10 @@ namespace rtm
 		__m128d is_not_finite_xy = _mm_or_pd(is_infinity_xy, is_nan_xy);
 		__m128d is_not_finite_zw = _mm_or_pd(is_infinity_zw, is_nan_zw);
 		return _mm_movemask_pd(is_not_finite_xy) == 0 && (_mm_movemask_pd(is_not_finite_zw) & 0x1) == 0;
+#elif defined(RTM_NEON64_INTRINSICS)
+		// The absolute value is less than infinity only if the value is finite: NaN and infinity are false
+		const float64x2_t infinity = vdupq_n_f64(std::numeric_limits<double>::infinity());
+		return rtm_impl::mask4q_all_true3(vcltq_f64(vabsq_f64(input.xy), infinity), vcltq_f64(vabsq_f64(input.zw), infinity));
 #else
 		return scalar_is_finite(vector_get_x(input)) && scalar_is_finite(vector_get_y(input)) && scalar_is_finite(vector_get_z(input));
 #endif
@@ -2945,10 +3206,29 @@ namespace rtm
 		__m128d xy = RTM_VECTOR2D_SELECT(mask.xy, if_true.xy, if_false.xy);
 		__m128d zw = RTM_VECTOR2D_SELECT(mask.zw, if_true.zw, if_false.zw);
 		return vector4d{ xy, zw };
+#elif defined(RTM_NEON64_INTRINSICS)
+		float64x2_t xy = RTM_VECTOR2D_SELECT(mask.xy, if_true.xy, if_false.xy);
+		float64x2_t zw = RTM_VECTOR2D_SELECT(mask.zw, if_true.zw, if_false.zw);
+		return vector4d{ xy, zw };
 #else
 		return vector4d{ rtm_impl::select(mask.x, if_true.x, if_false.x), rtm_impl::select(mask.y, if_true.y, if_false.y), rtm_impl::select(mask.z, if_true.z, if_false.z), rtm_impl::select(mask.w, if_true.w, if_false.w) };
 #endif
 	}
+
+#if defined(RTM_NEON64_INTRINSICS)
+	namespace rtm_impl
+	{
+		//////////////////////////////////////////////////////////////////////////
+		// Returns the 2-lane register that holds the mix4 component: input0.xy, input0.zw, input1.xy, or input1.zw.
+		//////////////////////////////////////////////////////////////////////////
+		template<mix4 component>
+		RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE float64x2_t RTM_SIMD_CALL vector_mix_get_pair(const vector4d& input0, const vector4d& input1) RTM_NO_EXCEPT
+		{
+			const vector4d& input = is_mix_xyzw(component) ? input0 : input1;
+			return (uint32_t(component) % 4) < 2 ? input.xy : input.zw;
+		}
+	}
+#endif
 
 	//////////////////////////////////////////////////////////////////////////
 	// Mixes two inputs and returns the desired components.
@@ -3615,6 +3895,17 @@ namespace rtm
 
 
 		return vector4d{ result_xy, result_zw };
+#elif defined(RTM_NEON64_INTRINSICS)
+		// Each result lane is a lane of one of the four 2-lane registers: input0.xy, input0.zw, input1.xy, input1.zw
+		// The compiler usually replaces the lane copies with one or two shuffle instructions
+		const float64x2_t src0 = rtm_impl::vector_mix_get_pair<comp0>(input0, input1);
+		const float64x2_t src1 = rtm_impl::vector_mix_get_pair<comp1>(input0, input1);
+		const float64x2_t src2 = rtm_impl::vector_mix_get_pair<comp2>(input0, input1);
+		const float64x2_t src3 = rtm_impl::vector_mix_get_pair<comp3>(input0, input1);
+
+		const float64x2_t result_xy = vsetq_lane_f64(vgetq_lane_f64(src1, int(comp1) % 2), vdupq_laneq_f64(src0, int(comp0) % 2), 1);
+		const float64x2_t result_zw = vsetq_lane_f64(vgetq_lane_f64(src3, int(comp3) % 2), vdupq_laneq_f64(src2, int(comp2) % 2), 1);
+		return vector4d{ result_xy, result_zw };
 #else
 		// Non-simd variant
 		constexpr component4 component0 = rtm_impl::mix_to_component(comp0);
@@ -3639,6 +3930,9 @@ namespace rtm
 #if defined(RTM_SSE2_INTRINSICS)
 		__m128d value = _mm_shuffle_pd(input.xy, input.xy, _MM_SHUFFLE2(0, 0));
 		return vector4d{ value, value };
+#elif defined(RTM_NEON64_INTRINSICS)
+		const float64x2_t value = vdupq_laneq_f64(input.xy, 0);
+		return vector4d{ value, value };
 #else
 		return vector4d{ input.x, input.x, input.x, input.x };
 #endif
@@ -3651,6 +3945,9 @@ namespace rtm
 	{
 #if defined(RTM_SSE2_INTRINSICS)
 		__m128d value = _mm_shuffle_pd(input.xy, input.xy, _MM_SHUFFLE2(1, 1));
+		return vector4d{ value, value };
+#elif defined(RTM_NEON64_INTRINSICS)
+		const float64x2_t value = vdupq_laneq_f64(input.xy, 1);
 		return vector4d{ value, value };
 #else
 		return vector4d{ input.y, input.y, input.y, input.y };
@@ -3665,6 +3962,9 @@ namespace rtm
 #if defined(RTM_SSE2_INTRINSICS)
 		__m128d value = _mm_shuffle_pd(input.zw, input.zw, _MM_SHUFFLE2(0, 0));
 		return vector4d{ value, value };
+#elif defined(RTM_NEON64_INTRINSICS)
+		const float64x2_t value = vdupq_laneq_f64(input.zw, 0);
+		return vector4d{ value, value };
 #else
 		return vector4d{ input.z, input.z, input.z, input.z };
 #endif
@@ -3677,6 +3977,9 @@ namespace rtm
 	{
 #if defined(RTM_SSE2_INTRINSICS)
 		__m128d value = _mm_shuffle_pd(input.zw, input.zw, _MM_SHUFFLE2(1, 1));
+		return vector4d{ value, value };
+#elif defined(RTM_NEON64_INTRINSICS)
+		const float64x2_t value = vdupq_laneq_f64(input.zw, 1);
 		return vector4d{ value, value };
 #else
 		return vector4d{ input.w, input.w, input.w, input.w };
@@ -3696,6 +3999,10 @@ namespace rtm
 #if defined(RTM_SSE2_INTRINSICS)
 		__m128d xy = _mm_and_pd(input0.xy, input1.xy);
 		__m128d zw = _mm_and_pd(input0.zw, input1.zw);
+		return vector4d{ xy, zw };
+#elif defined(RTM_NEON64_INTRINSICS)
+		const float64x2_t xy = vreinterpretq_f64_u64(vandq_u64(vreinterpretq_u64_f64(input0.xy), vreinterpretq_u64_f64(input1.xy)));
+		const float64x2_t zw = vreinterpretq_f64_u64(vandq_u64(vreinterpretq_u64_f64(input0.zw), vreinterpretq_u64_f64(input1.zw)));
 		return vector4d{ xy, zw };
 #else
 		const uint64_t* input0_ = rtm_impl::bit_cast<const uint64_t*>(&input0);
@@ -3722,6 +4029,10 @@ namespace rtm
 		__m128d xy = _mm_or_pd(input0.xy, input1.xy);
 		__m128d zw = _mm_or_pd(input0.zw, input1.zw);
 		return vector4d{ xy, zw };
+#elif defined(RTM_NEON64_INTRINSICS)
+		const float64x2_t xy = vreinterpretq_f64_u64(vorrq_u64(vreinterpretq_u64_f64(input0.xy), vreinterpretq_u64_f64(input1.xy)));
+		const float64x2_t zw = vreinterpretq_f64_u64(vorrq_u64(vreinterpretq_u64_f64(input0.zw), vreinterpretq_u64_f64(input1.zw)));
+		return vector4d{ xy, zw };
 #else
 		const uint64_t* input0_ = rtm_impl::bit_cast<const uint64_t*>(&input0);
 		const uint64_t* input1_ = rtm_impl::bit_cast<const uint64_t*>(&input1);
@@ -3746,6 +4057,10 @@ namespace rtm
 #if defined(RTM_SSE2_INTRINSICS)
 		__m128d xy = _mm_xor_pd(input0.xy, input1.xy);
 		__m128d zw = _mm_xor_pd(input0.zw, input1.zw);
+		return vector4d{ xy, zw };
+#elif defined(RTM_NEON64_INTRINSICS)
+		const float64x2_t xy = vreinterpretq_f64_u64(veorq_u64(vreinterpretq_u64_f64(input0.xy), vreinterpretq_u64_f64(input1.xy)));
+		const float64x2_t zw = vreinterpretq_f64_u64(veorq_u64(vreinterpretq_u64_f64(input0.zw), vreinterpretq_u64_f64(input1.zw)));
 		return vector4d{ xy, zw };
 #else
 		const uint64_t* input0_ = rtm_impl::bit_cast<const uint64_t*>(&input0);
@@ -3802,6 +4117,10 @@ namespace rtm
 		__m128d xy = _mm_or_pd(abs_input_xy, signs_xy);
 		__m128d zw = _mm_or_pd(abs_input_zw, signs_zw);
 		return vector4d{ xy, zw };
+#elif defined(RTM_NEON64_INTRINSICS)
+		// Select the sign bit from the control value and the other bits from the input
+		const uint64x2_t sign_bit = vdupq_n_u64(0x8000000000000000ULL);
+		return vector4d{ vbslq_f64(sign_bit, control_sign.xy, input.xy), vbslq_f64(sign_bit, control_sign.zw, input.zw) };
 #else
 		double x = vector_get_x(input);
 		double y = vector_get_y(input);
@@ -3961,6 +4280,8 @@ namespace rtm
 		__m128d result_xy = _mm_or_pd(_mm_and_pd(is_input_large_xy, input.xy), _mm_andnot_pd(is_input_large_xy, integer_part_xy));
 		__m128d result_zw = _mm_or_pd(_mm_and_pd(is_input_large_zw, input.zw), _mm_andnot_pd(is_input_large_zw, integer_part_zw));
 		return vector4d{ result_xy, result_zw };
+#elif defined(RTM_NEON64_INTRINSICS)
+		return vector4d{ vrndnq_f64(input.xy), vrndnq_f64(input.zw) };
 #else
 		scalard x = scalar_round_bankers(scalard(vector_get_x(input)));
 		scalard y = scalar_round_bankers(scalard(vector_get_y(input)));

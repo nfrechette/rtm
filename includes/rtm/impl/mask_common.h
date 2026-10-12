@@ -53,6 +53,13 @@ namespace rtm
 				const uint64_t w_mask = w ? 0xFFFFFFFFFFFFFFFFULL : 0;
 
 				return mask4d{ _mm_castsi128_pd(_mm_set_epi64x(static_cast<int64_t>(y_mask), static_cast<int64_t>(x_mask))), _mm_castsi128_pd(_mm_set_epi64x(static_cast<int64_t>(w_mask), static_cast<int64_t>(z_mask))) };
+#elif defined(RTM_NEON64_INTRINSICS)
+				const uint64_t x_mask = x ? 0xFFFFFFFFFFFFFFFFULL : 0;
+				const uint64_t y_mask = y ? 0xFFFFFFFFFFFFFFFFULL : 0;
+				const uint64_t z_mask = z ? 0xFFFFFFFFFFFFFFFFULL : 0;
+				const uint64_t w_mask = w ? 0xFFFFFFFFFFFFFFFFULL : 0;
+
+				return mask4d{ vcombine_u64(vcreate_u64(x_mask), vcreate_u64(y_mask)), vcombine_u64(vcreate_u64(z_mask), vcreate_u64(w_mask)) };
 #else
 				const uint64_t x_mask = x ? 0xFFFFFFFFFFFFFFFFULL : 0;
 				const uint64_t y_mask = y ? 0xFFFFFFFFFFFFFFFFULL : 0;
@@ -72,6 +79,13 @@ namespace rtm
 				const uint64_t w_mask = w ? 0xFFFFFFFFFFFFFFFFULL : 0;
 
 				return mask4q{ _mm_set_epi64x(static_cast<int64_t>(y_mask), static_cast<int64_t>(x_mask)), _mm_set_epi64x(static_cast<int64_t>(w_mask), static_cast<int64_t>(z_mask)) };
+#elif defined(RTM_NEON64_INTRINSICS)
+				const uint64_t x_mask = x ? 0xFFFFFFFFFFFFFFFFULL : 0;
+				const uint64_t y_mask = y ? 0xFFFFFFFFFFFFFFFFULL : 0;
+				const uint64_t z_mask = z ? 0xFFFFFFFFFFFFFFFFULL : 0;
+				const uint64_t w_mask = w ? 0xFFFFFFFFFFFFFFFFULL : 0;
+
+				return mask4q{ vcombine_u64(vcreate_u64(x_mask), vcreate_u64(y_mask)), vcombine_u64(vcreate_u64(z_mask), vcreate_u64(w_mask)) };
 #else
 				const uint64_t x_mask = x ? 0xFFFFFFFFFFFFFFFFULL : 0;
 				const uint64_t y_mask = y ? 0xFFFFFFFFFFFFFFFFULL : 0;
@@ -214,6 +228,8 @@ namespace rtm
 	#else
 				return mask4d{ _mm_castsi128_pd(_mm_set_epi64x(static_cast<int64_t>(y), static_cast<int64_t>(x))), _mm_castsi128_pd(_mm_set_epi64x(static_cast<int64_t>(w), static_cast<int64_t>(z))) };
 	#endif
+#elif defined(RTM_NEON64_INTRINSICS)
+				return mask4d{ vcombine_u64(vcreate_u64(x), vcreate_u64(y)), vcombine_u64(vcreate_u64(z), vcreate_u64(w)) };
 #else
 				return mask4d{ x, y, z, w };
 #endif
@@ -239,6 +255,8 @@ namespace rtm
 	#else
 				return mask4q{ _mm_set_epi64x(static_cast<int64_t>(y), static_cast<int64_t>(x)), _mm_set_epi64x(static_cast<int64_t>(w), static_cast<int64_t>(z)) };
 	#endif
+#elif defined(RTM_NEON64_INTRINSICS)
+				return mask4q{ vcombine_u64(vcreate_u64(x), vcreate_u64(y)), vcombine_u64(vcreate_u64(z), vcreate_u64(w)) };
 #else
 				return mask4q{ x, y, z, w };
 #endif

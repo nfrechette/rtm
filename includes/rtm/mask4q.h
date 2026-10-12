@@ -28,6 +28,7 @@
 #include "rtm/version.h"
 #include "rtm/impl/bit_cast.impl.h"
 #include "rtm/impl/compiler_utils.h"
+#include "rtm/impl/macros.mask4.impl.h"
 #include "rtm/impl/mask_common.h"
 
 RTM_IMPL_FILE_PRAGMA_PUSH
@@ -48,6 +49,8 @@ namespace rtm
 		// Just sign extend on 32bit systems
 		return static_cast<uint64_t>(_mm_cvtsi128_si32(input.xy));
 #endif
+#elif defined(RTM_NEON64_INTRINSICS)
+		return vgetq_lane_u64(input.xy, 0);
 #else
 		return input.x;
 #endif
@@ -65,6 +68,8 @@ namespace rtm
 		// Just sign extend on 32bit systems
 		return static_cast<uint64_t>(_mm_cvtsi128_si32(_mm_shuffle_epi32(input.xy, _MM_SHUFFLE(3, 2, 3, 2))));
 #endif
+#elif defined(RTM_NEON64_INTRINSICS)
+		return vgetq_lane_u64(input.xy, 1);
 #else
 		return input.y;
 #endif
@@ -82,6 +87,8 @@ namespace rtm
 		// Just sign extend on 32bit systems
 		return static_cast<uint64_t>(_mm_cvtsi128_si32(input.zw));
 #endif
+#elif defined(RTM_NEON64_INTRINSICS)
+		return vgetq_lane_u64(input.zw, 0);
 #else
 		return input.z;
 #endif
@@ -99,6 +106,8 @@ namespace rtm
 		// Just sign extend on 32bit systems
 		return static_cast<uint64_t>(_mm_cvtsi128_si32(_mm_shuffle_epi32(input.zw, _MM_SHUFFLE(3, 2, 3, 2))));
 #endif
+#elif defined(RTM_NEON64_INTRINSICS)
+		return vgetq_lane_u64(input.zw, 1);
 #else
 		return input.w;
 #endif
@@ -111,6 +120,8 @@ namespace rtm
 	{
 #if defined(RTM_SSE2_INTRINSICS)
 		return (_mm_movemask_epi8(input.xy) & _mm_movemask_epi8(input.zw)) == 0xFFFF;
+#elif defined(RTM_NEON64_INTRINSICS)
+		return rtm_impl::mask4q_all_true(input.xy, input.zw);
 #else
 		return input.x != 0 && input.y != 0 && input.z != 0 && input.w != 0;
 #endif
@@ -123,6 +134,8 @@ namespace rtm
 	{
 #if defined(RTM_SSE2_INTRINSICS)
 		return _mm_movemask_epi8(input.xy) == 0xFFFF;
+#elif defined(RTM_NEON64_INTRINSICS)
+		return rtm_impl::mask2q_all_true(input.xy);
 #else
 		return input.x != 0 && input.y != 0;
 #endif
@@ -135,6 +148,8 @@ namespace rtm
 	{
 #if defined(RTM_SSE2_INTRINSICS)
 		return _mm_movemask_epi8(input.xy) == 0xFFFF && (_mm_movemask_epi8(input.zw) & 0x00FF) == 0x00FF;
+#elif defined(RTM_NEON64_INTRINSICS)
+		return rtm_impl::mask4q_all_true3(input.xy, input.zw);
 #else
 		return input.x != 0 && input.y != 0 && input.z != 0;
 #endif
@@ -147,6 +162,8 @@ namespace rtm
 	{
 #if defined(RTM_SSE2_INTRINSICS)
 		return (_mm_movemask_epi8(input.xy) | _mm_movemask_epi8(input.zw)) != 0;
+#elif defined(RTM_NEON64_INTRINSICS)
+		return rtm_impl::mask4q_any_true(input.xy, input.zw);
 #else
 		return input.x != 0 || input.y != 0 || input.z != 0 || input.w != 0;
 #endif
@@ -159,6 +176,8 @@ namespace rtm
 	{
 #if defined(RTM_SSE2_INTRINSICS)
 		return _mm_movemask_epi8(input.xy) != 0;
+#elif defined(RTM_NEON64_INTRINSICS)
+		return rtm_impl::mask2q_any_true(input.xy);
 #else
 		return input.x != 0 || input.y != 0;
 #endif
@@ -171,6 +190,8 @@ namespace rtm
 	{
 #if defined(RTM_SSE2_INTRINSICS)
 		return _mm_movemask_epi8(input.xy) != 0 || (_mm_movemask_epi8(input.zw) & 0x00FF) != 0;
+#elif defined(RTM_NEON64_INTRINSICS)
+		return rtm_impl::mask4q_any_true3(input.xy, input.zw);
 #else
 		return input.x != 0 || input.y != 0 || input.z != 0;
 #endif
@@ -187,6 +208,8 @@ namespace rtm
 		__m128i xy_eq = _mm_cmpeq_epi32(lhs.xy, rhs.xy);
 		__m128i zw_eq = _mm_cmpeq_epi32(lhs.zw, rhs.zw);
 		return (_mm_movemask_epi8(xy_eq) & _mm_movemask_epi8(zw_eq)) == 0xFFFF;
+#elif defined(RTM_NEON64_INTRINSICS)
+		return rtm_impl::mask4q_all_true(vceqq_u64(lhs.xy, rhs.xy), vceqq_u64(lhs.zw, rhs.zw));
 #elif defined(RTM_SSE4_INTRINSICS) && 0
 		// TODO
 #else
@@ -203,6 +226,8 @@ namespace rtm
 		// WARNING: SSE2 doesn't have a 64 bit int compare, we use 32 bit here and we assume
 		// that in a mask all bits are equal
 		return _mm_movemask_epi8(_mm_cmpeq_epi32(lhs.xy, rhs.xy)) == 0xFFFF;
+#elif defined(RTM_NEON64_INTRINSICS)
+		return rtm_impl::mask2q_all_true(vceqq_u64(lhs.xy, rhs.xy));
 #elif defined(RTM_SSE4_INTRINSICS) && 0
 		// TODO
 #else
@@ -221,6 +246,8 @@ namespace rtm
 		__m128i xy_eq = _mm_cmpeq_epi32(lhs.xy, rhs.xy);
 		__m128i zw_eq = _mm_cmpeq_epi32(lhs.zw, rhs.zw);
 		return _mm_movemask_epi8(xy_eq) == 0xFFFF && (_mm_movemask_epi8(zw_eq) & 0x00FF) == 0x00FF;
+#elif defined(RTM_NEON64_INTRINSICS)
+		return rtm_impl::mask4q_all_true3(vceqq_u64(lhs.xy, rhs.xy), vceqq_u64(lhs.zw, rhs.zw));
 #elif defined(RTM_SSE4_INTRINSICS) && 0
 		// TODO
 #else
@@ -239,6 +266,8 @@ namespace rtm
 		__m128i xy_eq = _mm_cmpeq_epi32(lhs.xy, rhs.xy);
 		__m128i zw_eq = _mm_cmpeq_epi32(lhs.zw, rhs.zw);
 		return (_mm_movemask_epi8(xy_eq) | _mm_movemask_epi8(zw_eq)) != 0;
+#elif defined(RTM_NEON64_INTRINSICS)
+		return rtm_impl::mask4q_any_true(vceqq_u64(lhs.xy, rhs.xy), vceqq_u64(lhs.zw, rhs.zw));
 #elif defined(RTM_SSE4_INTRINSICS) && 0
 		// TODO
 #else
@@ -255,6 +284,8 @@ namespace rtm
 		// WARNING: SSE2 doesn't have a 64 bit int compare, we use 32 bit here and we assume
 		// that in a mask all bits are equal
 		return _mm_movemask_epi8(_mm_cmpeq_epi32(lhs.xy, rhs.xy)) != 0;
+#elif defined(RTM_NEON64_INTRINSICS)
+		return rtm_impl::mask2q_any_true(vceqq_u64(lhs.xy, rhs.xy));
 #elif defined(RTM_SSE4_INTRINSICS) && 0
 		// TODO
 #else
@@ -273,6 +304,8 @@ namespace rtm
 		__m128i xy_eq = _mm_cmpeq_epi32(lhs.xy, rhs.xy);
 		__m128i zw_eq = _mm_cmpeq_epi32(lhs.zw, rhs.zw);
 		return _mm_movemask_epi8(xy_eq) != 0 || (_mm_movemask_epi8(zw_eq) & 0x00FF) != 0;
+#elif defined(RTM_NEON64_INTRINSICS)
+		return rtm_impl::mask4q_any_true3(vceqq_u64(lhs.xy, rhs.xy), vceqq_u64(lhs.zw, rhs.zw));
 #elif defined(RTM_SSE4_INTRINSICS) && 0
 		// TODO
 #else
@@ -289,6 +322,8 @@ namespace rtm
 		__m128i xy = _mm_and_si128(lhs.xy, rhs.xy);
 		__m128i zw = _mm_and_si128(lhs.zw, rhs.zw);
 		return mask4q{ xy, zw };
+#elif defined(RTM_NEON64_INTRINSICS)
+		return mask4q{ vandq_u64(lhs.xy, rhs.xy), vandq_u64(lhs.zw, rhs.zw) };
 #else
 		const uint64_t* lhs_ = rtm_impl::bit_cast<const uint64_t*>(&lhs);
 		const uint64_t* rhs_ = rtm_impl::bit_cast<const uint64_t*>(&rhs);
@@ -317,6 +352,8 @@ namespace rtm
 		__m128i xy = _mm_or_si128(lhs.xy, rhs.xy);
 		__m128i zw = _mm_or_si128(lhs.zw, rhs.zw);
 		return mask4q{ xy, zw };
+#elif defined(RTM_NEON64_INTRINSICS)
+		return mask4q{ vorrq_u64(lhs.xy, rhs.xy), vorrq_u64(lhs.zw, rhs.zw) };
 #else
 		const uint64_t* lhs_ = rtm_impl::bit_cast<const uint64_t*>(&lhs);
 		const uint64_t* rhs_ = rtm_impl::bit_cast<const uint64_t*>(&rhs);
@@ -345,6 +382,8 @@ namespace rtm
 		__m128i xy = _mm_xor_si128(lhs.xy, rhs.xy);
 		__m128i zw = _mm_xor_si128(lhs.zw, rhs.zw);
 		return mask4q{ xy, zw };
+#elif defined(RTM_NEON64_INTRINSICS)
+		return mask4q{ veorq_u64(lhs.xy, rhs.xy), veorq_u64(lhs.zw, rhs.zw) };
 #else
 		const uint64_t* lhs_ = rtm_impl::bit_cast<const uint64_t*>(&lhs);
 		const uint64_t* rhs_ = rtm_impl::bit_cast<const uint64_t*>(&rhs);
@@ -373,6 +412,10 @@ namespace rtm
 		const __m128i true_mask = _mm_set_epi64x(0xFFFFFFFFFFFFFFFFULL, 0xFFFFFFFFFFFFFFFFULL);
 		__m128i xy = _mm_andnot_si128(input.xy, true_mask);
 		__m128i zw = _mm_andnot_si128(input.zw, true_mask);
+		return mask4q{ xy, zw };
+#elif defined(RTM_NEON64_INTRINSICS)
+		uint64x2_t xy = vreinterpretq_u64_u32(vmvnq_u32(vreinterpretq_u32_u64(input.xy)));
+		uint64x2_t zw = vreinterpretq_u64_u32(vmvnq_u32(vreinterpretq_u32_u64(input.zw)));
 		return mask4q{ xy, zw };
 #else
 		const uint64_t* input_ = rtm_impl::bit_cast<const uint64_t*>(&input);
