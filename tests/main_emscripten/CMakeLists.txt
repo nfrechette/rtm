@@ -9,6 +9,13 @@ file(GLOB_RECURSE ALL_TEST_SOURCE_FILES LIST_DIRECTORIES false
 	${PROJECT_SOURCE_DIR}/../sources/*.h
 	${PROJECT_SOURCE_DIR}/../sources/*.cpp)
 
+if(NOT WITH_VECTOR_MIX_TESTS)
+	# The vector_mix unit tests are slow to compile, do not compile them when they are disabled
+	file(GLOB VECTOR_MIX_SOURCE_FILES LIST_DIRECTORIES false
+		${PROJECT_SOURCE_DIR}/../sources/vector_mix/*.cpp)
+	list(REMOVE_ITEM ALL_TEST_SOURCE_FILES ${VECTOR_MIX_SOURCE_FILES})
+endif()
+
 # Grab all of our main source files
 file(GLOB_RECURSE ALL_MAIN_SOURCE_FILES LIST_DIRECTORIES false
 	${PROJECT_SOURCE_DIR}/*.cpp)
