@@ -184,6 +184,18 @@ jobs:
         uses: docker://emscripten/emsdk:6.0.11
         with:
           args: 'python3 make.py -ci -compiler emscripten -config release -unit_test'
+      - name: Clean
+        uses: docker://emscripten/emsdk:6.0.11
+        with:
+          args: 'python3 make.py -ci -clean_only'
+      - name: Build (release nosimd)
+        uses: docker://emscripten/emsdk:6.0.11
+        with:
+          args: 'python3 make.py -ci -compiler emscripten -config release -build -nosimd'
+      - name: Unit tests (release nosimd)
+        uses: docker://emscripten/emsdk:6.0.11
+        with:
+          args: 'python3 make.py -ci -compiler emscripten -config release -unit_test -nosimd'
 
   vs2022:
     runs-on: windows-2022
