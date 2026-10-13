@@ -113,6 +113,8 @@ if __name__ == "__main__":
 		cmd_args.append([x for x in args if x])
 		args = [python_exe, 'make.py', '-compiler', 'emscripten', '-config', 'release', '-build', '-unit_test', '-vector_mix_test', '-clean']
 		cmd_args.append([x for x in args if x])
+		args = [python_exe, 'make.py', '-compiler', 'emscripten', '-config', 'release', '-build', '-unit_test', '-vector_mix_test', '-clean', '-nosimd']
+		cmd_args.append([x for x in args if x])
 
 	root_dir = os.path.join(os.getcwd(), '../..')
 	os.chdir(root_dir)
