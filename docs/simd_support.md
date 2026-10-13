@@ -10,3 +10,11 @@ Various versions of SSE are supported: SSE2, SSE3, SSE4, AVX, AVX2, and FMA.
 
 Both ARM NEON and ARM64 NEON are supported.
 
+## WebAssembly
+
+WebAssembly SIMD128 is supported. To enable it, compile with `-msimd128`. Clang then defines `__wasm_simd128__` and RTM defines `RTM_WASM128_INTRINSICS`. Without `-msimd128`, RTM uses the scalar code path.
+
+*  The relaxed SIMD instructions are not used. Thus, the results do not change between the browsers and the CPUs.
+*  WebAssembly SIMD does not have an instruction for a reciprocal square root estimate. Thus, functions such as `quat_normalize` use a square root and a division.
+*  `vector_min` and `vector_max` use the `pmin` and `pmax` instructions. They have the same semantics as `std::min` and `std::max`, and they compile to a single instruction on x64.
+

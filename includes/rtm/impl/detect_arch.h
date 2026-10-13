@@ -47,4 +47,11 @@
 	#define RTM_ARCH_X64
 #elif defined(_M_IX86) || defined(__i386__)
 	#define RTM_ARCH_X86
+#elif defined(__wasm__)
+	#define RTM_ARCH_WASM
+	#if defined(__wasm64__)
+		#define RTM_ARCH_WASM64
+	#else
+		#define RTM_ARCH_WASM32
+	#endif
 #endif

@@ -340,6 +340,12 @@ namespace rtm
 			result_mtx.x_axis = _mm_xor_ps(result_mtx.x_axis, _mm_shuffle_ps(sign_bits, sign_bits, _MM_SHUFFLE(0, 0, 0, 0)));
 			result_mtx.y_axis = _mm_xor_ps(result_mtx.y_axis, _mm_shuffle_ps(sign_bits, sign_bits, _MM_SHUFFLE(1, 1, 1, 1)));
 			result_mtx.z_axis = _mm_xor_ps(result_mtx.z_axis, _mm_shuffle_ps(sign_bits, sign_bits, _MM_SHUFFLE(2, 2, 2, 2)));
+#elif defined(RTM_WASM128_INTRINSICS)
+			const v128_t sign_bits = wasm_v128_and(scale, wasm_f32x4_splat(-0.0F));	// Mask out the sign bit
+
+			result_mtx.x_axis = wasm_v128_xor(result_mtx.x_axis, wasm_i32x4_shuffle(sign_bits, sign_bits, 0, 0, 0, 0));
+			result_mtx.y_axis = wasm_v128_xor(result_mtx.y_axis, wasm_i32x4_shuffle(sign_bits, sign_bits, 1, 1, 1, 1));
+			result_mtx.z_axis = wasm_v128_xor(result_mtx.z_axis, wasm_i32x4_shuffle(sign_bits, sign_bits, 2, 2, 2, 2));
 #else
 			const vector4f sign = vector_sign(scale);
 			result_mtx.x_axis = vector_mul(result_mtx.x_axis, vector_dup_x(sign));

@@ -733,8 +733,8 @@ namespace rtm
 	{
 #if defined(RTM_SSE2_INTRINSICS)
 		return scalar_cast(scalar_round_symmetric(scalar_set(input)));
-#elif defined(RTM_NEON64_INTRINSICS)
-		// arm64 has floor/ceil instructions
+#elif defined(RTM_NEON64_INTRINSICS) || defined(RTM_WASM128_INTRINSICS)
+		// arm64 and WASM have floor/ceil instructions
 		// Keep the sign of the input as std::round does, thus round(-0.0) = -0.0 and round(-0.3) = -0.0
 		return rtm_impl::copysign(input >= 0.0F ? scalar_floor(input + 0.5F) : scalar_ceil(input - 0.5F), input);
 #else
@@ -825,6 +825,9 @@ namespace rtm
 		return scalar_cast(scalar_round_bankers(scalar_set(input)));
 #elif defined(RTM_NEON64_INTRINSICS) && defined(RTM_IMPL_VRNDNS_SUPPORTED)
 		return vrndns_f32(input);
+#elif defined(RTM_WASM128_INTRINSICS)
+		// WASM always rounds to nearest even and std::nearbyint compiles to f32.nearest
+		return std::nearbyint(input);
 #else
 		// NaN, +- Infinity, and numbers larger or equal to 2^23 remain unchanged
 		// since they have no fractional part. A conversion to a 32 bit integer would overflow for some of them.
@@ -1063,6 +1066,8 @@ namespace rtm
 		return _mm_unpacklo_ps(sin_.value, cos_.value);
 #elif defined(RTM_NEON_INTRINSICS)
 		return vsetq_lane_f32(cos_, vmovq_n_f32(sin_), 1);
+#elif defined(RTM_WASM128_INTRINSICS)
+		return wasm_f32x4_replace_lane(wasm_f32x4_splat(sin_), 1, cos_);
 #else
 		return vector4f{ sin_, cos_, sin_, cos_ };
 #endif

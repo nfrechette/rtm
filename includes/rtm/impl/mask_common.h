@@ -60,6 +60,13 @@ namespace rtm
 				const uint64_t w_mask = w ? 0xFFFFFFFFFFFFFFFFULL : 0;
 
 				return mask4d{ vcombine_u64(vcreate_u64(x_mask), vcreate_u64(y_mask)), vcombine_u64(vcreate_u64(z_mask), vcreate_u64(w_mask)) };
+#elif defined(RTM_WASM128_INTRINSICS)
+				const uint64_t x_mask = x ? 0xFFFFFFFFFFFFFFFFULL : 0;
+				const uint64_t y_mask = y ? 0xFFFFFFFFFFFFFFFFULL : 0;
+				const uint64_t z_mask = z ? 0xFFFFFFFFFFFFFFFFULL : 0;
+				const uint64_t w_mask = w ? 0xFFFFFFFFFFFFFFFFULL : 0;
+
+				return mask4d{ wasm_u64x2_make(x_mask, y_mask), wasm_u64x2_make(z_mask, w_mask) };
 #else
 				const uint64_t x_mask = x ? 0xFFFFFFFFFFFFFFFFULL : 0;
 				const uint64_t y_mask = y ? 0xFFFFFFFFFFFFFFFFULL : 0;
@@ -86,6 +93,13 @@ namespace rtm
 				const uint64_t w_mask = w ? 0xFFFFFFFFFFFFFFFFULL : 0;
 
 				return mask4q{ vcombine_u64(vcreate_u64(x_mask), vcreate_u64(y_mask)), vcombine_u64(vcreate_u64(z_mask), vcreate_u64(w_mask)) };
+#elif defined(RTM_WASM128_INTRINSICS)
+				const uint64_t x_mask = x ? 0xFFFFFFFFFFFFFFFFULL : 0;
+				const uint64_t y_mask = y ? 0xFFFFFFFFFFFFFFFFULL : 0;
+				const uint64_t z_mask = z ? 0xFFFFFFFFFFFFFFFFULL : 0;
+				const uint64_t w_mask = w ? 0xFFFFFFFFFFFFFFFFULL : 0;
+
+				return mask4q{ wasm_u64x2_make(x_mask, y_mask), wasm_u64x2_make(z_mask, w_mask) };
 #else
 				const uint64_t x_mask = x ? 0xFFFFFFFFFFFFFFFFULL : 0;
 				const uint64_t y_mask = y ? 0xFFFFFFFFFFFFFFFFULL : 0;
@@ -109,6 +123,8 @@ namespace rtm
 				uint32x2_t V0 = vcreate_u32(((uint64_t)x_mask) | ((uint64_t)(y_mask) << 32));
 				uint32x2_t V1 = vcreate_u32(((uint64_t)z_mask) | ((uint64_t)(w_mask) << 32));
 				return vcombine_u32(V0, V1);
+#elif defined(RTM_WASM128_INTRINSICS)
+				return wasm_u32x4_make(x_mask, y_mask, z_mask, w_mask);
 #else
 				return mask4f{ x_mask, y_mask, z_mask, w_mask };
 #endif
@@ -127,6 +143,8 @@ namespace rtm
 				uint32x2_t V0 = vcreate_u32(((uint64_t)x_mask) | ((uint64_t)(y_mask) << 32));
 				uint32x2_t V1 = vcreate_u32(((uint64_t)z_mask) | ((uint64_t)(w_mask) << 32));
 				return RTM_IMPL_MASK4i_SET(vcombine_u32(V0, V1));
+#elif defined(RTM_WASM128_INTRINSICS)
+				return RTM_IMPL_MASK4i_SET(wasm_u32x4_make(x_mask, y_mask, z_mask, w_mask));
 #else
 				return mask4i{ x_mask, y_mask, z_mask, w_mask };
 #endif
@@ -165,6 +183,8 @@ namespace rtm
 				uint32x2_t V0 = vcreate_u32(((uint64_t)x) | ((uint64_t)(y) << 32));
 				uint32x2_t V1 = vcreate_u32(((uint64_t)z) | ((uint64_t)(w) << 32));
 				return vcombine_u32(V0, V1);
+#elif defined(RTM_WASM128_INTRINSICS)
+				return wasm_u32x4_make(x, y, z, w);
 #else
 				return mask4f{ x, y, z, w };
 #endif
@@ -178,6 +198,8 @@ namespace rtm
 				uint32x2_t V0 = vcreate_u32(((uint64_t)x) | ((uint64_t)(y) << 32));
 				uint32x2_t V1 = vcreate_u32(((uint64_t)z) | ((uint64_t)(w) << 32));
 				return RTM_IMPL_MASK4i_SET(vcombine_u32(V0, V1));
+#elif defined(RTM_WASM128_INTRINSICS)
+				return RTM_IMPL_MASK4i_SET(wasm_u32x4_make(x, y, z, w));
 #else
 				return mask4i{ x, y, z, w };
 #endif
@@ -230,6 +252,8 @@ namespace rtm
 	#endif
 #elif defined(RTM_NEON64_INTRINSICS)
 				return mask4d{ vcombine_u64(vcreate_u64(x), vcreate_u64(y)), vcombine_u64(vcreate_u64(z), vcreate_u64(w)) };
+#elif defined(RTM_WASM128_INTRINSICS)
+				return mask4d{ wasm_u64x2_make(x, y), wasm_u64x2_make(z, w) };
 #else
 				return mask4d{ x, y, z, w };
 #endif
@@ -257,6 +281,8 @@ namespace rtm
 	#endif
 #elif defined(RTM_NEON64_INTRINSICS)
 				return mask4q{ vcombine_u64(vcreate_u64(x), vcreate_u64(y)), vcombine_u64(vcreate_u64(z), vcreate_u64(w)) };
+#elif defined(RTM_WASM128_INTRINSICS)
+				return mask4q{ wasm_u64x2_make(x, y), wasm_u64x2_make(z, w) };
 #else
 				return mask4q{ x, y, z, w };
 #endif

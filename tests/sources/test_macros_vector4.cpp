@@ -69,7 +69,7 @@ TEST_CASE("macros vector4f", "[math][macros][vector4]")
 	}
 #endif
 
-#if defined(RTM_SSE2_INTRINSICS) || defined(RTM_NEON_INTRINSICS)
+#if defined(RTM_SSE2_INTRINSICS) || defined(RTM_NEON_INTRINSICS) || defined(RTM_WASM128_INTRINSICS)
 	{
 		// RTM_VECTOR4F_SELECT is not available with the scalar code path
 		const rtm::mask4f mask = rtm::mask_set(true, false, false, true);
@@ -111,8 +111,22 @@ TEST_CASE("macros vector4d", "[math][macros][vector4]")
 		const rtm::vector4d result = rtm::vector4d{ xy, zw };
 		CHECK(rtm::vector_all_near_equal(rtm::vector_set(1.0, 20.0, -30.0, 4.0), result, threshold));
 	}
+#elif defined(RTM_WASM128_INTRINSICS)
+	const double threshold = 0.0;	// Result must be binary exact!
+
+	const rtm::vector4d v0 = rtm::vector_set(1.0, -2.0, 3.5, 4.0);
+	const rtm::vector4d v2 = rtm::vector_set(10.0, 20.0, -30.0, 40.0);
+
+	{
+		// RTM_VECTOR2D_SELECT is also available with WASM SIMD
+		const rtm::mask4d mask = rtm::mask_set(true, false, false, true);
+		const v128_t xy = RTM_VECTOR2D_SELECT(mask.xy, v0.xy, v2.xy);
+		const v128_t zw = RTM_VECTOR2D_SELECT(mask.zw, v0.zw, v2.zw);
+		const rtm::vector4d result = rtm::vector4d{ xy, zw };
+		CHECK(rtm::vector_all_near_equal(rtm::vector_set(1.0, 20.0, -30.0, 4.0), result, threshold));
+	}
 #else
-	// The float64 vector macros are only available with SSE2
+	// The float64 vector macros are only available with SSE2 and WASM SIMD
 	SUCCEED();
 #endif
 }

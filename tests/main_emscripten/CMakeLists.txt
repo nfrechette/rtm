@@ -30,6 +30,12 @@ if(WITH_VECTOR_MIX_TESTS)
 	add_definitions(-DRTM_IMPL_WITH_VECTOR_MIX_TESTS)
 endif()
 
+if(USE_SIMD_INSTRUCTIONS)
+	target_compile_options(${PROJECT_NAME} PRIVATE -msimd128)		# Enable WASM SIMD
+else()
+	add_definitions(-DRTM_NO_INTRINSICS)
+endif()
+
 target_compile_options(${PROJECT_NAME} PRIVATE -Wall -Wextra)		# Enable all warnings
 target_compile_options(${PROJECT_NAME} PRIVATE -Wshadow)			# Enable shadowing warnings
 target_compile_options(${PROJECT_NAME} PRIVATE -Werror)				# Treat warnings as errors

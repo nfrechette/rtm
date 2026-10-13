@@ -55,6 +55,8 @@ namespace rtm
 	{
 #if defined(RTM_SSE2_INTRINSICS)
 		return _mm_loadu_ps(input);
+#elif defined(RTM_WASM128_INTRINSICS)
+		return wasm_v128_load(input);
 #elif defined(RTM_NEON_INTRINSICS)
 		return vld1q_f32(input);
 #else
@@ -69,6 +71,8 @@ namespace rtm
 	{
 #if defined(RTM_SSE2_INTRINSICS)
 		return _mm_loadu_ps(&input->x);
+#elif defined(RTM_WASM128_INTRINSICS)
+		return wasm_v128_load(&input->x);
 #elif defined(RTM_NEON_INTRINSICS)
 		return vld1q_f32(&input->x);
 #else
@@ -81,7 +85,7 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE quatf RTM_SIMD_CALL vector_to_quat(vector4f_arg0 input) RTM_NO_EXCEPT
 	{
-#if defined(RTM_SSE2_INTRINSICS) || defined(RTM_NEON_INTRINSICS)
+#if defined(RTM_SSE2_INTRINSICS) || defined(RTM_NEON_INTRINSICS) || defined(RTM_WASM128_INTRINSICS)
 		return input;
 #else
 		return quatf{ input.x, input.y, input.z, input.w };
@@ -95,6 +99,8 @@ namespace rtm
 	{
 #if defined(RTM_SSE2_INTRINSICS)
 		return _mm_shuffle_ps(_mm_cvtpd_ps(input.xy), _mm_cvtpd_ps(input.zw), _MM_SHUFFLE(1, 0, 1, 0));
+#elif defined(RTM_WASM128_INTRINSICS)
+		return wasm_i32x4_shuffle(wasm_f32x4_demote_f64x2_zero(input.xy), wasm_f32x4_demote_f64x2_zero(input.zw), 0, 1, 4, 5);
 #elif defined(RTM_NEON64_INTRINSICS)
 		return vcvt_high_f32_f64(vcvt_f32_f64(input.xy), input.zw);
 #else
@@ -116,6 +122,8 @@ namespace rtm
 			{
 #if defined(RTM_SSE2_INTRINSICS)
 				return _mm_cvtss_f32(input);
+#elif defined(RTM_WASM128_INTRINSICS)
+				return wasm_f32x4_extract_lane(input, 0);
 #elif defined(RTM_NEON_INTRINSICS)
 				return vgetq_lane_f32(input, 0);
 #else
@@ -169,6 +177,8 @@ namespace rtm
 			{
 #if defined(RTM_SSE2_INTRINSICS)
 				return _mm_cvtss_f32(_mm_shuffle_ps(input, input, _MM_SHUFFLE(1, 1, 1, 1)));
+#elif defined(RTM_WASM128_INTRINSICS)
+				return wasm_f32x4_extract_lane(input, 1);
 #elif defined(RTM_NEON_INTRINSICS)
 				return vgetq_lane_f32(input, 1);
 #else
@@ -222,6 +232,8 @@ namespace rtm
 			{
 #if defined(RTM_SSE2_INTRINSICS)
 				return _mm_cvtss_f32(_mm_shuffle_ps(input, input, _MM_SHUFFLE(2, 2, 2, 2)));
+#elif defined(RTM_WASM128_INTRINSICS)
+				return wasm_f32x4_extract_lane(input, 2);
 #elif defined(RTM_NEON_INTRINSICS)
 				return vgetq_lane_f32(input, 2);
 #else
@@ -275,6 +287,8 @@ namespace rtm
 			{
 #if defined(RTM_SSE2_INTRINSICS)
 				return _mm_cvtss_f32(_mm_shuffle_ps(input, input, _MM_SHUFFLE(3, 3, 3, 3)));
+#elif defined(RTM_WASM128_INTRINSICS)
+				return wasm_f32x4_extract_lane(input, 3);
 #elif defined(RTM_NEON_INTRINSICS)
 				return vgetq_lane_f32(input, 3);
 #else
@@ -321,6 +335,8 @@ namespace rtm
 	{
 #if defined(RTM_SSE2_INTRINSICS)
 		return _mm_move_ss(input, _mm_set_ss(lane_value));
+#elif defined(RTM_WASM128_INTRINSICS)
+		return wasm_f32x4_replace_lane(input, 0, lane_value);
 #elif defined(RTM_NEON_INTRINSICS)
 		return vsetq_lane_f32(lane_value, input, 0);
 #else
@@ -349,6 +365,8 @@ namespace rtm
 		const __m128 yxzw = _mm_shuffle_ps(input, input, _MM_SHUFFLE(3, 2, 0, 1));
 		const __m128 vxzw = _mm_move_ss(yxzw, _mm_set_ss(lane_value));
 		return _mm_shuffle_ps(vxzw, vxzw, _MM_SHUFFLE(3, 2, 0, 1));
+#elif defined(RTM_WASM128_INTRINSICS)
+		return wasm_f32x4_replace_lane(input, 1, lane_value);
 #elif defined(RTM_NEON_INTRINSICS)
 		return vsetq_lane_f32(lane_value, input, 1);
 #else
@@ -383,6 +401,8 @@ namespace rtm
 		const __m128 zyxw = _mm_shuffle_ps(input, input, _MM_SHUFFLE(3, 0, 1, 2));
 		const __m128 vyxw = _mm_move_ss(zyxw, _mm_set_ss(lane_value));
 		return _mm_shuffle_ps(vyxw, vyxw, _MM_SHUFFLE(3, 0, 1, 2));
+#elif defined(RTM_WASM128_INTRINSICS)
+		return wasm_f32x4_replace_lane(input, 2, lane_value);
 #elif defined(RTM_NEON_INTRINSICS)
 		return vsetq_lane_f32(lane_value, input, 2);
 #else
@@ -417,6 +437,8 @@ namespace rtm
 		const __m128 wyzx = _mm_shuffle_ps(input, input, _MM_SHUFFLE(0, 2, 1, 3));
 		const __m128 vyzx = _mm_move_ss(wyzx, _mm_set_ss(lane_value));
 		return _mm_shuffle_ps(vyzx, vyzx, _MM_SHUFFLE(0, 2, 1, 3));
+#elif defined(RTM_WASM128_INTRINSICS)
+		return wasm_f32x4_replace_lane(input, 3, lane_value);
 #elif defined(RTM_NEON_INTRINSICS)
 		return vsetq_lane_f32(lane_value, input, 3);
 #else
@@ -447,6 +469,8 @@ namespace rtm
 	{
 #if defined(RTM_SSE2_INTRINSICS)
 		_mm_storeu_ps(output, input);
+#elif defined(RTM_WASM128_INTRINSICS)
+		wasm_v128_store(output, input);
 #else
 		output[0] = quat_get_x(input);
 		output[1] = quat_get_y(input);
@@ -462,6 +486,8 @@ namespace rtm
 	{
 #if defined(RTM_SSE2_INTRINSICS)
 		_mm_storeu_ps(&output->x, input);
+#elif defined(RTM_WASM128_INTRINSICS)
+		wasm_v128_store(&output->x, input);
 #else
 		output->x = quat_get_x(input);
 		output->y = quat_get_y(input);
@@ -486,6 +512,9 @@ namespace rtm
 #if defined(RTM_SSE2_INTRINSICS)
 		constexpr __m128 signs = RTM_VECTOR4F_MAKE(-0.0F, -0.0F, -0.0F, 0.0F);
 		return _mm_xor_ps(input, signs);
+#elif defined(RTM_WASM128_INTRINSICS)
+		const v128_t signs = wasm_f32x4_const(-0.0F, -0.0F, -0.0F, 0.0F);
+		return wasm_v128_xor(input, signs);
 #else
 		// On ARMv7 the scalar version performs best or among the best while on ARM64 it beats the others.
 		return quat_set(-quat_get_x(input), -quat_get_y(input), -quat_get_z(input), quat_get_w(input));
@@ -499,6 +528,8 @@ namespace rtm
 	{
 #if defined(RTM_SSE2_INTRINSICS)
 		return _mm_add_ps(lhs, rhs);
+#elif defined(RTM_WASM128_INTRINSICS)
+		return wasm_f32x4_add(lhs, rhs);
 #elif defined(RTM_NEON_INTRINSICS)
 		return vaddq_f32(lhs, rhs);
 #else
@@ -564,6 +595,35 @@ namespace rtm
 		const __m128 nlyrz_lxrz_lwrz_nlzrz = _mm_xor_ps(lyrz_lxrz_lwrz_lzrz, control_yxwz);
 		const __m128 result1 = _mm_add_ps(lzry_lwry_nlxry_nlyry, nlyrz_lxrz_lwrz_nlzrz);
 		return _mm_add_ps(result0, result1);
+#elif defined(RTM_WASM128_INTRINSICS)
+		const v128_t control_wzyx = wasm_f32x4_const(0.0F, -0.0F,  0.0F, -0.0F);
+		const v128_t control_zwxy = wasm_f32x4_const(0.0F,  0.0F, -0.0F, -0.0F);
+		const v128_t control_yxwz = wasm_f32x4_const(-0.0F,  0.0F,  0.0F, -0.0F);
+
+		const v128_t r_xxxx = wasm_i32x4_shuffle(rhs, rhs, 0, 0, 0, 0);
+		const v128_t r_yyyy = wasm_i32x4_shuffle(rhs, rhs, 1, 1, 1, 1);
+		const v128_t r_zzzz = wasm_i32x4_shuffle(rhs, rhs, 2, 2, 2, 2);
+		const v128_t r_wwww = wasm_i32x4_shuffle(rhs, rhs, 3, 3, 3, 3);
+
+		const v128_t lxrw_lyrw_lzrw_lwrw = wasm_f32x4_mul(r_wwww, lhs);
+		const v128_t l_wzyx = wasm_i32x4_shuffle(lhs, lhs, 3, 2, 1, 0);
+
+		const v128_t lwrx_lzrx_lyrx_lxrx = wasm_f32x4_mul(r_xxxx, l_wzyx);
+		const v128_t l_zwxy = wasm_i32x4_shuffle(l_wzyx, l_wzyx, 1, 0, 3, 2);
+
+		const v128_t lwrx_nlzrx_lyrx_nlxrx = wasm_v128_xor(lwrx_lzrx_lyrx_lxrx, control_wzyx);
+
+		const v128_t lzry_lwry_lxry_lyry = wasm_f32x4_mul(r_yyyy, l_zwxy);
+		const v128_t l_yxwz = wasm_i32x4_shuffle(l_zwxy, l_zwxy, 3, 2, 1, 0);
+
+		const v128_t lzry_lwry_nlxry_nlyry = wasm_v128_xor(lzry_lwry_lxry_lyry, control_zwxy);
+
+		const v128_t lyrz_lxrz_lwrz_lzrz = wasm_f32x4_mul(r_zzzz, l_yxwz);
+		const v128_t result0 = wasm_f32x4_add(lxrw_lyrw_lzrw_lwrw, lwrx_nlzrx_lyrx_nlxrx);
+
+		const v128_t nlyrz_lxrz_lwrz_nlzrz = wasm_v128_xor(lyrz_lxrz_lwrz_lzrz, control_yxwz);
+		const v128_t result1 = wasm_f32x4_add(lzry_lwry_nlxry_nlyry, nlyrz_lxrz_lwrz_nlzrz);
+		return wasm_f32x4_add(result0, result1);
 #elif defined(RTM_NEON64_INTRINSICS)
 		// Use shuffles and negation instead of loading constants and doing mul/xor.
 		// On ARM64, this is the fastest version.
@@ -632,6 +692,8 @@ namespace rtm
 	{
 #if defined(RTM_SSE2_INTRINSICS)
 		return _mm_mul_ps(quat, _mm_set_ps1(scalar));
+#elif defined(RTM_WASM128_INTRINSICS)
+		return wasm_f32x4_mul(quat, wasm_f32x4_splat(scalar));
 #elif defined(RTM_NEON_INTRINSICS)
 		return vmulq_n_f32(quat, scalar);
 #else
@@ -711,6 +773,62 @@ namespace rtm
 			__m128 result1 = _mm_add_ps(lzry_lwry_lxry_lyry, lyrz_lxrz_lwrz_lzrz);
 			return _mm_add_ps(result0, result1);
 		}
+#elif defined(RTM_WASM128_INTRINSICS)
+		const v128_t inv_rotation = quat_conjugate(rotation);
+
+		// Normally when we multiply our inverse rotation quaternion with the input vector as a quaternion with W = 0.0.
+		// As a result, we can strip the whole part that uses W saving a few instructions.
+		// Because we have the rotation and its inverse, we also can use them to avoid flipping the signs
+		// when lining up our SIMD additions. For the first quaternion multiplication, we can avoid 3 XORs by
+		// doing 2 shuffles instead. The same trick can also be used with the second quaternion multiplication.
+		// We also don't care about the result W lane but it comes for free.
+
+		// temp = quat_mul(inv_rotation, vector_quat)
+		v128_t temp;
+		{
+			const v128_t rotation_tmp0 = wasm_i32x4_shuffle(rotation, inv_rotation, 1, 2, 4, 7);		// r.y, r.z, -r.x, -r.w
+			const v128_t rotation_tmp1 = wasm_i32x4_shuffle(rotation, inv_rotation, 0, 2, 5, 7);		// r.x, r.z, -r.y, -r.w
+
+			const v128_t v_xxxx = wasm_i32x4_shuffle(vector, vector, 0, 0, 0, 0);
+			const v128_t v_yyyy = wasm_i32x4_shuffle(vector, vector, 1, 1, 1, 1);
+			const v128_t v_zzzz = wasm_i32x4_shuffle(vector, vector, 2, 2, 2, 2);
+
+			const v128_t rotation_tmp2 = wasm_i32x4_shuffle(rotation_tmp0, rotation_tmp1, 3, 1, 6, 4);	// -r.w, r.z, -r.y, r.x
+			const v128_t lwrx_lzrx_lyrx_lxrx = wasm_f32x4_mul(v_xxxx, rotation_tmp2);
+
+			const v128_t rotation_tmp3 = wasm_i32x4_shuffle(inv_rotation, rotation, 2, 3, 4, 5);		// -r.z, -r.w, r.x, r.y
+			const v128_t lzry_lwry_lxry_lyry = wasm_f32x4_mul(v_yyyy, rotation_tmp3);
+
+			const v128_t rotation_tmp4 = wasm_i32x4_shuffle(rotation_tmp0, rotation_tmp1, 0, 2, 7, 5);	// r.y, -r.x, -r.w, r.z
+			const v128_t lyrz_lxrz_lwrz_lzrz = wasm_f32x4_mul(v_zzzz, rotation_tmp4);
+
+			temp = wasm_f32x4_add(wasm_f32x4_add(lwrx_lzrx_lyrx_lxrx, lzry_lwry_lxry_lyry), lyrz_lxrz_lwrz_lzrz);
+		}
+
+		// result = quat_mul(temp, rotation)
+		{
+			const v128_t rotation_tmp0 = wasm_i32x4_shuffle(rotation, inv_rotation, 0, 2, 4, 6);		// r.x, r.z, -r.x, -r.z
+
+			v128_t r_xxxx = wasm_i32x4_shuffle(rotation_tmp0, rotation_tmp0, 0, 2, 0, 2);				// r.x, -r.x, r.x, -r.x
+			v128_t r_yyyy = wasm_i32x4_shuffle(rotation, inv_rotation, 1, 1, 5, 5);					// r.y, r.y, -r.y, -r.y
+			v128_t r_zzzz = wasm_i32x4_shuffle(rotation_tmp0, rotation_tmp0, 3, 1, 1, 3);				// -r.z, r.z, r.z, -r.z
+			v128_t r_wwww = wasm_i32x4_shuffle(rotation, rotation, 3, 3, 3, 3);						// r.w, r.w, r.w, r.w
+
+			v128_t lxrw_lyrw_lzrw_lwrw = wasm_f32x4_mul(r_wwww, temp);
+
+			v128_t t_wzyx = wasm_i32x4_shuffle(temp, temp, 3, 2, 1, 0);
+			v128_t lwrx_lzrx_lyrx_lxrx = wasm_f32x4_mul(r_xxxx, t_wzyx);
+
+			v128_t t_zwxy = wasm_i32x4_shuffle(t_wzyx, t_wzyx, 1, 0, 3, 2);
+			v128_t lzry_lwry_lxry_lyry = wasm_f32x4_mul(r_yyyy, t_zwxy);
+
+			v128_t t_yxwz = wasm_i32x4_shuffle(t_zwxy, t_zwxy, 3, 2, 1, 0);
+			v128_t lyrz_lxrz_lwrz_lzrz = wasm_f32x4_mul(r_zzzz, t_yxwz);
+
+			v128_t result0 = wasm_f32x4_add(lxrw_lyrw_lzrw_lwrw, lwrx_lzrx_lyrx_lxrx);
+			v128_t result1 = wasm_f32x4_add(lzry_lwry_lxry_lyry, lyrz_lxrz_lwrz_lzrz);
+			return wasm_f32x4_add(result0, result1);
+		}
 #elif defined(RTM_NEON_INTRINSICS)
 		// On ARMv7 and ARM64, the scalar version is often the fastest.
 		const float32x4_t n_rotation = vnegq_f32(rotation);
@@ -783,6 +901,13 @@ namespace rtm
 				__m128 y2w2_0_0_0 = _mm_shuffle_ps(x2z2_y2w2_0_0, x2z2_y2w2_0_0, _MM_SHUFFLE(0, 0, 0, 1));
 				__m128 x2y2z2w2_0_0_0 = _mm_add_ps(x2z2_y2w2_0_0, y2w2_0_0_0);
 				return _mm_cvtss_f32(x2y2z2w2_0_0_0);
+#elif defined(RTM_WASM128_INTRINSICS)
+				v128_t x2_y2_z2_w2 = wasm_f32x4_mul(lhs, rhs);
+				v128_t z2_w2_x2_y2 = wasm_i32x4_shuffle(x2_y2_z2_w2, x2_y2_z2_w2, 2, 3, 0, 1);
+				v128_t x2z2_y2w2_x2z2_y2w2 = wasm_f32x4_add(x2_y2_z2_w2, z2_w2_x2_y2);
+				v128_t y2w2_x2z2_y2w2_x2z2 = wasm_i32x4_shuffle(x2z2_y2w2_x2z2_y2w2, x2z2_y2w2_x2z2_y2w2, 1, 0, 3, 2);
+				v128_t x2y2z2w2_x2y2z2w2_x2y2z2w2_x2y2z2w2 = wasm_f32x4_add(x2z2_y2w2_x2z2_y2w2, y2w2_x2z2_y2w2_x2z2);
+				return wasm_f32x4_extract_lane(x2y2z2w2_x2y2z2w2_x2y2z2w2_x2y2z2w2, 0);
 #else
 				return (quat_get_x(lhs) * quat_get_x(rhs)) + (quat_get_y(lhs) * quat_get_y(rhs)) + (quat_get_z(lhs) * quat_get_z(rhs)) + (quat_get_w(lhs) * quat_get_w(rhs));
 #endif
@@ -989,6 +1114,18 @@ namespace rtm
 
 		// Multiply the rotation by it's inverse length in order to normalize it
 		return _mm_mul_ps(input, inv_len);
+#elif defined(RTM_WASM128_INTRINSICS)
+		// We first calculate the dot product to get the length squared: dot(input, input)
+		// The result is in all 4 lanes
+		v128_t x2_y2_z2_w2 = wasm_f32x4_mul(input, input);
+		v128_t z2_w2_x2_y2 = wasm_i32x4_shuffle(x2_y2_z2_w2, x2_y2_z2_w2, 2, 3, 0, 1);
+		v128_t x2z2_y2w2_x2z2_y2w2 = wasm_f32x4_add(x2_y2_z2_w2, z2_w2_x2_y2);
+		v128_t y2w2_x2z2_y2w2_x2z2 = wasm_i32x4_shuffle(x2z2_y2w2_x2z2_y2w2, x2z2_y2w2_x2z2_y2w2, 1, 0, 3, 2);
+		v128_t dot = wasm_f32x4_add(x2z2_y2w2_x2z2_y2w2, y2w2_x2z2_y2w2_x2z2);
+
+		// WASM does not have a reciprocal square root estimate, use sqrt/div/mul to normalize
+		v128_t inv_len = wasm_f32x4_div(wasm_f32x4_splat(1.0F), wasm_f32x4_sqrt(dot));
+		return wasm_f32x4_mul(input, inv_len);
 #elif defined (RTM_NEON_INTRINSICS)
 		// Use sqrt/div/mul to normalize because the sqrt/div are faster than rsqrt
 		float inv_len = 1.0F / scalar_sqrt(vector_length_squared(input));
@@ -1113,6 +1250,38 @@ namespace rtm
 
 		// Multiply the rotation by it's inverse length in order to normalize it
 		return _mm_mul_ps(interpolated_rotation, inv_len);
+#elif defined(RTM_WASM128_INTRINSICS)
+		// Calculate the vector4 dot product in all 4 lanes: dot(start, end)
+		v128_t dot;
+		{
+			v128_t x2_y2_z2_w2 = wasm_f32x4_mul(start, end);
+			v128_t z2_w2_x2_y2 = wasm_i32x4_shuffle(x2_y2_z2_w2, x2_y2_z2_w2, 2, 3, 0, 1);
+			v128_t x2z2_y2w2_x2z2_y2w2 = wasm_f32x4_add(x2_y2_z2_w2, z2_w2_x2_y2);
+			v128_t y2w2_x2z2_y2w2_x2z2 = wasm_i32x4_shuffle(x2z2_y2w2_x2z2_y2w2, x2z2_y2w2_x2z2_y2w2, 1, 0, 3, 2);
+			v128_t x2y2z2w2_x2y2z2w2_x2y2z2w2_x2y2z2w2 = wasm_f32x4_add(x2z2_y2w2_x2z2_y2w2, y2w2_x2z2_y2w2_x2z2);
+			dot = x2y2z2w2_x2y2z2w2_x2y2z2w2_x2y2z2w2;
+		}
+
+		// Calculate the bias, if the dot product is positive or zero, there is no bias
+		// but if it is negative, we want to flip the 'end' rotation XYZW components
+		v128_t bias = wasm_v128_and(dot, wasm_f32x4_splat(-0.0F));
+
+		// Lerp the rotation after applying the bias
+		// ((1.0 - alpha) * start) + (alpha * (end ^ bias)) == (start - alpha * start) + (alpha * (end ^ bias))
+		v128_t alpha_ = wasm_f32x4_splat(alpha);
+		v128_t interpolated_rotation = wasm_f32x4_add(wasm_f32x4_sub(start, wasm_f32x4_mul(alpha_, start)), wasm_f32x4_mul(alpha_, wasm_v128_xor(end, bias)));
+
+		// Now we need to normalize the resulting rotation. We first calculate the
+		// dot product in all 4 lanes to get the length squared: dot(interpolated_rotation, interpolated_rotation)
+		v128_t x2_y2_z2_w2 = wasm_f32x4_mul(interpolated_rotation, interpolated_rotation);
+		v128_t z2_w2_x2_y2 = wasm_i32x4_shuffle(x2_y2_z2_w2, x2_y2_z2_w2, 2, 3, 0, 1);
+		v128_t x2z2_y2w2_x2z2_y2w2 = wasm_f32x4_add(x2_y2_z2_w2, z2_w2_x2_y2);
+		v128_t y2w2_x2z2_y2w2_x2z2 = wasm_i32x4_shuffle(x2z2_y2w2_x2z2_y2w2, x2z2_y2w2_x2z2_y2w2, 1, 0, 3, 2);
+		v128_t len_sq = wasm_f32x4_add(x2z2_y2w2_x2z2_y2w2, y2w2_x2z2_y2w2_x2z2);
+
+		// WASM does not have a reciprocal square root estimate, use sqrt/div/mul to normalize
+		v128_t inv_len = wasm_f32x4_div(wasm_f32x4_splat(1.0F), wasm_f32x4_sqrt(len_sq));
+		return wasm_f32x4_mul(interpolated_rotation, inv_len);
 #elif defined (RTM_NEON64_INTRINSICS)
 		// On ARM64 with NEON, we load 1.0 once and use it twice which is faster than
 		// using a AND/XOR with the bias (same number of instructions)
@@ -1333,6 +1502,9 @@ namespace rtm
 #if defined(RTM_SSE2_INTRINSICS)
 		constexpr __m128 signs = RTM_VECTOR4F_MAKE(-0.0F, -0.0F, -0.0F, -0.0F);
 		return _mm_xor_ps(input, signs);
+#elif defined(RTM_WASM128_INTRINSICS)
+		const v128_t signs = wasm_f32x4_const(-0.0F, -0.0F, -0.0F, -0.0F);
+		return wasm_v128_xor(input, signs);
 #elif defined(RTM_NEON_INTRINSICS)
 		return vnegq_f32(input);
 #else
@@ -1519,6 +1691,13 @@ namespace rtm
 
 		__m128 is_not_finite = _mm_or_ps(is_infinity, is_nan);
 		return _mm_movemask_ps(is_not_finite) == 0;
+#elif defined(RTM_WASM128_INTRINSICS)
+		// The absolute value is smaller than infinity only when the input is finite, it is false for NaN
+		const v128_t is_finite = wasm_f32x4_lt(wasm_f32x4_abs(input), wasm_f32x4_splat(std::numeric_limits<float>::infinity()));
+
+		bool result;
+		RTM_MASK4F_ALL_TRUE(is_finite, result);
+		return result;
 #else
 		return scalar_is_finite(quat_get_x(input)) && scalar_is_finite(quat_get_y(input)) && scalar_is_finite(quat_get_z(input)) && scalar_is_finite(quat_get_w(input));
 #endif
@@ -1540,6 +1719,12 @@ namespace rtm
 	{
 #if defined(RTM_SSE2_INTRINSICS)
 		const __m128 mask = _mm_cmpeq_ps(lhs, rhs);
+
+		bool result;
+		RTM_MASK4F_ALL_TRUE(mask, result);
+		return result;
+#elif defined(RTM_WASM128_INTRINSICS)
+		const v128_t mask = wasm_f32x4_eq(lhs, rhs);
 
 		bool result;
 		RTM_MASK4F_ALL_TRUE(mask, result);
@@ -1595,7 +1780,7 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE quatf RTM_SIMD_CALL quat_select(mask4f_arg0 mask, quatf_arg1 if_true, quatf_arg2 if_false) RTM_NO_EXCEPT
 	{
-#if defined(RTM_SSE2_INTRINSICS) || defined(RTM_NEON_INTRINSICS)
+#if defined(RTM_SSE2_INTRINSICS) || defined(RTM_NEON_INTRINSICS) || defined(RTM_WASM128_INTRINSICS)
 		return RTM_VECTOR4F_SELECT(mask, if_true, if_false);
 #else
 		return quatf{ rtm_impl::select(mask.x, if_true.x, if_false.x), rtm_impl::select(mask.y, if_true.y, if_false.y), rtm_impl::select(mask.z, if_true.z, if_false.z), rtm_impl::select(mask.w, if_true.w, if_false.w) };

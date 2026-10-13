@@ -37,6 +37,8 @@
 	#include "rtm/impl/type_args.neon64.impl.h"
 #elif defined(RTM_NEON_INTRINSICS)
 	#include "rtm/impl/type_args.neon.impl.h"
+#elif defined(RTM_WASM128_INTRINSICS)
+	#include "rtm/impl/type_args.wasm.impl.h"
 #elif defined(RTM_ARCH_X64) && defined(RTM_COMPILER_GCC)
 	#include "rtm/impl/type_args.x64_gcc.impl.h"
 #elif defined(RTM_ARCH_X64) && defined(RTM_COMPILER_CLANG)
