@@ -48,6 +48,10 @@ namespace rtm
 		const __m128 input_sign = _mm_and_ps(input, sign_bit);
 		const __m128 bias = _mm_shuffle_ps(input_sign, input_sign, _MM_SHUFFLE(3, 3, 3, 3));
 		return _mm_xor_ps(input, bias);
+#elif defined(RTM_WASM128_INTRINSICS)
+		const v128_t input_sign = wasm_v128_and(input, wasm_f32x4_splat(-0.0F));
+		const v128_t bias = wasm_i32x4_shuffle(input_sign, input_sign, 3, 3, 3, 3);
+		return wasm_v128_xor(input, bias);
 #elif defined(RTM_NEON_INTRINSICS)
 		alignas(16) constexpr uint32_t sign_bit_i[4] = { 0x80000000U, 0x80000000U, 0x80000000U, 0x80000000U };
 		const uint32x4_t sign_bit = *rtm_impl::bit_cast<const uint32x4_t*>(&sign_bit_i[0]);

@@ -788,6 +788,9 @@ namespace rtm
 	{
 #if defined(RTM_SSE2_INTRINSICS)
 		return scalar_cast(scalar_round_bankers(scalar_set(input)));
+#elif defined(RTM_WASM128_INTRINSICS)
+		// WASM always rounds to nearest even and std::nearbyint compiles to f64.nearest
+		return std::nearbyint(input);
 #else
 		// NaN, +- Infinity, and numbers larger or equal to 2^52 remain unchanged
 		// since they have no fractional part. A conversion to a 64 bit integer would overflow for some of them.
@@ -901,6 +904,9 @@ namespace rtm
 		return vector4d{ xy, xy };
 #elif defined(RTM_NEON64_INTRINSICS)
 		const float64x2_t xy = vcombine_f64(vdup_n_f64(sin_), vdup_n_f64(cos_));
+		return vector4d{ xy, xy };
+#elif defined(RTM_WASM128_INTRINSICS)
+		const v128_t xy = wasm_f64x2_make(sin_, cos_);
 		return vector4d{ xy, xy };
 #else
 		return vector4d{ sin_, cos_, sin_, cos_ };

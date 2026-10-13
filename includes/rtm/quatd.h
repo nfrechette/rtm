@@ -54,6 +54,8 @@ namespace rtm
 	{
 #if defined(RTM_SSE2_INTRINSICS)
 		return quatd{ _mm_loadu_pd(input), _mm_loadu_pd(input + 2) };
+#elif defined(RTM_WASM128_INTRINSICS)
+		return quatd{ wasm_v128_load(input), wasm_v128_load(input + 2) };
 #elif defined(RTM_NEON64_INTRINSICS)
 		return quatd{ vld1q_f64(input), vld1q_f64(input + 2) };
 #else
@@ -68,6 +70,8 @@ namespace rtm
 	{
 #if defined(RTM_SSE2_INTRINSICS)
 		return quatd{ _mm_loadu_pd(&input->x), _mm_loadu_pd(&input->z) };
+#elif defined(RTM_WASM128_INTRINSICS)
+		return quatd{ wasm_v128_load(&input->x), wasm_v128_load(&input->z) };
 #elif defined(RTM_NEON64_INTRINSICS)
 		return quatd{ vld1q_f64(&input->x), vld1q_f64(&input->z) };
 #else
@@ -81,6 +85,8 @@ namespace rtm
 	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE quatd RTM_SIMD_CALL vector_to_quat(vector4d_arg0 input) RTM_NO_EXCEPT
 	{
 #if defined(RTM_SSE2_INTRINSICS)
+		return quatd{ input.xy, input.zw };
+#elif defined(RTM_WASM128_INTRINSICS)
 		return quatd{ input.xy, input.zw };
 #elif defined(RTM_NEON64_INTRINSICS)
 		return quatd{ input.xy, input.zw };
@@ -96,6 +102,8 @@ namespace rtm
 	{
 #if defined(RTM_SSE2_INTRINSICS)
 		return quatd{ _mm_cvtps_pd(input), _mm_cvtps_pd(_mm_shuffle_ps(input, input, _MM_SHUFFLE(3, 2, 3, 2))) };
+#elif defined(RTM_WASM128_INTRINSICS)
+		return quatd{ wasm_f64x2_promote_low_f32x4(input), wasm_f64x2_promote_low_f32x4(wasm_i32x4_shuffle(input, input, 2, 3, 2, 3)) };
 #elif defined(RTM_NEON64_INTRINSICS)
 		return quatd{ vcvt_f64_f32(vget_low_f32(input)), vcvt_high_f64_f32(input) };
 #elif defined(RTM_NEON_INTRINSICS)
@@ -119,6 +127,8 @@ namespace rtm
 			{
 #if defined(RTM_SSE2_INTRINSICS)
 				return _mm_cvtsd_f64(input.xy);
+#elif defined(RTM_WASM128_INTRINSICS)
+				return wasm_f64x2_extract_lane(input.xy, 0);
 #elif defined(RTM_NEON64_INTRINSICS)
 				return vgetq_lane_f64(input.xy, 0);
 #else
@@ -172,6 +182,8 @@ namespace rtm
 			{
 #if defined(RTM_SSE2_INTRINSICS)
 				return _mm_cvtsd_f64(_mm_shuffle_pd(input.xy, input.xy, _MM_SHUFFLE2(0, 1)));
+#elif defined(RTM_WASM128_INTRINSICS)
+				return wasm_f64x2_extract_lane(input.xy, 1);
 #elif defined(RTM_NEON64_INTRINSICS)
 				return vgetq_lane_f64(input.xy, 1);
 #else
@@ -225,6 +237,8 @@ namespace rtm
 			{
 #if defined(RTM_SSE2_INTRINSICS)
 				return _mm_cvtsd_f64(input.zw);
+#elif defined(RTM_WASM128_INTRINSICS)
+				return wasm_f64x2_extract_lane(input.zw, 0);
 #elif defined(RTM_NEON64_INTRINSICS)
 				return vgetq_lane_f64(input.zw, 0);
 #else
@@ -278,6 +292,8 @@ namespace rtm
 			{
 #if defined(RTM_SSE2_INTRINSICS)
 				return _mm_cvtsd_f64(_mm_shuffle_pd(input.zw, input.zw, _MM_SHUFFLE2(0, 1)));
+#elif defined(RTM_WASM128_INTRINSICS)
+				return wasm_f64x2_extract_lane(input.zw, 1);
 #elif defined(RTM_NEON64_INTRINSICS)
 				return vgetq_lane_f64(input.zw, 1);
 #else
@@ -324,6 +340,8 @@ namespace rtm
 	{
 #if defined(RTM_SSE2_INTRINSICS)
 		return quatd{ _mm_move_sd(input.xy, _mm_set_sd(lane_value)), input.zw };
+#elif defined(RTM_WASM128_INTRINSICS)
+		return quatd{ wasm_f64x2_replace_lane(input.xy, 0, lane_value), input.zw };
 #elif defined(RTM_NEON64_INTRINSICS)
 		return quatd{ vsetq_lane_f64(lane_value, input.xy, 0), input.zw };
 #else
@@ -348,6 +366,8 @@ namespace rtm
 	{
 #if defined(RTM_SSE2_INTRINSICS)
 		return quatd{ _mm_shuffle_pd(input.xy, _mm_set_sd(lane_value), _MM_SHUFFLE2(0, 0)), input.zw };
+#elif defined(RTM_WASM128_INTRINSICS)
+		return quatd{ wasm_f64x2_replace_lane(input.xy, 1, lane_value), input.zw };
 #elif defined(RTM_NEON64_INTRINSICS)
 		return quatd{ vsetq_lane_f64(lane_value, input.xy, 1), input.zw };
 #else
@@ -372,6 +392,8 @@ namespace rtm
 	{
 #if defined(RTM_SSE2_INTRINSICS)
 		return quatd{ input.xy, _mm_move_sd(input.zw, _mm_set_sd(lane_value)) };
+#elif defined(RTM_WASM128_INTRINSICS)
+		return quatd{ input.xy, wasm_f64x2_replace_lane(input.zw, 0, lane_value) };
 #elif defined(RTM_NEON64_INTRINSICS)
 		return quatd{ input.xy, vsetq_lane_f64(lane_value, input.zw, 0) };
 #else
@@ -396,6 +418,8 @@ namespace rtm
 	{
 #if defined(RTM_SSE2_INTRINSICS)
 		return quatd{ input.xy, _mm_shuffle_pd(input.zw, _mm_set_sd(lane_value), _MM_SHUFFLE2(0, 0)) };
+#elif defined(RTM_WASM128_INTRINSICS)
+		return quatd{ input.xy, wasm_f64x2_replace_lane(input.zw, 1, lane_value) };
 #elif defined(RTM_NEON64_INTRINSICS)
 		return quatd{ input.xy, vsetq_lane_f64(lane_value, input.zw, 1) };
 #else
@@ -421,6 +445,9 @@ namespace rtm
 #if defined(RTM_SSE2_INTRINSICS)
 		_mm_storeu_pd(output, input.xy);
 		_mm_storeu_pd(output + 2, input.zw);
+#elif defined(RTM_WASM128_INTRINSICS)
+		wasm_v128_store(output, input.xy);
+		wasm_v128_store(output + 2, input.zw);
 #elif defined(RTM_NEON64_INTRINSICS)
 		vst1q_f64(output, input.xy);
 		vst1q_f64(output + 2, input.zw);
@@ -440,6 +467,9 @@ namespace rtm
 #if defined(RTM_SSE2_INTRINSICS)
 		_mm_storeu_pd(&output->x, input.xy);
 		_mm_storeu_pd(&output->z, input.zw);
+#elif defined(RTM_WASM128_INTRINSICS)
+		wasm_v128_store(&output->x, input.xy);
+		wasm_v128_store(&output->z, input.zw);
 #elif defined(RTM_NEON64_INTRINSICS)
 		vst1q_f64(&output->x, input.xy);
 		vst1q_f64(&output->z, input.zw);
@@ -468,6 +498,8 @@ namespace rtm
 		constexpr __m128d signs_xy = RTM_VECTOR2D_MAKE(-0.0, -0.0);
 		constexpr __m128d signs_zw = RTM_VECTOR2D_MAKE(-0.0, 0.0);
 		return quatd{ _mm_xor_pd(input.xy, signs_xy), _mm_xor_pd(input.zw, signs_zw) };
+#elif defined(RTM_WASM128_INTRINSICS)
+		return vector_to_quat(vector_neg<true, true, true, false>(quat_to_vector(input)));
 #elif defined(RTM_NEON64_INTRINSICS)
 		return vector_to_quat(vector_neg<true, true, true, false>(quat_to_vector(input)));
 #else
@@ -482,6 +514,8 @@ namespace rtm
 	{
 #if defined(RTM_SSE2_INTRINSICS)
 		return quatd{ _mm_add_pd(lhs.xy, rhs.xy), _mm_add_pd(lhs.zw, rhs.zw) };
+#elif defined(RTM_WASM128_INTRINSICS)
+		return quatd{ wasm_f64x2_add(lhs.xy, rhs.xy), wasm_f64x2_add(lhs.zw, rhs.zw) };
 #elif defined(RTM_NEON64_INTRINSICS)
 		return quatd{ vaddq_f64(lhs.xy, rhs.xy), vaddq_f64(lhs.zw, rhs.zw) };
 #else
@@ -534,6 +568,38 @@ namespace rtm
 		const __m128d result1_zw = _mm_add_pd(nlxry_nlyry, lwrz_nlzrz);
 
 		return quatd{ _mm_add_pd(result0_xy, result1_xy), _mm_add_pd(result0_zw, result1_zw) };
+#elif defined(RTM_WASM128_INTRINSICS)
+		// Use shuffles and negation instead of loading constants and doing mul/xor, as quatf does.
+		// x = (l.x * r.w) + (l.w * r.x) + (l.z * r.y) - (l.y * r.z)
+		// y = (l.y * r.w) - (l.z * r.x) + (l.w * r.y) + (l.x * r.z)
+		// z = (l.z * r.w) + (l.y * r.x) - (l.x * r.y) + (l.w * r.z)
+		// w = (l.w * r.w) - (l.x * r.x) - (l.y * r.y) - (l.z * r.z)
+
+		// [-l.x, -l.y] and [-l.z, -l.w]
+		const v128_t l_nx_ny = wasm_f64x2_neg(lhs.xy);
+		const v128_t l_nz_nw = wasm_f64x2_neg(lhs.zw);
+
+		// [l.w, -l.z]
+		const v128_t l_w_nz = wasm_i64x2_shuffle(lhs.zw, l_nz_nw, 1, 2);
+
+		// [l.y, -l.x]
+		const v128_t l_y_nx = wasm_i64x2_shuffle(lhs.xy, l_nx_ny, 1, 2);
+
+		// [-l.y, l.x]
+		const v128_t l_ny_x = wasm_i64x2_shuffle(l_nx_ny, lhs.xy, 1, 2);
+
+		const v128_t result0_xy = wasm_f64x2_mul(lhs.xy, wasm_i64x2_shuffle(rhs.zw, rhs.zw, 1, 1));
+		const v128_t result0_zw = wasm_f64x2_mul(lhs.zw, wasm_i64x2_shuffle(rhs.zw, rhs.zw, 1, 1));
+
+		const v128_t result1_xy = wasm_f64x2_add(result0_xy, wasm_f64x2_mul(l_w_nz, wasm_i64x2_shuffle(rhs.xy, rhs.xy, 0, 0)));
+		const v128_t result1_zw = wasm_f64x2_add(result0_zw, wasm_f64x2_mul(l_y_nx, wasm_i64x2_shuffle(rhs.xy, rhs.xy, 0, 0)));
+
+		const v128_t result2_xy = wasm_f64x2_add(result1_xy, wasm_f64x2_mul(lhs.zw, wasm_i64x2_shuffle(rhs.xy, rhs.xy, 1, 1)));
+		const v128_t result2_zw = wasm_f64x2_add(result1_zw, wasm_f64x2_mul(l_nx_ny, wasm_i64x2_shuffle(rhs.xy, rhs.xy, 1, 1)));
+
+		const v128_t result_xy = wasm_f64x2_add(result2_xy, wasm_f64x2_mul(l_ny_x, wasm_i64x2_shuffle(rhs.zw, rhs.zw, 0, 0)));
+		const v128_t result_zw = wasm_f64x2_add(result2_zw, wasm_f64x2_mul(l_w_nz, wasm_i64x2_shuffle(rhs.zw, rhs.zw, 0, 0)));
+		return quatd{ result_xy, result_zw };
 #elif defined(RTM_NEON64_INTRINSICS)
 		// Use shuffles and negation instead of loading constants and doing mul/xor, as quatf does.
 		// x = (l.x * r.w) + (l.w * r.x) + (l.z * r.y) - (l.y * r.z)
@@ -594,6 +660,9 @@ namespace rtm
 #if defined(RTM_SSE2_INTRINSICS)
 		const __m128d scalar_v = _mm_set1_pd(scalar);
 		return quatd{ _mm_mul_pd(quat.xy, scalar_v), _mm_mul_pd(quat.zw, scalar_v) };
+#elif defined(RTM_WASM128_INTRINSICS)
+		const v128_t scalar_v = wasm_f64x2_splat(scalar);
+		return quatd{ wasm_f64x2_mul(quat.xy, scalar_v), wasm_f64x2_mul(quat.zw, scalar_v) };
 #elif defined(RTM_NEON64_INTRINSICS)
 		const float64x2_t scalar_v = vdupq_n_f64(scalar);
 		return quatd{ vmulq_f64(quat.xy, scalar_v), vmulq_f64(quat.zw, scalar_v) };
@@ -642,6 +711,11 @@ namespace rtm
 				const __m128d y2w2 = _mm_shuffle_pd(x2z2_y2w2, x2z2_y2w2, _MM_SHUFFLE2(1, 1));
 				const __m128d x2y2z2w2 = _mm_add_pd(x2z2_y2w2, y2w2);
 				return _mm_cvtsd_f64(x2y2z2w2);
+#elif defined(RTM_WASM128_INTRINSICS)
+				const v128_t x2_y2 = wasm_f64x2_mul(lhs.xy, rhs.xy);
+				const v128_t z2_w2 = wasm_f64x2_mul(lhs.zw, rhs.zw);
+				const v128_t x2z2_y2w2 = wasm_f64x2_add(x2_y2, z2_w2);
+				return wasm_f64x2_extract_lane(x2z2_y2w2, 0) + wasm_f64x2_extract_lane(x2z2_y2w2, 1);
 #elif defined(RTM_NEON64_INTRINSICS)
 				const float64x2_t x2_y2 = vmulq_f64(lhs.xy, rhs.xy);
 				const float64x2_t z2_w2 = vmulq_f64(lhs.zw, rhs.zw);
@@ -702,6 +776,11 @@ namespace rtm
 		const __m128d y2w2 = _mm_shuffle_pd(x2z2_y2w2, x2z2_y2w2, _MM_SHUFFLE2(1, 1));
 		const __m128d x2y2z2w2 = _mm_add_pd(x2z2_y2w2, y2w2);
 		return scalard{ x2y2z2w2 };
+#elif defined(RTM_WASM128_INTRINSICS)
+		const v128_t x2_y2 = wasm_f64x2_mul(lhs.xy, rhs.xy);
+		const v128_t z2_w2 = wasm_f64x2_mul(lhs.zw, rhs.zw);
+		const v128_t x2z2_y2w2 = wasm_f64x2_add(x2_y2, z2_w2);
+		return wasm_f64x2_extract_lane(x2z2_y2w2, 0) + wasm_f64x2_extract_lane(x2z2_y2w2, 1);
 #elif defined(RTM_NEON64_INTRINSICS)
 		const float64x2_t x2_y2 = vmulq_f64(lhs.xy, rhs.xy);
 		const float64x2_t z2_w2 = vmulq_f64(lhs.zw, rhs.zw);
@@ -1007,6 +1086,8 @@ namespace rtm
 #if defined(RTM_SSE2_INTRINSICS)
 		constexpr __m128d signs = RTM_VECTOR2D_MAKE(-0.0, -0.0);
 		return quatd{ _mm_xor_pd(input.xy, signs), _mm_xor_pd(input.zw, signs) };
+#elif defined(RTM_WASM128_INTRINSICS)
+		return quatd{ wasm_f64x2_neg(input.xy), wasm_f64x2_neg(input.zw) };
 #elif defined(RTM_NEON64_INTRINSICS)
 		return quatd{ vnegq_f64(input.xy), vnegq_f64(input.zw) };
 #else
@@ -1198,6 +1279,10 @@ namespace rtm
 		__m128d is_not_finite_zw = _mm_or_pd(is_infinity_zw, is_nan_zw);
 		__m128d is_not_finite = _mm_or_pd(is_not_finite_xy, is_not_finite_zw);
 		return _mm_movemask_pd(is_not_finite) == 0;
+#elif defined(RTM_WASM128_INTRINSICS)
+		// The absolute value is less than infinity only if the value is finite: NaN and infinity are false
+		const v128_t infinity = wasm_f64x2_splat(std::numeric_limits<double>::infinity());
+		return rtm_impl::mask4q_all_true(wasm_f64x2_lt(wasm_f64x2_abs(input.xy), infinity), wasm_f64x2_lt(wasm_f64x2_abs(input.zw), infinity));
 #elif defined(RTM_NEON64_INTRINSICS)
 		// The absolute value is less than infinity only if the value is finite: NaN and infinity are false
 		const float64x2_t infinity = vdupq_n_f64(std::numeric_limits<double>::infinity());
@@ -1225,6 +1310,8 @@ namespace rtm
 		__m128d xy_eq_pd = _mm_cmpeq_pd(lhs.xy, rhs.xy);
 		__m128d zw_eq_pd = _mm_cmpeq_pd(lhs.zw, rhs.zw);
 		return (_mm_movemask_pd(xy_eq_pd) & _mm_movemask_pd(zw_eq_pd)) == 3;
+#elif defined(RTM_WASM128_INTRINSICS)
+		return rtm_impl::mask4q_all_true(wasm_f64x2_eq(lhs.xy, rhs.xy), wasm_f64x2_eq(lhs.zw, rhs.zw));
 #elif defined(RTM_NEON64_INTRINSICS)
 		return rtm_impl::mask4q_all_true(vceqq_f64(lhs.xy, rhs.xy), vceqq_f64(lhs.zw, rhs.zw));
 #else
@@ -1263,6 +1350,10 @@ namespace rtm
 #if defined(RTM_SSE2_INTRINSICS)
 		__m128d xy = RTM_VECTOR2D_SELECT(mask.xy, if_true.xy, if_false.xy);
 		__m128d zw = RTM_VECTOR2D_SELECT(mask.zw, if_true.zw, if_false.zw);
+		return quatd{ xy, zw };
+#elif defined(RTM_WASM128_INTRINSICS)
+		v128_t xy = RTM_VECTOR2D_SELECT(mask.xy, if_true.xy, if_false.xy);
+		v128_t zw = RTM_VECTOR2D_SELECT(mask.zw, if_true.zw, if_false.zw);
 		return quatd{ xy, zw };
 #elif defined(RTM_NEON64_INTRINSICS)
 		float64x2_t xy = RTM_VECTOR2D_SELECT(mask.xy, if_true.xy, if_false.xy);

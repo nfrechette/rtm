@@ -65,6 +65,12 @@ RTM_IMPL_FILE_PRAGMA_PUSH
 	// All three inputs must be an rtm::vector4f.
 	//////////////////////////////////////////////////////////////////////////
 	#define RTM_VECTOR4F_MULV_ADD(v0, v1, v2) _mm_add_ps(_mm_mul_ps((v0), (v1)), (v2))
+#elif defined(RTM_WASM128_INTRINSICS)
+	//////////////////////////////////////////////////////////////////////////
+	// Per component multiplication/addition of the three inputs: v2 + (v0 * v1)
+	// All three inputs must be an rtm::vector4f.
+	//////////////////////////////////////////////////////////////////////////
+	#define RTM_VECTOR4F_MULV_ADD(v0, v1, v2) wasm_f32x4_add(wasm_f32x4_mul((v0), (v1)), (v2))
 #else
 	//////////////////////////////////////////////////////////////////////////
 	// Per component multiplication/addition of the three inputs: v2 + (v0 * v1)
@@ -91,6 +97,12 @@ RTM_IMPL_FILE_PRAGMA_PUSH
 	// The v0 and v2 inputs must be a rtm::vector4f and s1 must be a float.
 	//////////////////////////////////////////////////////////////////////////
 	#define RTM_VECTOR4F_MULS_ADD(v0, s1, v2) _mm_add_ps(_mm_mul_ps((v0), _mm_set_ps1((s1))), (v2))
+#elif defined(RTM_WASM128_INTRINSICS)
+	//////////////////////////////////////////////////////////////////////////
+	// Per component multiplication/addition of the three inputs: v2 + (v0 * s1)
+	// The v0 and v2 inputs must be a rtm::vector4f and s1 must be a float.
+	//////////////////////////////////////////////////////////////////////////
+	#define RTM_VECTOR4F_MULS_ADD(v0, s1, v2) wasm_f32x4_add(wasm_f32x4_mul((v0), wasm_f32x4_splat((s1))), (v2))
 #else
 	//////////////////////////////////////////////////////////////////////////
 	// Per component multiplication/addition of the three inputs: v2 + (v0 * s1)
@@ -120,6 +132,13 @@ RTM_IMPL_FILE_PRAGMA_PUSH
 	// All three inputs must be an rtm::vector4f.
 	//////////////////////////////////////////////////////////////////////////
 	#define RTM_VECTOR4F_NEG_MULV_SUB(v0, v1, v2) _mm_sub_ps((v2), _mm_mul_ps((v0), (v1)))
+#elif defined(RTM_WASM128_INTRINSICS)
+	//////////////////////////////////////////////////////////////////////////
+	// Per component negative multiplication/subtraction of the three inputs: -((v0 * v1) - v2)
+	// This is mathematically equivalent to: v2 - (v0 * v1)
+	// All three inputs must be an rtm::vector4f.
+	//////////////////////////////////////////////////////////////////////////
+	#define RTM_VECTOR4F_NEG_MULV_SUB(v0, v1, v2) wasm_f32x4_sub((v2), wasm_f32x4_mul((v0), (v1)))
 #else
 	//////////////////////////////////////////////////////////////////////////
 	// Per component negative multiplication/subtraction of the three inputs: -((v0 * v1) - v2)
@@ -150,6 +169,13 @@ RTM_IMPL_FILE_PRAGMA_PUSH
 	// The v0 and v2 inputs must be a rtm::vector4f and s1 must be a float.
 	//////////////////////////////////////////////////////////////////////////
 	#define RTM_VECTOR4F_NEG_MULS_SUB(v0, s1, v2) _mm_sub_ps((v2), _mm_mul_ps((v0), _mm_set_ps1((s1))))
+#elif defined(RTM_WASM128_INTRINSICS)
+	//////////////////////////////////////////////////////////////////////////
+	// Per component negative multiplication/subtraction of the three inputs: -((v0 * s1) - v2)
+	// This is mathematically equivalent to: v2 - (v0 * s1)
+	// The v0 and v2 inputs must be a rtm::vector4f and s1 must be a float.
+	//////////////////////////////////////////////////////////////////////////
+	#define RTM_VECTOR4F_NEG_MULS_SUB(v0, s1, v2) wasm_f32x4_sub((v2), wasm_f32x4_mul((v0), wasm_f32x4_splat((s1))))
 #else
 	//////////////////////////////////////////////////////////////////////////
 	// Per component negative multiplication/subtraction of the three inputs: -((v0 * s1) - v2)
@@ -192,6 +218,17 @@ RTM_IMPL_FILE_PRAGMA_PUSH
 		//////////////////////////////////////////////////////////////////////////
 		#define RTM_VECTOR2D_SELECT(mask, if_true, if_false) vbslq_f64(mask, if_true, if_false)
 	#endif
+#elif defined(RTM_WASM128_INTRINSICS)
+	//////////////////////////////////////////////////////////////////////////
+	// Per component selection depending on the mask: mask != 0 ? if_true : if_false
+	//////////////////////////////////////////////////////////////////////////
+	#define RTM_VECTOR4F_SELECT(mask, if_true, if_false) wasm_v128_bitselect(if_true, if_false, mask)
+
+	//////////////////////////////////////////////////////////////////////////
+	// Per component selection depending on the mask: mask != 0 ? if_true : if_false
+	// The mask and both values must be a v128_t with two 64 bit lanes.
+	//////////////////////////////////////////////////////////////////////////
+	#define RTM_VECTOR2D_SELECT(mask, if_true, if_false) wasm_v128_bitselect(if_true, if_false, mask)
 #else
 	// Macros not defined for scalar code path
 #endif
@@ -220,6 +257,8 @@ RTM_IMPL_FILE_PRAGMA_PUSH
 	#endif
 #elif defined(RTM_NEON_INTRINSICS)
 	// RTM_VECTOR2D_SELECT not defined for NEON yet, TODO
+#elif defined(RTM_WASM128_INTRINSICS)
+	// Use wasm_f32x4_const and wasm_f64x2_const to create a vector constant
 #else
 	// Macros not defined for scalar code path
 #endif

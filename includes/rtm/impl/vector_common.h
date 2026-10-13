@@ -46,6 +46,8 @@ namespace rtm
 	{
 #if defined(RTM_SSE2_INTRINSICS)
 		return _mm_set_ps(w, z, y, x);
+#elif defined(RTM_WASM128_INTRINSICS)
+		return wasm_f32x4_make(x, y, z, w);
 #elif defined(RTM_NEON_INTRINSICS)
 		float32x2_t V0 = vset_lane_f32(y, vmov_n_f32(x), 1);
 		float32x2_t V1 = vset_lane_f32(w, vmov_n_f32(z), 1);
@@ -62,6 +64,8 @@ namespace rtm
 	{
 #if defined(RTM_SSE2_INTRINSICS)
 		return _mm_set_ps(0.0F, z, y, x);
+#elif defined(RTM_WASM128_INTRINSICS)
+		return wasm_f32x4_make(x, y, z, 0.0F);
 #elif defined(RTM_NEON_INTRINSICS)
 		float32x2_t V0 = vset_lane_f32(y, vmov_n_f32(x), 1);
 		float32x2_t V1 = vset_lane_f32(z, vdup_n_f32(0.0F), 0);
@@ -78,6 +82,8 @@ namespace rtm
 	{
 #if defined(RTM_SSE2_INTRINSICS)
 		return _mm_set_ps1(xyzw);
+#elif defined(RTM_WASM128_INTRINSICS)
+		return wasm_f32x4_splat(xyzw);
 #elif defined(RTM_NEON_INTRINSICS)
 		return vdupq_n_f32(xyzw);
 #else
@@ -122,6 +128,8 @@ namespace rtm
 	{
 #if defined(RTM_SSE2_INTRINSICS)
 		return vector4d{ _mm_set_pd(y, x), _mm_set_pd(w, z) };
+#elif defined(RTM_WASM128_INTRINSICS)
+		return vector4d{ wasm_f64x2_make(x, y), wasm_f64x2_make(z, w) };
 #elif defined(RTM_NEON64_INTRINSICS)
 		return vector4d{ vcombine_f64(vdup_n_f64(x), vdup_n_f64(y)), vcombine_f64(vdup_n_f64(z), vdup_n_f64(w)) };
 #else
@@ -136,6 +144,8 @@ namespace rtm
 	{
 #if defined(RTM_SSE2_INTRINSICS)
 		return vector4d{ _mm_set_pd(y, x), _mm_set_pd(0.0, z) };
+#elif defined(RTM_WASM128_INTRINSICS)
+		return vector4d{ wasm_f64x2_make(x, y), wasm_f64x2_make(z, 0.0) };
 #elif defined(RTM_NEON64_INTRINSICS)
 		return vector4d{ vcombine_f64(vdup_n_f64(x), vdup_n_f64(y)), vcombine_f64(vdup_n_f64(z), vdup_n_f64(0.0)) };
 #else
@@ -150,6 +160,9 @@ namespace rtm
 	{
 #if defined(RTM_SSE2_INTRINSICS)
 		const __m128d xyzw_pd = _mm_set1_pd(xyzw);
+		return vector4d{ xyzw_pd, xyzw_pd };
+#elif defined(RTM_WASM128_INTRINSICS)
+		const v128_t xyzw_pd = wasm_f64x2_splat(xyzw);
 		return vector4d{ xyzw_pd, xyzw_pd };
 #elif defined(RTM_NEON64_INTRINSICS)
 		const float64x2_t xyzw_pd = vdupq_n_f64(xyzw);
@@ -406,6 +419,8 @@ namespace rtm
 				{
 #if defined(RTM_SSE2_INTRINSICS)
 					return _mm_loadu_ps((const float*)ptr);
+#elif defined(RTM_WASM128_INTRINSICS)
+					return wasm_v128_load(ptr);
 #elif defined(RTM_NEON_INTRINSICS)
 					return vreinterpretq_f32_u8(vld1q_u8(ptr));
 #else
@@ -432,6 +447,8 @@ namespace rtm
 			{
 #if defined(RTM_SSE2_INTRINSICS)
 				return _mm_cvtss_f32(value);
+#elif defined(RTM_WASM128_INTRINSICS)
+				return wasm_f32x4_extract_lane(value, 0);
 #elif defined(RTM_NEON_INTRINSICS)
 				return vgetq_lane_f32(value, 0);
 #else
@@ -461,6 +478,8 @@ namespace rtm
 			{
 #if defined(RTM_SSE2_INTRINSICS)
 				return _mm_cvtsd_f64(value.xy);
+#elif defined(RTM_WASM128_INTRINSICS)
+				return wasm_f64x2_extract_lane(value.xy, 0);
 #elif defined(RTM_NEON64_INTRINSICS)
 				return vgetq_lane_f64(value.xy, 0);
 #else
@@ -493,6 +512,11 @@ namespace rtm
 				__m128 xz_yw_zz_ww = _mm_min_ps(value, zwzw);
 				__m128 yw_yw_yw_yw = _mm_shuffle_ps(xz_yw_zz_ww, xz_yw_zz_ww, _MM_SHUFFLE(1, 1, 1, 1));
 				return _mm_cvtss_f32(_mm_min_ps(xz_yw_zz_ww, yw_yw_yw_yw));
+#elif defined(RTM_WASM128_INTRINSICS)
+				v128_t zwzw = wasm_i32x4_shuffle(value, value, 2, 3, 2, 3);
+				v128_t xz_yw_zz_ww = wasm_f32x4_pmin(value, zwzw);
+				v128_t yw_yw_yw_yw = wasm_i32x4_shuffle(xz_yw_zz_ww, xz_yw_zz_ww, 1, 1, 1, 1);
+				return wasm_f32x4_extract_lane(wasm_f32x4_pmin(xz_yw_zz_ww, yw_yw_yw_yw), 0);
 #elif defined(RTM_NEON_INTRINSICS)
 				float32x2_t xy_zw = vpmin_f32(vget_low_f32(value), vget_high_f32(value));
 				return vget_lane_f32(vpmin_f32(xy_zw, xy_zw), 0);
@@ -530,6 +554,11 @@ namespace rtm
 				__m128 xz_yw_zz_ww = _mm_max_ps(value, zwzw);
 				__m128 yw_yw_yw_yw = _mm_shuffle_ps(xz_yw_zz_ww, xz_yw_zz_ww, _MM_SHUFFLE(1, 1, 1, 1));
 				return _mm_cvtss_f32(_mm_max_ps(xz_yw_zz_ww, yw_yw_yw_yw));
+#elif defined(RTM_WASM128_INTRINSICS)
+				v128_t zwzw = wasm_i32x4_shuffle(value, value, 2, 3, 2, 3);
+				v128_t xz_yw_zz_ww = wasm_f32x4_pmax(value, zwzw);
+				v128_t yw_yw_yw_yw = wasm_i32x4_shuffle(xz_yw_zz_ww, xz_yw_zz_ww, 1, 1, 1, 1);
+				return wasm_f32x4_extract_lane(wasm_f32x4_pmax(xz_yw_zz_ww, yw_yw_yw_yw), 0);
 #elif defined(RTM_NEON_INTRINSICS)
 				float32x2_t xy_zw = vpmax_f32(vget_low_f32(value), vget_high_f32(value));
 				return vget_lane_f32(vpmax_f32(xy_zw, xy_zw), 0);
@@ -566,6 +595,10 @@ namespace rtm
 				__m128d xz_yw = _mm_min_pd(value.xy, value.zw);
 				__m128d yw_yw = _mm_shuffle_pd(xz_yw, xz_yw, 1);
 				return _mm_cvtsd_f64(_mm_min_pd(xz_yw, yw_yw));
+#elif defined(RTM_WASM128_INTRINSICS)
+				v128_t xz_yw = wasm_f64x2_pmin(value.xy, value.zw);
+				v128_t yw_yw = wasm_i64x2_shuffle(xz_yw, xz_yw, 1, 1);
+				return wasm_f64x2_extract_lane(wasm_f64x2_pmin(xz_yw, yw_yw), 0);
 #elif defined(RTM_NEON64_INTRINSICS)
 				float64x2_t xz_yw = vminq_f64(value.xy, value.zw);
 				float64x2_t yw_yw = vdupq_laneq_f64(xz_yw, 1);
@@ -602,6 +635,10 @@ namespace rtm
 				__m128d xz_yw = _mm_max_pd(value.xy, value.zw);
 				__m128d yw_yw = _mm_shuffle_pd(xz_yw, xz_yw, 1);
 				return _mm_cvtsd_f64(_mm_max_pd(xz_yw, yw_yw));
+#elif defined(RTM_WASM128_INTRINSICS)
+				v128_t xz_yw = wasm_f64x2_pmax(value.xy, value.zw);
+				v128_t yw_yw = wasm_i64x2_shuffle(xz_yw, xz_yw, 1, 1);
+				return wasm_f64x2_extract_lane(wasm_f64x2_pmax(xz_yw, yw_yw), 0);
 #elif defined(RTM_NEON64_INTRINSICS)
 				float64x2_t xz_yw = vmaxq_f64(value.xy, value.zw);
 				float64x2_t yw_yw = vdupq_laneq_f64(xz_yw, 1);

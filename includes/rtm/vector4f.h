@@ -56,6 +56,8 @@ namespace rtm
 	{
 #if defined(RTM_SSE2_INTRINSICS)
 		return _mm_loadu_ps(input);
+#elif defined(RTM_WASM128_INTRINSICS)
+		return wasm_v128_load(input);
 #elif defined(RTM_NEON_INTRINSICS)
 		return vld1q_f32(input);
 #else
@@ -70,6 +72,8 @@ namespace rtm
 	{
 #if defined(RTM_SSE2_INTRINSICS)
 		return _mm_load_ss(input);
+#elif defined(RTM_WASM128_INTRINSICS)
+		return wasm_v128_load32_zero(input);
 #elif defined(RTM_NEON_INTRINSICS)
 		return vld1q_lane_f32(input, vdupq_n_f32(0.0F), 0);
 #else
@@ -84,6 +88,8 @@ namespace rtm
 	{
 #if defined(RTM_SSE2_INTRINSICS)
 		return _mm_castpd_ps(_mm_load_sd(rtm_impl::bit_cast<const double*>(input)));
+#elif defined(RTM_WASM128_INTRINSICS)
+		return wasm_v128_load64_zero(input);
 #elif defined(RTM_NEON_INTRINSICS)
 		const float32x2_t xy = vld1_f32(input);
 		return vcombine_f32(xy, vdup_n_f32(0.0F));
@@ -101,6 +107,8 @@ namespace rtm
 		const __m128 xy = _mm_castpd_ps(_mm_load_sd(rtm_impl::bit_cast<const double*>(input)));
 		const __m128 z = _mm_load_ss(input + 2);
 		return _mm_movelh_ps(xy, z);
+#elif defined(RTM_WASM128_INTRINSICS)
+		return wasm_v128_load32_lane(input + 2, wasm_v128_load64_zero(input), 2);
 #elif defined(RTM_NEON_INTRINSICS)
 		const float32x2_t xy = vld1_f32(input);
 		const float32x2_t z = vld1_lane_f32(input + 2, vdup_n_f32(0.0F), 0);
@@ -117,6 +125,8 @@ namespace rtm
 	{
 #if defined(RTM_SSE2_INTRINSICS)
 		return _mm_loadu_ps(&input->x);
+#elif defined(RTM_WASM128_INTRINSICS)
+		return wasm_v128_load(&input->x);
 #elif defined(RTM_NEON_INTRINSICS)
 		return vld1q_f32(&input->x);
 #else
@@ -131,6 +141,8 @@ namespace rtm
 	{
 #if defined(RTM_SSE2_INTRINSICS)
 		return _mm_castpd_ps(_mm_load_sd(rtm_impl::bit_cast<const double*>(&input->x)));
+#elif defined(RTM_WASM128_INTRINSICS)
+		return wasm_v128_load64_zero(&input->x);
 #elif defined(RTM_NEON_INTRINSICS)
 		const float32x2_t xy = vld1_f32(&input->x);
 		return vcombine_f32(xy, vdup_n_f32(0.0F));
@@ -148,6 +160,8 @@ namespace rtm
 		const __m128 xy = _mm_castpd_ps(_mm_load_sd(rtm_impl::bit_cast<const double*>(&input->x)));
 		const __m128 z = _mm_load_ss(&input->z);
 		return _mm_movelh_ps(xy, z);
+#elif defined(RTM_WASM128_INTRINSICS)
+		return wasm_v128_load32_lane(&input->z, wasm_v128_load64_zero(&input->x), 2);
 #elif defined(RTM_NEON_INTRINSICS)
 		const float32x2_t xy = vld1_f32(&input->x);
 		const float32x2_t z = vld1_lane_f32(&input->z, vdup_n_f32(0.0F), 0);
@@ -166,6 +180,8 @@ namespace rtm
 		return _mm_broadcast_ss(input);
 #elif defined(RTM_SSE2_INTRINSICS)
 		return _mm_load_ps1(input);
+#elif defined(RTM_WASM128_INTRINSICS)
+		return wasm_v128_load32_splat(input);
 #elif defined(RTM_NEON_INTRINSICS)
 		return vld1q_dup_f32(input);
 #else
@@ -178,7 +194,7 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE vector4f RTM_SIMD_CALL quat_to_vector(quatf_arg0 input) RTM_NO_EXCEPT
 	{
-#if defined(RTM_SSE2_INTRINSICS) || defined(RTM_NEON_INTRINSICS)
+#if defined(RTM_SSE2_INTRINSICS) || defined(RTM_NEON_INTRINSICS) || defined(RTM_WASM128_INTRINSICS)
 		return input;
 #else
 		return vector4f{ input.x, input.y, input.z, input.w };
@@ -192,6 +208,8 @@ namespace rtm
 	{
 #if defined(RTM_SSE2_INTRINSICS)
 		return _mm_shuffle_ps(_mm_cvtpd_ps(input.xy), _mm_cvtpd_ps(input.zw), _MM_SHUFFLE(1, 0, 1, 0));
+#elif defined(RTM_WASM128_INTRINSICS)
+		return wasm_i32x4_shuffle(wasm_f32x4_demote_f64x2_zero(input.xy), wasm_f32x4_demote_f64x2_zero(input.zw), 0, 1, 4, 5);
 #elif defined(RTM_NEON64_INTRINSICS)
 		return vcvt_high_f32_f64(vcvt_f32_f64(input.xy), input.zw);
 #else
@@ -213,6 +231,8 @@ namespace rtm
 			{
 #if defined(RTM_SSE2_INTRINSICS)
 				return _mm_cvtss_f32(input);
+#elif defined(RTM_WASM128_INTRINSICS)
+				return wasm_f32x4_extract_lane(input, 0);
 #elif defined(RTM_NEON_INTRINSICS)
 				return vgetq_lane_f32(input, 0);
 #else
@@ -266,6 +286,8 @@ namespace rtm
 			{
 #if defined(RTM_SSE2_INTRINSICS)
 				return _mm_cvtss_f32(_mm_shuffle_ps(input, input, _MM_SHUFFLE(1, 1, 1, 1)));
+#elif defined(RTM_WASM128_INTRINSICS)
+				return wasm_f32x4_extract_lane(input, 1);
 #elif defined(RTM_NEON_INTRINSICS)
 				return vgetq_lane_f32(input, 1);
 #else
@@ -319,6 +341,8 @@ namespace rtm
 			{
 #if defined(RTM_SSE2_INTRINSICS)
 				return _mm_cvtss_f32(_mm_shuffle_ps(input, input, _MM_SHUFFLE(2, 2, 2, 2)));
+#elif defined(RTM_WASM128_INTRINSICS)
+				return wasm_f32x4_extract_lane(input, 2);
 #elif defined(RTM_NEON_INTRINSICS)
 				return vgetq_lane_f32(input, 2);
 #else
@@ -372,6 +396,8 @@ namespace rtm
 			{
 #if defined(RTM_SSE2_INTRINSICS)
 				return _mm_cvtss_f32(_mm_shuffle_ps(input, input, _MM_SHUFFLE(3, 3, 3, 3)));
+#elif defined(RTM_WASM128_INTRINSICS)
+				return wasm_f32x4_extract_lane(input, 3);
 #elif defined(RTM_NEON_INTRINSICS)
 				return vgetq_lane_f32(input, 3);
 #else
@@ -687,6 +713,8 @@ namespace rtm
 	{
 #if defined(RTM_SSE2_INTRINSICS)
 		return _mm_move_ss(input, _mm_set_ss(lane_value));
+#elif defined(RTM_WASM128_INTRINSICS)
+		return wasm_f32x4_replace_lane(input, 0, lane_value);
 #elif defined(RTM_NEON_INTRINSICS)
 		return vsetq_lane_f32(lane_value, input, 0);
 #else
@@ -715,6 +743,8 @@ namespace rtm
 		const __m128 yxzw = _mm_shuffle_ps(input, input, _MM_SHUFFLE(3, 2, 0, 1));
 		const __m128 vxzw = _mm_move_ss(yxzw, _mm_set_ss(lane_value));
 		return _mm_shuffle_ps(vxzw, vxzw, _MM_SHUFFLE(3, 2, 0, 1));
+#elif defined(RTM_WASM128_INTRINSICS)
+		return wasm_f32x4_replace_lane(input, 1, lane_value);
 #elif defined(RTM_NEON_INTRINSICS)
 		return vsetq_lane_f32(lane_value, input, 1);
 #else
@@ -749,6 +779,8 @@ namespace rtm
 		const __m128 zyxw = _mm_shuffle_ps(input, input, _MM_SHUFFLE(3, 0, 1, 2));
 		const __m128 vyxw = _mm_move_ss(zyxw, _mm_set_ss(lane_value));
 		return _mm_shuffle_ps(vyxw, vyxw, _MM_SHUFFLE(3, 0, 1, 2));
+#elif defined(RTM_WASM128_INTRINSICS)
+		return wasm_f32x4_replace_lane(input, 2, lane_value);
 #elif defined(RTM_NEON_INTRINSICS)
 		return vsetq_lane_f32(lane_value, input, 2);
 #else
@@ -783,6 +815,8 @@ namespace rtm
 		const __m128 wyzx = _mm_shuffle_ps(input, input, _MM_SHUFFLE(0, 2, 1, 3));
 		const __m128 vyzx = _mm_move_ss(wyzx, _mm_set_ss(lane_value));
 		return _mm_shuffle_ps(vyzx, vyzx, _MM_SHUFFLE(0, 2, 1, 3));
+#elif defined(RTM_WASM128_INTRINSICS)
+		return wasm_f32x4_replace_lane(input, 3, lane_value);
 #elif defined(RTM_NEON_INTRINSICS)
 		return vsetq_lane_f32(lane_value, input, 3);
 #else
@@ -1007,6 +1041,8 @@ namespace rtm
 	{
 #if defined(RTM_SSE2_INTRINSICS)
 		_mm_storeu_ps(output, input);
+#elif defined(RTM_WASM128_INTRINSICS)
+		wasm_v128_store(output, input);
 #else
 		output[0] = vector_get_x(input);
 		output[1] = vector_get_y(input);
@@ -1022,6 +1058,8 @@ namespace rtm
 	{
 #if defined(RTM_SSE2_INTRINSICS)
 		_mm_store_ss(output, input);
+#elif defined(RTM_WASM128_INTRINSICS)
+		wasm_v128_store32_lane(output, input, 0);
 #else
 		output[0] = vector_get_x(input);
 #endif
@@ -1034,6 +1072,8 @@ namespace rtm
 	{
 #if defined(RTM_SSE2_INTRINSICS)
 		_mm_store_sd(rtm_impl::bit_cast<double*>(output), _mm_castps_pd(input));
+#elif defined(RTM_WASM128_INTRINSICS)
+		wasm_v128_store64_lane(output, input, 0);
 #else
 		output[0] = vector_get_x(input);
 		output[1] = vector_get_y(input);
@@ -1048,6 +1088,9 @@ namespace rtm
 #if defined(RTM_SSE2_INTRINSICS)
 		_mm_store_sd(rtm_impl::bit_cast<double*>(output), _mm_castps_pd(input));
 		_mm_store_ss(output + 2, _mm_shuffle_ps(input, input, _MM_SHUFFLE(2, 2, 2, 2)));
+#elif defined(RTM_WASM128_INTRINSICS)
+		wasm_v128_store64_lane(output, input, 0);
+		wasm_v128_store32_lane(output + 2, input, 2);
 #else
 		output[0] = vector_get_x(input);
 		output[1] = vector_get_y(input);
@@ -1062,6 +1105,8 @@ namespace rtm
 	{
 #if defined(RTM_SSE2_INTRINSICS)
 		_mm_storeu_ps(rtm_impl::bit_cast<float*>(output), input);
+#elif defined(RTM_WASM128_INTRINSICS)
+		wasm_v128_store(output, input);
 #else
 		std::memcpy(output, &input, sizeof(vector4f));
 #endif
@@ -1074,6 +1119,8 @@ namespace rtm
 	{
 #if defined(RTM_SSE2_INTRINSICS)
 		_mm_store_ss(rtm_impl::bit_cast<float*>(output), input);
+#elif defined(RTM_WASM128_INTRINSICS)
+		wasm_v128_store32_lane(output, input, 0);
 #else
 		std::memcpy(output, &input, sizeof(float) * 1);
 #endif
@@ -1086,6 +1133,8 @@ namespace rtm
 	{
 #if defined(RTM_SSE2_INTRINSICS)
 		_mm_store_sd(rtm_impl::bit_cast<double*>(output), _mm_castps_pd(input));
+#elif defined(RTM_WASM128_INTRINSICS)
+		wasm_v128_store64_lane(output, input, 0);
 #else
 		std::memcpy(output, &input, sizeof(float) * 2);
 #endif
@@ -1099,6 +1148,9 @@ namespace rtm
 #if defined(RTM_SSE2_INTRINSICS)
 		_mm_store_sd(rtm_impl::bit_cast<double*>(output), _mm_castps_pd(input));
 		_mm_store_ss(rtm_impl::bit_cast<float*>(output) + 2, _mm_shuffle_ps(input, input, _MM_SHUFFLE(2, 2, 2, 2)));
+#elif defined(RTM_WASM128_INTRINSICS)
+		wasm_v128_store64_lane(output, input, 0);
+		wasm_v128_store32_lane(output + 8, input, 2);
 #else
 		std::memcpy(output, &input, sizeof(float) * 3);
 #endif
@@ -1111,6 +1163,8 @@ namespace rtm
 	{
 #if defined(RTM_SSE2_INTRINSICS)
 		_mm_storeu_ps(&output->x, input);
+#elif defined(RTM_WASM128_INTRINSICS)
+		wasm_v128_store(&output->x, input);
 #else
 		output->x = vector_get_x(input);
 		output->y = vector_get_y(input);
@@ -1126,6 +1180,8 @@ namespace rtm
 	{
 #if defined(RTM_SSE2_INTRINSICS)
 		_mm_store_sd(rtm_impl::bit_cast<double*>(&output->x), _mm_castps_pd(input));
+#elif defined(RTM_WASM128_INTRINSICS)
+		wasm_v128_store64_lane(&output->x, input, 0);
 #else
 		output->x = vector_get_x(input);
 		output->y = vector_get_y(input);
@@ -1140,6 +1196,9 @@ namespace rtm
 #if defined(RTM_SSE2_INTRINSICS)
 		_mm_store_sd(rtm_impl::bit_cast<double*>(&output->x), _mm_castps_pd(input));
 		_mm_store_ss(rtm_impl::bit_cast<float*>(&output->z), _mm_shuffle_ps(input, input, _MM_SHUFFLE(2, 2, 2, 2)));
+#elif defined(RTM_WASM128_INTRINSICS)
+		wasm_v128_store64_lane(&output->x, input, 0);
+		wasm_v128_store32_lane(&output->z, input, 2);
 #else
 		output->x = vector_get_x(input);
 		output->y = vector_get_y(input);
@@ -1161,6 +1220,8 @@ namespace rtm
 	{
 #if defined(RTM_SSE2_INTRINSICS)
 		return _mm_add_ps(lhs, rhs);
+#elif defined(RTM_WASM128_INTRINSICS)
+		return wasm_f32x4_add(lhs, rhs);
 #elif defined(RTM_NEON_INTRINSICS)
 		return vaddq_f32(lhs, rhs);
 #else
@@ -1175,6 +1236,8 @@ namespace rtm
 	{
 #if defined(RTM_SSE2_INTRINSICS)
 		return _mm_sub_ps(lhs, rhs);
+#elif defined(RTM_WASM128_INTRINSICS)
+		return wasm_f32x4_sub(lhs, rhs);
 #elif defined(RTM_NEON_INTRINSICS)
 		return vsubq_f32(lhs, rhs);
 #else
@@ -1189,6 +1252,8 @@ namespace rtm
 	{
 #if defined(RTM_SSE2_INTRINSICS)
 		return _mm_mul_ps(lhs, rhs);
+#elif defined(RTM_WASM128_INTRINSICS)
+		return wasm_f32x4_mul(lhs, rhs);
 #elif defined(RTM_NEON_INTRINSICS)
 		return vmulq_f32(lhs, rhs);
 #else
@@ -1225,6 +1290,8 @@ namespace rtm
 	{
 #if defined(RTM_SSE2_INTRINSICS)
 		return _mm_div_ps(lhs, rhs);
+#elif defined(RTM_WASM128_INTRINSICS)
+		return wasm_f32x4_div(lhs, rhs);
 #elif defined (RTM_NEON64_INTRINSICS)
 		return vdivq_f32(lhs, rhs);
 #elif defined(RTM_NEON_INTRINSICS)
@@ -1252,6 +1319,9 @@ namespace rtm
 	{
 #if defined(RTM_SSE2_INTRINSICS)
 		return _mm_max_ps(lhs, rhs);
+#elif defined(RTM_WASM128_INTRINSICS)
+		// pmax has the same semantics as std::max and it is a single instruction on x64, unlike max which propagates NaN
+		return wasm_f32x4_pmax(lhs, rhs);
 #elif defined(RTM_NEON_INTRINSICS)
 		return vmaxq_f32(lhs, rhs);
 #else
@@ -1266,6 +1336,9 @@ namespace rtm
 	{
 #if defined(RTM_SSE2_INTRINSICS)
 		return _mm_min_ps(lhs, rhs);
+#elif defined(RTM_WASM128_INTRINSICS)
+		// pmin has the same semantics as std::min and it is a single instruction on x64, unlike min which propagates NaN
+		return wasm_f32x4_pmin(lhs, rhs);
 #elif defined(RTM_NEON_INTRINSICS)
 		return vminq_f32(lhs, rhs);
 #else
@@ -1289,6 +1362,8 @@ namespace rtm
 #if defined(RTM_SSE2_INTRINSICS)
 		const __m128i abs_mask = _mm_set_epi32(0x7FFFFFFFULL, 0x7FFFFFFFULL, 0x7FFFFFFFULL, 0x7FFFFFFFULL);
 		return _mm_and_ps(input, _mm_castsi128_ps(abs_mask));
+#elif defined(RTM_WASM128_INTRINSICS)
+		return wasm_f32x4_abs(input);
 #elif defined(RTM_NEON_INTRINSICS)
 		return vabsq_f32(input);
 #else
@@ -1304,6 +1379,8 @@ namespace rtm
 #if defined(RTM_SSE2_INTRINSICS)
 		constexpr __m128 signs = RTM_VECTOR4F_MAKE(-0.0F, -0.0F, -0.0F, -0.0F);
 		return _mm_xor_ps(input, signs);
+#elif defined(RTM_WASM128_INTRINSICS)
+		return wasm_f32x4_neg(input);
 #elif defined(RTM_NEON_INTRINSICS)
 		return vnegq_f32(input);
 #else
@@ -1321,6 +1398,8 @@ namespace rtm
 #if defined(RTM_SSE2_INTRINSICS)
 		constexpr __m128 signs = RTM_VECTOR4F_MAKE(x ? -0.0F : 0.0F, y ? -0.0F : 0.0F, z ? -0.0F : 0.0F, w ? -0.0F : 0.0F);
 		return _mm_xor_ps(input, signs);
+#elif defined(RTM_WASM128_INTRINSICS)
+		return wasm_v128_xor(input, wasm_f32x4_const(x ? -0.0F : 0.0F, y ? -0.0F : 0.0F, z ? -0.0F : 0.0F, w ? -0.0F : 0.0F));
 #elif defined(RTM_NEON_INTRINSICS)
 		alignas(16) constexpr uint32_t sign_bit_i[4] =
 		{
@@ -1349,6 +1428,8 @@ namespace rtm
 		// as it uses fewer instructions.
 #if defined(RTM_SSE2_INTRINSICS)
 		return _mm_div_ps(_mm_set_ps1(1.0F), input);
+#elif defined(RTM_WASM128_INTRINSICS)
+		return wasm_f32x4_div(wasm_f32x4_splat(1.0F), input);
 #elif defined(RTM_NEON64_INTRINSICS)
 		return vdivq_f32(vdupq_n_f32(1.0F), input);
 #elif defined(RTM_NEON_INTRINSICS)
@@ -1373,6 +1454,8 @@ namespace rtm
 	{
 #if defined(RTM_SSE2_INTRINSICS)
 		return _mm_sqrt_ps(input);
+#elif defined(RTM_WASM128_INTRINSICS)
+		return wasm_f32x4_sqrt(input);
 #elif defined(RTM_NEON64_INTRINSICS) && defined(RTM_IMPL_VSQRT_SUPPORTED)
 		return vsqrtq_f32(input);
 #else
@@ -1442,6 +1525,8 @@ namespace rtm
 		integer_part = _mm_or_ps(integer_part, _mm_and_ps(input, sign_mask));
 
 		return _mm_or_ps(_mm_and_ps(use_original_input, input), _mm_andnot_ps(use_original_input, integer_part));
+#elif defined(RTM_WASM128_INTRINSICS)
+		return wasm_f32x4_ceil(input);
 #elif defined(RTM_NEON64_INTRINSICS)
 		return vrndpq_f32(input);
 #elif defined(RTM_NEON_INTRINSICS)
@@ -1529,6 +1614,8 @@ namespace rtm
 		integer_part = _mm_or_ps(integer_part, _mm_and_ps(input, sign_mask));
 
 		return _mm_or_ps(_mm_and_ps(use_original_input, input), _mm_andnot_ps(use_original_input, integer_part));
+#elif defined(RTM_WASM128_INTRINSICS)
+		return wasm_f32x4_floor(input);
 #elif defined(RTM_NEON64_INTRINSICS)
 		return vrndmq_f32(input);
 #elif defined(RTM_NEON_INTRINSICS)
@@ -1584,6 +1671,14 @@ namespace rtm
 
 		// cross(a, b) = ((a * b.yzx) - (a.yzx * b)).yzx
 		return _mm_shuffle_ps(tmp_zxy, tmp_zxy, _MM_SHUFFLE(3, 0, 2, 1));
+#elif defined(RTM_WASM128_INTRINSICS)
+		// cross(a, b).zxy = (a * b.yzx) - (a.yzx * b)
+		v128_t lhs_yzx = wasm_i32x4_shuffle(lhs, lhs, 1, 2, 0, 3);
+		v128_t rhs_yzx = wasm_i32x4_shuffle(rhs, rhs, 1, 2, 0, 3);
+		v128_t tmp_zxy = wasm_f32x4_sub(wasm_f32x4_mul(lhs, rhs_yzx), wasm_f32x4_mul(lhs_yzx, rhs));
+
+		// cross(a, b) = ((a * b.yzx) - (a.yzx * b)).yzx
+		return wasm_i32x4_shuffle(tmp_zxy, tmp_zxy, 1, 2, 0, 3);
 #elif defined(RTM_NEON_INTRINSICS)
 		// cross(a, b) = (a.yzx * b.zxy) - (a.zxy * b.yzx)
 		float32x4_t lhs_yzwx = vextq_f32(lhs, lhs, 1);
@@ -1635,6 +1730,13 @@ namespace rtm
 				__m128 y2w2_0_0_0 = _mm_shuffle_ps(x2z2_y2w2_0_0, x2z2_y2w2_0_0, _MM_SHUFFLE(0, 0, 0, 1));
 				__m128 x2y2z2w2_0_0_0 = _mm_add_ps(x2z2_y2w2_0_0, y2w2_0_0_0);
 				return _mm_cvtss_f32(x2y2z2w2_0_0_0);
+#elif defined(RTM_WASM128_INTRINSICS)
+				v128_t x2_y2_z2_w2 = wasm_f32x4_mul(lhs, rhs);
+				v128_t z2_w2_x2_y2 = wasm_i32x4_shuffle(x2_y2_z2_w2, x2_y2_z2_w2, 2, 3, 0, 1);
+				v128_t x2z2_y2w2_x2z2_y2w2 = wasm_f32x4_add(x2_y2_z2_w2, z2_w2_x2_y2);
+				v128_t y2w2_x2z2_y2w2_x2z2 = wasm_i32x4_shuffle(x2z2_y2w2_x2z2_y2w2, x2z2_y2w2_x2z2_y2w2, 1, 0, 3, 2);
+				v128_t x2y2z2w2_x2y2z2w2_x2y2z2w2_x2y2z2w2 = wasm_f32x4_add(x2z2_y2w2_x2z2_y2w2, y2w2_x2z2_y2w2_x2z2);
+				return wasm_f32x4_extract_lane(x2y2z2w2_x2y2z2w2_x2y2z2w2_x2y2z2w2, 0);
 #elif defined(RTM_NEON64_INTRINSICS) && defined(RTM_IMPL_VADDVQ_SUPPORTED)
 				float32x4_t x2_y2_z2_w2 = vmulq_f32(lhs, rhs);
 				return vaddvq_f32(x2_y2_z2_w2);
@@ -1681,6 +1783,13 @@ namespace rtm
 				__m128 y2w2_0_0_0 = _mm_shuffle_ps(x2z2_y2w2_0_0, x2z2_y2w2_0_0, _MM_SHUFFLE(0, 0, 0, 1));
 				__m128 x2y2z2w2_0_0_0 = _mm_add_ps(x2z2_y2w2_0_0, y2w2_0_0_0);
 				return _mm_shuffle_ps(x2y2z2w2_0_0_0, x2y2z2w2_0_0_0, _MM_SHUFFLE(0, 0, 0, 0));
+#elif defined(RTM_WASM128_INTRINSICS)
+				v128_t x2_y2_z2_w2 = wasm_f32x4_mul(lhs, rhs);
+				v128_t z2_w2_x2_y2 = wasm_i32x4_shuffle(x2_y2_z2_w2, x2_y2_z2_w2, 2, 3, 0, 1);
+				v128_t x2z2_y2w2_x2z2_y2w2 = wasm_f32x4_add(x2_y2_z2_w2, z2_w2_x2_y2);
+				v128_t y2w2_x2z2_y2w2_x2z2 = wasm_i32x4_shuffle(x2z2_y2w2_x2z2_y2w2, x2z2_y2w2_x2z2_y2w2, 1, 0, 3, 2);
+				v128_t x2y2z2w2_x2y2z2w2_x2y2z2w2_x2y2z2w2 = wasm_f32x4_add(x2z2_y2w2_x2z2_y2w2, y2w2_x2z2_y2w2_x2z2);
+				return x2y2z2w2_x2y2z2w2_x2y2z2w2_x2y2z2w2;
 #elif defined(RTM_NEON64_INTRINSICS)
 				float32x4_t x2_y2_z2_w2 = vmulq_f32(lhs, rhs);
 				float32x4_t x2y2_z2w2_x2y2_z2w2 = vpaddq_f32(x2_y2_z2_w2, x2_y2_z2_w2);
@@ -1749,6 +1858,13 @@ namespace rtm
 		__m128 y2w2_0_0_0 = _mm_shuffle_ps(x2z2_y2w2_0_0, x2z2_y2w2_0_0, _MM_SHUFFLE(0, 0, 0, 1));
 		__m128 x2y2z2w2_0_0_0 = _mm_add_ps(x2z2_y2w2_0_0, y2w2_0_0_0);
 		return _mm_shuffle_ps(x2y2z2w2_0_0_0, x2y2z2w2_0_0_0, _MM_SHUFFLE(0, 0, 0, 0));
+#elif defined(RTM_WASM128_INTRINSICS)
+		v128_t x2_y2_z2_w2 = wasm_f32x4_mul(lhs, rhs);
+		v128_t z2_w2_x2_y2 = wasm_i32x4_shuffle(x2_y2_z2_w2, x2_y2_z2_w2, 2, 3, 0, 1);
+		v128_t x2z2_y2w2_x2z2_y2w2 = wasm_f32x4_add(x2_y2_z2_w2, z2_w2_x2_y2);
+		v128_t y2w2_x2z2_y2w2_x2z2 = wasm_i32x4_shuffle(x2z2_y2w2_x2z2_y2w2, x2z2_y2w2_x2z2_y2w2, 1, 0, 3, 2);
+		v128_t x2y2z2w2_x2y2z2w2_x2y2z2w2_x2y2z2w2 = wasm_f32x4_add(x2z2_y2w2_x2z2_y2w2, y2w2_x2z2_y2w2_x2z2);
+		return x2y2z2w2_x2y2z2w2_x2y2z2w2_x2y2z2w2;
 #elif defined(RTM_NEON64_INTRINSICS)
 		float32x4_t x2_y2_z2_w2 = vmulq_f32(lhs, rhs);
 		float32x4_t x2y2_z2w2_x2y2_z2w2 = vpaddq_f32(x2_y2_z2_w2, x2_y2_z2_w2);
@@ -1786,6 +1902,11 @@ namespace rtm
 				__m128 y2_0_0_0 = _mm_shuffle_ps(x2_y2_z2_w2, x2_y2_z2_w2, _MM_SHUFFLE(0, 0, 0, 1));
 				__m128 x2y2_0_0_0 = _mm_add_ss(x2_y2_z2_w2, y2_0_0_0);
 				return _mm_cvtss_f32(x2y2_0_0_0);
+#elif defined(RTM_WASM128_INTRINSICS)
+				v128_t x2_y2_z2_w2 = wasm_f32x4_mul(lhs, rhs);
+				v128_t y2_x2_w2_z2 = wasm_i32x4_shuffle(x2_y2_z2_w2, x2_y2_z2_w2, 1, 0, 3, 2);
+				v128_t x2y2_x2y2_z2w2_z2w2 = wasm_f32x4_add(x2_y2_z2_w2, y2_x2_w2_z2);
+				return wasm_f32x4_extract_lane(x2y2_x2y2_z2w2_z2w2, 0);
 #elif defined(RTM_NEON_INTRINSICS)
 				float32x4_t x2_y2_z2_w2 = vmulq_f32(lhs, rhs);
 				float32x2_t x2_y2 = vget_low_f32(x2_y2_z2_w2);
@@ -1817,6 +1938,11 @@ namespace rtm
 				__m128 y2_0_0_0 = _mm_shuffle_ps(x2_y2_z2_w2, x2_y2_z2_w2, _MM_SHUFFLE(0, 0, 0, 1));
 				__m128 x2y2_0_0_0 = _mm_add_ss(x2_y2_z2_w2, y2_0_0_0);
 				return _mm_shuffle_ps(x2y2_0_0_0, x2y2_0_0_0, _MM_SHUFFLE(0, 0, 0, 0));
+#elif defined(RTM_WASM128_INTRINSICS)
+				v128_t x2_y2_z2_w2 = wasm_f32x4_mul(lhs, rhs);
+				v128_t y2_x2_w2_z2 = wasm_i32x4_shuffle(x2_y2_z2_w2, x2_y2_z2_w2, 1, 0, 3, 2);
+				v128_t x2y2_x2y2_z2w2_z2w2 = wasm_f32x4_add(x2_y2_z2_w2, y2_x2_w2_z2);
+				return wasm_i32x4_shuffle(x2y2_x2y2_z2w2_z2w2, x2y2_x2y2_z2w2_z2w2, 0, 0, 0, 0);
 #elif defined(RTM_NEON_INTRINSICS)
 				float32x4_t x2_y2_z2_w2 = vmulq_f32(lhs, rhs);
 				float32x2_t x2_y2 = vget_low_f32(x2_y2_z2_w2);
@@ -1868,6 +1994,11 @@ namespace rtm
 		__m128 y2_0_0_0 = _mm_shuffle_ps(x2_y2_z2_w2, x2_y2_z2_w2, _MM_SHUFFLE(0, 0, 0, 1));
 		__m128 x2y2_0_0_0 = _mm_add_ss(x2_y2_z2_w2, y2_0_0_0);
 		return _mm_shuffle_ps(x2y2_0_0_0, x2y2_0_0_0, _MM_SHUFFLE(0, 0, 0, 0));
+#elif defined(RTM_WASM128_INTRINSICS)
+		v128_t x2_y2_z2_w2 = wasm_f32x4_mul(lhs, rhs);
+		v128_t y2_x2_w2_z2 = wasm_i32x4_shuffle(x2_y2_z2_w2, x2_y2_z2_w2, 1, 0, 3, 2);
+		v128_t x2y2_x2y2_z2w2_z2w2 = wasm_f32x4_add(x2_y2_z2_w2, y2_x2_w2_z2);
+		return wasm_i32x4_shuffle(x2y2_x2y2_z2w2_z2w2, x2y2_x2y2_z2w2_z2w2, 0, 0, 0, 0);
 #elif defined(RTM_NEON_INTRINSICS)
 		float32x4_t x2_y2_z2_w2 = vmulq_f32(lhs, rhs);
 		float32x2_t x2_y2 = vget_low_f32(x2_y2_z2_w2);
@@ -1900,6 +2031,13 @@ namespace rtm
 				__m128 z2_0_0_0 = _mm_shuffle_ps(x2_y2_z2_w2, x2_y2_z2_w2, _MM_SHUFFLE(0, 0, 0, 2));
 				__m128 x2y2z2_0_0_0 = _mm_add_ss(x2y2_0_0_0, z2_0_0_0);
 				return _mm_cvtss_f32(x2y2z2_0_0_0);
+#elif defined(RTM_WASM128_INTRINSICS)
+				v128_t x2_y2_z2_w2 = wasm_f32x4_mul(lhs, rhs);
+				v128_t y2_y2_y2_y2 = wasm_i32x4_shuffle(x2_y2_z2_w2, x2_y2_z2_w2, 1, 1, 1, 1);
+				v128_t z2_z2_z2_z2 = wasm_i32x4_shuffle(x2_y2_z2_w2, x2_y2_z2_w2, 2, 2, 2, 2);
+				v128_t x2y2_0_0_0 = wasm_f32x4_add(x2_y2_z2_w2, y2_y2_y2_y2);
+				v128_t x2y2z2_0_0_0 = wasm_f32x4_add(x2y2_0_0_0, z2_z2_z2_z2);
+				return wasm_f32x4_extract_lane(x2y2z2_0_0_0, 0);
 #elif defined(RTM_NEON_INTRINSICS)
 				float32x4_t x2_y2_z2_w2 = vmulq_f32(lhs, rhs);
 				float32x2_t x2_y2 = vget_low_f32(x2_y2_z2_w2);
@@ -1938,6 +2076,13 @@ namespace rtm
 				__m128 z2_0_0_0 = _mm_shuffle_ps(x2_y2_z2_w2, x2_y2_z2_w2, _MM_SHUFFLE(0, 0, 0, 2));
 				__m128 x2y2z2_0_0_0 = _mm_add_ss(x2y2_0_0_0, z2_0_0_0);
 				return _mm_shuffle_ps(x2y2z2_0_0_0, x2y2z2_0_0_0, _MM_SHUFFLE(0, 0, 0, 0));
+#elif defined(RTM_WASM128_INTRINSICS)
+				v128_t x2_y2_z2_w2 = wasm_f32x4_mul(lhs, rhs);
+				v128_t x2_x2_x2_x2 = wasm_i32x4_shuffle(x2_y2_z2_w2, x2_y2_z2_w2, 0, 0, 0, 0);
+				v128_t y2_y2_y2_y2 = wasm_i32x4_shuffle(x2_y2_z2_w2, x2_y2_z2_w2, 1, 1, 1, 1);
+				v128_t z2_z2_z2_z2 = wasm_i32x4_shuffle(x2_y2_z2_w2, x2_y2_z2_w2, 2, 2, 2, 2);
+				v128_t x2y2_x2y2_x2y2_x2y2 = wasm_f32x4_add(x2_x2_x2_x2, y2_y2_y2_y2);
+				return wasm_f32x4_add(x2y2_x2y2_x2y2_x2y2, z2_z2_z2_z2);
 #elif defined(RTM_NEON64_INTRINSICS)
 				float32x4_t x2_y2_z2_w2 = vmulq_f32(lhs, rhs);
 				float32x4_t x2_y2_z2 = vsetq_lane_f32(0.0F, x2_y2_z2_w2, 3);
@@ -2002,6 +2147,13 @@ namespace rtm
 		__m128 z2_0_0_0 = _mm_shuffle_ps(x2_y2_z2_w2, x2_y2_z2_w2, _MM_SHUFFLE(0, 0, 0, 2));
 		__m128 x2y2z2_0_0_0 = _mm_add_ss(x2y2_0_0_0, z2_0_0_0);
 		return _mm_shuffle_ps(x2y2z2_0_0_0, x2y2z2_0_0_0, _MM_SHUFFLE(0, 0, 0, 0));
+#elif defined(RTM_WASM128_INTRINSICS)
+		v128_t x2_y2_z2_w2 = wasm_f32x4_mul(lhs, rhs);
+		v128_t x2_x2_x2_x2 = wasm_i32x4_shuffle(x2_y2_z2_w2, x2_y2_z2_w2, 0, 0, 0, 0);
+		v128_t y2_y2_y2_y2 = wasm_i32x4_shuffle(x2_y2_z2_w2, x2_y2_z2_w2, 1, 1, 1, 1);
+		v128_t z2_z2_z2_z2 = wasm_i32x4_shuffle(x2_y2_z2_w2, x2_y2_z2_w2, 2, 2, 2, 2);
+		v128_t x2y2_x2y2_x2y2_x2y2 = wasm_f32x4_add(x2_x2_x2_x2, y2_y2_y2_y2);
+		return wasm_f32x4_add(x2y2_x2y2_x2y2_x2y2, z2_z2_z2_z2);
 #elif defined(RTM_NEON64_INTRINSICS)
 		float32x4_t x2_y2_z2_w2 = vmulq_f32(lhs, rhs);
 		float32x4_t x2_y2_z2 = vsetq_lane_f32(0.0F, x2_y2_z2_w2, 3);
@@ -2559,6 +2711,8 @@ namespace rtm
 	{
 #if defined(RTM_SSE2_INTRINSICS)
 		return _mm_cmpeq_ps(lhs, rhs);
+#elif defined(RTM_WASM128_INTRINSICS)
+		return wasm_f32x4_eq(lhs, rhs);
 #elif defined(RTM_NEON_INTRINSICS)
 		return vceqq_f32(lhs, rhs);
 #else
@@ -2573,6 +2727,8 @@ namespace rtm
 	{
 #if defined(RTM_SSE2_INTRINSICS)
 		return _mm_cmpneq_ps(lhs, rhs);
+#elif defined(RTM_WASM128_INTRINSICS)
+		return wasm_f32x4_ne(lhs, rhs);
 #elif defined(RTM_NEON_INTRINSICS)
 		return vmvnq_u32(vceqq_f32(lhs, rhs));
 #else
@@ -2587,6 +2743,8 @@ namespace rtm
 	{
 #if defined(RTM_SSE2_INTRINSICS)
 		return _mm_cmplt_ps(lhs, rhs);
+#elif defined(RTM_WASM128_INTRINSICS)
+		return wasm_f32x4_lt(lhs, rhs);
 #elif defined(RTM_NEON_INTRINSICS)
 		return vcltq_f32(lhs, rhs);
 #else
@@ -2601,6 +2759,8 @@ namespace rtm
 	{
 #if defined(RTM_SSE2_INTRINSICS)
 		return _mm_cmple_ps(lhs, rhs);
+#elif defined(RTM_WASM128_INTRINSICS)
+		return wasm_f32x4_le(lhs, rhs);
 #elif defined(RTM_NEON_INTRINSICS)
 		return vcleq_f32(lhs, rhs);
 #else
@@ -2615,6 +2775,8 @@ namespace rtm
 	{
 #if defined(RTM_SSE2_INTRINSICS)
 		return _mm_cmpgt_ps(lhs, rhs);
+#elif defined(RTM_WASM128_INTRINSICS)
+		return wasm_f32x4_gt(lhs, rhs);
 #elif defined(RTM_NEON_INTRINSICS)
 		return vcgtq_f32(lhs, rhs);
 #else
@@ -2629,6 +2791,8 @@ namespace rtm
 	{
 #if defined(RTM_SSE2_INTRINSICS)
 		return _mm_cmpge_ps(lhs, rhs);
+#elif defined(RTM_WASM128_INTRINSICS)
+		return wasm_f32x4_ge(lhs, rhs);
 #elif defined(RTM_NEON_INTRINSICS)
 		return vcgeq_f32(lhs, rhs);
 #else
@@ -2643,6 +2807,12 @@ namespace rtm
 	{
 #if defined(RTM_SSE2_INTRINSICS)
 		const __m128 mask = _mm_cmplt_ps(lhs, rhs);
+
+		bool result;
+		RTM_MASK4F_ALL_TRUE(mask, result);
+		return result;
+#elif defined(RTM_WASM128_INTRINSICS)
+		const v128_t mask = wasm_f32x4_lt(lhs, rhs);
 
 		bool result;
 		RTM_MASK4F_ALL_TRUE(mask, result);
@@ -2669,6 +2839,12 @@ namespace rtm
 		bool result;
 		RTM_MASK4F_ALL_TRUE2(mask, result);
 		return result;
+#elif defined(RTM_WASM128_INTRINSICS)
+		const v128_t mask = wasm_f32x4_lt(lhs, rhs);
+
+		bool result;
+		RTM_MASK4F_ALL_TRUE2(mask, result);
+		return result;
 #elif defined(RTM_NEON_INTRINSICS)
 		const uint32x2_t mask = vclt_f32(vget_low_f32(lhs), vget_low_f32(rhs));
 
@@ -2687,6 +2863,12 @@ namespace rtm
 	{
 #if defined(RTM_SSE2_INTRINSICS)
 		const __m128 mask = _mm_cmplt_ps(lhs, rhs);
+
+		bool result;
+		RTM_MASK4F_ALL_TRUE3(mask, result);
+		return result;
+#elif defined(RTM_WASM128_INTRINSICS)
+		const v128_t mask = wasm_f32x4_lt(lhs, rhs);
 
 		bool result;
 		RTM_MASK4F_ALL_TRUE3(mask, result);
@@ -2713,6 +2895,12 @@ namespace rtm
 		bool result;
 		RTM_MASK4F_ANY_TRUE(mask, result);
 		return result;
+#elif defined(RTM_WASM128_INTRINSICS)
+		const v128_t mask = wasm_f32x4_lt(lhs, rhs);
+
+		bool result;
+		RTM_MASK4F_ANY_TRUE(mask, result);
+		return result;
 #elif defined(RTM_NEON_INTRINSICS)
 		const uint32x4_t mask = vcltq_f32(lhs, rhs);
 
@@ -2731,6 +2919,12 @@ namespace rtm
 	{
 #if defined(RTM_SSE2_INTRINSICS)
 		const __m128 mask = _mm_cmplt_ps(lhs, rhs);
+
+		bool result;
+		RTM_MASK4F_ANY_TRUE2(mask, result);
+		return result;
+#elif defined(RTM_WASM128_INTRINSICS)
+		const v128_t mask = wasm_f32x4_lt(lhs, rhs);
 
 		bool result;
 		RTM_MASK4F_ANY_TRUE2(mask, result);
@@ -2757,6 +2951,12 @@ namespace rtm
 		bool result;
 		RTM_MASK4F_ANY_TRUE3(mask, result);
 		return result;
+#elif defined(RTM_WASM128_INTRINSICS)
+		const v128_t mask = wasm_f32x4_lt(lhs, rhs);
+
+		bool result;
+		RTM_MASK4F_ANY_TRUE3(mask, result);
+		return result;
 #elif defined(RTM_NEON_INTRINSICS)
 		const uint32x4_t mask = vcltq_f32(lhs, rhs);
 
@@ -2775,6 +2975,12 @@ namespace rtm
 	{
 #if defined(RTM_SSE2_INTRINSICS)
 		const __m128 mask = _mm_cmple_ps(lhs, rhs);
+
+		bool result;
+		RTM_MASK4F_ALL_TRUE(mask, result);
+		return result;
+#elif defined(RTM_WASM128_INTRINSICS)
+		const v128_t mask = wasm_f32x4_le(lhs, rhs);
 
 		bool result;
 		RTM_MASK4F_ALL_TRUE(mask, result);
@@ -2801,6 +3007,12 @@ namespace rtm
 		bool result;
 		RTM_MASK4F_ALL_TRUE2(mask, result);
 		return result;
+#elif defined(RTM_WASM128_INTRINSICS)
+		const v128_t mask = wasm_f32x4_le(lhs, rhs);
+
+		bool result;
+		RTM_MASK4F_ALL_TRUE2(mask, result);
+		return result;
 #elif defined(RTM_NEON_INTRINSICS)
 		const uint32x2_t mask = vcle_f32(vget_low_f32(lhs), vget_low_f32(rhs));
 
@@ -2819,6 +3031,12 @@ namespace rtm
 	{
 #if defined(RTM_SSE2_INTRINSICS)
 		const __m128 mask = _mm_cmple_ps(lhs, rhs);
+
+		bool result;
+		RTM_MASK4F_ALL_TRUE3(mask, result);
+		return result;
+#elif defined(RTM_WASM128_INTRINSICS)
+		const v128_t mask = wasm_f32x4_le(lhs, rhs);
 
 		bool result;
 		RTM_MASK4F_ALL_TRUE3(mask, result);
@@ -2845,6 +3063,12 @@ namespace rtm
 		bool result;
 		RTM_MASK4F_ANY_TRUE(mask, result);
 		return result;
+#elif defined(RTM_WASM128_INTRINSICS)
+		const v128_t mask = wasm_f32x4_le(lhs, rhs);
+
+		bool result;
+		RTM_MASK4F_ANY_TRUE(mask, result);
+		return result;
 #elif defined(RTM_NEON_INTRINSICS)
 		const uint32x4_t mask = vcleq_f32(lhs, rhs);
 
@@ -2863,6 +3087,12 @@ namespace rtm
 	{
 #if defined(RTM_SSE2_INTRINSICS)
 		const __m128 mask = _mm_cmple_ps(lhs, rhs);
+
+		bool result;
+		RTM_MASK4F_ANY_TRUE2(mask, result);
+		return result;
+#elif defined(RTM_WASM128_INTRINSICS)
+		const v128_t mask = wasm_f32x4_le(lhs, rhs);
 
 		bool result;
 		RTM_MASK4F_ANY_TRUE2(mask, result);
@@ -2889,6 +3119,12 @@ namespace rtm
 		bool result;
 		RTM_MASK4F_ANY_TRUE3(mask, result);
 		return result;
+#elif defined(RTM_WASM128_INTRINSICS)
+		const v128_t mask = wasm_f32x4_le(lhs, rhs);
+
+		bool result;
+		RTM_MASK4F_ANY_TRUE3(mask, result);
+		return result;
 #elif defined(RTM_NEON_INTRINSICS)
 		const uint32x4_t mask = vcleq_f32(lhs, rhs);
 
@@ -2907,6 +3143,12 @@ namespace rtm
 	{
 #if defined(RTM_SSE2_INTRINSICS)
 		const __m128 mask = _mm_cmpgt_ps(lhs, rhs);
+
+		bool result;
+		RTM_MASK4F_ALL_TRUE(mask, result);
+		return result;
+#elif defined(RTM_WASM128_INTRINSICS)
+		const v128_t mask = wasm_f32x4_gt(lhs, rhs);
 
 		bool result;
 		RTM_MASK4F_ALL_TRUE(mask, result);
@@ -2933,6 +3175,12 @@ namespace rtm
 		bool result;
 		RTM_MASK4F_ALL_TRUE2(mask, result);
 		return result;
+#elif defined(RTM_WASM128_INTRINSICS)
+		const v128_t mask = wasm_f32x4_gt(lhs, rhs);
+
+		bool result;
+		RTM_MASK4F_ALL_TRUE2(mask, result);
+		return result;
 #elif defined(RTM_NEON_INTRINSICS)
 		const uint32x2_t mask = vcgt_f32(vget_low_f32(lhs), vget_low_f32(rhs));
 
@@ -2951,6 +3199,12 @@ namespace rtm
 	{
 #if defined(RTM_SSE2_INTRINSICS)
 		const __m128 mask = _mm_cmpgt_ps(lhs, rhs);
+
+		bool result;
+		RTM_MASK4F_ALL_TRUE3(mask, result);
+		return result;
+#elif defined(RTM_WASM128_INTRINSICS)
+		const v128_t mask = wasm_f32x4_gt(lhs, rhs);
 
 		bool result;
 		RTM_MASK4F_ALL_TRUE3(mask, result);
@@ -2977,6 +3231,12 @@ namespace rtm
 		bool result;
 		RTM_MASK4F_ANY_TRUE(mask, result);
 		return result;
+#elif defined(RTM_WASM128_INTRINSICS)
+		const v128_t mask = wasm_f32x4_gt(lhs, rhs);
+
+		bool result;
+		RTM_MASK4F_ANY_TRUE(mask, result);
+		return result;
 #elif defined(RTM_NEON_INTRINSICS)
 		const uint32x4_t mask = vcgtq_f32(lhs, rhs);
 
@@ -2995,6 +3255,12 @@ namespace rtm
 	{
 #if defined(RTM_SSE2_INTRINSICS)
 		const __m128 mask = _mm_cmpgt_ps(lhs, rhs);
+
+		bool result;
+		RTM_MASK4F_ANY_TRUE2(mask, result);
+		return result;
+#elif defined(RTM_WASM128_INTRINSICS)
+		const v128_t mask = wasm_f32x4_gt(lhs, rhs);
 
 		bool result;
 		RTM_MASK4F_ANY_TRUE2(mask, result);
@@ -3021,6 +3287,12 @@ namespace rtm
 		bool result;
 		RTM_MASK4F_ANY_TRUE3(mask, result);
 		return result;
+#elif defined(RTM_WASM128_INTRINSICS)
+		const v128_t mask = wasm_f32x4_gt(lhs, rhs);
+
+		bool result;
+		RTM_MASK4F_ANY_TRUE3(mask, result);
+		return result;
 #elif defined(RTM_NEON_INTRINSICS)
 		const uint32x4_t mask = vcgtq_f32(lhs, rhs);
 
@@ -3039,6 +3311,12 @@ namespace rtm
 	{
 #if defined(RTM_SSE2_INTRINSICS)
 		const __m128 mask = _mm_cmpge_ps(lhs, rhs);
+
+		bool result;
+		RTM_MASK4F_ALL_TRUE(mask, result);
+		return result;
+#elif defined(RTM_WASM128_INTRINSICS)
+		const v128_t mask = wasm_f32x4_ge(lhs, rhs);
 
 		bool result;
 		RTM_MASK4F_ALL_TRUE(mask, result);
@@ -3065,6 +3343,12 @@ namespace rtm
 		bool result;
 		RTM_MASK4F_ALL_TRUE2(mask, result);
 		return result;
+#elif defined(RTM_WASM128_INTRINSICS)
+		const v128_t mask = wasm_f32x4_ge(lhs, rhs);
+
+		bool result;
+		RTM_MASK4F_ALL_TRUE2(mask, result);
+		return result;
 #elif defined(RTM_NEON_INTRINSICS)
 		const uint32x2_t mask = vcge_f32(vget_low_f32(lhs), vget_low_f32(rhs));
 
@@ -3083,6 +3367,12 @@ namespace rtm
 	{
 #if defined(RTM_SSE2_INTRINSICS)
 		const __m128 mask = _mm_cmpge_ps(lhs, rhs);
+
+		bool result;
+		RTM_MASK4F_ALL_TRUE3(mask, result);
+		return result;
+#elif defined(RTM_WASM128_INTRINSICS)
+		const v128_t mask = wasm_f32x4_ge(lhs, rhs);
 
 		bool result;
 		RTM_MASK4F_ALL_TRUE3(mask, result);
@@ -3109,6 +3399,12 @@ namespace rtm
 		bool result;
 		RTM_MASK4F_ANY_TRUE(mask, result);
 		return result;
+#elif defined(RTM_WASM128_INTRINSICS)
+		const v128_t mask = wasm_f32x4_ge(lhs, rhs);
+
+		bool result;
+		RTM_MASK4F_ANY_TRUE(mask, result);
+		return result;
 #elif defined(RTM_NEON_INTRINSICS)
 		const uint32x4_t mask = vcgeq_f32(lhs, rhs);
 
@@ -3127,6 +3423,12 @@ namespace rtm
 	{
 #if defined(RTM_SSE2_INTRINSICS)
 		const __m128 mask = _mm_cmpge_ps(lhs, rhs);
+
+		bool result;
+		RTM_MASK4F_ANY_TRUE2(mask, result);
+		return result;
+#elif defined(RTM_WASM128_INTRINSICS)
+		const v128_t mask = wasm_f32x4_ge(lhs, rhs);
 
 		bool result;
 		RTM_MASK4F_ANY_TRUE2(mask, result);
@@ -3153,6 +3455,12 @@ namespace rtm
 		bool result;
 		RTM_MASK4F_ANY_TRUE3(mask, result);
 		return result;
+#elif defined(RTM_WASM128_INTRINSICS)
+		const v128_t mask = wasm_f32x4_ge(lhs, rhs);
+
+		bool result;
+		RTM_MASK4F_ANY_TRUE3(mask, result);
+		return result;
 #elif defined(RTM_NEON_INTRINSICS)
 		const uint32x4_t mask = vcgeq_f32(lhs, rhs);
 
@@ -3171,6 +3479,12 @@ namespace rtm
 	{
 #if defined(RTM_SSE2_INTRINSICS)
 		const __m128 mask = _mm_cmpeq_ps(lhs, rhs);
+
+		bool result;
+		RTM_MASK4F_ALL_TRUE(mask, result);
+		return result;
+#elif defined(RTM_WASM128_INTRINSICS)
+		const v128_t mask = wasm_f32x4_eq(lhs, rhs);
 
 		bool result;
 		RTM_MASK4F_ALL_TRUE(mask, result);
@@ -3197,6 +3511,12 @@ namespace rtm
 		bool result;
 		RTM_MASK4F_ALL_TRUE2(mask, result);
 		return result;
+#elif defined(RTM_WASM128_INTRINSICS)
+		const v128_t mask = wasm_f32x4_eq(lhs, rhs);
+
+		bool result;
+		RTM_MASK4F_ALL_TRUE2(mask, result);
+		return result;
 #elif defined(RTM_NEON_INTRINSICS)
 		const uint32x2_t mask = vceq_f32(vget_low_f32(lhs), vget_low_f32(rhs));
 
@@ -3215,6 +3535,12 @@ namespace rtm
 	{
 #if defined(RTM_SSE2_INTRINSICS)
 		const __m128 mask = _mm_cmpeq_ps(lhs, rhs);
+
+		bool result;
+		RTM_MASK4F_ALL_TRUE3(mask, result);
+		return result;
+#elif defined(RTM_WASM128_INTRINSICS)
+		const v128_t mask = wasm_f32x4_eq(lhs, rhs);
 
 		bool result;
 		RTM_MASK4F_ALL_TRUE3(mask, result);
@@ -3241,6 +3567,12 @@ namespace rtm
 		bool result;
 		RTM_MASK4F_ANY_TRUE(mask, result);
 		return result;
+#elif defined(RTM_WASM128_INTRINSICS)
+		const v128_t mask = wasm_f32x4_eq(lhs, rhs);
+
+		bool result;
+		RTM_MASK4F_ANY_TRUE(mask, result);
+		return result;
 #elif defined(RTM_NEON_INTRINSICS)
 		const uint32x4_t mask = vceqq_f32(lhs, rhs);
 
@@ -3259,6 +3591,12 @@ namespace rtm
 	{
 #if defined(RTM_SSE2_INTRINSICS)
 		const __m128 mask = _mm_cmpeq_ps(lhs, rhs);
+
+		bool result;
+		RTM_MASK4F_ANY_TRUE2(mask, result);
+		return result;
+#elif defined(RTM_WASM128_INTRINSICS)
+		const v128_t mask = wasm_f32x4_eq(lhs, rhs);
 
 		bool result;
 		RTM_MASK4F_ANY_TRUE2(mask, result);
@@ -3285,6 +3623,12 @@ namespace rtm
 		bool result;
 		RTM_MASK4F_ANY_TRUE3(mask, result);
 		return result;
+#elif defined(RTM_WASM128_INTRINSICS)
+		const v128_t mask = wasm_f32x4_eq(lhs, rhs);
+
+		bool result;
+		RTM_MASK4F_ANY_TRUE3(mask, result);
+		return result;
 #elif defined(RTM_NEON_INTRINSICS)
 		const uint32x4_t mask = vceqq_f32(lhs, rhs);
 
@@ -3303,6 +3647,12 @@ namespace rtm
 	{
 #if defined(RTM_SSE2_INTRINSICS)
 		const __m128 mask = _mm_cmpneq_ps(lhs, rhs);
+
+		bool result;
+		RTM_MASK4F_ALL_TRUE(mask, result);
+		return result;
+#elif defined(RTM_WASM128_INTRINSICS)
+		const v128_t mask = wasm_f32x4_ne(lhs, rhs);
 
 		bool result;
 		RTM_MASK4F_ALL_TRUE(mask, result);
@@ -3329,6 +3679,12 @@ namespace rtm
 		bool result;
 		RTM_MASK4F_ALL_TRUE2(mask, result);
 		return result;
+#elif defined(RTM_WASM128_INTRINSICS)
+		const v128_t mask = wasm_f32x4_ne(lhs, rhs);
+
+		bool result;
+		RTM_MASK4F_ALL_TRUE2(mask, result);
+		return result;
 #elif defined(RTM_NEON_INTRINSICS)
 		const uint32x2_t mask = vmvn_u32(vceq_f32(vget_low_f32(lhs), vget_low_f32(rhs)));
 
@@ -3347,6 +3703,12 @@ namespace rtm
 	{
 #if defined(RTM_SSE2_INTRINSICS)
 		const __m128 mask = _mm_cmpneq_ps(lhs, rhs);
+
+		bool result;
+		RTM_MASK4F_ALL_TRUE3(mask, result);
+		return result;
+#elif defined(RTM_WASM128_INTRINSICS)
+		const v128_t mask = wasm_f32x4_ne(lhs, rhs);
 
 		bool result;
 		RTM_MASK4F_ALL_TRUE3(mask, result);
@@ -3373,6 +3735,12 @@ namespace rtm
 		bool result;
 		RTM_MASK4F_ANY_TRUE(mask, result);
 		return result;
+#elif defined(RTM_WASM128_INTRINSICS)
+		const v128_t mask = wasm_f32x4_ne(lhs, rhs);
+
+		bool result;
+		RTM_MASK4F_ANY_TRUE(mask, result);
+		return result;
 #elif defined(RTM_NEON_INTRINSICS)
 		const uint32x4_t mask = vmvnq_u32(vceqq_f32(lhs, rhs));
 
@@ -3395,6 +3763,12 @@ namespace rtm
 		bool result;
 		RTM_MASK4F_ANY_TRUE2(mask, result);
 		return result;
+#elif defined(RTM_WASM128_INTRINSICS)
+		const v128_t mask = wasm_f32x4_ne(lhs, rhs);
+
+		bool result;
+		RTM_MASK4F_ANY_TRUE2(mask, result);
+		return result;
 #elif defined(RTM_NEON_INTRINSICS)
 		const uint32x2_t mask = vmvn_u32(vceq_f32(vget_low_f32(lhs), vget_low_f32(rhs)));
 
@@ -3413,6 +3787,12 @@ namespace rtm
 	{
 #if defined(RTM_SSE2_INTRINSICS)
 		const __m128 mask = _mm_cmpneq_ps(lhs, rhs);
+
+		bool result;
+		RTM_MASK4F_ANY_TRUE3(mask, result);
+		return result;
+#elif defined(RTM_WASM128_INTRINSICS)
+		const v128_t mask = wasm_f32x4_ne(lhs, rhs);
 
 		bool result;
 		RTM_MASK4F_ANY_TRUE3(mask, result);
@@ -3492,6 +3872,10 @@ namespace rtm
 
 		__m128 is_finite = _mm_andnot_ps(is_nan, is_not_infinity);
 		return is_finite;
+#elif defined(RTM_WASM128_INTRINSICS)
+		// The absolute value is smaller than infinity only when the input is finite, it is false for NaN
+		const v128_t is_finite = wasm_f32x4_lt(wasm_f32x4_abs(input), wasm_f32x4_splat(std::numeric_limits<float>::infinity()));
+		return is_finite;
 #elif defined(RTM_NEON_INTRINSICS)
 		const float32x4_t abs_input = vabsq_f32(input);
 		const float32x4_t infinity = vdupq_n_f32(std::numeric_limits<float>::infinity());
@@ -3525,6 +3909,13 @@ namespace rtm
 
 		__m128 is_not_finite = _mm_or_ps(is_infinity, is_nan);
 		return _mm_movemask_ps(is_not_finite) == 0;
+#elif defined(RTM_WASM128_INTRINSICS)
+		// The absolute value is smaller than infinity only when the input is finite, it is false for NaN
+		const v128_t is_finite = wasm_f32x4_lt(wasm_f32x4_abs(input), wasm_f32x4_splat(std::numeric_limits<float>::infinity()));
+
+		bool result;
+		RTM_MASK4F_ALL_TRUE(is_finite, result);
+		return result;
 #else
 		return scalar_is_finite(vector_get_x(input)) && scalar_is_finite(vector_get_y(input)) && scalar_is_finite(vector_get_z(input)) && scalar_is_finite(vector_get_w(input));
 #endif
@@ -3546,6 +3937,13 @@ namespace rtm
 
 		__m128 is_not_finite = _mm_or_ps(is_infinity, is_nan);
 		return (_mm_movemask_ps(is_not_finite) & 0x3) == 0;
+#elif defined(RTM_WASM128_INTRINSICS)
+		// The absolute value is smaller than infinity only when the input is finite, it is false for NaN
+		const v128_t is_finite = wasm_f32x4_lt(wasm_f32x4_abs(input), wasm_f32x4_splat(std::numeric_limits<float>::infinity()));
+
+		bool result;
+		RTM_MASK4F_ALL_TRUE2(is_finite, result);
+		return result;
 #else
 		return scalar_is_finite(vector_get_x(input)) && scalar_is_finite(vector_get_y(input));
 #endif
@@ -3567,6 +3965,13 @@ namespace rtm
 
 		__m128 is_not_finite = _mm_or_ps(is_infinity, is_nan);
 		return (_mm_movemask_ps(is_not_finite) & 0x7) == 0;
+#elif defined(RTM_WASM128_INTRINSICS)
+		// The absolute value is smaller than infinity only when the input is finite, it is false for NaN
+		const v128_t is_finite = wasm_f32x4_lt(wasm_f32x4_abs(input), wasm_f32x4_splat(std::numeric_limits<float>::infinity()));
+
+		bool result;
+		RTM_MASK4F_ALL_TRUE3(is_finite, result);
+		return result;
 #else
 		return scalar_is_finite(vector_get_x(input)) && scalar_is_finite(vector_get_y(input)) && scalar_is_finite(vector_get_z(input));
 #endif
@@ -3584,7 +3989,7 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE vector4f RTM_SIMD_CALL vector_select(mask4f_arg0 mask, vector4f_arg1 if_true, vector4f_arg2 if_false) RTM_NO_EXCEPT
 	{
-#if defined(RTM_SSE2_INTRINSICS) || defined(RTM_NEON_INTRINSICS)
+#if defined(RTM_SSE2_INTRINSICS) || defined(RTM_NEON_INTRINSICS) || defined(RTM_WASM128_INTRINSICS)
 		return RTM_VECTOR4F_SELECT(mask, if_true, if_false);
 #else
 		return vector4f{ rtm_impl::select(mask.x, if_true.x, if_false.x), rtm_impl::select(mask.y, if_true.y, if_false.y), rtm_impl::select(mask.z, if_true.z, if_false.z), rtm_impl::select(mask.w, if_true.w, if_false.w) };
@@ -3892,6 +4297,9 @@ namespace rtm
 
 		// All vector_mix permutations are handled above, return a dummy value to avoid warnings
 		return _mm_setzero_ps();
+#elif defined(RTM_WASM128_INTRINSICS)
+		// The mix4 values match the lane indices of the shuffle: [xyzw] are 0 to 3 and [abcd] are 4 to 7
+		return wasm_i32x4_shuffle(input0, input1, int(comp0), int(comp1), int(comp2), int(comp3));
 #elif defined(RTM_NEON_INTRINSICS)
 	#if defined(RTM_COMPILER_CLANG) || defined(RTM_COMPILER_GCC)
 		#if RTM_HAS_BUILTIN(__builtin_shufflevector)
@@ -4106,6 +4514,8 @@ namespace rtm
 	{
 #if defined(RTM_SSE2_INTRINSICS)
 		return _mm_shuffle_ps(input, input, _MM_SHUFFLE(0, 0, 0, 0));
+#elif defined(RTM_WASM128_INTRINSICS)
+		return wasm_i32x4_shuffle(input, input, 0, 0, 0, 0);
 #elif defined(RTM_NEON_INTRINSICS)
 		return vmovq_n_f32(vgetq_lane_f32(input, 0));
 #else
@@ -4120,6 +4530,8 @@ namespace rtm
 	{
 #if defined(RTM_SSE2_INTRINSICS)
 		return _mm_shuffle_ps(input, input, _MM_SHUFFLE(1, 1, 1, 1));
+#elif defined(RTM_WASM128_INTRINSICS)
+		return wasm_i32x4_shuffle(input, input, 1, 1, 1, 1);
 #elif defined(RTM_NEON_INTRINSICS)
 		return vmovq_n_f32(vgetq_lane_f32(input, 1));
 #else
@@ -4134,6 +4546,8 @@ namespace rtm
 	{
 #if defined(RTM_SSE2_INTRINSICS)
 		return _mm_shuffle_ps(input, input, _MM_SHUFFLE(2, 2, 2, 2));
+#elif defined(RTM_WASM128_INTRINSICS)
+		return wasm_i32x4_shuffle(input, input, 2, 2, 2, 2);
 #elif defined(RTM_NEON_INTRINSICS)
 		return vmovq_n_f32(vgetq_lane_f32(input, 2));
 #else
@@ -4148,6 +4562,8 @@ namespace rtm
 	{
 #if defined(RTM_SSE2_INTRINSICS)
 		return _mm_shuffle_ps(input, input, _MM_SHUFFLE(3, 3, 3, 3));
+#elif defined(RTM_WASM128_INTRINSICS)
+		return wasm_i32x4_shuffle(input, input, 3, 3, 3, 3);
 #elif defined(RTM_NEON_INTRINSICS)
 		return vmovq_n_f32(vgetq_lane_f32(input, 3));
 #else
@@ -4166,6 +4582,8 @@ namespace rtm
 	{
 #if defined(RTM_SSE2_INTRINSICS)
 		return _mm_and_ps(input0, input1);
+#elif defined(RTM_WASM128_INTRINSICS)
+		return wasm_v128_and(input0, input1);
 #elif defined(RTM_NEON_INTRINSICS)
 		return vreinterpretq_f32_u32(vandq_u32(vreinterpretq_u32_f32(input0), vreinterpretq_u32_f32(input1)));
 #else
@@ -4202,6 +4620,8 @@ namespace rtm
 	{
 #if defined(RTM_SSE2_INTRINSICS)
 		return _mm_or_ps(input0, input1);
+#elif defined(RTM_WASM128_INTRINSICS)
+		return wasm_v128_or(input0, input1);
 #elif defined(RTM_NEON_INTRINSICS)
 		return vreinterpretq_f32_u32(vorrq_u32(vreinterpretq_u32_f32(input0), vreinterpretq_u32_f32(input1)));
 #else
@@ -4238,6 +4658,8 @@ namespace rtm
 	{
 #if defined(RTM_SSE2_INTRINSICS)
 		return _mm_xor_ps(input0, input1);
+#elif defined(RTM_WASM128_INTRINSICS)
+		return wasm_v128_xor(input0, input1);
 #elif defined(RTM_NEON_INTRINSICS)
 		return vreinterpretq_f32_u32(veorq_u32(vreinterpretq_u32_f32(input0), vreinterpretq_u32_f32(input1)));
 #else
@@ -4283,6 +4705,9 @@ namespace rtm
 		constexpr __m128 one = RTM_VECTOR4F_MAKE(1.0F, 1.0F, 1.0F, 1.0F);
 		const __m128 sign_bits = _mm_and_ps(input, signs);	// Mask out the sign bit
 		return _mm_or_ps(sign_bits, one);					// Copy the sign bit onto +-1.0f
+#elif defined(RTM_WASM128_INTRINSICS)
+		const v128_t sign_bits = wasm_v128_and(input, wasm_f32x4_splat(-0.0F));	// Mask out the sign bit
+		return wasm_v128_or(sign_bits, wasm_f32x4_splat(1.0F));					// Copy the sign bit onto +-1.0f
 #else
 		const mask4f mask = vector_greater_equal(input, vector_zero());
 		return vector_select(mask, vector_set(1.0F), vector_set(-1.0F));
@@ -4299,6 +4724,8 @@ namespace rtm
 		__m128 signs = _mm_and_ps(sign_bit, control_sign);
 		__m128 abs_input = _mm_andnot_ps(sign_bit, input);
 		return _mm_or_ps(abs_input, signs);
+#elif defined(RTM_WASM128_INTRINSICS)
+		return wasm_v128_bitselect(control_sign, input, wasm_f32x4_splat(-0.0F));
 #else
 		float x = vector_get_x(input);
 		float y = vector_get_y(input);
@@ -4374,6 +4801,20 @@ namespace rtm
 		integer_part = _mm_or_ps(integer_part, sign);
 
 		return _mm_or_ps(_mm_and_ps(use_original_input, input), _mm_andnot_ps(use_original_input, integer_part));
+#elif defined(RTM_WASM128_INTRINSICS)
+		// Truncate and add one with the sign of the input when the fractional part is 0.5 or more.
+		// The subtraction of the truncated value is exact, unlike the addition of a 0.5 bias.
+		// NaN and +- Infinity remain unchanged since their fractional part is NaN.
+		const v128_t sign_mask = wasm_f32x4_splat(-0.0F);
+		const v128_t sign = wasm_v128_and(input, sign_mask);
+		const v128_t truncated = wasm_f32x4_trunc(input);
+		const v128_t fraction = wasm_f32x4_abs(wasm_f32x4_sub(input, truncated));
+		const v128_t is_half_or_more = wasm_f32x4_ge(fraction, wasm_f32x4_splat(0.5F));
+		const v128_t signed_one = wasm_v128_or(sign, wasm_f32x4_splat(1.0F));
+		const v128_t result = wasm_f32x4_add(truncated, wasm_v128_and(is_half_or_more, signed_one));
+
+		// Keep the sign of the input as std::round does, thus round(-0.0) = -0.0 and round(-0.3) = -0.0
+		return wasm_v128_or(result, sign);
 #elif defined(RTM_NEON_INTRINSICS) && !defined(RTM_NEON64_INTRINSICS) // arm64 is faster with scalar code
 		// NaN, +- Infinity, and numbers larger or equal to 2^23 remain unchanged
 		// since they have no fractional part.
@@ -4452,6 +4893,8 @@ namespace rtm
 		__m128 abs_input = _mm_and_ps(input, _mm_castsi128_ps(abs_mask));
 		__m128 is_input_large = _mm_cmpge_ps(abs_input, fractional_limit);
 		return _mm_or_ps(_mm_and_ps(is_input_large, input), _mm_andnot_ps(is_input_large, integer_part));
+#elif defined(RTM_WASM128_INTRINSICS)
+		return wasm_f32x4_nearest(input);
 #elif defined(RTM_NEON64_INTRINSICS)
 		return vrndnq_f32(input);
 #elif defined(RTM_NEON_INTRINSICS)
@@ -4519,6 +4962,37 @@ namespace rtm
 		result = _mm_add_ps(_mm_mul_ps(result, x2), _mm_set_ps1(-1.6666666601721269e-1F));
 		result = _mm_add_ps(_mm_mul_ps(result, x2), _mm_set_ps1(1.0F));
 		result = _mm_mul_ps(result, x);
+		return result;
+#elif defined(RTM_WASM128_INTRINSICS)
+		// Use a degree 11 minimax approximation polynomial
+		// See: GPGPU Programming for Games and Science (David H. Eberly)
+
+		// Remap our input in the [-pi, pi] range
+		v128_t quotient = wasm_f32x4_mul(input, wasm_f32x4_splat(constants::one_div_two_pi()));
+		quotient = vector_round_bankers(quotient);
+		quotient = wasm_f32x4_mul(quotient, wasm_f32x4_splat(constants::two_pi()));
+		v128_t x = wasm_f32x4_sub(input, quotient);
+
+		// Remap our input in the [-pi/2, pi/2] range
+		const v128_t sign_mask = wasm_f32x4_splat(-0.0F);
+		v128_t sign = wasm_v128_and(x, sign_mask);
+		v128_t reference = wasm_v128_or(sign, wasm_f32x4_splat(constants::pi()));
+
+		const v128_t reflection = wasm_f32x4_sub(reference, x);
+		const v128_t x_abs = wasm_f32x4_abs(x);
+
+		v128_t is_less_equal_than_half_pi = wasm_f32x4_le(x_abs, wasm_f32x4_splat(constants::half_pi()));
+
+		x = RTM_VECTOR4F_SELECT(is_less_equal_than_half_pi, x, reflection);
+
+		// Calculate our value
+		const v128_t x2 = wasm_f32x4_mul(x, x);
+		v128_t result = wasm_f32x4_add(wasm_f32x4_mul(x2, wasm_f32x4_splat(-2.3828544692960918e-8F)), wasm_f32x4_splat(2.7521557770526783e-6F));
+		result = wasm_f32x4_add(wasm_f32x4_mul(result, x2), wasm_f32x4_splat(-1.9840782426250314e-4F));
+		result = wasm_f32x4_add(wasm_f32x4_mul(result, x2), wasm_f32x4_splat(8.3333303183525942e-3F));
+		result = wasm_f32x4_add(wasm_f32x4_mul(result, x2), wasm_f32x4_splat(-1.6666666601721269e-1F));
+		result = wasm_f32x4_add(wasm_f32x4_mul(result, x2), wasm_f32x4_splat(1.0F));
+		result = wasm_f32x4_mul(result, x);
 		return result;
 #elif defined(RTM_NEON_INTRINSICS)
 		// Use a degree 11 minimax approximation polynomial
@@ -4603,6 +5077,40 @@ namespace rtm
 		// And our result has the opposite sign of the input
 		result = _mm_xor_ps(result, _mm_xor_ps(input_sign, sign_bit));
 		return _mm_add_ps(result, offset);
+#elif defined(RTM_WASM128_INTRINSICS)
+		// Use a degree 7 minimax approximation polynomial
+		// See: GPGPU Programming for Games and Science (David H. Eberly)
+
+		// We first calculate our scale: sqrt(1.0 - abs(value))
+		// Use the sign bit to generate our absolute value since we'll re-use that constant
+		const v128_t sign_bit = wasm_f32x4_splat(-0.0F);
+		v128_t abs_value = wasm_f32x4_abs(input);
+
+		// Calculate our value
+		v128_t result = wasm_f32x4_add(wasm_f32x4_mul(abs_value, wasm_f32x4_splat(-1.2690614339589956e-3F)), wasm_f32x4_splat(6.7072304676685235e-3F));
+		result = wasm_f32x4_add(wasm_f32x4_mul(result, abs_value), wasm_f32x4_splat(-1.7162031184398074e-2F));
+		result = wasm_f32x4_add(wasm_f32x4_mul(result, abs_value), wasm_f32x4_splat(3.0961594977611639e-2F));
+		result = wasm_f32x4_add(wasm_f32x4_mul(result, abs_value), wasm_f32x4_splat(-5.0207843052845647e-2F));
+		result = wasm_f32x4_add(wasm_f32x4_mul(result, abs_value), wasm_f32x4_splat(8.8986946573346160e-2F));
+		result = wasm_f32x4_add(wasm_f32x4_mul(result, abs_value), wasm_f32x4_splat(-2.1459960076929829e-1F));
+		result = wasm_f32x4_add(wasm_f32x4_mul(result, abs_value), wasm_f32x4_splat(1.5707963267948966F));
+
+		// Scale our result
+		v128_t scale = wasm_f32x4_sqrt(wasm_f32x4_sub(wasm_f32x4_splat(1.0F), abs_value));
+		result = wasm_f32x4_mul(result, scale);
+
+		// Normally the math is as follow:
+		// If input is positive: PI/2 - result
+		// If input is negative: PI/2 - (PI - result) = PI/2 - PI + result = -PI/2 + result
+
+		// As such, the offset is PI/2 and it takes the sign of the input
+		// This allows us to load a single constant from memory directly
+		v128_t input_sign = wasm_v128_and(input, sign_bit);
+		v128_t offset = wasm_v128_or(input_sign, wasm_f32x4_splat(constants::half_pi()));
+
+		// And our result has the opposite sign of the input
+		result = wasm_v128_xor(result, wasm_v128_xor(input_sign, sign_bit));
+		return wasm_f32x4_add(result, offset);
 #else
 		scalarf x = scalar_asin(scalarf(vector_get_x(input)));
 		scalarf y = scalar_asin(scalarf(vector_get_y(input)));
@@ -4649,6 +5157,37 @@ namespace rtm
 
 		// Remap into [-pi, pi]
 		return _mm_or_ps(result, _mm_andnot_ps(is_less_equal_than_half_pi, sign_mask));
+#elif defined(RTM_WASM128_INTRINSICS)
+		// Use a degree 10 minimax approximation polynomial
+		// See: GPGPU Programming for Games and Science (David H. Eberly)
+
+		// Remap our input in the [-pi, pi] range
+		v128_t quotient = wasm_f32x4_mul(input, wasm_f32x4_splat(constants::one_div_two_pi()));
+		quotient = vector_round_bankers(quotient);
+		quotient = wasm_f32x4_mul(quotient, wasm_f32x4_splat(constants::two_pi()));
+		v128_t x = wasm_f32x4_sub(input, quotient);
+
+		// Remap our input in the [-pi/2, pi/2] range
+		const v128_t sign_mask = wasm_f32x4_splat(-0.0F);
+		v128_t x_sign = wasm_v128_and(x, sign_mask);
+		v128_t reference = wasm_v128_or(x_sign, wasm_f32x4_splat(constants::pi()));
+		const v128_t reflection = wasm_f32x4_sub(reference, x);
+
+		v128_t x_abs = wasm_f32x4_abs(x);
+		v128_t is_less_equal_than_half_pi = wasm_f32x4_le(x_abs, wasm_f32x4_splat(constants::half_pi()));
+
+		x = RTM_VECTOR4F_SELECT(is_less_equal_than_half_pi, x, reflection);
+
+		// Calculate our value
+		const v128_t x2 = wasm_f32x4_mul(x, x);
+		v128_t result = wasm_f32x4_add(wasm_f32x4_mul(x2, wasm_f32x4_splat(-2.6051615464872668e-7F)), wasm_f32x4_splat(2.4760495088926859e-5F));
+		result = wasm_f32x4_add(wasm_f32x4_mul(result, x2), wasm_f32x4_splat(-1.3888377661039897e-3F));
+		result = wasm_f32x4_add(wasm_f32x4_mul(result, x2), wasm_f32x4_splat(4.1666638865338612e-2F));
+		result = wasm_f32x4_add(wasm_f32x4_mul(result, x2), wasm_f32x4_splat(-4.9999999508695869e-1F));
+		result = wasm_f32x4_add(wasm_f32x4_mul(result, x2), wasm_f32x4_splat(1.0F));
+
+		// Remap into [-pi, pi]
+		return wasm_v128_or(result, wasm_v128_andnot(sign_mask, is_less_equal_than_half_pi));
 #elif defined(RTM_NEON_INTRINSICS)
 		// Use a degree 10 minimax approximation polynomial
 		// See: GPGPU Programming for Games and Science (David H. Eberly)
@@ -4736,6 +5275,44 @@ namespace rtm
 		__m128 input_sign = _mm_and_ps(input, sign_bit);
 		result = _mm_or_ps(result, input_sign);
 		return _mm_add_ps(result, offset);
+#elif defined(RTM_WASM128_INTRINSICS)
+		// Use the identity: acos(value) + asin(value) = PI/2
+		// This ends up being: acos(value) = PI/2 - asin(value)
+		// Since asin(value) = PI/2 - sqrt(1.0 - polynomial(value))
+		// Our end result is acos(value) = sqrt(1.0 - polynomial(value))
+		// This means we can re-use the same polynomial as asin()
+		// See: GPGPU Programming for Games and Science (David H. Eberly)
+
+		// We first calculate our scale: sqrt(1.0 - abs(value))
+		// Use the sign bit to generate our absolute value since we'll re-use that constant
+		const v128_t sign_bit = wasm_f32x4_splat(-0.0F);
+		v128_t abs_value = wasm_f32x4_abs(input);
+
+		// Calculate our value
+		v128_t result = wasm_f32x4_add(wasm_f32x4_mul(abs_value, wasm_f32x4_splat(-1.2690614339589956e-3F)), wasm_f32x4_splat(6.7072304676685235e-3F));
+		result = wasm_f32x4_add(wasm_f32x4_mul(result, abs_value), wasm_f32x4_splat(-1.7162031184398074e-2F));
+		result = wasm_f32x4_add(wasm_f32x4_mul(result, abs_value), wasm_f32x4_splat(3.0961594977611639e-2F));
+		result = wasm_f32x4_add(wasm_f32x4_mul(result, abs_value), wasm_f32x4_splat(-5.0207843052845647e-2F));
+		result = wasm_f32x4_add(wasm_f32x4_mul(result, abs_value), wasm_f32x4_splat(8.8986946573346160e-2F));
+		result = wasm_f32x4_add(wasm_f32x4_mul(result, abs_value), wasm_f32x4_splat(-2.1459960076929829e-1F));
+		result = wasm_f32x4_add(wasm_f32x4_mul(result, abs_value), wasm_f32x4_splat(1.5707963267948966F));
+
+		// Scale our result
+		v128_t scale = wasm_f32x4_sqrt(wasm_f32x4_sub(wasm_f32x4_splat(1.0F), abs_value));
+		result = wasm_f32x4_mul(result, scale);
+
+		// Normally the math is as follow:
+		// If input is positive: result
+		// If input is negative: PI - result = -result + PI
+
+		// As such, the offset is 0.0 when the input is positive and PI when negative
+		v128_t is_input_negative = wasm_f32x4_lt(input, wasm_f32x4_splat(0.0F));
+		v128_t offset = wasm_v128_and(is_input_negative, wasm_f32x4_splat(constants::pi()));
+
+		// And our result has the same sign of the input
+		v128_t input_sign = wasm_v128_and(input, sign_bit);
+		result = wasm_v128_or(result, input_sign);
+		return wasm_f32x4_add(result, offset);
 #else
 		scalarf x = scalar_acos(scalarf(vector_get_x(input)));
 		scalarf y = scalar_acos(scalarf(vector_get_y(input)));
@@ -4790,6 +5367,45 @@ namespace rtm
 		sine_result = _mm_add_ps(_mm_mul_ps(sine_result, x2), _mm_set_ps1(-1.6666666601721269e-1F));
 		sine_result = _mm_add_ps(_mm_mul_ps(sine_result, x2), _mm_set_ps1(1.0F));
 		out_sine = _mm_mul_ps(sine_result, x);
+#elif defined(RTM_WASM128_INTRINSICS)
+		// Use a degree 10 minimax approximation polynomial
+		// See: GPGPU Programming for Games and Science (David H. Eberly)
+
+		// Remap our input in the [-pi, pi] range
+		v128_t quotient = wasm_f32x4_mul(input, wasm_f32x4_splat(constants::one_div_two_pi()));
+		quotient = vector_round_bankers(quotient);
+		quotient = wasm_f32x4_mul(quotient, wasm_f32x4_splat(constants::two_pi()));
+		v128_t x = wasm_f32x4_sub(input, quotient);
+
+		// Remap our input in the [-pi/2, pi/2] range
+		const v128_t sign_mask = wasm_f32x4_splat(-0.0F);
+		v128_t x_sign = wasm_v128_and(x, sign_mask);
+		v128_t reference = wasm_v128_or(x_sign, wasm_f32x4_splat(constants::pi()));
+		const v128_t reflection = wasm_f32x4_sub(reference, x);
+
+		v128_t x_abs = wasm_f32x4_abs(x);
+		v128_t is_less_equal_than_half_pi = wasm_f32x4_le(x_abs, wasm_f32x4_splat(constants::half_pi()));
+
+		x = RTM_VECTOR4F_SELECT(is_less_equal_than_half_pi, x, reflection);
+		const v128_t x2 = wasm_f32x4_mul(x, x);
+
+		// Calculate our cosine value
+		v128_t cosine_result = wasm_f32x4_add(wasm_f32x4_mul(x2, wasm_f32x4_splat(-2.6051615464872668e-7F)), wasm_f32x4_splat(2.4760495088926859e-5F));
+		cosine_result = wasm_f32x4_add(wasm_f32x4_mul(cosine_result, x2), wasm_f32x4_splat(-1.3888377661039897e-3F));
+		cosine_result = wasm_f32x4_add(wasm_f32x4_mul(cosine_result, x2), wasm_f32x4_splat(4.1666638865338612e-2F));
+		cosine_result = wasm_f32x4_add(wasm_f32x4_mul(cosine_result, x2), wasm_f32x4_splat(-4.9999999508695869e-1F));
+		cosine_result = wasm_f32x4_add(wasm_f32x4_mul(cosine_result, x2), wasm_f32x4_splat(1.0F));
+
+		// Remap into [-pi, pi]
+		out_cosine = wasm_v128_or(cosine_result, wasm_v128_andnot(sign_mask, is_less_equal_than_half_pi));
+
+		// Calculate our sine value
+		v128_t sine_result = wasm_f32x4_add(wasm_f32x4_mul(x2, wasm_f32x4_splat(-2.3828544692960918e-8F)), wasm_f32x4_splat(2.7521557770526783e-6F));
+		sine_result = wasm_f32x4_add(wasm_f32x4_mul(sine_result, x2), wasm_f32x4_splat(-1.9840782426250314e-4F));
+		sine_result = wasm_f32x4_add(wasm_f32x4_mul(sine_result, x2), wasm_f32x4_splat(8.3333303183525942e-3F));
+		sine_result = wasm_f32x4_add(wasm_f32x4_mul(sine_result, x2), wasm_f32x4_splat(-1.6666666601721269e-1F));
+		sine_result = wasm_f32x4_add(wasm_f32x4_mul(sine_result, x2), wasm_f32x4_splat(1.0F));
+		out_sine = wasm_f32x4_mul(sine_result, x);
 #elif defined(RTM_NEON_INTRINSICS)
 		// Use a degree 10 minimax approximation polynomial
 		// See: GPGPU Programming for Games and Science (David H. Eberly)
@@ -4897,6 +5513,36 @@ namespace rtm
 
 		// Keep the original sign
 		return _mm_or_ps(result, _mm_and_ps(input, _mm_set_ps1(-0.0F)));
+#elif defined(RTM_WASM128_INTRINSICS)
+		// Use a degree 13 minimax approximation polynomial
+		// See: GPGPU Programming for Games and Science (David H. Eberly)
+
+		// Discard our sign, we'll restore it later
+		v128_t abs_value = wasm_f32x4_abs(input);
+
+		// Compute our value
+		v128_t is_larger_than_one = wasm_f32x4_gt(abs_value, wasm_f32x4_splat(1.0F));
+		v128_t reciprocal = vector_reciprocal(abs_value);
+
+		v128_t x = vector_select(is_larger_than_one, reciprocal, abs_value);
+
+		v128_t x2 = wasm_f32x4_mul(x, x);
+
+		v128_t result = wasm_f32x4_add(wasm_f32x4_mul(x2, wasm_f32x4_splat(7.2128853633444123e-3F)), wasm_f32x4_splat(-3.5059680836411644e-2F));
+		result = wasm_f32x4_add(wasm_f32x4_mul(result, x2), wasm_f32x4_splat(8.1675882859940430e-2F));
+		result = wasm_f32x4_add(wasm_f32x4_mul(result, x2), wasm_f32x4_splat(-1.3374657325451267e-1F));
+		result = wasm_f32x4_add(wasm_f32x4_mul(result, x2), wasm_f32x4_splat(1.9856563505717162e-1F));
+		result = wasm_f32x4_add(wasm_f32x4_mul(result, x2), wasm_f32x4_splat(-3.3324998579202170e-1F));
+		result = wasm_f32x4_add(wasm_f32x4_mul(result, x2), wasm_f32x4_splat(1.0F));
+		result = wasm_f32x4_mul(result, x);
+
+		v128_t remapped = wasm_f32x4_sub(wasm_f32x4_splat(constants::half_pi()), result);
+
+		// pi/2 - result
+		result = vector_select(is_larger_than_one, remapped, result);
+
+		// Keep the original sign
+		return wasm_v128_or(result, wasm_v128_and(input, wasm_f32x4_splat(-0.0F)));
 #elif defined(RTM_NEON_INTRINSICS)
 		// Use a degree 13 minimax approximation polynomial
 		// See: GPGPU Programming for Games and Science (David H. Eberly)
@@ -4988,6 +5634,45 @@ namespace rtm
 		value = _mm_andnot_ps(inputs_are_zero, value);
 
 		return _mm_add_ps(value, offset);
+#elif defined(RTM_WASM128_INTRINSICS)
+		// If X == 0.0 and Y != 0.0, we return PI/2 with the sign of Y
+		// If X == 0.0 and Y == 0.0, we return 0.0
+		// If X > 0.0, we return atan(y/x)
+		// If X < 0.0, we return atan(y/x) + sign(Y) * PI
+		// See: https://en.wikipedia.org/wiki/Atan2#Definition_and_computation
+
+		const v128_t zero = wasm_f32x4_splat(0.0F);
+		v128_t is_x_zero = wasm_f32x4_eq(x, zero);
+		v128_t is_y_zero = wasm_f32x4_eq(y, zero);
+		v128_t inputs_are_zero = wasm_v128_and(is_x_zero, is_y_zero);
+
+		v128_t is_x_positive = wasm_f32x4_gt(x, zero);
+
+		const v128_t sign_mask = wasm_f32x4_splat(-0.0F);
+		v128_t y_sign = wasm_v128_and(y, sign_mask);
+
+		// If X == 0.0, our offset is PI/2 otherwise it is PI both with the sign of Y
+		v128_t half_pi = wasm_f32x4_splat(constants::half_pi());
+		v128_t pi = wasm_f32x4_splat(constants::pi());
+		v128_t offset = wasm_v128_or(wasm_v128_and(is_x_zero, half_pi), wasm_v128_andnot(pi, is_x_zero));
+		offset = wasm_v128_or(offset, y_sign);
+
+		// If X > 0.0, our offset is 0.0
+		offset = wasm_v128_andnot(offset, is_x_positive);
+
+		// If X == 0.0 and Y == 0.0, our offset is 0.0
+		offset = wasm_v128_andnot(offset, inputs_are_zero);
+
+		v128_t angle = wasm_f32x4_div(y, x);
+		v128_t value = vector_atan(angle);
+
+		// If X == 0.0, our value is 0.0 otherwise it is atan(y/x)
+		value = wasm_v128_andnot(value, is_x_zero);
+
+		// If X == 0.0 and Y == 0.0, our value is 0.0
+		value = wasm_v128_andnot(value, inputs_are_zero);
+
+		return wasm_f32x4_add(value, offset);
 #elif defined(RTM_NEON64_INTRINSICS)
 		// If X == 0.0 and Y != 0.0, we return PI/2 with the sign of Y
 		// If X == 0.0 and Y == 0.0, we return 0.0

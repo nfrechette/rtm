@@ -66,8 +66,13 @@
 		#define RTM_NEON_INTRINSICS
 	#endif
 
-	// If SSE2 and NEON aren't used, we default to the scalar implementation
-	#if !defined(RTM_SSE2_INTRINSICS) && !defined(RTM_NEON_INTRINSICS)
+	// Clang defines __wasm_simd128__ when we compile with -msimd128
+	#if defined(RTM_ARCH_WASM) && defined(__wasm_simd128__)
+		#define RTM_WASM128_INTRINSICS
+	#endif
+
+	// If SSE2, NEON, and WASM SIMD aren't used, we default to the scalar implementation
+	#if !defined(RTM_SSE2_INTRINSICS) && !defined(RTM_NEON_INTRINSICS) && !defined(RTM_WASM128_INTRINSICS)
 		#define RTM_NO_INTRINSICS
 	#endif
 #endif
@@ -107,6 +112,10 @@
 	#include <arm64_neon.h>
 #elif defined(RTM_NEON_INTRINSICS)
 	#include <arm_neon.h>
+#endif
+
+#if defined(RTM_WASM128_INTRINSICS)
+	#include <wasm_simd128.h>
 #endif
 
 // Specify the SIMD calling convention if we can

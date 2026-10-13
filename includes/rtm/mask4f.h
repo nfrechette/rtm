@@ -48,6 +48,8 @@ namespace rtm
 	{
 #if defined(RTM_SSE2_INTRINSICS)
 		return static_cast<uint32_t>(_mm_cvtsi128_si32(_mm_castps_si128(input)));
+#elif defined(RTM_WASM128_INTRINSICS)
+		return wasm_u32x4_extract_lane(input, 0);
 #elif defined(RTM_NEON_INTRINSICS)
 		return vgetq_lane_u32(input, 0);
 #else
@@ -62,6 +64,8 @@ namespace rtm
 	{
 #if defined(RTM_SSE2_INTRINSICS)
 		return static_cast<uint32_t>(_mm_cvtsi128_si32(_mm_castps_si128(_mm_shuffle_ps(input, input, _MM_SHUFFLE(1, 1, 1, 1)))));
+#elif defined(RTM_WASM128_INTRINSICS)
+		return wasm_u32x4_extract_lane(input, 1);
 #elif defined(RTM_NEON_INTRINSICS)
 		return vgetq_lane_u32(input, 1);
 #else
@@ -76,6 +80,8 @@ namespace rtm
 	{
 #if defined(RTM_SSE2_INTRINSICS)
 		return static_cast<uint32_t>(_mm_cvtsi128_si32(_mm_castps_si128(_mm_shuffle_ps(input, input, _MM_SHUFFLE(2, 2, 2, 2)))));
+#elif defined(RTM_WASM128_INTRINSICS)
+		return wasm_u32x4_extract_lane(input, 2);
 #elif defined(RTM_NEON_INTRINSICS)
 		return vgetq_lane_u32(input, 2);
 #else
@@ -90,6 +96,8 @@ namespace rtm
 	{
 #if defined(RTM_SSE2_INTRINSICS)
 		return static_cast<uint32_t>(_mm_cvtsi128_si32(_mm_castps_si128(_mm_shuffle_ps(input, input, _MM_SHUFFLE(3, 3, 3, 3)))));
+#elif defined(RTM_WASM128_INTRINSICS)
+		return wasm_u32x4_extract_lane(input, 3);
 #elif defined(RTM_NEON_INTRINSICS)
 		return vgetq_lane_u32(input, 3);
 #else
@@ -167,6 +175,8 @@ namespace rtm
 		// lhs ^ rhs = 0 if both are equal and != 0 if they are not
 #if defined(RTM_SSE2_INTRINSICS)
 		return _mm_movemask_ps(_mm_xor_ps(lhs, rhs)) == 0;
+#elif defined(RTM_WASM128_INTRINSICS)
+		return !wasm_v128_any_true(wasm_v128_xor(lhs, rhs));
 #elif defined(RTM_NEON_INTRINSICS)
 		uint32x4_t mask = veorq_u32(lhs, rhs);
 		uint16x4_t truncated_mask = vmovn_u32(mask);
@@ -186,6 +196,8 @@ namespace rtm
 		// lhs ^ rhs = 0 if both are equal and != 0 if they are not
 #if defined(RTM_SSE2_INTRINSICS)
 		return (_mm_movemask_ps(_mm_xor_ps(lhs, rhs)) & 0x03) == 0;
+#elif defined(RTM_WASM128_INTRINSICS)
+		return wasm_u64x2_extract_lane(wasm_v128_xor(lhs, rhs), 0) == 0;
 #elif defined(RTM_NEON_INTRINSICS)
 		uint32x2_t mask = veor_u32(vget_low_u32(lhs), vget_low_u32(rhs));
 		return vget_lane_u64(vreinterpret_u64_u32(mask), 0) == 0;
@@ -204,6 +216,8 @@ namespace rtm
 		// lhs ^ rhs = 0 if both are equal and != 0 if they are not
 #if defined(RTM_SSE2_INTRINSICS)
 		return (_mm_movemask_ps(_mm_xor_ps(lhs, rhs)) & 0x07) == 0;
+#elif defined(RTM_WASM128_INTRINSICS)
+		return (wasm_i32x4_bitmask(wasm_v128_xor(lhs, rhs)) & 0x07) == 0;
 #elif defined(RTM_NEON_INTRINSICS)
 		uint32x4_t mask = veorq_u32(lhs, rhs);
 		uint16x4_t truncated_mask = vmovn_u32(mask);
@@ -223,6 +237,8 @@ namespace rtm
 		// lhs ^ rhs = 0 if both are equal and != 0 if they are not
 #if defined(RTM_SSE2_INTRINSICS)
 		return _mm_movemask_ps(_mm_xor_ps(lhs, rhs)) != 0x0F;
+#elif defined(RTM_WASM128_INTRINSICS)
+		return !wasm_i32x4_all_true(wasm_v128_xor(lhs, rhs));
 #elif defined(RTM_NEON_INTRINSICS)
 		uint32x4_t mask = veorq_u32(lhs, rhs);
 		uint16x4_t truncated_mask = vmovn_u32(mask);
@@ -245,6 +261,8 @@ namespace rtm
 		// lhs ^ rhs = 0 if both are equal and != 0 if they are not
 #if defined(RTM_SSE2_INTRINSICS)
 		return (_mm_movemask_ps(_mm_xor_ps(lhs, rhs)) & 0x03) != 0x03;
+#elif defined(RTM_WASM128_INTRINSICS)
+		return (wasm_i32x4_bitmask(wasm_v128_xor(lhs, rhs)) & 0x03) != 0x03;
 #elif defined(RTM_NEON_INTRINSICS)
 		uint32x2_t mask = veor_u32(vget_low_u32(lhs), vget_low_u32(rhs));
 		return vget_lane_u64(vreinterpret_u64_u32(mask), 0) != 0xFFFFFFFFFFFFFFFFULL;
@@ -264,6 +282,8 @@ namespace rtm
 		// lhs ^ rhs = 0 if both are equal and != 0 if they are not
 #if defined(RTM_SSE2_INTRINSICS)
 		return (_mm_movemask_ps(_mm_xor_ps(lhs, rhs)) & 0x07) != 0x07;
+#elif defined(RTM_WASM128_INTRINSICS)
+		return (wasm_i32x4_bitmask(wasm_v128_xor(lhs, rhs)) & 0x07) != 0x07;
 #elif defined(RTM_NEON_INTRINSICS)
 		uint32x4_t mask = veorq_u32(lhs, rhs);
 		uint16x4_t truncated_mask = vmovn_u32(mask);
@@ -282,6 +302,8 @@ namespace rtm
 	{
 #if defined(RTM_SSE2_INTRINSICS)
 		return _mm_and_ps(lhs, rhs);
+#elif defined(RTM_WASM128_INTRINSICS)
+		return wasm_v128_and(lhs, rhs);
 #elif defined(RTM_NEON_INTRINSICS)
 		return vandq_u32(lhs, rhs);
 #else
@@ -310,6 +332,8 @@ namespace rtm
 	{
 #if defined(RTM_SSE2_INTRINSICS)
 		return _mm_or_ps(lhs, rhs);
+#elif defined(RTM_WASM128_INTRINSICS)
+		return wasm_v128_or(lhs, rhs);
 #elif defined(RTM_NEON_INTRINSICS)
 		return vorrq_u32(lhs, rhs);
 #else
@@ -338,6 +362,8 @@ namespace rtm
 	{
 #if defined(RTM_SSE2_INTRINSICS)
 		return _mm_xor_ps(lhs, rhs);
+#elif defined(RTM_WASM128_INTRINSICS)
+		return wasm_v128_xor(lhs, rhs);
 #elif defined(RTM_NEON_INTRINSICS)
 		return veorq_u32(lhs, rhs);
 #else
@@ -367,6 +393,8 @@ namespace rtm
 #if defined(RTM_SSE2_INTRINSICS)
 		const __m128i true_mask = _mm_set_epi32(0xFFFFFFFFULL, 0xFFFFFFFFULL, 0xFFFFFFFFULL, 0xFFFFFFFFULL);
 		return _mm_andnot_ps(input, _mm_castsi128_ps(true_mask));
+#elif defined(RTM_WASM128_INTRINSICS)
+		return wasm_v128_not(input);
 #elif defined(RTM_NEON_INTRINSICS)
 		return vmvnq_u32(input);
 #else

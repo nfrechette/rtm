@@ -67,6 +67,22 @@ RTM_IMPL_FILE_PRAGMA_PUSH
 			(output_zzzz) = _mm_shuffle_ps(z0w0z1w1, z2w2z3w3, _MM_SHUFFLE(2, 0, 2, 0)); \
 			(output_wwww) = _mm_shuffle_ps(z0w0z1w1, z2w2z3w3, _MM_SHUFFLE(3, 1, 3, 1)); \
 		} while(0)
+#elif defined(RTM_WASM128_INTRINSICS)
+	//////////////////////////////////////////////////////////////////////////
+	// Transposes a 4x4 matrix.
+	// All inputs and outputs must be rtm::vector4f.
+	//////////////////////////////////////////////////////////////////////////
+	#define RTM_MATRIXF_TRANSPOSE_4X4(input_xyzw0, input_xyzw1, input_xyzw2, input_xyzw3, output_xxxx, output_yyyy, output_zzzz, output_wwww) \
+		do { \
+			const v128_t x0y0x1y1 = wasm_i32x4_shuffle((input_xyzw0), (input_xyzw1), 0, 1, 4, 5); \
+			const v128_t z0w0z1w1 = wasm_i32x4_shuffle((input_xyzw0), (input_xyzw1), 2, 3, 6, 7); \
+			const v128_t x2y2x3y3 = wasm_i32x4_shuffle((input_xyzw2), (input_xyzw3), 0, 1, 4, 5); \
+			const v128_t z2w2z3w3 = wasm_i32x4_shuffle((input_xyzw2), (input_xyzw3), 2, 3, 6, 7); \
+			(output_xxxx) = wasm_i32x4_shuffle(x0y0x1y1, x2y2x3y3, 0, 2, 4, 6); \
+			(output_yyyy) = wasm_i32x4_shuffle(x0y0x1y1, x2y2x3y3, 1, 3, 5, 7); \
+			(output_zzzz) = wasm_i32x4_shuffle(z0w0z1w1, z2w2z3w3, 0, 2, 4, 6); \
+			(output_wwww) = wasm_i32x4_shuffle(z0w0z1w1, z2w2z3w3, 1, 3, 5, 7); \
+		} while(0)
 #else
 	//////////////////////////////////////////////////////////////////////////
 	// Transposes a 4x4 matrix.
@@ -137,6 +153,26 @@ RTM_IMPL_FILE_PRAGMA_PUSH
 			(output_zzzz) = RTM_IMPL_NAMESPACE::vector4d { z0z1, z2z3 }; \
 			(output_wwww) = RTM_IMPL_NAMESPACE::vector4d { w0w1, w2w3 }; \
 		} while(0)
+#elif defined(RTM_WASM128_INTRINSICS)
+	//////////////////////////////////////////////////////////////////////////
+	// Transposes a 4x4 matrix.
+	// All inputs and outputs must be rtm::vector4d.
+	//////////////////////////////////////////////////////////////////////////
+	#define RTM_MATRIXD_TRANSPOSE_4X4(input_xyzw0, input_xyzw1, input_xyzw2, input_xyzw3, output_xxxx, output_yyyy, output_zzzz, output_wwww) \
+		do { \
+			const v128_t x0x1 = wasm_i64x2_shuffle(input_xyzw0.xy, input_xyzw1.xy, 0, 2); \
+			const v128_t y0y1 = wasm_i64x2_shuffle(input_xyzw0.xy, input_xyzw1.xy, 1, 3); \
+			const v128_t x2x3 = wasm_i64x2_shuffle(input_xyzw2.xy, input_xyzw3.xy, 0, 2); \
+			const v128_t y2y3 = wasm_i64x2_shuffle(input_xyzw2.xy, input_xyzw3.xy, 1, 3); \
+			const v128_t z0z1 = wasm_i64x2_shuffle(input_xyzw0.zw, input_xyzw1.zw, 0, 2); \
+			const v128_t w0w1 = wasm_i64x2_shuffle(input_xyzw0.zw, input_xyzw1.zw, 1, 3); \
+			const v128_t z2z3 = wasm_i64x2_shuffle(input_xyzw2.zw, input_xyzw3.zw, 0, 2); \
+			const v128_t w2w3 = wasm_i64x2_shuffle(input_xyzw2.zw, input_xyzw3.zw, 1, 3); \
+			(output_xxxx) = RTM_IMPL_NAMESPACE::vector4d { x0x1, x2x3 }; \
+			(output_yyyy) = RTM_IMPL_NAMESPACE::vector4d { y0y1, y2y3 }; \
+			(output_zzzz) = RTM_IMPL_NAMESPACE::vector4d { z0z1, z2z3 }; \
+			(output_wwww) = RTM_IMPL_NAMESPACE::vector4d { w0w1, w2w3 }; \
+		} while(0)
 #else
 	//////////////////////////////////////////////////////////////////////////
 	// Transposes a 4x4 matrix.
@@ -196,6 +232,20 @@ RTM_IMPL_FILE_PRAGMA_PUSH
 			(output_yyy) = _mm_shuffle_ps(x0y0x1y1, input_xyz2_, _MM_SHUFFLE(3, 1, 3, 1)); \
 			(output_zzz) = _mm_shuffle_ps(z0w0z1w1, input_xyz2_, _MM_SHUFFLE(2, 2, 2, 0)); \
 		} while(0)
+#elif defined(RTM_WASM128_INTRINSICS)
+	//////////////////////////////////////////////////////////////////////////
+	// Transposes a 3x3 matrix.
+	// All inputs and outputs must be rtm::vector4f.
+	//////////////////////////////////////////////////////////////////////////
+	#define RTM_MATRIXF_TRANSPOSE_3X3(input_xyz0, input_xyz1, input_xyz2, output_xxx, output_yyy, output_zzz) \
+		do { \
+			const v128_t input_xyz2_ = (input_xyz2); \
+			const v128_t x0y0x1y1 = wasm_i32x4_shuffle((input_xyz0), (input_xyz1), 0, 1, 4, 5); \
+			const v128_t z0w0z1w1 = wasm_i32x4_shuffle((input_xyz0), (input_xyz1), 2, 3, 6, 7); \
+			(output_xxx) = wasm_i32x4_shuffle(x0y0x1y1, input_xyz2_, 0, 2, 4, 6); \
+			(output_yyy) = wasm_i32x4_shuffle(x0y0x1y1, input_xyz2_, 1, 3, 5, 7); \
+			(output_zzz) = wasm_i32x4_shuffle(z0w0z1w1, input_xyz2_, 0, 2, 6, 6); \
+		} while(0)
 #else
 	//////////////////////////////////////////////////////////////////////////
 	// Transposes a 3x3 matrix.
@@ -244,6 +294,21 @@ RTM_IMPL_FILE_PRAGMA_PUSH
 			const float64x2_t y0y1 = vzip2q_f64(input_xyz0.xy, input_xyz1.xy); \
 			const float64x2_t y2 = vzip2q_f64(input_xyz2.xy, input_xyz2.xy); \
 			const float64x2_t z0z1 = vzip1q_f64(input_xyz0.zw, input_xyz1.zw); \
+			(output_xxx) = RTM_IMPL_NAMESPACE::vector4d { x0x1, input_xyz2.xy }; \
+			(output_yyy) = RTM_IMPL_NAMESPACE::vector4d { y0y1, y2 }; \
+			(output_zzz) = RTM_IMPL_NAMESPACE::vector4d { z0z1, input_xyz2.zw }; \
+		} while(0)
+#elif defined(RTM_WASM128_INTRINSICS)
+	//////////////////////////////////////////////////////////////////////////
+	// Transposes a 3x3 matrix.
+	// All inputs and outputs must be rtm::vector4d.
+	//////////////////////////////////////////////////////////////////////////
+	#define RTM_MATRIXD_TRANSPOSE_3X3(input_xyz0, input_xyz1, input_xyz2, output_xxx, output_yyy, output_zzz) \
+		do { \
+			const v128_t x0x1 = wasm_i64x2_shuffle(input_xyz0.xy, input_xyz1.xy, 0, 2); \
+			const v128_t y0y1 = wasm_i64x2_shuffle(input_xyz0.xy, input_xyz1.xy, 1, 3); \
+			const v128_t y2 = wasm_i64x2_shuffle(input_xyz2.xy, input_xyz2.xy, 1, 3); \
+			const v128_t z0z1 = wasm_i64x2_shuffle(input_xyz0.zw, input_xyz1.zw, 0, 2); \
 			(output_xxx) = RTM_IMPL_NAMESPACE::vector4d { x0x1, input_xyz2.xy }; \
 			(output_yyy) = RTM_IMPL_NAMESPACE::vector4d { y0y1, y2 }; \
 			(output_zzz) = RTM_IMPL_NAMESPACE::vector4d { z0z1, input_xyz2.zw }; \
@@ -304,6 +369,17 @@ RTM_IMPL_FILE_PRAGMA_PUSH
 			(output_xx) = x0x1y0y1; \
 			(output_yy) = _mm_movehl_ps(x0x1y0y1, x0x1y0y1); \
 		} while(0)
+#elif defined(RTM_WASM128_INTRINSICS)
+	//////////////////////////////////////////////////////////////////////////
+	// Transposes a 2x2 matrix.
+	// All inputs and outputs must be rtm::vector4f.
+	//////////////////////////////////////////////////////////////////////////
+	#define RTM_MATRIXF_TRANSPOSE_2X2(input_xy0, input_xy1, output_xx, output_yy) \
+		do { \
+			const v128_t x0x1y0y1 = wasm_i32x4_shuffle((input_xy0), (input_xy1), 0, 4, 1, 5); \
+			(output_xx) = x0x1y0y1; \
+			(output_yy) = wasm_i32x4_shuffle(x0x1y0y1, x0x1y0y1, 6, 7, 2, 3); \
+		} while(0)
 #else
 	//////////////////////////////////////////////////////////////////////////
 	// Transposes a 2x2 matrix.
@@ -341,6 +417,18 @@ RTM_IMPL_FILE_PRAGMA_PUSH
 		do { \
 			const float64x2_t x0x1 = vzip1q_f64((input_xy0).xy, (input_xy1).xy); \
 			const float64x2_t y0y1 = vzip2q_f64((input_xy0).xy, (input_xy1).xy); \
+			(output_xx) = RTM_IMPL_NAMESPACE::vector4d { x0x1, x0x1 }; \
+			(output_yy) = RTM_IMPL_NAMESPACE::vector4d { y0y1, y0y1 }; \
+		} while(0)
+#elif defined(RTM_WASM128_INTRINSICS)
+	//////////////////////////////////////////////////////////////////////////
+	// Transposes a 2x2 matrix.
+	// All inputs and outputs must be rtm::vector4d.
+	//////////////////////////////////////////////////////////////////////////
+	#define RTM_MATRIXD_TRANSPOSE_2X2(input_xy0, input_xy1, output_xx, output_yy) \
+		do { \
+			const v128_t x0x1 = wasm_i64x2_shuffle((input_xy0).xy, (input_xy1).xy, 0, 2); \
+			const v128_t y0y1 = wasm_i64x2_shuffle((input_xy0).xy, (input_xy1).xy, 1, 3); \
 			(output_xx) = RTM_IMPL_NAMESPACE::vector4d { x0x1, x0x1 }; \
 			(output_yy) = RTM_IMPL_NAMESPACE::vector4d { y0y1, y0y1 }; \
 		} while(0)
@@ -389,6 +477,21 @@ RTM_IMPL_FILE_PRAGMA_PUSH
 			(output_xxxx) = _mm_shuffle_ps(x0y0x1y1, x2y2x3y3, _MM_SHUFFLE(2, 0, 2, 0)); \
 			(output_yyyy) = _mm_shuffle_ps(x0y0x1y1, x2y2x3y3, _MM_SHUFFLE(3, 1, 3, 1)); \
 			(output_zzzz) = _mm_shuffle_ps(z0w0z1w1, z2w2z3w3, _MM_SHUFFLE(2, 0, 2, 0)); \
+		} while(0)
+#elif defined(RTM_WASM128_INTRINSICS)
+	//////////////////////////////////////////////////////////////////////////
+	// Transposes a 4x3 matrix.
+	// All inputs and outputs must be rtm::vector4f.
+	//////////////////////////////////////////////////////////////////////////
+	#define RTM_MATRIXF_TRANSPOSE_4X3(input_xyz0, input_xyz1, input_xyz2, input_xyz3, output_xxxx, output_yyyy, output_zzzz) \
+		do { \
+			const v128_t x0y0x1y1 = wasm_i32x4_shuffle((input_xyz0), (input_xyz1), 0, 1, 4, 5); \
+			const v128_t z0w0z1w1 = wasm_i32x4_shuffle((input_xyz0), (input_xyz1), 2, 3, 6, 7); \
+			const v128_t x2y2x3y3 = wasm_i32x4_shuffle((input_xyz2), (input_xyz3), 0, 1, 4, 5); \
+			const v128_t z2w2z3w3 = wasm_i32x4_shuffle((input_xyz2), (input_xyz3), 2, 3, 6, 7); \
+			(output_xxxx) = wasm_i32x4_shuffle(x0y0x1y1, x2y2x3y3, 0, 2, 4, 6); \
+			(output_yyyy) = wasm_i32x4_shuffle(x0y0x1y1, x2y2x3y3, 1, 3, 5, 7); \
+			(output_zzzz) = wasm_i32x4_shuffle(z0w0z1w1, z2w2z3w3, 0, 2, 4, 6); \
 		} while(0)
 #else
 	//////////////////////////////////////////////////////////////////////////
@@ -449,6 +552,23 @@ RTM_IMPL_FILE_PRAGMA_PUSH
 			(output_yyyy) = RTM_IMPL_NAMESPACE::vector4d { y0y1, y2y3 }; \
 			(output_zzzz) = RTM_IMPL_NAMESPACE::vector4d { z0z1, z2z3 }; \
 		} while(0)
+#elif defined(RTM_WASM128_INTRINSICS)
+	//////////////////////////////////////////////////////////////////////////
+	// Transposes a 4x3 matrix.
+	// All inputs and outputs must be rtm::vector4d.
+	//////////////////////////////////////////////////////////////////////////
+	#define RTM_MATRIXD_TRANSPOSE_4X3(input_xyz0, input_xyz1, input_xyz2, input_xyz3, output_xxxx, output_yyyy, output_zzzz) \
+		do { \
+			const v128_t x0x1 = wasm_i64x2_shuffle(input_xyz0.xy, input_xyz1.xy, 0, 2); \
+			const v128_t y0y1 = wasm_i64x2_shuffle(input_xyz0.xy, input_xyz1.xy, 1, 3); \
+			const v128_t x2x3 = wasm_i64x2_shuffle(input_xyz2.xy, input_xyz3.xy, 0, 2); \
+			const v128_t y2y3 = wasm_i64x2_shuffle(input_xyz2.xy, input_xyz3.xy, 1, 3); \
+			const v128_t z0z1 = wasm_i64x2_shuffle(input_xyz0.zw, input_xyz1.zw, 0, 2); \
+			const v128_t z2z3 = wasm_i64x2_shuffle(input_xyz2.zw, input_xyz3.zw, 0, 2); \
+			(output_xxxx) = RTM_IMPL_NAMESPACE::vector4d { x0x1, x2x3 }; \
+			(output_yyyy) = RTM_IMPL_NAMESPACE::vector4d { y0y1, y2y3 }; \
+			(output_zzzz) = RTM_IMPL_NAMESPACE::vector4d { z0z1, z2z3 }; \
+		} while(0)
 #else
 	//////////////////////////////////////////////////////////////////////////
 	// Transposes a 4x3 matrix.
@@ -504,6 +624,21 @@ RTM_IMPL_FILE_PRAGMA_PUSH
 			(output_yyy) = _mm_shuffle_ps(x0y0x1y1, input_xyzw2_, _MM_SHUFFLE(1, 1, 3, 1)); \
 			(output_zzz) = _mm_shuffle_ps(z0w0z1w1, input_xyzw2_, _MM_SHUFFLE(2, 2, 2, 0)); \
 			(output_www) = _mm_shuffle_ps(z0w0z1w1, input_xyzw2_, _MM_SHUFFLE(3, 3, 3, 1)); \
+		} while(0)
+#elif defined(RTM_WASM128_INTRINSICS)
+	//////////////////////////////////////////////////////////////////////////
+	// Transposes a 3x4 matrix.
+	// All inputs and outputs must be rtm::vector4f.
+	//////////////////////////////////////////////////////////////////////////
+	#define RTM_MATRIXF_TRANSPOSE_3X4(input_xyzw0, input_xyzw1, input_xyzw2, output_xxx, output_yyy, output_zzz, output_www) \
+		do { \
+			const v128_t input_xyzw2_ = (input_xyzw2); \
+			const v128_t x0y0x1y1 = wasm_i32x4_shuffle((input_xyzw0), (input_xyzw1), 0, 1, 4, 5); \
+			const v128_t z0w0z1w1 = wasm_i32x4_shuffle((input_xyzw0), (input_xyzw1), 2, 3, 6, 7); \
+			(output_xxx) = wasm_i32x4_shuffle(x0y0x1y1, input_xyzw2_, 0, 2, 4, 4); \
+			(output_yyy) = wasm_i32x4_shuffle(x0y0x1y1, input_xyzw2_, 1, 3, 5, 5); \
+			(output_zzz) = wasm_i32x4_shuffle(z0w0z1w1, input_xyzw2_, 0, 2, 6, 6); \
+			(output_www) = wasm_i32x4_shuffle(z0w0z1w1, input_xyzw2_, 1, 3, 7, 7); \
 		} while(0)
 #else
 	//////////////////////////////////////////////////////////////////////////
@@ -562,6 +697,24 @@ RTM_IMPL_FILE_PRAGMA_PUSH
 			const float64x2_t z0z1 = vzip1q_f64(input_xyzw0.zw, input_xyzw1.zw); \
 			const float64x2_t w0w1 = vzip2q_f64(input_xyzw0.zw, input_xyzw1.zw); \
 			const float64x2_t w2w2 = vzip2q_f64(input_xyzw2.zw, input_xyzw2.zw); \
+			(output_xxx) = RTM_IMPL_NAMESPACE::vector4d { x0x1, input_xyzw2.xy }; \
+			(output_yyy) = RTM_IMPL_NAMESPACE::vector4d { y0y1, y2y2 }; \
+			(output_zzz) = RTM_IMPL_NAMESPACE::vector4d { z0z1, input_xyzw2.zw }; \
+			(output_www) = RTM_IMPL_NAMESPACE::vector4d { w0w1, w2w2 }; \
+		} while(0)
+#elif defined(RTM_WASM128_INTRINSICS)
+	//////////////////////////////////////////////////////////////////////////
+	// Transposes a 3x4 matrix.
+	// All inputs and outputs must be rtm::vector4d.
+	//////////////////////////////////////////////////////////////////////////
+	#define RTM_MATRIXD_TRANSPOSE_3X4(input_xyzw0, input_xyzw1, input_xyzw2, output_xxx, output_yyy, output_zzz, output_www) \
+		do { \
+			const v128_t x0x1 = wasm_i64x2_shuffle(input_xyzw0.xy, input_xyzw1.xy, 0, 2); \
+			const v128_t y0y1 = wasm_i64x2_shuffle(input_xyzw0.xy, input_xyzw1.xy, 1, 3); \
+			const v128_t y2y2 = wasm_i64x2_shuffle(input_xyzw2.xy, input_xyzw2.xy, 1, 3); \
+			const v128_t z0z1 = wasm_i64x2_shuffle(input_xyzw0.zw, input_xyzw1.zw, 0, 2); \
+			const v128_t w0w1 = wasm_i64x2_shuffle(input_xyzw0.zw, input_xyzw1.zw, 1, 3); \
+			const v128_t w2w2 = wasm_i64x2_shuffle(input_xyzw2.zw, input_xyzw2.zw, 1, 3); \
 			(output_xxx) = RTM_IMPL_NAMESPACE::vector4d { x0x1, input_xyzw2.xy }; \
 			(output_yyy) = RTM_IMPL_NAMESPACE::vector4d { y0y1, y2y2 }; \
 			(output_zzz) = RTM_IMPL_NAMESPACE::vector4d { z0z1, input_xyzw2.zw }; \

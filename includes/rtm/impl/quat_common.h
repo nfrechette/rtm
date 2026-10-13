@@ -41,6 +41,8 @@ namespace rtm
 	{
 #if defined(RTM_SSE2_INTRINSICS)
 		return _mm_set_ps(w, z, y, x);
+#elif defined(RTM_WASM128_INTRINSICS)
+		return wasm_f32x4_make(x, y, z, w);
 #elif defined(RTM_NEON_INTRINSICS)
 		float32x2_t V0 = vset_lane_f32(y, vmov_n_f32(x), 1);
 		float32x2_t V1 = vset_lane_f32(w, vmov_n_f32(z), 1);
@@ -57,6 +59,8 @@ namespace rtm
 	{
 #if defined(RTM_SSE2_INTRINSICS)
 		return quatd{ _mm_set_pd(y, x), _mm_set_pd(w, z) };
+#elif defined(RTM_WASM128_INTRINSICS)
+		return quatd{ wasm_f64x2_make(x, y), wasm_f64x2_make(z, w) };
 #elif defined(RTM_NEON64_INTRINSICS)
 		return quatd{ vcombine_f64(vdup_n_f64(x), vdup_n_f64(y)), vcombine_f64(vdup_n_f64(z), vdup_n_f64(w)) };
 #else
