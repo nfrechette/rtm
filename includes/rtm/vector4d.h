@@ -4444,85 +4444,75 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	RTM_DISABLE_SECURITY_COOKIE_CHECK inline vector4d RTM_SIMD_CALL vector_round_symmetric(vector4d_arg0 input) RTM_NO_EXCEPT
 	{
-		// NaN, +- Infinity, and numbers larger or equal to 2^23 remain unchanged
-		// since they have no fractional part.
+		// We do not add a bias of 0.5 and then truncate: that addition can round.
+		// For example, 0.49999999999999994 + 0.5 rounds to 1.0, and 4503599627370497.0 + 0.5 rounds to 4503599627370498.0.
+		// We calculate the integer part and the fractional part with exact operations instead.
 
 #if defined(RTM_SSE4_INTRINSICS)
-		__m128d zero = _mm_setzero_pd();
-		__m128d is_positive_xy = _mm_cmpge_pd(input.xy, zero);
-		__m128d is_positive_zw = _mm_cmpge_pd(input.zw, zero);
-
 		const __m128d sign_mask = _mm_set_pd(-0.0, -0.0);
-		__m128d sign_xy = _mm_andnot_pd(is_positive_xy, sign_mask);
-		__m128d sign_zw = _mm_andnot_pd(is_positive_zw, sign_mask);
+		__m128d sign_xy = _mm_and_pd(input.xy, sign_mask);
+		__m128d sign_zw = _mm_and_pd(input.zw, sign_mask);
 
-		// For positive values, we add a bias of 0.5.
-		// For negative values, we add a bias of -0.5.
-		__m128d half = _mm_set1_pd(0.5);
-		__m128d bias_xy = _mm_or_pd(sign_xy, half);
-		__m128d bias_zw = _mm_or_pd(sign_zw, half);
-		__m128d biased_input_xy = _mm_add_pd(input.xy, bias_xy);
-		__m128d biased_input_zw = _mm_add_pd(input.zw, bias_zw);
+		// NaN, +- Infinity, and numbers larger or equal to 2^52 remain unchanged
+		// since they have no fractional part.
+		__m128d integer_part_xy = _mm_round_pd(input.xy, _MM_FROUND_TO_ZERO | _MM_FROUND_NO_EXC);
+		__m128d integer_part_zw = _mm_round_pd(input.zw, _MM_FROUND_TO_ZERO | _MM_FROUND_NO_EXC);
 
-		__m128d floored_xy = _mm_floor_pd(biased_input_xy);
-		__m128d floored_zw = _mm_floor_pd(biased_input_zw);
-		__m128d ceiled_xy = _mm_ceil_pd(biased_input_xy);
-		__m128d ceiled_zw = _mm_ceil_pd(biased_input_zw);
+		// If the absolute value of the fractional part is 0.5 or more, we add 1.0 with the sign of the input.
+		// The fractional part is NaN for NaN and infinities, the comparison is false for them.
+		const __m128d half = _mm_set1_pd(0.5);
+		__m128d abs_fraction_xy = _mm_andnot_pd(sign_mask, _mm_sub_pd(input.xy, integer_part_xy));
+		__m128d abs_fraction_zw = _mm_andnot_pd(sign_mask, _mm_sub_pd(input.zw, integer_part_zw));
+		__m128d is_fraction_half_or_more_xy = _mm_cmpge_pd(abs_fraction_xy, half);
+		__m128d is_fraction_half_or_more_zw = _mm_cmpge_pd(abs_fraction_zw, half);
 
-		__m128d result_xy = RTM_VECTOR2D_SELECT(is_positive_xy, floored_xy, ceiled_xy);
-		__m128d result_zw = RTM_VECTOR2D_SELECT(is_positive_zw, floored_zw, ceiled_zw);
+		// The bias is +- 1.0 with the sign of the input, or 0.0
+		const __m128d one = _mm_set1_pd(1.0);
+		__m128d bias_xy = _mm_and_pd(is_fraction_half_or_more_xy, _mm_or_pd(sign_xy, one));
+		__m128d bias_zw = _mm_and_pd(is_fraction_half_or_more_zw, _mm_or_pd(sign_zw, one));
+		__m128d result_xy = _mm_add_pd(integer_part_xy, bias_xy);
+		__m128d result_zw = _mm_add_pd(integer_part_zw, bias_zw);
 
 		// Keep the sign of the input as std::round does, thus round(-0.0) = -0.0 and round(-0.3) = -0.0
-		result_xy = _mm_or_pd(result_xy, _mm_and_pd(input.xy, sign_mask));
-		result_zw = _mm_or_pd(result_zw, _mm_and_pd(input.zw, sign_mask));
+		result_xy = _mm_or_pd(result_xy, sign_xy);
+		result_zw = _mm_or_pd(result_zw, sign_zw);
 		return vector4d{ result_xy, result_zw };
 #elif defined(RTM_SSE2_INTRINSICS)
 		const __m128i abs_mask = _mm_set_epi64x(0x7FFFFFFFFFFFFFFFULL, 0x7FFFFFFFFFFFFFFFULL);
 		const __m128d fractional_limit = _mm_set1_pd(4503599627370496.0); // 2^52
 
-		// Build our mask, larger values that have no fractional part, and infinities will be true
-		// Smaller values and NaN will be false
+		// NaN, +- Infinity, and numbers larger or equal to 2^52 remain unchanged
+		// since they have no fractional part.
+		// The mask is true only for the smaller values. It is false for NaN.
 		__m128d abs_input_xy = _mm_and_pd(input.xy, _mm_castsi128_pd(abs_mask));
 		__m128d abs_input_zw = _mm_and_pd(input.zw, _mm_castsi128_pd(abs_mask));
-		__m128d is_input_large_xy = _mm_cmpge_pd(abs_input_xy, fractional_limit);
-		__m128d is_input_large_zw = _mm_cmpge_pd(abs_input_zw, fractional_limit);
-
-		// Test if our input is NaN with (value != value), it is only true for NaN
-		__m128d is_nan_xy = _mm_cmpneq_pd(input.xy, input.xy);
-		__m128d is_nan_zw = _mm_cmpneq_pd(input.zw, input.zw);
-
-		// Combine our masks to determine if we should return the original value
-		__m128d use_original_input_xy = _mm_or_pd(is_input_large_xy, is_nan_xy);
-		__m128d use_original_input_zw = _mm_or_pd(is_input_large_zw, is_nan_zw);
+		__m128d is_input_small_xy = _mm_cmplt_pd(abs_input_xy, fractional_limit);
+		__m128d is_input_small_zw = _mm_cmplt_pd(abs_input_zw, fractional_limit);
 
 		const __m128d sign_mask = _mm_set_pd(-0.0, -0.0);
 		__m128d sign_xy = _mm_and_pd(input.xy, sign_mask);
 		__m128d sign_zw = _mm_and_pd(input.zw, sign_mask);
 
-		// For positive values, we add a bias of 0.5.
-		// For negative values, we add a bias of -0.5.
-		__m128d half = _mm_set1_pd(0.5);
-		__m128d bias_xy = _mm_or_pd(sign_xy, half);
-		__m128d bias_zw = _mm_or_pd(sign_zw, half);
-		__m128d biased_input_xy = _mm_add_pd(input.xy, bias_xy);
-		__m128d biased_input_zw = _mm_add_pd(input.zw, bias_zw);
-
-		// Truncate towards zero: round the absolute value with 2^52, then subtract 1.0 if the result is greater.
+		// Round the absolute value to the nearest integer with 2^52: the addition rounds half to even.
 		// A conversion to a 32 bit integer would overflow for the values between 2^31 and 2^52.
+		__m128d rounded_xy = _mm_sub_pd(_mm_add_pd(abs_input_xy, fractional_limit), fractional_limit);
+		__m128d rounded_zw = _mm_sub_pd(_mm_add_pd(abs_input_zw, fractional_limit), fractional_limit);
+
+		// The difference is exact. It is 0.5 only for a tie that rounds down to the even value.
+		// In that case, add 1.0 to round half away from zero.
+		const __m128d half = _mm_set1_pd(0.5);
 		const __m128d one = _mm_set1_pd(1.0);
-		__m128d abs_biased_input_xy = _mm_and_pd(biased_input_xy, _mm_castsi128_pd(abs_mask));
-		__m128d abs_biased_input_zw = _mm_and_pd(biased_input_zw, _mm_castsi128_pd(abs_mask));
-		__m128d rounded_xy = _mm_sub_pd(_mm_add_pd(abs_biased_input_xy, fractional_limit), fractional_limit);
-		__m128d rounded_zw = _mm_sub_pd(_mm_add_pd(abs_biased_input_zw, fractional_limit), fractional_limit);
-		rounded_xy = _mm_sub_pd(rounded_xy, _mm_and_pd(_mm_cmpgt_pd(rounded_xy, abs_biased_input_xy), one));
-		rounded_zw = _mm_sub_pd(rounded_zw, _mm_and_pd(_mm_cmpgt_pd(rounded_zw, abs_biased_input_zw), one));
+		__m128d is_tie_rounded_down_xy = _mm_cmpge_pd(_mm_sub_pd(abs_input_xy, rounded_xy), half);
+		__m128d is_tie_rounded_down_zw = _mm_cmpge_pd(_mm_sub_pd(abs_input_zw, rounded_zw), half);
+		rounded_xy = _mm_add_pd(rounded_xy, _mm_and_pd(is_tie_rounded_down_xy, one));
+		rounded_zw = _mm_add_pd(rounded_zw, _mm_and_pd(is_tie_rounded_down_zw, one));
 
 		// Restore the sign of the input as std::round does, thus round(-0.0) = -0.0 and round(-0.3) = -0.0
 		__m128d integer_part_xy = _mm_or_pd(rounded_xy, sign_xy);
 		__m128d integer_part_zw = _mm_or_pd(rounded_zw, sign_zw);
 
-		__m128d result_xy = _mm_or_pd(_mm_and_pd(use_original_input_xy, input.xy), _mm_andnot_pd(use_original_input_xy, integer_part_xy));
-		__m128d result_zw = _mm_or_pd(_mm_and_pd(use_original_input_zw, input.zw), _mm_andnot_pd(use_original_input_zw, integer_part_zw));
+		__m128d result_xy = _mm_or_pd(_mm_and_pd(is_input_small_xy, integer_part_xy), _mm_andnot_pd(is_input_small_xy, input.xy));
+		__m128d result_zw = _mm_or_pd(_mm_and_pd(is_input_small_zw, integer_part_zw), _mm_andnot_pd(is_input_small_zw, input.zw));
 
 		return vector4d{ result_xy, result_zw };
 #elif defined(RTM_WASM128_INTRINSICS)
@@ -4544,15 +4534,15 @@ namespace rtm
 
 		// Keep the sign of the input as std::round does, thus round(-0.0) = -0.0 and round(-0.3) = -0.0
 		return vector4d{ wasm_v128_or(result_xy, sign_xy), wasm_v128_or(result_zw, sign_zw) };
+#elif defined(RTM_NEON64_INTRINSICS)
+		// This instruction rounds half away from zero, as std::round does
+		return vector4d{ vrndaq_f64(input.xy), vrndaq_f64(input.zw) };
 #else
-		const vector4d half = vector_set(0.5);
-		const vector4d floored = vector_floor(vector_add(input, half));
-		const vector4d ceiled = vector_ceil(vector_sub(input, half));
-		const mask4d is_greater_equal = vector_greater_equal(input, vector_zero());
-		const vector4d result = vector_select(is_greater_equal, floored, ceiled);
-
-		// Keep the sign of the input as std::round does, thus round(-0.0) = -0.0 and round(-0.3) = -0.0
-		return vector_copy_sign(result, input);
+		scalard x = scalar_round_symmetric(scalard(vector_get_x(input)));
+		scalard y = scalar_round_symmetric(scalard(vector_get_y(input)));
+		scalard z = scalar_round_symmetric(scalard(vector_get_z(input)));
+		scalard w = scalar_round_symmetric(scalard(vector_get_w(input)));
+		return vector_set(x, y, z, w);
 #endif
 	}
 

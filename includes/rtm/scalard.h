@@ -655,61 +655,56 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	RTM_DISABLE_SECURITY_COOKIE_CHECK inline scalard RTM_SIMD_CALL scalar_round_symmetric(scalard_arg0 input) RTM_NO_EXCEPT
 	{
-		// NaN, +- Infinity, and numbers larger or equal to 2^23 remain unchanged
-		// since they have no fractional part.
+		// We do not add a bias of 0.5 and then truncate: that addition can round.
+		// For example, 0.49999999999999994 + 0.5 rounds to 1.0, and 4503599627370497.0 + 0.5 rounds to 4503599627370498.0.
+		// We calculate the integer part and the fractional part with exact operations instead.
 
 #if defined(RTM_SSE4_INTRINSICS)
-		__m128d is_positive = _mm_cmpge_sd(input.value, _mm_setzero_pd());
-
 		const __m128d sign_mask = _mm_set_pd(-0.0, -0.0);
-		__m128d sign = _mm_andnot_pd(is_positive, sign_mask);
+		__m128d sign = _mm_and_pd(input.value, sign_mask);
 
-		// For positive values, we add a bias of 0.5.
-		// For negative values, we add a bias of -0.5.
-		__m128d bias = _mm_or_pd(sign, _mm_set1_pd(0.5));
-		__m128d biased_input = _mm_add_sd(input.value, bias);
+		// NaN, +- Infinity, and numbers larger or equal to 2^52 remain unchanged
+		// since they have no fractional part.
+		__m128d integer_part = _mm_round_sd(input.value, input.value, _MM_FROUND_TO_ZERO | _MM_FROUND_NO_EXC);
 
-		__m128d floored = _mm_floor_sd(biased_input, biased_input);
-		__m128d ceiled = _mm_ceil_sd(biased_input, biased_input);
+		// If the absolute value of the fractional part is 0.5 or more, we add 1.0 with the sign of the input.
+		// The fractional part is NaN for NaN and infinities, the comparison is false for them.
+		__m128d abs_fraction = _mm_andnot_pd(sign_mask, _mm_sub_sd(input.value, integer_part));
+		__m128d is_fraction_half_or_more = _mm_cmpge_sd(abs_fraction, _mm_set1_pd(0.5));
 
-		__m128d result = RTM_VECTOR2D_SELECT(is_positive, floored, ceiled);
+		// The bias is +- 1.0 with the sign of the input, or 0.0
+		__m128d bias = _mm_and_pd(is_fraction_half_or_more, _mm_or_pd(sign, _mm_set1_pd(1.0)));
+		__m128d result = _mm_add_sd(integer_part, bias);
 
 		// Keep the sign of the input as std::round does, thus round(-0.0) = -0.0 and round(-0.3) = -0.0
-		result = _mm_or_pd(result, _mm_and_pd(input.value, sign_mask));
+		result = _mm_or_pd(result, sign);
 		return scalard{ result };
 #else
 		const __m128i abs_mask = _mm_set_epi64x(0x7FFFFFFFFFFFFFFFULL, 0x7FFFFFFFFFFFFFFFULL);
 		const __m128d fractional_limit = _mm_set1_pd(4503599627370496.0); // 2^52
 
-		// Build our mask, larger values that have no fractional part, and infinities will be true
-		// Smaller values and NaN will be false
+		// NaN, +- Infinity, and numbers larger or equal to 2^52 remain unchanged
+		// since they have no fractional part.
+		// The mask is true only for the smaller values. It is false for NaN.
 		__m128d abs_input = _mm_and_pd(input.value, _mm_castsi128_pd(abs_mask));
-		__m128d is_input_large = _mm_cmpge_sd(abs_input, fractional_limit);
-
-		// Test if our input is NaN with (value != value), it is only true for NaN
-		__m128d is_nan = _mm_cmpneq_sd(input.value, input.value);
-
-		// Combine our masks to determine if we should return the original value
-		__m128d use_original_input = _mm_or_pd(is_input_large, is_nan);
+		__m128d is_input_small = _mm_cmplt_sd(abs_input, fractional_limit);
 
 		const __m128d sign_mask = _mm_set_pd(-0.0, -0.0);
 		__m128d sign = _mm_and_pd(input.value, sign_mask);
 
-		// For positive values, we add a bias of 0.5.
-		// For negative values, we add a bias of -0.5.
-		__m128d bias = _mm_or_pd(sign, _mm_set1_pd(0.5));
-		__m128d biased_input = _mm_add_sd(input.value, bias);
-
-		// Truncate towards zero: round the absolute value with 2^52, then subtract 1.0 if the result is greater.
+		// Round the absolute value to the nearest integer with 2^52: the addition rounds half to even.
 		// A conversion to a 32 bit integer would overflow for the values between 2^31 and 2^52.
-		__m128d abs_biased_input = _mm_and_pd(biased_input, _mm_castsi128_pd(abs_mask));
-		__m128d rounded = _mm_sub_sd(_mm_add_sd(abs_biased_input, fractional_limit), fractional_limit);
-		rounded = _mm_sub_sd(rounded, _mm_and_pd(_mm_cmpgt_sd(rounded, abs_biased_input), _mm_set1_pd(1.0)));
+		__m128d rounded = _mm_sub_sd(_mm_add_sd(abs_input, fractional_limit), fractional_limit);
+
+		// The difference is exact. It is 0.5 only for a tie that rounds down to the even value.
+		// In that case, add 1.0 to round half away from zero.
+		__m128d is_tie_rounded_down = _mm_cmpge_sd(_mm_sub_sd(abs_input, rounded), _mm_set1_pd(0.5));
+		rounded = _mm_add_sd(rounded, _mm_and_pd(is_tie_rounded_down, _mm_set1_pd(1.0)));
 
 		// Restore the sign of the input as std::round does, thus round(-0.0) = -0.0 and round(-0.3) = -0.0
 		__m128d integer_part = _mm_or_pd(rounded, sign);
 
-		__m128d result = _mm_or_pd(_mm_and_pd(use_original_input, input.value), _mm_andnot_pd(use_original_input, integer_part));
+		__m128d result = _mm_or_pd(_mm_and_pd(is_input_small, integer_part), _mm_andnot_pd(is_input_small, input.value));
 
 		return scalard{ result };
 #endif
@@ -727,9 +722,31 @@ namespace rtm
 	{
 #if defined(RTM_SSE2_INTRINSICS)
 		return scalar_cast(scalar_round_symmetric(scalar_set(input)));
+#elif defined(RTM_NEON64_INTRINSICS)
+		// arm64 has an instruction that rounds half away from zero, as std::round does
+		return vgetq_lane_f64(vrndaq_f64(vdupq_n_f64(input)), 0);
 #else
+		// We do not add a bias of 0.5 and then truncate: that addition can round.
+		// For example, 0.49999999999999994 + 0.5 rounds to 1.0, and 4503599627370497.0 + 0.5 rounds to 4503599627370498.0.
+
+		// NaN, +- Infinity, and numbers larger or equal to 2^52 remain unchanged
+		// since they have no fractional part. A conversion to a 64 bit integer would overflow for some of them.
+		// The comparison is false for NaN.
+		const double fractional_limit = 4503599627370496.0; // 2^52
+		if (!(scalar_abs(input) < fractional_limit))
+			return input;
+
+		// Convert to an integer with truncation and back, this rounds towards zero.
+		// The fractional part is exact.
+		double integer_part = static_cast<double>(static_cast<int64_t>(input));
+		double abs_fraction = scalar_abs(input - integer_part);
+
+		// If the absolute value of the fractional part is 0.5 or more, we add 1.0 with the sign of the input
+		if (abs_fraction >= 0.5)
+			integer_part += rtm_impl::copysign(1.0, input);
+
 		// Keep the sign of the input as std::round does, thus round(-0.0) = -0.0 and round(-0.3) = -0.0
-		return rtm_impl::copysign(input >= 0.0 ? scalar_floor(input + 0.5) : scalar_ceil(input - 0.5), input);
+		return rtm_impl::copysign(integer_part, input);
 #endif
 	}
 

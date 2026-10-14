@@ -1720,6 +1720,39 @@ void test_vector4_impl(const FloatType threshold)
 	}
 
 	{
+		// An addition of 0.5 rounds for these values: 0.49999997 + 0.5 = 1.0 and 8388609.0 + 0.5 = 8388610.0 (float32)
+		// The float64 values are 0.49999999999999994 and 4503599627370497.0
+		const FloatType largest_below_half = std::nextafter(FloatType(0.5), FloatType(0.0));
+		const FloatType smallest_odd_without_fraction = FloatType(std::ldexp(FloatType(1.0), std::numeric_limits<FloatType>::digits - 1)) + FloatType(1.0);
+		const FloatType largest_below_one_and_half = std::nextafter(FloatType(1.5), FloatType(0.0));
+		const FloatType largest_below_two_and_half = std::nextafter(FloatType(2.5), FloatType(0.0));
+
+		const FloatType inputs_flt[3][4] =
+		{
+			{ largest_below_half, -largest_below_half, smallest_odd_without_fraction, -smallest_odd_without_fraction },
+			{ largest_below_one_and_half, -largest_below_one_and_half, largest_below_two_and_half, -largest_below_two_and_half },
+			{ FloatType(-0.3), FloatType(-0.5), FloatType(2.5), FloatType(-2.5) },
+		};
+
+		for (const FloatType* input_flt : inputs_flt)
+		{
+			const Vector4Type input = vector_set(input_flt[0], input_flt[1], input_flt[2], input_flt[3]);
+
+			FloatType result[4];
+			vector_store(vector_round_symmetric(input), &result[0]);
+
+			for (uint32_t lane_index = 0; lane_index < 4; ++lane_index)
+			{
+				INFO("input: " << input_flt[lane_index]);
+
+				const FloatType ref_result = std::round(input_flt[lane_index]);
+				CHECK(result[lane_index] == ref_result);
+				CHECK(std::signbit(result[lane_index]) == std::signbit(ref_result));
+			}
+		}
+	}
+
+	{
 		const Vector4Type infinity_v = vector_set(std::numeric_limits<FloatType>::infinity());
 		const Vector4Type nan_v = vector_set(std::numeric_limits<FloatType>::quiet_NaN());
 
