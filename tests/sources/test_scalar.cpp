@@ -445,7 +445,19 @@ static void test_scalar_impl(const FloatType threshold, const FloatType trig_thr
 	{
 		// The round functions keep the sign of the input as std::round and std::nearbyint do
 		// The large values have no fractional part, and a conversion to an integer overflows for them
-		const FloatType round_inputs[] = { FloatType(-0.0), FloatType(0.0), FloatType(-0.3), FloatType(-0.5), FloatType(0.5), FloatType(-0.7), FloatType(-2.5), FloatType(2.5), FloatType(1.0e10), FloatType(-1.0e10), FloatType(1.0e30), FloatType(-1.0e30) };
+		// An addition of 0.5 rounds for some values: 0.49999997 + 0.5 = 1.0 and 8388609.0 + 0.5 = 8388610.0 (float32)
+		// The float64 values are 0.49999999999999994 and 4503599627370497.0
+		const FloatType largest_below_half = std::nextafter(FloatType(0.5), FloatType(0.0));
+		const FloatType smallest_odd_without_fraction = FloatType(std::ldexp(FloatType(1.0), std::numeric_limits<FloatType>::digits - 1)) + FloatType(1.0);
+		const FloatType largest_below_one_and_half = std::nextafter(FloatType(1.5), FloatType(0.0));
+
+		const FloatType round_inputs[] =
+		{
+			FloatType(-0.0), FloatType(0.0), FloatType(-0.3), FloatType(-0.5), FloatType(0.5), FloatType(-0.7), FloatType(-2.5), FloatType(2.5),
+			FloatType(1.0e10), FloatType(-1.0e10), FloatType(1.0e30), FloatType(-1.0e30),
+			largest_below_half, -largest_below_half, smallest_odd_without_fraction, -smallest_odd_without_fraction,
+			largest_below_one_and_half, -largest_below_one_and_half,
+		};
 		for (const FloatType input : round_inputs)
 		{
 			INFO("input: " << input);
@@ -556,6 +568,17 @@ TEST_CASE("scalarf math", "[math][scalar]")
 	CHECK(scalar_cast(scalar_round_bankers(scalar_set(8388606.5F))) == 8388606.0F);
 	CHECK(scalar_cast(scalar_round_bankers(scalar_set(-8388606.5F))) == -8388606.0F);
 
+	// An addition of 0.5 rounds for these values, the result must not use it
+	CHECK(scalar_round_symmetric(0.49999997F) == 0.0F);
+	CHECK(scalar_round_symmetric(-0.49999997F) == -0.0F);
+	CHECK(std::signbit(scalar_round_symmetric(-0.49999997F)));
+	CHECK(scalar_round_symmetric(8388609.0F) == 8388609.0F);
+	CHECK(scalar_round_symmetric(-8388609.0F) == -8388609.0F);
+	CHECK(scalar_cast(scalar_round_symmetric(scalar_set(0.49999997F))) == 0.0F);
+	CHECK(scalar_cast(scalar_round_symmetric(scalar_set(-0.49999997F))) == -0.0F);
+	CHECK(scalar_cast(scalar_round_symmetric(scalar_set(8388609.0F))) == 8388609.0F);
+	CHECK(scalar_cast(scalar_round_symmetric(scalar_set(-8388609.0F))) == -8388609.0F);
+
 	CHECK(scalar_safe_to_float(int32_t(0)) == 0.0F);
 	CHECK(scalar_safe_to_float(int32_t(-7)) == -7.0F);
 	CHECK(scalar_safe_to_float(uint8_t(255)) == 255.0F);
@@ -623,6 +646,17 @@ TEST_CASE("scalard math", "[math][scalar]")
 	CHECK(scalar_round_bankers(-4503599627370494.5) == -4503599627370494.0);
 	CHECK(scalar_cast(scalar_round_bankers(scalar_set(4503599627370494.5))) == 4503599627370494.0);
 	CHECK(scalar_cast(scalar_round_bankers(scalar_set(-4503599627370494.5))) == -4503599627370494.0);
+
+	// An addition of 0.5 rounds for these values, the result must not use it
+	CHECK(scalar_round_symmetric(0.49999999999999994) == 0.0);
+	CHECK(scalar_round_symmetric(-0.49999999999999994) == -0.0);
+	CHECK(std::signbit(scalar_round_symmetric(-0.49999999999999994)));
+	CHECK(scalar_round_symmetric(4503599627370497.0) == 4503599627370497.0);
+	CHECK(scalar_round_symmetric(-4503599627370497.0) == -4503599627370497.0);
+	CHECK(scalar_cast(scalar_round_symmetric(scalar_set(0.49999999999999994))) == 0.0);
+	CHECK(scalar_cast(scalar_round_symmetric(scalar_set(-0.49999999999999994))) == -0.0);
+	CHECK(scalar_cast(scalar_round_symmetric(scalar_set(4503599627370497.0))) == 4503599627370497.0);
+	CHECK(scalar_cast(scalar_round_symmetric(scalar_set(-4503599627370497.0))) == -4503599627370497.0);
 
 	CHECK(scalar_safe_to_double(int32_t(0)) == 0.0);
 	CHECK(scalar_safe_to_double(int32_t(-7)) == -7.0);

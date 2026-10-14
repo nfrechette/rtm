@@ -18,6 +18,8 @@
 *  Pass qvd and qvsd by register on ARM64
 *  Add support for WebAssembly SIMD128: compile with `-msimd128` to enable it, RTM then defines `RTM_WASM128_INTRINSICS`
 *  Compile the Emscripten unit tests with WebAssembly SIMD by default in `make.py`, use `-nosimd` for the scalar code path
+*  Fix symmetric rounding for values near 0.5 and for odd values above 2^23 (float32) or 2^52 (float64) on all code paths, for example round(0.49999997) = 0.0
+*  Use the ARM64 round instruction (half away from zero) for vector and scalar symmetric rounding
 
 ## 2.3.1
 
