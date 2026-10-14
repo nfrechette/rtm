@@ -367,7 +367,7 @@ namespace rtm
 	// This is the same instruction count when FMA is present but it might be slightly slower
 	// due to the extra multiplication compared to: start + (alpha * (end - start)).
 	//////////////////////////////////////////////////////////////////////////
-	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE qvsd RTM_SIMD_CALL qvs_lerp(qvsd_arg0 start, qvsd_arg0 end, double alpha) RTM_NO_EXCEPT
+	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE qvsd RTM_SIMD_CALL qvs_lerp(qvsd_arg0 start, qvsd_arg1 end, double alpha) RTM_NO_EXCEPT
 	{
 		const quatd rotation = quat_lerp(start.rotation, end.rotation, alpha);
 		const vector4d translation_scale = vector_lerp(start.translation_scale, end.translation_scale, alpha);
@@ -382,7 +382,7 @@ namespace rtm
 	// This is the same instruction count when FMA is present but it might be slightly slower
 	// due to the extra multiplication compared to: start + (alpha * (end - start)).
 	//////////////////////////////////////////////////////////////////////////
-	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE qvsd RTM_SIMD_CALL qvs_lerp(qvsd_arg0 start, qvsd_arg0 end, scalard_argn alpha) RTM_NO_EXCEPT
+	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE qvsd RTM_SIMD_CALL qvs_lerp(qvsd_arg0 start, qvsd_arg1 end, scalard_argn alpha) RTM_NO_EXCEPT
 	{
 		const quatd rotation = quat_lerp(start.rotation, end.rotation, alpha);
 		const vector4d translation_scale = vector_lerp(start.translation_scale, end.translation_scale, alpha);
@@ -398,7 +398,7 @@ namespace rtm
 	// due to the extra multiplication compared to: start + (alpha * (end - start)).
 	// The resulting QVV transform will have the start scale.
 	//////////////////////////////////////////////////////////////////////////
-	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE qvsd RTM_SIMD_CALL qvs_lerp_no_scale(qvsd_arg0 start, qvsd_arg0 end, double alpha) RTM_NO_EXCEPT
+	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE qvsd RTM_SIMD_CALL qvs_lerp_no_scale(qvsd_arg0 start, qvsd_arg1 end, double alpha) RTM_NO_EXCEPT
 	{
 		const quatd rotation = quat_lerp(start.rotation, end.rotation, alpha);
 		const vector4d translation_scale_lerp = vector_lerp(start.translation_scale, end.translation_scale, alpha);
@@ -415,7 +415,7 @@ namespace rtm
 	// due to the extra multiplication compared to: start + (alpha * (end - start)).
 	// The resulting QVV transform will have the start scale.
 	//////////////////////////////////////////////////////////////////////////
-	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE qvsd RTM_SIMD_CALL qvs_lerp_no_scale(qvsd_arg0 start, qvsd_arg0 end, scalard_argn alpha) RTM_NO_EXCEPT
+	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE qvsd RTM_SIMD_CALL qvs_lerp_no_scale(qvsd_arg0 start, qvsd_arg1 end, scalard_argn alpha) RTM_NO_EXCEPT
 	{
 		const quatd rotation = quat_lerp(start.rotation, end.rotation, alpha);
 		const vector4d translation_scale_lerp = vector_lerp(start.translation_scale, end.translation_scale, alpha);
@@ -428,7 +428,7 @@ namespace rtm
 	// Per component spherical interpolation of the two inputs at the specified alpha.
 	// See quat_slerp(..)
 	//////////////////////////////////////////////////////////////////////////
-	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE qvsd RTM_SIMD_CALL qvs_slerp(qvsd_arg0 start, qvsd_arg0 end, double alpha) RTM_NO_EXCEPT
+	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE qvsd RTM_SIMD_CALL qvs_slerp(qvsd_arg0 start, qvsd_arg1 end, double alpha) RTM_NO_EXCEPT
 	{
 		const quatd rotation = quat_slerp(start.rotation, end.rotation, alpha);
 		const vector4d translation_scale = vector_lerp(start.translation_scale, end.translation_scale, alpha);
@@ -440,7 +440,7 @@ namespace rtm
 	// Per component spherical interpolation of the two inputs at the specified alpha.
 	// See quat_slerp(..)
 	//////////////////////////////////////////////////////////////////////////
-	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE qvsd RTM_SIMD_CALL qvs_slerp(qvsd_arg0 start, qvsd_arg0 end, scalard_argn alpha) RTM_NO_EXCEPT
+	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE qvsd RTM_SIMD_CALL qvs_slerp(qvsd_arg0 start, qvsd_arg1 end, scalard_argn alpha) RTM_NO_EXCEPT
 	{
 		const quatd rotation = quat_slerp(start.rotation, end.rotation, alpha);
 		const vector4d translation_scale = vector_lerp(start.translation_scale, end.translation_scale, alpha);

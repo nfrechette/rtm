@@ -2424,7 +2424,7 @@ namespace rtm
 	// Per component negative multiplication/subtraction of the three inputs: -((v0 * s1) - v2)
 	// This is mathematically equivalent to: v2 - (v0 * s1)
 	//////////////////////////////////////////////////////////////////////////
-	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE vector4d RTM_SIMD_CALL vector_neg_mul_sub(vector4d_arg0 v0, scalard_arg2 s1, vector4d_arg0 v2) RTM_NO_EXCEPT
+	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE vector4d RTM_SIMD_CALL vector_neg_mul_sub(vector4d_arg0 v0, scalard_arg2 s1, vector4d_arg2 v2) RTM_NO_EXCEPT
 	{
 		return vector_sub(v2, vector_mul(v0, s1));
 	}
