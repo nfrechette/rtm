@@ -106,6 +106,8 @@ namespace rtm
 	// Thus, the first 4x vector4d/quatd/mask4d/mask4q arguments are passed by register.
 	// A qvd and a qvsd use 4 registers. Thus, the first 2x qvd/qvsd arguments are passed by register.
 	// A qvvd and the double matrices use more than 4 registers. Thus, they are passed in memory.
+	// When such an argument is passed by value, the caller copies it to the stack and passes a pointer.
+	// Thus, we pass them by const& to remove the copy.
 
 	using vector4d_arg0 = const vector4d;
 	using vector4d_arg1 = const vector4d;
@@ -167,7 +169,7 @@ namespace rtm
 	using qvvf_arg1 = const qvvf;
 	using qvvf_argn = const qvvf&;
 
-	using qvvd_arg0 = const qvvd;
+	using qvvd_arg0 = const qvvd&;
 	using qvvd_arg1 = const qvvd&;
 	using qvvd_argn = const qvvd&;
 
@@ -175,6 +177,8 @@ namespace rtm
 	using matrix3x3f_arg1 = const matrix3x3f;
 	using matrix3x3f_argn = const matrix3x3f&;
 
+	// TODO: Pass by const& as well. With const&, GCC 15.2 stops with an internal compiler error
+	// in simplify-rtx.cc when it compiles test_matrix4x4.cpp.
 	using matrix3x3d_arg0 = const matrix3x3d;
 	using matrix3x3d_arg1 = const matrix3x3d&;
 	using matrix3x3d_argn = const matrix3x3d&;
@@ -183,7 +187,7 @@ namespace rtm
 	using matrix3x4f_arg1 = const matrix3x4f;
 	using matrix3x4f_argn = const matrix3x4f&;
 
-	using matrix3x4d_arg0 = const matrix3x4d;
+	using matrix3x4d_arg0 = const matrix3x4d&;
 	using matrix3x4d_arg1 = const matrix3x4d&;
 	using matrix3x4d_argn = const matrix3x4d&;
 
@@ -191,7 +195,7 @@ namespace rtm
 	using matrix4x4f_arg1 = const matrix4x4f;
 	using matrix4x4f_argn = const matrix4x4f&;
 
-	using matrix4x4d_arg0 = const matrix4x4d;
+	using matrix4x4d_arg0 = const matrix4x4d&;
 	using matrix4x4d_arg1 = const matrix4x4d&;
 	using matrix4x4d_argn = const matrix4x4d&;
 #endif

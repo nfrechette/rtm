@@ -1046,7 +1046,7 @@ namespace rtm
 	// See: https://www.euclideanspace.com/maths/algebra/realNormedAlgebra/quaternions/slerp/index.htm
 	// Perhaps try this someday: http://number-none.com/product/Understanding%20Slerp,%20Then%20Not%20Using%20It/
 	//////////////////////////////////////////////////////////////////////////
-	RTM_DISABLE_SECURITY_COOKIE_CHECK inline quatd RTM_SIMD_CALL quat_slerp(quatd_arg0 start, quatd_arg0 end, double alpha) RTM_NO_EXCEPT
+	RTM_DISABLE_SECURITY_COOKIE_CHECK inline quatd RTM_SIMD_CALL quat_slerp(quatd_arg0 start, quatd_arg1 end, double alpha) RTM_NO_EXCEPT
 	{
 		vector4d start_v = quat_to_vector(start);
 		vector4d end_v = quat_to_vector(end);

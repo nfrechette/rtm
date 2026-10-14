@@ -18,6 +18,8 @@
 *  Pass qvd and qvsd by register on ARM64
 *  Add support for WebAssembly SIMD128: compile with `-msimd128` to enable it, RTM then defines `RTM_WASM128_INTRINSICS`
 *  Compile the Emscripten unit tests with WebAssembly SIMD by default in `make.py`, use `-nosimd` for the scalar code path
+*  Pass qvvd, matrix3x4d, and matrix4x4d by reference on ARM64 to remove a copy to the stack
+*  Fix the argument type of the second input of qv_slerp, qvs_lerp, qvs_lerp_no_scale, qvs_slerp, quat_slerp (double), and vector_neg_mul_sub (vector4d, scalard)
 
 ## 2.3.1
 
