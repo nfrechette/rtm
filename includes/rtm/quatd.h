@@ -1331,9 +1331,24 @@ namespace rtm
 	// Returns true if the input quaternion is nearly equal to the identity quaternion
 	// by comparing its rotation angle.
 	//////////////////////////////////////////////////////////////////////////
-	RTM_DISABLE_SECURITY_COOKIE_CHECK inline bool RTM_SIMD_CALL quat_near_identity(quatd_arg0 input, double threshold_angle = 0.00284714461) RTM_NO_EXCEPT
+	RTM_DISABLE_SECURITY_COOKIE_CHECK inline bool RTM_SIMD_CALL quat_near_identity(quatd_arg0 input, double threshold_angle = 2.82729655E-7) RTM_NO_EXCEPT
 	{
-		// See the quatf version of quat_near_identity for details.
+		// Floating point precision limits the smallest rotation that we can represent.
+		// The closest double to 1.0 that is not 1.0 itself gives:
+		// acos(0.99999999999999989) * 2.0 = 2.98023224E-8 rad
+		//
+		// The default threshold uses an error threshold of 1.0E-14:
+		// acos(1.0 - 1.0E-14) * 2.0 = 2.82729655E-7 rad
+		// acos(1.0 - 1.0E-15) * 2.0 = 8.94069672E-8 rad
+		//
+		// The error threshold of 1.0E-14 is approximately 90 ulps below 1.0.
+		// Arithmetic on a quaternion adds a small number of ulps of error to [w].
+		// Thus an identity quaternion that is the result of a few operations still passes.
+		//
+		// A quatd that comes from float32 data has the precision of a float32.
+		// To test such a quaternion, use the float32 threshold of 0.00284714461 rad.
+		//
+		// See the quatf version of quat_near_identity for the other details.
 		const scalard input_w = quat_get_w_as_scalar(input);
 		const scalard input_abs_w = scalar_min(scalar_abs(input_w), scalar_set(1.0));
 		const double positive_w_angle = scalar_acos(scalar_cast(input_abs_w)) * 2.0;

@@ -22,6 +22,7 @@
 *  Use the ARM64 round instruction (half away from zero) for vector and scalar symmetric rounding
 *  Pass qvvd, matrix3x4d, and matrix4x4d by reference on ARM64 to remove a copy to the stack
 *  Fix the argument type of the second input of qv_slerp, qvs_lerp, qvs_lerp_no_scale, qvs_slerp, quat_slerp (double), and vector_neg_mul_sub (vector4d, scalard)
+*  Use a float64 default threshold in quat_near_identity (double): 2.82729655E-7 rad (an error of 1.0E-14 on [w]) replaces the float32 value of 0.00284714461 rad. To keep the previous behavior, give 0.00284714461 as the threshold
 
 ## 2.3.1
 
