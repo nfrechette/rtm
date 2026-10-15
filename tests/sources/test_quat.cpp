@@ -590,6 +590,15 @@ TEST_CASE("quatf math", "[math][quat]")
 	CHECK(scalar_near_equal(double(quat_get_y(dst)), 0.044254239301713752, 1.0E-6));
 	CHECK(scalar_near_equal(double(quat_get_z(dst)), 0.22768840967675355, 1.0E-6));
 	CHECK(scalar_near_equal(double(quat_get_w(dst)), 0.88863059760894492, 1.0E-6));
+
+	{
+		// The default threshold uses an error threshold of 1.0E-6 on [w]
+		const quatf identity = quat_identity();
+		CHECK(quat_near_identity(identity) == true);
+		CHECK(quat_near_identity(quat_set(0.0F, 0.0F, 0.0F, 0.9999999F)) == true);
+		CHECK(quat_near_identity(quat_set(0.0F, 0.0F, 0.0F, -0.9999999F)) == true);
+		CHECK(quat_near_identity(quat_set(0.0F, 0.0F, 0.0F, 0.99999F)) == false);
+	}
 }
 
 TEST_CASE("quatd math", "[math][quat]")
@@ -602,4 +611,22 @@ TEST_CASE("quatd math", "[math][quat]")
 	CHECK(scalar_near_equal(float(quat_get_y(dst)), 0.044254239301713752F, 1.0E-6F));
 	CHECK(scalar_near_equal(float(quat_get_z(dst)), 0.22768840967675355F, 1.0E-6F));
 	CHECK(scalar_near_equal(float(quat_get_w(dst)), 0.88863059760894492F, 1.0E-6F));
+
+	{
+		// The default threshold uses an error threshold of 1.0E-14 on [w]
+		const quatd identity = quat_identity();
+		CHECK(quat_near_identity(identity) == true);
+		CHECK(quat_near_identity(quat_set(0.0, 0.0, 0.0, 1.0 - 1.0E-15)) == true);
+		CHECK(quat_near_identity(quat_set(0.0, 0.0, 0.0, -(1.0 - 1.0E-15))) == true);
+		CHECK(quat_near_identity(quat_set(0.0, 0.0, 0.0, 1.0 - 1.0E-13)) == false);
+
+		const vector4d x_axis = vector_set(1.0, 0.0, 0.0);
+		CHECK(quat_near_identity(quat_from_axis_angle(x_axis, 1.0E-7)) == true);
+		CHECK(quat_near_identity(quat_from_axis_angle(x_axis, 1.0E-6)) == false);
+
+		// A quatd with float32 precision needs the float32 threshold
+		const quatd from_float = quat_cast(quat_set(0.0F, 0.0F, 0.0F, 0.9999999F));
+		CHECK(quat_near_identity(from_float) == false);
+		CHECK(quat_near_identity(from_float, 0.00284714461) == true);
+	}
 }
