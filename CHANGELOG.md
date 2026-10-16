@@ -23,6 +23,13 @@
 *  Pass qvvd, matrix3x4d, and matrix4x4d by reference on ARM64 to remove a copy to the stack
 *  Fix the argument type of the second input of qv_slerp, qvs_lerp, qvs_lerp_no_scale, qvs_slerp, quat_slerp (double), and vector_neg_mul_sub (vector4d, scalard)
 *  Use a float64 default threshold in quat_near_identity (double): 2.82729655E-7 rad (an error of 1.0E-14 on [w]) replaces the float32 value of 0.00284714461 rad. To keep the previous behavior, give 0.00284714461 as the threshold
+*  Use a square root and a division instead of the reciprocal square root estimate in float32 quat_normalize and quat_lerp with SSE2: the results are more accurate and do not change between Intel and AMD CPUs
+*  Use a division instead of the reciprocal estimate in vector_reciprocal on ARMv7: the results are more accurate
+*  Use a square root instead of two reciprocals in quat_from_matrix
+*  Divide by the length instead of a multiplication by the reciprocal length to normalize float32 vectors and quaternions with SSE2 and WebAssembly SIMD: the code is faster and more accurate. This applies to vector_normalize, vector_normalize2, vector_normalize3, quat_normalize, quat_lerp, quat_to_axis_angle, quat_get_axis, and the functions that call them
+*  Divide by the sine of the half angle instead of a multiplication by its reciprocal in float32 quat_slerp with SSE2 and WebAssembly SIMD
+*  Multiply by the reciprocal length instead of two vector divisions in float64 quat_normalize: the code is faster
+*  Use one division instead of a reciprocal and a multiplication to scale the result of quat_rotation_log
 
 ## 2.3.1
 

@@ -178,13 +178,13 @@ namespace rtm
 				const float z_axis_x = vector_get_x(z_axis);
 				const float z_axis_y = vector_get_y(z_axis);
 
-				const float inv_trace = scalar_sqrt_reciprocal(mtx_trace + 1.0F);
-				const float half_inv_trace = inv_trace * 0.5F;
+				const float trace_sqrt = scalar_sqrt(mtx_trace + 1.0F);
+				const float half_inv_trace = scalar_reciprocal(trace_sqrt) * 0.5F;
 
 				const float x = (y_axis_z - z_axis_y) * half_inv_trace;
 				const float y = (z_axis_x - x_axis_z) * half_inv_trace;
 				const float z = (x_axis_y - y_axis_x) * half_inv_trace;
-				const float w = scalar_reciprocal(inv_trace) * 0.5F;
+				const float w = trace_sqrt * 0.5F;
 
 				return quat_normalize(quat_set(x, y, z, w));
 			}
@@ -205,11 +205,11 @@ namespace rtm
 					vector_get_component(matrix_get_axis(x_axis, y_axis, z_axis, axis3(next_best_axis)), component4(next_best_axis)) -
 					vector_get_component(matrix_get_axis(x_axis, y_axis, z_axis, axis3(next_next_best_axis)), component4(next_next_best_axis));
 
-				const float inv_pseudo_trace = scalar_sqrt_reciprocal(mtx_pseudo_trace);
-				const float half_inv_pseudo_trace = inv_pseudo_trace * 0.5F;
+				const float pseudo_trace_sqrt = scalar_sqrt(mtx_pseudo_trace);
+				const float half_inv_pseudo_trace = scalar_reciprocal(pseudo_trace_sqrt) * 0.5F;
 
 				float quat_values[4];
-				quat_values[best_axis] = scalar_reciprocal(inv_pseudo_trace) * 0.5F;
+				quat_values[best_axis] = pseudo_trace_sqrt * 0.5F;
 				quat_values[next_best_axis] = half_inv_pseudo_trace *
 					(vector_get_component(matrix_get_axis(x_axis, y_axis, z_axis, axis3(best_axis)), component4(next_best_axis)) +
 						vector_get_component(matrix_get_axis(x_axis, y_axis, z_axis, axis3(next_best_axis)), component4(best_axis)));
@@ -249,13 +249,13 @@ namespace rtm
 				const double z_axis_x = vector_get_x(z_axis);
 				const double z_axis_y = vector_get_y(z_axis);
 
-				const double inv_trace = scalar_sqrt_reciprocal(mtx_trace + 1.0);
-				const double half_inv_trace = inv_trace * 0.5;
+				const double trace_sqrt = scalar_sqrt(mtx_trace + 1.0);
+				const double half_inv_trace = scalar_reciprocal(trace_sqrt) * 0.5;
 
 				const double x = (y_axis_z - z_axis_y) * half_inv_trace;
 				const double y = (z_axis_x - x_axis_z) * half_inv_trace;
 				const double z = (x_axis_y - y_axis_x) * half_inv_trace;
-				const double w = scalar_reciprocal(inv_trace) * 0.5;
+				const double w = trace_sqrt * 0.5;
 
 				return quat_normalize(quat_set(x, y, z, w));
 			}
@@ -276,11 +276,11 @@ namespace rtm
 					vector_get_component(matrix_get_axis(x_axis, y_axis, z_axis, axis3(next_best_axis)), component4(next_best_axis)) -
 					vector_get_component(matrix_get_axis(x_axis, y_axis, z_axis, axis3(next_next_best_axis)), component4(next_next_best_axis));
 
-				const double inv_pseudo_trace = scalar_sqrt_reciprocal(mtx_pseudo_trace);
-				const double half_inv_pseudo_trace = inv_pseudo_trace * 0.5;
+				const double pseudo_trace_sqrt = scalar_sqrt(mtx_pseudo_trace);
+				const double half_inv_pseudo_trace = scalar_reciprocal(pseudo_trace_sqrt) * 0.5;
 
 				double quat_values[4];
-				quat_values[best_axis] = scalar_reciprocal(inv_pseudo_trace) * 0.5;
+				quat_values[best_axis] = pseudo_trace_sqrt * 0.5;
 				quat_values[next_best_axis] = half_inv_pseudo_trace *
 					(vector_get_component(matrix_get_axis(x_axis, y_axis, z_axis, axis3(best_axis)), component4(next_best_axis)) +
 						vector_get_component(matrix_get_axis(x_axis, y_axis, z_axis, axis3(next_best_axis)), component4(best_axis)));

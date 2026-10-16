@@ -1433,15 +1433,9 @@ namespace rtm
 #elif defined(RTM_NEON64_INTRINSICS)
 		return vdivq_f32(vdupq_n_f32(1.0F), input);
 #elif defined(RTM_NEON_INTRINSICS)
-		// Perform two passes of Newton-Raphson iteration on the hardware estimate
-		float32x4_t x0 = vrecpeq_f32(input);
-
-		// First iteration
-		float32x4_t x1 = vmulq_f32(x0, vrecpsq_f32(x0, input));
-
-		// Second iteration
-		float32x4_t x2 = vmulq_f32(x1, vrecpsq_f32(x1, input));
-		return x2;
+		// ARMv7 does not have a vector division. We use the scalar division instead of the
+		// reciprocal estimate because the estimate does not give the same result as the other code paths.
+		return vector_div(vector_set(1.0F), input);
 #else
 		return vector_div(vector_set(1.0F), input);
 #endif
@@ -2512,15 +2506,27 @@ namespace rtm
 	}
 
 	//////////////////////////////////////////////////////////////////////////
+	// Implementation detail: returns the input divided by the square root of the squared length.
+	//////////////////////////////////////////////////////////////////////////
+#if defined(RTM_SSE2_INTRINSICS) || defined(RTM_WASM128_INTRINSICS)
+	// A vector division costs the same as a scalar division on x64.
+	// One division is faster and more accurate than a division followed by a multiplication.
+	#define RTM_IMPL_VECTOR4F_NORMALIZE(input, len_sq) vector_div(input, vector_set(scalar_sqrt(len_sq)))
+#else
+	// On ARM64, the vector division is slower than the scalar division on some processors.
+	// ARMv7 and the scalar code path do not have a vector division.
+	#define RTM_IMPL_VECTOR4F_NORMALIZE(input, len_sq) vector_mul(input, scalar_sqrt_reciprocal(len_sq))
+#endif
+
+	//////////////////////////////////////////////////////////////////////////
 	// Returns a normalized vector2.
 	// If the length of the input is not finite or zero, the result is undefined.
 	// For a safe alternative, supply a fallback value and a threshold.
 	//////////////////////////////////////////////////////////////////////////
 	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE vector4f RTM_SIMD_CALL vector_normalize2(vector4f_arg0 input) RTM_NO_EXCEPT
 	{
-		// Reciprocal is more accurate to normalize with
 		const scalarf len_sq = vector_length_squared2_as_scalar(input);
-		return vector_mul(input, scalar_sqrt_reciprocal(len_sq));
+		return RTM_IMPL_VECTOR4F_NORMALIZE(input, len_sq);
 	}
 
 	//////////////////////////////////////////////////////////////////////////
@@ -2530,10 +2536,9 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE vector4f RTM_SIMD_CALL vector_normalize2(vector4f_arg0 input, vector4f_arg1 fallback, float threshold = 1.0E-8F) RTM_NO_EXCEPT
 	{
-		// Reciprocal is more accurate to normalize with
 		const scalarf len_sq = vector_length_squared2_as_scalar(input);
 		if (scalar_cast(len_sq) >= threshold)
-			return vector_mul(input, scalar_sqrt_reciprocal(len_sq));
+			return RTM_IMPL_VECTOR4F_NORMALIZE(input, len_sq);
 		else
 			return fallback;
 	}
@@ -2545,9 +2550,8 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE vector4f RTM_SIMD_CALL vector_normalize3(vector4f_arg0 input) RTM_NO_EXCEPT
 	{
-		// Reciprocal is more accurate to normalize with
 		const scalarf len_sq = vector_length_squared3_as_scalar(input);
-		return vector_mul(input, scalar_sqrt_reciprocal(len_sq));
+		return RTM_IMPL_VECTOR4F_NORMALIZE(input, len_sq);
 	}
 
 	//////////////////////////////////////////////////////////////////////////
@@ -2557,10 +2561,9 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE vector4f RTM_SIMD_CALL vector_normalize3(vector4f_arg0 input, vector4f_arg1 fallback, float threshold = 1.0E-8F) RTM_NO_EXCEPT
 	{
-		// Reciprocal is more accurate to normalize with
 		const scalarf len_sq = vector_length_squared3_as_scalar(input);
 		if (scalar_cast(len_sq) >= threshold)
-			return vector_mul(input, scalar_sqrt_reciprocal(len_sq));
+			return RTM_IMPL_VECTOR4F_NORMALIZE(input, len_sq);
 		else
 			return fallback;
 	}
@@ -2572,9 +2575,8 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE vector4f RTM_SIMD_CALL vector_normalize(vector4f_arg0 input) RTM_NO_EXCEPT
 	{
-		// Reciprocal is more accurate to normalize with
 		const scalarf len_sq = vector_length_squared_as_scalar(input);
-		return vector_mul(input, scalar_sqrt_reciprocal(len_sq));
+		return RTM_IMPL_VECTOR4F_NORMALIZE(input, len_sq);
 	}
 
 	//////////////////////////////////////////////////////////////////////////
@@ -2584,10 +2586,9 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE vector4f RTM_SIMD_CALL vector_normalize(vector4f_arg0 input, vector4f_arg1 fallback, float threshold = 1.0E-8F) RTM_NO_EXCEPT
 	{
-		// Reciprocal is more accurate to normalize with
 		const scalarf len_sq = vector_length_squared_as_scalar(input);
 		if (scalar_cast(len_sq) >= threshold)
-			return vector_mul(input, scalar_sqrt_reciprocal(len_sq));
+			return RTM_IMPL_VECTOR4F_NORMALIZE(input, len_sq);
 		else
 			return fallback;
 	}
