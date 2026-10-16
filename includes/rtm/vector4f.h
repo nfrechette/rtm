@@ -240,14 +240,6 @@ namespace rtm
 #endif
 			}
 
-#if defined(RTM_SSE2_INTRINSICS)
-			RTM_DEPRECATED("Use 'as_scalar' suffix instead. To be removed in 2.4.")
-			RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE RTM_SIMD_CALL operator scalarf() const RTM_NO_EXCEPT
-			{
-				return scalarf{ input };
-			}
-#endif
-
 			vector4f input;
 		};
 	}
@@ -294,14 +286,6 @@ namespace rtm
 				return input.y;
 #endif
 			}
-
-#if defined(RTM_SSE2_INTRINSICS)
-			RTM_DEPRECATED("Use 'as_scalar' suffix instead. To be removed in 2.4.")
-			RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE RTM_SIMD_CALL operator scalarf() const RTM_NO_EXCEPT
-			{
-				return scalarf{ _mm_shuffle_ps(input, input, _MM_SHUFFLE(1, 1, 1, 1)) };
-			}
-#endif
 
 			vector4f input;
 		};
@@ -350,14 +334,6 @@ namespace rtm
 #endif
 			}
 
-#if defined(RTM_SSE2_INTRINSICS)
-			RTM_DEPRECATED("Use 'as_scalar' suffix instead. To be removed in 2.4.")
-			RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE RTM_SIMD_CALL operator scalarf() const RTM_NO_EXCEPT
-			{
-				return scalarf{ _mm_shuffle_ps(input, input, _MM_SHUFFLE(2, 2, 2, 2)) };
-			}
-#endif
-
 			vector4f input;
 		};
 	}
@@ -405,14 +381,6 @@ namespace rtm
 #endif
 			}
 
-#if defined(RTM_SSE2_INTRINSICS)
-			RTM_DEPRECATED("Use 'as_scalar' suffix instead. To be removed in 2.4.")
-			RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE RTM_SIMD_CALL operator scalarf() const RTM_NO_EXCEPT
-			{
-				return scalarf{ _mm_shuffle_ps(input, input, _MM_SHUFFLE(3, 3, 3, 3)) };
-			}
-#endif
-
 			vector4f input;
 		};
 	}
@@ -459,21 +427,6 @@ namespace rtm
 					case component4::w:	return vector_get_w(input);
 				}
 			}
-
-#if defined(RTM_SSE2_INTRINSICS)
-			RTM_DEPRECATED("Use 'as_scalar' suffix instead. To be removed in 2.4.")
-			RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE RTM_SIMD_CALL operator scalarf() const RTM_NO_EXCEPT
-			{
-				switch (component)
-				{
-					default:
-					case component4::x:	return vector_get_x_as_scalar(input);
-					case component4::y:	return vector_get_y_as_scalar(input);
-					case component4::z:	return vector_get_z_as_scalar(input);
-					case component4::w:	return vector_get_w_as_scalar(input);
-				}
-			}
-#endif
 
 			vector4f input;
 		};
@@ -572,21 +525,6 @@ namespace rtm
 					case component4::w:	return vector_get_w(input);
 				}
 			}
-
-#if defined(RTM_SSE2_INTRINSICS)
-			RTM_DEPRECATED("Use 'as_scalar' suffix instead. To be removed in 2.4.")
-			RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE RTM_SIMD_CALL operator scalarf() const RTM_NO_EXCEPT
-			{
-				switch (component)
-				{
-					default:
-					case component4::x:	return vector_get_x_as_scalar(input);
-					case component4::y:	return vector_get_y_as_scalar(input);
-					case component4::z:	return vector_get_z_as_scalar(input);
-					case component4::w:	return vector_get_w_as_scalar(input);
-				}
-			}
-#endif
 
 			vector4f input;
 			component4 component;
@@ -1746,62 +1684,6 @@ namespace rtm
 #endif
 			}
 
-#if defined(RTM_SSE2_INTRINSICS)
-			RTM_DEPRECATED("Use 'as_scalar' suffix instead. To be removed in 2.4.")
-			RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE RTM_SIMD_CALL operator scalarf() const RTM_NO_EXCEPT
-			{
-#if defined(RTM_SSE4_INTRINSICS) && 0
-				// SSE4 dot product instruction appears slower on Zen2, is it the case elsewhere as well?
-				return scalarf{ _mm_cvtss_f32(_mm_dp_ps(lhs, rhs, 0xFF)) };
-#else
-				__m128 x2_y2_z2_w2 = _mm_mul_ps(lhs, rhs);
-				__m128 z2_w2_0_0 = _mm_shuffle_ps(x2_y2_z2_w2, x2_y2_z2_w2, _MM_SHUFFLE(0, 0, 3, 2));
-				__m128 x2z2_y2w2_0_0 = _mm_add_ps(x2_y2_z2_w2, z2_w2_0_0);
-				__m128 y2w2_0_0_0 = _mm_shuffle_ps(x2z2_y2w2_0_0, x2z2_y2w2_0_0, _MM_SHUFFLE(0, 0, 0, 1));
-				__m128 x2y2z2w2_0_0_0 = _mm_add_ps(x2z2_y2w2_0_0, y2w2_0_0_0);
-				return scalarf{ x2y2z2w2_0_0_0 };
-#endif
-			}
-#endif
-
-			RTM_DEPRECATED("Use 'as_vector' suffix instead. To be removed in 2.4.")
-			RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE RTM_SIMD_CALL operator vector4f() const RTM_NO_EXCEPT
-			{
-#if defined(RTM_SSE4_INTRINSICS) && 0
-				// SSE4 dot product instruction appears slower on Zen2, is it the case elsewhere as well?
-				return _mm_dp_ps(lhs, rhs, 0xFF);
-#elif defined(RTM_SSE2_INTRINSICS)
-				__m128 x2_y2_z2_w2 = _mm_mul_ps(lhs, rhs);
-				__m128 z2_w2_0_0 = _mm_shuffle_ps(x2_y2_z2_w2, x2_y2_z2_w2, _MM_SHUFFLE(0, 0, 3, 2));
-				__m128 x2z2_y2w2_0_0 = _mm_add_ps(x2_y2_z2_w2, z2_w2_0_0);
-				__m128 y2w2_0_0_0 = _mm_shuffle_ps(x2z2_y2w2_0_0, x2z2_y2w2_0_0, _MM_SHUFFLE(0, 0, 0, 1));
-				__m128 x2y2z2w2_0_0_0 = _mm_add_ps(x2z2_y2w2_0_0, y2w2_0_0_0);
-				return _mm_shuffle_ps(x2y2z2w2_0_0_0, x2y2z2w2_0_0_0, _MM_SHUFFLE(0, 0, 0, 0));
-#elif defined(RTM_WASM128_INTRINSICS)
-				v128_t x2_y2_z2_w2 = wasm_f32x4_mul(lhs, rhs);
-				v128_t z2_w2_x2_y2 = wasm_i32x4_shuffle(x2_y2_z2_w2, x2_y2_z2_w2, 2, 3, 0, 1);
-				v128_t x2z2_y2w2_x2z2_y2w2 = wasm_f32x4_add(x2_y2_z2_w2, z2_w2_x2_y2);
-				v128_t y2w2_x2z2_y2w2_x2z2 = wasm_i32x4_shuffle(x2z2_y2w2_x2z2_y2w2, x2z2_y2w2_x2z2_y2w2, 1, 0, 3, 2);
-				v128_t x2y2z2w2_x2y2z2w2_x2y2z2w2_x2y2z2w2 = wasm_f32x4_add(x2z2_y2w2_x2z2_y2w2, y2w2_x2z2_y2w2_x2z2);
-				return x2y2z2w2_x2y2z2w2_x2y2z2w2_x2y2z2w2;
-#elif defined(RTM_NEON64_INTRINSICS)
-				float32x4_t x2_y2_z2_w2 = vmulq_f32(lhs, rhs);
-				float32x4_t x2y2_z2w2_x2y2_z2w2 = vpaddq_f32(x2_y2_z2_w2, x2_y2_z2_w2);
-				float32x4_t x2y2z2w2_x2y2z2w2_x2y2z2w2_x2y2z2w2 = vpaddq_f32(x2y2_z2w2_x2y2_z2w2, x2y2_z2w2_x2y2_z2w2);
-				return x2y2z2w2_x2y2z2w2_x2y2z2w2_x2y2z2w2;
-#elif defined(RTM_NEON_INTRINSICS)
-				float32x4_t x2_y2_z2_w2 = vmulq_f32(lhs, rhs);
-				float32x2_t x2_y2 = vget_low_f32(x2_y2_z2_w2);
-				float32x2_t z2_w2 = vget_high_f32(x2_y2_z2_w2);
-				float32x2_t x2z2_y2w2 = vadd_f32(x2_y2, z2_w2);
-				float32x2_t x2y2z2w2 = vpadd_f32(x2z2_y2w2, x2z2_y2w2);
-				return vcombine_f32(x2y2z2w2, x2y2z2w2);
-#else
-				scalarf result = *this;
-				return vector_set(result);
-#endif
-			}
-
 			vector4f lhs;
 			vector4f rhs;
 		};
@@ -1911,43 +1793,6 @@ namespace rtm
 #endif
 			}
 
-#if defined(RTM_SSE2_INTRINSICS)
-			RTM_DEPRECATED("Use 'as_scalar' suffix instead. To be removed in 2.4.")
-			RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE RTM_SIMD_CALL operator scalarf() const RTM_NO_EXCEPT
-			{
-				__m128 x2_y2_z2_w2 = _mm_mul_ps(lhs, rhs);
-				__m128 y2_0_0_0 = _mm_shuffle_ps(x2_y2_z2_w2, x2_y2_z2_w2, _MM_SHUFFLE(0, 0, 0, 1));
-				return scalarf{ _mm_add_ss(x2_y2_z2_w2, y2_0_0_0) };
-			}
-#endif
-
-			RTM_DEPRECATED("Use 'as_vector' suffix instead. To be removed in 2.4.")
-			RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE RTM_SIMD_CALL operator vector4f() const RTM_NO_EXCEPT
-			{
-#if defined(RTM_SSE4_INTRINSICS) && 0
-				// SSE4 dot product instruction appears slower on Zen2, is it the case elsewhere as well?
-				return _mm_cvtss_f32(_mm_dp_ps(lhs, rhs, 0xFF));
-#elif defined(RTM_SSE2_INTRINSICS)
-				__m128 x2_y2_z2_w2 = _mm_mul_ps(lhs, rhs);
-				__m128 y2_0_0_0 = _mm_shuffle_ps(x2_y2_z2_w2, x2_y2_z2_w2, _MM_SHUFFLE(0, 0, 0, 1));
-				__m128 x2y2_0_0_0 = _mm_add_ss(x2_y2_z2_w2, y2_0_0_0);
-				return _mm_shuffle_ps(x2y2_0_0_0, x2y2_0_0_0, _MM_SHUFFLE(0, 0, 0, 0));
-#elif defined(RTM_WASM128_INTRINSICS)
-				v128_t x2_y2_z2_w2 = wasm_f32x4_mul(lhs, rhs);
-				v128_t y2_x2_w2_z2 = wasm_i32x4_shuffle(x2_y2_z2_w2, x2_y2_z2_w2, 1, 0, 3, 2);
-				v128_t x2y2_x2y2_z2w2_z2w2 = wasm_f32x4_add(x2_y2_z2_w2, y2_x2_w2_z2);
-				return wasm_i32x4_shuffle(x2y2_x2y2_z2w2_z2w2, x2y2_x2y2_z2w2_z2w2, 0, 0, 0, 0);
-#elif defined(RTM_NEON_INTRINSICS)
-				float32x4_t x2_y2_z2_w2 = vmulq_f32(lhs, rhs);
-				float32x2_t x2_y2 = vget_low_f32(x2_y2_z2_w2);
-				float32x2_t x2y2_x2y2 = vpadd_f32(x2_y2, x2_y2);
-				return vcombine_f32(x2y2_x2y2, x2y2_x2y2);
-#else
-				scalarf result = *this;
-				return vector_set(result);
-#endif
-			}
-
 			vector4f lhs;
 			vector4f rhs;
 		};
@@ -2042,58 +1887,6 @@ namespace rtm
 				return vget_lane_f32(x2y2z2_x2y2z2, 0);
 #else
 				return (vector_get_x(lhs) * vector_get_x(rhs)) + (vector_get_y(lhs) * vector_get_y(rhs)) + (vector_get_z(lhs) * vector_get_z(rhs));
-#endif
-			}
-
-#if defined(RTM_SSE2_INTRINSICS)
-			RTM_DEPRECATED("Use 'as_scalar' suffix instead. To be removed in 2.4.")
-			RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE RTM_SIMD_CALL operator scalarf() const RTM_NO_EXCEPT
-			{
-				__m128 x2_y2_z2_w2 = _mm_mul_ps(lhs, rhs);
-				__m128 y2_0_0_0 = _mm_shuffle_ps(x2_y2_z2_w2, x2_y2_z2_w2, _MM_SHUFFLE(0, 0, 0, 1));
-				__m128 x2y2_0_0_0 = _mm_add_ss(x2_y2_z2_w2, y2_0_0_0);
-				__m128 z2_0_0_0 = _mm_shuffle_ps(x2_y2_z2_w2, x2_y2_z2_w2, _MM_SHUFFLE(0, 0, 0, 2));
-				return scalarf{ _mm_add_ss(x2y2_0_0_0, z2_0_0_0) };
-			}
-#endif
-
-			RTM_DEPRECATED("Use 'as_vector' suffix instead. To be removed in 2.4.")
-			RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE RTM_SIMD_CALL operator vector4f() const RTM_NO_EXCEPT
-			{
-#if defined(RTM_SSE4_INTRINSICS) && 0
-				// SSE4 dot product instruction appears slower on Zen2, is it the case elsewhere as well?
-				return _mm_cvtss_f32(_mm_dp_ps(lhs, rhs, 0xFF));
-#elif defined(RTM_SSE2_INTRINSICS)
-				__m128 x2_y2_z2_w2 = _mm_mul_ps(lhs, rhs);
-				__m128 y2_0_0_0 = _mm_shuffle_ps(x2_y2_z2_w2, x2_y2_z2_w2, _MM_SHUFFLE(0, 0, 0, 1));
-				__m128 x2y2_0_0_0 = _mm_add_ss(x2_y2_z2_w2, y2_0_0_0);
-				__m128 z2_0_0_0 = _mm_shuffle_ps(x2_y2_z2_w2, x2_y2_z2_w2, _MM_SHUFFLE(0, 0, 0, 2));
-				__m128 x2y2z2_0_0_0 = _mm_add_ss(x2y2_0_0_0, z2_0_0_0);
-				return _mm_shuffle_ps(x2y2z2_0_0_0, x2y2z2_0_0_0, _MM_SHUFFLE(0, 0, 0, 0));
-#elif defined(RTM_WASM128_INTRINSICS)
-				v128_t x2_y2_z2_w2 = wasm_f32x4_mul(lhs, rhs);
-				v128_t x2_x2_x2_x2 = wasm_i32x4_shuffle(x2_y2_z2_w2, x2_y2_z2_w2, 0, 0, 0, 0);
-				v128_t y2_y2_y2_y2 = wasm_i32x4_shuffle(x2_y2_z2_w2, x2_y2_z2_w2, 1, 1, 1, 1);
-				v128_t z2_z2_z2_z2 = wasm_i32x4_shuffle(x2_y2_z2_w2, x2_y2_z2_w2, 2, 2, 2, 2);
-				v128_t x2y2_x2y2_x2y2_x2y2 = wasm_f32x4_add(x2_x2_x2_x2, y2_y2_y2_y2);
-				return wasm_f32x4_add(x2y2_x2y2_x2y2_x2y2, z2_z2_z2_z2);
-#elif defined(RTM_NEON64_INTRINSICS)
-				float32x4_t x2_y2_z2_w2 = vmulq_f32(lhs, rhs);
-				float32x4_t x2_y2_z2 = vsetq_lane_f32(0.0F, x2_y2_z2_w2, 3);
-				float32x4_t x2y2_z2_x2y2_z2 = vpaddq_f32(x2_y2_z2, x2_y2_z2);
-				float32x4_t x2y2z2_x2y2z2_x2y2z2_x2y2z2 = vpaddq_f32(x2y2_z2_x2y2_z2, x2y2_z2_x2y2_z2);
-				return x2y2z2_x2y2z2_x2y2z2_x2y2z2;
-#elif defined(RTM_NEON_INTRINSICS)
-				float32x4_t x2_y2_z2_w2 = vmulq_f32(lhs, rhs);
-				float32x2_t x2_y2 = vget_low_f32(x2_y2_z2_w2);
-				float32x2_t z2_w2 = vget_high_f32(x2_y2_z2_w2);
-				float32x2_t x2y2_x2y2 = vpadd_f32(x2_y2, x2_y2);
-				float32x2_t z2_z2 = vdup_lane_f32(z2_w2, 0);
-				float32x2_t x2y2z2_x2y2z2 = vadd_f32(x2y2_x2y2, z2_z2);
-				return vdupq_lane_f32(x2y2z2_x2y2z2, 0);
-#else
-				scalarf result = *this;
-				return vector_set(result);
 #endif
 			}
 
@@ -2255,15 +2048,6 @@ namespace rtm
 				return scalar_cast(scalar_sqrt(len_sq));
 			}
 
-#if defined(RTM_SSE2_INTRINSICS)
-			RTM_DEPRECATED("Use 'as_scalar' suffix instead. To be removed in 2.4.")
-			RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE RTM_SIMD_CALL operator scalarf() const RTM_NO_EXCEPT
-			{
-				const scalarf len_sq = vector_length_squared_as_scalar(input);
-				return scalar_sqrt(len_sq);
-			}
-#endif
-
 			vector4f input;
 		};
 	}
@@ -2300,15 +2084,6 @@ namespace rtm
 				const scalarf len_sq = vector_length_squared3_as_scalar(input);
 				return scalar_cast(scalar_sqrt(len_sq));
 			}
-
-#if defined(RTM_SSE2_INTRINSICS)
-			RTM_DEPRECATED("Use 'as_scalar' suffix instead. To be removed in 2.4.")
-			RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE RTM_SIMD_CALL operator scalarf() const RTM_NO_EXCEPT
-			{
-				const scalarf len_sq = vector_length_squared3_as_scalar(input);
-				return scalar_sqrt(len_sq);
-			}
-#endif
 
 			vector4f input;
 		};
@@ -2347,15 +2122,6 @@ namespace rtm
 				return scalar_cast(scalar_sqrt_reciprocal(len_sq));
 			}
 
-#if defined(RTM_SSE2_INTRINSICS)
-			RTM_DEPRECATED("Use 'as_scalar' suffix instead. To be removed in 2.4.")
-			RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE RTM_SIMD_CALL operator scalarf() const RTM_NO_EXCEPT
-			{
-				const scalarf len_sq = vector_length_squared_as_scalar(input);
-				return scalar_sqrt_reciprocal(len_sq);
-			}
-#endif
-
 			vector4f input;
 		};
 	}
@@ -2393,15 +2159,6 @@ namespace rtm
 				return scalar_cast(scalar_sqrt_reciprocal(len_sq));
 			}
 
-#if defined(RTM_SSE2_INTRINSICS)
-			RTM_DEPRECATED("Use 'as_scalar' suffix instead. To be removed in 2.4.")
-			RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE RTM_SIMD_CALL operator scalarf() const RTM_NO_EXCEPT
-			{
-				const scalarf len_sq = vector_length_squared2_as_scalar(input);
-				return scalar_sqrt_reciprocal(len_sq);
-			}
-#endif
-
 			vector4f input;
 		};
 	}
@@ -2438,15 +2195,6 @@ namespace rtm
 				const scalarf len_sq = vector_length_squared3_as_scalar(input);
 				return scalar_cast(scalar_sqrt_reciprocal(len_sq));
 			}
-
-#if defined(RTM_SSE2_INTRINSICS)
-			RTM_DEPRECATED("Use 'as_scalar' suffix instead. To be removed in 2.4.")
-			RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE RTM_SIMD_CALL operator scalarf() const RTM_NO_EXCEPT
-			{
-				const scalarf len_sq = vector_length_squared3_as_scalar(input);
-				return scalar_sqrt_reciprocal(len_sq);
-			}
-#endif
 
 			vector4f input;
 		};

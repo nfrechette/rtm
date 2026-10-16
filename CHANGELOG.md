@@ -31,6 +31,8 @@
 *  Multiply by the reciprocal length instead of two vector divisions in float64 quat_normalize: the code is faster
 *  Use one division instead of a reciprocal and a multiplication to scale the result of quat_rotation_log
 *  Replicate a lane with one NEON dup instruction in float32 vector_dup_x/y/z/w and when vector_mix uses the same lane four times: on ARMv7, GCC previously moved the lane through a general purpose register or used a table lookup (vtbl)
+*  Remove the deprecated `float_traits` type: use `related_types`
+*  Remove the deprecated implicit coercion to `scalarf`, `scalard`, `vector4f`, and `vector4d`: use the functions with the `as_scalar` and `as_vector` suffixes
 
 ## 2.3.1
 

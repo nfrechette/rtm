@@ -38,65 +38,7 @@ namespace rtm
 	// GCC complains that the alignment attribute is ignored, we don't care with type traits
 	#pragma GCC diagnostic ignored "-Wignored-attributes"
 #endif
-	// GCC complains that the type is deprecated when we specialize it, we don't care
-	#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
 #endif
-
-	//////////////////////////////////////////////////////////////////////////
-	// Returns the proper types for a floating point type.
-	//////////////////////////////////////////////////////////////////////////
-	template<typename float_type>
-	struct RTM_DEPRECATED("Use 'related_types' instead. To be removed in 2.4") float_traits {};
-
-	template<>
-	struct RTM_DEPRECATED("Use 'related_types' instead. To be removed in 2.4") float_traits<float>
-	{
-		using mask4 = mask4f;
-
-		using scalar = scalarf;
-		using vector4 = vector4f;
-		using quat = quatf;
-
-		using qv = qvf;
-		using qvs = qvsf;
-		using qvv = qvvf;
-
-		using matrix3x3 = matrix3x3f;
-		using matrix3x4 = matrix3x4f;
-		using matrix4x4 = matrix4x4f;
-
-		using float1 = float;
-		using float2 = float2f;
-		using float3 = float3f;
-		using float4 = float4f;
-
-		using int1 = uint32_t;
-	};
-
-	template<>
-	struct RTM_DEPRECATED("Use 'related_types' instead. To be removed in 2.4") float_traits<double>
-	{
-		using mask4 = mask4d;
-
-		using scalar = scalard;
-		using vector4 = vector4d;
-		using quat = quatd;
-
-		using qv = qvd;
-		using qvs = qvsd;
-		using qvv = qvvd;
-
-		using matrix3x3 = matrix3x3d;
-		using matrix3x4 = matrix3x4d;
-		using matrix4x4 = matrix4x4d;
-
-		using float1 = double;
-		using float2 = float2d;
-		using float3 = float3d;
-		using float4 = float4d;
-
-		using int1 = uint64_t;
-	};
 
 	//////////////////////////////////////////////////////////////////////////
 	// Specifies the related types given a source type.

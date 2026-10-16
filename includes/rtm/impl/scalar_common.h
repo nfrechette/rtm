@@ -49,14 +49,6 @@ namespace rtm
 				return *ptr;
 			}
 
-#if defined(RTM_SSE2_INTRINSICS)
-			RTM_DEPRECATED("Use 'as_scalar' suffix instead. To be removed in 2.4.")
-			RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE RTM_SIMD_CALL operator scalarf() const RTM_NO_EXCEPT
-			{
-				return scalarf{ _mm_load_ss(ptr) };
-			}
-#endif
-
 			const float* ptr;
 		};
 
@@ -72,14 +64,6 @@ namespace rtm
 			{
 				return *ptr;
 			}
-
-#if defined(RTM_SSE2_INTRINSICS)
-			RTM_DEPRECATED("Use 'as_scalar' suffix instead. To be removed in 2.4.")
-			RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE RTM_SIMD_CALL operator scalard() const RTM_NO_EXCEPT
-			{
-				return scalard{ _mm_load_sd(ptr) };
-			}
-#endif
 
 			const double* ptr;
 		};
