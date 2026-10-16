@@ -136,14 +136,6 @@ namespace rtm
 #endif
 			}
 
-#if defined(RTM_SSE2_INTRINSICS)
-			RTM_DEPRECATED("Use 'as_scalar' suffix instead. To be removed in 2.4.")
-			RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE RTM_SIMD_CALL operator scalard() const RTM_NO_EXCEPT
-			{
-				return scalard{ input.xy };
-			}
-#endif
-
 			quatd input;
 		};
 	}
@@ -190,14 +182,6 @@ namespace rtm
 				return input.y;
 #endif
 			}
-
-#if defined(RTM_SSE2_INTRINSICS)
-			RTM_DEPRECATED("Use 'as_scalar' suffix instead. To be removed in 2.4.")
-			RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE RTM_SIMD_CALL operator scalard() const RTM_NO_EXCEPT
-			{
-				return scalard{ _mm_shuffle_pd(input.xy, input.xy, _MM_SHUFFLE2(0, 1)) };
-			}
-#endif
 
 			quatd input;
 		};
@@ -246,14 +230,6 @@ namespace rtm
 #endif
 			}
 
-#if defined(RTM_SSE2_INTRINSICS)
-			RTM_DEPRECATED("Use 'as_scalar' suffix instead. To be removed in 2.4.")
-			RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE RTM_SIMD_CALL operator scalard() const RTM_NO_EXCEPT
-			{
-				return scalard{ input.zw };
-			}
-#endif
-
 			quatd input;
 		};
 	}
@@ -300,14 +276,6 @@ namespace rtm
 				return input.w;
 #endif
 			}
-
-#if defined(RTM_SSE2_INTRINSICS)
-			RTM_DEPRECATED("Use 'as_scalar' suffix instead. To be removed in 2.4.")
-			RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE RTM_SIMD_CALL operator scalard() const RTM_NO_EXCEPT
-			{
-				return scalard{ _mm_shuffle_pd(input.zw, input.zw, _MM_SHUFFLE2(0, 1)) };
-			}
-#endif
 
 			quatd input;
 		};
@@ -738,19 +706,6 @@ namespace rtm
 #endif
 			}
 
-#if defined(RTM_SSE2_INTRINSICS)
-			RTM_DEPRECATED("Use 'as_scalar' suffix instead. To be removed in 2.4.")
-			RTM_DISABLE_SECURITY_COOKIE_CHECK inline RTM_SIMD_CALL operator scalard() const RTM_NO_EXCEPT
-			{
-				const __m128d x2_y2 = _mm_mul_pd(lhs.xy, rhs.xy);
-				const __m128d z2_w2 = _mm_mul_pd(lhs.zw, rhs.zw);
-				const __m128d x2z2_y2w2 = _mm_add_pd(x2_y2, z2_w2);
-				const __m128d y2w2 = _mm_shuffle_pd(x2z2_y2w2, x2z2_y2w2, _MM_SHUFFLE2(1, 1));
-				const __m128d x2y2z2w2 = _mm_add_pd(x2z2_y2w2, y2w2);
-				return scalard{ x2y2z2w2 };
-			}
-#endif
-
 			quatd lhs;
 			quatd rhs;
 		};
@@ -835,15 +790,6 @@ namespace rtm
 				return scalar_cast(scalar_sqrt(len_sq));
 			}
 
-#if defined(RTM_SSE2_INTRINSICS)
-			RTM_DEPRECATED("Use 'as_scalar' suffix instead. To be removed in 2.4.")
-			RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE RTM_SIMD_CALL operator scalard() const RTM_NO_EXCEPT
-			{
-				const scalard len_sq = quat_length_squared_as_scalar(input);
-				return scalar_sqrt(len_sq);
-			}
-#endif
-
 			quatd input;
 		};
 	}
@@ -880,15 +826,6 @@ namespace rtm
 				const scalard len_sq = quat_length_squared_as_scalar(input);
 				return scalar_cast(scalar_sqrt_reciprocal(len_sq));
 			}
-
-#if defined(RTM_SSE2_INTRINSICS)
-			RTM_DEPRECATED("Use 'as_scalar' suffix instead. To be removed in 2.4.")
-			RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE RTM_SIMD_CALL operator scalard() const RTM_NO_EXCEPT
-			{
-				const scalard len_sq = quat_length_squared_as_scalar(input);
-				return scalar_sqrt_reciprocal(len_sq);
-			}
-#endif
 
 			quatd input;
 		};

@@ -525,17 +525,6 @@ namespace rtm
 #endif
 			}
 
-#if defined(RTM_SSE2_INTRINSICS)
-			RTM_DEPRECATED("Use 'as_scalar' suffix instead. To be removed in 2.4.")
-			RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE RTM_SIMD_CALL operator scalarf() const RTM_NO_EXCEPT
-			{
-				__m128 zwzw = _mm_movehl_ps(value, value);
-				__m128 xz_yw_zz_ww = _mm_min_ps(value, zwzw);
-				__m128 yw_yw_yw_yw = _mm_shuffle_ps(xz_yw_zz_ww, xz_yw_zz_ww, _MM_SHUFFLE(1, 1, 1, 1));
-				return scalarf{ _mm_min_ps(xz_yw_zz_ww, yw_yw_yw_yw) };
-			}
-#endif
-
 			vector4f value;
 		};
 
@@ -567,17 +556,6 @@ namespace rtm
 #endif
 			}
 
-#if defined(RTM_SSE2_INTRINSICS)
-			RTM_DEPRECATED("Use 'as_scalar' suffix instead. To be removed in 2.4.")
-			RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE RTM_SIMD_CALL operator scalarf() const RTM_NO_EXCEPT
-			{
-				__m128 zwzw = _mm_movehl_ps(value, value);
-				__m128 xz_yw_zz_ww = _mm_max_ps(value, zwzw);
-				__m128 yw_yw_yw_yw = _mm_shuffle_ps(xz_yw_zz_ww, xz_yw_zz_ww, _MM_SHUFFLE(1, 1, 1, 1));
-				return scalarf{ _mm_max_ps(xz_yw_zz_ww, yw_yw_yw_yw) };
-			}
-#endif
-
 			vector4f value;
 		};
 
@@ -608,16 +586,6 @@ namespace rtm
 #endif
 			}
 
-#if defined(RTM_SSE2_INTRINSICS)
-			RTM_DEPRECATED("Use 'as_scalar' suffix instead. To be removed in 2.4.")
-			RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE RTM_SIMD_CALL operator scalard() const RTM_NO_EXCEPT
-			{
-				__m128d xz_yw = _mm_min_pd(value.xy, value.zw);
-				__m128d yw_yw = _mm_shuffle_pd(xz_yw, xz_yw, 1);
-				return scalard{ _mm_min_pd(xz_yw, yw_yw) };
-			}
-#endif
-
 			vector4d value;
 		};
 
@@ -647,16 +615,6 @@ namespace rtm
 				return scalar_max(scalar_max(value.x, value.y), scalar_max(value.z, value.w));
 #endif
 			}
-
-#if defined(RTM_SSE2_INTRINSICS)
-			RTM_DEPRECATED("Use 'as_scalar' suffix instead. To be removed in 2.4.")
-			RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE RTM_SIMD_CALL operator scalard() const RTM_NO_EXCEPT
-			{
-				__m128d xz_yw = _mm_max_pd(value.xy, value.zw);
-				__m128d yw_yw = _mm_shuffle_pd(xz_yw, xz_yw, 1);
-				return scalard{ _mm_max_pd(xz_yw, yw_yw) };
-			}
-#endif
 
 			vector4d value;
 		};

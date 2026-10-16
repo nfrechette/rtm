@@ -131,14 +131,6 @@ namespace rtm
 #endif
 			}
 
-#if defined(RTM_SSE2_INTRINSICS)
-			RTM_DEPRECATED("Use 'as_scalar' suffix instead. To be removed in 2.4.")
-			RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE RTM_SIMD_CALL operator scalarf() const RTM_NO_EXCEPT
-			{
-				return scalarf{ input };
-			}
-#endif
-
 			quatf input;
 		};
 	}
@@ -185,14 +177,6 @@ namespace rtm
 				return input.y;
 #endif
 			}
-
-#if defined(RTM_SSE2_INTRINSICS)
-			RTM_DEPRECATED("Use 'as_scalar' suffix instead. To be removed in 2.4.")
-			RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE RTM_SIMD_CALL operator scalarf() const RTM_NO_EXCEPT
-			{
-				return scalarf{ _mm_shuffle_ps(input, input, _MM_SHUFFLE(1, 1, 1, 1)) };
-			}
-#endif
 
 			quatf input;
 		};
@@ -241,14 +225,6 @@ namespace rtm
 #endif
 			}
 
-#if defined(RTM_SSE2_INTRINSICS)
-			RTM_DEPRECATED("Use 'as_scalar' suffix instead. To be removed in 2.4.")
-			RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE RTM_SIMD_CALL operator scalarf() const RTM_NO_EXCEPT
-			{
-				return scalarf{ _mm_shuffle_ps(input, input, _MM_SHUFFLE(2, 2, 2, 2)) };
-			}
-#endif
-
 			quatf input;
 		};
 	}
@@ -295,14 +271,6 @@ namespace rtm
 				return input.w;
 #endif
 			}
-
-#if defined(RTM_SSE2_INTRINSICS)
-			RTM_DEPRECATED("Use 'as_scalar' suffix instead. To be removed in 2.4.")
-			RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE RTM_SIMD_CALL operator scalarf() const RTM_NO_EXCEPT
-			{
-				return scalarf{ _mm_shuffle_ps(input, input, _MM_SHUFFLE(3, 3, 3, 3)) };
-			}
-#endif
 
 			quatf input;
 		};
@@ -913,24 +881,6 @@ namespace rtm
 #endif
 			}
 
-#if defined(RTM_SSE2_INTRINSICS)
-			RTM_DEPRECATED("Use 'as_scalar' suffix instead. To be removed in 2.4.")
-			RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE RTM_SIMD_CALL operator scalarf() const RTM_NO_EXCEPT
-			{
-#if defined(RTM_SSE4_INTRINSICS) && 0
-				// SSE4 dot product instruction appears slower on Zen2, is it the case elsewhere as well?
-				return scalarf{ _mm_cvtss_f32(_mm_dp_ps(lhs, rhs, 0xFF)) };
-#else
-				__m128 x2_y2_z2_w2 = _mm_mul_ps(lhs, rhs);
-				__m128 z2_w2_0_0 = _mm_shuffle_ps(x2_y2_z2_w2, x2_y2_z2_w2, _MM_SHUFFLE(0, 0, 3, 2));
-				__m128 x2z2_y2w2_0_0 = _mm_add_ps(x2_y2_z2_w2, z2_w2_0_0);
-				__m128 y2w2_0_0_0 = _mm_shuffle_ps(x2z2_y2w2_0_0, x2z2_y2w2_0_0, _MM_SHUFFLE(0, 0, 0, 1));
-				__m128 x2y2z2w2_0_0_0 = _mm_add_ps(x2z2_y2w2_0_0, y2w2_0_0_0);
-				return scalarf{ x2y2z2w2_0_0_0 };
-#endif
-			}
-#endif
-
 			quatf lhs;
 			quatf rhs;
 		};
@@ -998,15 +948,6 @@ namespace rtm
 				return scalar_cast(scalar_sqrt(len_sq));
 			}
 
-#if defined(RTM_SSE2_INTRINSICS)
-			RTM_DEPRECATED("Use 'as_scalar' suffix instead. To be removed in 2.4.")
-			RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE RTM_SIMD_CALL operator scalarf() const RTM_NO_EXCEPT
-			{
-				const scalarf len_sq = quat_length_squared_as_scalar(input);
-				return scalar_sqrt(len_sq);
-			}
-#endif
-
 			quatf input;
 		};
 	}
@@ -1043,15 +984,6 @@ namespace rtm
 				const scalarf len_sq = quat_length_squared_as_scalar(input);
 				return scalar_cast(scalar_sqrt_reciprocal(len_sq));
 			}
-
-#if defined(RTM_SSE2_INTRINSICS)
-			RTM_DEPRECATED("Use 'as_scalar' suffix instead. To be removed in 2.4.")
-			RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE RTM_SIMD_CALL operator scalarf() const RTM_NO_EXCEPT
-			{
-				const scalarf len_sq = quat_length_squared_as_scalar(input);
-				return scalar_sqrt_reciprocal(len_sq);
-			}
-#endif
 
 			quatf input;
 		};
