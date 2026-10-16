@@ -4302,9 +4302,25 @@ namespace rtm
 		// The mix4 values match the lane indices of the shuffle: [xyzw] are 0 to 3 and [abcd] are 4 to 7
 		return wasm_i32x4_shuffle(input0, input1, int(comp0), int(comp1), int(comp2), int(comp3));
 #elif defined(RTM_NEON_INTRINSICS)
+		// All comes from the same position
+		// GCC uses a table lookup (vtbl) for this case of __builtin_shufflevector on ARMv7, test it first
+		if (rtm_impl::static_condition<comp0 == comp1 && comp0 == comp2 && comp0 == comp3>::test())
+		{
+			const float32x4_t input = rtm_impl::is_mix_xyzw(comp0) ? input0 : input1;
+
+	#if defined(RTM_NEON64_INTRINSICS)
+			return vdupq_laneq_f32(input, int(comp0) % 4);
+	#else
+			// ARMv7 can only replicate a lane of a 64 bit register
+			const float32x2_t input_half = (int(comp0) % 4) < 2 ? vget_low_f32(input) : vget_high_f32(input);
+			return vdupq_lane_f32(input_half, int(comp0) % 2);
+	#endif
+		}
+
 	#if defined(RTM_COMPILER_CLANG) || defined(RTM_COMPILER_GCC)
 		#if RTM_HAS_BUILTIN(__builtin_shufflevector)
-			// GCC/Clang offer a builtin intrinsic to generate optimal assembly for this
+			// GCC/Clang offer a builtin intrinsic for the other permutations
+			// Clang generates short instruction sequences, GCC uses a table lookup (vtbl/tbl) for most of them
 			return __builtin_shufflevector(input0, input1, int(comp0), int(comp1), int(comp2), int(comp3));
 		#endif
 	#endif
@@ -4460,20 +4476,6 @@ namespace rtm
 		// Fourth component comes from input 0, others come from the respective positions of input 1
 		if (rtm_impl::static_condition<comp0 == mix4::a && comp1 == mix4::b && comp2 == mix4::c && rtm_impl::is_mix_xyzw(comp3)>::test())
 			return vsetq_lane_f32(vgetq_lane_f32(input0, int(comp3) % 4), input1, 3);
-
-		// All comes from the same position
-		if (rtm_impl::static_condition<comp0 == comp1 && comp0 == comp2 && comp0 == comp3>::test())
-		{
-			const float32x4_t input = rtm_impl::is_mix_xyzw(comp0) ? input0 : input1;
-
-#if defined(RTM_NEON64_INTRINSICS)
-			return vdupq_laneq_f32(input, int(comp0) % 4);
-#else
-			// ARMv7 can only replicate a lane of a 64 bit register
-			const float32x2_t input_half = (int(comp0) % 4) < 2 ? vget_low_f32(input) : vget_high_f32(input);
-			return vdupq_lane_f32(input_half, int(comp0) % 2);
-#endif
-		}
 
 		// Fallback to handle remaining cases
 		const float x = vgetq_lane_f32(rtm_impl::is_mix_xyzw(comp0) ? input0 : input1, int(comp0) % 4);

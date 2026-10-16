@@ -30,7 +30,7 @@
 *  Divide by the sine of the half angle instead of a multiplication by its reciprocal in float32 quat_slerp with SSE2 and WebAssembly SIMD
 *  Multiply by the reciprocal length instead of two vector divisions in float64 quat_normalize: the code is faster
 *  Use one division instead of a reciprocal and a multiplication to scale the result of quat_rotation_log
-*  Replicate a lane with one NEON dup instruction in float32 vector_dup_x/y/z/w and in the vector_mix broadcast: the previous code made GCC on ARMv7 move the lane through a general purpose register
+*  Replicate a lane with one NEON dup instruction in float32 vector_dup_x/y/z/w and when vector_mix uses the same lane four times: on ARMv7, GCC previously moved the lane through a general purpose register or used a table lookup (vtbl)
 
 ## 2.3.1
 
