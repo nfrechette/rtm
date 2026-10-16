@@ -29,6 +29,7 @@
 *  Divide by the length instead of a multiplication by the reciprocal length to normalize float32 vectors and quaternions with SSE2 and WebAssembly SIMD: the code is faster and more accurate. This applies to vector_normalize, vector_normalize2, vector_normalize3, quat_normalize, quat_lerp, quat_to_axis_angle, quat_get_axis, and the functions that call them
 *  Divide by the sine of the half angle instead of a multiplication by its reciprocal in float32 quat_slerp with SSE2 and WebAssembly SIMD
 *  Multiply by the reciprocal length instead of two vector divisions in float64 quat_normalize: the code is faster
+*  Use one division instead of a reciprocal and a multiplication to scale the result of quat_rotation_log
 
 ## 2.3.1
 

@@ -1511,8 +1511,8 @@ namespace rtm
 		const vector4f input_v = quat_to_vector(input);
 		const scalarf input_w = scalar_clamp(quat_get_w_as_scalar(input), scalar_set(-1.0F), scalar_set(1.0F));
 		const scalarf half_angle = scalar_acos(input_w);
-		const scalarf xyz_inv_len = vector_length_reciprocal3_as_scalar(input_v);
-		vector4f result_xyz = vector_mul(input_v, scalar_mul(xyz_inv_len, half_angle));
+		const scalarf xyz_len = vector_length3_as_scalar(input_v);
+		vector4f result_xyz = vector_mul(input_v, scalar_div(half_angle, xyz_len));
 
 		// If we are near the identity, xyz will be set to our input xyz which should be near zero
 		// For a true identity input, we'll output zero
