@@ -97,7 +97,7 @@ static void test_vqm_impl(const FloatType threshold)
 		Vector4Type scale = vector_set(FloatType(4.0), FloatType(5.0), FloatType(6.0));
 
 		Matrix3x4Type src_mtx = matrix_from_qvv(rotation, translation, scale);
-		TransformType dst_tx = vqm_set(translation, rotation, scale);
+		TransformType dst_tx = vqm_set(rotation, translation, scale);
 		Matrix3x4Type dst_mtx = vqm_to_matrix(dst_tx);
 		CHECK(vector_all_near_equal3(src_mtx.x_axis, dst_mtx.x_axis, threshold));
 		CHECK(vector_all_near_equal3(src_mtx.y_axis, dst_mtx.y_axis, threshold));
@@ -110,12 +110,12 @@ static void test_vqm_impl(const FloatType threshold)
 		QuatType rotation0 = quat_from_euler(scalar_deg_to_rad(FloatType(10.1)), scalar_deg_to_rad(FloatType(41.6)), scalar_deg_to_rad(FloatType(-12.7)));
 		Vector4Type translation0 = vector_set(FloatType(1.0), FloatType(2.0), FloatType(3.0));
 		Vector4Type scale0 = vector_set(FloatType(4.0), FloatType(5.0), FloatType(6.0));
-		TransformType tx0 = vqm_set(translation0, rotation0, scale0);
+		TransformType tx0 = vqm_set(rotation0, translation0, scale0);
 
 		QuatType rotation1 = quat_from_euler(scalar_deg_to_rad(FloatType(-35.2)), scalar_deg_to_rad(FloatType(5.3)), scalar_deg_to_rad(FloatType(72.4)));
 		Vector4Type translation1 = vector_set(FloatType(-8.5), FloatType(0.25), FloatType(14.0));
 		Vector4Type scale1 = vector_set(FloatType(0.5), FloatType(-2.0), FloatType(3.5));
-		TransformType tx1 = vqm_set(translation1, rotation1, scale1);
+		TransformType tx1 = vqm_set(rotation1, translation1, scale1);
 
 		// The function adds each component of the two transforms
 		TransformType add_result = vqm_add(tx0, tx1);
@@ -146,7 +146,7 @@ static void test_vqm_impl(const FloatType threshold)
 		Matrix3x4Type src_mtx = matrix_from_qvv(rotation, translation, scale);
 		src_mtx = matrix_mul(src_mtx, src_mtx);
 
-		TransformType dst_tx = vqm_set(translation, rotation, scale);
+		TransformType dst_tx = vqm_set(rotation, translation, scale);
 		dst_tx = vqm_mul(dst_tx, dst_tx);
 		Matrix3x4Type dst_mtx = vqm_to_matrix(dst_tx);
 		CHECK(vector_all_near_equal3(src_mtx.x_axis, dst_mtx.x_axis, threshold));
@@ -162,8 +162,8 @@ static void test_vqm_impl(const FloatType threshold)
 
 			Matrix3x4Type mtx0 = matrix_from_qvv(rotation, translation, scale);
 			Matrix3x4Type mtx1 = matrix_from_qvv(rotation1, translation1, scale1);
-			TransformType tx0 = vqm_set(translation, rotation, scale);
-			TransformType tx1 = vqm_set(translation1, rotation1, scale1);
+			TransformType tx0 = vqm_set(rotation, translation, scale);
+			TransformType tx1 = vqm_set(rotation1, translation1, scale1);
 
 			Matrix3x4Type ref_01 = matrix_mul(mtx0, mtx1);
 			Matrix3x4Type result_01 = vqm_to_matrix(vqm_mul(tx0, tx1));
@@ -186,7 +186,7 @@ static void test_vqm_impl(const FloatType threshold)
 		src_mtx = matrix_from_qvv(rotation, translation, scale);
 		src_mtx = matrix_mul(src_mtx, src_mtx);
 
-		dst_tx = vqm_set(translation, rotation, scale);
+		dst_tx = vqm_set(rotation, translation, scale);
 		dst_tx = vqm_mul(dst_tx, dst_tx);
 		dst_mtx = vqm_to_matrix(dst_tx);
 		CHECK(vector_all_near_equal3(src_mtx.x_axis, dst_mtx.x_axis, threshold));
@@ -200,7 +200,7 @@ static void test_vqm_impl(const FloatType threshold)
 		src_mtx = matrix_from_qvv(rotation, translation, scale);
 		src_mtx = matrix_mul(src_mtx, src_mtx);
 
-		dst_tx = vqm_set(translation, rotation, scale);
+		dst_tx = vqm_set(rotation, translation, scale);
 		dst_tx = vqm_mul(dst_tx, dst_tx);
 		dst_mtx = vqm_to_matrix(dst_tx);
 		CHECK(vector_all_near_equal3(src_mtx.x_axis, dst_mtx.x_axis, threshold));
@@ -214,7 +214,7 @@ static void test_vqm_impl(const FloatType threshold)
 		src_mtx = matrix_from_qvv(rotation, translation, scale);
 		src_mtx = matrix_mul(src_mtx, src_mtx);
 
-		dst_tx = vqm_set(translation, rotation, scale);
+		dst_tx = vqm_set(rotation, translation, scale);
 		dst_tx = vqm_mul(dst_tx, dst_tx);
 		dst_mtx = vqm_to_matrix(dst_tx);
 		CHECK(vector_all_near_equal3(src_mtx.x_axis, dst_mtx.x_axis, threshold));
@@ -228,7 +228,7 @@ static void test_vqm_impl(const FloatType threshold)
 		src_mtx = matrix_from_qvv(rotation, translation, scale);
 		src_mtx = matrix_mul(src_mtx, src_mtx);
 
-		dst_tx = vqm_set(translation, rotation, scale);
+		dst_tx = vqm_set(rotation, translation, scale);
 		dst_tx = vqm_mul(dst_tx, dst_tx);
 		dst_mtx = vqm_to_matrix(dst_tx);
 		CHECK(vector_all_near_equal3(src_mtx.x_axis, dst_mtx.x_axis, threshold));
@@ -242,7 +242,7 @@ static void test_vqm_impl(const FloatType threshold)
 		src_mtx = matrix_from_qvv(rotation, translation, scale);
 		src_mtx = matrix_mul(src_mtx, src_mtx);
 
-		dst_tx = vqm_set(translation, rotation, scale);
+		dst_tx = vqm_set(rotation, translation, scale);
 		dst_tx = vqm_mul(dst_tx, dst_tx);
 		dst_mtx = vqm_to_matrix(dst_tx);
 		CHECK(vector_all_near_equal3(src_mtx.x_axis, dst_mtx.x_axis, threshold));
@@ -256,7 +256,7 @@ static void test_vqm_impl(const FloatType threshold)
 		src_mtx = matrix_from_qvv(rotation, translation, scale);
 		src_mtx = matrix_mul(src_mtx, src_mtx);
 
-		dst_tx = vqm_set(translation, rotation, scale);
+		dst_tx = vqm_set(rotation, translation, scale);
 		dst_tx = vqm_mul(dst_tx, dst_tx);
 		dst_mtx = vqm_to_matrix(dst_tx);
 		CHECK(vector_all_near_equal3(src_mtx.x_axis, dst_mtx.x_axis, threshold));
@@ -270,7 +270,7 @@ static void test_vqm_impl(const FloatType threshold)
 		QuatType rotation = quat_from_euler(scalar_deg_to_rad(FloatType(10.1)), scalar_deg_to_rad(FloatType(41.6)), scalar_deg_to_rad(FloatType(-12.7)));
 		Vector4Type translation = vector_set(FloatType(1.0), FloatType(2.0), FloatType(3.0));
 		Vector4Type scale = vector_set(FloatType(4.0), FloatType(5.0), FloatType(6.0));
-		TransformType tx = vqm_set(translation, rotation, scale);
+		TransformType tx = vqm_set(rotation, translation, scale);
 
 		// The function multiplies each component of the transform by the scalar
 		const FloatType factor = FloatType(-1.5);
@@ -303,7 +303,7 @@ static void test_vqm_impl(const FloatType threshold)
 		Matrix3x4Type src_mtx = matrix_from_qvv(rotation, translation, scale);
 		Vector4Type src_point = matrix_mul_point3(point, src_mtx);
 
-		TransformType dst_tx = vqm_set(translation, rotation, scale);
+		TransformType dst_tx = vqm_set(rotation, translation, scale);
 		Vector4Type dst_point = vqm_mul_point3(point, dst_tx);
 		CHECK(vector_all_near_equal3(src_point, dst_point, threshold));
 
@@ -317,7 +317,7 @@ static void test_vqm_impl(const FloatType threshold)
 		src_mtx = matrix_from_qvv(rotation, translation, scale);
 		src_point = matrix_mul_point3(point, src_mtx);
 
-		dst_tx = vqm_set(translation, rotation, scale);
+		dst_tx = vqm_set(rotation, translation, scale);
 		dst_point = vqm_mul_point3(point, dst_tx);
 		CHECK(vector_all_near_equal3(src_point, dst_point, threshold));
 
@@ -331,7 +331,7 @@ static void test_vqm_impl(const FloatType threshold)
 		src_mtx = matrix_from_qvv(rotation, translation, scale);
 		src_point = matrix_mul_point3(point, src_mtx);
 
-		dst_tx = vqm_set(translation, rotation, scale);
+		dst_tx = vqm_set(rotation, translation, scale);
 		dst_point = vqm_mul_point3(point, dst_tx);
 		CHECK(vector_all_near_equal3(src_point, dst_point, threshold));
 
@@ -345,7 +345,7 @@ static void test_vqm_impl(const FloatType threshold)
 		src_mtx = matrix_from_qvv(rotation, translation, scale);
 		src_point = matrix_mul_point3(point, src_mtx);
 
-		dst_tx = vqm_set(translation, rotation, scale);
+		dst_tx = vqm_set(rotation, translation, scale);
 		dst_point = vqm_mul_point3(point, dst_tx);
 		CHECK(vector_all_near_equal3(src_point, dst_point, threshold));
 
@@ -359,7 +359,7 @@ static void test_vqm_impl(const FloatType threshold)
 		src_mtx = matrix_from_qvv(rotation, translation, scale);
 		src_point = matrix_mul_point3(point, src_mtx);
 
-		dst_tx = vqm_set(translation, rotation, scale);
+		dst_tx = vqm_set(rotation, translation, scale);
 		dst_point = vqm_mul_point3(point, dst_tx);
 		CHECK(vector_all_near_equal3(src_point, dst_point, threshold));
 
@@ -373,7 +373,7 @@ static void test_vqm_impl(const FloatType threshold)
 		src_mtx = matrix_from_qvv(rotation, translation, scale);
 		src_point = matrix_mul_point3(point, src_mtx);
 
-		dst_tx = vqm_set(translation, rotation, scale);
+		dst_tx = vqm_set(rotation, translation, scale);
 		dst_point = vqm_mul_point3(point, dst_tx);
 		CHECK(vector_all_near_equal3(src_point, dst_point, threshold));
 
@@ -387,7 +387,7 @@ static void test_vqm_impl(const FloatType threshold)
 		src_mtx = matrix_from_qvv(rotation, translation, scale);
 		src_point = matrix_mul_point3(point, src_mtx);
 
-		dst_tx = vqm_set(translation, rotation, scale);
+		dst_tx = vqm_set(rotation, translation, scale);
 		dst_point = vqm_mul_point3(point, dst_tx);
 		CHECK(vector_all_near_equal3(src_point, dst_point, threshold));
 
@@ -407,7 +407,7 @@ static void test_vqm_impl(const FloatType threshold)
 		Matrix3x4Type src_mtx = matrix_from_qvv(rotation, translation, scale);
 		Matrix3x4Type inv_src_mtx = matrix_inverse(src_mtx);
 
-		TransformType dst_tx = vqm_set(translation, rotation, scale);
+		TransformType dst_tx = vqm_set(rotation, translation, scale);
 		TransformType inv_dst_tx = vqm_inverse(dst_tx);
 
 		Matrix3x4Type inv_dst_mtx = vqm_to_matrix(inv_dst_tx);
@@ -439,7 +439,7 @@ static void test_vqm_impl(const FloatType threshold)
 		src_mtx = matrix_from_qvv(rotation, translation, scale);
 		inv_src_mtx = matrix_inverse(src_mtx);
 
-		dst_tx = vqm_set(translation, rotation, scale);
+		dst_tx = vqm_set(rotation, translation, scale);
 		inv_dst_tx = vqm_inverse(dst_tx);
 
 		inv_dst_mtx = vqm_to_matrix(inv_dst_tx);
@@ -471,7 +471,7 @@ static void test_vqm_impl(const FloatType threshold)
 		src_mtx = matrix_from_qvv(rotation, translation, scale);
 		inv_src_mtx = matrix_inverse(src_mtx);
 
-		dst_tx = vqm_set(translation, rotation, scale);
+		dst_tx = vqm_set(rotation, translation, scale);
 		inv_dst_tx = vqm_inverse(dst_tx);
 
 		inv_dst_mtx = vqm_to_matrix(inv_dst_tx);
@@ -503,7 +503,7 @@ static void test_vqm_impl(const FloatType threshold)
 		src_mtx = matrix_from_qvv(rotation, translation, scale);
 		inv_src_mtx = matrix_inverse(src_mtx);
 
-		dst_tx = vqm_set(translation, rotation, scale);
+		dst_tx = vqm_set(rotation, translation, scale);
 		inv_dst_tx = vqm_inverse(dst_tx);
 
 		inv_dst_mtx = vqm_to_matrix(inv_dst_tx);

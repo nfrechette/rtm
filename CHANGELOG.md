@@ -33,6 +33,8 @@
 *  Replicate a lane with one NEON dup instruction in float32 vector_dup_x/y/z/w and when vector_mix uses the same lane four times: on ARMv7, GCC previously moved the lane through a general purpose register or used a table lookup (vtbl)
 *  Remove the deprecated `float_traits` type: use `related_types`
 *  Remove the deprecated implicit coercion to `scalarf`, `scalard`, `vector4f`, and `vector4d`: use the functions with the `as_scalar` and `as_vector` suffixes
+*  Change the argument order of the experimental `vqm_set` to rotation, translation, and scale, as `qvv_set` uses
+*  Rename the experimental `qvv_normalize` and `qvv_is_finite` for `vqmf` and `vqmd` to `vqm_normalize` and `vqm_is_finite`
 
 ## 2.3.1
 
