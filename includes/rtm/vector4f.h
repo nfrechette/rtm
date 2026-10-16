@@ -4464,13 +4464,15 @@ namespace rtm
 		// All comes from the same position
 		if (rtm_impl::static_condition<comp0 == comp1 && comp0 == comp2 && comp0 == comp3>::test())
 		{
-			// All comes from the same position of input0
-			if (rtm_impl::static_condition<rtm_impl::is_mix_xyzw(comp0)>::test())
-				return vmovq_n_f32(vgetq_lane_f32(input0, int(comp0) % 4));
+			const float32x4_t input = rtm_impl::is_mix_xyzw(comp0) ? input0 : input1;
 
-			// All comes from the same position of input1
-			if (rtm_impl::static_condition<rtm_impl::is_mix_abcd(comp0)>::test())
-				return vmovq_n_f32(vgetq_lane_f32(input1, int(comp0) % 4));
+#if defined(RTM_NEON64_INTRINSICS)
+			return vdupq_laneq_f32(input, int(comp0) % 4);
+#else
+			// ARMv7 can only replicate a lane of a 64 bit register
+			const float32x2_t input_half = (int(comp0) % 4) < 2 ? vget_low_f32(input) : vget_high_f32(input);
+			return vdupq_lane_f32(input_half, int(comp0) % 2);
+#endif
 		}
 
 		// Fallback to handle remaining cases
@@ -4517,8 +4519,10 @@ namespace rtm
 		return _mm_shuffle_ps(input, input, _MM_SHUFFLE(0, 0, 0, 0));
 #elif defined(RTM_WASM128_INTRINSICS)
 		return wasm_i32x4_shuffle(input, input, 0, 0, 0, 0);
+#elif defined(RTM_NEON64_INTRINSICS)
+		return vdupq_laneq_f32(input, 0);
 #elif defined(RTM_NEON_INTRINSICS)
-		return vmovq_n_f32(vgetq_lane_f32(input, 0));
+		return vdupq_lane_f32(vget_low_f32(input), 0);
 #else
 		return vector4f{ input.x, input.x, input.x, input.x };
 #endif
@@ -4533,8 +4537,10 @@ namespace rtm
 		return _mm_shuffle_ps(input, input, _MM_SHUFFLE(1, 1, 1, 1));
 #elif defined(RTM_WASM128_INTRINSICS)
 		return wasm_i32x4_shuffle(input, input, 1, 1, 1, 1);
+#elif defined(RTM_NEON64_INTRINSICS)
+		return vdupq_laneq_f32(input, 1);
 #elif defined(RTM_NEON_INTRINSICS)
-		return vmovq_n_f32(vgetq_lane_f32(input, 1));
+		return vdupq_lane_f32(vget_low_f32(input), 1);
 #else
 		return vector4f{ input.y, input.y, input.y, input.y };
 #endif
@@ -4549,8 +4555,10 @@ namespace rtm
 		return _mm_shuffle_ps(input, input, _MM_SHUFFLE(2, 2, 2, 2));
 #elif defined(RTM_WASM128_INTRINSICS)
 		return wasm_i32x4_shuffle(input, input, 2, 2, 2, 2);
+#elif defined(RTM_NEON64_INTRINSICS)
+		return vdupq_laneq_f32(input, 2);
 #elif defined(RTM_NEON_INTRINSICS)
-		return vmovq_n_f32(vgetq_lane_f32(input, 2));
+		return vdupq_lane_f32(vget_high_f32(input), 0);
 #else
 		return vector4f{ input.z, input.z, input.z, input.z };
 #endif
@@ -4565,8 +4573,10 @@ namespace rtm
 		return _mm_shuffle_ps(input, input, _MM_SHUFFLE(3, 3, 3, 3));
 #elif defined(RTM_WASM128_INTRINSICS)
 		return wasm_i32x4_shuffle(input, input, 3, 3, 3, 3);
+#elif defined(RTM_NEON64_INTRINSICS)
+		return vdupq_laneq_f32(input, 3);
 #elif defined(RTM_NEON_INTRINSICS)
-		return vmovq_n_f32(vgetq_lane_f32(input, 3));
+		return vdupq_lane_f32(vget_high_f32(input), 1);
 #else
 		return vector4f{ input.w, input.w, input.w, input.w };
 #endif
