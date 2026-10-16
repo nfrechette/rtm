@@ -529,6 +529,67 @@ static void test_vqm_impl(const FloatType threshold)
 		CHECK(vector_all_near_equal3(inverse_mul_result.z_axis, identity.z_axis, threshold));
 		CHECK(vector_all_near_equal3(inverse_mul_result.translation, identity.translation, threshold));
 	}
+
+	// VQM normalize validation
+	{
+		Vector4Type translation = vector_set(FloatType(1.0), FloatType(2.0), FloatType(3.0));
+		Vector4Type scale = vector_set(FloatType(4.0), FloatType(-5.0), FloatType(6.0));
+
+		QuatType rotation = quat_from_euler(scalar_deg_to_rad(FloatType(10.1)), scalar_deg_to_rad(FloatType(41.6)), scalar_deg_to_rad(FloatType(-12.7)));
+		TransformType tx = vqm_set(rotation, translation, scale);
+		CHECK(quat_is_normalized(vqm_normalize(tx).rotation, threshold));
+
+		QuatType quat = quat_set(FloatType(-0.001138), FloatType(0.91623), FloatType(-1.624598), FloatType(0.715671));
+		tx = vqm_set(quat, translation, scale);
+		CHECK(!quat_is_normalized(tx.rotation, threshold));
+
+		TransformType normalize_result = vqm_normalize(tx);
+		CHECK(quat_is_normalized(normalize_result.rotation, threshold));
+		CHECK(quat_near_equal(normalize_result.rotation, quat_normalize(quat), threshold));
+		CHECK(vector_all_near_equal3(normalize_result.x_axis, tx.x_axis, threshold));
+		CHECK(vector_all_near_equal3(normalize_result.y_axis, tx.y_axis, threshold));
+		CHECK(vector_all_near_equal3(normalize_result.z_axis, tx.z_axis, threshold));
+		CHECK(vector_all_near_equal3(normalize_result.translation, tx.translation, threshold));
+	}
+
+	// VQM is_finite validation
+	{
+		const FloatType inf = std::numeric_limits<FloatType>::infinity();
+		const FloatType nan = std::numeric_limits<FloatType>::quiet_NaN();
+		const FloatType one = FloatType(1.0);
+
+		const QuatType quat0 = quat_from_euler(scalar_deg_to_rad(FloatType(30.0)), scalar_deg_to_rad(FloatType(-45.0)), scalar_deg_to_rad(FloatType(90.0)));
+		const QuatType quat_inf = quat_set(inf, inf, inf, inf);
+		const QuatType quat_nan = quat_set(nan, nan, nan, nan);
+
+		const Vector4Type trans0 = vector_set(FloatType(-0.001138), FloatType(0.91623), FloatType(-1.624598));
+		const Vector4Type scale0 = vector_set(FloatType(-1.915), FloatType(0.23656), FloatType(-3.7811));
+		const Vector4Type vec_inf = vector_set(inf, inf, inf, inf);
+		const Vector4Type vec_nan = vector_set(nan, nan, nan, nan);
+
+		const TransformType identity = vqm_identity();
+		CHECK(vqm_is_finite(identity) == true);
+		CHECK(vqm_is_finite(vqm_set(quat0, trans0, scale0)) == true);
+		CHECK(vqm_is_finite(vqm_set(quat_inf, trans0, scale0)) == false);
+		CHECK(vqm_is_finite(vqm_set(quat_nan, trans0, scale0)) == false);
+		CHECK(vqm_is_finite(vqm_set(quat0, vec_inf, scale0)) == false);
+		CHECK(vqm_is_finite(vqm_set(quat0, vec_nan, scale0)) == false);
+		CHECK(vqm_is_finite(vqm_set(quat0, trans0, vec_inf)) == false);
+		CHECK(vqm_is_finite(vqm_set(quat0, trans0, vec_nan)) == false);
+		CHECK(vqm_is_finite(vqm_set(quat_inf, vec_inf, vec_inf)) == false);
+		CHECK(vqm_is_finite(vqm_set(quat_nan, vec_nan, vec_nan)) == false);
+
+		// vqm_set puts the scale [x], [y], and [z] in the x_axis, y_axis, and z_axis: test each axis
+		CHECK(vqm_is_finite(vqm_set(quat0, trans0, vector_set(inf, one, one))) == false);
+		CHECK(vqm_is_finite(vqm_set(quat0, trans0, vector_set(one, inf, one))) == false);
+		CHECK(vqm_is_finite(vqm_set(quat0, trans0, vector_set(one, one, inf))) == false);
+		CHECK(vqm_is_finite(vqm_set(quat0, trans0, vector_set(nan, one, one))) == false);
+		CHECK(vqm_is_finite(vqm_set(quat0, trans0, vector_set(one, nan, one))) == false);
+		CHECK(vqm_is_finite(vqm_set(quat0, trans0, vector_set(one, one, nan))) == false);
+
+		// The translation [w] is undefined: it does not change the result
+		CHECK(vqm_is_finite(vqm_set(quat0, vector_set(FloatType(1.0), FloatType(2.0), FloatType(3.0), inf), scale0)) == true);
+	}
 }
 
 TEST_CASE("vqmf math", "[math][vqm]")
