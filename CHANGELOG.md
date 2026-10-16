@@ -25,6 +25,7 @@
 *  Use a float64 default threshold in quat_near_identity (double): 2.82729655E-7 rad (an error of 1.0E-14 on [w]) replaces the float32 value of 0.00284714461 rad. To keep the previous behavior, give 0.00284714461 as the threshold
 *  Use a square root and a division instead of the reciprocal square root estimate in float32 quat_normalize and quat_lerp with SSE2: the results are more accurate and do not change between Intel and AMD CPUs
 *  Use a division instead of the reciprocal estimate in vector_reciprocal on ARMv7: the results are more accurate
+*  Use a square root instead of two reciprocals in quat_from_matrix
 
 ## 2.3.1
 
