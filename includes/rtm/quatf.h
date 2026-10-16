@@ -1090,18 +1090,20 @@ namespace rtm
 		__m128 x2y2z2w2_0_0_0 = _mm_add_ps(x2z2_y2w2_0_0, y2w2_0_0_0);
 
 		// Keep the dot product result as a scalar within the first lane, it is faster to
-		// calculate the square root and the division of a single lane VS all 4 lanes
+		// calculate the square root of a single lane VS all 4 lanes
 		__m128 dot = x2y2z2w2_0_0_0;
 
-		// Calculate the inverse length of our vector with a square root and a division.
+		// Calculate the length of our vector with a square root.
 		// We do not use the reciprocal square root estimate because its precision changes between CPU vendors.
-		__m128 inv_len_s = _mm_div_ss(_mm_set_ss(1.0F), _mm_sqrt_ss(dot));
+		__m128 len_s = _mm_sqrt_ss(dot);
 
-		// Broadcast the vector length reciprocal to all 4 lanes in order to multiply it with the vector
-		__m128 inv_len = _mm_shuffle_ps(inv_len_s, inv_len_s, _MM_SHUFFLE(0, 0, 0, 0));
+		// Broadcast the vector length to all 4 lanes in order to divide the vector with it
+		__m128 len = _mm_shuffle_ps(len_s, len_s, _MM_SHUFFLE(0, 0, 0, 0));
 
-		// Multiply the rotation by it's inverse length in order to normalize it
-		return _mm_mul_ps(input, inv_len);
+		// Divide the rotation by its length in order to normalize it.
+		// A vector division costs the same as a scalar division, and one division is more accurate
+		// than a division followed by a multiplication.
+		return _mm_div_ps(input, len);
 #elif defined(RTM_WASM128_INTRINSICS)
 		// We first calculate the dot product to get the length squared: dot(input, input)
 		// The result is in all 4 lanes
@@ -1111,9 +1113,8 @@ namespace rtm
 		v128_t y2w2_x2z2_y2w2_x2z2 = wasm_i32x4_shuffle(x2z2_y2w2_x2z2_y2w2, x2z2_y2w2_x2z2_y2w2, 1, 0, 3, 2);
 		v128_t dot = wasm_f32x4_add(x2z2_y2w2_x2z2_y2w2, y2w2_x2z2_y2w2_x2z2);
 
-		// WASM does not have a reciprocal square root estimate, use sqrt/div/mul to normalize
-		v128_t inv_len = wasm_f32x4_div(wasm_f32x4_splat(1.0F), wasm_f32x4_sqrt(dot));
-		return wasm_f32x4_mul(input, inv_len);
+		// Divide by the length to normalize, as with SSE2
+		return wasm_f32x4_div(input, wasm_f32x4_sqrt(dot));
 #elif defined (RTM_NEON_INTRINSICS)
 		// Use sqrt/div/mul to normalize because the sqrt/div are faster than rsqrt
 		float inv_len = 1.0F / scalar_sqrt(vector_length_squared(input));
@@ -1214,18 +1215,20 @@ namespace rtm
 		__m128 x2y2z2w2_0_0_0 = _mm_add_ps(x2z2_y2w2_0_0, y2w2_0_0_0);
 
 		// Keep the dot product result as a scalar within the first lane, it is faster to
-		// calculate the square root and the division of a single lane VS all 4 lanes
+		// calculate the square root of a single lane VS all 4 lanes
 		dot = x2y2z2w2_0_0_0;
 
-		// Calculate the inverse length of our vector with a square root and a division.
+		// Calculate the length of our vector with a square root.
 		// We do not use the reciprocal square root estimate because its precision changes between CPU vendors.
-		__m128 inv_len_s = _mm_div_ss(_mm_set_ss(1.0F), _mm_sqrt_ss(dot));
+		__m128 len_s = _mm_sqrt_ss(dot);
 
-		// Broadcast the vector length reciprocal to all 4 lanes in order to multiply it with the vector
-		__m128 inv_len = _mm_shuffle_ps(inv_len_s, inv_len_s, _MM_SHUFFLE(0, 0, 0, 0));
+		// Broadcast the vector length to all 4 lanes in order to divide the vector with it
+		__m128 len = _mm_shuffle_ps(len_s, len_s, _MM_SHUFFLE(0, 0, 0, 0));
 
-		// Multiply the rotation by it's inverse length in order to normalize it
-		return _mm_mul_ps(interpolated_rotation, inv_len);
+		// Divide the rotation by its length in order to normalize it.
+		// A vector division costs the same as a scalar division, and one division is more accurate
+		// than a division followed by a multiplication.
+		return _mm_div_ps(interpolated_rotation, len);
 #elif defined(RTM_WASM128_INTRINSICS)
 		// Calculate the vector4 dot product in all 4 lanes: dot(start, end)
 		v128_t dot;
@@ -1255,9 +1258,8 @@ namespace rtm
 		v128_t y2w2_x2z2_y2w2_x2z2 = wasm_i32x4_shuffle(x2z2_y2w2_x2z2_y2w2, x2z2_y2w2_x2z2_y2w2, 1, 0, 3, 2);
 		v128_t len_sq = wasm_f32x4_add(x2z2_y2w2_x2z2_y2w2, y2w2_x2z2_y2w2_x2z2);
 
-		// WASM does not have a reciprocal square root estimate, use sqrt/div/mul to normalize
-		v128_t inv_len = wasm_f32x4_div(wasm_f32x4_splat(1.0F), wasm_f32x4_sqrt(len_sq));
-		return wasm_f32x4_mul(interpolated_rotation, inv_len);
+		// Divide by the length to normalize, as with SSE2
+		return wasm_f32x4_div(interpolated_rotation, wasm_f32x4_sqrt(len_sq));
 #elif defined (RTM_NEON64_INTRINSICS)
 		// On ARM64 with NEON, we load 1.0 once and use it twice which is faster than
 		// using a AND/XOR with the bias (same number of instructions)
@@ -1368,18 +1370,20 @@ namespace rtm
 		__m128 x2y2z2w2_0_0_0 = _mm_add_ps(x2z2_y2w2_0_0, y2w2_0_0_0);
 
 		// Keep the dot product result as a scalar within the first lane, it is faster to
-		// calculate the square root and the division of a single lane VS all 4 lanes
+		// calculate the square root of a single lane VS all 4 lanes
 		dot = x2y2z2w2_0_0_0;
 
-		// Calculate the inverse length of our vector with a square root and a division.
+		// Calculate the length of our vector with a square root.
 		// We do not use the reciprocal square root estimate because its precision changes between CPU vendors.
-		__m128 inv_len_s = _mm_div_ss(_mm_set_ss(1.0F), _mm_sqrt_ss(dot));
+		__m128 len_s = _mm_sqrt_ss(dot);
 
-		// Broadcast the vector length reciprocal to all 4 lanes in order to multiply it with the vector
-		__m128 inv_len = _mm_shuffle_ps(inv_len_s, inv_len_s, _MM_SHUFFLE(0, 0, 0, 0));
+		// Broadcast the vector length to all 4 lanes in order to divide the vector with it
+		__m128 len = _mm_shuffle_ps(len_s, len_s, _MM_SHUFFLE(0, 0, 0, 0));
 
-		// Multiply the rotation by it's inverse length in order to normalize it
-		return _mm_mul_ps(interpolated_rotation, inv_len);
+		// Divide the rotation by its length in order to normalize it.
+		// A vector division costs the same as a scalar division, and one division is more accurate
+		// than a division followed by a multiplication.
+		return _mm_div_ps(interpolated_rotation, len);
 	}
 #endif
 
@@ -1570,7 +1574,7 @@ namespace rtm
 		out_angle = scalar_cast(scalar_acos(input_w)) * 2.0F;
 
 		const float scale_sq = scalar_max(1.0F - quat_get_w(input) * quat_get_w(input), 0.0F);
-		out_axis = scale_sq >= epsilon_squared ? vector_mul(quat_to_vector(input), vector_set(scalar_sqrt_reciprocal(scale_sq))) : vector_set(1.0F, 0.0F, 0.0F);
+		out_axis = scale_sq >= epsilon_squared ? RTM_IMPL_VECTOR4F_NORMALIZE(quat_to_vector(input), scalar_set(scale_sq)) : vector_set(1.0F, 0.0F, 0.0F);
 	}
 
 	//////////////////////////////////////////////////////////////////////////
@@ -1582,7 +1586,7 @@ namespace rtm
 		constexpr float epsilon_squared = epsilon * epsilon;
 
 		const float scale_sq = scalar_max(1.0F - quat_get_w(input) * quat_get_w(input), 0.0F);
-		return scale_sq >= epsilon_squared ? vector_mul(quat_to_vector(input), vector_set(scalar_sqrt_reciprocal(scale_sq))) : vector_set(1.0F, 0.0F, 0.0F);
+		return scale_sq >= epsilon_squared ? RTM_IMPL_VECTOR4F_NORMALIZE(quat_to_vector(input), scalar_set(scale_sq)) : vector_set(1.0F, 0.0F, 0.0F);
 	}
 
 	//////////////////////////////////////////////////////////////////////////

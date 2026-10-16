@@ -26,6 +26,7 @@
 *  Use a square root and a division instead of the reciprocal square root estimate in float32 quat_normalize and quat_lerp with SSE2: the results are more accurate and do not change between Intel and AMD CPUs
 *  Use a division instead of the reciprocal estimate in vector_reciprocal on ARMv7: the results are more accurate
 *  Use a square root instead of two reciprocals in quat_from_matrix
+*  Divide by the length instead of a multiplication by the reciprocal length to normalize float32 vectors and quaternions with SSE2 and WebAssembly SIMD: the code is faster and more accurate. This applies to vector_normalize, vector_normalize2, vector_normalize3, quat_normalize, quat_lerp, quat_to_axis_angle, quat_get_axis, and the functions that call them
 
 ## 2.3.1
 
