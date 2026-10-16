@@ -918,12 +918,10 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE quatd RTM_SIMD_CALL quat_normalize(quatd_arg0 input) RTM_NO_EXCEPT
 	{
-		// TODO: Use high precision recip sqrt function and vector_mul
-		double length = quat_length(input);
-		//float length_recip = quat_length_reciprocal(input);
-		vector4d input_vector = quat_to_vector(input);
-		//return vector_to_quat(vector_mul(input_vector, length_recip));
-		return vector_to_quat(vector_div(input_vector, vector_set(length)));
+		// Multiply by the reciprocal length: for float64, one scalar division and a multiplication
+		// are faster than two vector divisions
+		const scalard len_sq = quat_length_squared_as_scalar(input);
+		return vector_to_quat(vector_mul(quat_to_vector(input), scalar_sqrt_reciprocal(len_sq)));
 	}
 
 	//////////////////////////////////////////////////////////////////////////
