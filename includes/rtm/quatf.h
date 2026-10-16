@@ -1411,12 +1411,13 @@ namespace rtm
 		scalarf cos_half_angle = vector_get_x_as_scalar(cos_half_angle_v);
 		scalarf half_angle = scalar_acos(cos_half_angle);
 		scalarf sin_half_angle = scalar_sqrt(scalar_sub(scalar_set(1.0F), scalar_mul(cos_half_angle, cos_half_angle)));
-		scalarf inv_sin_half_angle = scalar_reciprocal(sin_half_angle);
 
 		scalarf start_contribution_angle = scalar_mul(scalar_sub(scalar_set(1.0F), alpha), half_angle);
 		scalarf end_contribution_angle = scalar_mul(alpha, half_angle);
 		vector4f contribution_angles = vector_set(start_contribution_angle, end_contribution_angle, start_contribution_angle, end_contribution_angle);
-		vector4f contributions = vector_mul(vector_sin(contribution_angles), inv_sin_half_angle);
+		// A vector division costs the same as a scalar division, and one division is more accurate
+		// than a division followed by a multiplication
+		vector4f contributions = vector_div(vector_sin(contribution_angles), vector_set(sin_half_angle));
 		vector4f start_contribution = vector_dup_x(contributions);
 		vector4f end_contribution = vector_dup_y(contributions);
 
@@ -1449,12 +1450,19 @@ namespace rtm
 		scalarf cos_half_angle = vector_get_x_as_scalar(cos_half_angle_v);
 		scalarf half_angle = scalar_acos(cos_half_angle);
 		scalarf sin_half_angle = scalar_sqrt(scalar_sub(scalar_set(1.0F), scalar_mul(cos_half_angle, cos_half_angle)));
-		scalarf inv_sin_half_angle = scalar_reciprocal(sin_half_angle);
 
 		scalarf start_contribution_angle = scalar_mul(scalar_sub(scalar_set(1.0F), alpha_s), half_angle);
 		scalarf end_contribution_angle = scalar_mul(alpha_s, half_angle);
 		vector4f contribution_angles = vector_set(start_contribution_angle, end_contribution_angle, start_contribution_angle, end_contribution_angle);
-		vector4f contributions = vector_mul(vector_sin(contribution_angles), inv_sin_half_angle);
+#if defined(RTM_SSE2_INTRINSICS) || defined(RTM_WASM128_INTRINSICS)
+		// A vector division costs the same as a scalar division, and one division is more accurate
+		// than a division followed by a multiplication
+		vector4f contributions = vector_div(vector_sin(contribution_angles), vector_set(sin_half_angle));
+#else
+		// On ARM64, the vector division is slower than the scalar division on some processors.
+		// ARMv7 and the scalar code path do not have a vector division.
+		vector4f contributions = vector_mul(vector_sin(contribution_angles), scalar_reciprocal(sin_half_angle));
+#endif
 		vector4f start_contribution = vector_dup_x(contributions);
 		vector4f end_contribution = vector_dup_y(contributions);
 
