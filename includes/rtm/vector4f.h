@@ -1433,15 +1433,9 @@ namespace rtm
 #elif defined(RTM_NEON64_INTRINSICS)
 		return vdivq_f32(vdupq_n_f32(1.0F), input);
 #elif defined(RTM_NEON_INTRINSICS)
-		// Perform two passes of Newton-Raphson iteration on the hardware estimate
-		float32x4_t x0 = vrecpeq_f32(input);
-
-		// First iteration
-		float32x4_t x1 = vmulq_f32(x0, vrecpsq_f32(x0, input));
-
-		// Second iteration
-		float32x4_t x2 = vmulq_f32(x1, vrecpsq_f32(x1, input));
-		return x2;
+		// ARMv7 does not have a vector division. We use the scalar division instead of the
+		// reciprocal estimate because the estimate does not give the same result as the other code paths.
+		return vector_div(vector_set(1.0F), input);
 #else
 		return vector_div(vector_set(1.0F), input);
 #endif

@@ -1090,27 +1090,15 @@ namespace rtm
 		__m128 x2y2z2w2_0_0_0 = _mm_add_ps(x2z2_y2w2_0_0, y2w2_0_0_0);
 
 		// Keep the dot product result as a scalar within the first lane, it is faster to
-		// calculate the reciprocal square root of a single lane VS all 4 lanes
+		// calculate the square root and the division of a single lane VS all 4 lanes
 		__m128 dot = x2y2z2w2_0_0_0;
 
-		// Calculate the reciprocal square root to get the inverse length of our vector
-		// Perform two passes of Newton-Raphson iteration on the hardware estimate
-		__m128 half = _mm_set_ss(0.5F);
-		__m128 input_half_v = _mm_mul_ss(dot, half);
-		__m128 x0 = _mm_rsqrt_ss(dot);
-
-		// First iteration
-		__m128 x1 = _mm_mul_ss(x0, x0);
-		x1 = _mm_sub_ss(half, _mm_mul_ss(input_half_v, x1));
-		x1 = _mm_add_ss(_mm_mul_ss(x0, x1), x0);
-
-		// Second iteration
-		__m128 x2 = _mm_mul_ss(x1, x1);
-		x2 = _mm_sub_ss(half, _mm_mul_ss(input_half_v, x2));
-		x2 = _mm_add_ss(_mm_mul_ss(x1, x2), x1);
+		// Calculate the inverse length of our vector with a square root and a division.
+		// We do not use the reciprocal square root estimate because its precision changes between CPU vendors.
+		__m128 inv_len_s = _mm_div_ss(_mm_set_ss(1.0F), _mm_sqrt_ss(dot));
 
 		// Broadcast the vector length reciprocal to all 4 lanes in order to multiply it with the vector
-		__m128 inv_len = _mm_shuffle_ps(x2, x2, _MM_SHUFFLE(0, 0, 0, 0));
+		__m128 inv_len = _mm_shuffle_ps(inv_len_s, inv_len_s, _MM_SHUFFLE(0, 0, 0, 0));
 
 		// Multiply the rotation by it's inverse length in order to normalize it
 		return _mm_mul_ps(input, inv_len);
@@ -1226,27 +1214,15 @@ namespace rtm
 		__m128 x2y2z2w2_0_0_0 = _mm_add_ps(x2z2_y2w2_0_0, y2w2_0_0_0);
 
 		// Keep the dot product result as a scalar within the first lane, it is faster to
-		// calculate the reciprocal square root of a single lane VS all 4 lanes
+		// calculate the square root and the division of a single lane VS all 4 lanes
 		dot = x2y2z2w2_0_0_0;
 
-		// Calculate the reciprocal square root to get the inverse length of our vector
-		// Perform two passes of Newton-Raphson iteration on the hardware estimate
-		__m128 half = _mm_set_ss(0.5F);
-		__m128 input_half_v = _mm_mul_ss(dot, half);
-		__m128 x0 = _mm_rsqrt_ss(dot);
-
-		// First iteration
-		__m128 x1 = _mm_mul_ss(x0, x0);
-		x1 = _mm_sub_ss(half, _mm_mul_ss(input_half_v, x1));
-		x1 = _mm_add_ss(_mm_mul_ss(x0, x1), x0);
-
-		// Second iteration
-		__m128 x2 = _mm_mul_ss(x1, x1);
-		x2 = _mm_sub_ss(half, _mm_mul_ss(input_half_v, x2));
-		x2 = _mm_add_ss(_mm_mul_ss(x1, x2), x1);
+		// Calculate the inverse length of our vector with a square root and a division.
+		// We do not use the reciprocal square root estimate because its precision changes between CPU vendors.
+		__m128 inv_len_s = _mm_div_ss(_mm_set_ss(1.0F), _mm_sqrt_ss(dot));
 
 		// Broadcast the vector length reciprocal to all 4 lanes in order to multiply it with the vector
-		__m128 inv_len = _mm_shuffle_ps(x2, x2, _MM_SHUFFLE(0, 0, 0, 0));
+		__m128 inv_len = _mm_shuffle_ps(inv_len_s, inv_len_s, _MM_SHUFFLE(0, 0, 0, 0));
 
 		// Multiply the rotation by it's inverse length in order to normalize it
 		return _mm_mul_ps(interpolated_rotation, inv_len);
@@ -1392,27 +1368,15 @@ namespace rtm
 		__m128 x2y2z2w2_0_0_0 = _mm_add_ps(x2z2_y2w2_0_0, y2w2_0_0_0);
 
 		// Keep the dot product result as a scalar within the first lane, it is faster to
-		// calculate the reciprocal square root of a single lane VS all 4 lanes
+		// calculate the square root and the division of a single lane VS all 4 lanes
 		dot = x2y2z2w2_0_0_0;
 
-		// Calculate the reciprocal square root to get the inverse length of our vector
-		// Perform two passes of Newton-Raphson iteration on the hardware estimate
-		__m128 half = _mm_set_ss(0.5F);
-		__m128 input_half_v = _mm_mul_ss(dot, half);
-		__m128 x0 = _mm_rsqrt_ss(dot);
-
-		// First iteration
-		__m128 x1 = _mm_mul_ss(x0, x0);
-		x1 = _mm_sub_ss(half, _mm_mul_ss(input_half_v, x1));
-		x1 = _mm_add_ss(_mm_mul_ss(x0, x1), x0);
-
-		// Second iteration
-		__m128 x2 = _mm_mul_ss(x1, x1);
-		x2 = _mm_sub_ss(half, _mm_mul_ss(input_half_v, x2));
-		x2 = _mm_add_ss(_mm_mul_ss(x1, x2), x1);
+		// Calculate the inverse length of our vector with a square root and a division.
+		// We do not use the reciprocal square root estimate because its precision changes between CPU vendors.
+		__m128 inv_len_s = _mm_div_ss(_mm_set_ss(1.0F), _mm_sqrt_ss(dot));
 
 		// Broadcast the vector length reciprocal to all 4 lanes in order to multiply it with the vector
-		__m128 inv_len = _mm_shuffle_ps(x2, x2, _MM_SHUFFLE(0, 0, 0, 0));
+		__m128 inv_len = _mm_shuffle_ps(inv_len_s, inv_len_s, _MM_SHUFFLE(0, 0, 0, 0));
 
 		// Multiply the rotation by it's inverse length in order to normalize it
 		return _mm_mul_ps(interpolated_rotation, inv_len);
