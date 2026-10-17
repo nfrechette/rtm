@@ -42,59 +42,51 @@ namespace rtm
 	RTM_IMPL_VERSION_NAMESPACE_BEGIN
 
 	//////////////////////////////////////////////////////////////////////////
-	// See here for details: The VQM-Group and its Applications
-	//                       By Michael Aristidou and Xin Li
+	// Reference: "The VQM-Group and its Applications" by Michael Aristidou and Xin Li.
 	//
-	// Key insights:
-	// - We wish to maintain rotation, translation, and scale/shear separately as they do not
-	//   interpolate the same way. In particular, scale/shear and rotation mix together in the
-	//   upper 3x3 part of affine matrices and it is difficult to manage them correctly as there
-	//   is no unique way to decompose them.
-	// - Let us define [T1, R1, S1] and [T2, R2, S2] as two transforms with 3 affine matrices each
-	//   We will ignore translation since it mostly lives in its own dimension (4th) and does not
-	//   interfere with scale/shear/rotation.
-	// - We define multiplication as follow:
-	//   (R2 * S2) * (R1 * S1) = (R3 * S3)
-	//   By construction, we wish R3 = R2 * R1, we substitute
-	//   (R2 * S2) * (R1 * S1) = (R2 * R1 * S3)
-	//   We solve for S3, which is the scale/shear matrix we are looking for
-	//   (R2^-1 * R2) * S2 * (R1 * S1) = R1 * S3
-	//   R1^-1 * (R2^-1 * R2) * S2 * (R1 * S1) = S3
-	//   R2^-1 * R2 cancel out and we get
-	//   R1^-1 * S2 * R1 * S1 = S3
-	//   In plain english, to compute our scale/shear matrix, we rotate S1 into the space of S2
-	//   by multiplying with R1, then we scale/shear the result, and return into the space of S1
-	//   by applying the inverse R1 rotation. A sensible result.
-	// - This is all well and good with matrices, but we wish to retain rotation as a quaternion
-	//   for its numerical stability, compact nature, and superior interpolation. How do we multiply
-	//   a matrix with a quaternion?
-	// - A key insight is that if we apply a rotation matrix onto any other affine matrix (e.g. a
-	//   scale/shear or other pure rotation matrix), what occurs under the matrix multiplication is
-	//   that each column of the affine matrix is rotated by our rotation matrix. This is something
-	//   we can easily achieve as well with a quaternion: by using the sandwich product. From this
-	//   key insight, the various identities in the paper follow as matrix multiplication with a pure
-	//   rotation matrix is equivalent to the sandwich product of each column of the other matrix.
+	// Conventions:
+	// - RTM uses row vectors. A VQM transform T = [v, q, M] transforms a point p as follows:
+	//   p' = p * M * R + v
+	//   M is the 3x3 scale/shear matrix, R is the rotation matrix of the quaternion q, and v is the translation.
+	// - R^T is the transpose of R. It is the rotation matrix of the conjugate of q.
+	// - quat_mul_vector3(a, q) is equal to a * R. Thus a rotation of each row of a matrix A with q gives A * R.
 	//
-	// Some VQM identities:
-	// - If we treat M as a homogenous quaternion matrix, q a quaternion, and r a pure quaternion,
-	//   then: q * (M * r) * q^-1 = (q * M * q^-1) * r
-	//   In plain english, applying scale/shear to a point and rotating that point is equivalent to
-	//   rotating the scale/shear matrix and applying the result to that point.
+	// Why VQM:
+	// - Rotation, translation, and scale/shear do not interpolate in the same way. Thus VQM keeps them separate.
+	// - In an affine matrix, the scale/shear and the rotation mix in the upper 3x3 part.
+	//   More than one decomposition gives the same 3x3 part. Thus it is difficult to find them again.
+	// - A quaternion is compact and numerically stable, and it interpolates well. Thus VQM keeps the rotation as a quaternion.
 	//
-	// - If M and N are homogenous quaternion matrices, and q1 and q2 quaternions then:
-	//   (q2 * N * q2^-1) * (q1 * M * q1^-1) = q2 * (N * (q1 * M * q1^-1)) * q2^-1
-	//   In plain english, the product of two rotated scale/shear matrices is equivalent to the
-	//   rotated product of one scale/shear matrix with another rotated scale/shear matrix meaning
-	//   rotation can occur before the multiplication or after due to assossiativity. This is
-	//   straightforward to see if the rotations are expressed in matrix form.
+	// Multiplication:
+	// - Let T1 = [v1, q1, M1] and T2 = [v2, q2, M2]. T1 transforms the point first, then T2 transforms the result:
+	//   p'' = (p * M1 * R1 + v1) * M2 * R2 + v2
+	//   p'' = p * M1 * R1 * M2 * R2 + v1 * M2 * R2 + v2
+	// - The result is T3 = [v3, q3, M3] with R3 = R1 * R2. Then:
+	//   M3 * R1 * R2 = M1 * R1 * M2 * R2
+	//   M3 = (M1 * R1) * (M2 * R1^T)
+	//   v3 = v1 * M2 * R2 + v2
+	// - M1 * R1 is M1 with each row rotated by q1. M2 * R1^T is M2 with each row rotated by the conjugate of q1.
+	//   Thus the multiplication does not need a rotation matrix.
+	// - The rotation of T1 moves into M3. Thus M3 can contain shear when M1 and M2 contain only scale.
+	//   This is why VQV, which stores only a scale, does not form a group.
+	//
+	// Inverse:
+	// - From p' = p * M * R + v, we get p = (p' - v) * R^T * M^-1.
+	// - The inverse is T' = [v', q', M'] with R' = R^T. Then:
+	//   M' * R^T = R^T * M^-1
+	//   M' = R^T * (M^-1 * R)
+	//   v' = -v * R^T * M^-1
+	// - M^-1 * R is M^-1 with each row rotated by q. The matrix R^T is on the left side, thus it is not a row rotation.
+	//   The function uses the rotation matrix of the conjugate of q for it.
 	//////////////////////////////////////////////////////////////////////////
 
 	//////////////////////////////////////////////////////////////////////////
-	// A VQM transform represents a 3D rotation (quaternion), 3D translation (vector3),
-	// and 3D non-uniform scale and shear (matrix 3x3).
-	// VQM forms a group with a well defined multiplication and inverse. Its
-	// multiplication is assossiative but not commutative (like quaternions/matrices).
-	// Rotations are assumed to represent a single turn (normalized quaternion).
+	// A VQM transform contains a 3D rotation (quaternion), a 3D translation (vector3),
+	// and a 3D scale/shear part (matrix 3x3). The scale/shear part can contain a
+	// non-uniform scale, shear, and a reflection.
+	// VQM transforms form a group: the multiplication and the inverse are well defined.
+	// The multiplication is associative but not commutative, as with quaternions and matrices.
+	// The rotation must be a normalized quaternion.
 	//////////////////////////////////////////////////////////////////////////
 #if 0	// defined in types.h
 	struct vqmf
@@ -402,7 +394,9 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	RTM_DISABLE_SECURITY_COOKIE_CHECK inline vqmf RTM_SIMD_CALL vqm_mul(const vqmf& lhs, const vqmf& rhs) RTM_NO_EXCEPT
 	{
-		// T2 * T1 = [v2, q2, M2] * [v1, q1, M1] = [q2 * (M2 * v1) * q2^-1 + v2, q2 * q1, (q1^-1 * M2 * q1)(q1 * M1 * q1^-1)]
+		// lhs = [v1, q1, M1] and rhs = [v2, q2, M2]
+		// result = [v1 * M2 * R2 + v2, quat_mul(q1, q2), (M1 * R1) * (M2 * R1^T)]
+		// See the multiplication section at the top of this file
 
 		const quatf inv_lhs_rotation = quat_conjugate(lhs.rotation);
 
@@ -434,7 +428,7 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE vqmf RTM_SIMD_CALL vqm_mul(const vqmf& vqm, float scalar) RTM_NO_EXCEPT
 	{
-		// s * T = s * [v, q, M] = [s * v, s * q, s * M]
+		// T * s = [v, q, M] * s = [v * s, q * s, M * s]
 		vector4f scalar_v = vector_set(scalar);
 
 		vqmf result;
@@ -453,19 +447,19 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	RTM_DISABLE_SECURITY_COOKIE_CHECK inline vector4f RTM_SIMD_CALL vqm_mul_point3(vector4f_arg0 point, const vqmf& vqm) RTM_NO_EXCEPT
 	{
-		// T * p = [v, q, M] * p = (q * (M * p) * q^-1) + v
+		// p' = p * M * R + v
 
 		const matrix3x3f scale_shear = matrix_set(vqm.x_axis, vqm.y_axis, vqm.z_axis);
 		return vector_add(quat_mul_vector3(matrix_mul_vector3(point, scale_shear), vqm.rotation), vqm.translation);
 	}
 
 	//////////////////////////////////////////////////////////////////////////
-	// Multiplies a VQM transform and a 3D vector.
-	// Multiplication order is as follow: world_position = vqm_mul_point3(local_position, local_to_world)
+	// Multiplies a VQM transform and a 3D vector. The translation does not apply.
+	// Multiplication order is as follow: world_direction = vqm_mul_vector3(local_direction, local_to_world)
 	//////////////////////////////////////////////////////////////////////////
 	RTM_DISABLE_SECURITY_COOKIE_CHECK inline vector4f RTM_SIMD_CALL vqm_mul_vector3(vector4f_arg0 vec3, const vqmf& vqm) RTM_NO_EXCEPT
 	{
-		// T * vec3 = [v, q, M] * p = (q * (M * vec3) * q^-1)
+		// vec3' = vec3 * M * R
 
 		const matrix3x3f scale_shear = matrix_set(vqm.x_axis, vqm.y_axis, vqm.z_axis);
 		return quat_mul_vector3(matrix_mul_vector3(vec3, scale_shear), vqm.rotation);
@@ -478,17 +472,9 @@ namespace rtm
 		//////////////////////////////////////////////////////////////////////////
 		RTM_DISABLE_SECURITY_COOKIE_CHECK inline vqmf RTM_SIMD_CALL vqm_inverse(const vqmf& input, matrix3x3f_arg0 inv_scale_shear) RTM_NO_EXCEPT
 		{
-			// T^-1 = [v, q, M]^-1 = [M^-1 * (q^-1 * -v * q), q^-1, q * (q * M * q^-1)^-1 * q^-1]
-			// Note that (q * M * q^-1)^-1 != (q^-1 * M^-1 * q)
-			// However, let us convert that last part into matrix representation
-			// q * (q * M * q^-1)^-1 * q^-1 = Mq * (Mq * M)^-1
-			// Mq * (Mq * M)^-1 = (Mq * M^-1) * Mq^-1
-			// (Mq * M^-1) * Mq^-1 = (q * M^-1 * q^-1) * Mq^-1
-			// Unfortunately, we cannot convert the remaining Mq^-1 matrix back into a quaternion product
-			// because it does not rotate anything (multiplication is on left side instead of right)
-			// However, we can solve this by introducing the identity matrix
-			// (q * M^-1 * q^-1) * (Mq^-1 * I) = (q * M^-1 * q^-1) * (q^-1 * I * q)
-			// This is better because it allows us to compute a single matrix inverse as opposed to two
+			// T = [v, q, M] and T^-1 = [-v * R^T * M^-1, conjugate(q), R^T * (M^-1 * R)]
+			// See the inverse section at the top of this file
+			// The caller gives M^-1. Thus the function computes only one matrix inverse.
 
 			const quatf inv_rotation = quat_conjugate(input.rotation);
 

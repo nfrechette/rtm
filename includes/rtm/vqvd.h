@@ -41,7 +41,7 @@ RTM_IMPL_FILE_PRAGMA_PUSH
 // WARNING: VQV transforms do _NOT_ form a group. It has no well defined multiplication and inverse.
 // This is because when non-uniform scale is rotated (e.g. as the result of two VQV multiplying),
 // shear is introduced and there is no place to store it. As such, VQV discards the introduced shear
-// which is mathematically incorrect. As a result of this, VQV multiplication is _NOT_ assossiative and
+// which is mathematically incorrect. As a result of this, VQV multiplication is _NOT_ associative and
 // the inverse is incorrect. USE AT YOUR OWN RISK.
 ////////////////////////////////////////////////////////////////////////////////
 
