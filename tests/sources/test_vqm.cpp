@@ -29,8 +29,8 @@
 #include <rtm/type_traits.h>
 #include <rtm/packing/quatf.h>
 #include <rtm/packing/quatd.h>
-#include <rtm/experimental/vqmf.h>
-#include <rtm/experimental/vqmd.h>
+#include <rtm/vqmf.h>
+#include <rtm/vqmd.h>
 
 using namespace rtm;
 

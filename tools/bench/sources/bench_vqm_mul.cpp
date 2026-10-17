@@ -24,8 +24,8 @@
 
 #include <benchmark/benchmark.h>
 
-#include <rtm/experimental/vqmf.h>
-#include <rtm/experimental/vqmd.h>
+#include <rtm/vqmf.h>
+#include <rtm/vqmd.h>
 
 #include <cstddef>
 #include <random>

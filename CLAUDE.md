@@ -39,7 +39,7 @@ Builds use `-Wall -Wextra -Werror` (GCC/Clang) and `/W4 /WX` (MSVC) -- warnings 
 - **Return-type coercion helpers**: some functions return small `rtm_impl::*_impl`/`*_loader` structs with an implicit conversion operator to `float` or `double`. To get a `scalarf` or a `vector4f`, use the function with the `_as_scalar` / `_as_vector` suffix.
 - **Math conventions**: row vectors (`v' = v * M`, `local_to_world = local_to_object * object_to_world`); left-handed frame with X forward, Y right, Z up; quaternion `[xyz]` = vector part, `[w]` = scalar part. Functions with a numeric suffix (`vector_dot3`) operate on fewer lanes and leave unused lanes undefined.
 - **Asserts** (`impl/error.h`) are stripped by default; `RTM_ON_ASSERT_ABORT`, `RTM_ON_ASSERT_THROW`, or `RTM_ON_ASSERT_CUSTOM` enable them.
-- `includes/rtm/experimental/` holds unstable APIs (e.g. VQM) not covered by include validation.
+- `includes/rtm/experimental/` holds unstable APIs and include validation does not cover it. Today it holds only the deprecated VQM headers, to be removed in 2.5.
 
 ## Tests
 

@@ -560,6 +560,42 @@ namespace rtm
 	using qvvd RTM_DEPRECATED("Use 'vqvd' instead. To be removed in 2.5.") = vqvd;
 
 	//////////////////////////////////////////////////////////////////////////
+	// A VQM transform represents a 3D rotation (quaternion), a 3D translation (vector), and a 3D scale/shear (3x3 matrix).
+	// The scale/shear part can contain a non-uniform scale, shear, and a reflection. A point transforms as follows:
+	// p' = p * M * R + t, with M the scale/shear matrix and R the rotation matrix of the quaternion.
+	// VQM transforms form a group: the multiplication and the inverse are well defined.
+	// The multiplication is associative but not commutative, as with quaternions and matrices.
+	// The rotation must be a normalized quaternion.
+	// The internal format is opaque: use the vqm_* functions. The [w] lanes hold the third row of M:
+	// m20 = z_axis.x, m21 = z_axis.y, and m22 = z_axis.z. Thus the transform uses 4 registers.
+	//////////////////////////////////////////////////////////////////////////
+	struct vqmf
+	{
+		quatf		rotation;
+		vector4f	translation_m22;	// [xyz] = translation, [w] = m22
+		vector4f	x_axis_m20;			// [xyz] = x_axis, [w] = m20
+		vector4f	y_axis_m21;			// [xyz] = y_axis, [w] = m21
+	};
+
+	//////////////////////////////////////////////////////////////////////////
+	// A VQM transform represents a 3D rotation (quaternion), a 3D translation (vector), and a 3D scale/shear (3x3 matrix).
+	// The scale/shear part can contain a non-uniform scale, shear, and a reflection. A point transforms as follows:
+	// p' = p * M * R + t, with M the scale/shear matrix and R the rotation matrix of the quaternion.
+	// VQM transforms form a group: the multiplication and the inverse are well defined.
+	// The multiplication is associative but not commutative, as with quaternions and matrices.
+	// The rotation must be a normalized quaternion.
+	// The internal format is opaque: use the vqm_* functions. The [w] lanes hold the third row of M:
+	// m20 = z_axis.x, m21 = z_axis.y, and m22 = z_axis.z. Thus the transform uses 4 registers.
+	//////////////////////////////////////////////////////////////////////////
+	struct vqmd
+	{
+		quatd		rotation;
+		vector4d	translation_m22;	// [xyz] = translation, [w] = m22
+		vector4d	x_axis_m20;			// [xyz] = x_axis, [w] = m20
+		vector4d	y_axis_m21;			// [xyz] = y_axis, [w] = m21
+	};
+
+	//////////////////////////////////////////////////////////////////////////
 	// A generic 3x3 matrix.
 	// Note: The [w] component of every column vector is undefined.
 	//////////////////////////////////////////////////////////////////////////

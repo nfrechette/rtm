@@ -24,39 +24,23 @@
 // SOFTWARE.
 ////////////////////////////////////////////////////////////////////////////////
 
-#include "rtm/math.h"
 #include "rtm/version.h"
+#include "rtm/types.h"
 #include "rtm/impl/compiler_utils.h"
+#include "rtm/impl/error.h"
 
 RTM_IMPL_FILE_PRAGMA_PUSH
+
+// Deprecated in 2.4, to be removed in 2.5
+// VQM is no longer experimental: include rtm/types.h instead.
 
 namespace rtm
 {
 	RTM_IMPL_VERSION_NAMESPACE_BEGIN
 
-	struct vqmd
-	{
-		// The internal format is meant to be opaque, use vqm_* accessors
-		// The scale/shear matrix M has the rows x_axis, y_axis, and z_axis. Each row has 3 components.
-		// The [w] lanes hold the third row: m20 = z_axis.x, m21 = z_axis.y, and m22 = z_axis.z.
-		// Thus the transform uses 4 registers and 16 components.
-		quatd		rotation;
-		vector4d	translation_m22;	// [xyz] = translation, [w] = m22
-		vector4d	x_axis_m20;			// [xyz] = x_axis, [w] = m20
-		vector4d	y_axis_m21;			// [xyz] = y_axis, [w] = m21
-	};
-
-	struct vqmf
-	{
-		// The internal format is meant to be opaque, use vqm_* accessors
-		// The scale/shear matrix M has the rows x_axis, y_axis, and z_axis. Each row has 3 components.
-		// The [w] lanes hold the third row: m20 = z_axis.x, m21 = z_axis.y, and m22 = z_axis.z.
-		// Thus the transform uses 4 registers and 16 components.
-		quatf		rotation;
-		vector4f	translation_m22;	// [xyz] = translation, [w] = m22
-		vector4f	x_axis_m20;			// [xyz] = x_axis, [w] = m20
-		vector4f	y_axis_m21;			// [xyz] = y_axis, [w] = m21
-	};
+	RTM_DEPRECATED("Use rtm/types.h instead, this header is deprecated. To be removed in 2.5.")
+	constexpr static bool k_use_rtm_types_h_instead = false;
+	constexpr static bool k_experimental_types_h_is_deprecated = k_use_rtm_types_h_instead;
 
 	RTM_IMPL_VERSION_NAMESPACE_END
 }

@@ -25,8 +25,10 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 #include "rtm/math.h"
+#include "rtm/types.h"
+#include "rtm/vector4d.h"
+#include "rtm/vector4f.h"
 #include "rtm/version.h"
-#include "rtm/experimental/types.h"
 #include "rtm/impl/compiler_utils.h"
 
 #include <cstdint>
@@ -82,19 +84,21 @@ namespace rtm
 
 		//////////////////////////////////////////////////////////////////////////
 		// Returns true if the m22 slot of the input holds the flag: the scale/shear part is exactly the identity.
-		// The function reads the [w] lane of the translation from memory. It compares the bits, not the value.
+		// The function compares the bits, not the value. A lane extraction keeps the bits of a NaN.
 		//////////////////////////////////////////////////////////////////////////
 		RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE bool vqm_has_identity_scale_shear(const vqmf& input) RTM_NO_EXCEPT
 		{
+			const float m22 = vector_get_w(input.translation_m22);
 			uint32_t m22_bits;
-			std::memcpy(&m22_bits, reinterpret_cast<const uint8_t*>(&input.translation_m22) + (3 * sizeof(float)), sizeof(uint32_t));
+			std::memcpy(&m22_bits, &m22, sizeof(uint32_t));
 			return m22_bits == k_vqmf_identity_scale_shear_flag;
 		}
 
 		RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE bool vqm_has_identity_scale_shear(const vqmd& input) RTM_NO_EXCEPT
 		{
+			const double m22 = vector_get_w(input.translation_m22);
 			uint64_t m22_bits;
-			std::memcpy(&m22_bits, reinterpret_cast<const uint8_t*>(&input.translation_m22) + (3 * sizeof(double)), sizeof(uint64_t));
+			std::memcpy(&m22_bits, &m22, sizeof(uint64_t));
 			return m22_bits == k_vqmd_identity_scale_shear_flag;
 		}
 
