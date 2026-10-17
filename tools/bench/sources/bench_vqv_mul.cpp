@@ -24,11 +24,11 @@
 
 #include <benchmark/benchmark.h>
 
-#include <rtm/qvvf.h>
+#include <rtm/vqvf.h>
 
 using namespace rtm;
 
-RTM_FORCE_NOINLINE qvvf RTM_SIMD_CALL qvv_mul_ref(qvvf_arg0 lhs, qvvf_arg1 rhs) RTM_NO_EXCEPT
+RTM_FORCE_NOINLINE vqvf RTM_SIMD_CALL vqv_mul_ref(vqvf_arg0 lhs, vqvf_arg1 rhs) RTM_NO_EXCEPT
 {
 	const vector4f min_scale = vector_min(lhs.scale, rhs.scale);
 	const vector4f scale = vector_mul(lhs.scale, rhs.scale);
@@ -36,8 +36,8 @@ RTM_FORCE_NOINLINE qvvf RTM_SIMD_CALL qvv_mul_ref(qvvf_arg0 lhs, qvvf_arg1 rhs) 
 	if (vector_any_less_than3(min_scale, vector_zero()))
 	{
 		// If we have negative scale, we go through a matrix
-		const matrix3x4f lhs_mtx = matrix_from_qvv(lhs);
-		const matrix3x4f rhs_mtx = matrix_from_qvv(rhs);
+		const matrix3x4f lhs_mtx = matrix_from_vqv(lhs);
+		const matrix3x4f rhs_mtx = matrix_from_vqv(rhs);
 		matrix3x4f result_mtx = matrix_mul(lhs_mtx, rhs_mtx);
 		result_mtx = matrix_remove_scale(result_mtx);
 
@@ -48,13 +48,13 @@ RTM_FORCE_NOINLINE qvvf RTM_SIMD_CALL qvv_mul_ref(qvvf_arg0 lhs, qvvf_arg1 rhs) 
 
 		const quatf rotation = quat_from_matrix(result_mtx);
 		const vector4f translation = result_mtx.w_axis;
-		return qvv_set(rotation, translation, scale);
+		return vqv_set(rotation, translation, scale);
 	}
 	else
 	{
 		const quatf rotation = quat_mul(lhs.rotation, rhs.rotation);
 		const vector4f translation = vector_add(quat_mul_vector3(vector_mul(lhs.translation, rhs.scale), rhs.rotation), rhs.translation);
-		return qvv_set(rotation, translation, scale);
+		return vqv_set(rotation, translation, scale);
 	}
 }
 
@@ -62,7 +62,7 @@ RTM_FORCE_NOINLINE qvvf RTM_SIMD_CALL qvv_mul_ref(qvvf_arg0 lhs, qvvf_arg1 rhs) 
 // Wins on Haswell laptop x64 AVX
 // Wins on Ryzen 2990X desktop VS2017 x64 AVX
 // Wins on Ryzen 2990X desktop clang9 x64 AVX
-RTM_FORCE_NOINLINE qvvf RTM_SIMD_CALL qvv_mul_sse2(qvvf_arg0 lhs, qvvf_arg1 rhs) RTM_NO_EXCEPT
+RTM_FORCE_NOINLINE vqvf RTM_SIMD_CALL vqv_mul_sse2(vqvf_arg0 lhs, vqvf_arg1 rhs) RTM_NO_EXCEPT
 {
 	const vector4f min_scale = vector_min(lhs.scale, rhs.scale);
 	const vector4f scale = vector_mul(lhs.scale, rhs.scale);
@@ -70,8 +70,8 @@ RTM_FORCE_NOINLINE qvvf RTM_SIMD_CALL qvv_mul_sse2(qvvf_arg0 lhs, qvvf_arg1 rhs)
 	if (vector_any_less_than3(min_scale, vector_zero()))
 	{
 		// If we have negative scale, we go through a matrix
-		const matrix3x4f lhs_mtx = matrix_from_qvv(lhs);
-		const matrix3x4f rhs_mtx = matrix_from_qvv(rhs);
+		const matrix3x4f lhs_mtx = matrix_from_vqv(lhs);
+		const matrix3x4f rhs_mtx = matrix_from_vqv(rhs);
 		matrix3x4f result_mtx = matrix_mul(lhs_mtx, rhs_mtx);
 		result_mtx = matrix_remove_scale(result_mtx);
 
@@ -84,28 +84,28 @@ RTM_FORCE_NOINLINE qvvf RTM_SIMD_CALL qvv_mul_sse2(qvvf_arg0 lhs, qvvf_arg1 rhs)
 
 		const quatf rotation = quat_from_matrix(result_mtx);
 		const vector4f translation = result_mtx.w_axis;
-		return qvv_set(rotation, translation, scale);
+		return vqv_set(rotation, translation, scale);
 	}
 	else
 	{
 		const quatf rotation = quat_mul(lhs.rotation, rhs.rotation);
 		const vector4f translation = vector_add(quat_mul_vector3(vector_mul(lhs.translation, rhs.scale), rhs.rotation), rhs.translation);
-		return qvv_set(rotation, translation, scale);
+		return vqv_set(rotation, translation, scale);
 	}
 }
 #endif
 
-static void bm_qvv_mul_ref(benchmark::State& state)
+static void bm_vqv_mul_ref(benchmark::State& state)
 {
-	qvvf t0 = qvv_identity();
-	qvvf t1 = qvv_set(quat_identity(), vector_zero(), vector_set(-1.0f));
-	qvvf t2 = qvv_identity();
-	qvvf t3 = qvv_set(quat_identity(), vector_zero(), vector_set(-1.0f));
+	vqvf t0 = vqv_identity();
+	vqvf t1 = vqv_set(quat_identity(), vector_zero(), vector_set(-1.0f));
+	vqvf t2 = vqv_identity();
+	vqvf t3 = vqv_set(quat_identity(), vector_zero(), vector_set(-1.0f));
 
 	for (auto _ : state)
 	{
-		t0 = qvv_mul_ref(t0, t1);
-		t2 = qvv_mul_ref(t2, t3);
+		t0 = vqv_mul_ref(t0, t1);
+		t2 = vqv_mul_ref(t2, t3);
 	}
 
 	benchmark::DoNotOptimize(t0);
@@ -114,20 +114,20 @@ static void bm_qvv_mul_ref(benchmark::State& state)
 	benchmark::DoNotOptimize(t3);
 }
 
-BENCHMARK(bm_qvv_mul_ref);
+BENCHMARK(bm_vqv_mul_ref);
 
 #if defined(RTM_SSE2_INTRINSICS)
-static void bm_qvv_mul_sse2(benchmark::State& state)
+static void bm_vqv_mul_sse2(benchmark::State& state)
 {
-	qvvf t0 = qvv_identity();
-	qvvf t1 = qvv_set(quat_identity(), vector_zero(), vector_set(-1.0f));
-	qvvf t2 = qvv_identity();
-	qvvf t3 = qvv_set(quat_identity(), vector_zero(), vector_set(-1.0f));
+	vqvf t0 = vqv_identity();
+	vqvf t1 = vqv_set(quat_identity(), vector_zero(), vector_set(-1.0f));
+	vqvf t2 = vqv_identity();
+	vqvf t3 = vqv_set(quat_identity(), vector_zero(), vector_set(-1.0f));
 
 	for (auto _ : state)
 	{
-		t0 = qvv_mul_sse2(t0, t1);
-		t2 = qvv_mul_sse2(t2, t3);
+		t0 = vqv_mul_sse2(t0, t1);
+		t2 = vqv_mul_sse2(t2, t3);
 	}
 
 	benchmark::DoNotOptimize(t0);
@@ -136,5 +136,5 @@ static void bm_qvv_mul_sse2(benchmark::State& state)
 	benchmark::DoNotOptimize(t3);
 }
 
-BENCHMARK(bm_qvv_mul_sse2);
+BENCHMARK(bm_vqv_mul_sse2);
 #endif

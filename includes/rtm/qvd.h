@@ -65,7 +65,7 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	RTM_DISABLE_SECURITY_COOKIE_CHECK inline qvd RTM_SIMD_CALL qv_from_matrix(matrix3x4d_arg0 input) RTM_NO_EXCEPT
 	{
-		// See qvv_from_matrix for details, the process here is very similar
+		// See vqv_from_matrix for details, the process here is very similar
 		// We still treat every axis independently as if they have unique scale values
 		// to be able to handle ill-formed matrices with non-uniform scale.
 

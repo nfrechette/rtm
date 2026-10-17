@@ -158,13 +158,13 @@ namespace rtm
 	using qvsd_arg1 = const qvsd&;
 	using qvsd_argn = const qvsd&;
 
-	using qvvf_arg0 = const qvvf&;
-	using qvvf_arg1 = const qvvf&;
-	using qvvf_argn = const qvvf&;
+	using vqvf_arg0 = const vqvf&;
+	using vqvf_arg1 = const vqvf&;
+	using vqvf_argn = const vqvf&;
 
-	using qvvd_arg0 = const qvvd&;
-	using qvvd_arg1 = const qvvd&;
-	using qvvd_argn = const qvvd&;
+	using vqvd_arg0 = const vqvd&;
+	using vqvd_arg1 = const vqvd&;
+	using vqvd_argn = const vqvd&;
 
 	using matrix3x3f_arg0 = const matrix3x3f&;
 	using matrix3x3f_arg1 = const matrix3x3f&;

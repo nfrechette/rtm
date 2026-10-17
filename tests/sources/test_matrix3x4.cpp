@@ -32,8 +32,8 @@
 #include <rtm/qvd.h>
 #include <rtm/qvsf.h>
 #include <rtm/qvsd.h>
-#include <rtm/qvvf.h>
-#include <rtm/qvvd.h>
+#include <rtm/vqvf.h>
+#include <rtm/vqvd.h>
 
 using namespace rtm;
 
@@ -44,7 +44,7 @@ static void test_affine_matrix_setters(const FloatType threshold)
 	using Vector4Type = typename related_types<FloatType>::vector4;
 	using QVType = typename related_types<FloatType>::qv;
 	using QVSType = typename related_types<FloatType>::qvs;
-	using QVVType = typename related_types<FloatType>::qvv;
+	using VQVType = typename related_types<FloatType>::vqv;
 	using Matrix3x3Type = typename related_types<FloatType>::matrix3x3;
 	using Matrix3x4Type = typename related_types<FloatType>::matrix3x4;
 
@@ -99,14 +99,14 @@ static void test_affine_matrix_setters(const FloatType threshold)
 	{
 		QuatType rotation_around_z = quat_from_euler(scalar_deg_to_rad(FloatType(0.0)), scalar_deg_to_rad(FloatType(90.0)), scalar_deg_to_rad(FloatType(0.0)));
 		Vector4Type translation = vector_set(FloatType(1.0), FloatType(2.0), FloatType(3.0));
-		Matrix3x4Type mtx = matrix_from_qvv(rotation_around_z, translation, vector_set(FloatType(1.0)));
+		Matrix3x4Type mtx = matrix_from_vqv(rotation_around_z, translation, vector_set(FloatType(1.0)));
 		CHECK(vector_all_near_equal3(vector_set(FloatType(0.0), FloatType(1.0), FloatType(0.0), FloatType(0.0)), mtx.x_axis, threshold));
 		CHECK(vector_all_near_equal3(vector_set(FloatType(-1.0), FloatType(0.0), FloatType(0.0), FloatType(0.0)), mtx.y_axis, threshold));
 		CHECK(vector_all_near_equal3(vector_set(FloatType(0.0), FloatType(0.0), FloatType(1.0), FloatType(0.0)), mtx.z_axis, threshold));
 		CHECK(vector_all_near_equal3(vector_set(FloatType(1.0), FloatType(2.0), FloatType(3.0), FloatType(1.0)), mtx.w_axis, threshold));
 
 		Vector4Type scale = vector_set(FloatType(4.0), FloatType(5.0), FloatType(6.0));
-		mtx = matrix_from_qvv(rotation_around_z, translation, scale);
+		mtx = matrix_from_vqv(rotation_around_z, translation, scale);
 		CHECK(vector_all_near_equal3(vector_set(FloatType(0.0), FloatType(4.0), FloatType(0.0), FloatType(0.0)), mtx.x_axis, threshold));
 		CHECK(vector_all_near_equal3(vector_set(FloatType(-5.0), FloatType(0.0), FloatType(0.0), FloatType(0.0)), mtx.y_axis, threshold));
 		CHECK(vector_all_near_equal3(vector_set(FloatType(0.0), FloatType(0.0), FloatType(6.0), FloatType(0.0)), mtx.z_axis, threshold));
@@ -184,8 +184,8 @@ static void test_affine_matrix_setters(const FloatType threshold)
 		QuatType rotation_around_z = quat_from_euler(scalar_deg_to_rad(FloatType(0.0)), scalar_deg_to_rad(FloatType(90.0)), scalar_deg_to_rad(FloatType(0.0)));
 		Vector4Type translation = vector_set(FloatType(1.0), FloatType(2.0), FloatType(3.0));
 		Vector4Type scale = vector_set(FloatType(4.0), FloatType(5.0), FloatType(6.0));
-		QVVType transform = qvv_set(rotation_around_z, translation, scale);
-		Matrix3x4Type mtx = matrix_from_qvv(transform);
+		VQVType transform = vqv_set(rotation_around_z, translation, scale);
+		Matrix3x4Type mtx = matrix_from_vqv(transform);
 		CHECK(vector_all_near_equal3(vector_set(FloatType(0.0), FloatType(4.0), FloatType(0.0), FloatType(0.0)), mtx.x_axis, threshold));
 		CHECK(vector_all_near_equal3(vector_set(FloatType(-5.0), FloatType(0.0), FloatType(0.0), FloatType(0.0)), mtx.y_axis, threshold));
 		CHECK(vector_all_near_equal3(vector_set(FloatType(0.0), FloatType(0.0), FloatType(6.0), FloatType(0.0)), mtx.z_axis, threshold));
@@ -196,7 +196,7 @@ static void test_affine_matrix_setters(const FloatType threshold)
 		QuatType rotation_around_z = quat_from_euler(scalar_deg_to_rad(FloatType(0.0)), scalar_deg_to_rad(FloatType(90.0)), scalar_deg_to_rad(FloatType(0.0)));
 		Vector4Type translation = vector_set(FloatType(1.0), FloatType(2.0), FloatType(3.0));
 		Vector4Type scale = vector_set(FloatType(4.0), FloatType(5.0), FloatType(6.0));
-		Matrix3x4Type mtx = matrix_from_qvv(rotation_around_z, translation, scale);
+		Matrix3x4Type mtx = matrix_from_vqv(rotation_around_z, translation, scale);
 		CHECK(vector_all_near_equal3(matrix_get_axis(mtx, axis4::x), mtx.x_axis, threshold));
 		CHECK(vector_all_near_equal3(matrix_get_axis(mtx, axis4::y), mtx.y_axis, threshold));
 		CHECK(vector_all_near_equal3(matrix_get_axis(mtx, axis4::z), mtx.z_axis, threshold));
@@ -212,7 +212,7 @@ static void test_affine_matrix_setters(const FloatType threshold)
 		QuatType rotation_around_z = quat_from_euler(scalar_deg_to_rad(FloatType(0.0)), scalar_deg_to_rad(FloatType(90.0)), scalar_deg_to_rad(FloatType(0.0)));
 		Vector4Type translation = vector_set(FloatType(1.0), FloatType(2.0), FloatType(3.0));
 		Vector4Type scale = vector_set(FloatType(4.0), FloatType(5.0), FloatType(6.0));
-		Matrix3x4Type mtx = matrix_from_qvv(rotation_around_z, translation, scale);
+		Matrix3x4Type mtx = matrix_from_vqv(rotation_around_z, translation, scale);
 
 		Matrix3x4Type mtx2 = identity;
 		mtx2 = matrix_set_axis(mtx2, mtx.x_axis, axis4::x);
@@ -315,14 +315,14 @@ static void test_affine_matrix_arithmetic(const FloatType threshold)
 		Vector4Type y_axis = vector_set(FloatType(0.0), FloatType(1.0), FloatType(0.0));
 
 		QuatType rotation_around_z = quat_from_euler(scalar_deg_to_rad(FloatType(0.0)), scalar_deg_to_rad(FloatType(90.0)), scalar_deg_to_rad(FloatType(0.0)));
-		Matrix3x4Type mtx_a = matrix_from_qvv(rotation_around_z, x_axis, vector_set(FloatType(1.0)));
+		Matrix3x4Type mtx_a = matrix_from_vqv(rotation_around_z, x_axis, vector_set(FloatType(1.0)));
 		Vector4Type result = matrix_mul_point3(x_axis, mtx_a);
 		CHECK(vector_all_near_equal3(result, vector_set(FloatType(1.0), FloatType(1.0), FloatType(0.0)), threshold));
 		result = matrix_mul_point3(y_axis, mtx_a);
 		CHECK(vector_all_near_equal3(result, vector_set(FloatType(0.0), FloatType(0.0), FloatType(0.0)), threshold));
 
 		QuatType rotation_around_x = quat_from_euler(scalar_deg_to_rad(FloatType(0.0)), scalar_deg_to_rad(FloatType(0.0)), scalar_deg_to_rad(FloatType(90.0)));
-		Matrix3x4Type mtx_b = matrix_from_qvv(rotation_around_x, y_axis, vector_set(FloatType(1.0)));
+		Matrix3x4Type mtx_b = matrix_from_vqv(rotation_around_x, y_axis, vector_set(FloatType(1.0)));
 		result = matrix_mul_point3(x_axis, mtx_b);
 		CHECK(vector_all_near_equal3(result, vector_set(FloatType(1.0), FloatType(1.0), FloatType(0.0)), threshold));
 		result = matrix_mul_point3(y_axis, mtx_b);
@@ -349,14 +349,14 @@ static void test_affine_matrix_arithmetic(const FloatType threshold)
 		Vector4Type y_axis = vector_set(FloatType(0.0), FloatType(1.0), FloatType(0.0));
 
 		QuatType rotation_around_z = quat_from_euler(scalar_deg_to_rad(FloatType(0.0)), scalar_deg_to_rad(FloatType(90.0)), scalar_deg_to_rad(FloatType(0.0)));
-		Matrix3x4Type mtx_a = matrix_from_qvv(rotation_around_z, x_axis, vector_set(FloatType(1.0)));
+		Matrix3x4Type mtx_a = matrix_from_vqv(rotation_around_z, x_axis, vector_set(FloatType(1.0)));
 		Vector4Type result = matrix_mul_vector3(x_axis, mtx_a);
 		CHECK(vector_all_near_equal3(result, vector_set(FloatType(0.0), FloatType(1.0), FloatType(0.0)), threshold));
 		result = matrix_mul_vector3(y_axis, mtx_a);
 		CHECK(vector_all_near_equal3(result, vector_set(FloatType(-1.0), FloatType(0.0), FloatType(0.0)), threshold));
 
 		QuatType rotation_around_x = quat_from_euler(scalar_deg_to_rad(FloatType(0.0)), scalar_deg_to_rad(FloatType(0.0)), scalar_deg_to_rad(FloatType(90.0)));
-		Matrix3x4Type mtx_b = matrix_from_qvv(rotation_around_x, y_axis, vector_set(FloatType(1.0)));
+		Matrix3x4Type mtx_b = matrix_from_vqv(rotation_around_x, y_axis, vector_set(FloatType(1.0)));
 		result = matrix_mul_vector3(x_axis, mtx_b);
 		CHECK(vector_all_near_equal3(result, vector_set(FloatType(1.0), FloatType(0.0), FloatType(0.0)), threshold));
 		result = matrix_mul_vector3(y_axis, mtx_b);
@@ -406,7 +406,7 @@ static void test_affine_matrix_transformations(const FloatType threshold)
 		QuatType rotation_around_z = quat_from_euler(scalar_deg_to_rad(FloatType(0.0)), scalar_deg_to_rad(FloatType(90.0)), scalar_deg_to_rad(FloatType(0.0)));
 		Vector4Type translation = vector_set(FloatType(1.0), FloatType(2.0), FloatType(3.0));
 		Vector4Type scale = vector_set(FloatType(4.0), FloatType(5.0), FloatType(6.0));
-		Matrix3x4Type mtx = matrix_from_qvv(rotation_around_z, translation, scale);
+		Matrix3x4Type mtx = matrix_from_vqv(rotation_around_z, translation, scale);
 		Matrix3x4Type inv_mtx = matrix_inverse(mtx);
 		Matrix3x4Type result = matrix_mul(mtx, inv_mtx);
 		CHECK(vector_all_near_equal3(vector_set(FloatType(1.0), FloatType(0.0), FloatType(0.0), FloatType(0.0)), result.x_axis, threshold));
@@ -419,7 +419,7 @@ static void test_affine_matrix_transformations(const FloatType threshold)
 		QuatType rotation_around_z = quat_from_euler(scalar_deg_to_rad(FloatType(0.0)), scalar_deg_to_rad(FloatType(90.0)), scalar_deg_to_rad(FloatType(0.0)));
 		Vector4Type translation = vector_set(FloatType(1.0), FloatType(2.0), FloatType(3.0));
 		Vector4Type scale = vector_set(FloatType(4.0), FloatType(5.0), FloatType(6.0));
-		Matrix3x4Type mtx = matrix_from_qvv(rotation_around_z, translation, scale);
+		Matrix3x4Type mtx = matrix_from_vqv(rotation_around_z, translation, scale);
 		Matrix3x4Type inv_mtx = matrix_inverse(mtx, mtx);
 		Matrix3x4Type result = matrix_mul(mtx, inv_mtx);
 		CHECK(vector_all_near_equal3(vector_set(FloatType(1.0), FloatType(0.0), FloatType(0.0), FloatType(0.0)), result.x_axis, threshold));
@@ -441,7 +441,7 @@ static void test_affine_matrix_transformations(const FloatType threshold)
 		QuatType rotation = quat_from_euler(scalar_deg_to_rad(FloatType(12.3)), scalar_deg_to_rad(FloatType(42.8)), scalar_deg_to_rad(FloatType(33.41)));
 		Vector4Type translation = vector_set(FloatType(1.0), FloatType(2.0), FloatType(3.0));
 		Vector4Type scale = vector_set(FloatType(4.0), FloatType(5.0), FloatType(6.0));
-		Matrix3x4Type mtx = matrix_from_qvv(rotation, translation, scale);
+		Matrix3x4Type mtx = matrix_from_vqv(rotation, translation, scale);
 		Matrix3x4Type inv_mtx = matrix_inverse(mtx);
 		Matrix3x4Type result = matrix_mul(mtx, inv_mtx);
 		CHECK(vector_all_near_equal3(vector_set(FloatType(1.0), FloatType(0.0), FloatType(0.0), FloatType(0.0)), result.x_axis, threshold));
@@ -470,7 +470,7 @@ static void test_affine_matrix_misc(const FloatType threshold)
 		QuatType rotation_around_z = quat_from_euler(scalar_deg_to_rad(FloatType(0.0)), scalar_deg_to_rad(FloatType(90.0)), scalar_deg_to_rad(FloatType(0.0)));
 		Vector4Type translation = vector_set(FloatType(1.0), FloatType(2.0), FloatType(3.0));
 		Vector4Type scale = vector_set(FloatType(4.0), FloatType(5.0), FloatType(6.0));
-		Matrix3x4Type mtx0 = matrix_from_qvv(rotation_around_z, translation, scale);
+		Matrix3x4Type mtx0 = matrix_from_vqv(rotation_around_z, translation, scale);
 		Matrix3x4Type mtx0_no_scale = matrix_remove_scale(mtx0);
 		CHECK(vector_all_near_equal3(vector_set(FloatType(0.0), FloatType(1.0), FloatType(0.0), FloatType(0.0)), mtx0_no_scale.x_axis, threshold));
 		CHECK(vector_all_near_equal3(vector_set(FloatType(-1.0), FloatType(0.0), FloatType(0.0), FloatType(0.0)), mtx0_no_scale.y_axis, threshold));
@@ -585,7 +585,7 @@ TEST_CASE("matrix3x4f math", "[math][matrix3x4]")
 		quatf rotation_around_z = quat_from_euler(scalar_deg_to_rad(0.0F), scalar_deg_to_rad(90.0F), scalar_deg_to_rad(0.0F));
 		vector4f translation = vector_set(1.0F, 2.0F, 3.0F);
 		vector4f scale = vector_set(4.0F, 5.0F, 6.0F);
-		matrix3x4f src = matrix_from_qvv(rotation_around_z, translation, scale);
+		matrix3x4f src = matrix_from_vqv(rotation_around_z, translation, scale);
 		matrix3x4d dst = matrix_cast(src);
 		CHECK(vector_all_near_equal3(vector_cast(src.x_axis), dst.x_axis, 1.0E-4));
 		CHECK(vector_all_near_equal3(vector_cast(src.y_axis), dst.y_axis, 1.0E-4));
@@ -605,7 +605,7 @@ TEST_CASE("matrix3x4d math", "[math][matrix3x4]")
 		quatd rotation_around_z = quat_from_euler(scalar_deg_to_rad(0.0), scalar_deg_to_rad(90.0), scalar_deg_to_rad(0.0));
 		vector4d translation = vector_set(1.0, 2.0, 3.0);
 		vector4d scale = vector_set(4.0, 5.0, 6.0);
-		matrix3x4d src = matrix_from_qvv(rotation_around_z, translation, scale);
+		matrix3x4d src = matrix_from_vqv(rotation_around_z, translation, scale);
 		matrix3x4f dst = matrix_cast(src);
 		CHECK(vector_all_near_equal3(vector_cast(src.x_axis), dst.x_axis, 1.0E-4F));
 		CHECK(vector_all_near_equal3(vector_cast(src.y_axis), dst.y_axis, 1.0E-4F));

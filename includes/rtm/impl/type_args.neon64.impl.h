@@ -100,12 +100,12 @@ namespace rtm
 	using mask4i_argn = const mask4i&;
 
 	// With ARM64 NEON, an aggregate of up to 4 vector registers is also passed by register,
-	// but the whole aggregate must fit in the registers that remain (e.g. we can pass 2x qvvf but not 3x).
-	// A qvvf can also be returned by register.
+	// but the whole aggregate must fit in the registers that remain (e.g. we can pass 2x vqvf but not 3x).
+	// A vqvf can also be returned by register.
 	// The non-scalar types that use doubles are aggregates of 2x float64x2_t or 2x uint64x2_t.
 	// Thus, the first 4x vector4d/quatd/mask4d/mask4q arguments are passed by register.
 	// A qvd and a qvsd use 4 registers. Thus, the first 2x qvd/qvsd arguments are passed by register.
-	// A qvvd and the double matrices use more than 4 registers. Thus, they are passed in memory.
+	// A vqvd and the double matrices use more than 4 registers. Thus, they are passed in memory.
 	// When such an argument is passed by value, the caller copies it to the stack and passes a pointer.
 	// Thus, we pass them by const& to remove the copy.
 
@@ -165,13 +165,13 @@ namespace rtm
 	using qvsd_arg1 = const qvsd;
 	using qvsd_argn = const qvsd&;
 
-	using qvvf_arg0 = const qvvf;
-	using qvvf_arg1 = const qvvf;
-	using qvvf_argn = const qvvf&;
+	using vqvf_arg0 = const vqvf;
+	using vqvf_arg1 = const vqvf;
+	using vqvf_argn = const vqvf&;
 
-	using qvvd_arg0 = const qvvd&;
-	using qvvd_arg1 = const qvvd&;
-	using qvvd_argn = const qvvd&;
+	using vqvd_arg0 = const vqvd&;
+	using vqvd_arg1 = const vqvd&;
+	using vqvd_argn = const vqvd&;
 
 	using matrix3x3f_arg0 = const matrix3x3f;
 	using matrix3x3f_arg1 = const matrix3x3f;

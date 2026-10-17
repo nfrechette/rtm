@@ -36,9 +36,11 @@ A QV represents an affine transform in two distinct parts: a rotation quaternion
 
 A QVS represents an affine transform in three distinct parts: a rotation quaternion, a vector4 translation, and a scalar uniform scale. This type is commonly used in video games as it is very fast to work with and more compact than a full affine matrix. It represents uniform positive/negative scale through a single scalar value. When multiplying transforms of this type, scale combines as it would with matrices.
 
-## QVV (quaternion-vector-vector)
+## VQV (vector-quaternion-vector)
 
-A QVV represents an affine transform in three distinct parts: a rotation quaternion, a vector3 translation, and a vector3 non-uniform scale. This type is commonly used in video games as it is very fast to work with and more compact than a full affine matrix. It properly handles positive non-uniform scaling but negative scaling is a bit more problematic. A best effort is made by converting the quaternion to a matrix when necessary. If scale fidelity is important, consider using an affine matrix 3x4 instead. When multiplying transforms of this type, scale combines as it would with matrices.
+A VQV represents an affine transform in three distinct parts: a rotation quaternion, a vector3 translation, and a vector3 non-uniform scale. This type is commonly used in video games as it is very fast to work with and more compact than a full affine matrix. It properly handles positive non-uniform scaling but negative scaling is a bit more problematic. A best effort is made by converting the quaternion to a matrix when necessary. If scale fidelity is important, consider using an affine matrix 3x4 instead. When multiplying transforms of this type, scale combines as it would with matrices.
+
+Before 2.4, the name of this type was QVV. The new name follows the order of operations from right to left (scale, rotation, translation), as VQS does in the literature.
 
 ## Matrix 3x3
 

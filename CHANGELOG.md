@@ -20,7 +20,7 @@
 *  Compile the Emscripten unit tests with WebAssembly SIMD by default in `make.py`, use `-nosimd` for the scalar code path
 *  Fix symmetric rounding for values near 0.5 and for odd values above 2^23 (float32) or 2^52 (float64) on all code paths, for example round(0.49999997) = 0.0
 *  Use the ARM64 round instruction (half away from zero) for vector and scalar symmetric rounding
-*  Pass qvvd, matrix3x4d, and matrix4x4d by reference on ARM64 to remove a copy to the stack
+*  Pass vqvd, matrix3x4d, and matrix4x4d by reference on ARM64 to remove a copy to the stack
 *  Fix the argument type of the second input of qv_slerp, qvs_lerp, qvs_lerp_no_scale, qvs_slerp, quat_slerp (double), and vector_neg_mul_sub (vector4d, scalard)
 *  Use a float64 default threshold in quat_near_identity (double): 2.82729655E-7 rad (an error of 1.0E-14 on [w]) replaces the float32 value of 0.00284714461 rad. To keep the previous behavior, give 0.00284714461 as the threshold
 *  Use a square root and a division instead of the reciprocal square root estimate in float32 quat_normalize and quat_lerp with SSE2: the results are more accurate and do not change between Intel and AMD CPUs
@@ -33,8 +33,9 @@
 *  Replicate a lane with one NEON dup instruction in float32 vector_dup_x/y/z/w and when vector_mix uses the same lane four times: on ARMv7, GCC previously moved the lane through a general purpose register or used a table lookup (vtbl)
 *  Remove the deprecated `float_traits` type: use `related_types`
 *  Remove the deprecated implicit coercion to `scalarf`, `scalard`, `vector4f`, and `vector4d`: use the functions with the `as_scalar` and `as_vector` suffixes
-*  Change the argument order of the experimental `vqm_set` to rotation, translation, and scale, as `qvv_set` uses
+*  Change the argument order of the experimental `vqm_set` to rotation, translation, and scale, as `vqv_set` uses
 *  Rename the experimental `qvv_normalize` and `qvv_is_finite` for `vqmf` and `vqmd` to `vqm_normalize` and `vqm_is_finite`
+*  Rename qvvf and qvvd to vqvf and vqvd, and the qvv functions to vqv: the name follows the order of operations, as with vqm. The new headers are rtm/vqvf.h and rtm/vqvd.h
 
 ## 2.3.1
 

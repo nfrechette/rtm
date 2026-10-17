@@ -96,7 +96,7 @@ static void test_vqm_impl(const FloatType threshold)
 		Vector4Type translation = vector_set(FloatType(1.0), FloatType(2.0), FloatType(3.0));
 		Vector4Type scale = vector_set(FloatType(4.0), FloatType(5.0), FloatType(6.0));
 
-		Matrix3x4Type src_mtx = matrix_from_qvv(rotation, translation, scale);
+		Matrix3x4Type src_mtx = matrix_from_vqv(rotation, translation, scale);
 		TransformType dst_tx = vqm_set(rotation, translation, scale);
 		Matrix3x4Type dst_mtx = vqm_to_matrix(dst_tx);
 		CHECK(vector_all_near_equal3(src_mtx.x_axis, dst_mtx.x_axis, threshold));
@@ -143,7 +143,7 @@ static void test_vqm_impl(const FloatType threshold)
 		// All positive scale
 		Vector4Type scale = vector_set(FloatType(4.0), FloatType(5.0), FloatType(6.0));
 
-		Matrix3x4Type src_mtx = matrix_from_qvv(rotation, translation, scale);
+		Matrix3x4Type src_mtx = matrix_from_vqv(rotation, translation, scale);
 		src_mtx = matrix_mul(src_mtx, src_mtx);
 
 		TransformType dst_tx = vqm_set(rotation, translation, scale);
@@ -160,8 +160,8 @@ static void test_vqm_impl(const FloatType threshold)
 			Vector4Type translation1 = vector_set(FloatType(-8.5), FloatType(0.25), FloatType(14.0));
 			Vector4Type scale1 = vector_set(FloatType(0.5), FloatType(-2.0), FloatType(3.5));
 
-			Matrix3x4Type mtx0 = matrix_from_qvv(rotation, translation, scale);
-			Matrix3x4Type mtx1 = matrix_from_qvv(rotation1, translation1, scale1);
+			Matrix3x4Type mtx0 = matrix_from_vqv(rotation, translation, scale);
+			Matrix3x4Type mtx1 = matrix_from_vqv(rotation1, translation1, scale1);
 			TransformType tx0 = vqm_set(rotation, translation, scale);
 			TransformType tx1 = vqm_set(rotation1, translation1, scale1);
 
@@ -183,7 +183,7 @@ static void test_vqm_impl(const FloatType threshold)
 		// One negative scale
 		scale = vector_set(FloatType(-4.0), FloatType(5.0), FloatType(6.0));
 
-		src_mtx = matrix_from_qvv(rotation, translation, scale);
+		src_mtx = matrix_from_vqv(rotation, translation, scale);
 		src_mtx = matrix_mul(src_mtx, src_mtx);
 
 		dst_tx = vqm_set(rotation, translation, scale);
@@ -197,7 +197,7 @@ static void test_vqm_impl(const FloatType threshold)
 		// Two negative scale
 		scale = vector_set(FloatType(-4.0), FloatType(-5.0), FloatType(6.0));
 
-		src_mtx = matrix_from_qvv(rotation, translation, scale);
+		src_mtx = matrix_from_vqv(rotation, translation, scale);
 		src_mtx = matrix_mul(src_mtx, src_mtx);
 
 		dst_tx = vqm_set(rotation, translation, scale);
@@ -211,7 +211,7 @@ static void test_vqm_impl(const FloatType threshold)
 		// Three negative scale
 		scale = vector_set(FloatType(-4.0), FloatType(-5.0), FloatType(-6.0));
 
-		src_mtx = matrix_from_qvv(rotation, translation, scale);
+		src_mtx = matrix_from_vqv(rotation, translation, scale);
 		src_mtx = matrix_mul(src_mtx, src_mtx);
 
 		dst_tx = vqm_set(rotation, translation, scale);
@@ -225,7 +225,7 @@ static void test_vqm_impl(const FloatType threshold)
 		// One zero scale
 		scale = vector_set(FloatType(0.0), FloatType(5.0), FloatType(6.0));
 
-		src_mtx = matrix_from_qvv(rotation, translation, scale);
+		src_mtx = matrix_from_vqv(rotation, translation, scale);
 		src_mtx = matrix_mul(src_mtx, src_mtx);
 
 		dst_tx = vqm_set(rotation, translation, scale);
@@ -239,7 +239,7 @@ static void test_vqm_impl(const FloatType threshold)
 		// Two zero scale
 		scale = vector_set(FloatType(0.0), FloatType(0.0), FloatType(6.0));
 
-		src_mtx = matrix_from_qvv(rotation, translation, scale);
+		src_mtx = matrix_from_vqv(rotation, translation, scale);
 		src_mtx = matrix_mul(src_mtx, src_mtx);
 
 		dst_tx = vqm_set(rotation, translation, scale);
@@ -253,7 +253,7 @@ static void test_vqm_impl(const FloatType threshold)
 		// Three zero scale
 		scale = vector_set(FloatType(0.0), FloatType(0.0), FloatType(0.0));
 
-		src_mtx = matrix_from_qvv(rotation, translation, scale);
+		src_mtx = matrix_from_vqv(rotation, translation, scale);
 		src_mtx = matrix_mul(src_mtx, src_mtx);
 
 		dst_tx = vqm_set(rotation, translation, scale);
@@ -300,7 +300,7 @@ static void test_vqm_impl(const FloatType threshold)
 		// All positive scale
 		Vector4Type scale = vector_set(FloatType(4.0), FloatType(5.0), FloatType(6.0));
 
-		Matrix3x4Type src_mtx = matrix_from_qvv(rotation, translation, scale);
+		Matrix3x4Type src_mtx = matrix_from_vqv(rotation, translation, scale);
 		Vector4Type src_point = matrix_mul_point3(point, src_mtx);
 
 		TransformType dst_tx = vqm_set(rotation, translation, scale);
@@ -314,7 +314,7 @@ static void test_vqm_impl(const FloatType threshold)
 		// One negative scale
 		scale = vector_set(FloatType(-4.0), FloatType(5.0), FloatType(6.0));
 
-		src_mtx = matrix_from_qvv(rotation, translation, scale);
+		src_mtx = matrix_from_vqv(rotation, translation, scale);
 		src_point = matrix_mul_point3(point, src_mtx);
 
 		dst_tx = vqm_set(rotation, translation, scale);
@@ -328,7 +328,7 @@ static void test_vqm_impl(const FloatType threshold)
 		// Two negative scale
 		scale = vector_set(FloatType(-4.0), FloatType(-5.0), FloatType(6.0));
 
-		src_mtx = matrix_from_qvv(rotation, translation, scale);
+		src_mtx = matrix_from_vqv(rotation, translation, scale);
 		src_point = matrix_mul_point3(point, src_mtx);
 
 		dst_tx = vqm_set(rotation, translation, scale);
@@ -342,7 +342,7 @@ static void test_vqm_impl(const FloatType threshold)
 		// Three negative scale
 		scale = vector_set(FloatType(-4.0), FloatType(-5.0), FloatType(-6.0));
 
-		src_mtx = matrix_from_qvv(rotation, translation, scale);
+		src_mtx = matrix_from_vqv(rotation, translation, scale);
 		src_point = matrix_mul_point3(point, src_mtx);
 
 		dst_tx = vqm_set(rotation, translation, scale);
@@ -356,7 +356,7 @@ static void test_vqm_impl(const FloatType threshold)
 		// One zero scale
 		scale = vector_set(FloatType(0.0), FloatType(5.0), FloatType(6.0));
 
-		src_mtx = matrix_from_qvv(rotation, translation, scale);
+		src_mtx = matrix_from_vqv(rotation, translation, scale);
 		src_point = matrix_mul_point3(point, src_mtx);
 
 		dst_tx = vqm_set(rotation, translation, scale);
@@ -370,7 +370,7 @@ static void test_vqm_impl(const FloatType threshold)
 		// Two zero scale
 		scale = vector_set(FloatType(0.0), FloatType(0.0), FloatType(6.0));
 
-		src_mtx = matrix_from_qvv(rotation, translation, scale);
+		src_mtx = matrix_from_vqv(rotation, translation, scale);
 		src_point = matrix_mul_point3(point, src_mtx);
 
 		dst_tx = vqm_set(rotation, translation, scale);
@@ -384,7 +384,7 @@ static void test_vqm_impl(const FloatType threshold)
 		// Three zero scale
 		scale = vector_set(FloatType(0.0), FloatType(0.0), FloatType(0.0));
 
-		src_mtx = matrix_from_qvv(rotation, translation, scale);
+		src_mtx = matrix_from_vqv(rotation, translation, scale);
 		src_point = matrix_mul_point3(point, src_mtx);
 
 		dst_tx = vqm_set(rotation, translation, scale);
@@ -404,7 +404,7 @@ static void test_vqm_impl(const FloatType threshold)
 		// All positive scale
 		Vector4Type scale = vector_set(FloatType(4.0), FloatType(5.0), FloatType(6.0));
 
-		Matrix3x4Type src_mtx = matrix_from_qvv(rotation, translation, scale);
+		Matrix3x4Type src_mtx = matrix_from_vqv(rotation, translation, scale);
 		Matrix3x4Type inv_src_mtx = matrix_inverse(src_mtx);
 
 		TransformType dst_tx = vqm_set(rotation, translation, scale);
@@ -436,7 +436,7 @@ static void test_vqm_impl(const FloatType threshold)
 		// One negative scale
 		scale = vector_set(FloatType(-4.0), FloatType(5.0), FloatType(6.0));
 
-		src_mtx = matrix_from_qvv(rotation, translation, scale);
+		src_mtx = matrix_from_vqv(rotation, translation, scale);
 		inv_src_mtx = matrix_inverse(src_mtx);
 
 		dst_tx = vqm_set(rotation, translation, scale);
@@ -468,7 +468,7 @@ static void test_vqm_impl(const FloatType threshold)
 		// Two negative scale
 		scale = vector_set(FloatType(-4.0), FloatType(-5.0), FloatType(6.0));
 
-		src_mtx = matrix_from_qvv(rotation, translation, scale);
+		src_mtx = matrix_from_vqv(rotation, translation, scale);
 		inv_src_mtx = matrix_inverse(src_mtx);
 
 		dst_tx = vqm_set(rotation, translation, scale);
@@ -500,7 +500,7 @@ static void test_vqm_impl(const FloatType threshold)
 		// Three negative scale
 		scale = vector_set(FloatType(-4.0), FloatType(-5.0), FloatType(-6.0));
 
-		src_mtx = matrix_from_qvv(rotation, translation, scale);
+		src_mtx = matrix_from_vqv(rotation, translation, scale);
 		inv_src_mtx = matrix_inverse(src_mtx);
 
 		dst_tx = vqm_set(rotation, translation, scale);

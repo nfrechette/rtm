@@ -63,10 +63,10 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	RTM_DISABLE_SECURITY_COOKIE_CHECK inline qvsf RTM_SIMD_CALL qvs_from_matrix(matrix3x4f_arg0 input) RTM_NO_EXCEPT
 	{
-		// See qvv_from_matrix for details, the process here is very similar
+		// See vqv_from_matrix for details, the process here is very similar
 		// We still treat every axis independently as if they have unique scale values
 		// to be able to handle ill-formed matrices with non-uniform scale.
-		// Unlike with QVV transforms, if the scale is uniform and negative, we know
+		// Unlike with VQV transforms, if the scale is uniform and negative, we know
 		// that all three axes have reflection and we can recover the original rotation.
 
 		// Translation is always in the W axis
@@ -396,7 +396,7 @@ namespace rtm
 	// Interpolation is stable and will return 'start' when alpha is 0.0 and 'end' when it is 1.0.
 	// This is the same instruction count when FMA is present but it might be slightly slower
 	// due to the extra multiplication compared to: start + (alpha * (end - start)).
-	// The resulting QVV transform will have the start scale.
+	// The resulting VQV transform will have the start scale.
 	//////////////////////////////////////////////////////////////////////////
 	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE qvsf RTM_SIMD_CALL qvs_lerp_no_scale(qvsf_arg0 start, qvsf_arg1 end, float alpha) RTM_NO_EXCEPT
 	{
@@ -413,7 +413,7 @@ namespace rtm
 	// Interpolation is stable and will return 'start' when alpha is 0.0 and 'end' when it is 1.0.
 	// This is the same instruction count when FMA is present but it might be slightly slower
 	// due to the extra multiplication compared to: start + (alpha * (end - start)).
-	// The resulting QVV transform will have the start scale.
+	// The resulting VQV transform will have the start scale.
 	//////////////////////////////////////////////////////////////////////////
 	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE qvsf RTM_SIMD_CALL qvs_lerp_no_scale(qvsf_arg0 start, qvsf_arg1 end, scalarf_arg2 alpha) RTM_NO_EXCEPT
 	{

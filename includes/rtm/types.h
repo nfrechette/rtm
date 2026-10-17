@@ -499,14 +499,14 @@ namespace rtm
 	};
 
 	//////////////////////////////////////////////////////////////////////////
-	// A QVV transform represents a 3D rotation (quaternion), 3D translation (vector), and 3D non-uniform scale (vector).
-	// WARNING: QVV transforms do _NOT_ form a group. It has no well defined multiplication and inverse.
-	// This is because when non-uniform scale is rotated (e.g. as the result of two QVV multiplying),
-	// shear is introduced and there is no place to store it. As such, QVV discards the introduced shear
-	// which is mathematically incorrect. As a result of this, QVV multiplication is _NOT_ assossiative and
+	// A VQV transform represents a 3D rotation (quaternion), 3D translation (vector), and 3D non-uniform scale (vector).
+	// WARNING: VQV transforms do _NOT_ form a group. It has no well defined multiplication and inverse.
+	// This is because when non-uniform scale is rotated (e.g. as the result of two VQV multiplying),
+	// shear is introduced and there is no place to store it. As such, VQV discards the introduced shear
+	// which is mathematically incorrect. As a result of this, VQV multiplication is _NOT_ assossiative and
 	// the inverse is incorrect. USE AT YOUR OWN RISK.
 	//////////////////////////////////////////////////////////////////////////
-	struct qvvf
+	struct vqvf
 	{
 		quatf		rotation;
 		vector4f	translation;	// [w] is undefined
@@ -514,14 +514,14 @@ namespace rtm
 	};
 
 	//////////////////////////////////////////////////////////////////////////
-	// A QVV transform represents a 3D rotation (quaternion), 3D translation (vector), and 3D non-uniform scale (vector).
-	// WARNING: QVV transforms do _NOT_ form a group. It has no well defined multiplication and inverse.
-	// This is because when non-uniform scale is rotated (e.g. as the result of two QVV multiplying),
-	// shear is introduced and there is no place to store it. As such, QVV discards the introduced shear
-	// which is mathematically incorrect. As a result of this, QVV multiplication is _NOT_ assossiative and
+	// A VQV transform represents a 3D rotation (quaternion), 3D translation (vector), and 3D non-uniform scale (vector).
+	// WARNING: VQV transforms do _NOT_ form a group. It has no well defined multiplication and inverse.
+	// This is because when non-uniform scale is rotated (e.g. as the result of two VQV multiplying),
+	// shear is introduced and there is no place to store it. As such, VQV discards the introduced shear
+	// which is mathematically incorrect. As a result of this, VQV multiplication is _NOT_ assossiative and
 	// the inverse is incorrect. USE AT YOUR OWN RISK.
 	//////////////////////////////////////////////////////////////////////////
-	struct qvvd
+	struct vqvd
 	{
 		quatd		rotation;
 		vector4d	translation;	// [w] is undefined

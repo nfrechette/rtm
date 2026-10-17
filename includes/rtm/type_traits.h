@@ -57,7 +57,7 @@ namespace rtm
 
 		using qv = qvf;
 		using qvs = qvsf;
-		using qvv = qvvf;
+		using vqv = vqvf;
 
 		using matrix3x3 = matrix3x3f;
 		using matrix3x4 = matrix3x4f;
@@ -82,7 +82,7 @@ namespace rtm
 
 		using qv = qvd;
 		using qvs = qvsd;
-		using qvv = qvvd;
+		using vqv = vqvd;
 
 		using matrix3x3 = matrix3x3d;
 		using matrix3x4 = matrix3x4d;
@@ -100,7 +100,7 @@ namespace rtm
 	template<> struct related_types<vector4f> : related_types<float> {};
 	template<> struct related_types<qvf> : related_types<float> {};
 	template<> struct related_types<qvsf> : related_types<float> {};
-	template<> struct related_types<qvvf> : related_types<float> {};
+	template<> struct related_types<vqvf> : related_types<float> {};
 	template<> struct related_types<matrix3x3f> : related_types<float> {};
 	template<> struct related_types<matrix3x4f> : related_types<float> {};
 	template<> struct related_types<matrix4x4f> : related_types<float> {};
@@ -135,7 +135,7 @@ namespace rtm
 	template<> struct related_types<quatd> : related_types<double> {};
 	template<> struct related_types<qvd> : related_types<double> {};
 	template<> struct related_types<qvsd> : related_types<double> {};
-	template<> struct related_types<qvvd> : related_types<double> {};
+	template<> struct related_types<vqvd> : related_types<double> {};
 	template<> struct related_types<matrix3x3d> : related_types<double> {};
 	template<> struct related_types<matrix3x4d> : related_types<double> {};
 	template<> struct related_types<matrix4x4d> : related_types<double> {};
