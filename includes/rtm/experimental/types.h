@@ -24,35 +24,23 @@
 // SOFTWARE.
 ////////////////////////////////////////////////////////////////////////////////
 
-#include "rtm/math.h"
 #include "rtm/version.h"
+#include "rtm/types.h"
 #include "rtm/impl/compiler_utils.h"
+#include "rtm/impl/error.h"
 
 RTM_IMPL_FILE_PRAGMA_PUSH
+
+// Deprecated in 2.4, to be removed in 2.5
+// VQM is no longer experimental: include rtm/types.h instead.
 
 namespace rtm
 {
 	RTM_IMPL_VERSION_NAMESPACE_BEGIN
 
-	struct vqmd
-	{
-		// The internal format is meant to be opaque, use vqm_* accessors
-		quatd		rotation;
-		vector4d	translation;
-		vector4d	x_axis;
-		vector4d	y_axis;
-		vector4d	z_axis;
-	};
-
-	struct vqmf
-	{
-		// The internal format is meant to be opaque, use vqm_* accessors
-		quatf		rotation;
-		vector4f	translation;
-		vector4f	x_axis;
-		vector4f	y_axis;
-		vector4f	z_axis;
-	};
+	RTM_DEPRECATED("Use rtm/types.h instead, this header is deprecated. To be removed in 2.5.")
+	constexpr static bool k_use_rtm_types_h_instead = false;
+	constexpr static bool k_experimental_types_h_is_deprecated = k_use_rtm_types_h_instead;
 
 	RTM_IMPL_VERSION_NAMESPACE_END
 }

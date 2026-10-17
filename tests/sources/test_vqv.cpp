@@ -59,14 +59,18 @@ static void test_vqv_interpolation(const FloatType threshold)
 	Vector4Type scale_ref = vector_lerp(scale0, scale1, alpha);
 	Vector4Type scale_ref_s = vector_lerp(scale0, scale1, alpha_s);
 
+	// vqv_slerp interpolates the scale with eerp: the two scales of each component have the same sign
+	Vector4Type scale_ref_eerp = vector_eerp(scale0, scale1, alpha);
+	Vector4Type scale_ref_eerp_s = vector_eerp(scale0, scale1, alpha_s);
+
 	TransformType transform0 = vqv_set(quat0, trans0, scale0);
 	TransformType transform1 = vqv_set(quat1, trans1, scale1);
 
 	TransformType transform_ref_lerp = vqv_set(quat_ref_lerp, trans_ref, scale_ref);
-	TransformType transform_ref_slerp = vqv_set(quat_ref_slerp, trans_ref, scale_ref);
+	TransformType transform_ref_slerp = vqv_set(quat_ref_slerp, trans_ref, scale_ref_eerp);
 
 	TransformType transform_ref_lerp_s = vqv_set(quat_ref_lerp_s, trans_ref_s, scale_ref_s);
-	TransformType transform_ref_slerp_s = vqv_set(quat_ref_slerp_s, trans_ref_s, scale_ref_s);
+	TransformType transform_ref_slerp_s = vqv_set(quat_ref_slerp_s, trans_ref_s, scale_ref_eerp_s);
 
 	TransformType transform_lerp = vqv_lerp(transform0, transform1, alpha);
 	TransformType transform_lerp_s = vqv_lerp(transform0, transform1, alpha_s);
@@ -107,6 +111,18 @@ static void test_vqv_interpolation(const FloatType threshold)
 	CHECK(vector_all_near_equal3(transform_slerp_no_scale_s.translation, transform_ref_slerp_s.translation, threshold));
 	CHECK(vector_all_near_equal3(transform_slerp_no_scale.scale, transform0.scale, threshold));
 	CHECK(vector_all_near_equal3(transform_slerp_no_scale_s.scale, transform0.scale, threshold));
+
+	// When the two scales of a component have a different sign or when one scale is zero, vqv_slerp uses lerp for that component
+	{
+		const Vector4Type mixed_scale0 = vector_set(FloatType(2.0), FloatType(-1.0), FloatType(0.0));
+		const Vector4Type mixed_scale1 = vector_set(FloatType(8.0), FloatType(4.0), FloatType(5.0));
+		const TransformType mixed_slerp = vqv_slerp(vqv_set(quat0, trans0, mixed_scale0), vqv_set(quat1, trans1, mixed_scale1), alpha);
+		const TransformType mixed_slerp_s = vqv_slerp(vqv_set(quat0, trans0, mixed_scale0), vqv_set(quat1, trans1, mixed_scale1), alpha_s);
+		const Vector4Type mixed_ref = vector_set(scalar_eerp(FloatType(2.0), FloatType(8.0), alpha), scalar_lerp(FloatType(-1.0), FloatType(4.0), alpha), scalar_lerp(FloatType(0.0), FloatType(5.0), alpha));
+		CHECK(vqv_is_finite(mixed_slerp));
+		CHECK(vector_all_near_equal3(mixed_slerp.scale, mixed_ref, threshold));
+		CHECK(vector_all_near_equal3(mixed_slerp_s.scale, mixed_ref, threshold));
+	}
 }
 
 template<typename TransformType, typename FloatType>

@@ -100,7 +100,7 @@ RTM_FORCE_NOINLINE vector4f RTM_SIMD_CALL vector_ceil_neon(vector4f_arg0 input) 
 	// A positive input will round towards zero and be lower when we need it to be greater.
 	uint32x4_t is_positive = vcltq_f32(integer_part, input);
 
-	float32x4_t bias = vcvtq_f32_s32(is_positive);
+	float32x4_t bias = vcvtq_f32_s32(vreinterpretq_s32_u32(is_positive));
 
 	// Subtract our bias to properly handle positive values
 	integer_part = vsubq_f32(integer_part, bias);

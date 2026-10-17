@@ -26,6 +26,7 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 #include "rtm/math.h"
+#include "rtm/mask4d.h"
 #include "rtm/quatd.h"
 #include "rtm/vector4d.h"
 #include "rtm/matrix3x4d.h"
@@ -40,7 +41,7 @@ RTM_IMPL_FILE_PRAGMA_PUSH
 // WARNING: VQV transforms do _NOT_ form a group. It has no well defined multiplication and inverse.
 // This is because when non-uniform scale is rotated (e.g. as the result of two VQV multiplying),
 // shear is introduced and there is no place to store it. As such, VQV discards the introduced shear
-// which is mathematically incorrect. As a result of this, VQV multiplication is _NOT_ assossiative and
+// which is mathematically incorrect. As a result of this, VQV multiplication is _NOT_ associative and
 // the inverse is incorrect. USE AT YOUR OWN RISK.
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -492,28 +493,51 @@ namespace rtm
 	}
 #endif
 
+	namespace rtm_impl
+	{
+		//////////////////////////////////////////////////////////////////////////
+		// Returns per component the exponential interpolation of the two scales.
+		// Eerp is not defined when the two scales have a different sign or when one scale is zero.
+		// For these components, the function returns the linear interpolation.
+		//////////////////////////////////////////////////////////////////////////
+		RTM_DISABLE_SECURITY_COOKIE_CHECK inline vector4d RTM_SIMD_CALL vqv_slerp_scale(vector4d_arg0 start, vector4d_arg1 end, vector4d_arg2 alpha) RTM_NO_EXCEPT
+		{
+			const vector4d zero = vector_zero();
+			const vector4d one = vector_set(1.0);
+			const mask4d is_eerp_defined = mask_or(vector_greater_than(vector_min(start, end), zero), vector_less_than(vector_max(start, end), zero));
+
+			// eerp(1.0, 1.0) is 1.0: the components without eerp do not contain NaN
+			const vector4d eerp = vector_eerp(vector_select(is_eerp_defined, start, one), vector_select(is_eerp_defined, end, one), alpha);
+			return vector_select(is_eerp_defined, eerp, vector_lerp(start, end, alpha));
+		}
+	}
+
 	//////////////////////////////////////////////////////////////////////////
 	// Per component spherical interpolation of the two inputs at the specified alpha.
-	// See quat_slerp(..)
+	// The function interpolates the rotation with quat_slerp(..), the translation with vector_lerp(..),
+	// and the scale with vector_eerp(..). If the two scales of a component have a different sign or if
+	// one scale is zero, the function uses vector_lerp(..) for that component.
 	//////////////////////////////////////////////////////////////////////////
 	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE vqvd RTM_SIMD_CALL vqv_slerp(vqvd_arg0 start, vqvd_arg1 end, double alpha) RTM_NO_EXCEPT
 	{
 		const quatd rotation = quat_slerp(start.rotation, end.rotation, alpha);
 		const vector4d translation = vector_lerp(start.translation, end.translation, alpha);
-		const vector4d scale = vector_lerp(start.scale, end.scale, alpha);
+		const vector4d scale = rtm_impl::vqv_slerp_scale(start.scale, end.scale, vector_set(alpha));
 		return vqv_set(rotation, translation, scale);
 	}
 
 #if defined(RTM_SSE2_INTRINSICS)
 	//////////////////////////////////////////////////////////////////////////
 	// Per component spherical interpolation of the two inputs at the specified alpha.
-	// See quat_slerp(..)
+	// The function interpolates the rotation with quat_slerp(..), the translation with vector_lerp(..),
+	// and the scale with vector_eerp(..). If the two scales of a component have a different sign or if
+	// one scale is zero, the function uses vector_lerp(..) for that component.
 	//////////////////////////////////////////////////////////////////////////
 	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE vqvd RTM_SIMD_CALL vqv_slerp(vqvd_arg0 start, vqvd_arg1 end, scalard_argn alpha) RTM_NO_EXCEPT
 	{
 		const quatd rotation = quat_slerp(start.rotation, end.rotation, alpha);
 		const vector4d translation = vector_lerp(start.translation, end.translation, alpha);
-		const vector4d scale = vector_lerp(start.scale, end.scale, alpha);
+		const vector4d scale = rtm_impl::vqv_slerp_scale(start.scale, end.scale, vector_set(alpha));
 		return vqv_set(rotation, translation, scale);
 	}
 #endif
