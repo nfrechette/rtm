@@ -35,6 +35,8 @@
 *  Remove the deprecated implicit coercion to `scalarf`, `scalard`, `vector4f`, and `vector4d`: use the functions with the `as_scalar` and `as_vector` suffixes
 *  Change the argument order of the experimental `vqm_set` to rotation, translation, and scale, as `vqv_set` uses
 *  Rename the experimental `qvv_normalize` and `qvv_is_finite` for `vqmf` and `vqmd` to `vqm_normalize` and `vqm_is_finite`
+*  Add `vqm_cast`, `vqm_from_matrix`, `vqm_lerp`, `vqm_slerp`, and a `vqm_inverse` overload with a fallback scale to the experimental VQM. `vqm_from_matrix` finds the rotation with the Gram-Schmidt process, and the scale/shear part contains the reflection, if any
+*  Rename the experimental `vqm_to_matrix` to `matrix_from_vqm`, as `matrix_from_vqv` uses
 *  Rename qvvf and qvvd to vqvf and vqvd, and the qvv functions to vqv: the name follows the order of operations, as with vqm. The new headers are rtm/vqvf.h and rtm/vqvd.h
 *  Deprecate qvvf, qvvd, the qvv functions, matrix_from_qvv, the qvvf_arg and qvvd_arg types, related_types::qvv, and the headers rtm/qvvf.h and rtm/qvvd.h: use the vqv names. To be removed in 2.5
 *  Code that forward declares struct qvvf or struct qvvd does not compile: include rtm/fwd.h instead

@@ -26,10 +26,12 @@
 
 #include "rtm/math.h"
 #include "rtm/matrix3x3d.h"
+#include "rtm/matrix3x4d.h"
 #include "rtm/quatd.h"
 #include "rtm/vector4d.h"
 #include "rtm/version.h"
 #include "rtm/impl/compiler_utils.h"
+#include "rtm/impl/matrix_affine_common.h"
 #include "rtm/experimental/impl/vqm_common.h"
 
 RTM_IMPL_FILE_PRAGMA_PUSH
@@ -106,6 +108,161 @@ namespace rtm
 #endif
 
 	template<> struct related_types<vqmd> : related_types<double> {};
+
+	//////////////////////////////////////////////////////////////////////////
+	// Casts a VQM transform float32 variant to a float64 variant.
+	//////////////////////////////////////////////////////////////////////////
+	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE vqmd RTM_SIMD_CALL vqm_cast(const vqmf& input) RTM_NO_EXCEPT
+	{
+		vqmd result;
+		result.rotation = quat_cast(input.rotation);
+		result.translation = vector_cast(input.translation);
+		result.x_axis = vector_cast(input.x_axis);
+		result.y_axis = vector_cast(input.y_axis);
+		result.z_axis = vector_cast(input.z_axis);
+
+		return result;
+	}
+
+	//////////////////////////////////////////////////////////////////////////
+	// Converts a 3x3 matrix into a VQM transform.
+	// The matrix can contain rotation, scale, shear, and reflection. The translation is zero.
+	// The rotation part is a pure rotation. If the matrix contains a reflection, the
+	// scale/shear part contains it.
+	// More than one VQM transform gives the same matrix. The function returns one of them.
+	//////////////////////////////////////////////////////////////////////////
+	RTM_DISABLE_SECURITY_COOKIE_CHECK inline vqmd RTM_SIMD_CALL vqm_from_matrix(matrix3x3d_arg0 input) RTM_NO_EXCEPT
+	{
+		// Let A be the input matrix. We find a rotation matrix R and a scale/shear matrix M with:
+		// A = M * R
+		// For each rotation matrix R, the matrix M = A * R^T satisfies this equation because R * R^T = I.
+		// Thus the choice of R selects the result, and the product M * R is equal to A for each R.
+		//
+		// We find R with the Gram-Schmidt process on the rows of A:
+		//     - The first axis of R is the largest row of A, normalized.
+		//     - The second axis of R is the part of a second row that is orthogonal to the first axis, normalized.
+		//       Of the two remaining rows, we use the row that has the largest orthogonal part, for precision.
+		//     - The third axis of R is the cross product of the first two axes.
+		// With u a unit vector, cross(cross(u, a), u) = a - dot(a, u) * u is the part of a that is orthogonal to u.
+		// The length of cross(u, a) is the length of that orthogonal part.
+		// The third axis has the sign that gives R a determinant of +1. Thus R is a rotation. If A contains a
+		// reflection, M contains it and the determinant of M is negative.
+		// When A has no shear and a positive scale (A = S * R0 with S diagonal), R is equal to R0 and M is equal to S.
+		//
+		// If the largest row is zero, all the rows are zero. R is the identity and M is equal to A.
+		// If the orthogonal parts of the two remaining rows are zero, all the rows are parallel to the first axis.
+		// Then we use an axis that is orthogonal to the first axis, as vqv_from_matrix does.
+
+		// We use a threshold to test for zero because division with near zero values is imprecise
+		// and might not yield a normalized result
+		const double zero_scale_threshold = 1.0E-8;
+
+		const vector4d* input_axes = &input.x_axis;
+
+		const double axis_lengths[3] = { vector_length3(input.x_axis), vector_length3(input.y_axis), vector_length3(input.z_axis) };
+
+		int32_t first_index = 0;
+		if (axis_lengths[1] > axis_lengths[first_index])
+			first_index = 1;
+		if (axis_lengths[2] > axis_lengths[first_index])
+			first_index = 2;
+
+		const double first_length = axis_lengths[first_index];
+		if (first_length < zero_scale_threshold)
+		{
+			// The largest row is zero which means all three are zero
+			// We use the identity rotation since its value is not recoverable
+			vqmd result;
+			result.rotation = quat_identity();
+			result.translation = vector_zero();
+			result.x_axis = input.x_axis;
+			result.y_axis = input.y_axis;
+			result.z_axis = input.z_axis;
+
+			return result;
+		}
+
+		const vector4d first_axis = vector_div(input_axes[first_index], vector_set(first_length));
+
+		// The two other rows follow the first row in the cyclic order X -> Y -> Z -> X
+		const int32_t next_index = (first_index + 1) % 3;
+		const int32_t last_index = (first_index + 2) % 3;
+
+		const vector4d next_normal = vector_cross3(first_axis, input_axes[next_index]);
+		const vector4d last_normal = vector_cross3(first_axis, input_axes[last_index]);
+		const double next_orthogonal_length = vector_length3(next_normal);
+		const double last_orthogonal_length = vector_length3(last_normal);
+
+		int32_t second_index;
+		int32_t third_index;
+		vector4d normal;
+		if (next_orthogonal_length >= last_orthogonal_length)
+		{
+			second_index = next_index;
+			third_index = last_index;
+			normal = next_normal;
+		}
+		else
+		{
+			second_index = last_index;
+			third_index = next_index;
+			normal = last_normal;
+		}
+
+		if (scalar_max(next_orthogonal_length, last_orthogonal_length) < zero_scale_threshold)
+		{
+			// All the rows are parallel to the first axis
+			// We build an orthogonal basis around the first axis
+			const matrix3x3d identity3x3 = matrix_identity();
+			const vector4d first_y_dot = vector_dot3_as_vector(first_axis, identity3x3.y_axis);
+			const mask4d is_first_parallel_to_y = vector_greater_equal(vector_abs(first_y_dot), vector_set(1.0 - zero_scale_threshold));
+			const vector4d orthogonal_axis = vector_select(is_first_parallel_to_y, identity3x3.z_axis, identity3x3.y_axis);
+
+			second_index = next_index;
+			third_index = last_index;
+			normal = vector_cross3(first_axis, orthogonal_axis);
+		}
+
+		// The second axis is orthogonal to the first axis, even when the normal is not exactly orthogonal to it
+		// The third axis is orthogonal to the two others and (first, second, third) is a right-handed basis
+		const vector4d second_axis = vector_normalize3(vector_cross3(normal, first_axis));
+		const vector4d third_axis = vector_cross3(first_axis, second_axis);
+
+		matrix3x3d rotation;
+		vector4d* rotation_axes = &rotation.x_axis;
+		rotation_axes[first_index] = first_axis;
+		rotation_axes[second_index] = second_axis;
+
+		// When the rows (first, second, third) are in the cyclic order X -> Y -> Z, the basis has the same
+		// winding as the identity. Otherwise, we negate the third axis to get a determinant of +1.
+		rotation_axes[third_index] = second_index == next_index ? third_axis : vector_neg(third_axis);
+
+		// M = A * R^T
+		const matrix3x3d scale_shear = matrix_mul(input, matrix_transpose(rotation));
+
+		vqmd result;
+		result.rotation = rtm_impl::quat_from_matrix(rotation.x_axis, rotation.y_axis, rotation.z_axis);
+		result.translation = vector_zero();
+		result.x_axis = scale_shear.x_axis;
+		result.y_axis = scale_shear.y_axis;
+		result.z_axis = scale_shear.z_axis;
+
+		return result;
+	}
+
+	//////////////////////////////////////////////////////////////////////////
+	// Converts a 3x4 affine matrix into a VQM transform.
+	// See vqm_from_matrix(matrix3x3d) for the rotation and the scale/shear parts.
+	//////////////////////////////////////////////////////////////////////////
+	RTM_DISABLE_SECURITY_COOKIE_CHECK inline vqmd RTM_SIMD_CALL vqm_from_matrix(matrix3x4d_arg0 input) RTM_NO_EXCEPT
+	{
+		const matrix3x3d rotation_scale_shear = matrix_set(input.x_axis, input.y_axis, input.z_axis);
+
+		vqmd result = vqm_from_matrix(rotation_scale_shear);
+		result.translation = input.w_axis;
+
+		return result;
+	}
 
 	//////////////////////////////////////////////////////////////////////////
 	// Creates a VQM transform from a rotation quaternion, a translation, and a 3D scale.
@@ -185,7 +342,7 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	// Adds two VQM transforms.
 	//////////////////////////////////////////////////////////////////////////
-	RTM_DISABLE_SECURITY_COOKIE_CHECK inline vqmd RTM_SIMD_CALL vqm_add(const vqmd& lhs, const vqmd& rhs) RTM_NO_EXCEPT
+	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE vqmd RTM_SIMD_CALL vqm_add(const vqmd& lhs, const vqmd& rhs) RTM_NO_EXCEPT
 	{
 		// T2 + T1 = [v2, q2, M2] + [v1, q1, M1] = [v2 + v1, q2 + q1, M2 + M1]
 		vqmd result;
@@ -273,60 +430,91 @@ namespace rtm
 		return quat_mul_vector3(matrix_mul_vector3(vec3, scale_shear), vqm.rotation);
 	}
 
+	namespace rtm_impl
+	{
+		//////////////////////////////////////////////////////////////////////////
+		// Returns the inverse of the input VQM transform from the inverse of its scale/shear part.
+		//////////////////////////////////////////////////////////////////////////
+		RTM_DISABLE_SECURITY_COOKIE_CHECK inline vqmd RTM_SIMD_CALL vqm_inverse(const vqmd& input, matrix3x3d_arg0 inv_scale_shear) RTM_NO_EXCEPT
+		{
+			// T^-1 = [v, q, M]^-1 = [M^-1 * (q^-1 * -v * q), q^-1, q * (q * M * q^-1)^-1 * q^-1]
+			// Note that (q * M * q^-1)^-1 != (q^-1 * M^-1 * q)
+			// However, let us convert that last part into matrix representation
+			// q * (q * M * q^-1)^-1 * q^-1 = Mq * (Mq * M)^-1
+			// Mq * (Mq * M)^-1 = (Mq * M^-1) * Mq^-1
+			// (Mq * M^-1) * Mq^-1 = (q * M^-1 * q^-1) * Mq^-1
+			// Unfortunately, we cannot convert the remaining Mq^-1 matrix back into a quaternion product
+			// because it does not rotate anything (multiplication is on left side instead of right)
+			// However, we can solve this by introducing the identity matrix
+			// (q * M^-1 * q^-1) * (Mq^-1 * I) = (q * M^-1 * q^-1) * (q^-1 * I * q)
+			// This is better because it allows us to compute a single matrix inverse as opposed to two
+
+			const quatd inv_rotation = quat_conjugate(input.rotation);
+
+			// Rotate the inverse scale/shear matrix
+			matrix3x3d inv_rotated_scale_shear;
+			inv_rotated_scale_shear.x_axis = quat_mul_vector3(inv_scale_shear.x_axis, input.rotation);
+			inv_rotated_scale_shear.y_axis = quat_mul_vector3(inv_scale_shear.y_axis, input.rotation);
+			inv_rotated_scale_shear.z_axis = quat_mul_vector3(inv_scale_shear.z_axis, input.rotation);
+
+			// Build our inverse rotation matrix
+			// TODO: We could build the matrix directly from the quaternion which is cheaper than rotating 3 axes, need to profile
+			matrix3x3d inv_rotation_mtx = matrix_identity();
+			inv_rotation_mtx.x_axis = quat_mul_vector3(inv_rotation_mtx.x_axis, inv_rotation);
+			inv_rotation_mtx.y_axis = quat_mul_vector3(inv_rotation_mtx.y_axis, inv_rotation);
+			inv_rotation_mtx.z_axis = quat_mul_vector3(inv_rotation_mtx.z_axis, inv_rotation);
+
+			// Multiply our two matrices
+			inv_rotated_scale_shear = matrix_mul(inv_rotation_mtx, inv_rotated_scale_shear);
+
+			vqmd result;
+			result.rotation = inv_rotation;
+			result.x_axis = inv_rotated_scale_shear.x_axis;
+			result.y_axis = inv_rotated_scale_shear.y_axis;
+			result.z_axis = inv_rotated_scale_shear.z_axis;
+			result.translation = matrix_mul_vector3(quat_mul_vector3(vector_neg(input.translation), inv_rotation), inv_scale_shear);
+
+			return result;
+		}
+	}
+
 	//////////////////////////////////////////////////////////////////////////
 	// Returns the inverse of the input VQM transform.
-	// If zero scale is contained, the result is undefined.
+	// If the scale/shear part has a zero determinant (e.g. zero scale), the result is undefined.
 	// For a safe alternative, supply a fallback scale value and a threshold.
 	//////////////////////////////////////////////////////////////////////////
 	RTM_DISABLE_SECURITY_COOKIE_CHECK inline vqmd RTM_SIMD_CALL vqm_inverse(const vqmd& input) RTM_NO_EXCEPT
 	{
-		// T^-1 = [v, q, M]^-1 = [M^-1 * (q^-1 * -v * q), q^-1, q * (q * M * q^-1)^-1 * q^-1]
-		// Note that (q * M * q^-1)^-1 != (q^-1 * M^-1 * q)
-		// However, let us convert that last part into matrix representation
-		// q * (q * M * q^-1)^-1 * q^-1 = Mq * (Mq * M)^-1
-		// Mq * (Mq * M)^-1 = (Mq * M^-1) * Mq^-1
-		// (Mq * M^-1) * Mq^-1 = (q * M^-1 * q^-1) * Mq^-1
-		// Unfortunately, we cannot convert the remaining Mq^-1 matrix back into a quaternion product
-		// because it does not rotate anything (multiplication is on left side instead of right)
-		// However, we can solve this by introducing the identity matrix
-		// (q * M^-1 * q^-1) * (Mq^-1 * I) = (q * M^-1 * q^-1) * (q^-1 * I * q)
-		// This is better because it allows us to compute a single matrix inverse as opposed to two
+		const matrix3x3d scale_shear = matrix_set(input.x_axis, input.y_axis, input.z_axis);
+		return rtm_impl::vqm_inverse(input, matrix_inverse(scale_shear));
+	}
 
+	//////////////////////////////////////////////////////////////////////////
+	// Returns the inverse of the input VQM transform.
+	// If the scale/shear part has a determinant whose absolute value is below the supplied
+	// threshold, the function uses the fallback scale in place of the scale/shear part.
+	// The fallback scale part has no shear. It must not contain a zero scale.
+	//////////////////////////////////////////////////////////////////////////
+	RTM_DISABLE_SECURITY_COOKIE_CHECK inline vqmd RTM_SIMD_CALL vqm_inverse(const vqmd& input, vector4d_arg0 fallback_scale, double threshold = 1.0E-8) RTM_NO_EXCEPT
+	{
 		const matrix3x3d scale_shear = matrix_set(input.x_axis, input.y_axis, input.z_axis);
 
-		const matrix3x3d inv_scale_shear = matrix_inverse(scale_shear);
-		const quatd inv_rotation = quat_conjugate(input.rotation);
+		// matrix_inverse returns its fallback value when the determinant is below the threshold
+		// Thus we give it the inverse of the fallback scale part
+		const vector4d inv_fallback_scale = vector_reciprocal(fallback_scale);
+		const vector4d zero = vector_zero();
+		const matrix3x3d inv_fallback_scale_shear = matrix_set(
+			vector_set_x(zero, vector_get_x_as_scalar(inv_fallback_scale)),
+			vector_set_y(zero, vector_get_y_as_scalar(inv_fallback_scale)),
+			vector_set_z(zero, vector_get_z_as_scalar(inv_fallback_scale)));
 
-		// Rotate the inverse scale/shear matrix
-		matrix3x3d inv_rotated_scale_shear;
-		inv_rotated_scale_shear.x_axis = quat_mul_vector3(inv_scale_shear.x_axis, input.rotation);
-		inv_rotated_scale_shear.y_axis = quat_mul_vector3(inv_scale_shear.y_axis, input.rotation);
-		inv_rotated_scale_shear.z_axis = quat_mul_vector3(inv_scale_shear.z_axis, input.rotation);
-
-		// Build our inverse rotation matrix
-		// TODO: We could build the matrix directly from the quaternion which is cheaper than rotating 3 axes, need to profile
-		matrix3x3d inv_rotation_mtx = matrix_identity();
-		inv_rotation_mtx.x_axis = quat_mul_vector3(inv_rotation_mtx.x_axis, inv_rotation);
-		inv_rotation_mtx.y_axis = quat_mul_vector3(inv_rotation_mtx.y_axis, inv_rotation);
-		inv_rotation_mtx.z_axis = quat_mul_vector3(inv_rotation_mtx.z_axis, inv_rotation);
-
-		// Multiply our two matrices
-		inv_rotated_scale_shear = matrix_mul(inv_rotation_mtx, inv_rotated_scale_shear);
-
-		vqmd result;
-		result.rotation = inv_rotation;
-		result.x_axis = inv_rotated_scale_shear.x_axis;
-		result.y_axis = inv_rotated_scale_shear.y_axis;
-		result.z_axis = inv_rotated_scale_shear.z_axis;
-		result.translation = matrix_mul_vector3(quat_mul_vector3(vector_neg(input.translation), inv_rotation), inv_scale_shear);
-
-		return result;
+		return rtm_impl::vqm_inverse(input, matrix_inverse(scale_shear, inv_fallback_scale_shear, threshold));
 	}
 
 	//////////////////////////////////////////////////////////////////////////
 	// Converts a VQM transform into a 3x4 affine matrix.
 	//////////////////////////////////////////////////////////////////////////
-	RTM_DISABLE_SECURITY_COOKIE_CHECK inline matrix3x4d RTM_SIMD_CALL vqm_to_matrix(const vqmd& input) RTM_NO_EXCEPT
+	RTM_DISABLE_SECURITY_COOKIE_CHECK inline matrix3x4d RTM_SIMD_CALL matrix_from_vqm(const vqmd& input) RTM_NO_EXCEPT
 	{
 		matrix3x4d result = matrix_set(input.x_axis, input.y_axis, input.z_axis, input.translation);
 
@@ -351,6 +539,80 @@ namespace rtm
 
 		return result;
 	}
+
+	//////////////////////////////////////////////////////////////////////////
+	// Per component linear interpolation of the two inputs at the specified alpha.
+	// The function interpolates the rotation with quat_lerp(..). It interpolates the
+	// translation and each axis of the scale/shear part with vector_lerp(..).
+	// The formula used is: ((1.0 - alpha) * start) + (alpha * end).
+	//////////////////////////////////////////////////////////////////////////
+	RTM_DISABLE_SECURITY_COOKIE_CHECK inline vqmd RTM_SIMD_CALL vqm_lerp(const vqmd& start, const vqmd& end, double alpha) RTM_NO_EXCEPT
+	{
+		vqmd result;
+		result.rotation = quat_lerp(start.rotation, end.rotation, alpha);
+		result.translation = vector_lerp(start.translation, end.translation, alpha);
+		result.x_axis = vector_lerp(start.x_axis, end.x_axis, alpha);
+		result.y_axis = vector_lerp(start.y_axis, end.y_axis, alpha);
+		result.z_axis = vector_lerp(start.z_axis, end.z_axis, alpha);
+
+		return result;
+	}
+
+#if defined(RTM_SSE2_INTRINSICS)
+	//////////////////////////////////////////////////////////////////////////
+	// Per component linear interpolation of the two inputs at the specified alpha.
+	// The function interpolates the rotation with quat_lerp(..). It interpolates the
+	// translation and each axis of the scale/shear part with vector_lerp(..).
+	// The formula used is: ((1.0 - alpha) * start) + (alpha * end).
+	//////////////////////////////////////////////////////////////////////////
+	RTM_DISABLE_SECURITY_COOKIE_CHECK inline vqmd RTM_SIMD_CALL vqm_lerp(const vqmd& start, const vqmd& end, scalard_arg0 alpha) RTM_NO_EXCEPT
+	{
+		vqmd result;
+		result.rotation = quat_lerp(start.rotation, end.rotation, alpha);
+		result.translation = vector_lerp(start.translation, end.translation, alpha);
+		result.x_axis = vector_lerp(start.x_axis, end.x_axis, alpha);
+		result.y_axis = vector_lerp(start.y_axis, end.y_axis, alpha);
+		result.z_axis = vector_lerp(start.z_axis, end.z_axis, alpha);
+
+		return result;
+	}
+#endif
+
+	//////////////////////////////////////////////////////////////////////////
+	// Per component spherical interpolation of the two inputs at the specified alpha.
+	// The function interpolates the rotation with quat_slerp(..). It interpolates the
+	// translation and each axis of the scale/shear part with vector_lerp(..).
+	//////////////////////////////////////////////////////////////////////////
+	RTM_DISABLE_SECURITY_COOKIE_CHECK inline vqmd RTM_SIMD_CALL vqm_slerp(const vqmd& start, const vqmd& end, double alpha) RTM_NO_EXCEPT
+	{
+		vqmd result;
+		result.rotation = quat_slerp(start.rotation, end.rotation, alpha);
+		result.translation = vector_lerp(start.translation, end.translation, alpha);
+		result.x_axis = vector_lerp(start.x_axis, end.x_axis, alpha);
+		result.y_axis = vector_lerp(start.y_axis, end.y_axis, alpha);
+		result.z_axis = vector_lerp(start.z_axis, end.z_axis, alpha);
+
+		return result;
+	}
+
+#if defined(RTM_SSE2_INTRINSICS)
+	//////////////////////////////////////////////////////////////////////////
+	// Per component spherical interpolation of the two inputs at the specified alpha.
+	// The function interpolates the rotation with quat_slerp(..). It interpolates the
+	// translation and each axis of the scale/shear part with vector_lerp(..).
+	//////////////////////////////////////////////////////////////////////////
+	RTM_DISABLE_SECURITY_COOKIE_CHECK inline vqmd RTM_SIMD_CALL vqm_slerp(const vqmd& start, const vqmd& end, scalard_arg0 alpha) RTM_NO_EXCEPT
+	{
+		vqmd result;
+		result.rotation = quat_slerp(start.rotation, end.rotation, alpha);
+		result.translation = vector_lerp(start.translation, end.translation, alpha);
+		result.x_axis = vector_lerp(start.x_axis, end.x_axis, alpha);
+		result.y_axis = vector_lerp(start.y_axis, end.y_axis, alpha);
+		result.z_axis = vector_lerp(start.z_axis, end.z_axis, alpha);
+
+		return result;
+	}
+#endif
 
 	//////////////////////////////////////////////////////////////////////////
 	// Returns true if the input VQM does not contain any NaN or Inf, otherwise false.

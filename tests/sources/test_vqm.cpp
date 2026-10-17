@@ -27,16 +27,39 @@
 #include <rtm/matrix3x4f.h>
 #include <rtm/matrix3x4d.h>
 #include <rtm/type_traits.h>
+#include <rtm/packing/quatf.h>
+#include <rtm/packing/quatd.h>
 #include <rtm/experimental/vqmf.h>
 #include <rtm/experimental/vqmd.h>
 
 using namespace rtm;
+
+template<typename Matrix3x4Type, typename FloatType>
+static void check_matrix_near_equal(const Matrix3x4Type& lhs, const Matrix3x4Type& rhs, const FloatType threshold)
+{
+	CHECK(vector_all_near_equal3(lhs.x_axis, rhs.x_axis, threshold));
+	CHECK(vector_all_near_equal3(lhs.y_axis, rhs.y_axis, threshold));
+	CHECK(vector_all_near_equal3(lhs.z_axis, rhs.z_axis, threshold));
+	CHECK(vector_all_near_equal3(lhs.w_axis, rhs.w_axis, threshold));
+}
+
+template<typename TransformType, typename FloatType>
+static void check_vqm_near_equal(const TransformType& lhs, const TransformType& rhs, const FloatType threshold)
+{
+	CHECK(quat_near_equal(lhs.rotation, rhs.rotation, threshold));
+	CHECK(vector_all_near_equal3(lhs.translation, rhs.translation, threshold));
+	CHECK(vector_all_near_equal3(lhs.x_axis, rhs.x_axis, threshold));
+	CHECK(vector_all_near_equal3(lhs.y_axis, rhs.y_axis, threshold));
+	CHECK(vector_all_near_equal3(lhs.z_axis, rhs.z_axis, threshold));
+}
 
 template<typename TransformType, typename FloatType>
 static void test_vqm_impl(const FloatType threshold)
 {
 	using QuatType = typename related_types<FloatType>::quat;
 	using Vector4Type = typename related_types<FloatType>::vector4;
+	using ScalarType = typename related_types<FloatType>::scalar;
+	using Matrix3x3Type = typename related_types<FloatType>::matrix3x3;
 	using Matrix3x4Type = typename related_types<FloatType>::matrix3x4;
 
 	// Identity validation
@@ -98,11 +121,64 @@ static void test_vqm_impl(const FloatType threshold)
 
 		Matrix3x4Type src_mtx = matrix_from_vqv(rotation, translation, scale);
 		TransformType dst_tx = vqm_set(rotation, translation, scale);
-		Matrix3x4Type dst_mtx = vqm_to_matrix(dst_tx);
+		Matrix3x4Type dst_mtx = matrix_from_vqm(dst_tx);
 		CHECK(vector_all_near_equal3(src_mtx.x_axis, dst_mtx.x_axis, threshold));
 		CHECK(vector_all_near_equal3(src_mtx.y_axis, dst_mtx.y_axis, threshold));
 		CHECK(vector_all_near_equal3(src_mtx.z_axis, dst_mtx.z_axis, threshold));
 		CHECK(vector_all_near_equal3(src_mtx.w_axis, dst_mtx.w_axis, threshold));
+	}
+
+	// VQM from matrix validation
+	{
+		QuatType rotation = quat_from_euler(scalar_deg_to_rad(FloatType(10.1)), scalar_deg_to_rad(FloatType(41.6)), scalar_deg_to_rad(FloatType(-12.7)));
+		Vector4Type translation = vector_set(FloatType(1.0), FloatType(2.0), FloatType(3.0));
+
+		// Without shear and with a positive scale, the function finds the original rotation and scale
+		{
+			Vector4Type scale = vector_set(FloatType(4.0), FloatType(5.0), FloatType(6.0));
+			TransformType tx = vqm_from_matrix(matrix_from_vqv(rotation, translation, scale));
+			tx = vqm_set_rotation(tx, quat_ensure_positive_w(tx.rotation));
+			check_vqm_near_equal(tx, vqm_set(quat_ensure_positive_w(rotation), translation, scale), threshold);
+		}
+
+		// The rows of each scale/shear part are: shear only (with Z or X as the largest row), shear and negative scale,
+		// shear and zero scale, all the rows parallel, two parallel rows and a zero row, and all the rows zero
+		const Vector4Type scale_shear_axes[][3] =
+		{
+			{ vector_set(FloatType(4.0), FloatType(0.5), FloatType(-0.25)), vector_set(FloatType(0.3), FloatType(5.0), FloatType(0.75)), vector_set(FloatType(-0.6), FloatType(0.2), FloatType(6.0)) },
+			{ vector_set(FloatType(6.0), FloatType(0.5), FloatType(-0.25)), vector_set(FloatType(0.3), FloatType(5.0), FloatType(0.75)), vector_set(FloatType(-0.6), FloatType(0.2), FloatType(4.0)) },
+			{ vector_set(FloatType(-4.0), FloatType(0.5), FloatType(-0.25)), vector_set(FloatType(0.3), FloatType(5.0), FloatType(0.75)), vector_set(FloatType(-0.6), FloatType(0.2), FloatType(6.0)) },
+			{ vector_set(FloatType(-4.0), FloatType(0.5), FloatType(-0.25)), vector_set(FloatType(0.3), FloatType(-5.0), FloatType(0.75)), vector_set(FloatType(-0.6), FloatType(0.2), FloatType(6.0)) },
+			{ vector_set(FloatType(-4.0), FloatType(0.5), FloatType(-0.25)), vector_set(FloatType(0.3), FloatType(-5.0), FloatType(0.75)), vector_set(FloatType(-0.6), FloatType(0.2), FloatType(-6.0)) },
+			{ vector_set(FloatType(0.0), FloatType(0.0), FloatType(0.0)), vector_set(FloatType(0.3), FloatType(5.0), FloatType(0.75)), vector_set(FloatType(-0.6), FloatType(0.2), FloatType(6.0)) },
+			{ vector_set(FloatType(0.0), FloatType(0.0), FloatType(0.0)), vector_set(FloatType(0.3), FloatType(5.0), FloatType(0.75)), vector_set(FloatType(0.0), FloatType(0.0), FloatType(0.0)) },
+			{ vector_set(FloatType(1.0), FloatType(2.0), FloatType(3.0)), vector_set(FloatType(-2.0), FloatType(-4.0), FloatType(-6.0)), vector_set(FloatType(0.5), FloatType(1.0), FloatType(1.5)) },
+			{ vector_set(FloatType(0.0), FloatType(1.0), FloatType(0.0)), vector_set(FloatType(0.0), FloatType(-3.0), FloatType(0.0)), vector_set(FloatType(0.0), FloatType(0.0), FloatType(0.0)) },
+			{ vector_set(FloatType(0.0), FloatType(0.0), FloatType(0.0)), vector_set(FloatType(0.0), FloatType(0.0), FloatType(0.0)), vector_set(FloatType(0.0), FloatType(0.0), FloatType(0.0)) },
+		};
+
+		for (const Vector4Type* axes : scale_shear_axes)
+		{
+			TransformType src_tx = vqm_set(rotation, translation, vector_zero());
+			src_tx.x_axis = axes[0];
+			src_tx.y_axis = axes[1];
+			src_tx.z_axis = axes[2];
+
+			// The product of the two parts is equal to the input matrix
+			const Matrix3x4Type src_mtx = matrix_from_vqm(src_tx);
+			const TransformType dst_tx = vqm_from_matrix(src_mtx);
+			CHECK(quat_is_normalized(dst_tx.rotation, threshold));
+			check_matrix_near_equal(matrix_from_vqm(dst_tx), src_mtx, threshold);
+
+			// The scale/shear part contains the reflection: it has the same determinant as the input
+			const Matrix3x3Type src_mtx3x3 = matrix_set(src_mtx.x_axis, src_mtx.y_axis, src_mtx.z_axis);
+			const Matrix3x3Type dst_scale_shear = matrix_set(dst_tx.x_axis, dst_tx.y_axis, dst_tx.z_axis);
+			CHECK(scalar_near_equal(scalar_cast(matrix_determinant(dst_scale_shear)), scalar_cast(matrix_determinant(src_mtx3x3)), threshold));
+
+			// The 3x3 matrix variant returns the same rotation and scale/shear, and a zero translation
+			const TransformType dst_tx3x3 = vqm_from_matrix(src_mtx3x3);
+			check_vqm_near_equal(dst_tx3x3, vqm_set_translation(dst_tx, vector_zero()), threshold);
+		}
 	}
 
 	// VQM + VQM validation
@@ -148,7 +224,7 @@ static void test_vqm_impl(const FloatType threshold)
 
 		TransformType dst_tx = vqm_set(rotation, translation, scale);
 		dst_tx = vqm_mul(dst_tx, dst_tx);
-		Matrix3x4Type dst_mtx = vqm_to_matrix(dst_tx);
+		Matrix3x4Type dst_mtx = matrix_from_vqm(dst_tx);
 		CHECK(vector_all_near_equal3(src_mtx.x_axis, dst_mtx.x_axis, threshold));
 		CHECK(vector_all_near_equal3(src_mtx.y_axis, dst_mtx.y_axis, threshold));
 		CHECK(vector_all_near_equal3(src_mtx.z_axis, dst_mtx.z_axis, threshold));
@@ -166,14 +242,14 @@ static void test_vqm_impl(const FloatType threshold)
 			TransformType tx1 = vqm_set(rotation1, translation1, scale1);
 
 			Matrix3x4Type ref_01 = matrix_mul(mtx0, mtx1);
-			Matrix3x4Type result_01 = vqm_to_matrix(vqm_mul(tx0, tx1));
+			Matrix3x4Type result_01 = matrix_from_vqm(vqm_mul(tx0, tx1));
 			CHECK(vector_all_near_equal3(ref_01.x_axis, result_01.x_axis, threshold));
 			CHECK(vector_all_near_equal3(ref_01.y_axis, result_01.y_axis, threshold));
 			CHECK(vector_all_near_equal3(ref_01.z_axis, result_01.z_axis, threshold));
 			CHECK(vector_all_near_equal3(ref_01.w_axis, result_01.w_axis, threshold));
 
 			Matrix3x4Type ref_10 = matrix_mul(mtx1, mtx0);
-			Matrix3x4Type result_10 = vqm_to_matrix(vqm_mul(tx1, tx0));
+			Matrix3x4Type result_10 = matrix_from_vqm(vqm_mul(tx1, tx0));
 			CHECK(vector_all_near_equal3(ref_10.x_axis, result_10.x_axis, threshold));
 			CHECK(vector_all_near_equal3(ref_10.y_axis, result_10.y_axis, threshold));
 			CHECK(vector_all_near_equal3(ref_10.z_axis, result_10.z_axis, threshold));
@@ -188,7 +264,7 @@ static void test_vqm_impl(const FloatType threshold)
 
 		dst_tx = vqm_set(rotation, translation, scale);
 		dst_tx = vqm_mul(dst_tx, dst_tx);
-		dst_mtx = vqm_to_matrix(dst_tx);
+		dst_mtx = matrix_from_vqm(dst_tx);
 		CHECK(vector_all_near_equal3(src_mtx.x_axis, dst_mtx.x_axis, threshold));
 		CHECK(vector_all_near_equal3(src_mtx.y_axis, dst_mtx.y_axis, threshold));
 		CHECK(vector_all_near_equal3(src_mtx.z_axis, dst_mtx.z_axis, threshold));
@@ -202,7 +278,7 @@ static void test_vqm_impl(const FloatType threshold)
 
 		dst_tx = vqm_set(rotation, translation, scale);
 		dst_tx = vqm_mul(dst_tx, dst_tx);
-		dst_mtx = vqm_to_matrix(dst_tx);
+		dst_mtx = matrix_from_vqm(dst_tx);
 		CHECK(vector_all_near_equal3(src_mtx.x_axis, dst_mtx.x_axis, threshold));
 		CHECK(vector_all_near_equal3(src_mtx.y_axis, dst_mtx.y_axis, threshold));
 		CHECK(vector_all_near_equal3(src_mtx.z_axis, dst_mtx.z_axis, threshold));
@@ -216,7 +292,7 @@ static void test_vqm_impl(const FloatType threshold)
 
 		dst_tx = vqm_set(rotation, translation, scale);
 		dst_tx = vqm_mul(dst_tx, dst_tx);
-		dst_mtx = vqm_to_matrix(dst_tx);
+		dst_mtx = matrix_from_vqm(dst_tx);
 		CHECK(vector_all_near_equal3(src_mtx.x_axis, dst_mtx.x_axis, threshold));
 		CHECK(vector_all_near_equal3(src_mtx.y_axis, dst_mtx.y_axis, threshold));
 		CHECK(vector_all_near_equal3(src_mtx.z_axis, dst_mtx.z_axis, threshold));
@@ -230,7 +306,7 @@ static void test_vqm_impl(const FloatType threshold)
 
 		dst_tx = vqm_set(rotation, translation, scale);
 		dst_tx = vqm_mul(dst_tx, dst_tx);
-		dst_mtx = vqm_to_matrix(dst_tx);
+		dst_mtx = matrix_from_vqm(dst_tx);
 		CHECK(vector_all_near_equal3(src_mtx.x_axis, dst_mtx.x_axis, threshold));
 		CHECK(vector_all_near_equal3(src_mtx.y_axis, dst_mtx.y_axis, threshold));
 		CHECK(vector_all_near_equal3(src_mtx.z_axis, dst_mtx.z_axis, threshold));
@@ -244,7 +320,7 @@ static void test_vqm_impl(const FloatType threshold)
 
 		dst_tx = vqm_set(rotation, translation, scale);
 		dst_tx = vqm_mul(dst_tx, dst_tx);
-		dst_mtx = vqm_to_matrix(dst_tx);
+		dst_mtx = matrix_from_vqm(dst_tx);
 		CHECK(vector_all_near_equal3(src_mtx.x_axis, dst_mtx.x_axis, threshold));
 		CHECK(vector_all_near_equal3(src_mtx.y_axis, dst_mtx.y_axis, threshold));
 		CHECK(vector_all_near_equal3(src_mtx.z_axis, dst_mtx.z_axis, threshold));
@@ -258,7 +334,7 @@ static void test_vqm_impl(const FloatType threshold)
 
 		dst_tx = vqm_set(rotation, translation, scale);
 		dst_tx = vqm_mul(dst_tx, dst_tx);
-		dst_mtx = vqm_to_matrix(dst_tx);
+		dst_mtx = matrix_from_vqm(dst_tx);
 		CHECK(vector_all_near_equal3(src_mtx.x_axis, dst_mtx.x_axis, threshold));
 		CHECK(vector_all_near_equal3(src_mtx.y_axis, dst_mtx.y_axis, threshold));
 		CHECK(vector_all_near_equal3(src_mtx.z_axis, dst_mtx.z_axis, threshold));
@@ -410,7 +486,7 @@ static void test_vqm_impl(const FloatType threshold)
 		TransformType dst_tx = vqm_set(rotation, translation, scale);
 		TransformType inv_dst_tx = vqm_inverse(dst_tx);
 
-		Matrix3x4Type inv_dst_mtx = vqm_to_matrix(inv_dst_tx);
+		Matrix3x4Type inv_dst_mtx = matrix_from_vqm(inv_dst_tx);
 		CHECK(vector_all_near_equal3(inv_src_mtx.x_axis, inv_dst_mtx.x_axis, threshold));
 		CHECK(vector_all_near_equal3(inv_src_mtx.y_axis, inv_dst_mtx.y_axis, threshold));
 		CHECK(vector_all_near_equal3(inv_src_mtx.z_axis, inv_dst_mtx.z_axis, threshold));
@@ -442,7 +518,7 @@ static void test_vqm_impl(const FloatType threshold)
 		dst_tx = vqm_set(rotation, translation, scale);
 		inv_dst_tx = vqm_inverse(dst_tx);
 
-		inv_dst_mtx = vqm_to_matrix(inv_dst_tx);
+		inv_dst_mtx = matrix_from_vqm(inv_dst_tx);
 		CHECK(vector_all_near_equal3(inv_src_mtx.x_axis, inv_dst_mtx.x_axis, threshold));
 		CHECK(vector_all_near_equal3(inv_src_mtx.y_axis, inv_dst_mtx.y_axis, threshold));
 		CHECK(vector_all_near_equal3(inv_src_mtx.z_axis, inv_dst_mtx.z_axis, threshold));
@@ -474,7 +550,7 @@ static void test_vqm_impl(const FloatType threshold)
 		dst_tx = vqm_set(rotation, translation, scale);
 		inv_dst_tx = vqm_inverse(dst_tx);
 
-		inv_dst_mtx = vqm_to_matrix(inv_dst_tx);
+		inv_dst_mtx = matrix_from_vqm(inv_dst_tx);
 		CHECK(vector_all_near_equal3(inv_src_mtx.x_axis, inv_dst_mtx.x_axis, threshold));
 		CHECK(vector_all_near_equal3(inv_src_mtx.y_axis, inv_dst_mtx.y_axis, threshold));
 		CHECK(vector_all_near_equal3(inv_src_mtx.z_axis, inv_dst_mtx.z_axis, threshold));
@@ -506,7 +582,7 @@ static void test_vqm_impl(const FloatType threshold)
 		dst_tx = vqm_set(rotation, translation, scale);
 		inv_dst_tx = vqm_inverse(dst_tx);
 
-		inv_dst_mtx = vqm_to_matrix(inv_dst_tx);
+		inv_dst_mtx = matrix_from_vqm(inv_dst_tx);
 		CHECK(vector_all_near_equal3(inv_src_mtx.x_axis, inv_dst_mtx.x_axis, threshold));
 		CHECK(vector_all_near_equal3(inv_src_mtx.y_axis, inv_dst_mtx.y_axis, threshold));
 		CHECK(vector_all_near_equal3(inv_src_mtx.z_axis, inv_dst_mtx.z_axis, threshold));
@@ -528,6 +604,73 @@ static void test_vqm_impl(const FloatType threshold)
 		CHECK(vector_all_near_equal3(inverse_mul_result.y_axis, identity.y_axis, threshold));
 		CHECK(vector_all_near_equal3(inverse_mul_result.z_axis, identity.z_axis, threshold));
 		CHECK(vector_all_near_equal3(inverse_mul_result.translation, identity.translation, threshold));
+	}
+
+	// VQM inverse with fallback validation
+	{
+		QuatType rotation = quat_from_euler(scalar_deg_to_rad(FloatType(10.1)), scalar_deg_to_rad(FloatType(41.6)), scalar_deg_to_rad(FloatType(-12.7)));
+		Vector4Type translation = vector_set(FloatType(1.0), FloatType(2.0), FloatType(3.0));
+		Vector4Type fallback_scale = vector_set(FloatType(2.0), FloatType(4.0), FloatType(0.5));
+
+		// The scale/shear part is invertible: the function ignores the fallback
+		TransformType tx = vqm_set(rotation, translation, vector_zero());
+		tx.x_axis = vector_set(FloatType(-4.0), FloatType(0.5), FloatType(-0.25));
+		tx.y_axis = vector_set(FloatType(0.3), FloatType(5.0), FloatType(0.75));
+		tx.z_axis = vector_set(FloatType(-0.6), FloatType(0.2), FloatType(6.0));
+		check_vqm_near_equal(vqm_inverse(tx, fallback_scale), vqm_inverse(tx), threshold);
+
+		// The scale/shear part is not invertible: the function uses the fallback scale without shear
+		tx.x_axis = vector_set(FloatType(0.0), FloatType(0.0), FloatType(0.0));
+		TransformType inverse_result = vqm_inverse(tx, fallback_scale);
+		CHECK(vqm_is_finite(inverse_result));
+		check_vqm_near_equal(inverse_result, vqm_inverse(vqm_set(rotation, translation, fallback_scale)), threshold);
+
+		// All the rows are parallel: the determinant is zero
+		tx.x_axis = vector_set(FloatType(1.0), FloatType(2.0), FloatType(3.0));
+		tx.y_axis = vector_set(FloatType(-2.0), FloatType(-4.0), FloatType(-6.0));
+		tx.z_axis = vector_set(FloatType(0.5), FloatType(1.0), FloatType(1.5));
+		inverse_result = vqm_inverse(tx, fallback_scale);
+		CHECK(vqm_is_finite(inverse_result));
+		check_vqm_near_equal(inverse_result, vqm_inverse(vqm_set(rotation, translation, fallback_scale)), threshold);
+	}
+
+	// VQM lerp and slerp validation
+	{
+		const FloatType alpha = FloatType(0.33);
+		const ScalarType alpha_s = scalar_set(alpha);
+
+		QuatType rotation0 = quat_normalize(quat_from_euler(scalar_deg_to_rad(FloatType(30.0)), scalar_deg_to_rad(FloatType(-45.0)), scalar_deg_to_rad(FloatType(90.0))));
+		QuatType rotation1 = quat_normalize(quat_from_euler(scalar_deg_to_rad(FloatType(45.0)), scalar_deg_to_rad(FloatType(60.0)), scalar_deg_to_rad(FloatType(120.0))));
+		Vector4Type translation0 = vector_set(FloatType(-0.001138), FloatType(0.91623), FloatType(-1.624598));
+		Vector4Type translation1 = vector_set(FloatType(-8.5), FloatType(0.25), FloatType(14.0));
+
+		TransformType tx0 = vqm_set(rotation0, translation0, vector_zero());
+		tx0.x_axis = vector_set(FloatType(-4.0), FloatType(0.5), FloatType(-0.25));
+		tx0.y_axis = vector_set(FloatType(0.3), FloatType(5.0), FloatType(0.75));
+		tx0.z_axis = vector_set(FloatType(-0.6), FloatType(0.2), FloatType(6.0));
+
+		TransformType tx1 = vqm_set(rotation1, translation1, vector_zero());
+		tx1.x_axis = vector_set(FloatType(0.5), FloatType(-1.5), FloatType(2.0));
+		tx1.y_axis = vector_set(FloatType(1.25), FloatType(-2.0), FloatType(0.1));
+		tx1.z_axis = vector_set(FloatType(3.0), FloatType(0.4), FloatType(3.5));
+
+		// The function interpolates each component of the two transforms
+		TransformType lerp_ref = vqm_set(quat_lerp(rotation0, rotation1, alpha), vector_lerp(translation0, translation1, alpha), vector_zero());
+		lerp_ref.x_axis = vector_lerp(tx0.x_axis, tx1.x_axis, alpha);
+		lerp_ref.y_axis = vector_lerp(tx0.y_axis, tx1.y_axis, alpha);
+		lerp_ref.z_axis = vector_lerp(tx0.z_axis, tx1.z_axis, alpha);
+		const TransformType slerp_ref = vqm_set_rotation(lerp_ref, quat_slerp(rotation0, rotation1, alpha));
+
+		check_vqm_near_equal(vqm_lerp(tx0, tx1, alpha), lerp_ref, threshold);
+		check_vqm_near_equal(vqm_lerp(tx0, tx1, alpha_s), lerp_ref, threshold);
+		check_vqm_near_equal(vqm_slerp(tx0, tx1, alpha), slerp_ref, threshold);
+		check_vqm_near_equal(vqm_slerp(tx0, tx1, alpha_s), slerp_ref, threshold);
+
+		// The result is the start transform when alpha is 0.0 and the end transform when alpha is 1.0
+		check_vqm_near_equal(vqm_lerp(tx0, tx1, FloatType(0.0)), tx0, threshold);
+		check_vqm_near_equal(vqm_lerp(tx0, tx1, FloatType(1.0)), tx1, threshold);
+		check_vqm_near_equal(vqm_slerp(tx0, tx1, FloatType(0.0)), tx0, threshold);
+		check_vqm_near_equal(vqm_slerp(tx0, tx1, FloatType(1.0)), tx1, threshold);
 	}
 
 	// VQM normalize validation
@@ -595,9 +738,35 @@ static void test_vqm_impl(const FloatType threshold)
 TEST_CASE("vqmf math", "[math][vqm]")
 {
 	test_vqm_impl<vqmf, float>(1.0E-3F);
+
+	const quatf src_rotation = quat_set(0.39564531008956383F, 0.044254239301713752F, 0.22768840967675355F, 0.88863059760894492F);
+	const vector4f src_translation = vector_set(-2.65F, 2.996113F, 0.68123521F);
+	vqmf src = vqm_set(src_rotation, src_translation, vector_zero());
+	src.x_axis = vector_set(1.2F, 0.5F, -0.25F);
+	src.y_axis = vector_set(0.3F, 0.8F, 0.75F);
+	src.z_axis = vector_set(-0.6F, 0.2F, 2.1F);
+	const vqmd dst = vqm_cast(src);
+	CHECK(quat_near_equal(src.rotation, quat_cast(dst.rotation), 1.0E-6F));
+	CHECK(vector_all_near_equal3(src.translation, vector_cast(dst.translation), 1.0E-6F));
+	CHECK(vector_all_near_equal3(src.x_axis, vector_cast(dst.x_axis), 1.0E-6F));
+	CHECK(vector_all_near_equal3(src.y_axis, vector_cast(dst.y_axis), 1.0E-6F));
+	CHECK(vector_all_near_equal3(src.z_axis, vector_cast(dst.z_axis), 1.0E-6F));
 }
 
 TEST_CASE("vqmd math", "[math][vqm]")
 {
 	test_vqm_impl<vqmd, double>(1.0E-8);
+
+	const quatd src_rotation = quat_set(0.39564531008956383, 0.044254239301713752, 0.22768840967675355, 0.88863059760894492);
+	const vector4d src_translation = vector_set(-2.65, 2.996113, 0.68123521);
+	vqmd src = vqm_set(src_rotation, src_translation, vector_zero());
+	src.x_axis = vector_set(1.2, 0.5, -0.25);
+	src.y_axis = vector_set(0.3, 0.8, 0.75);
+	src.z_axis = vector_set(-0.6, 0.2, 2.1);
+	const vqmf dst = vqm_cast(src);
+	CHECK(quat_near_equal(src.rotation, quat_cast(dst.rotation), 1.0E-6));
+	CHECK(vector_all_near_equal3(src.translation, vector_cast(dst.translation), 1.0E-6));
+	CHECK(vector_all_near_equal3(src.x_axis, vector_cast(dst.x_axis), 1.0E-6));
+	CHECK(vector_all_near_equal3(src.y_axis, vector_cast(dst.y_axis), 1.0E-6));
+	CHECK(vector_all_near_equal3(src.z_axis, vector_cast(dst.z_axis), 1.0E-6));
 }
