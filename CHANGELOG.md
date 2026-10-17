@@ -42,6 +42,8 @@
 *  Deprecate qvsf, qvsd, the qvs functions, matrix_from_qvs, the qvsf_arg and qvsd_arg types, related_types::qvs, and the headers rtm/qvsf.h and rtm/qvsd.h: use the vqs names. To be removed in 2.5
 *  Code that forward declares struct qvsf or struct qvsd does not compile: include rtm/fwd.h instead
 *  Rename qvf and qvd to vqf and vqd, and the qv functions to vq: the name follows the order of operations, as with vqs. The new headers are rtm/vqf.h and rtm/vqd.h
+*  Deprecate qvf, qvd, the qv functions, matrix_from_qv, the qvf_arg and qvd_arg types, related_types::qv, and the headers rtm/qvf.h and rtm/qvd.h: use the vq names. To be removed in 2.5
+*  Code that forward declares struct qvf or struct qvd does not compile: include rtm/fwd.h instead
 
 ## 2.3.1
 

@@ -93,6 +93,24 @@ namespace rtm
 	}
 
 	//////////////////////////////////////////////////////////////////////////
+	// Sets a 3x4 affine matrix from a rotation quaternion and translation.
+	//////////////////////////////////////////////////////////////////////////
+	RTM_DEPRECATED("Use 'matrix_from_vq' instead. To be removed in 2.5.")
+	RTM_DISABLE_SECURITY_COOKIE_CHECK inline matrix3x4d RTM_SIMD_CALL matrix_from_qv(quatd_arg0 quat, vector4d_arg1 translation) RTM_NO_EXCEPT
+	{
+		return matrix_from_vq(quat, translation);
+	}
+
+	//////////////////////////////////////////////////////////////////////////
+	// Converts a VQ transform into a 3x4 affine matrix.
+	//////////////////////////////////////////////////////////////////////////
+	RTM_DEPRECATED("Use 'matrix_from_vq' instead. To be removed in 2.5.")
+	RTM_DISABLE_SECURITY_COOKIE_CHECK inline matrix3x4d RTM_SIMD_CALL matrix_from_qv(vqd_arg0 transform) RTM_NO_EXCEPT
+	{
+		return matrix_from_vq(transform);
+	}
+
+	//////////////////////////////////////////////////////////////////////////
 	// Sets a 3x4 affine matrix from a rotation quaternion, translation, and scalar scale.
 	//////////////////////////////////////////////////////////////////////////
 	RTM_DISABLE_SECURITY_COOKIE_CHECK inline matrix3x4d RTM_SIMD_CALL matrix_from_vqs(quatd_arg0 quat, vector4d_arg1 translation, double scale) RTM_NO_EXCEPT

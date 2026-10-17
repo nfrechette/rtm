@@ -59,6 +59,7 @@ namespace rtm
 		using vqs = vqsf;
 		using vqv = vqvf;
 
+		using qv RTM_DEPRECATED("Use 'vq' instead. To be removed in 2.5.") = vqf;
 		using qvs RTM_DEPRECATED("Use 'vqs' instead. To be removed in 2.5.") = vqsf;
 		using qvv RTM_DEPRECATED("Use 'vqv' instead. To be removed in 2.5.") = vqvf;
 
@@ -87,6 +88,7 @@ namespace rtm
 		using vqs = vqsd;
 		using vqv = vqvd;
 
+		using qv RTM_DEPRECATED("Use 'vq' instead. To be removed in 2.5.") = vqd;
 		using qvs RTM_DEPRECATED("Use 'vqs' instead. To be removed in 2.5.") = vqsd;
 		using qvv RTM_DEPRECATED("Use 'vqv' instead. To be removed in 2.5.") = vqvd;
 
