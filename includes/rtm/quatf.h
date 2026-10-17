@@ -1324,6 +1324,7 @@ namespace rtm
 #if defined(RTM_SSE2_INTRINSICS)
 	//////////////////////////////////////////////////////////////////////////
 	// Returns the spherical interpolation between start and end for a given alpha value.
+	// If the angle between the two inputs is near zero, the function uses the weights (1.0 - alpha) and alpha.
 	// See: https://www.euclideanspace.com/maths/algebra/realNormedAlgebra/quaternions/slerp/index.htm
 	// Perhaps try this someday: http://number-none.com/product/Understanding%20Slerp,%20Then%20Not%20Using%20It/
 	//////////////////////////////////////////////////////////////////////////
@@ -1344,7 +1345,9 @@ namespace rtm
 
 		scalarf cos_half_angle = vector_get_x_as_scalar(cos_half_angle_v);
 		scalarf half_angle = scalar_acos(cos_half_angle);
-		scalarf sin_half_angle = scalar_sqrt(scalar_sub(scalar_set(1.0F), scalar_mul(cos_half_angle, cos_half_angle)));
+
+		// sin^2 = 1 - cos^2 = (1 - cos) * (1 + cos): the second form does not lose precision when the angle is small
+		scalarf sin_half_angle = scalar_sqrt(scalar_mul(scalar_sub(scalar_set(1.0F), cos_half_angle), scalar_add(scalar_set(1.0F), cos_half_angle)));
 
 		scalarf start_contribution_angle = scalar_mul(scalar_sub(scalar_set(1.0F), alpha), half_angle);
 		scalarf end_contribution_angle = scalar_mul(alpha, half_angle);
@@ -1352,6 +1355,14 @@ namespace rtm
 		// A vector division costs the same as a scalar division, and one division is more accurate
 		// than a division followed by a multiplication
 		vector4f contributions = vector_div(vector_sin(contribution_angles), vector_set(sin_half_angle));
+
+		// When the angle is near zero, sin(half_angle) is near zero and the division is not finite (0 / 0) when the
+		// two inputs are equal. Then sin(x * half_angle) / sin(half_angle) is approximately x: we use the linear weights.
+		const scalarf start_weight = scalar_sub(scalar_set(1.0F), alpha);
+		const vector4f linear_contributions = vector_set(start_weight, alpha, start_weight, alpha);
+		const mask4f is_angle_small = vector_less_than(vector_set(sin_half_angle), vector_set(1.0E-4F));
+		contributions = vector_select(is_angle_small, linear_contributions, contributions);
+
 		vector4f start_contribution = vector_dup_x(contributions);
 		vector4f end_contribution = vector_dup_y(contributions);
 
@@ -1362,6 +1373,7 @@ namespace rtm
 
 	//////////////////////////////////////////////////////////////////////////
 	// Returns the spherical interpolation between start and end for a given alpha value.
+	// If the angle between the two inputs is near zero, the function uses the weights (1.0 - alpha) and alpha.
 	// See: https://www.euclideanspace.com/maths/algebra/realNormedAlgebra/quaternions/slerp/index.htm
 	// Perhaps try this someday: http://number-none.com/product/Understanding%20Slerp,%20Then%20Not%20Using%20It/
 	//////////////////////////////////////////////////////////////////////////
@@ -1383,7 +1395,9 @@ namespace rtm
 
 		scalarf cos_half_angle = vector_get_x_as_scalar(cos_half_angle_v);
 		scalarf half_angle = scalar_acos(cos_half_angle);
-		scalarf sin_half_angle = scalar_sqrt(scalar_sub(scalar_set(1.0F), scalar_mul(cos_half_angle, cos_half_angle)));
+
+		// sin^2 = 1 - cos^2 = (1 - cos) * (1 + cos): the second form does not lose precision when the angle is small
+		scalarf sin_half_angle = scalar_sqrt(scalar_mul(scalar_sub(scalar_set(1.0F), cos_half_angle), scalar_add(scalar_set(1.0F), cos_half_angle)));
 
 		scalarf start_contribution_angle = scalar_mul(scalar_sub(scalar_set(1.0F), alpha_s), half_angle);
 		scalarf end_contribution_angle = scalar_mul(alpha_s, half_angle);
@@ -1397,6 +1411,14 @@ namespace rtm
 		// ARMv7 and the scalar code path do not have a vector division.
 		vector4f contributions = vector_mul(vector_sin(contribution_angles), scalar_reciprocal(sin_half_angle));
 #endif
+
+		// When the angle is near zero, sin(half_angle) is near zero and the division is not finite (0 / 0) when the
+		// two inputs are equal. Then sin(x * half_angle) / sin(half_angle) is approximately x: we use the linear weights.
+		const scalarf start_weight = scalar_sub(scalar_set(1.0F), alpha_s);
+		const vector4f linear_contributions = vector_set(start_weight, alpha_s, start_weight, alpha_s);
+		const mask4f is_angle_small = vector_less_than(vector_set(sin_half_angle), vector_set(1.0E-4F));
+		contributions = vector_select(is_angle_small, linear_contributions, contributions);
+
 		vector4f start_contribution = vector_dup_x(contributions);
 		vector4f end_contribution = vector_dup_y(contributions);
 
