@@ -31,6 +31,7 @@
 #include "rtm/version.h"
 #include "rtm/impl/cmath.impl.h"
 #include "rtm/impl/compiler_utils.h"
+#include "rtm/impl/exp_log_common.h"
 #include "rtm/impl/scalar_common.h"
 
 #include <algorithm>
@@ -472,6 +473,64 @@ namespace rtm
 	{
 		// ((1.0 - alpha) * start) + (alpha * end) == (start - alpha * start) + (alpha * end)
 		return scalar_mul_add(end, alpha, scalar_neg_mul_sub(start, alpha, start));
+	}
+
+#if defined(RTM_SSE2_INTRINSICS)
+	//////////////////////////////////////////////////////////////////////////
+	// Returns the natural exponential of the input: e^input.
+	// The function uses the same algorithm as vector_exp(..): for the same input, the results are equal.
+	//////////////////////////////////////////////////////////////////////////
+	RTM_DISABLE_SECURITY_COOKIE_CHECK inline scalarf RTM_SIMD_CALL scalar_exp(scalarf_arg0 input) RTM_NO_EXCEPT
+	{
+		return scalarf{ rtm_impl::exp_f32x4(input.value) };
+	}
+#endif
+
+	//////////////////////////////////////////////////////////////////////////
+	// Returns the natural exponential of the input: e^input.
+	// The function uses the same algorithm as vector_exp(..): for the same input, the results are equal.
+	//////////////////////////////////////////////////////////////////////////
+	RTM_DISABLE_SECURITY_COOKIE_CHECK inline float RTM_SIMD_CALL scalar_exp(float input) RTM_NO_EXCEPT
+	{
+#if defined(RTM_SSE2_INTRINSICS)
+		return _mm_cvtss_f32(rtm_impl::exp_f32x4(_mm_set_ps1(input)));
+#elif defined(RTM_WASM128_INTRINSICS)
+		return wasm_f32x4_extract_lane(rtm_impl::exp_f32x4(wasm_f32x4_splat(input)), 0);
+#elif defined(RTM_NEON_INTRINSICS)
+		return vgetq_lane_f32(rtm_impl::exp_f32x4(vdupq_n_f32(input)), 0);
+#else
+		return rtm_impl::exp_f32(input);
+#endif
+	}
+
+#if defined(RTM_SSE2_INTRINSICS)
+	//////////////////////////////////////////////////////////////////////////
+	// Returns the natural logarithm of the input.
+	// The function uses the same algorithm as vector_log(..): for the same input, the results are equal.
+	// The result is -inf when the input is zero, and NaN when the input is negative.
+	//////////////////////////////////////////////////////////////////////////
+	RTM_DISABLE_SECURITY_COOKIE_CHECK inline scalarf RTM_SIMD_CALL scalar_log(scalarf_arg0 input) RTM_NO_EXCEPT
+	{
+		return scalarf{ rtm_impl::log_f32x4(input.value) };
+	}
+#endif
+
+	//////////////////////////////////////////////////////////////////////////
+	// Returns the natural logarithm of the input.
+	// The function uses the same algorithm as vector_log(..): for the same input, the results are equal.
+	// The result is -inf when the input is zero, and NaN when the input is negative.
+	//////////////////////////////////////////////////////////////////////////
+	RTM_DISABLE_SECURITY_COOKIE_CHECK inline float RTM_SIMD_CALL scalar_log(float input) RTM_NO_EXCEPT
+	{
+#if defined(RTM_SSE2_INTRINSICS)
+		return _mm_cvtss_f32(rtm_impl::log_f32x4(_mm_set_ps1(input)));
+#elif defined(RTM_WASM128_INTRINSICS)
+		return wasm_f32x4_extract_lane(rtm_impl::log_f32x4(wasm_f32x4_splat(input)), 0);
+#elif defined(RTM_NEON_INTRINSICS)
+		return vgetq_lane_f32(rtm_impl::log_f32x4(vdupq_n_f32(input)), 0);
+#else
+		return rtm_impl::log_f32(input);
+#endif
 	}
 
 #if defined(RTM_SSE2_INTRINSICS)

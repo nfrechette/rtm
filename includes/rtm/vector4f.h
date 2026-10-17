@@ -31,6 +31,7 @@
 #include "rtm/version.h"
 #include "rtm/impl/bit_cast.impl.h"
 #include "rtm/impl/compiler_utils.h"
+#include "rtm/impl/exp_log_common.h"
 #include "rtm/impl/macros.mask4.impl.h"
 #include "rtm/impl/memory_utils.h"
 #include "rtm/impl/vector_common.h"
@@ -4678,6 +4679,39 @@ namespace rtm
 		scalarf y = scalar_round_bankers(scalarf(vector_get_y(input)));
 		scalarf z = scalar_round_bankers(scalarf(vector_get_z(input)));
 		scalarf w = scalar_round_bankers(scalarf(vector_get_w(input)));
+		return vector_set(x, y, z, w);
+#endif
+	}
+
+	//////////////////////////////////////////////////////////////////////////
+	// Returns per component the natural exponential of the input: e^input.
+	//////////////////////////////////////////////////////////////////////////
+	RTM_DISABLE_SECURITY_COOKIE_CHECK inline vector4f RTM_SIMD_CALL vector_exp(vector4f_arg0 input) RTM_NO_EXCEPT
+	{
+#if defined(RTM_SSE2_INTRINSICS) || defined(RTM_WASM128_INTRINSICS) || defined(RTM_NEON_INTRINSICS)
+		return rtm_impl::exp_f32x4(input);
+#else
+		scalarf x = scalar_exp(scalarf(vector_get_x(input)));
+		scalarf y = scalar_exp(scalarf(vector_get_y(input)));
+		scalarf z = scalar_exp(scalarf(vector_get_z(input)));
+		scalarf w = scalar_exp(scalarf(vector_get_w(input)));
+		return vector_set(x, y, z, w);
+#endif
+	}
+
+	//////////////////////////////////////////////////////////////////////////
+	// Returns per component the natural logarithm of the input.
+	// The result is -inf when the input is zero, and NaN when the input is negative.
+	//////////////////////////////////////////////////////////////////////////
+	RTM_DISABLE_SECURITY_COOKIE_CHECK inline vector4f RTM_SIMD_CALL vector_log(vector4f_arg0 input) RTM_NO_EXCEPT
+	{
+#if defined(RTM_SSE2_INTRINSICS) || defined(RTM_WASM128_INTRINSICS) || defined(RTM_NEON_INTRINSICS)
+		return rtm_impl::log_f32x4(input);
+#else
+		scalarf x = scalar_log(scalarf(vector_get_x(input)));
+		scalarf y = scalar_log(scalarf(vector_get_y(input)));
+		scalarf z = scalar_log(scalarf(vector_get_z(input)));
+		scalarf w = scalar_log(scalarf(vector_get_w(input)));
 		return vector_set(x, y, z, w);
 #endif
 	}

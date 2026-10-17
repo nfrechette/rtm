@@ -56,3 +56,8 @@ TEST_CASE("vector4d math misc", "[math][vector4]")
 {
 	test_vector4_impl<double>(1.0E-9);
 }
+
+TEST_CASE("vector4d math exp/log", "[math][vector4]")
+{
+	test_vector4_exp_log_impl<double>(1.0E-12);
+}

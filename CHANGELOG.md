@@ -37,6 +37,7 @@
 *  Rename the experimental `qvv_normalize` and `qvv_is_finite` for `vqmf` and `vqmd` to `vqm_normalize` and `vqm_is_finite`
 *  Add `vqm_cast`, `vqm_from_matrix`, `vqm_lerp`, `vqm_slerp`, and a `vqm_inverse` overload with a fallback scale to the experimental VQM. `vqm_from_matrix` finds the rotation with the Gram-Schmidt process, and the scale/shear part contains the reflection, if any
 *  Rename the experimental `vqm_to_matrix` to `matrix_from_vqm`, as `matrix_from_vqv` uses
+*  Add `scalar_exp`, `scalar_log`, `vector_exp`, and `vector_log` for float32 and float64. All the code paths use the same approximations (Cephes): for the same input, the scalar and the vector functions give the same result, and the result does not depend on the C runtime library. The results can differ in the last bit on ARM because the code uses FMA there. The largest error that we measured is 1 ulp for float32 and 2 ulp for float64
 *  Fix `quat_slerp` when the two quaternions are equal or nearly equal: the result was NaN. When the angle is near zero, the function uses the weights (1.0 - alpha) and alpha
 *  Compute sin(half angle) in `quat_slerp` as sqrt((1 - cos) * (1 + cos)) instead of sqrt(1 - cos^2): the result is more accurate for small angles. For example, the float32 error for an angle of 0.0336 rad is 1.0E-7 instead of 3.0E-5
 *  Rename qvvf and qvvd to vqvf and vqvd, and the qvv functions to vqv: the name follows the order of operations, as with vqm. The new headers are rtm/vqvf.h and rtm/vqvd.h
