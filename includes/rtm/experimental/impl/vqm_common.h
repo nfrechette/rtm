@@ -29,6 +29,9 @@
 #include "rtm/experimental/types.h"
 #include "rtm/impl/compiler_utils.h"
 
+#include <cstdint>
+#include <cstring>
+
 RTM_IMPL_FILE_PRAGMA_PUSH
 
 namespace rtm
@@ -37,6 +40,64 @@ namespace rtm
 
 	namespace rtm_impl
 	{
+		//////////////////////////////////////////////////////////////////////////
+		// When the scale/shear part of a VQM transform is exactly the identity, the m22 slot can hold a flag.
+		// Then the functions skip the scale/shear part. The other entries of the scale/shear part hold their
+		// identity values: m00 = m11 = 1.0, and the entries that are not on the diagonal are 0.0.
+		// When the m22 slot does not hold the flag, the scale/shear part can have any value, the identity too.
+		//
+		// The flag is a quiet NaN with a fixed payload. A valid scale/shear part is finite, thus m22 cannot have this value.
+		// The hardware does not make this payload: the default NaN is 0x7FC00000 (ARM, WebAssembly) or 0xFFC00000 (x86).
+		// The flag is a quiet NaN because x87 changes the bits of a signaling NaN.
+		// A float32 to float64 conversion of the float32 flag gives the float64 flag, and the reverse conversion gives
+		// the float32 flag. The functions do not use this because some targets do not keep the payload of a NaN.
+		// The flag goes only through loads, stores, and shuffles, which keep its bits. The functions remove it before arithmetic.
+		//////////////////////////////////////////////////////////////////////////
+		constexpr uint32_t k_vqmf_identity_scale_shear_flag = 0x7FC00001U;
+		constexpr uint64_t k_vqmd_identity_scale_shear_flag = 0x7FF8000020000000ULL;
+
+		//////////////////////////////////////////////////////////////////////////
+		// Returns the value of the flag for the m22 slot.
+		//////////////////////////////////////////////////////////////////////////
+		template<typename FloatType>
+		FloatType vqm_identity_scale_shear_flag() RTM_NO_EXCEPT;
+
+		template<>
+		RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE float vqm_identity_scale_shear_flag<float>() RTM_NO_EXCEPT
+		{
+			const uint32_t bits = k_vqmf_identity_scale_shear_flag;
+			float value;
+			std::memcpy(&value, &bits, sizeof(float));
+			return value;
+		}
+
+		template<>
+		RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE double vqm_identity_scale_shear_flag<double>() RTM_NO_EXCEPT
+		{
+			const uint64_t bits = k_vqmd_identity_scale_shear_flag;
+			double value;
+			std::memcpy(&value, &bits, sizeof(double));
+			return value;
+		}
+
+		//////////////////////////////////////////////////////////////////////////
+		// Returns true if the m22 slot of the input holds the flag: the scale/shear part is exactly the identity.
+		// The function reads the [w] lane of the translation from memory. It compares the bits, not the value.
+		//////////////////////////////////////////////////////////////////////////
+		RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE bool vqm_has_identity_scale_shear(const vqmf& input) RTM_NO_EXCEPT
+		{
+			uint32_t m22_bits;
+			std::memcpy(&m22_bits, reinterpret_cast<const uint8_t*>(&input.translation_m22) + (3 * sizeof(float)), sizeof(uint32_t));
+			return m22_bits == k_vqmf_identity_scale_shear_flag;
+		}
+
+		RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE bool vqm_has_identity_scale_shear(const vqmd& input) RTM_NO_EXCEPT
+		{
+			uint64_t m22_bits;
+			std::memcpy(&m22_bits, reinterpret_cast<const uint8_t*>(&input.translation_m22) + (3 * sizeof(double)), sizeof(uint64_t));
+			return m22_bits == k_vqmd_identity_scale_shear_flag;
+		}
+
 		//////////////////////////////////////////////////////////////////////////
 		// This is a helper struct to allow a single consistent API between
 		// various VQM transform types when the semantics are identical but the return
@@ -49,7 +110,7 @@ namespace rtm
 			{
 				vqmd result;
 				result.rotation = quat_identity();
-				result.translation_m22 = vector_set(0.0, 0.0, 0.0, 1.0);
+				result.translation_m22 = vector_set(0.0, 0.0, 0.0, vqm_identity_scale_shear_flag<double>());
 				result.x_axis_m20 = vector_set(1.0, 0.0, 0.0, 0.0);
 				result.y_axis_m21 = vector_set(0.0, 1.0, 0.0, 0.0);
 
@@ -60,7 +121,7 @@ namespace rtm
 			{
 				vqmf result;
 				result.rotation = quat_identity();
-				result.translation_m22 = vector_set(0.0F, 0.0F, 0.0F, 1.0F);
+				result.translation_m22 = vector_set(0.0F, 0.0F, 0.0F, vqm_identity_scale_shear_flag<float>());
 				result.x_axis_m20 = vector_set(1.0F, 0.0F, 0.0F, 0.0F);
 				result.y_axis_m21 = vector_set(0.0F, 1.0F, 0.0F, 0.0F);
 

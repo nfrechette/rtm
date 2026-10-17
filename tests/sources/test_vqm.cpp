@@ -711,6 +711,133 @@ static void test_vqm_impl(const FloatType threshold)
 		check_vqm_near_equal(vqm_slerp(tx1, scaled_tx, FloatType(0.5)), half_scaled_tx, threshold);
 	}
 
+	// Transforms with the identity scale/shear part: the m22 slot holds a flag and the functions skip the scale/shear part
+	{
+		const QuatType rotation0 = quat_from_euler(scalar_deg_to_rad(FloatType(10.1)), scalar_deg_to_rad(FloatType(41.6)), scalar_deg_to_rad(FloatType(-12.7)));
+		const QuatType rotation1 = quat_from_euler(scalar_deg_to_rad(FloatType(-35.2)), scalar_deg_to_rad(FloatType(5.3)), scalar_deg_to_rad(FloatType(72.4)));
+		const Vector4Type translation0 = vector_set(FloatType(1.0), FloatType(2.0), FloatType(3.0));
+		const Vector4Type translation1 = vector_set(FloatType(-8.5), FloatType(0.25), FloatType(14.0));
+		const Vector4Type one = vector_set(FloatType(1.0));
+		const Vector4Type scale = vector_set(FloatType(2.0), FloatType(-3.0), FloatType(0.5));
+		const Matrix3x3Type identity3x3 = matrix_identity();
+		const Matrix3x3Type scale_shear0 = matrix_set(
+			vector_set(FloatType(2.0), FloatType(0.5), FloatType(-0.25)),
+			vector_set(FloatType(0.75), FloatType(-3.0), FloatType(0.125)),
+			vector_set(FloatType(-1.5), FloatType(0.375), FloatType(1.25)));
+		const Matrix3x3Type scale_shear1 = matrix_set(
+			vector_set(FloatType(0.5), FloatType(-1.5), FloatType(2.0)),
+			vector_set(FloatType(1.25), FloatType(-2.0), FloatType(0.1)),
+			vector_set(FloatType(3.0), FloatType(0.4), FloatType(3.5)));
+
+		const TransformType rigid0 = vqm_set(rotation0, translation0, one);
+		const TransformType rigid1 = vqm_set(rotation1, translation1, identity3x3);
+		const TransformType general0 = vqm_set(rotation0, translation0, scale_shear0);
+		const TransformType general1 = vqm_set(rotation1, translation1, scale_shear1);
+
+		// The setters set the flag when the scale/shear part is exactly the identity
+		CHECK(rtm_impl::vqm_has_identity_scale_shear(TransformType(vqm_identity())));
+		CHECK(rtm_impl::vqm_has_identity_scale_shear(rigid0));
+		CHECK(rtm_impl::vqm_has_identity_scale_shear(rigid1));
+		CHECK(!rtm_impl::vqm_has_identity_scale_shear(general0));
+		CHECK(!rtm_impl::vqm_has_identity_scale_shear(vqm_set(rotation0, translation0, scale)));
+		CHECK(rtm_impl::vqm_has_identity_scale_shear(vqm_set_scale_shear(general0, identity3x3)));
+		CHECK(rtm_impl::vqm_has_identity_scale_shear(vqm_set_scale(vqm_set(rotation0, translation0, scale), one)));
+		CHECK(rtm_impl::vqm_has_identity_scale_shear(vqm_from_matrix(identity3x3)));
+
+		// The functions that do not change the scale/shear part keep the flag
+		CHECK(rtm_impl::vqm_has_identity_scale_shear(vqm_set_translation(rigid0, translation1)));
+		CHECK(rtm_impl::vqm_has_identity_scale_shear(vqm_set_rotation(rigid0, rotation1)));
+		CHECK(rtm_impl::vqm_has_identity_scale_shear(vqm_normalize(rigid0)));
+		CHECK(rtm_impl::vqm_has_identity_scale_shear(vqm_cast(vqm_cast(rigid0))));
+
+		// The accessors return the identity values, not the flag
+		CHECK(vqm_is_finite(rigid0));
+		CHECK(vqm_is_finite(vqm_cast(rigid0)));
+		CHECK(vector_all_equal3(vqm_get_scale(rigid0), one));
+		CHECK(vector_all_equal3(vqm_get_translation(rigid0), translation0));
+		CHECK(quat_near_equal(vqm_get_rotation(rigid0), rotation0, threshold));
+		const Matrix3x3Type rigid_scale_shear = vqm_get_scale_shear(rigid0);
+		CHECK(vector_all_equal3(rigid_scale_shear.x_axis, identity3x3.x_axis));
+		CHECK(vector_all_equal3(rigid_scale_shear.y_axis, identity3x3.y_axis));
+		CHECK(vector_all_equal3(rigid_scale_shear.z_axis, identity3x3.z_axis));
+		check_matrix_near_equal(matrix_from_vqm(rigid0), matrix_from_vqv(rotation0, translation0, one), threshold);
+
+		// vqm_set_scale replaces the flag with the new m22
+		const TransformType scaled_rigid = vqm_set_scale(rigid0, scale);
+		CHECK(!rtm_impl::vqm_has_identity_scale_shear(scaled_rigid));
+		check_vqm_near_equal(scaled_rigid, vqm_set(rotation0, translation0, scale), threshold);
+
+		const TransformType inputs[] = { rigid0, rigid1, general0, general1 };
+		const Vector4Type point = vector_set(FloatType(-2.5), FloatType(1.75), FloatType(0.5));
+
+		for (const TransformType& lhs : inputs)
+		{
+			const Matrix3x4Type lhs_mtx = matrix_from_vqm(lhs);
+
+			// The product is equal to the product of the matrices for each combination of the two kinds
+			for (const TransformType& rhs : inputs)
+				check_matrix_near_equal(matrix_from_vqm(vqm_mul(lhs, rhs)), matrix_mul(lhs_mtx, matrix_from_vqm(rhs)), threshold);
+
+			CHECK(vector_all_near_equal3(vqm_mul_point3(point, lhs), matrix_mul_point3(point, lhs_mtx), threshold));
+			CHECK(vector_all_near_equal3(vqm_mul_vector3(point, lhs), matrix_mul_vector3(point, lhs_mtx), threshold));
+
+			check_matrix_near_equal(matrix_from_vqm(vqm_inverse(lhs)), matrix_inverse(lhs_mtx), threshold);
+			check_vqm_near_equal(vqm_inverse(lhs, scale), vqm_inverse(lhs), threshold);
+		}
+
+		// The product and the inverse keep the flag when no scale/shear part is involved
+		CHECK(rtm_impl::vqm_has_identity_scale_shear(vqm_mul(rigid0, rigid1)));
+		CHECK(rtm_impl::vqm_has_identity_scale_shear(vqm_inverse(rigid0)));
+		CHECK(rtm_impl::vqm_has_identity_scale_shear(vqm_inverse(rigid0, scale)));
+		CHECK(!rtm_impl::vqm_has_identity_scale_shear(vqm_mul(rigid0, general1)));
+		CHECK(!rtm_impl::vqm_has_identity_scale_shear(vqm_mul(general0, rigid1)));
+
+		// When the scale/shear part of rhs is the identity, the result has the scale/shear part of lhs
+		check_scale_shear_near_equal(vqm_mul(general0, rigid1), general0, threshold);
+
+		// The sum and the product with a scalar do not keep the flag
+		const TransformType add_result = vqm_add(rigid0, rigid1);
+		CHECK(!rtm_impl::vqm_has_identity_scale_shear(add_result));
+		CHECK(vector_all_near_equal3(vqm_get_translation(add_result), vector_add(translation0, translation1), threshold));
+		check_scale_shear_near_equal(add_result, vqm_set(rotation0, translation0, vector_set(FloatType(2.0))), threshold);
+
+		const TransformType add_general_result = vqm_add(rigid0, general1);
+		const Matrix3x3Type add_general_scale_shear = vqm_get_scale_shear(add_general_result);
+		CHECK(vector_all_near_equal3(add_general_scale_shear.x_axis, vector_add(identity3x3.x_axis, scale_shear1.x_axis), threshold));
+		CHECK(vector_all_near_equal3(add_general_scale_shear.y_axis, vector_add(identity3x3.y_axis, scale_shear1.y_axis), threshold));
+		CHECK(vector_all_near_equal3(add_general_scale_shear.z_axis, vector_add(identity3x3.z_axis, scale_shear1.z_axis), threshold));
+
+		const TransformType mul_scalar_result = vqm_mul(rigid0, FloatType(3.0));
+		CHECK(!rtm_impl::vqm_has_identity_scale_shear(mul_scalar_result));
+		CHECK(vector_all_near_equal3(vqm_get_translation(mul_scalar_result), vector_mul(translation0, FloatType(3.0)), threshold));
+		check_scale_shear_near_equal(mul_scalar_result, vqm_set(rotation0, translation0, vector_set(FloatType(3.0))), threshold);
+
+		// The interpolation of two transforms with the flag keeps the flag
+		const FloatType alpha = FloatType(0.33);
+		const TransformType lerp_result = vqm_lerp(rigid0, rigid1, alpha);
+		CHECK(rtm_impl::vqm_has_identity_scale_shear(lerp_result));
+		check_vqm_near_equal(lerp_result, vqm_set(quat_lerp(rotation0, rotation1, alpha), vector_lerp(translation0, translation1, alpha), one), threshold);
+
+		const TransformType slerp_result = vqm_slerp(rigid0, rigid1, alpha);
+		CHECK(rtm_impl::vqm_has_identity_scale_shear(slerp_result));
+		check_vqm_near_equal(slerp_result, vqm_set(quat_slerp(rotation0, rotation1, alpha), vector_lerp(translation0, translation1, alpha), one), threshold);
+
+		// The interpolation of a transform with the flag and a transform without it interpolates from the identity
+		const TransformType lerp_mixed_result = vqm_lerp(rigid0, general1, alpha);
+		CHECK(!rtm_impl::vqm_has_identity_scale_shear(lerp_mixed_result));
+		const Matrix3x3Type lerp_mixed_ref = matrix_set(
+			vector_lerp(identity3x3.x_axis, scale_shear1.x_axis, alpha),
+			vector_lerp(identity3x3.y_axis, scale_shear1.y_axis, alpha),
+			vector_lerp(identity3x3.z_axis, scale_shear1.z_axis, alpha));
+		check_vqm_near_equal(lerp_mixed_result, vqm_set(quat_lerp(rotation0, rotation1, alpha), vector_lerp(translation0, translation1, alpha), lerp_mixed_ref), threshold);
+
+		// The scale is positive on the three axes: vqm_slerp interpolates it with eerp from 1.0
+		const Vector4Type positive_scale = vector_set(FloatType(2.0), FloatType(3.0), FloatType(0.5));
+		const TransformType slerp_mixed_result = vqm_slerp(rigid0, vqm_set(rotation1, translation1, positive_scale), alpha);
+		CHECK(!rtm_impl::vqm_has_identity_scale_shear(slerp_mixed_result));
+		check_vqm_near_equal(slerp_mixed_result, vqm_set(quat_slerp(rotation0, rotation1, alpha), vector_lerp(translation0, translation1, alpha), vector_eerp(one, positive_scale, alpha)), threshold);
+	}
+
 	// VQM normalize validation
 	{
 		Vector4Type translation = vector_set(FloatType(1.0), FloatType(2.0), FloatType(3.0));

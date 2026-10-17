@@ -101,6 +101,80 @@ namespace rtm
 
 	template<> struct related_types<vqmf> : related_types<float> {};
 
+	namespace rtm_impl
+	{
+		//////////////////////////////////////////////////////////////////////////
+		// Returns the translation register of the input with m22 in the [w] lane.
+		// When the m22 slot holds the flag, the [w] lane is 1.0. See vqm_common.h for the flag.
+		//////////////////////////////////////////////////////////////////////////
+		RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE vector4f RTM_SIMD_CALL vqm_get_translation_m22(const vqmf& input) RTM_NO_EXCEPT
+		{
+			return vqm_has_identity_scale_shear(input) ? vector_set_w(input.translation_m22, 1.0F) : input.translation_m22;
+		}
+
+		//////////////////////////////////////////////////////////////////////////
+		// Creates a VQM transform from a rotation quaternion, a translation, and a 3x3 scale/shear matrix.
+		// The result does not hold the flag, even when the scale/shear matrix is the identity.
+		//////////////////////////////////////////////////////////////////////////
+		RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE vqmf RTM_SIMD_CALL vqm_set_no_flag(quatf_arg0 rotation, vector4f_arg1 translation, matrix3x3f_arg0 scale_shear) RTM_NO_EXCEPT
+		{
+			// The [w] lanes hold the third row of the scale/shear matrix
+			vqmf result;
+			result.rotation = rotation;
+			result.translation_m22 = vector_mix<mix4::x, mix4::y, mix4::z, mix4::c>(translation, scale_shear.z_axis);
+			result.x_axis_m20 = vector_mix<mix4::x, mix4::y, mix4::z, mix4::a>(scale_shear.x_axis, scale_shear.z_axis);
+			result.y_axis_m21 = vector_mix<mix4::x, mix4::y, mix4::z, mix4::b>(scale_shear.y_axis, scale_shear.z_axis);
+
+			return result;
+		}
+
+		//////////////////////////////////////////////////////////////////////////
+		// Creates a VQM transform from a rotation quaternion and a translation.
+		// The scale/shear part is the identity and the m22 slot holds the flag.
+		//////////////////////////////////////////////////////////////////////////
+		RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE vqmf RTM_SIMD_CALL vqm_set_identity_scale_shear(quatf_arg0 rotation, vector4f_arg1 translation) RTM_NO_EXCEPT
+		{
+			vqmf result;
+			result.rotation = rotation;
+			result.translation_m22 = vector_set_w(translation, vqm_identity_scale_shear_flag<float>());
+			result.x_axis_m20 = vector_set(1.0F, 0.0F, 0.0F, 0.0F);
+			result.y_axis_m21 = vector_set(0.0F, 1.0F, 0.0F, 0.0F);
+
+			return result;
+		}
+
+		//////////////////////////////////////////////////////////////////////////
+		// Returns the scale/shear part of a VQM transform as a 3x3 matrix.
+		// The m22 slot of the input must not hold the flag.
+		//////////////////////////////////////////////////////////////////////////
+		RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE matrix3x3f RTM_SIMD_CALL vqm_get_scale_shear_no_flag(const vqmf& input) RTM_NO_EXCEPT
+		{
+			// The [w] lanes hold the third row of the scale/shear matrix
+			const vector4f m20_m20_m21_m21 = vector_mix<mix4::w, mix4::w, mix4::d, mix4::d>(input.x_axis_m20, input.y_axis_m21);
+			const vector4f z_axis = vector_mix<mix4::x, mix4::z, mix4::d, mix4::d>(m20_m20_m21_m21, input.translation_m22);
+			return matrix_set(input.x_axis_m20, input.y_axis_m21, z_axis);
+		}
+
+		//////////////////////////////////////////////////////////////////////////
+		// Returns the input with the flag in the m22 slot if the scale/shear part is exactly the identity.
+		// Otherwise, the function returns the input. The m22 slot of the input must not hold the flag.
+		//////////////////////////////////////////////////////////////////////////
+		RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE vqmf RTM_SIMD_CALL vqm_set_flag_if_identity(const vqmf& input) RTM_NO_EXCEPT
+		{
+			// The rows hold m20 and m21 in their [w] lane: the identity rows have 0.0 there
+			const bool is_identity = vector_all_equal(input.x_axis_m20, vector_set(1.0F, 0.0F, 0.0F, 0.0F))
+				&& vector_all_equal(input.y_axis_m21, vector_set(0.0F, 1.0F, 0.0F, 0.0F))
+				&& float(vector_get_w(input.translation_m22)) == 1.0F;
+
+			if (!is_identity)
+				return input;
+
+			vqmf result = input;
+			result.translation_m22 = vector_set_w(input.translation_m22, vqm_identity_scale_shear_flag<float>());
+			return result;
+		}
+	}
+
 	//////////////////////////////////////////////////////////////////////////
 	// Casts a VQM transform float64 variant to a float32 variant.
 	//////////////////////////////////////////////////////////////////////////
@@ -112,6 +186,10 @@ namespace rtm
 		result.x_axis_m20 = vector_cast(input.x_axis_m20);
 		result.y_axis_m21 = vector_cast(input.y_axis_m21);
 
+		// A conversion does not always keep the payload of a NaN, thus we set the flag again
+		if (rtm_impl::vqm_has_identity_scale_shear(input))
+			result.translation_m22 = vector_set_w(result.translation_m22, rtm_impl::vqm_identity_scale_shear_flag<float>());
+
 		return result;
 	}
 
@@ -121,14 +199,7 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE vqmf RTM_SIMD_CALL vqm_set(quatf_arg0 rotation, vector4f_arg1 translation, matrix3x3f_arg0 scale_shear) RTM_NO_EXCEPT
 	{
-		// The [w] lanes hold the third row of the scale/shear matrix
-		vqmf result;
-		result.rotation = rotation;
-		result.translation_m22 = vector_mix<mix4::x, mix4::y, mix4::z, mix4::c>(translation, scale_shear.z_axis);
-		result.x_axis_m20 = vector_mix<mix4::x, mix4::y, mix4::z, mix4::a>(scale_shear.x_axis, scale_shear.z_axis);
-		result.y_axis_m21 = vector_mix<mix4::x, mix4::y, mix4::z, mix4::b>(scale_shear.y_axis, scale_shear.z_axis);
-
-		return result;
+		return rtm_impl::vqm_set_flag_if_identity(rtm_impl::vqm_set_no_flag(rotation, translation, scale_shear));
 	}
 
 	//////////////////////////////////////////////////////////////////////////
@@ -136,6 +207,9 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE vqmf RTM_SIMD_CALL vqm_set(quatf_arg0 rotation, vector4f_arg1 translation, vector4f_arg2 scale) RTM_NO_EXCEPT
 	{
+		if (vector_all_equal3(scale, vector_set(1.0F)))
+			return rtm_impl::vqm_set_identity_scale_shear(rotation, translation);
+
 		const vector4f zero = vector_zero();
 
 		vqmf result;
@@ -153,10 +227,10 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE matrix3x3f RTM_SIMD_CALL vqm_get_scale_shear(const vqmf& input) RTM_NO_EXCEPT
 	{
-		// The [w] lanes hold the third row of the scale/shear matrix
-		const vector4f m20_m20_m21_m21 = vector_mix<mix4::w, mix4::w, mix4::d, mix4::d>(input.x_axis_m20, input.y_axis_m21);
-		const vector4f z_axis = vector_mix<mix4::x, mix4::z, mix4::d, mix4::d>(m20_m20_m21_m21, input.translation_m22);
-		return matrix_set(input.x_axis_m20, input.y_axis_m21, z_axis);
+		if (rtm_impl::vqm_has_identity_scale_shear(input))
+			return matrix_identity();
+
+		return rtm_impl::vqm_get_scale_shear_no_flag(input);
 	}
 
 	//////////////////////////////////////////////////////////////////////////
@@ -333,7 +407,7 @@ namespace rtm
 	{
 		// The scale is [m00, m11, m22]
 		const vector4f m00_m11 = vector_mix<mix4::x, mix4::b, mix4::z, mix4::w>(input.x_axis_m20, input.y_axis_m21);
-		return vector_mix<mix4::x, mix4::y, mix4::d, mix4::d>(m00_m11, input.translation_m22);
+		return vector_mix<mix4::x, mix4::y, mix4::d, mix4::d>(m00_m11, rtm_impl::vqm_get_translation_m22(input));
 	}
 
 	//////////////////////////////////////////////////////////////////////////
@@ -343,12 +417,13 @@ namespace rtm
 	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE vqmf RTM_SIMD_CALL vqm_set_scale(const vqmf& input, vector4f_arg0 scale) RTM_NO_EXCEPT
 	{
 		// The scale is [m00, m11, m22]
+		// When the m22 slot holds the flag, the other entries hold their identity values and the new m22 replaces the flag
 		vqmf result;
 		result.rotation = input.rotation;
 		result.translation_m22 = vector_mix<mix4::x, mix4::y, mix4::z, mix4::c>(input.translation_m22, scale);
 		result.x_axis_m20 = vector_mix<mix4::a, mix4::y, mix4::z, mix4::w>(input.x_axis_m20, scale);
 		result.y_axis_m21 = vector_mix<mix4::x, mix4::b, mix4::z, mix4::w>(input.y_axis_m21, scale);
-		return result;
+		return rtm_impl::vqm_set_flag_if_identity(result);
 	}
 
 	//////////////////////////////////////////////////////////////////////////
@@ -367,9 +442,10 @@ namespace rtm
 	{
 		// T2 + T1 = [v2, q2, M2] + [v1, q1, M1] = [v2 + v1, q2 + q1, M2 + M1]
 		// Each register holds components of only one part. Thus a sum of the registers gives the sum of the parts.
+		// The result does not hold the flag: the sum of two identity matrices is not the identity
 		vqmf result;
 		result.rotation = quat_add(lhs.rotation, rhs.rotation);
-		result.translation_m22 = vector_add(lhs.translation_m22, rhs.translation_m22);
+		result.translation_m22 = vector_add(rtm_impl::vqm_get_translation_m22(lhs), rtm_impl::vqm_get_translation_m22(rhs));
 		result.x_axis_m20 = vector_add(lhs.x_axis_m20, rhs.x_axis_m20);
 		result.y_axis_m21 = vector_add(lhs.y_axis_m21, rhs.y_axis_m21);
 
@@ -386,12 +462,27 @@ namespace rtm
 		// result = [v1 * M2 * R2 + v2, quat_mul(q1, q2), (M1 * R1) * (M2 * R1^T)]
 		// See the multiplication section at the top of this file
 
+		const quatf rotation = quat_mul(lhs.rotation, rhs.rotation);
+
+		if (rtm_impl::vqm_has_identity_scale_shear(rhs))
+		{
+			// M2 = I, thus v3 = v1 * R2 + v2 and M3 = M1 * R1 * R1^T = M1
+			// The result has the scale/shear part of lhs: the flag too, if lhs holds it
+			const vector4f translation = vector_add(quat_mul_vector3(lhs.translation_m22, rhs.rotation), rhs.translation_m22);
+
+			vqmf result;
+			result.rotation = rotation;
+			result.translation_m22 = vector_mix<mix4::x, mix4::y, mix4::z, mix4::d>(translation, lhs.translation_m22);
+			result.x_axis_m20 = lhs.x_axis_m20;
+			result.y_axis_m21 = lhs.y_axis_m21;
+			return result;
+		}
+
 		const quatf inv_lhs_rotation = quat_conjugate(lhs.rotation);
 
 		matrix3x3f lhs_scale_shear = vqm_get_scale_shear(lhs);
-		matrix3x3f rhs_scale_shear = vqm_get_scale_shear(rhs);
+		matrix3x3f rhs_scale_shear = rtm_impl::vqm_get_scale_shear_no_flag(rhs);
 
-		const quatf rotation = quat_mul(lhs.rotation, rhs.rotation);
 		const vector4f translation = vector_add(quat_mul_vector3(matrix_mul_vector3(lhs.translation_m22, rhs_scale_shear), rhs.rotation), rhs.translation_m22);
 
 		rhs_scale_shear.x_axis = quat_mul_vector3(rhs_scale_shear.x_axis, inv_lhs_rotation);
@@ -403,7 +494,7 @@ namespace rtm
 		lhs_scale_shear.z_axis = quat_mul_vector3(lhs_scale_shear.z_axis, lhs.rotation);
 
 		const matrix3x3f scale_shear = matrix_mul(lhs_scale_shear, rhs_scale_shear);
-		return vqm_set(rotation, translation, scale_shear);
+		return rtm_impl::vqm_set_no_flag(rotation, translation, scale_shear);
 	}
 
 	//////////////////////////////////////////////////////////////////////////
@@ -412,11 +503,12 @@ namespace rtm
 	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE vqmf RTM_SIMD_CALL vqm_mul(const vqmf& vqm, float scalar) RTM_NO_EXCEPT
 	{
 		// T * s = [v, q, M] * s = [v * s, q * s, M * s]
+		// The result does not hold the flag
 		vector4f scalar_v = vector_set(scalar);
 
 		vqmf result;
 		result.rotation = quat_mul(vqm.rotation, scalar);
-		result.translation_m22 = vector_mul(vqm.translation_m22, scalar_v);
+		result.translation_m22 = vector_mul(rtm_impl::vqm_get_translation_m22(vqm), scalar_v);
 		result.x_axis_m20 = vector_mul(vqm.x_axis_m20, scalar_v);
 		result.y_axis_m21 = vector_mul(vqm.y_axis_m21, scalar_v);
 
@@ -431,7 +523,10 @@ namespace rtm
 	{
 		// p' = p * M * R + v
 
-		const matrix3x3f scale_shear = vqm_get_scale_shear(vqm);
+		if (rtm_impl::vqm_has_identity_scale_shear(vqm))
+			return vector_add(quat_mul_vector3(point, vqm.rotation), vqm.translation_m22);
+
+		const matrix3x3f scale_shear = rtm_impl::vqm_get_scale_shear_no_flag(vqm);
 		return vector_add(quat_mul_vector3(matrix_mul_vector3(point, scale_shear), vqm.rotation), vqm.translation_m22);
 	}
 
@@ -443,7 +538,10 @@ namespace rtm
 	{
 		// vec3' = vec3 * M * R
 
-		const matrix3x3f scale_shear = vqm_get_scale_shear(vqm);
+		if (rtm_impl::vqm_has_identity_scale_shear(vqm))
+			return quat_mul_vector3(vec3, vqm.rotation);
+
+		const matrix3x3f scale_shear = rtm_impl::vqm_get_scale_shear_no_flag(vqm);
 		return quat_mul_vector3(matrix_mul_vector3(vec3, scale_shear), vqm.rotation);
 	}
 
@@ -477,7 +575,18 @@ namespace rtm
 			inv_rotated_scale_shear = matrix_mul(inv_rotation_mtx, inv_rotated_scale_shear);
 
 			const vector4f inv_translation = matrix_mul_vector3(quat_mul_vector3(vector_neg(input.translation_m22), inv_rotation), inv_scale_shear);
-			return vqm_set(inv_rotation, inv_translation, inv_rotated_scale_shear);
+			return vqm_set_no_flag(inv_rotation, inv_translation, inv_rotated_scale_shear);
+		}
+
+		//////////////////////////////////////////////////////////////////////////
+		// Returns the inverse of the input VQM transform. The m22 slot of the input must hold the flag.
+		//////////////////////////////////////////////////////////////////////////
+		RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE vqmf RTM_SIMD_CALL vqm_inverse_identity_scale_shear(const vqmf& input) RTM_NO_EXCEPT
+		{
+			// M = I, thus T^-1 = [-v * R^T, conjugate(q), I]
+			const quatf inv_rotation = quat_conjugate(input.rotation);
+			const vector4f inv_translation = quat_mul_vector3(vector_neg(input.translation_m22), inv_rotation);
+			return vqm_set_identity_scale_shear(inv_rotation, inv_translation);
 		}
 	}
 
@@ -488,7 +597,10 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	RTM_DISABLE_SECURITY_COOKIE_CHECK inline vqmf RTM_SIMD_CALL vqm_inverse(const vqmf& input) RTM_NO_EXCEPT
 	{
-		const matrix3x3f scale_shear = vqm_get_scale_shear(input);
+		if (rtm_impl::vqm_has_identity_scale_shear(input))
+			return rtm_impl::vqm_inverse_identity_scale_shear(input);
+
+		const matrix3x3f scale_shear = rtm_impl::vqm_get_scale_shear_no_flag(input);
 		return rtm_impl::vqm_inverse(input, matrix_inverse(scale_shear));
 	}
 
@@ -500,7 +612,10 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	RTM_DISABLE_SECURITY_COOKIE_CHECK inline vqmf RTM_SIMD_CALL vqm_inverse(const vqmf& input, vector4f_arg0 fallback_scale, float threshold = 1.0E-8F) RTM_NO_EXCEPT
 	{
-		const matrix3x3f scale_shear = vqm_get_scale_shear(input);
+		if (rtm_impl::vqm_has_identity_scale_shear(input))
+			return rtm_impl::vqm_inverse_identity_scale_shear(input);
+
+		const matrix3x3f scale_shear = rtm_impl::vqm_get_scale_shear_no_flag(input);
 
 		// matrix_inverse returns its fallback value when the determinant is below the threshold
 		// Thus we give it the inverse of the fallback scale part
@@ -525,7 +640,8 @@ namespace rtm
 		const vector4f y_axis = quat_mul_vector3(scale_shear.y_axis, input.rotation);
 		const vector4f z_axis = quat_mul_vector3(scale_shear.z_axis, input.rotation);
 
-		return matrix_set(x_axis, y_axis, z_axis, input.translation_m22);
+		// The [w] lane of the translation is 1.0 or m22, not the flag
+		return matrix_set(x_axis, y_axis, z_axis, rtm_impl::vqm_get_translation_m22(input));
 	}
 
 	//////////////////////////////////////////////////////////////////////////
@@ -548,7 +664,18 @@ namespace rtm
 	{
 		vqmf result;
 		result.rotation = quat_lerp(start.rotation, end.rotation, alpha);
-		result.translation_m22 = vector_lerp(start.translation_m22, end.translation_m22, alpha);
+
+		if (rtm_impl::vqm_has_identity_scale_shear(start) && rtm_impl::vqm_has_identity_scale_shear(end))
+		{
+			// The two scale/shear parts are the identity: the result keeps the identity and the flag
+			// A lerp of the identity rows does not always give exactly 1.0 on the diagonal
+			result.translation_m22 = vector_mix<mix4::x, mix4::y, mix4::z, mix4::d>(vector_lerp(start.translation_m22, end.translation_m22, alpha), start.translation_m22);
+			result.x_axis_m20 = start.x_axis_m20;
+			result.y_axis_m21 = start.y_axis_m21;
+			return result;
+		}
+
+		result.translation_m22 = vector_lerp(rtm_impl::vqm_get_translation_m22(start), rtm_impl::vqm_get_translation_m22(end), alpha);
 		result.x_axis_m20 = vector_lerp(start.x_axis_m20, end.x_axis_m20, alpha);
 		result.y_axis_m21 = vector_lerp(start.y_axis_m21, end.y_axis_m21, alpha);
 
@@ -566,7 +693,18 @@ namespace rtm
 	{
 		vqmf result;
 		result.rotation = quat_lerp(start.rotation, end.rotation, alpha);
-		result.translation_m22 = vector_lerp(start.translation_m22, end.translation_m22, alpha);
+
+		if (rtm_impl::vqm_has_identity_scale_shear(start) && rtm_impl::vqm_has_identity_scale_shear(end))
+		{
+			// The two scale/shear parts are the identity: the result keeps the identity and the flag
+			// A lerp of the identity rows does not always give exactly 1.0 on the diagonal
+			result.translation_m22 = vector_mix<mix4::x, mix4::y, mix4::z, mix4::d>(vector_lerp(start.translation_m22, end.translation_m22, alpha), start.translation_m22);
+			result.x_axis_m20 = start.x_axis_m20;
+			result.y_axis_m21 = start.y_axis_m21;
+			return result;
+		}
+
+		result.translation_m22 = vector_lerp(rtm_impl::vqm_get_translation_m22(start), rtm_impl::vqm_get_translation_m22(end), alpha);
 		result.x_axis_m20 = vector_lerp(start.x_axis_m20, end.x_axis_m20, alpha);
 		result.y_axis_m21 = vector_lerp(start.y_axis_m21, end.y_axis_m21, alpha);
 
@@ -620,8 +758,13 @@ namespace rtm
 	{
 		const quatf rotation = quat_slerp(start.rotation, end.rotation, alpha);
 		const vector4f translation = vector_lerp(start.translation_m22, end.translation_m22, alpha);
+
+		// The two scale/shear parts are the identity: the result keeps the identity and the flag
+		if (rtm_impl::vqm_has_identity_scale_shear(start) && rtm_impl::vqm_has_identity_scale_shear(end))
+			return rtm_impl::vqm_set_identity_scale_shear(rotation, translation);
+
 		const matrix3x3f scale_shear = rtm_impl::vqm_slerp_scale_shear(start, end, vector_set(alpha));
-		return vqm_set(rotation, translation, scale_shear);
+		return rtm_impl::vqm_set_no_flag(rotation, translation, scale_shear);
 	}
 
 #if defined(RTM_SSE2_INTRINSICS)
@@ -637,8 +780,13 @@ namespace rtm
 	{
 		const quatf rotation = quat_slerp(start.rotation, end.rotation, alpha);
 		const vector4f translation = vector_lerp(start.translation_m22, end.translation_m22, alpha);
+
+		// The two scale/shear parts are the identity: the result keeps the identity and the flag
+		if (rtm_impl::vqm_has_identity_scale_shear(start) && rtm_impl::vqm_has_identity_scale_shear(end))
+			return rtm_impl::vqm_set_identity_scale_shear(rotation, translation);
+
 		const matrix3x3f scale_shear = rtm_impl::vqm_slerp_scale_shear(start, end, vector_set(alpha));
-		return vqm_set(rotation, translation, scale_shear);
+		return rtm_impl::vqm_set_no_flag(rotation, translation, scale_shear);
 	}
 #endif
 
@@ -647,9 +795,9 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE bool RTM_SIMD_CALL vqm_is_finite(const vqmf& input) RTM_NO_EXCEPT
 	{
-		// All the lanes are used
+		// All the lanes are used. The flag is a NaN, thus the function tests m22 without it.
 		return quat_is_finite(input.rotation)
-			&& vector_is_finite(input.translation_m22)
+			&& vector_is_finite(rtm_impl::vqm_get_translation_m22(input))
 			&& vector_is_finite(input.x_axis_m20)
 			&& vector_is_finite(input.y_axis_m21);
 	}
