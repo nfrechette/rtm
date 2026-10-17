@@ -526,6 +526,34 @@ namespace rtm
 
 #if defined(RTM_SSE2_INTRINSICS)
 	//////////////////////////////////////////////////////////////////////////
+	// Returns the exponential interpolation of the two inputs at the specified alpha.
+	// The formula used is: start * (end / start)^alpha.
+	// For equal steps of alpha, the result changes by the same ratio. Use it to interpolate a scale.
+	// The result is 'start' when alpha is 0.0. It is approximately 'end' when alpha is 1.0.
+	// The two inputs must have the same sign and must not be zero. Otherwise, the result is undefined.
+	//////////////////////////////////////////////////////////////////////////
+	RTM_DISABLE_SECURITY_COOKIE_CHECK inline scalard RTM_SIMD_CALL scalar_eerp(scalard_arg0 start, scalard_arg1 end, scalard_arg2 alpha) RTM_NO_EXCEPT
+	{
+		// start * (end / start)^alpha == start * exp(alpha * log(end / start))
+		return scalar_mul(start, scalar_exp(scalar_mul(scalar_log(scalar_div(end, start)), alpha)));
+	}
+#endif
+
+	//////////////////////////////////////////////////////////////////////////
+	// Returns the exponential interpolation of the two inputs at the specified alpha.
+	// The formula used is: start * (end / start)^alpha.
+	// For equal steps of alpha, the result changes by the same ratio. Use it to interpolate a scale.
+	// The result is 'start' when alpha is 0.0. It is approximately 'end' when alpha is 1.0.
+	// The two inputs must have the same sign and must not be zero. Otherwise, the result is undefined.
+	//////////////////////////////////////////////////////////////////////////
+	RTM_DISABLE_SECURITY_COOKIE_CHECK inline double RTM_SIMD_CALL scalar_eerp(double start, double end, double alpha) RTM_NO_EXCEPT
+	{
+		// start * (end / start)^alpha == start * exp(alpha * log(end / start))
+		return start * scalar_exp(scalar_log(end / start) * alpha);
+	}
+
+#if defined(RTM_SSE2_INTRINSICS)
+	//////////////////////////////////////////////////////////////////////////
 	// Returns the smallest of the two inputs.
 	//////////////////////////////////////////////////////////////////////////
 	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE scalard RTM_SIMD_CALL scalar_min(scalard_arg0 lhs, scalard_arg1 rhs) RTM_NO_EXCEPT

@@ -261,6 +261,17 @@ static void test_scalar_impl(const FloatType threshold, const FloatType trig_thr
 	CHECK(std::isnan(scalar_log(FloatType(-1.0))));
 	CHECK(std::isnan(scalar_log(nan)));
 
+	// Exponential interpolation: 2 * 4^0.5, -2 * 4^0.5, 4 * 0.25^0.5
+	CHECK(scalar_near_equal(scalar_eerp(FloatType(2.0), FloatType(8.0), FloatType(0.5)), FloatType(4.0), threshold * FloatType(4.0)));
+	CHECK(scalar_near_equal(scalar_eerp(FloatType(-2.0), FloatType(-8.0), FloatType(0.5)), FloatType(-4.0), threshold * FloatType(4.0)));
+	CHECK(scalar_near_equal(scalar_eerp(FloatType(4.0), FloatType(1.0), FloatType(0.5)), FloatType(2.0), threshold * FloatType(4.0)));
+	CHECK(scalar_near_equal(scalar_cast(scalar_eerp(scalar_set(FloatType(2.0)), scalar_set(FloatType(8.0)), scalar_set(FloatType(0.5)))), FloatType(4.0), threshold * FloatType(4.0)));
+
+	// The result is exactly 'start' when alpha is 0.0, and approximately 'end' when alpha is 1.0
+	CHECK(scalar_eerp(FloatType(2.0), FloatType(8.0), FloatType(0.0)) == FloatType(2.0));
+	CHECK(scalar_near_equal(scalar_eerp(FloatType(2.0), FloatType(8.0), FloatType(1.0)), FloatType(8.0), threshold * FloatType(8.0)));
+	CHECK(scalar_cast(scalar_eerp(scalar_set(FloatType(2.0)), scalar_set(FloatType(8.0)), scalar_set(FloatType(0.0)))) == FloatType(2.0));
+
 	using Vector4Type = typename related_types<FloatType>::vector4;
 
 	const FloatType half_pi = FloatType(rtm::constants::half_pi());

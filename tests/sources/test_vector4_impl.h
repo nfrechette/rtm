@@ -2011,6 +2011,7 @@ template<typename FloatType>
 void test_vector4_exp_log_impl(const FloatType threshold)
 {
 	using Vector4Type = typename related_types<FloatType>::vector4;
+	using ScalarType = typename related_types<FloatType>::scalar;
 
 	const FloatType infinity = std::numeric_limits<FloatType>::infinity();
 	const FloatType nan = std::numeric_limits<FloatType>::quiet_NaN();
@@ -2114,4 +2115,25 @@ void test_vector4_exp_log_impl(const FloatType threshold)
 		}
 	}
 
+	// Exponential interpolation
+	{
+		const Vector4Type start = vector_set(FloatType(2.0), FloatType(-2.0), FloatType(4.0), FloatType(0.5));
+		const Vector4Type end = vector_set(FloatType(8.0), FloatType(-8.0), FloatType(1.0), FloatType(0.5));
+		const Vector4Type ref = vector_set(FloatType(4.0), FloatType(-4.0), FloatType(2.0), FloatType(0.5));
+		const FloatType alpha = FloatType(0.5);
+		const ScalarType alpha_s = scalar_set(alpha);
+
+		CHECK(vector_all_near_equal(vector_eerp(start, end, alpha), ref, threshold * FloatType(4.0)));
+		CHECK(vector_all_near_equal(vector_eerp(start, end, alpha_s), ref, threshold * FloatType(4.0)));
+		CHECK(vector_all_near_equal(vector_eerp(start, end, vector_set(alpha)), ref, threshold * FloatType(4.0)));
+
+		// The result is exactly 'start' when alpha is 0.0, and approximately 'end' when alpha is 1.0
+		CHECK(vector_all_near_equal(vector_eerp(start, end, FloatType(0.0)), start, FloatType(0.0)));
+		CHECK(vector_all_near_equal(vector_eerp(start, end, FloatType(1.0)), end, threshold * FloatType(8.0)));
+
+		// Each lane uses its own alpha: 2 * 4^0.25, -2 * 4^1.0, 4 * 0.25^0.0, 0.5 * 1.0^0.75
+		const Vector4Type alpha_v = vector_set(FloatType(0.25), FloatType(1.0), FloatType(0.0), FloatType(0.75));
+		const Vector4Type ref_v = vector_set(FloatType(2.0) * std::pow(FloatType(4.0), FloatType(0.25)), FloatType(-8.0), FloatType(4.0), FloatType(0.5));
+		CHECK(vector_all_near_equal(vector_eerp(start, end, alpha_v), ref_v, threshold * FloatType(8.0)));
+	}
 }

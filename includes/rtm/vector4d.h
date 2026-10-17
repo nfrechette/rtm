@@ -4473,6 +4473,47 @@ namespace rtm
 	}
 
 	//////////////////////////////////////////////////////////////////////////
+	// Per component exponential interpolation of the two inputs at the specified alpha.
+	// The formula used is: start * (end / start)^alpha.
+	// For equal steps of alpha, the result changes by the same ratio. Use it to interpolate a scale.
+	// The result is 'start' when alpha is 0.0. It is approximately 'end' when alpha is 1.0.
+	// The two inputs must have the same sign and must not be zero. Otherwise, the result is undefined.
+	//////////////////////////////////////////////////////////////////////////
+	RTM_DISABLE_SECURITY_COOKIE_CHECK inline vector4d RTM_SIMD_CALL vector_eerp(vector4d_arg0 start, vector4d_arg1 end, double alpha) RTM_NO_EXCEPT
+	{
+		// start * (end / start)^alpha == start * exp(alpha * log(end / start))
+		return vector_mul(start, vector_exp(vector_mul(vector_log(vector_div(end, start)), alpha)));
+	}
+
+#if defined(RTM_SSE2_INTRINSICS)
+	//////////////////////////////////////////////////////////////////////////
+	// Per component exponential interpolation of the two inputs at the specified alpha.
+	// The formula used is: start * (end / start)^alpha.
+	// For equal steps of alpha, the result changes by the same ratio. Use it to interpolate a scale.
+	// The result is 'start' when alpha is 0.0. It is approximately 'end' when alpha is 1.0.
+	// The two inputs must have the same sign and must not be zero. Otherwise, the result is undefined.
+	//////////////////////////////////////////////////////////////////////////
+	RTM_DISABLE_SECURITY_COOKIE_CHECK inline vector4d RTM_SIMD_CALL vector_eerp(vector4d_arg0 start, vector4d_arg1 end, scalard_arg4 alpha) RTM_NO_EXCEPT
+	{
+		// start * (end / start)^alpha == start * exp(alpha * log(end / start))
+		return vector_mul(start, vector_exp(vector_mul(vector_log(vector_div(end, start)), vector_set(alpha))));
+	}
+#endif
+
+	//////////////////////////////////////////////////////////////////////////
+	// Per component exponential interpolation of the two inputs at the specified alpha.
+	// The formula used is: start * (end / start)^alpha.
+	// For equal steps of alpha, the result changes by the same ratio. Use it to interpolate a scale.
+	// The result is 'start' when alpha is 0.0. It is approximately 'end' when alpha is 1.0.
+	// The two inputs must have the same sign and must not be zero. Otherwise, the result is undefined.
+	//////////////////////////////////////////////////////////////////////////
+	RTM_DISABLE_SECURITY_COOKIE_CHECK inline vector4d RTM_SIMD_CALL vector_eerp(vector4d_arg0 start, vector4d_arg1 end, vector4d_arg2 alpha) RTM_NO_EXCEPT
+	{
+		// start * (end / start)^alpha == start * exp(alpha * log(end / start))
+		return vector_mul(start, vector_exp(vector_mul(vector_log(vector_div(end, start)), alpha)));
+	}
+
+	//////////////////////////////////////////////////////////////////////////
 	// Returns per component the sine of the input angle.
 	//////////////////////////////////////////////////////////////////////////
 	RTM_DISABLE_SECURITY_COOKIE_CHECK inline vector4d RTM_SIMD_CALL vector_sin(vector4d_arg0 input) RTM_NO_EXCEPT
