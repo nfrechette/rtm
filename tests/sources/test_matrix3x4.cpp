@@ -28,8 +28,8 @@
 #include <rtm/type_traits.h>
 #include <rtm/matrix3x4f.h>
 #include <rtm/matrix3x4d.h>
-#include <rtm/qvf.h>
-#include <rtm/qvd.h>
+#include <rtm/vqf.h>
+#include <rtm/vqd.h>
 #include <rtm/vqsf.h>
 #include <rtm/vqsd.h>
 #include <rtm/vqvf.h>
@@ -42,7 +42,7 @@ static void test_affine_matrix_setters(const FloatType threshold)
 {
 	using QuatType = typename related_types<FloatType>::quat;
 	using Vector4Type = typename related_types<FloatType>::vector4;
-	using QVType = typename related_types<FloatType>::qv;
+	using VQType = typename related_types<FloatType>::vq;
 	using VQSType = typename related_types<FloatType>::vqs;
 	using VQVType = typename related_types<FloatType>::vqv;
 	using Matrix3x3Type = typename related_types<FloatType>::matrix3x3;
@@ -72,7 +72,7 @@ static void test_affine_matrix_setters(const FloatType threshold)
 	{
 		QuatType rotation_around_z = quat_from_euler(scalar_deg_to_rad(FloatType(0.0)), scalar_deg_to_rad(FloatType(90.0)), scalar_deg_to_rad(FloatType(0.0)));
 		Vector4Type translation = vector_set(FloatType(1.0), FloatType(2.0), FloatType(3.0));
-		Matrix3x4Type mtx = matrix_from_qv(rotation_around_z, translation);
+		Matrix3x4Type mtx = matrix_from_vq(rotation_around_z, translation);
 		CHECK(vector_all_near_equal3(vector_set(FloatType(0.0), FloatType(1.0), FloatType(0.0), FloatType(0.0)), mtx.x_axis, threshold));
 		CHECK(vector_all_near_equal3(vector_set(FloatType(-1.0), FloatType(0.0), FloatType(0.0), FloatType(0.0)), mtx.y_axis, threshold));
 		CHECK(vector_all_near_equal3(vector_set(FloatType(0.0), FloatType(0.0), FloatType(1.0), FloatType(0.0)), mtx.z_axis, threshold));
@@ -160,8 +160,8 @@ static void test_affine_matrix_setters(const FloatType threshold)
 	{
 		QuatType rotation_around_z = quat_from_euler(scalar_deg_to_rad(FloatType(0.0)), scalar_deg_to_rad(FloatType(90.0)), scalar_deg_to_rad(FloatType(0.0)));
 		Vector4Type translation = vector_set(FloatType(1.0), FloatType(2.0), FloatType(3.0));
-		QVType transform = qv_set(rotation_around_z, translation);
-		Matrix3x4Type mtx = matrix_from_qv(transform);
+		VQType transform = vq_set(rotation_around_z, translation);
+		Matrix3x4Type mtx = matrix_from_vq(transform);
 		CHECK(vector_all_near_equal3(vector_set(FloatType(0.0), FloatType(1.0), FloatType(0.0), FloatType(0.0)), mtx.x_axis, threshold));
 		CHECK(vector_all_near_equal3(vector_set(FloatType(-1.0), FloatType(0.0), FloatType(0.0), FloatType(0.0)), mtx.y_axis, threshold));
 		CHECK(vector_all_near_equal3(vector_set(FloatType(0.0), FloatType(0.0), FloatType(1.0), FloatType(0.0)), mtx.z_axis, threshold));

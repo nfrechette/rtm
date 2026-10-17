@@ -28,9 +28,11 @@ A comparison mask used by vector selection/blending. Each SIMD lane consists of 
 
 Quaternions are 4D complex numbers commonly used to represent 3D rotations (when normalized). The **[xyz]** components are the real part while the **[w]** component is the imaginary part.
 
-## QV (quaternion-vector)
+## VQ (vector-quaternion)
 
-A QV represents an affine transform in two distinct parts: a rotation quaternion and a vector3 translation. This type is commonly used in video games as it is very fast to work with and more compact than a full affine matrix.
+A VQ represents an affine transform in two distinct parts: a rotation quaternion and a vector3 translation. This type is commonly used in video games as it is very fast to work with and more compact than a full affine matrix.
+
+Before 2.4, the name of this type was QV. The new name follows the order of operations from right to left (rotation, translation), as in the literature.
 
 ## VQS (vector-quaternion-scalar)
 

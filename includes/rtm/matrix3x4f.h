@@ -62,7 +62,7 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	// Sets a 3x4 affine matrix from a rotation quaternion and translation.
 	//////////////////////////////////////////////////////////////////////////
-	RTM_DISABLE_SECURITY_COOKIE_CHECK inline matrix3x4f RTM_SIMD_CALL matrix_from_qv(quatf_arg0 quat, vector4f_arg1 translation) RTM_NO_EXCEPT
+	RTM_DISABLE_SECURITY_COOKIE_CHECK inline matrix3x4f RTM_SIMD_CALL matrix_from_vq(quatf_arg0 quat, vector4f_arg1 translation) RTM_NO_EXCEPT
 	{
 		RTM_ASSERT(quat_is_normalized(quat), "Quaternion is not normalized");
 
@@ -86,11 +86,11 @@ namespace rtm
 	}
 
 	//////////////////////////////////////////////////////////////////////////
-	// Converts a QV transform into a 3x4 affine matrix.
+	// Converts a VQ transform into a 3x4 affine matrix.
 	//////////////////////////////////////////////////////////////////////////
-	RTM_DISABLE_SECURITY_COOKIE_CHECK inline matrix3x4f RTM_SIMD_CALL matrix_from_qv(qvf_arg0 transform) RTM_NO_EXCEPT
+	RTM_DISABLE_SECURITY_COOKIE_CHECK inline matrix3x4f RTM_SIMD_CALL matrix_from_vq(vqf_arg0 transform) RTM_NO_EXCEPT
 	{
-		return matrix_from_qv(transform.rotation, transform.translation);
+		return matrix_from_vq(transform.rotation, transform.translation);
 	}
 
 	//////////////////////////////////////////////////////////////////////////

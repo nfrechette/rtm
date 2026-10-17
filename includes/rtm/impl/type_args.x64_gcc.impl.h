@@ -142,13 +142,13 @@ namespace rtm
 	using mask4q_arg7 = const mask4q&;
 	using mask4q_argn = const mask4q&;
 
-	using qvf_arg0 = const qvf&;
-	using qvf_arg1 = const qvf&;
-	using qvf_argn = const qvf&;
+	using vqf_arg0 = const vqf&;
+	using vqf_arg1 = const vqf&;
+	using vqf_argn = const vqf&;
 
-	using qvd_arg0 = const qvd&;
-	using qvd_arg1 = const qvd&;
-	using qvd_argn = const qvd&;
+	using vqd_arg0 = const vqd&;
+	using vqd_arg1 = const vqd&;
+	using vqd_argn = const vqd&;
 
 	using vqsf_arg0 = const vqsf&;
 	using vqsf_arg1 = const vqsf&;

@@ -458,20 +458,20 @@ namespace rtm
 #endif
 
 	//////////////////////////////////////////////////////////////////////////
-	// A QV transform represents a 3D rotation (quaternion) and a 3D translation (vector).
-	// QV transforms form a group with a well defined multiplication and inverse.
+	// A VQ transform represents a 3D rotation (quaternion) and a 3D translation (vector).
+	// VQ transforms form a group with a well defined multiplication and inverse.
 	//////////////////////////////////////////////////////////////////////////
-	struct qvf
+	struct vqf
 	{
 		quatf		rotation;
 		vector4f	translation;	// [w] is undefined
 	};
 
 	//////////////////////////////////////////////////////////////////////////
-	// A QV transform represents a 3D rotation (quaternion) and a 3D translation (vector).
-	// QV transforms form a group with a well defined multiplication and inverse.
+	// A VQ transform represents a 3D rotation (quaternion) and a 3D translation (vector).
+	// VQ transforms form a group with a well defined multiplication and inverse.
 	//////////////////////////////////////////////////////////////////////////
-	struct qvd
+	struct vqd
 	{
 		quatd		rotation;
 		vector4d	translation;	// [w] is undefined

@@ -149,7 +149,7 @@ static void test_vqs_impl(const TransformType& identity, const FloatType thresho
 		FloatType one = FloatType(1.0);
 
 		// Default scale
-		Matrix3x4Type mtx = matrix_from_qv(rotation_around_z, translation);
+		Matrix3x4Type mtx = matrix_from_vq(rotation_around_z, translation);
 		TransformType transform = vqs_from_matrix(mtx);
 		CHECK(quat_near_equal(rotation_around_z, transform.rotation, threshold));
 		CHECK(vector_all_near_equal3(translation, vqs_get_translation(transform), threshold));
