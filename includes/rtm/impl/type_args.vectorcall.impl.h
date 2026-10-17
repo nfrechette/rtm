@@ -142,29 +142,29 @@ namespace rtm
 	using mask4q_arg7 = const mask4q&;
 	using mask4q_argn = const mask4q&;
 
-	using qvf_arg0 = const qvf;
-	using qvf_arg1 = const qvf;
-	using qvf_argn = const qvf&;
+	using vqf_arg0 = const vqf;
+	using vqf_arg1 = const vqf;
+	using vqf_argn = const vqf&;
 
-	using qvd_arg0 = const qvd;
-	using qvd_arg1 = const qvd&;
-	using qvd_argn = const qvd&;
+	using vqd_arg0 = const vqd;
+	using vqd_arg1 = const vqd&;
+	using vqd_argn = const vqd&;
 
-	using qvsf_arg0 = const qvsf;
-	using qvsf_arg1 = const qvsf;
-	using qvsf_argn = const qvsf&;
+	using vqsf_arg0 = const vqsf;
+	using vqsf_arg1 = const vqsf;
+	using vqsf_argn = const vqsf&;
 
-	using qvsd_arg0 = const qvsd;
-	using qvsd_arg1 = const qvsd&;
-	using qvsd_argn = const qvsd&;
+	using vqsd_arg0 = const vqsd;
+	using vqsd_arg1 = const vqsd&;
+	using vqsd_argn = const vqsd&;
 
-	using qvvf_arg0 = const qvvf;
-	using qvvf_arg1 = const qvvf;
-	using qvvf_argn = const qvvf&;
+	using vqvf_arg0 = const vqvf;
+	using vqvf_arg1 = const vqvf;
+	using vqvf_argn = const vqvf&;
 
-	using qvvd_arg0 = const qvvd&;
-	using qvvd_arg1 = const qvvd&;
-	using qvvd_argn = const qvvd&;
+	using vqvd_arg0 = const vqvd&;
+	using vqvd_arg1 = const vqvd&;
+	using vqvd_argn = const vqvd&;
 
 	using matrix3x3f_arg0 = const matrix3x3f;
 	using matrix3x3f_arg1 = const matrix3x3f&;

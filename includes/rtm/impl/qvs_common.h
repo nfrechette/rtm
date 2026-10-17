@@ -3,7 +3,7 @@
 ////////////////////////////////////////////////////////////////////////////////
 // The MIT License (MIT)
 //
-// Copyright (c) 2023 Nicholas Frechette & Realtime Math contributors
+// Copyright (c) 2026 Nicholas Frechette & Realtime Math contributors
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -26,86 +26,66 @@
 
 #include "rtm/math.h"
 #include "rtm/version.h"
-#include "rtm/quatd.h"
-#include "rtm/quatf.h"
-#include "rtm/vector4d.h"
-#include "rtm/vector4f.h"
 #include "rtm/impl/compiler_utils.h"
+#include "rtm/impl/error.h"
+#include "rtm/impl/vqs_common.h"
 
 RTM_IMPL_FILE_PRAGMA_PUSH
+
+// Deprecated in 2.4, to be removed in 2.5
+// This header keeps the previous qvs names. Use rtm/impl/vqs_common.h instead.
 
 namespace rtm
 {
 	RTM_IMPL_VERSION_NAMESPACE_BEGIN
 
 	//////////////////////////////////////////////////////////////////////////
-	// Creates a QVS transform from a rotation quaternion, a translation, and scalar scale.
+	// Creates a VQS transform from a rotation quaternion, a translation, and scalar scale.
 	//////////////////////////////////////////////////////////////////////////
-	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE qvsf RTM_SIMD_CALL qvs_set(quatf_arg0 rotation, vector4f_arg1 translation, float scale) RTM_NO_EXCEPT
+	RTM_DEPRECATED("Use 'vqs_set' instead. To be removed in 2.5.")
+	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE vqsf RTM_SIMD_CALL qvs_set(quatf_arg0 rotation, vector4f_arg1 translation, float scale) RTM_NO_EXCEPT
 	{
-		const vector4f translation_scale = vector_set_w(translation, scale);
-		return qvsf{ rotation, translation_scale };
+		return vqs_set(rotation, translation, scale);
 	}
 
 #if defined(RTM_SSE2_INTRINSICS)
 	//////////////////////////////////////////////////////////////////////////
-	// Creates a QVS transform from a rotation quaternion, a translation, and scalar scale.
+	// Creates a VQS transform from a rotation quaternion, a translation, and scalar scale.
 	//////////////////////////////////////////////////////////////////////////
-	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE qvsf RTM_SIMD_CALL qvs_set(quatf_arg0 rotation, vector4f_arg1 translation, scalarf_arg2 scale) RTM_NO_EXCEPT
+	RTM_DEPRECATED("Use 'vqs_set' instead. To be removed in 2.5.")
+	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE vqsf RTM_SIMD_CALL qvs_set(quatf_arg0 rotation, vector4f_arg1 translation, scalarf_arg2 scale) RTM_NO_EXCEPT
 	{
-		const vector4f translation_scale = vector_set_w(translation, scale);
-		return qvsf{ rotation, translation_scale };
+		return vqs_set(rotation, translation, scale);
 	}
 #endif
 
 	//////////////////////////////////////////////////////////////////////////
-	// Creates a QVS transform from a rotation quaternion, a translation, and scale scale.
+	// Creates a VQS transform from a rotation quaternion, a translation, and scalar scale.
 	//////////////////////////////////////////////////////////////////////////
-	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE qvsd RTM_SIMD_CALL qvs_set(quatd_arg0 rotation, vector4d_arg1 translation, double scale) RTM_NO_EXCEPT
+	RTM_DEPRECATED("Use 'vqs_set' instead. To be removed in 2.5.")
+	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE vqsd RTM_SIMD_CALL qvs_set(quatd_arg0 rotation, vector4d_arg1 translation, double scale) RTM_NO_EXCEPT
 	{
-		const vector4d translation_scale = vector_set_w(translation, scale);
-		return qvsd{ rotation, translation_scale };
+		return vqs_set(rotation, translation, scale);
 	}
 
 #if defined(RTM_SSE2_INTRINSICS)
 	//////////////////////////////////////////////////////////////////////////
-	// Creates a QVS transform from a rotation quaternion, a translation, and scalar scale.
+	// Creates a VQS transform from a rotation quaternion, a translation, and scalar scale.
 	//////////////////////////////////////////////////////////////////////////
-	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE qvsd RTM_SIMD_CALL qvs_set(quatd_arg0 rotation, vector4d_arg1 translation, scalard_arg5 scale) RTM_NO_EXCEPT
+	RTM_DEPRECATED("Use 'vqs_set' instead. To be removed in 2.5.")
+	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE vqsd RTM_SIMD_CALL qvs_set(quatd_arg0 rotation, vector4d_arg1 translation, scalard_arg5 scale) RTM_NO_EXCEPT
 	{
-		const vector4d translation_scale = vector_set_w(translation, scale);
-		return qvsd{ rotation, translation_scale };
+		return vqs_set(rotation, translation, scale);
 	}
 #endif
 
-	namespace rtm_impl
-	{
-		//////////////////////////////////////////////////////////////////////////
-		// This is a helper struct to allow a single consistent API between
-		// various QVS transform types when the semantics are identical but the return
-		// type differs. Implicit coercion is used to return the desired value
-		// at the call site.
-		//////////////////////////////////////////////////////////////////////////
-		struct qvs_identity_impl
-		{
-			RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE RTM_SIMD_CALL operator qvsd() const RTM_NO_EXCEPT
-			{
-				return qvsd{ (quatd)quat_identity(), vector_set(0.0, 0.0, 0.0, 1.0) };
-			}
-
-			RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE RTM_SIMD_CALL operator qvsf() const RTM_NO_EXCEPT
-			{
-				return qvsf{ (quatf)quat_identity(), vector_set(0.0F, 0.0F, 0.0F, 1.0F) };
-			}
-		};
-	}
-
 	//////////////////////////////////////////////////////////////////////////
-	// Returns the identity QVS transform.
+	// Returns the identity VQS transform.
 	//////////////////////////////////////////////////////////////////////////
-	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE constexpr rtm_impl::qvs_identity_impl RTM_SIMD_CALL qvs_identity() RTM_NO_EXCEPT
+	RTM_DEPRECATED("Use 'vqs_identity' instead. To be removed in 2.5.")
+	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE constexpr rtm_impl::vqs_identity_impl RTM_SIMD_CALL qvs_identity() RTM_NO_EXCEPT
 	{
-		return rtm_impl::qvs_identity_impl();
+		return vqs_identity();
 	}
 
 	RTM_IMPL_VERSION_NAMESPACE_END

@@ -27,6 +27,7 @@
 
 #include "rtm/math.h"
 #include "rtm/version.h"
+#include "rtm/impl/error.h"
 
 #include <cstdint>
 
@@ -457,56 +458,76 @@ namespace rtm
 #endif
 
 	//////////////////////////////////////////////////////////////////////////
-	// A QV transform represents a 3D rotation (quaternion) and a 3D translation (vector).
-	// QV transforms form a group with a well defined multiplication and inverse.
+	// A VQ transform represents a 3D rotation (quaternion) and a 3D translation (vector).
+	// VQ transforms form a group with a well defined multiplication and inverse.
 	//////////////////////////////////////////////////////////////////////////
-	struct qvf
+	struct vqf
 	{
 		quatf		rotation;
 		vector4f	translation;	// [w] is undefined
 	};
 
 	//////////////////////////////////////////////////////////////////////////
-	// A QV transform represents a 3D rotation (quaternion) and a 3D translation (vector).
-	// QV transforms form a group with a well defined multiplication and inverse.
+	// A VQ transform represents a 3D rotation (quaternion) and a 3D translation (vector).
+	// VQ transforms form a group with a well defined multiplication and inverse.
 	//////////////////////////////////////////////////////////////////////////
-	struct qvd
+	struct vqd
 	{
 		quatd		rotation;
 		vector4d	translation;	// [w] is undefined
 	};
 
 	//////////////////////////////////////////////////////////////////////////
-	// A QVS transform represents a 3D rotation (quaternion), a 3D translation (vector),
-	// and a single scalar uniform scale value.
-	// QVS transforms form a group with a well defined multiplication and inverse.
+	// The previous name of vqf.
 	//////////////////////////////////////////////////////////////////////////
-	struct qvsf
+	using qvf RTM_DEPRECATED("Use 'vqf' instead. To be removed in 2.5.") = vqf;
+
+	//////////////////////////////////////////////////////////////////////////
+	// The previous name of vqd.
+	//////////////////////////////////////////////////////////////////////////
+	using qvd RTM_DEPRECATED("Use 'vqd' instead. To be removed in 2.5.") = vqd;
+
+	//////////////////////////////////////////////////////////////////////////
+	// A VQS transform represents a 3D rotation (quaternion), a 3D translation (vector),
+	// and a single scalar uniform scale value.
+	// VQS transforms form a group with a well defined multiplication and inverse.
+	//////////////////////////////////////////////////////////////////////////
+	struct vqsf
 	{
 		quatf		rotation;
 		vector4f	translation_scale;	// [xyz] for translation, [w] for scale
 	};
 
 	//////////////////////////////////////////////////////////////////////////
-	// A QVS transform represents a 3D rotation (quaternion), a 3D translation (vector),
+	// A VQS transform represents a 3D rotation (quaternion), a 3D translation (vector),
 	// and a single scalar uniform scale value.
-	// QVS transforms form a group with a well defined multiplication and inverse.
+	// VQS transforms form a group with a well defined multiplication and inverse.
 	//////////////////////////////////////////////////////////////////////////
-	struct qvsd
+	struct vqsd
 	{
 		quatd		rotation;
 		vector4d	translation_scale;	// [xyz] for translation, [w] for scale
 	};
 
 	//////////////////////////////////////////////////////////////////////////
-	// A QVV transform represents a 3D rotation (quaternion), 3D translation (vector), and 3D non-uniform scale (vector).
-	// WARNING: QVV transforms do _NOT_ form a group. It has no well defined multiplication and inverse.
-	// This is because when non-uniform scale is rotated (e.g. as the result of two QVV multiplying),
-	// shear is introduced and there is no place to store it. As such, QVV discards the introduced shear
-	// which is mathematically incorrect. As a result of this, QVV multiplication is _NOT_ assossiative and
+	// The previous name of vqsf.
+	//////////////////////////////////////////////////////////////////////////
+	using qvsf RTM_DEPRECATED("Use 'vqsf' instead. To be removed in 2.5.") = vqsf;
+
+	//////////////////////////////////////////////////////////////////////////
+	// The previous name of vqsd.
+	//////////////////////////////////////////////////////////////////////////
+	using qvsd RTM_DEPRECATED("Use 'vqsd' instead. To be removed in 2.5.") = vqsd;
+
+	//////////////////////////////////////////////////////////////////////////
+	// A VQV transform represents a 3D rotation (quaternion), 3D translation (vector), and 3D non-uniform scale (vector).
+	// WARNING: VQV transforms do _NOT_ form a group. It has no well defined multiplication and inverse.
+	// This is because when non-uniform scale is rotated (e.g. as the result of two VQV multiplying),
+	// shear is introduced and there is no place to store it. As such, VQV discards the introduced shear
+	// which is mathematically incorrect. As a result of this, VQV multiplication is _NOT_ assossiative and
 	// the inverse is incorrect. USE AT YOUR OWN RISK.
 	//////////////////////////////////////////////////////////////////////////
-	struct qvvf
+	struct vqvf
 	{
 		quatf		rotation;
 		vector4f	translation;	// [w] is undefined
@@ -514,19 +535,29 @@ namespace rtm
 	};
 
 	//////////////////////////////////////////////////////////////////////////
-	// A QVV transform represents a 3D rotation (quaternion), 3D translation (vector), and 3D non-uniform scale (vector).
-	// WARNING: QVV transforms do _NOT_ form a group. It has no well defined multiplication and inverse.
-	// This is because when non-uniform scale is rotated (e.g. as the result of two QVV multiplying),
-	// shear is introduced and there is no place to store it. As such, QVV discards the introduced shear
-	// which is mathematically incorrect. As a result of this, QVV multiplication is _NOT_ assossiative and
+	// A VQV transform represents a 3D rotation (quaternion), 3D translation (vector), and 3D non-uniform scale (vector).
+	// WARNING: VQV transforms do _NOT_ form a group. It has no well defined multiplication and inverse.
+	// This is because when non-uniform scale is rotated (e.g. as the result of two VQV multiplying),
+	// shear is introduced and there is no place to store it. As such, VQV discards the introduced shear
+	// which is mathematically incorrect. As a result of this, VQV multiplication is _NOT_ assossiative and
 	// the inverse is incorrect. USE AT YOUR OWN RISK.
 	//////////////////////////////////////////////////////////////////////////
-	struct qvvd
+	struct vqvd
 	{
 		quatd		rotation;
 		vector4d	translation;	// [w] is undefined
 		vector4d	scale;			// [w] is undefined
 	};
+
+	//////////////////////////////////////////////////////////////////////////
+	// The previous name of vqvf.
+	//////////////////////////////////////////////////////////////////////////
+	using qvvf RTM_DEPRECATED("Use 'vqvf' instead. To be removed in 2.5.") = vqvf;
+
+	//////////////////////////////////////////////////////////////////////////
+	// The previous name of vqvd.
+	//////////////////////////////////////////////////////////////////////////
+	using qvvd RTM_DEPRECATED("Use 'vqvd' instead. To be removed in 2.5.") = vqvd;
 
 	//////////////////////////////////////////////////////////////////////////
 	// A generic 3x3 matrix.

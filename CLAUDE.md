@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Overview
 
-Realtime Math (RTM) is a **header-only C++11** SIMD math library (vectors, quaternions, matrices, QV/QVS/QVV transforms) for games/realtime apps. All library code lives in `includes/rtm/`; there is nothing to link. The only compiled code is unit tests (`tests/`) and benchmarks (`tools/bench/`). Code must stay valid C++11 (CI also tests 14/17/20).
+Realtime Math (RTM) is a **header-only C++11** SIMD math library (vectors, quaternions, matrices, VQ/VQS/VQV transforms) for games/realtime apps. All library code lives in `includes/rtm/`; there is nothing to link. The only compiled code is unit tests (`tests/`) and benchmarks (`tools/bench/`). Code must stay valid C++11 (CI also tests 14/17/20).
 
 ## Build & test
 

@@ -24,29 +24,29 @@
 
 #include <benchmark/benchmark.h>
 
-#include <rtm/qvvd.h>
+#include <rtm/vqvd.h>
 
 using namespace rtm;
 
 // The current library implementation
-RTM_FORCE_NOINLINE qvvd RTM_SIMD_CALL qvv_mul_current(qvvd_arg0 lhs, qvvd_arg1 rhs) RTM_NO_EXCEPT
+RTM_FORCE_NOINLINE vqvd RTM_SIMD_CALL vqv_mul_current(vqvd_arg0 lhs, vqvd_arg1 rhs) RTM_NO_EXCEPT
 {
-	return qvv_mul(lhs, rhs);
+	return vqv_mul(lhs, rhs);
 }
 
-static void bm_qvvd_mul_current(benchmark::State& state)
+static void bm_vqvd_mul_current(benchmark::State& state)
 {
-	// The scale is positive, thus qvv_mul does not use the matrix code path
+	// The scale is positive, thus vqv_mul does not use the matrix code path
 	const quatd rotation = quat_from_euler(scalar_deg_to_rad(10.0), scalar_deg_to_rad(20.0), scalar_deg_to_rad(30.0));
-	qvvd t0 = qvv_identity();
-	qvvd t1 = qvv_set(rotation, vector_set(1.0, 2.0, 3.0), vector_set(1.0));
-	qvvd t2 = qvv_identity();
-	qvvd t3 = qvv_set(rotation, vector_set(1.0, 2.0, 3.0), vector_set(1.0));
+	vqvd t0 = vqv_identity();
+	vqvd t1 = vqv_set(rotation, vector_set(1.0, 2.0, 3.0), vector_set(1.0));
+	vqvd t2 = vqv_identity();
+	vqvd t3 = vqv_set(rotation, vector_set(1.0, 2.0, 3.0), vector_set(1.0));
 
 	for (auto _ : state)
 	{
-		t0 = qvv_mul_current(t0, t1);
-		t2 = qvv_mul_current(t2, t3);
+		t0 = vqv_mul_current(t0, t1);
+		t2 = vqv_mul_current(t2, t3);
 	}
 
 	benchmark::DoNotOptimize(t0);
@@ -55,4 +55,4 @@ static void bm_qvvd_mul_current(benchmark::State& state)
 	benchmark::DoNotOptimize(t3);
 }
 
-BENCHMARK(bm_qvvd_mul_current);
+BENCHMARK(bm_vqvd_mul_current);

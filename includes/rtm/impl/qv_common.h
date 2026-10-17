@@ -3,7 +3,7 @@
 ////////////////////////////////////////////////////////////////////////////////
 // The MIT License (MIT)
 //
-// Copyright (c) 2023 Nicholas Frechette & Realtime Math contributors
+// Copyright (c) 2026 Nicholas Frechette & Realtime Math contributors
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -27,61 +27,43 @@
 #include "rtm/math.h"
 #include "rtm/version.h"
 #include "rtm/impl/compiler_utils.h"
+#include "rtm/impl/error.h"
+#include "rtm/impl/vq_common.h"
 
 RTM_IMPL_FILE_PRAGMA_PUSH
+
+// Deprecated in 2.4, to be removed in 2.5
+// This header keeps the previous qv names. Use rtm/impl/vq_common.h instead.
 
 namespace rtm
 {
 	RTM_IMPL_VERSION_NAMESPACE_BEGIN
 
 	//////////////////////////////////////////////////////////////////////////
-	// Creates a QV transform from a rotation quaternion and a translation.
+	// Creates a VQ transform from a rotation quaternion and a translation.
 	//////////////////////////////////////////////////////////////////////////
-	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE constexpr qvf RTM_SIMD_CALL qv_set(quatf_arg0 rotation, vector4f_arg1 translation) RTM_NO_EXCEPT
+	RTM_DEPRECATED("Use 'vq_set' instead. To be removed in 2.5.")
+	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE constexpr vqf RTM_SIMD_CALL qv_set(quatf_arg0 rotation, vector4f_arg1 translation) RTM_NO_EXCEPT
 	{
-		return qvf{ rotation, translation };
+		return vq_set(rotation, translation);
 	}
 
 	//////////////////////////////////////////////////////////////////////////
-	// Creates a QV transform from a rotation quaternion and a translation.
+	// Creates a VQ transform from a rotation quaternion and a translation.
 	//////////////////////////////////////////////////////////////////////////
-	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE constexpr qvd RTM_SIMD_CALL qv_set(quatd_arg0 rotation, vector4d_arg1 translation) RTM_NO_EXCEPT
+	RTM_DEPRECATED("Use 'vq_set' instead. To be removed in 2.5.")
+	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE constexpr vqd RTM_SIMD_CALL qv_set(quatd_arg0 rotation, vector4d_arg1 translation) RTM_NO_EXCEPT
 	{
-		return qvd{ rotation, translation };
-	}
-
-	namespace rtm_impl
-	{
-		//////////////////////////////////////////////////////////////////////////
-		// This is a helper struct to allow a single consistent API between
-		// various QV transform types when the semantics are identical but the return
-		// type differs. Implicit coercion is used to return the desired value
-		// at the call site.
-		//////////////////////////////////////////////////////////////////////////
-		struct qv_identity_impl
-		{
-			RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE RTM_SIMD_CALL operator qvd() const RTM_NO_EXCEPT
-			{
-				const quatd identity = quat_identity();
-				const vector4d zero = vector_zero();
-				return qv_set(identity, zero);
-			}
-
-			RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE RTM_SIMD_CALL operator qvf() const RTM_NO_EXCEPT
-			{
-				const quatf identity = quat_identity();
-				const vector4f zero = vector_zero();
-				return qv_set(identity, zero);
-			}
-		};
+		return vq_set(rotation, translation);
 	}
 
 	//////////////////////////////////////////////////////////////////////////
-	// Returns the identity QV transform.
+	// Returns the identity VQ transform.
 	//////////////////////////////////////////////////////////////////////////
-	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE constexpr rtm_impl::qv_identity_impl RTM_SIMD_CALL qv_identity() RTM_NO_EXCEPT
+	RTM_DEPRECATED("Use 'vq_identity' instead. To be removed in 2.5.")
+	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE constexpr rtm_impl::vq_identity_impl RTM_SIMD_CALL qv_identity() RTM_NO_EXCEPT
 	{
-		return rtm_impl::qv_identity_impl();
+		return vq_identity();
 	}
 
 	RTM_IMPL_VERSION_NAMESPACE_END

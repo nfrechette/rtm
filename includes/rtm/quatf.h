@@ -98,7 +98,9 @@ namespace rtm
 	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE quatf RTM_SIMD_CALL quat_cast(const quatd& input) RTM_NO_EXCEPT
 	{
 #if defined(RTM_SSE2_INTRINSICS)
-		return _mm_shuffle_ps(_mm_cvtpd_ps(input.xy), _mm_cvtpd_ps(input.zw), _MM_SHUFFLE(1, 0, 1, 0));
+		// Do not use _mm_shuffle_ps here. MSVC 19.34 to 19.44 removes the shuffle when [xy] and [zw]
+		// are the same constant, and the [zw] result is then 0.
+		return _mm_movelh_ps(_mm_cvtpd_ps(input.xy), _mm_cvtpd_ps(input.zw));
 #elif defined(RTM_WASM128_INTRINSICS)
 		return wasm_i32x4_shuffle(wasm_f32x4_demote_f64x2_zero(input.xy), wasm_f32x4_demote_f64x2_zero(input.zw), 0, 1, 4, 5);
 #elif defined(RTM_NEON64_INTRINSICS)

@@ -110,7 +110,7 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	// Creates a VQM transform from a rotation quaternion, a translation, and a 3D scale.
 	//////////////////////////////////////////////////////////////////////////
-	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE vqmf RTM_SIMD_CALL vqm_set(vector4f_arg0 translation, quatf_arg1 rotation, vector4f_arg2 scale) RTM_NO_EXCEPT
+	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE vqmf RTM_SIMD_CALL vqm_set(quatf_arg0 rotation, vector4f_arg1 translation, vector4f_arg2 scale) RTM_NO_EXCEPT
 	{
 		vector4f zero = vector_zero();
 
@@ -135,9 +135,9 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	// Sets the rotation part of a VQM and returns the new value.
 	//////////////////////////////////////////////////////////////////////////
-	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE vqmf RTM_SIMD_CALL vqm_set_rotation(const vqmf& qvm, quatf_arg0 rotation) RTM_NO_EXCEPT
+	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE vqmf RTM_SIMD_CALL vqm_set_rotation(const vqmf& input, quatf_arg0 rotation) RTM_NO_EXCEPT
 	{
-		vqmf result = qvm;
+		vqmf result = input;
 		result.rotation = rotation;
 		return result;
 	}
@@ -153,9 +153,9 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	// Sets the translation part of a VQM and returns the new value.
 	//////////////////////////////////////////////////////////////////////////
-	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE vqmf RTM_SIMD_CALL vqm_set_translation(const vqmf& qvm, vector4f_arg0 translation) RTM_NO_EXCEPT
+	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE vqmf RTM_SIMD_CALL vqm_set_translation(const vqmf& input, vector4f_arg0 translation) RTM_NO_EXCEPT
 	{
-		vqmf result = qvm;
+		vqmf result = input;
 		result.translation = translation;
 		return result;
 	}
@@ -173,12 +173,12 @@ namespace rtm
 	// Sets the scale part of a VQM and returns the new value.
 	// This preserves existing shear.
 	//////////////////////////////////////////////////////////////////////////
-	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE vqmf RTM_SIMD_CALL vqm_set_scale(const vqmf& qvm, vector4f_arg0 scale) RTM_NO_EXCEPT
+	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE vqmf RTM_SIMD_CALL vqm_set_scale(const vqmf& input, vector4f_arg0 scale) RTM_NO_EXCEPT
 	{
-		vqmf result = qvm;
-		result.x_axis = vector_set_x(qvm.x_axis, vector_get_x_as_scalar(scale));
-		result.y_axis = vector_set_y(qvm.y_axis, vector_get_y_as_scalar(scale));
-		result.z_axis = vector_set_z(qvm.z_axis, vector_get_z_as_scalar(scale));
+		vqmf result = input;
+		result.x_axis = vector_set_x(input.x_axis, vector_get_x_as_scalar(scale));
+		result.y_axis = vector_set_y(input.y_axis, vector_get_y_as_scalar(scale));
+		result.z_axis = vector_set_z(input.z_axis, vector_get_z_as_scalar(scale));
 		return result;
 	}
 
@@ -338,9 +338,9 @@ namespace rtm
 	}
 
 	//////////////////////////////////////////////////////////////////////////
-	// Returns a VQM transforms with the rotation part normalized.
+	// Returns a VQM transform with the rotation part normalized.
 	//////////////////////////////////////////////////////////////////////////
-	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE vqmf RTM_SIMD_CALL qvv_normalize(const vqmf& input) RTM_NO_EXCEPT
+	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE vqmf RTM_SIMD_CALL vqm_normalize(const vqmf& input) RTM_NO_EXCEPT
 	{
 		vqmf result;
 		result.rotation = quat_normalize(input.rotation);
@@ -355,7 +355,7 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	// Returns true if the input VQM does not contain any NaN or Inf, otherwise false.
 	//////////////////////////////////////////////////////////////////////////
-	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE bool RTM_SIMD_CALL qvv_is_finite(const vqmf& input) RTM_NO_EXCEPT
+	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE bool RTM_SIMD_CALL vqm_is_finite(const vqmf& input) RTM_NO_EXCEPT
 	{
 		return quat_is_finite(input.rotation)
 			&& vector_is_finite3(input.translation)

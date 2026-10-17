@@ -3,7 +3,7 @@
 ////////////////////////////////////////////////////////////////////////////////
 // The MIT License (MIT)
 //
-// Copyright (c) 2018 Nicholas Frechette & Realtime Math contributors
+// Copyright (c) 2026 Nicholas Frechette & Realtime Math contributors
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -27,57 +27,43 @@
 #include "rtm/math.h"
 #include "rtm/version.h"
 #include "rtm/impl/compiler_utils.h"
+#include "rtm/impl/error.h"
+#include "rtm/impl/vqv_common.h"
 
 RTM_IMPL_FILE_PRAGMA_PUSH
+
+// Deprecated in 2.4, to be removed in 2.5
+// This header keeps the previous qvv names. Use rtm/impl/vqv_common.h instead.
 
 namespace rtm
 {
 	RTM_IMPL_VERSION_NAMESPACE_BEGIN
 
 	//////////////////////////////////////////////////////////////////////////
-	// Creates a QVV transform from a rotation quaternion, a translation, and a 3D scale.
+	// Creates a VQV transform from a rotation quaternion, a translation, and a 3D scale.
 	//////////////////////////////////////////////////////////////////////////
-	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE constexpr qvvf RTM_SIMD_CALL qvv_set(quatf_arg0 rotation, vector4f_arg1 translation, vector4f_arg2 scale) RTM_NO_EXCEPT
+	RTM_DEPRECATED("Use 'vqv_set' instead. To be removed in 2.5.")
+	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE constexpr vqvf RTM_SIMD_CALL qvv_set(quatf_arg0 rotation, vector4f_arg1 translation, vector4f_arg2 scale) RTM_NO_EXCEPT
 	{
-		return qvvf{ rotation, translation, scale };
+		return vqv_set(rotation, translation, scale);
 	}
 
 	//////////////////////////////////////////////////////////////////////////
-	// Creates a QVV transform from a rotation quaternion, a translation, and a 3D scale.
+	// Creates a VQV transform from a rotation quaternion, a translation, and a 3D scale.
 	//////////////////////////////////////////////////////////////////////////
-	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE constexpr qvvd RTM_SIMD_CALL qvv_set(quatd_arg0 rotation, vector4d_arg1 translation, vector4d_arg2 scale) RTM_NO_EXCEPT
+	RTM_DEPRECATED("Use 'vqv_set' instead. To be removed in 2.5.")
+	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE constexpr vqvd RTM_SIMD_CALL qvv_set(quatd_arg0 rotation, vector4d_arg1 translation, vector4d_arg2 scale) RTM_NO_EXCEPT
 	{
-		return qvvd{ rotation, translation, scale };
-	}
-
-	namespace rtm_impl
-	{
-		//////////////////////////////////////////////////////////////////////////
-		// This is a helper struct to allow a single consistent API between
-		// various QVV transform types when the semantics are identical but the return
-		// type differs. Implicit coercion is used to return the desired value
-		// at the call site.
-		//////////////////////////////////////////////////////////////////////////
-		struct qvv_identity_impl
-		{
-			RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE RTM_SIMD_CALL operator qvvd() const RTM_NO_EXCEPT
-			{
-				return qvv_set(quat_identity(), vector_zero(), vector_set(1.0));
-			}
-
-			RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE RTM_SIMD_CALL operator qvvf() const RTM_NO_EXCEPT
-			{
-				return qvv_set(quat_identity(), vector_zero(), vector_set(1.0F));
-			}
-		};
+		return vqv_set(rotation, translation, scale);
 	}
 
 	//////////////////////////////////////////////////////////////////////////
-	// Returns the identity QVV transform.
+	// Returns the identity VQV transform.
 	//////////////////////////////////////////////////////////////////////////
-	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE constexpr rtm_impl::qvv_identity_impl RTM_SIMD_CALL qvv_identity() RTM_NO_EXCEPT
+	RTM_DEPRECATED("Use 'vqv_identity' instead. To be removed in 2.5.")
+	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE constexpr rtm_impl::vqv_identity_impl RTM_SIMD_CALL qvv_identity() RTM_NO_EXCEPT
 	{
-		return rtm_impl::qvv_identity_impl();
+		return vqv_identity();
 	}
 
 	RTM_IMPL_VERSION_NAMESPACE_END

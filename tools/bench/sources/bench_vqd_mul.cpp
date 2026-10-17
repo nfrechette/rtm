@@ -24,28 +24,28 @@
 
 #include <benchmark/benchmark.h>
 
-#include <rtm/qvd.h>
+#include <rtm/vqd.h>
 
 using namespace rtm;
 
 // The current library implementation
-RTM_FORCE_NOINLINE qvd RTM_SIMD_CALL qv_mul_current(qvd_arg0 lhs, qvd_arg1 rhs) RTM_NO_EXCEPT
+RTM_FORCE_NOINLINE vqd RTM_SIMD_CALL vq_mul_current(vqd_arg0 lhs, vqd_arg1 rhs) RTM_NO_EXCEPT
 {
-	return qv_mul(lhs, rhs);
+	return vq_mul(lhs, rhs);
 }
 
-static void bm_qvd_mul_current(benchmark::State& state)
+static void bm_vqd_mul_current(benchmark::State& state)
 {
 	const quatd rotation = quat_from_euler(scalar_deg_to_rad(10.0), scalar_deg_to_rad(20.0), scalar_deg_to_rad(30.0));
-	qvd t0 = qv_identity();
-	qvd t1 = qv_set(rotation, vector_set(1.0, 2.0, 3.0));
-	qvd t2 = qv_identity();
-	qvd t3 = qv_set(rotation, vector_set(1.0, 2.0, 3.0));
+	vqd t0 = vq_identity();
+	vqd t1 = vq_set(rotation, vector_set(1.0, 2.0, 3.0));
+	vqd t2 = vq_identity();
+	vqd t3 = vq_set(rotation, vector_set(1.0, 2.0, 3.0));
 
 	for (auto _ : state)
 	{
-		t0 = qv_mul_current(t0, t1);
-		t2 = qv_mul_current(t2, t3);
+		t0 = vq_mul_current(t0, t1);
+		t2 = vq_mul_current(t2, t3);
 	}
 
 	benchmark::DoNotOptimize(t0);
@@ -54,22 +54,22 @@ static void bm_qvd_mul_current(benchmark::State& state)
 	benchmark::DoNotOptimize(t3);
 }
 
-BENCHMARK(bm_qvd_mul_current);
+BENCHMARK(bm_vqd_mul_current);
 
-static void bm_qvd_mul_current_rhs_chain(benchmark::State& state)
+static void bm_vqd_mul_current_rhs_chain(benchmark::State& state)
 {
 	const quatd rotation = quat_from_euler(scalar_deg_to_rad(10.0), scalar_deg_to_rad(20.0), scalar_deg_to_rad(30.0));
-	qvd t0 = qv_identity();
-	qvd t1 = qv_set(rotation, vector_set(1.0, 2.0, 3.0));
-	qvd t2 = qv_identity();
-	qvd t3 = qv_set(rotation, vector_set(1.0, 2.0, 3.0));
+	vqd t0 = vq_identity();
+	vqd t1 = vq_set(rotation, vector_set(1.0, 2.0, 3.0));
+	vqd t2 = vq_identity();
+	vqd t3 = vq_set(rotation, vector_set(1.0, 2.0, 3.0));
 
 	for (auto _ : state)
 	{
 		// The result goes into the second argument, as with a parent transform in a hierarchy
 		// This measures how the second argument is passed: by register or through memory
-		t0 = qv_mul_current(t1, t0);
-		t2 = qv_mul_current(t3, t2);
+		t0 = vq_mul_current(t1, t0);
+		t2 = vq_mul_current(t3, t2);
 	}
 
 	benchmark::DoNotOptimize(t0);
@@ -78,4 +78,4 @@ static void bm_qvd_mul_current_rhs_chain(benchmark::State& state)
 	benchmark::DoNotOptimize(t3);
 }
 
-BENCHMARK(bm_qvd_mul_current_rhs_chain);
+BENCHMARK(bm_vqd_mul_current_rhs_chain);
