@@ -44,6 +44,7 @@
 *  Rename qvf and qvd to vqf and vqd, and the qv functions to vq: the name follows the order of operations, as with vqs. The new headers are rtm/vqf.h and rtm/vqd.h
 *  Deprecate qvf, qvd, the qv functions, matrix_from_qv, the qvf_arg and qvd_arg types, related_types::qv, and the headers rtm/qvf.h and rtm/qvd.h: use the vq names. To be removed in 2.5
 *  Code that forward declares struct qvf or struct qvd does not compile: include rtm/fwd.h instead
+*  Fix vector_cast and quat_cast (float64 to float32) with SSE2 and MSVC 19.34 to 19.44: when [xy] and [zw] are the same constant, the compiler sets [zw] to 0
 
 ## 2.3.1
 
