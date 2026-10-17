@@ -35,8 +35,8 @@ using namespace rtm;
 
 // Each variant has the same fast paths as vqm_mul and vqm_inverse: the flag in the m22 slot.
 // Only the full path changes. The variants are templates for vqmf and vqmd.
-//     - ref: the library function
-//     - matrix: the function builds the rotation matrix once from the quaternion and uses matrix multiplications
+//     - ref: the library function, which builds the rotation matrix once from the quaternion and uses matrix multiplications
+//     - quat: the function rotates each row (or column) of a matrix with quat_mul_vector3, as the library did before
 //     - soa_cross: the function rotates the three rows (or columns) of a matrix in one pass, in structure of arrays form,
 //       with the cross product formula
 //     - soa_quat: as soa_cross, but with the two quaternion products q * v * q^-1, as quat_mul_vector3 computes them
@@ -154,7 +154,7 @@ RTM_FORCE_NOINLINE TransformType RTM_SIMD_CALL vqm_mul_ref(const TransformType& 
 }
 
 template<typename TransformType>
-RTM_FORCE_NOINLINE TransformType RTM_SIMD_CALL vqm_mul_matrix(const TransformType& lhs, const TransformType& rhs) RTM_NO_EXCEPT
+RTM_FORCE_NOINLINE TransformType RTM_SIMD_CALL vqm_mul_quat(const TransformType& lhs, const TransformType& rhs) RTM_NO_EXCEPT
 {
 	using QuatType = typename related_types<TransformType>::quat;
 	using Vector4Type = typename related_types<TransformType>::vector4;
@@ -165,16 +165,23 @@ RTM_FORCE_NOINLINE TransformType RTM_SIMD_CALL vqm_mul_matrix(const TransformTyp
 	if (rtm_impl::vqm_has_identity_scale_shear(rhs))
 		return vqm_mul_rhs_identity(lhs, rhs, rotation);
 
-	const Matrix3x3Type lhs_scale_shear = vqm_get_scale_shear(lhs);
-	const Matrix3x3Type rhs_scale_shear = rtm_impl::vqm_get_scale_shear_no_flag(rhs);
+	const QuatType inv_lhs_rotation = quat_conjugate(lhs.rotation);
+
+	Matrix3x3Type lhs_scale_shear = vqm_get_scale_shear(lhs);
+	Matrix3x3Type rhs_scale_shear = rtm_impl::vqm_get_scale_shear_no_flag(rhs);
+
 	const Vector4Type translation = vector_add(quat_mul_vector3(matrix_mul_vector3(lhs.translation_m22, rhs_scale_shear), rhs.rotation), rhs.translation_m22);
 
 	// M3 = (M1 * R1) * (M2 * R1^T)
-	const Matrix3x3Type lhs_rotation = matrix_from_quat(lhs.rotation);
-	const Matrix3x3Type lhs_rotated = matrix_mul(lhs_scale_shear, lhs_rotation);
-	const Matrix3x3Type rhs_rotated = matrix_mul(rhs_scale_shear, matrix_transpose(lhs_rotation));
-	const Matrix3x3Type scale_shear = matrix_mul(lhs_rotated, rhs_rotated);
+	rhs_scale_shear.x_axis = quat_mul_vector3(rhs_scale_shear.x_axis, inv_lhs_rotation);
+	rhs_scale_shear.y_axis = quat_mul_vector3(rhs_scale_shear.y_axis, inv_lhs_rotation);
+	rhs_scale_shear.z_axis = quat_mul_vector3(rhs_scale_shear.z_axis, inv_lhs_rotation);
 
+	lhs_scale_shear.x_axis = quat_mul_vector3(lhs_scale_shear.x_axis, lhs.rotation);
+	lhs_scale_shear.y_axis = quat_mul_vector3(lhs_scale_shear.y_axis, lhs.rotation);
+	lhs_scale_shear.z_axis = quat_mul_vector3(lhs_scale_shear.z_axis, lhs.rotation);
+
+	const Matrix3x3Type scale_shear = matrix_mul(lhs_scale_shear, rhs_scale_shear);
 	return rtm_impl::vqm_set_no_flag(rotation, translation, scale_shear);
 }
 
@@ -239,7 +246,7 @@ RTM_FORCE_NOINLINE TransformType RTM_SIMD_CALL vqm_inverse_ref(const TransformTy
 }
 
 template<typename TransformType>
-RTM_FORCE_NOINLINE TransformType RTM_SIMD_CALL vqm_inverse_matrix(const TransformType& input) RTM_NO_EXCEPT
+RTM_FORCE_NOINLINE TransformType RTM_SIMD_CALL vqm_inverse_quat(const TransformType& input) RTM_NO_EXCEPT
 {
 	using QuatType = typename related_types<TransformType>::quat;
 	using Vector4Type = typename related_types<TransformType>::vector4;
@@ -253,9 +260,18 @@ RTM_FORCE_NOINLINE TransformType RTM_SIMD_CALL vqm_inverse_matrix(const Transfor
 	const Vector4Type inv_translation = matrix_mul_vector3(quat_mul_vector3(vector_neg(input.translation_m22), inv_rotation), inv_scale_shear);
 
 	// M' = R^T * (M^-1 * R)
-	const Matrix3x3Type rotation = matrix_from_quat(input.rotation);
-	const Matrix3x3Type scale_shear = matrix_mul(matrix_transpose(rotation), matrix_mul(inv_scale_shear, rotation));
+	// M^-1 * R rotates each row of M^-1 with q, and the rotation of the identity rows with conjugate(q) gives R^T
+	Matrix3x3Type inv_rotated_scale_shear;
+	inv_rotated_scale_shear.x_axis = quat_mul_vector3(inv_scale_shear.x_axis, input.rotation);
+	inv_rotated_scale_shear.y_axis = quat_mul_vector3(inv_scale_shear.y_axis, input.rotation);
+	inv_rotated_scale_shear.z_axis = quat_mul_vector3(inv_scale_shear.z_axis, input.rotation);
 
+	Matrix3x3Type inv_rotation_mtx = matrix_identity();
+	inv_rotation_mtx.x_axis = quat_mul_vector3(inv_rotation_mtx.x_axis, inv_rotation);
+	inv_rotation_mtx.y_axis = quat_mul_vector3(inv_rotation_mtx.y_axis, inv_rotation);
+	inv_rotation_mtx.z_axis = quat_mul_vector3(inv_rotation_mtx.z_axis, inv_rotation);
+
+	const Matrix3x3Type scale_shear = matrix_mul(inv_rotation_mtx, inv_rotated_scale_shear);
 	return rtm_impl::vqm_set_no_flag(inv_rotation, inv_translation, scale_shear);
 }
 
@@ -463,19 +479,19 @@ static void register_vqm_benchmarks(const char* type_name)
 		const std::string prefix = std::string("bm_") + type_name;
 
 		benchmark::RegisterBenchmark((prefix + "_mul_ref/throughput" + suffix).c_str(), bm_vqm_mul_throughput<TransformType, vqm_mul_ref<TransformType>>, kind);
-		benchmark::RegisterBenchmark((prefix + "_mul_matrix/throughput" + suffix).c_str(), bm_vqm_mul_throughput<TransformType, vqm_mul_matrix<TransformType>>, kind);
+		benchmark::RegisterBenchmark((prefix + "_mul_quat/throughput" + suffix).c_str(), bm_vqm_mul_throughput<TransformType, vqm_mul_quat<TransformType>>, kind);
 		benchmark::RegisterBenchmark((prefix + "_mul_soa_cross/throughput" + suffix).c_str(), bm_vqm_mul_throughput<TransformType, vqm_mul_soa<TransformType, false>>, kind);
 		benchmark::RegisterBenchmark((prefix + "_mul_soa_quat/throughput" + suffix).c_str(), bm_vqm_mul_throughput<TransformType, vqm_mul_soa<TransformType, true>>, kind);
 		benchmark::RegisterBenchmark((prefix + "_mul_soa_quat_split/throughput" + suffix).c_str(), bm_vqm_mul_throughput<TransformType, vqm_mul_soa_split<TransformType>>, kind);
 
 		benchmark::RegisterBenchmark((prefix + "_mul_ref/latency" + suffix).c_str(), bm_vqm_mul_latency<TransformType, vqm_mul_ref<TransformType>>, kind);
-		benchmark::RegisterBenchmark((prefix + "_mul_matrix/latency" + suffix).c_str(), bm_vqm_mul_latency<TransformType, vqm_mul_matrix<TransformType>>, kind);
+		benchmark::RegisterBenchmark((prefix + "_mul_quat/latency" + suffix).c_str(), bm_vqm_mul_latency<TransformType, vqm_mul_quat<TransformType>>, kind);
 		benchmark::RegisterBenchmark((prefix + "_mul_soa_cross/latency" + suffix).c_str(), bm_vqm_mul_latency<TransformType, vqm_mul_soa<TransformType, false>>, kind);
 		benchmark::RegisterBenchmark((prefix + "_mul_soa_quat/latency" + suffix).c_str(), bm_vqm_mul_latency<TransformType, vqm_mul_soa<TransformType, true>>, kind);
 		benchmark::RegisterBenchmark((prefix + "_mul_soa_quat_split/latency" + suffix).c_str(), bm_vqm_mul_latency<TransformType, vqm_mul_soa_split<TransformType>>, kind);
 
 		benchmark::RegisterBenchmark((prefix + "_inverse_ref/throughput" + suffix).c_str(), bm_vqm_inverse_throughput<TransformType, vqm_inverse_ref<TransformType>>, kind);
-		benchmark::RegisterBenchmark((prefix + "_inverse_matrix/throughput" + suffix).c_str(), bm_vqm_inverse_throughput<TransformType, vqm_inverse_matrix<TransformType>>, kind);
+		benchmark::RegisterBenchmark((prefix + "_inverse_quat/throughput" + suffix).c_str(), bm_vqm_inverse_throughput<TransformType, vqm_inverse_quat<TransformType>>, kind);
 		benchmark::RegisterBenchmark((prefix + "_inverse_soa_cross/throughput" + suffix).c_str(), bm_vqm_inverse_throughput<TransformType, vqm_inverse_soa<TransformType, false>>, kind);
 		benchmark::RegisterBenchmark((prefix + "_inverse_soa_quat/throughput" + suffix).c_str(), bm_vqm_inverse_throughput<TransformType, vqm_inverse_soa<TransformType, true>>, kind);
 

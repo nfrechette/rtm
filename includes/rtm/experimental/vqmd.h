@@ -65,8 +65,8 @@ namespace rtm
 	//   M3 * R1 * R2 = M1 * R1 * M2 * R2
 	//   M3 = (M1 * R1) * (M2 * R1^T)
 	//   v3 = v1 * M2 * R2 + v2
-	// - M1 * R1 is M1 with each row rotated by q1. M2 * R1^T is M2 with each row rotated by the conjugate of q1.
-	//   Thus the multiplication does not need a rotation matrix.
+	// - The function builds R1 once from q1. Then it computes M1 * R1, M2 * R1^T, and their product with matrix multiplications.
+	//   A rotation of each row with the quaternion (quat_mul_vector3) gives the same result, but it is slower.
 	// - The rotation of T1 moves into M3. Thus M3 can contain shear when M1 and M2 contain only scale.
 	//   This is why VQV, which stores only a scale, does not form a group.
 	//
@@ -76,8 +76,7 @@ namespace rtm
 	//   M' * R^T = R^T * M^-1
 	//   M' = R^T * (M^-1 * R)
 	//   v' = -v * R^T * M^-1
-	// - M^-1 * R is M^-1 with each row rotated by q. The matrix R^T is on the left side, thus it is not a row rotation.
-	//   The function uses the rotation matrix of the conjugate of q for it.
+	// - The function builds R once from q. Then it computes R^T * (M^-1 * R) with matrix multiplications.
 	//////////////////////////////////////////////////////////////////////////
 
 	//////////////////////////////////////////////////////////////////////////
@@ -478,22 +477,18 @@ namespace rtm
 			return result;
 		}
 
-		const quatd inv_lhs_rotation = quat_conjugate(lhs.rotation);
-
-		matrix3x3d lhs_scale_shear = vqm_get_scale_shear(lhs);
-		matrix3x3d rhs_scale_shear = rtm_impl::vqm_get_scale_shear_no_flag(rhs);
+		const matrix3x3d lhs_scale_shear = vqm_get_scale_shear(lhs);
+		const matrix3x3d rhs_scale_shear = rtm_impl::vqm_get_scale_shear_no_flag(rhs);
 
 		const vector4d translation = vector_add(quat_mul_vector3(matrix_mul_vector3(lhs.translation_m22, rhs_scale_shear), rhs.rotation), rhs.translation_m22);
 
-		rhs_scale_shear.x_axis = quat_mul_vector3(rhs_scale_shear.x_axis, inv_lhs_rotation);
-		rhs_scale_shear.y_axis = quat_mul_vector3(rhs_scale_shear.y_axis, inv_lhs_rotation);
-		rhs_scale_shear.z_axis = quat_mul_vector3(rhs_scale_shear.z_axis, inv_lhs_rotation);
+		// M3 = (M1 * R1) * (M2 * R1^T)
+		// M1 * R1 does not depend on rhs, thus a chain of products (a hierarchy) has a shorter dependency path
+		const matrix3x3d lhs_rotation = matrix_from_quat(lhs.rotation);
+		const matrix3x3d lhs_rotated_scale_shear = matrix_mul(lhs_scale_shear, lhs_rotation);
+		const matrix3x3d rhs_rotated_scale_shear = matrix_mul(rhs_scale_shear, matrix_transpose(lhs_rotation));
 
-		lhs_scale_shear.x_axis = quat_mul_vector3(lhs_scale_shear.x_axis, lhs.rotation);
-		lhs_scale_shear.y_axis = quat_mul_vector3(lhs_scale_shear.y_axis, lhs.rotation);
-		lhs_scale_shear.z_axis = quat_mul_vector3(lhs_scale_shear.z_axis, lhs.rotation);
-
-		const matrix3x3d scale_shear = matrix_mul(lhs_scale_shear, rhs_scale_shear);
+		const matrix3x3d scale_shear = matrix_mul(lhs_rotated_scale_shear, rhs_rotated_scale_shear);
 		return rtm_impl::vqm_set_no_flag(rotation, translation, scale_shear);
 	}
 
@@ -557,24 +552,12 @@ namespace rtm
 			// The caller gives M^-1. Thus the function computes only one matrix inverse.
 
 			const quatd inv_rotation = quat_conjugate(input.rotation);
-
-			// Rotate the inverse scale/shear matrix
-			matrix3x3d inv_rotated_scale_shear;
-			inv_rotated_scale_shear.x_axis = quat_mul_vector3(inv_scale_shear.x_axis, input.rotation);
-			inv_rotated_scale_shear.y_axis = quat_mul_vector3(inv_scale_shear.y_axis, input.rotation);
-			inv_rotated_scale_shear.z_axis = quat_mul_vector3(inv_scale_shear.z_axis, input.rotation);
-
-			// Build our inverse rotation matrix
-			// TODO: We could build the matrix directly from the quaternion which is cheaper than rotating 3 axes, need to profile
-			matrix3x3d inv_rotation_mtx = matrix_identity();
-			inv_rotation_mtx.x_axis = quat_mul_vector3(inv_rotation_mtx.x_axis, inv_rotation);
-			inv_rotation_mtx.y_axis = quat_mul_vector3(inv_rotation_mtx.y_axis, inv_rotation);
-			inv_rotation_mtx.z_axis = quat_mul_vector3(inv_rotation_mtx.z_axis, inv_rotation);
-
-			// Multiply our two matrices
-			inv_rotated_scale_shear = matrix_mul(inv_rotation_mtx, inv_rotated_scale_shear);
-
 			const vector4d inv_translation = matrix_mul_vector3(quat_mul_vector3(vector_neg(input.translation_m22), inv_rotation), inv_scale_shear);
+
+			// M' = R^T * (M^-1 * R)
+			const matrix3x3d rotation = matrix_from_quat(input.rotation);
+			const matrix3x3d inv_rotated_scale_shear = matrix_mul(matrix_transpose(rotation), matrix_mul(inv_scale_shear, rotation));
+
 			return vqm_set_no_flag(inv_rotation, inv_translation, inv_rotated_scale_shear);
 		}
 
