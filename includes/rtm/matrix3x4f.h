@@ -29,9 +29,9 @@
 #include "rtm/math.h"
 #include "rtm/matrix3x3f.h"
 #include "rtm/quatf.h"
-#include "rtm/qvsf.h"
 #include "rtm/vector4f.h"
 #include "rtm/version.h"
+#include "rtm/vqsf.h"
 #include "rtm/impl/compiler_utils.h"
 #include "rtm/impl/matrix_common.h"
 #include "rtm/impl/matrix_affine_common.h"
@@ -95,7 +95,7 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	// Sets a 3x4 affine matrix from a rotation quaternion, translation, and scalar scale.
 	//////////////////////////////////////////////////////////////////////////
-	RTM_DISABLE_SECURITY_COOKIE_CHECK inline matrix3x4f RTM_SIMD_CALL matrix_from_qvs(quatf_arg0 quat, vector4f_arg1 translation, float scale) RTM_NO_EXCEPT
+	RTM_DISABLE_SECURITY_COOKIE_CHECK inline matrix3x4f RTM_SIMD_CALL matrix_from_vqs(quatf_arg0 quat, vector4f_arg1 translation, float scale) RTM_NO_EXCEPT
 	{
 		RTM_ASSERT(quat_is_normalized(quat), "Quaternion is not normalized");
 
@@ -121,11 +121,11 @@ namespace rtm
 	}
 
 	//////////////////////////////////////////////////////////////////////////
-	// Converts a QVS transform into a 3x4 affine matrix.
+	// Converts a VQS transform into a 3x4 affine matrix.
 	//////////////////////////////////////////////////////////////////////////
-	RTM_DISABLE_SECURITY_COOKIE_CHECK inline matrix3x4f RTM_SIMD_CALL matrix_from_qvs(qvsf_arg0 transform) RTM_NO_EXCEPT
+	RTM_DISABLE_SECURITY_COOKIE_CHECK inline matrix3x4f RTM_SIMD_CALL matrix_from_vqs(vqsf_arg0 transform) RTM_NO_EXCEPT
 	{
-		return matrix_from_qvs(transform.rotation, transform.translation_scale, qvs_get_scale(transform));
+		return matrix_from_vqs(transform.rotation, transform.translation_scale, vqs_get_scale(transform));
 	}
 
 	//////////////////////////////////////////////////////////////////////////

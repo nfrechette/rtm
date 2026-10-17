@@ -15,13 +15,13 @@
 *  Update Google Benchmark to 1.9.5
 *  Use float64 SIMD on ARM64: vector4d, quatd, mask4d, and mask4q are now two 2-lane registers, as with SSE2
 *  Use FMA on ARM64 for float64 multiply-add and quaternion multiplication, as float32 does: the results can differ in the last bits
-*  Pass qvd and qvsd by register on ARM64
+*  Pass qvd and vqsd by register on ARM64
 *  Add support for WebAssembly SIMD128: compile with `-msimd128` to enable it, RTM then defines `RTM_WASM128_INTRINSICS`
 *  Compile the Emscripten unit tests with WebAssembly SIMD by default in `make.py`, use `-nosimd` for the scalar code path
 *  Fix symmetric rounding for values near 0.5 and for odd values above 2^23 (float32) or 2^52 (float64) on all code paths, for example round(0.49999997) = 0.0
 *  Use the ARM64 round instruction (half away from zero) for vector and scalar symmetric rounding
 *  Pass vqvd, matrix3x4d, and matrix4x4d by reference on ARM64 to remove a copy to the stack
-*  Fix the argument type of the second input of qv_slerp, qvs_lerp, qvs_lerp_no_scale, qvs_slerp, quat_slerp (double), and vector_neg_mul_sub (vector4d, scalard)
+*  Fix the argument type of the second input of qv_slerp, vqs_lerp, vqs_lerp_no_scale, vqs_slerp, quat_slerp (double), and vector_neg_mul_sub (vector4d, scalard)
 *  Use a float64 default threshold in quat_near_identity (double): 2.82729655E-7 rad (an error of 1.0E-14 on [w]) replaces the float32 value of 0.00284714461 rad. To keep the previous behavior, give 0.00284714461 as the threshold
 *  Use a square root and a division instead of the reciprocal square root estimate in float32 quat_normalize and quat_lerp with SSE2: the results are more accurate and do not change between Intel and AMD CPUs
 *  Use a division instead of the reciprocal estimate in vector_reciprocal on ARMv7: the results are more accurate
@@ -38,6 +38,7 @@
 *  Rename qvvf and qvvd to vqvf and vqvd, and the qvv functions to vqv: the name follows the order of operations, as with vqm. The new headers are rtm/vqvf.h and rtm/vqvd.h
 *  Deprecate qvvf, qvvd, the qvv functions, matrix_from_qvv, the qvvf_arg and qvvd_arg types, related_types::qvv, and the headers rtm/qvvf.h and rtm/qvvd.h: use the vqv names. To be removed in 2.5
 *  Code that forward declares struct qvvf or struct qvvd does not compile: include rtm/fwd.h instead
+*  Rename qvsf and qvsd to vqsf and vqsd, and the qvs functions to vqs: the name follows the order of operations, as with vqv. The new headers are rtm/vqsf.h and rtm/vqsd.h
 
 ## 2.3.1
 

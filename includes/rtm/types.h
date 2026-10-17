@@ -478,22 +478,22 @@ namespace rtm
 	};
 
 	//////////////////////////////////////////////////////////////////////////
-	// A QVS transform represents a 3D rotation (quaternion), a 3D translation (vector),
+	// A VQS transform represents a 3D rotation (quaternion), a 3D translation (vector),
 	// and a single scalar uniform scale value.
-	// QVS transforms form a group with a well defined multiplication and inverse.
+	// VQS transforms form a group with a well defined multiplication and inverse.
 	//////////////////////////////////////////////////////////////////////////
-	struct qvsf
+	struct vqsf
 	{
 		quatf		rotation;
 		vector4f	translation_scale;	// [xyz] for translation, [w] for scale
 	};
 
 	//////////////////////////////////////////////////////////////////////////
-	// A QVS transform represents a 3D rotation (quaternion), a 3D translation (vector),
+	// A VQS transform represents a 3D rotation (quaternion), a 3D translation (vector),
 	// and a single scalar uniform scale value.
-	// QVS transforms form a group with a well defined multiplication and inverse.
+	// VQS transforms form a group with a well defined multiplication and inverse.
 	//////////////////////////////////////////////////////////////////////////
-	struct qvsd
+	struct vqsd
 	{
 		quatd		rotation;
 		vector4d	translation_scale;	// [xyz] for translation, [w] for scale

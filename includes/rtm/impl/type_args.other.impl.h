@@ -145,13 +145,13 @@ namespace rtm
 	using qvd_arg1 = const qvd&;
 	using qvd_argn = const qvd&;
 
-	using qvsf_arg0 = const qvsf&;
-	using qvsf_arg1 = const qvsf&;
-	using qvsf_argn = const qvsf&;
+	using vqsf_arg0 = const vqsf&;
+	using vqsf_arg1 = const vqsf&;
+	using vqsf_argn = const vqsf&;
 
-	using qvsd_arg0 = const qvsd&;
-	using qvsd_arg1 = const qvsd&;
-	using qvsd_argn = const qvsd&;
+	using vqsd_arg0 = const vqsd&;
+	using vqsd_arg1 = const vqsd&;
+	using vqsd_argn = const vqsd&;
 
 	using vqvf_arg0 = const vqvf&;
 	using vqvf_arg1 = const vqvf&;

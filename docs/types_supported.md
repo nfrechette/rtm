@@ -32,9 +32,11 @@ Quaternions are 4D complex numbers commonly used to represent 3D rotations (when
 
 A QV represents an affine transform in two distinct parts: a rotation quaternion and a vector3 translation. This type is commonly used in video games as it is very fast to work with and more compact than a full affine matrix.
 
-## QVS (quaternion-vector-scalar)
+## VQS (vector-quaternion-scalar)
 
-A QVS represents an affine transform in three distinct parts: a rotation quaternion, a vector4 translation, and a scalar uniform scale. This type is commonly used in video games as it is very fast to work with and more compact than a full affine matrix. It represents uniform positive/negative scale through a single scalar value. When multiplying transforms of this type, scale combines as it would with matrices.
+A VQS represents an affine transform in three distinct parts: a rotation quaternion, a vector4 translation, and a scalar uniform scale. This type is commonly used in video games as it is very fast to work with and more compact than a full affine matrix. It represents uniform positive/negative scale through a single scalar value. When multiplying transforms of this type, scale combines as it would with matrices.
+
+Before 2.4, the name of this type was QVS. The new name follows the order of operations from right to left (scale, rotation, translation), as in the literature.
 
 ## VQV (vector-quaternion-vector)
 

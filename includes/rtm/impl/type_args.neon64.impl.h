@@ -104,7 +104,7 @@ namespace rtm
 	// A vqvf can also be returned by register.
 	// The non-scalar types that use doubles are aggregates of 2x float64x2_t or 2x uint64x2_t.
 	// Thus, the first 4x vector4d/quatd/mask4d/mask4q arguments are passed by register.
-	// A qvd and a qvsd use 4 registers. Thus, the first 2x qvd/qvsd arguments are passed by register.
+	// A qvd and a vqsd use 4 registers. Thus, the first 2x qvd/vqsd arguments are passed by register.
 	// A vqvd and the double matrices use more than 4 registers. Thus, they are passed in memory.
 	// When such an argument is passed by value, the caller copies it to the stack and passes a pointer.
 	// Thus, we pass them by const& to remove the copy.
@@ -157,13 +157,13 @@ namespace rtm
 	using qvd_arg1 = const qvd;
 	using qvd_argn = const qvd&;
 
-	using qvsf_arg0 = const qvsf;
-	using qvsf_arg1 = const qvsf;
-	using qvsf_argn = const qvsf&;
+	using vqsf_arg0 = const vqsf;
+	using vqsf_arg1 = const vqsf;
+	using vqsf_argn = const vqsf&;
 
-	using qvsd_arg0 = const qvsd;
-	using qvsd_arg1 = const qvsd;
-	using qvsd_argn = const qvsd&;
+	using vqsd_arg0 = const vqsd;
+	using vqsd_arg1 = const vqsd;
+	using vqsd_argn = const vqsd&;
 
 	using vqvf_arg0 = const vqvf;
 	using vqvf_arg1 = const vqvf;
