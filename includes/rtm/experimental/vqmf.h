@@ -93,10 +93,9 @@ namespace rtm
 	{
 		// The internal format is meant to be opaque, use vqm_* accessors
 		quatf		rotation;
-		vector4f	translation;
-		vector4f	x_axis;
-		vector4f	y_axis;
-		vector4f	z_axis;
+		vector4f	translation_m22;	// [xyz] = translation, [w] = m22
+		vector4f	x_axis_m20;			// [xyz] = x_axis, [w] = m20
+		vector4f	y_axis_m21;			// [xyz] = y_axis, [w] = m21
 	};
 #endif
 
@@ -109,12 +108,55 @@ namespace rtm
 	{
 		vqmf result;
 		result.rotation = quat_cast(input.rotation);
-		result.translation = vector_cast(input.translation);
-		result.x_axis = vector_cast(input.x_axis);
-		result.y_axis = vector_cast(input.y_axis);
-		result.z_axis = vector_cast(input.z_axis);
+		result.translation_m22 = vector_cast(input.translation_m22);
+		result.x_axis_m20 = vector_cast(input.x_axis_m20);
+		result.y_axis_m21 = vector_cast(input.y_axis_m21);
 
 		return result;
+	}
+
+	//////////////////////////////////////////////////////////////////////////
+	// Creates a VQM transform from a rotation quaternion, a translation, and a 3x3 scale/shear matrix.
+	// The scale/shear matrix applies before the rotation: p' = p * M * R + t.
+	//////////////////////////////////////////////////////////////////////////
+	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE vqmf RTM_SIMD_CALL vqm_set(quatf_arg0 rotation, vector4f_arg1 translation, matrix3x3f_arg0 scale_shear) RTM_NO_EXCEPT
+	{
+		// The [w] lanes hold the third row of the scale/shear matrix
+		vqmf result;
+		result.rotation = rotation;
+		result.translation_m22 = vector_mix<mix4::x, mix4::y, mix4::z, mix4::c>(translation, scale_shear.z_axis);
+		result.x_axis_m20 = vector_mix<mix4::x, mix4::y, mix4::z, mix4::a>(scale_shear.x_axis, scale_shear.z_axis);
+		result.y_axis_m21 = vector_mix<mix4::x, mix4::y, mix4::z, mix4::b>(scale_shear.y_axis, scale_shear.z_axis);
+
+		return result;
+	}
+
+	//////////////////////////////////////////////////////////////////////////
+	// Creates a VQM transform from a rotation quaternion, a translation, and a 3D scale.
+	//////////////////////////////////////////////////////////////////////////
+	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE vqmf RTM_SIMD_CALL vqm_set(quatf_arg0 rotation, vector4f_arg1 translation, vector4f_arg2 scale) RTM_NO_EXCEPT
+	{
+		const vector4f zero = vector_zero();
+
+		vqmf result;
+		result.rotation = rotation;
+		result.translation_m22 = vector_mix<mix4::x, mix4::y, mix4::z, mix4::c>(translation, scale);
+		result.x_axis_m20 = vector_mix<mix4::a, mix4::y, mix4::z, mix4::w>(zero, scale);
+		result.y_axis_m21 = vector_mix<mix4::x, mix4::b, mix4::z, mix4::w>(zero, scale);
+
+		return result;
+	}
+
+	//////////////////////////////////////////////////////////////////////////
+	// Returns the scale/shear part of a VQM transform as a 3x3 matrix.
+	// The matrix applies before the rotation: p' = p * M * R + t.
+	//////////////////////////////////////////////////////////////////////////
+	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE matrix3x3f RTM_SIMD_CALL vqm_get_scale_shear(const vqmf& input) RTM_NO_EXCEPT
+	{
+		// The [w] lanes hold the third row of the scale/shear matrix
+		const vector4f m20_m20_m21_m21 = vector_mix<mix4::w, mix4::w, mix4::d, mix4::d>(input.x_axis_m20, input.y_axis_m21);
+		const vector4f z_axis = vector_mix<mix4::x, mix4::z, mix4::d, mix4::d>(m20_m20_m21_m21, input.translation_m22);
+		return matrix_set(input.x_axis_m20, input.y_axis_m21, z_axis);
 	}
 
 	//////////////////////////////////////////////////////////////////////////
@@ -165,14 +207,7 @@ namespace rtm
 		{
 			// The largest row is zero which means all three are zero
 			// We use the identity rotation since its value is not recoverable
-			vqmf result;
-			result.rotation = quat_identity();
-			result.translation = vector_zero();
-			result.x_axis = input.x_axis;
-			result.y_axis = input.y_axis;
-			result.z_axis = input.z_axis;
-
-			return result;
+			return vqm_set(quat_identity(), vector_zero(), input);
 		}
 
 		const vector4f first_axis = vector_div(input_axes[first_index], vector_set(first_length));
@@ -233,14 +268,7 @@ namespace rtm
 		// M = A * R^T
 		const matrix3x3f scale_shear = matrix_mul(input, matrix_transpose(rotation));
 
-		vqmf result;
-		result.rotation = rtm_impl::quat_from_matrix(rotation.x_axis, rotation.y_axis, rotation.z_axis);
-		result.translation = vector_zero();
-		result.x_axis = scale_shear.x_axis;
-		result.y_axis = scale_shear.y_axis;
-		result.z_axis = scale_shear.z_axis;
-
-		return result;
+		return vqm_set(rtm_impl::quat_from_matrix(rotation.x_axis, rotation.y_axis, rotation.z_axis), vector_zero(), scale_shear);
 	}
 
 	//////////////////////////////////////////////////////////////////////////
@@ -252,40 +280,9 @@ namespace rtm
 		const matrix3x3f rotation_scale_shear = matrix_set(input.x_axis, input.y_axis, input.z_axis);
 
 		vqmf result = vqm_from_matrix(rotation_scale_shear);
-		result.translation = input.w_axis;
 
-		return result;
-	}
-
-	//////////////////////////////////////////////////////////////////////////
-	// Creates a VQM transform from a rotation quaternion, a translation, and a 3D scale.
-	//////////////////////////////////////////////////////////////////////////
-	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE vqmf RTM_SIMD_CALL vqm_set(quatf_arg0 rotation, vector4f_arg1 translation, vector4f_arg2 scale) RTM_NO_EXCEPT
-	{
-		vector4f zero = vector_zero();
-
-		vqmf result;
-		result.rotation = rotation;
-		result.translation = translation;
-		result.x_axis = vector_set_x(zero, vector_get_x_as_scalar(scale));
-		result.y_axis = vector_set_y(zero, vector_get_y_as_scalar(scale));
-		result.z_axis = vector_set_z(zero, vector_get_z_as_scalar(scale));
-
-		return result;
-	}
-
-	//////////////////////////////////////////////////////////////////////////
-	// Creates a VQM transform from a rotation quaternion, a translation, and a 3x3 scale/shear matrix.
-	// The scale/shear matrix applies before the rotation: p' = p * M * R + t.
-	//////////////////////////////////////////////////////////////////////////
-	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE vqmf RTM_SIMD_CALL vqm_set(quatf_arg0 rotation, vector4f_arg1 translation, matrix3x3f_arg0 scale_shear) RTM_NO_EXCEPT
-	{
-		vqmf result;
-		result.rotation = rotation;
-		result.translation = translation;
-		result.x_axis = scale_shear.x_axis;
-		result.y_axis = scale_shear.y_axis;
-		result.z_axis = scale_shear.z_axis;
+		// The [w] lane holds m22
+		result.translation_m22 = vector_mix<mix4::x, mix4::y, mix4::z, mix4::d>(input.w_axis, result.translation_m22);
 
 		return result;
 	}
@@ -309,11 +306,11 @@ namespace rtm
 	}
 
 	//////////////////////////////////////////////////////////////////////////
-	// Returns the translation part of a VQM transform.
+	// Returns the translation part of a VQM transform. The [w] component is undefined.
 	//////////////////////////////////////////////////////////////////////////
 	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE vector4f RTM_SIMD_CALL vqm_get_translation(const vqmf& input) RTM_NO_EXCEPT
 	{
-		return input.translation;
+		return input.translation_m22;
 	}
 
 	//////////////////////////////////////////////////////////////////////////
@@ -321,8 +318,9 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE vqmf RTM_SIMD_CALL vqm_set_translation(const vqmf& input, vector4f_arg0 translation) RTM_NO_EXCEPT
 	{
+		// The [w] lane holds m22
 		vqmf result = input;
-		result.translation = translation;
+		result.translation_m22 = vector_mix<mix4::x, mix4::y, mix4::z, mix4::d>(translation, input.translation_m22);
 		return result;
 	}
 
@@ -333,8 +331,9 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE vector4f RTM_SIMD_CALL vqm_get_scale(const vqmf& input) RTM_NO_EXCEPT
 	{
-		vector4f xyxy = vector_mix<mix4::x, mix4::b, mix4::x, mix4::b>(input.x_axis, input.y_axis);
-		return vector_mix<mix4::x, mix4::y, mix4::c, mix4::d>(xyxy, input.z_axis);
+		// The scale is [m00, m11, m22]
+		const vector4f m00_m11 = vector_mix<mix4::x, mix4::b, mix4::z, mix4::w>(input.x_axis_m20, input.y_axis_m21);
+		return vector_mix<mix4::x, mix4::y, mix4::d, mix4::d>(m00_m11, input.translation_m22);
 	}
 
 	//////////////////////////////////////////////////////////////////////////
@@ -343,20 +342,13 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE vqmf RTM_SIMD_CALL vqm_set_scale(const vqmf& input, vector4f_arg0 scale) RTM_NO_EXCEPT
 	{
-		vqmf result = input;
-		result.x_axis = vector_set_x(input.x_axis, vector_get_x_as_scalar(scale));
-		result.y_axis = vector_set_y(input.y_axis, vector_get_y_as_scalar(scale));
-		result.z_axis = vector_set_z(input.z_axis, vector_get_z_as_scalar(scale));
+		// The scale is [m00, m11, m22]
+		vqmf result;
+		result.rotation = input.rotation;
+		result.translation_m22 = vector_mix<mix4::x, mix4::y, mix4::z, mix4::c>(input.translation_m22, scale);
+		result.x_axis_m20 = vector_mix<mix4::a, mix4::y, mix4::z, mix4::w>(input.x_axis_m20, scale);
+		result.y_axis_m21 = vector_mix<mix4::x, mix4::b, mix4::z, mix4::w>(input.y_axis_m21, scale);
 		return result;
-	}
-
-	//////////////////////////////////////////////////////////////////////////
-	// Returns the scale/shear part of a VQM transform as a 3x3 matrix.
-	// The matrix applies before the rotation: p' = p * M * R + t.
-	//////////////////////////////////////////////////////////////////////////
-	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE matrix3x3f RTM_SIMD_CALL vqm_get_scale_shear(const vqmf& input) RTM_NO_EXCEPT
-	{
-		return matrix_set(input.x_axis, input.y_axis, input.z_axis);
 	}
 
 	//////////////////////////////////////////////////////////////////////////
@@ -365,11 +357,7 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE vqmf RTM_SIMD_CALL vqm_set_scale_shear(const vqmf& input, matrix3x3f_arg0 scale_shear) RTM_NO_EXCEPT
 	{
-		vqmf result = input;
-		result.x_axis = scale_shear.x_axis;
-		result.y_axis = scale_shear.y_axis;
-		result.z_axis = scale_shear.z_axis;
-		return result;
+		return vqm_set(input.rotation, input.translation_m22, scale_shear);
 	}
 
 	//////////////////////////////////////////////////////////////////////////
@@ -378,12 +366,12 @@ namespace rtm
 	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE vqmf RTM_SIMD_CALL vqm_add(const vqmf& lhs, const vqmf& rhs) RTM_NO_EXCEPT
 	{
 		// T2 + T1 = [v2, q2, M2] + [v1, q1, M1] = [v2 + v1, q2 + q1, M2 + M1]
+		// Each register holds components of only one part. Thus a sum of the registers gives the sum of the parts.
 		vqmf result;
 		result.rotation = quat_add(lhs.rotation, rhs.rotation);
-		result.translation = vector_add(lhs.translation, rhs.translation);
-		result.x_axis = vector_add(lhs.x_axis, rhs.x_axis);
-		result.y_axis = vector_add(lhs.y_axis, rhs.y_axis);
-		result.z_axis = vector_add(lhs.z_axis, rhs.z_axis);
+		result.translation_m22 = vector_add(lhs.translation_m22, rhs.translation_m22);
+		result.x_axis_m20 = vector_add(lhs.x_axis_m20, rhs.x_axis_m20);
+		result.y_axis_m21 = vector_add(lhs.y_axis_m21, rhs.y_axis_m21);
 
 		return result;
 	}
@@ -400,12 +388,11 @@ namespace rtm
 
 		const quatf inv_lhs_rotation = quat_conjugate(lhs.rotation);
 
-		matrix3x3f lhs_scale_shear = matrix_set(lhs.x_axis, lhs.y_axis, lhs.z_axis);
-		matrix3x3f rhs_scale_shear = matrix_set(rhs.x_axis, rhs.y_axis, rhs.z_axis);
+		matrix3x3f lhs_scale_shear = vqm_get_scale_shear(lhs);
+		matrix3x3f rhs_scale_shear = vqm_get_scale_shear(rhs);
 
-		vqmf result;
-		result.rotation = quat_mul(lhs.rotation, rhs.rotation);
-		result.translation = vector_add(quat_mul_vector3(matrix_mul_vector3(lhs.translation, rhs_scale_shear), rhs.rotation), rhs.translation);
+		const quatf rotation = quat_mul(lhs.rotation, rhs.rotation);
+		const vector4f translation = vector_add(quat_mul_vector3(matrix_mul_vector3(lhs.translation_m22, rhs_scale_shear), rhs.rotation), rhs.translation_m22);
 
 		rhs_scale_shear.x_axis = quat_mul_vector3(rhs_scale_shear.x_axis, inv_lhs_rotation);
 		rhs_scale_shear.y_axis = quat_mul_vector3(rhs_scale_shear.y_axis, inv_lhs_rotation);
@@ -415,12 +402,8 @@ namespace rtm
 		lhs_scale_shear.y_axis = quat_mul_vector3(lhs_scale_shear.y_axis, lhs.rotation);
 		lhs_scale_shear.z_axis = quat_mul_vector3(lhs_scale_shear.z_axis, lhs.rotation);
 
-		matrix3x3f scale_shear = matrix_mul(lhs_scale_shear, rhs_scale_shear);
-		result.x_axis = scale_shear.x_axis;
-		result.y_axis = scale_shear.y_axis;
-		result.z_axis = scale_shear.z_axis;
-
-		return result;
+		const matrix3x3f scale_shear = matrix_mul(lhs_scale_shear, rhs_scale_shear);
+		return vqm_set(rotation, translation, scale_shear);
 	}
 
 	//////////////////////////////////////////////////////////////////////////
@@ -433,10 +416,9 @@ namespace rtm
 
 		vqmf result;
 		result.rotation = quat_mul(vqm.rotation, scalar);
-		result.translation = vector_mul(vqm.translation, scalar_v);
-		result.x_axis = vector_mul(vqm.x_axis, scalar_v);
-		result.y_axis = vector_mul(vqm.y_axis, scalar_v);
-		result.z_axis = vector_mul(vqm.z_axis, scalar_v);
+		result.translation_m22 = vector_mul(vqm.translation_m22, scalar_v);
+		result.x_axis_m20 = vector_mul(vqm.x_axis_m20, scalar_v);
+		result.y_axis_m21 = vector_mul(vqm.y_axis_m21, scalar_v);
 
 		return result;
 	}
@@ -449,8 +431,8 @@ namespace rtm
 	{
 		// p' = p * M * R + v
 
-		const matrix3x3f scale_shear = matrix_set(vqm.x_axis, vqm.y_axis, vqm.z_axis);
-		return vector_add(quat_mul_vector3(matrix_mul_vector3(point, scale_shear), vqm.rotation), vqm.translation);
+		const matrix3x3f scale_shear = vqm_get_scale_shear(vqm);
+		return vector_add(quat_mul_vector3(matrix_mul_vector3(point, scale_shear), vqm.rotation), vqm.translation_m22);
 	}
 
 	//////////////////////////////////////////////////////////////////////////
@@ -461,7 +443,7 @@ namespace rtm
 	{
 		// vec3' = vec3 * M * R
 
-		const matrix3x3f scale_shear = matrix_set(vqm.x_axis, vqm.y_axis, vqm.z_axis);
+		const matrix3x3f scale_shear = vqm_get_scale_shear(vqm);
 		return quat_mul_vector3(matrix_mul_vector3(vec3, scale_shear), vqm.rotation);
 	}
 
@@ -494,14 +476,8 @@ namespace rtm
 			// Multiply our two matrices
 			inv_rotated_scale_shear = matrix_mul(inv_rotation_mtx, inv_rotated_scale_shear);
 
-			vqmf result;
-			result.rotation = inv_rotation;
-			result.x_axis = inv_rotated_scale_shear.x_axis;
-			result.y_axis = inv_rotated_scale_shear.y_axis;
-			result.z_axis = inv_rotated_scale_shear.z_axis;
-			result.translation = matrix_mul_vector3(quat_mul_vector3(vector_neg(input.translation), inv_rotation), inv_scale_shear);
-
-			return result;
+			const vector4f inv_translation = matrix_mul_vector3(quat_mul_vector3(vector_neg(input.translation_m22), inv_rotation), inv_scale_shear);
+			return vqm_set(inv_rotation, inv_translation, inv_rotated_scale_shear);
 		}
 	}
 
@@ -512,7 +488,7 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	RTM_DISABLE_SECURITY_COOKIE_CHECK inline vqmf RTM_SIMD_CALL vqm_inverse(const vqmf& input) RTM_NO_EXCEPT
 	{
-		const matrix3x3f scale_shear = matrix_set(input.x_axis, input.y_axis, input.z_axis);
+		const matrix3x3f scale_shear = vqm_get_scale_shear(input);
 		return rtm_impl::vqm_inverse(input, matrix_inverse(scale_shear));
 	}
 
@@ -524,7 +500,7 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	RTM_DISABLE_SECURITY_COOKIE_CHECK inline vqmf RTM_SIMD_CALL vqm_inverse(const vqmf& input, vector4f_arg0 fallback_scale, float threshold = 1.0E-8F) RTM_NO_EXCEPT
 	{
-		const matrix3x3f scale_shear = matrix_set(input.x_axis, input.y_axis, input.z_axis);
+		const matrix3x3f scale_shear = vqm_get_scale_shear(input);
 
 		// matrix_inverse returns its fallback value when the determinant is below the threshold
 		// Thus we give it the inverse of the fallback scale part
@@ -543,13 +519,13 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	RTM_DISABLE_SECURITY_COOKIE_CHECK inline matrix3x4f RTM_SIMD_CALL matrix_from_vqm(const vqmf& input) RTM_NO_EXCEPT
 	{
-		matrix3x4f result = matrix_set(input.x_axis, input.y_axis, input.z_axis, input.translation);
+		const matrix3x3f scale_shear = vqm_get_scale_shear(input);
 
-		result.x_axis = quat_mul_vector3(result.x_axis, input.rotation);
-		result.y_axis = quat_mul_vector3(result.y_axis, input.rotation);
-		result.z_axis = quat_mul_vector3(result.z_axis, input.rotation);
+		const vector4f x_axis = quat_mul_vector3(scale_shear.x_axis, input.rotation);
+		const vector4f y_axis = quat_mul_vector3(scale_shear.y_axis, input.rotation);
+		const vector4f z_axis = quat_mul_vector3(scale_shear.z_axis, input.rotation);
 
-		return result;
+		return matrix_set(x_axis, y_axis, z_axis, input.translation_m22);
 	}
 
 	//////////////////////////////////////////////////////////////////////////
@@ -557,13 +533,8 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE vqmf RTM_SIMD_CALL vqm_normalize(const vqmf& input) RTM_NO_EXCEPT
 	{
-		vqmf result;
+		vqmf result = input;
 		result.rotation = quat_normalize(input.rotation);
-		result.x_axis = input.x_axis;
-		result.y_axis = input.y_axis;
-		result.z_axis = input.z_axis;
-		result.translation = input.translation;
-
 		return result;
 	}
 
@@ -577,10 +548,9 @@ namespace rtm
 	{
 		vqmf result;
 		result.rotation = quat_lerp(start.rotation, end.rotation, alpha);
-		result.translation = vector_lerp(start.translation, end.translation, alpha);
-		result.x_axis = vector_lerp(start.x_axis, end.x_axis, alpha);
-		result.y_axis = vector_lerp(start.y_axis, end.y_axis, alpha);
-		result.z_axis = vector_lerp(start.z_axis, end.z_axis, alpha);
+		result.translation_m22 = vector_lerp(start.translation_m22, end.translation_m22, alpha);
+		result.x_axis_m20 = vector_lerp(start.x_axis_m20, end.x_axis_m20, alpha);
+		result.y_axis_m21 = vector_lerp(start.y_axis_m21, end.y_axis_m21, alpha);
 
 		return result;
 	}
@@ -596,10 +566,9 @@ namespace rtm
 	{
 		vqmf result;
 		result.rotation = quat_lerp(start.rotation, end.rotation, alpha);
-		result.translation = vector_lerp(start.translation, end.translation, alpha);
-		result.x_axis = vector_lerp(start.x_axis, end.x_axis, alpha);
-		result.y_axis = vector_lerp(start.y_axis, end.y_axis, alpha);
-		result.z_axis = vector_lerp(start.z_axis, end.z_axis, alpha);
+		result.translation_m22 = vector_lerp(start.translation_m22, end.translation_m22, alpha);
+		result.x_axis_m20 = vector_lerp(start.x_axis_m20, end.x_axis_m20, alpha);
+		result.y_axis_m21 = vector_lerp(start.y_axis_m21, end.y_axis_m21, alpha);
 
 		return result;
 	}
@@ -608,10 +577,9 @@ namespace rtm
 	namespace rtm_impl
 	{
 		//////////////////////////////////////////////////////////////////////////
-		// Sets the scale/shear part of the vqm_slerp(..) result.
-		// The function does not change the rotation and the translation of the result.
+		// Returns the scale/shear part of the vqm_slerp(..) result.
 		//////////////////////////////////////////////////////////////////////////
-		RTM_DISABLE_SECURITY_COOKIE_CHECK inline void RTM_SIMD_CALL vqm_slerp_scale_shear(const vqmf& start, const vqmf& end, vector4f_arg0 alpha, vqmf& result) RTM_NO_EXCEPT
+		RTM_DISABLE_SECURITY_COOKIE_CHECK inline matrix3x3f RTM_SIMD_CALL vqm_slerp_scale_shear(const vqmf& start, const vqmf& end, vector4f_arg0 alpha) RTM_NO_EXCEPT
 		{
 			// The scale is the diagonal of the scale/shear part: M = N * S with S = diag(M) and N the shear
 			// We divide each column by its scale to find N. Then we interpolate S with eerp and N with lerp,
@@ -629,10 +597,14 @@ namespace rtm
 			// eerp(1.0, 1.0) is 1.0
 			const vector4f scale = vector_eerp(safe_start_scale, safe_end_scale, alpha);
 
+			const matrix3x3f start_scale_shear = vqm_get_scale_shear(start);
+			const matrix3x3f end_scale_shear = vqm_get_scale_shear(end);
+
 			// Each axis is a row of M: a division by the scale vector divides each column by its scale
-			result.x_axis = vector_mul(vector_lerp(vector_div(start.x_axis, safe_start_scale), vector_div(end.x_axis, safe_end_scale), alpha), scale);
-			result.y_axis = vector_mul(vector_lerp(vector_div(start.y_axis, safe_start_scale), vector_div(end.y_axis, safe_end_scale), alpha), scale);
-			result.z_axis = vector_mul(vector_lerp(vector_div(start.z_axis, safe_start_scale), vector_div(end.z_axis, safe_end_scale), alpha), scale);
+			const vector4f x_axis = vector_mul(vector_lerp(vector_div(start_scale_shear.x_axis, safe_start_scale), vector_div(end_scale_shear.x_axis, safe_end_scale), alpha), scale);
+			const vector4f y_axis = vector_mul(vector_lerp(vector_div(start_scale_shear.y_axis, safe_start_scale), vector_div(end_scale_shear.y_axis, safe_end_scale), alpha), scale);
+			const vector4f z_axis = vector_mul(vector_lerp(vector_div(start_scale_shear.z_axis, safe_start_scale), vector_div(end_scale_shear.z_axis, safe_end_scale), alpha), scale);
+			return matrix_set(x_axis, y_axis, z_axis);
 		}
 	}
 
@@ -646,12 +618,10 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	RTM_DISABLE_SECURITY_COOKIE_CHECK inline vqmf RTM_SIMD_CALL vqm_slerp(const vqmf& start, const vqmf& end, float alpha) RTM_NO_EXCEPT
 	{
-		vqmf result;
-		result.rotation = quat_slerp(start.rotation, end.rotation, alpha);
-		result.translation = vector_lerp(start.translation, end.translation, alpha);
-		rtm_impl::vqm_slerp_scale_shear(start, end, vector_set(alpha), result);
-
-		return result;
+		const quatf rotation = quat_slerp(start.rotation, end.rotation, alpha);
+		const vector4f translation = vector_lerp(start.translation_m22, end.translation_m22, alpha);
+		const matrix3x3f scale_shear = rtm_impl::vqm_slerp_scale_shear(start, end, vector_set(alpha));
+		return vqm_set(rotation, translation, scale_shear);
 	}
 
 #if defined(RTM_SSE2_INTRINSICS)
@@ -665,12 +635,10 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	RTM_DISABLE_SECURITY_COOKIE_CHECK inline vqmf RTM_SIMD_CALL vqm_slerp(const vqmf& start, const vqmf& end, scalarf_arg0 alpha) RTM_NO_EXCEPT
 	{
-		vqmf result;
-		result.rotation = quat_slerp(start.rotation, end.rotation, alpha);
-		result.translation = vector_lerp(start.translation, end.translation, alpha);
-		rtm_impl::vqm_slerp_scale_shear(start, end, vector_set(alpha), result);
-
-		return result;
+		const quatf rotation = quat_slerp(start.rotation, end.rotation, alpha);
+		const vector4f translation = vector_lerp(start.translation_m22, end.translation_m22, alpha);
+		const matrix3x3f scale_shear = rtm_impl::vqm_slerp_scale_shear(start, end, vector_set(alpha));
+		return vqm_set(rotation, translation, scale_shear);
 	}
 #endif
 
@@ -679,11 +647,11 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE bool RTM_SIMD_CALL vqm_is_finite(const vqmf& input) RTM_NO_EXCEPT
 	{
+		// All the lanes are used
 		return quat_is_finite(input.rotation)
-			&& vector_is_finite3(input.translation)
-			&& vector_is_finite3(input.x_axis)
-			&& vector_is_finite3(input.y_axis)
-			&& vector_is_finite3(input.z_axis);
+			&& vector_is_finite(input.translation_m22)
+			&& vector_is_finite(input.x_axis_m20)
+			&& vector_is_finite(input.y_axis_m21);
 	}
 
 	RTM_IMPL_VERSION_NAMESPACE_END

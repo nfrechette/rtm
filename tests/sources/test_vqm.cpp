@@ -44,13 +44,21 @@ static void check_matrix_near_equal(const Matrix3x4Type& lhs, const Matrix3x4Typ
 }
 
 template<typename TransformType, typename FloatType>
+static void check_scale_shear_near_equal(const TransformType& lhs, const TransformType& rhs, const FloatType threshold)
+{
+	const auto lhs_scale_shear = vqm_get_scale_shear(lhs);
+	const auto rhs_scale_shear = vqm_get_scale_shear(rhs);
+	CHECK(vector_all_near_equal3(lhs_scale_shear.x_axis, rhs_scale_shear.x_axis, threshold));
+	CHECK(vector_all_near_equal3(lhs_scale_shear.y_axis, rhs_scale_shear.y_axis, threshold));
+	CHECK(vector_all_near_equal3(lhs_scale_shear.z_axis, rhs_scale_shear.z_axis, threshold));
+}
+
+template<typename TransformType, typename FloatType>
 static void check_vqm_near_equal(const TransformType& lhs, const TransformType& rhs, const FloatType threshold)
 {
-	CHECK(quat_near_equal(lhs.rotation, rhs.rotation, threshold));
-	CHECK(vector_all_near_equal3(lhs.translation, rhs.translation, threshold));
-	CHECK(vector_all_near_equal3(lhs.x_axis, rhs.x_axis, threshold));
-	CHECK(vector_all_near_equal3(lhs.y_axis, rhs.y_axis, threshold));
-	CHECK(vector_all_near_equal3(lhs.z_axis, rhs.z_axis, threshold));
+	CHECK(quat_near_equal(vqm_get_rotation(lhs), vqm_get_rotation(rhs), threshold));
+	CHECK(vector_all_near_equal3(vqm_get_translation(lhs), vqm_get_translation(rhs), threshold));
+	check_scale_shear_near_equal(lhs, rhs, threshold);
 }
 
 template<typename TransformType, typename FloatType>
@@ -73,17 +81,13 @@ static void test_vqm_impl(const FloatType threshold)
 
 		TransformType mul_itself_result = vqm_mul(identity, identity);
 		CHECK(quat_near_equal(mul_itself_result.rotation, identity.rotation, threshold));
-		CHECK(vector_all_near_equal3(mul_itself_result.x_axis, identity.x_axis, threshold));
-		CHECK(vector_all_near_equal3(mul_itself_result.y_axis, identity.y_axis, threshold));
-		CHECK(vector_all_near_equal3(mul_itself_result.z_axis, identity.z_axis, threshold));
-		CHECK(vector_all_near_equal3(mul_itself_result.translation, identity.translation, threshold));
+		check_scale_shear_near_equal(mul_itself_result, identity, threshold);
+		CHECK(vector_all_near_equal3(vqm_get_translation(mul_itself_result), vqm_get_translation(identity), threshold));
 
 		TransformType inverse_result = vqm_inverse(identity);
 		CHECK(quat_near_equal(inverse_result.rotation, identity.rotation, threshold));
-		CHECK(vector_all_near_equal3(inverse_result.x_axis, identity.x_axis, threshold));
-		CHECK(vector_all_near_equal3(inverse_result.y_axis, identity.y_axis, threshold));
-		CHECK(vector_all_near_equal3(inverse_result.z_axis, identity.z_axis, threshold));
-		CHECK(vector_all_near_equal3(inverse_result.translation, identity.translation, threshold));
+		check_scale_shear_near_equal(inverse_result, identity, threshold);
+		CHECK(vector_all_near_equal3(vqm_get_translation(inverse_result), vqm_get_translation(identity), threshold));
 	}
 
 	// Getters and setters
@@ -95,16 +99,12 @@ static void test_vqm_impl(const FloatType threshold)
 		TransformType identity = vqm_identity();
 		TransformType tx = vqm_set_rotation(identity, rotation);
 		CHECK(quat_near_equal(vqm_get_rotation(tx), rotation, threshold));
-		CHECK(vector_all_near_equal3(tx.x_axis, identity.x_axis, threshold));
-		CHECK(vector_all_near_equal3(tx.y_axis, identity.y_axis, threshold));
-		CHECK(vector_all_near_equal3(tx.z_axis, identity.z_axis, threshold));
-		CHECK(vector_all_near_equal3(tx.translation, identity.translation, threshold));
+		check_scale_shear_near_equal(tx, identity, threshold);
+		CHECK(vector_all_near_equal3(vqm_get_translation(tx), vqm_get_translation(identity), threshold));
 
 		tx = vqm_set_translation(tx, translation);
 		CHECK(quat_near_equal(vqm_get_rotation(tx), rotation, threshold));
-		CHECK(vector_all_near_equal3(tx.x_axis, identity.x_axis, threshold));
-		CHECK(vector_all_near_equal3(tx.y_axis, identity.y_axis, threshold));
-		CHECK(vector_all_near_equal3(tx.z_axis, identity.z_axis, threshold));
+		check_scale_shear_near_equal(tx, identity, threshold);
 		CHECK(vector_all_near_equal3(vqm_get_translation(tx), translation, threshold));
 
 		tx = vqm_set_scale(tx, scale);
@@ -196,10 +196,7 @@ static void test_vqm_impl(const FloatType threshold)
 
 		for (const Vector4Type* axes : scale_shear_axes)
 		{
-			TransformType src_tx = vqm_set(rotation, translation, vector_zero());
-			src_tx.x_axis = axes[0];
-			src_tx.y_axis = axes[1];
-			src_tx.z_axis = axes[2];
+			const TransformType src_tx = vqm_set(rotation, translation, matrix_set(axes[0], axes[1], axes[2]));
 
 			// The product of the two parts is equal to the input matrix
 			const Matrix3x4Type src_mtx = matrix_from_vqm(src_tx);
@@ -209,7 +206,7 @@ static void test_vqm_impl(const FloatType threshold)
 
 			// The scale/shear part contains the reflection: it has the same determinant as the input
 			const Matrix3x3Type src_mtx3x3 = matrix_set(src_mtx.x_axis, src_mtx.y_axis, src_mtx.z_axis);
-			const Matrix3x3Type dst_scale_shear = matrix_set(dst_tx.x_axis, dst_tx.y_axis, dst_tx.z_axis);
+			const Matrix3x3Type dst_scale_shear = vqm_get_scale_shear(dst_tx);
 			CHECK(scalar_near_equal(scalar_cast(matrix_determinant(dst_scale_shear)), scalar_cast(matrix_determinant(src_mtx3x3)), threshold));
 
 			// The 3x3 matrix variant returns the same rotation and scale/shear, and a zero translation
@@ -233,19 +230,20 @@ static void test_vqm_impl(const FloatType threshold)
 		// The function adds each component of the two transforms
 		TransformType add_result = vqm_add(tx0, tx1);
 		CHECK(vector_all_near_equal(quat_to_vector(add_result.rotation), vector_add(quat_to_vector(tx0.rotation), quat_to_vector(tx1.rotation)), threshold));
-		CHECK(vector_all_near_equal3(add_result.translation, vector_add(translation0, translation1), threshold));
-		CHECK(vector_all_near_equal3(add_result.x_axis, vector_add(tx0.x_axis, tx1.x_axis), threshold));
-		CHECK(vector_all_near_equal3(add_result.y_axis, vector_add(tx0.y_axis, tx1.y_axis), threshold));
-		CHECK(vector_all_near_equal3(add_result.z_axis, vector_add(tx0.z_axis, tx1.z_axis), threshold));
+		CHECK(vector_all_near_equal3(vqm_get_translation(add_result), vector_add(translation0, translation1), threshold));
+		const Matrix3x3Type add_scale_shear = vqm_get_scale_shear(add_result);
+		const Matrix3x3Type scale_shear0 = vqm_get_scale_shear(tx0);
+		const Matrix3x3Type scale_shear1 = vqm_get_scale_shear(tx1);
+		CHECK(vector_all_near_equal3(add_scale_shear.x_axis, vector_add(scale_shear0.x_axis, scale_shear1.x_axis), threshold));
+		CHECK(vector_all_near_equal3(add_scale_shear.y_axis, vector_add(scale_shear0.y_axis, scale_shear1.y_axis), threshold));
+		CHECK(vector_all_near_equal3(add_scale_shear.z_axis, vector_add(scale_shear0.z_axis, scale_shear1.z_axis), threshold));
 
 		// The sum of a transform with itself is equal to the product of the transform and 2
 		TransformType add_itself_result = vqm_add(tx0, tx0);
 		TransformType mul_scalar_result = vqm_mul(tx0, FloatType(2.0));
 		CHECK(vector_all_near_equal(quat_to_vector(add_itself_result.rotation), quat_to_vector(mul_scalar_result.rotation), threshold));
-		CHECK(vector_all_near_equal3(add_itself_result.translation, mul_scalar_result.translation, threshold));
-		CHECK(vector_all_near_equal3(add_itself_result.x_axis, mul_scalar_result.x_axis, threshold));
-		CHECK(vector_all_near_equal3(add_itself_result.y_axis, mul_scalar_result.y_axis, threshold));
-		CHECK(vector_all_near_equal3(add_itself_result.z_axis, mul_scalar_result.z_axis, threshold));
+		CHECK(vector_all_near_equal3(vqm_get_translation(add_itself_result), vqm_get_translation(mul_scalar_result), threshold));
+		check_scale_shear_near_equal(add_itself_result, mul_scalar_result, threshold);
 	}
 
 	// VQM * VQM validation
@@ -280,17 +278,11 @@ static void test_vqm_impl(const FloatType threshold)
 
 			Matrix3x4Type ref_01 = matrix_mul(mtx0, mtx1);
 			Matrix3x4Type result_01 = matrix_from_vqm(vqm_mul(tx0, tx1));
-			CHECK(vector_all_near_equal3(ref_01.x_axis, result_01.x_axis, threshold));
-			CHECK(vector_all_near_equal3(ref_01.y_axis, result_01.y_axis, threshold));
-			CHECK(vector_all_near_equal3(ref_01.z_axis, result_01.z_axis, threshold));
-			CHECK(vector_all_near_equal3(ref_01.w_axis, result_01.w_axis, threshold));
+			check_matrix_near_equal(ref_01, result_01, threshold);
 
 			Matrix3x4Type ref_10 = matrix_mul(mtx1, mtx0);
 			Matrix3x4Type result_10 = matrix_from_vqm(vqm_mul(tx1, tx0));
-			CHECK(vector_all_near_equal3(ref_10.x_axis, result_10.x_axis, threshold));
-			CHECK(vector_all_near_equal3(ref_10.y_axis, result_10.y_axis, threshold));
-			CHECK(vector_all_near_equal3(ref_10.z_axis, result_10.z_axis, threshold));
-			CHECK(vector_all_near_equal3(ref_10.w_axis, result_10.w_axis, threshold));
+			check_matrix_near_equal(ref_10, result_10, threshold);
 		}
 
 		// One negative scale
@@ -389,18 +381,18 @@ static void test_vqm_impl(const FloatType threshold)
 		const FloatType factor = FloatType(-1.5);
 		TransformType mul_result = vqm_mul(tx, factor);
 		CHECK(vector_all_near_equal(quat_to_vector(mul_result.rotation), vector_mul(quat_to_vector(tx.rotation), factor), threshold));
-		CHECK(vector_all_near_equal3(mul_result.translation, vector_mul(tx.translation, factor), threshold));
-		CHECK(vector_all_near_equal3(mul_result.x_axis, vector_mul(tx.x_axis, factor), threshold));
-		CHECK(vector_all_near_equal3(mul_result.y_axis, vector_mul(tx.y_axis, factor), threshold));
-		CHECK(vector_all_near_equal3(mul_result.z_axis, vector_mul(tx.z_axis, factor), threshold));
+		CHECK(vector_all_near_equal3(vqm_get_translation(mul_result), vector_mul(vqm_get_translation(tx), factor), threshold));
+		const Matrix3x3Type mul_scale_shear = vqm_get_scale_shear(mul_result);
+		const Matrix3x3Type tx_scale_shear = vqm_get_scale_shear(tx);
+		CHECK(vector_all_near_equal3(mul_scale_shear.x_axis, vector_mul(tx_scale_shear.x_axis, factor), threshold));
+		CHECK(vector_all_near_equal3(mul_scale_shear.y_axis, vector_mul(tx_scale_shear.y_axis, factor), threshold));
+		CHECK(vector_all_near_equal3(mul_scale_shear.z_axis, vector_mul(tx_scale_shear.z_axis, factor), threshold));
 
 		// A product with 1.0 does not change the transform
 		TransformType mul_one_result = vqm_mul(tx, FloatType(1.0));
 		CHECK(quat_near_equal(mul_one_result.rotation, tx.rotation, threshold));
-		CHECK(vector_all_near_equal3(mul_one_result.translation, tx.translation, threshold));
-		CHECK(vector_all_near_equal3(mul_one_result.x_axis, tx.x_axis, threshold));
-		CHECK(vector_all_near_equal3(mul_one_result.y_axis, tx.y_axis, threshold));
-		CHECK(vector_all_near_equal3(mul_one_result.z_axis, tx.z_axis, threshold));
+		CHECK(vector_all_near_equal3(vqm_get_translation(mul_one_result), vqm_get_translation(tx), threshold));
+		check_scale_shear_near_equal(mul_one_result, tx, threshold);
 	}
 
 	// point/vec3 * VQM validation
@@ -533,18 +525,14 @@ static void test_vqm_impl(const FloatType threshold)
 		TransformType identity = vqm_identity();
 		TransformType inverse_mul_result = vqm_mul(dst_tx, vqm_inverse(dst_tx));
 		CHECK(quat_near_equal(inverse_mul_result.rotation, identity.rotation, threshold));
-		CHECK(vector_all_near_equal3(inverse_mul_result.x_axis, identity.x_axis, threshold));
-		CHECK(vector_all_near_equal3(inverse_mul_result.y_axis, identity.y_axis, threshold));
-		CHECK(vector_all_near_equal3(inverse_mul_result.z_axis, identity.z_axis, threshold));
-		CHECK(vector_all_near_equal3(inverse_mul_result.translation, identity.translation, threshold));
+		check_scale_shear_near_equal(inverse_mul_result, identity, threshold);
+		CHECK(vector_all_near_equal3(vqm_get_translation(inverse_mul_result), vqm_get_translation(identity), threshold));
 
 		// T^-1 * T = identity
 		inverse_mul_result = vqm_mul(vqm_inverse(dst_tx), dst_tx);
 		CHECK(quat_near_equal(inverse_mul_result.rotation, identity.rotation, threshold));
-		CHECK(vector_all_near_equal3(inverse_mul_result.x_axis, identity.x_axis, threshold));
-		CHECK(vector_all_near_equal3(inverse_mul_result.y_axis, identity.y_axis, threshold));
-		CHECK(vector_all_near_equal3(inverse_mul_result.z_axis, identity.z_axis, threshold));
-		CHECK(vector_all_near_equal3(inverse_mul_result.translation, identity.translation, threshold));
+		check_scale_shear_near_equal(inverse_mul_result, identity, threshold);
+		CHECK(vector_all_near_equal3(vqm_get_translation(inverse_mul_result), vqm_get_translation(identity), threshold));
 
 		// One negative scale
 		scale = vector_set(FloatType(-4.0), FloatType(5.0), FloatType(6.0));
@@ -565,18 +553,14 @@ static void test_vqm_impl(const FloatType threshold)
 		identity = vqm_identity();
 		inverse_mul_result = vqm_mul(dst_tx, vqm_inverse(dst_tx));
 		CHECK(quat_near_equal(inverse_mul_result.rotation, identity.rotation, threshold));
-		CHECK(vector_all_near_equal3(inverse_mul_result.x_axis, identity.x_axis, threshold));
-		CHECK(vector_all_near_equal3(inverse_mul_result.y_axis, identity.y_axis, threshold));
-		CHECK(vector_all_near_equal3(inverse_mul_result.z_axis, identity.z_axis, threshold));
-		CHECK(vector_all_near_equal3(inverse_mul_result.translation, identity.translation, threshold));
+		check_scale_shear_near_equal(inverse_mul_result, identity, threshold);
+		CHECK(vector_all_near_equal3(vqm_get_translation(inverse_mul_result), vqm_get_translation(identity), threshold));
 
 		// T^-1 * T = identity
 		inverse_mul_result = vqm_mul(vqm_inverse(dst_tx), dst_tx);
 		CHECK(quat_near_equal(inverse_mul_result.rotation, identity.rotation, threshold));
-		CHECK(vector_all_near_equal3(inverse_mul_result.x_axis, identity.x_axis, threshold));
-		CHECK(vector_all_near_equal3(inverse_mul_result.y_axis, identity.y_axis, threshold));
-		CHECK(vector_all_near_equal3(inverse_mul_result.z_axis, identity.z_axis, threshold));
-		CHECK(vector_all_near_equal3(inverse_mul_result.translation, identity.translation, threshold));
+		check_scale_shear_near_equal(inverse_mul_result, identity, threshold);
+		CHECK(vector_all_near_equal3(vqm_get_translation(inverse_mul_result), vqm_get_translation(identity), threshold));
 
 		// Two negative scale
 		scale = vector_set(FloatType(-4.0), FloatType(-5.0), FloatType(6.0));
@@ -597,18 +581,14 @@ static void test_vqm_impl(const FloatType threshold)
 		identity = vqm_identity();
 		inverse_mul_result = vqm_mul(dst_tx, vqm_inverse(dst_tx));
 		CHECK(quat_near_equal(inverse_mul_result.rotation, identity.rotation, threshold));
-		CHECK(vector_all_near_equal3(inverse_mul_result.x_axis, identity.x_axis, threshold));
-		CHECK(vector_all_near_equal3(inverse_mul_result.y_axis, identity.y_axis, threshold));
-		CHECK(vector_all_near_equal3(inverse_mul_result.z_axis, identity.z_axis, threshold));
-		CHECK(vector_all_near_equal3(inverse_mul_result.translation, identity.translation, threshold));
+		check_scale_shear_near_equal(inverse_mul_result, identity, threshold);
+		CHECK(vector_all_near_equal3(vqm_get_translation(inverse_mul_result), vqm_get_translation(identity), threshold));
 
 		// T^-1 * T = identity
 		inverse_mul_result = vqm_mul(vqm_inverse(dst_tx), dst_tx);
 		CHECK(quat_near_equal(inverse_mul_result.rotation, identity.rotation, threshold));
-		CHECK(vector_all_near_equal3(inverse_mul_result.x_axis, identity.x_axis, threshold));
-		CHECK(vector_all_near_equal3(inverse_mul_result.y_axis, identity.y_axis, threshold));
-		CHECK(vector_all_near_equal3(inverse_mul_result.z_axis, identity.z_axis, threshold));
-		CHECK(vector_all_near_equal3(inverse_mul_result.translation, identity.translation, threshold));
+		check_scale_shear_near_equal(inverse_mul_result, identity, threshold);
+		CHECK(vector_all_near_equal3(vqm_get_translation(inverse_mul_result), vqm_get_translation(identity), threshold));
 
 		// Three negative scale
 		scale = vector_set(FloatType(-4.0), FloatType(-5.0), FloatType(-6.0));
@@ -629,18 +609,14 @@ static void test_vqm_impl(const FloatType threshold)
 		identity = vqm_identity();
 		inverse_mul_result = vqm_mul(dst_tx, vqm_inverse(dst_tx));
 		CHECK(quat_near_equal(inverse_mul_result.rotation, identity.rotation, threshold));
-		CHECK(vector_all_near_equal3(inverse_mul_result.x_axis, identity.x_axis, threshold));
-		CHECK(vector_all_near_equal3(inverse_mul_result.y_axis, identity.y_axis, threshold));
-		CHECK(vector_all_near_equal3(inverse_mul_result.z_axis, identity.z_axis, threshold));
-		CHECK(vector_all_near_equal3(inverse_mul_result.translation, identity.translation, threshold));
+		check_scale_shear_near_equal(inverse_mul_result, identity, threshold);
+		CHECK(vector_all_near_equal3(vqm_get_translation(inverse_mul_result), vqm_get_translation(identity), threshold));
 
 		// T^-1 * T = identity
 		inverse_mul_result = vqm_mul(vqm_inverse(dst_tx), dst_tx);
 		CHECK(quat_near_equal(inverse_mul_result.rotation, identity.rotation, threshold));
-		CHECK(vector_all_near_equal3(inverse_mul_result.x_axis, identity.x_axis, threshold));
-		CHECK(vector_all_near_equal3(inverse_mul_result.y_axis, identity.y_axis, threshold));
-		CHECK(vector_all_near_equal3(inverse_mul_result.z_axis, identity.z_axis, threshold));
-		CHECK(vector_all_near_equal3(inverse_mul_result.translation, identity.translation, threshold));
+		check_scale_shear_near_equal(inverse_mul_result, identity, threshold);
+		CHECK(vector_all_near_equal3(vqm_get_translation(inverse_mul_result), vqm_get_translation(identity), threshold));
 	}
 
 	// VQM inverse with fallback validation
@@ -650,22 +626,26 @@ static void test_vqm_impl(const FloatType threshold)
 		Vector4Type fallback_scale = vector_set(FloatType(2.0), FloatType(4.0), FloatType(0.5));
 
 		// The scale/shear part is invertible: the function ignores the fallback
-		TransformType tx = vqm_set(rotation, translation, vector_zero());
-		tx.x_axis = vector_set(FloatType(-4.0), FloatType(0.5), FloatType(-0.25));
-		tx.y_axis = vector_set(FloatType(0.3), FloatType(5.0), FloatType(0.75));
-		tx.z_axis = vector_set(FloatType(-0.6), FloatType(0.2), FloatType(6.0));
+		Matrix3x3Type scale_shear = matrix_set(
+			vector_set(FloatType(-4.0), FloatType(0.5), FloatType(-0.25)),
+			vector_set(FloatType(0.3), FloatType(5.0), FloatType(0.75)),
+			vector_set(FloatType(-0.6), FloatType(0.2), FloatType(6.0)));
+		TransformType tx = vqm_set(rotation, translation, scale_shear);
 		check_vqm_near_equal(vqm_inverse(tx, fallback_scale), vqm_inverse(tx), threshold);
 
 		// The scale/shear part is not invertible: the function uses the fallback scale without shear
-		tx.x_axis = vector_set(FloatType(0.0), FloatType(0.0), FloatType(0.0));
+		scale_shear.x_axis = vector_zero();
+		tx = vqm_set_scale_shear(tx, scale_shear);
 		TransformType inverse_result = vqm_inverse(tx, fallback_scale);
 		CHECK(vqm_is_finite(inverse_result));
 		check_vqm_near_equal(inverse_result, vqm_inverse(vqm_set(rotation, translation, fallback_scale)), threshold);
 
 		// All the rows are parallel: the determinant is zero
-		tx.x_axis = vector_set(FloatType(1.0), FloatType(2.0), FloatType(3.0));
-		tx.y_axis = vector_set(FloatType(-2.0), FloatType(-4.0), FloatType(-6.0));
-		tx.z_axis = vector_set(FloatType(0.5), FloatType(1.0), FloatType(1.5));
+		scale_shear = matrix_set(
+			vector_set(FloatType(1.0), FloatType(2.0), FloatType(3.0)),
+			vector_set(FloatType(-2.0), FloatType(-4.0), FloatType(-6.0)),
+			vector_set(FloatType(0.5), FloatType(1.0), FloatType(1.5)));
+		tx = vqm_set_scale_shear(tx, scale_shear);
 		inverse_result = vqm_inverse(tx, fallback_scale);
 		CHECK(vqm_is_finite(inverse_result));
 		check_vqm_near_equal(inverse_result, vqm_inverse(vqm_set(rotation, translation, fallback_scale)), threshold);
@@ -681,30 +661,35 @@ static void test_vqm_impl(const FloatType threshold)
 		Vector4Type translation0 = vector_set(FloatType(-0.001138), FloatType(0.91623), FloatType(-1.624598));
 		Vector4Type translation1 = vector_set(FloatType(-8.5), FloatType(0.25), FloatType(14.0));
 
-		TransformType tx0 = vqm_set(rotation0, translation0, vector_zero());
-		tx0.x_axis = vector_set(FloatType(-4.0), FloatType(0.5), FloatType(-0.25));
-		tx0.y_axis = vector_set(FloatType(0.3), FloatType(5.0), FloatType(0.75));
-		tx0.z_axis = vector_set(FloatType(-0.6), FloatType(0.2), FloatType(6.0));
+		const Matrix3x3Type scale_shear0 = matrix_set(
+			vector_set(FloatType(-4.0), FloatType(0.5), FloatType(-0.25)),
+			vector_set(FloatType(0.3), FloatType(5.0), FloatType(0.75)),
+			vector_set(FloatType(-0.6), FloatType(0.2), FloatType(6.0)));
+		const Matrix3x3Type scale_shear1 = matrix_set(
+			vector_set(FloatType(0.5), FloatType(-1.5), FloatType(2.0)),
+			vector_set(FloatType(1.25), FloatType(-2.0), FloatType(0.1)),
+			vector_set(FloatType(3.0), FloatType(0.4), FloatType(3.5)));
 
-		TransformType tx1 = vqm_set(rotation1, translation1, vector_zero());
-		tx1.x_axis = vector_set(FloatType(0.5), FloatType(-1.5), FloatType(2.0));
-		tx1.y_axis = vector_set(FloatType(1.25), FloatType(-2.0), FloatType(0.1));
-		tx1.z_axis = vector_set(FloatType(3.0), FloatType(0.4), FloatType(3.5));
+		TransformType tx0 = vqm_set(rotation0, translation0, scale_shear0);
+		TransformType tx1 = vqm_set(rotation1, translation1, scale_shear1);
 
 		// vqm_lerp interpolates each component of the two transforms
-		TransformType lerp_ref = vqm_set(quat_lerp(rotation0, rotation1, alpha), vector_lerp(translation0, translation1, alpha), vector_zero());
-		lerp_ref.x_axis = vector_lerp(tx0.x_axis, tx1.x_axis, alpha);
-		lerp_ref.y_axis = vector_lerp(tx0.y_axis, tx1.y_axis, alpha);
-		lerp_ref.z_axis = vector_lerp(tx0.z_axis, tx1.z_axis, alpha);
+		const Matrix3x3Type lerp_scale_shear = matrix_set(
+			vector_lerp(scale_shear0.x_axis, scale_shear1.x_axis, alpha),
+			vector_lerp(scale_shear0.y_axis, scale_shear1.y_axis, alpha),
+			vector_lerp(scale_shear0.z_axis, scale_shear1.z_axis, alpha));
+		TransformType lerp_ref = vqm_set(quat_lerp(rotation0, rotation1, alpha), vector_lerp(translation0, translation1, alpha), lerp_scale_shear);
 
 		// vqm_slerp divides each column by its scale, interpolates the scale with eerp and the shear with lerp,
 		// and multiplies each column by the new scale. The scales of the X and Y columns have a different sign:
 		// these columns use lerp. The scales of the Z column are 6.0 and 3.5.
 		TransformType slerp_ref = vqm_set_rotation(lerp_ref, quat_slerp(rotation0, rotation1, alpha));
 		const FloatType z_scale = scalar_eerp(FloatType(6.0), FloatType(3.5), alpha);
-		slerp_ref.x_axis = vector_set_z(slerp_ref.x_axis, scalar_lerp(FloatType(-0.25) / FloatType(6.0), FloatType(2.0) / FloatType(3.5), alpha) * z_scale);
-		slerp_ref.y_axis = vector_set_z(slerp_ref.y_axis, scalar_lerp(FloatType(0.75) / FloatType(6.0), FloatType(0.1) / FloatType(3.5), alpha) * z_scale);
-		slerp_ref.z_axis = vector_set_z(slerp_ref.z_axis, z_scale);
+		const Matrix3x3Type slerp_scale_shear = matrix_set(
+			vector_set_z(lerp_scale_shear.x_axis, scalar_lerp(FloatType(-0.25) / FloatType(6.0), FloatType(2.0) / FloatType(3.5), alpha) * z_scale),
+			vector_set_z(lerp_scale_shear.y_axis, scalar_lerp(FloatType(0.75) / FloatType(6.0), FloatType(0.1) / FloatType(3.5), alpha) * z_scale),
+			vector_set_z(lerp_scale_shear.z_axis, z_scale));
+		slerp_ref = vqm_set_scale_shear(slerp_ref, slerp_scale_shear);
 
 		check_vqm_near_equal(vqm_lerp(tx0, tx1, alpha), lerp_ref, threshold);
 		check_vqm_near_equal(vqm_lerp(tx0, tx1, alpha_s), lerp_ref, threshold);
@@ -719,14 +704,10 @@ static void test_vqm_impl(const FloatType threshold)
 
 		// The end transform is the start transform with the X column scaled by 4.0: the result at alpha 0.5
 		// is the start transform with the X column scaled by 2.0. The shear does not change.
-		TransformType scaled_tx = tx1;
-		scaled_tx.x_axis = vector_mul(tx1.x_axis, vector_set(FloatType(4.0), FloatType(1.0), FloatType(1.0), FloatType(1.0)));
-		scaled_tx.y_axis = vector_mul(tx1.y_axis, vector_set(FloatType(4.0), FloatType(1.0), FloatType(1.0), FloatType(1.0)));
-		scaled_tx.z_axis = vector_mul(tx1.z_axis, vector_set(FloatType(4.0), FloatType(1.0), FloatType(1.0), FloatType(1.0)));
-		TransformType half_scaled_tx = tx1;
-		half_scaled_tx.x_axis = vector_mul(tx1.x_axis, vector_set(FloatType(2.0), FloatType(1.0), FloatType(1.0), FloatType(1.0)));
-		half_scaled_tx.y_axis = vector_mul(tx1.y_axis, vector_set(FloatType(2.0), FloatType(1.0), FloatType(1.0), FloatType(1.0)));
-		half_scaled_tx.z_axis = vector_mul(tx1.z_axis, vector_set(FloatType(2.0), FloatType(1.0), FloatType(1.0), FloatType(1.0)));
+		const Vector4Type x_scale4 = vector_set(FloatType(4.0), FloatType(1.0), FloatType(1.0), FloatType(1.0));
+		const Vector4Type x_scale2 = vector_set(FloatType(2.0), FloatType(1.0), FloatType(1.0), FloatType(1.0));
+		const TransformType scaled_tx = vqm_set_scale_shear(tx1, matrix_set(vector_mul(scale_shear1.x_axis, x_scale4), vector_mul(scale_shear1.y_axis, x_scale4), vector_mul(scale_shear1.z_axis, x_scale4)));
+		const TransformType half_scaled_tx = vqm_set_scale_shear(tx1, matrix_set(vector_mul(scale_shear1.x_axis, x_scale2), vector_mul(scale_shear1.y_axis, x_scale2), vector_mul(scale_shear1.z_axis, x_scale2)));
 		check_vqm_near_equal(vqm_slerp(tx1, scaled_tx, FloatType(0.5)), half_scaled_tx, threshold);
 	}
 
@@ -746,10 +727,8 @@ static void test_vqm_impl(const FloatType threshold)
 		TransformType normalize_result = vqm_normalize(tx);
 		CHECK(quat_is_normalized(normalize_result.rotation, threshold));
 		CHECK(quat_near_equal(normalize_result.rotation, quat_normalize(quat), threshold));
-		CHECK(vector_all_near_equal3(normalize_result.x_axis, tx.x_axis, threshold));
-		CHECK(vector_all_near_equal3(normalize_result.y_axis, tx.y_axis, threshold));
-		CHECK(vector_all_near_equal3(normalize_result.z_axis, tx.z_axis, threshold));
-		CHECK(vector_all_near_equal3(normalize_result.translation, tx.translation, threshold));
+		check_scale_shear_near_equal(normalize_result, tx, threshold);
+		CHECK(vector_all_near_equal3(vqm_get_translation(normalize_result), vqm_get_translation(tx), threshold));
 	}
 
 	// VQM is_finite validation
@@ -794,36 +773,34 @@ static void test_vqm_impl(const FloatType threshold)
 
 TEST_CASE("vqmf math", "[math][vqm]")
 {
+	// The transform uses 4 registers: the [w] lanes hold the third row of the scale/shear part
+	static_assert(sizeof(vqmf) == 4 * sizeof(vector4f), "vqmf must use 4 registers");
+
 	test_vqm_impl<vqmf, float>(1.0E-3F);
 
 	const quatf src_rotation = quat_set(0.39564531008956383F, 0.044254239301713752F, 0.22768840967675355F, 0.88863059760894492F);
 	const vector4f src_translation = vector_set(-2.65F, 2.996113F, 0.68123521F);
-	vqmf src = vqm_set(src_rotation, src_translation, vector_zero());
-	src.x_axis = vector_set(1.2F, 0.5F, -0.25F);
-	src.y_axis = vector_set(0.3F, 0.8F, 0.75F);
-	src.z_axis = vector_set(-0.6F, 0.2F, 2.1F);
+	const matrix3x3f src_scale_shear = matrix_set(vector_set(1.2F, 0.5F, -0.25F), vector_set(0.3F, 0.8F, 0.75F), vector_set(-0.6F, 0.2F, 2.1F));
+	const vqmf src = vqm_set(src_rotation, src_translation, src_scale_shear);
 	const vqmd dst = vqm_cast(src);
-	CHECK(quat_near_equal(src.rotation, quat_cast(dst.rotation), 1.0E-6F));
-	CHECK(vector_all_near_equal3(src.translation, vector_cast(dst.translation), 1.0E-6F));
-	CHECK(vector_all_near_equal3(src.x_axis, vector_cast(dst.x_axis), 1.0E-6F));
-	CHECK(vector_all_near_equal3(src.y_axis, vector_cast(dst.y_axis), 1.0E-6F));
-	CHECK(vector_all_near_equal3(src.z_axis, vector_cast(dst.z_axis), 1.0E-6F));
+
+	// A cast back to the input type gives the input
+	check_vqm_near_equal(src, vqm_cast(dst), 1.0E-6F);
 }
 
 TEST_CASE("vqmd math", "[math][vqm]")
 {
+	// The transform uses 4 registers: the [w] lanes hold the third row of the scale/shear part
+	static_assert(sizeof(vqmd) == 4 * sizeof(vector4d), "vqmd must use 4 registers");
+
 	test_vqm_impl<vqmd, double>(1.0E-8);
 
 	const quatd src_rotation = quat_set(0.39564531008956383, 0.044254239301713752, 0.22768840967675355, 0.88863059760894492);
 	const vector4d src_translation = vector_set(-2.65, 2.996113, 0.68123521);
-	vqmd src = vqm_set(src_rotation, src_translation, vector_zero());
-	src.x_axis = vector_set(1.2, 0.5, -0.25);
-	src.y_axis = vector_set(0.3, 0.8, 0.75);
-	src.z_axis = vector_set(-0.6, 0.2, 2.1);
+	const matrix3x3d src_scale_shear = matrix_set(vector_set(1.2, 0.5, -0.25), vector_set(0.3, 0.8, 0.75), vector_set(-0.6, 0.2, 2.1));
+	const vqmd src = vqm_set(src_rotation, src_translation, src_scale_shear);
 	const vqmf dst = vqm_cast(src);
-	CHECK(quat_near_equal(src.rotation, quat_cast(dst.rotation), 1.0E-6));
-	CHECK(vector_all_near_equal3(src.translation, vector_cast(dst.translation), 1.0E-6));
-	CHECK(vector_all_near_equal3(src.x_axis, vector_cast(dst.x_axis), 1.0E-6));
-	CHECK(vector_all_near_equal3(src.y_axis, vector_cast(dst.y_axis), 1.0E-6));
-	CHECK(vector_all_near_equal3(src.z_axis, vector_cast(dst.z_axis), 1.0E-6));
+
+	// A cast back to the input type gives the input
+	check_vqm_near_equal(src, vqm_cast(dst), 1.0E-6);
 }

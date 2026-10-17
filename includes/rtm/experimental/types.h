@@ -37,21 +37,25 @@ namespace rtm
 	struct vqmd
 	{
 		// The internal format is meant to be opaque, use vqm_* accessors
+		// The scale/shear matrix M has the rows x_axis, y_axis, and z_axis. Each row has 3 components.
+		// The [w] lanes hold the third row: m20 = z_axis.x, m21 = z_axis.y, and m22 = z_axis.z.
+		// Thus the transform uses 4 registers and 16 components.
 		quatd		rotation;
-		vector4d	translation;
-		vector4d	x_axis;
-		vector4d	y_axis;
-		vector4d	z_axis;
+		vector4d	translation_m22;	// [xyz] = translation, [w] = m22
+		vector4d	x_axis_m20;			// [xyz] = x_axis, [w] = m20
+		vector4d	y_axis_m21;			// [xyz] = y_axis, [w] = m21
 	};
 
 	struct vqmf
 	{
 		// The internal format is meant to be opaque, use vqm_* accessors
+		// The scale/shear matrix M has the rows x_axis, y_axis, and z_axis. Each row has 3 components.
+		// The [w] lanes hold the third row: m20 = z_axis.x, m21 = z_axis.y, and m22 = z_axis.z.
+		// Thus the transform uses 4 registers and 16 components.
 		quatf		rotation;
-		vector4f	translation;
-		vector4f	x_axis;
-		vector4f	y_axis;
-		vector4f	z_axis;
+		vector4f	translation_m22;	// [xyz] = translation, [w] = m22
+		vector4f	x_axis_m20;			// [xyz] = x_axis, [w] = m20
+		vector4f	y_axis_m21;			// [xyz] = y_axis, [w] = m21
 	};
 
 	RTM_IMPL_VERSION_NAMESPACE_END

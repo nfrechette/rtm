@@ -49,10 +49,9 @@ namespace rtm
 			{
 				vqmd result;
 				result.rotation = quat_identity();
-				result.translation = vector_zero();
-				result.x_axis = vector_set(1.0, 0.0, 0.0, 0.0);
-				result.y_axis = vector_set(0.0, 1.0, 0.0, 0.0);
-				result.z_axis = vector_set(0.0, 0.0, 1.0, 0.0);
+				result.translation_m22 = vector_set(0.0, 0.0, 0.0, 1.0);
+				result.x_axis_m20 = vector_set(1.0, 0.0, 0.0, 0.0);
+				result.y_axis_m21 = vector_set(0.0, 1.0, 0.0, 0.0);
 
 				return result;
 			}
@@ -61,10 +60,9 @@ namespace rtm
 			{
 				vqmf result;
 				result.rotation = quat_identity();
-				result.translation = vector_zero();
-				result.x_axis = vector_set(1.0F, 0.0F, 0.0F, 0.0F);
-				result.y_axis = vector_set(0.0F, 1.0F, 0.0F, 0.0F);
-				result.z_axis = vector_set(0.0F, 0.0F, 1.0F, 0.0F);
+				result.translation_m22 = vector_set(0.0F, 0.0F, 0.0F, 1.0F);
+				result.x_axis_m20 = vector_set(1.0F, 0.0F, 0.0F, 0.0F);
+				result.y_axis_m21 = vector_set(0.0F, 1.0F, 0.0F, 0.0F);
 
 				return result;
 			}
