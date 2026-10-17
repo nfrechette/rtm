@@ -166,6 +166,24 @@ namespace rtm
 	}
 
 	//////////////////////////////////////////////////////////////////////////
+	// Sets a 3x4 affine matrix from a rotation quaternion, translation, and 3D scale.
+	//////////////////////////////////////////////////////////////////////////
+	RTM_DEPRECATED("Use 'matrix_from_vqv' instead. To be removed in 2.5.")
+	RTM_DISABLE_SECURITY_COOKIE_CHECK inline matrix3x4d RTM_SIMD_CALL matrix_from_qvv(quatd_arg0 quat, vector4d_arg1 translation, vector4d_arg2 scale) RTM_NO_EXCEPT
+	{
+		return matrix_from_vqv(quat, translation, scale);
+	}
+
+	//////////////////////////////////////////////////////////////////////////
+	// Converts a VQV transform into a 3x4 affine matrix.
+	//////////////////////////////////////////////////////////////////////////
+	RTM_DEPRECATED("Use 'matrix_from_vqv' instead. To be removed in 2.5.")
+	RTM_DISABLE_SECURITY_COOKIE_CHECK inline matrix3x4d RTM_SIMD_CALL matrix_from_qvv(vqvd_arg0 transform) RTM_NO_EXCEPT
+	{
+		return matrix_from_vqv(transform);
+	}
+
+	//////////////////////////////////////////////////////////////////////////
 	// Returns the axis pointing in the forward direction of the default coordinate system (Z+).
 	//////////////////////////////////////////////////////////////////////////
 	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE constexpr vector4d RTM_SIMD_CALL matrix_get_coord_forward(matrix3x4d_arg0 input) RTM_NO_EXCEPT

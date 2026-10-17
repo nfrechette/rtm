@@ -26,6 +26,8 @@
 
 #include "rtm/types.h"
 #include "rtm/version.h"
+#include "rtm/impl/compiler_utils.h"
+#include "rtm/impl/error.h"
 
 //////////////////////////////////////////////////////////////////////////
 // Register passing typedefs
@@ -46,3 +48,28 @@
 #else
 	#include "rtm/impl/type_args.other.impl.h"
 #endif
+
+RTM_IMPL_FILE_PRAGMA_PUSH
+
+namespace rtm
+{
+	RTM_IMPL_VERSION_NAMESPACE_BEGIN
+
+	//////////////////////////////////////////////////////////////////////////
+	// The previous names of the vqvf_arg0, vqvf_arg1, and vqvf_argn types.
+	//////////////////////////////////////////////////////////////////////////
+	using qvvf_arg0 RTM_DEPRECATED("Use 'vqvf_arg0' instead. To be removed in 2.5.") = vqvf_arg0;
+	using qvvf_arg1 RTM_DEPRECATED("Use 'vqvf_arg1' instead. To be removed in 2.5.") = vqvf_arg1;
+	using qvvf_argn RTM_DEPRECATED("Use 'vqvf_argn' instead. To be removed in 2.5.") = vqvf_argn;
+
+	//////////////////////////////////////////////////////////////////////////
+	// The previous names of the vqvd_arg0, vqvd_arg1, and vqvd_argn types.
+	//////////////////////////////////////////////////////////////////////////
+	using qvvd_arg0 RTM_DEPRECATED("Use 'vqvd_arg0' instead. To be removed in 2.5.") = vqvd_arg0;
+	using qvvd_arg1 RTM_DEPRECATED("Use 'vqvd_arg1' instead. To be removed in 2.5.") = vqvd_arg1;
+	using qvvd_argn RTM_DEPRECATED("Use 'vqvd_argn' instead. To be removed in 2.5.") = vqvd_argn;
+
+	RTM_IMPL_VERSION_NAMESPACE_END
+}
+
+RTM_IMPL_FILE_PRAGMA_POP
