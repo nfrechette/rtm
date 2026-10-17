@@ -283,6 +283,22 @@ namespace rtm
 	}
 
 	//////////////////////////////////////////////////////////////////////////
+	// Creates a VQM transform from a rotation quaternion, a translation, and a 3x3 scale/shear matrix.
+	// The scale/shear matrix applies before the rotation: p' = p * M * R + t.
+	//////////////////////////////////////////////////////////////////////////
+	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE vqmf RTM_SIMD_CALL vqm_set(quatf_arg0 rotation, vector4f_arg1 translation, matrix3x3f_arg0 scale_shear) RTM_NO_EXCEPT
+	{
+		vqmf result;
+		result.rotation = rotation;
+		result.translation = translation;
+		result.x_axis = scale_shear.x_axis;
+		result.y_axis = scale_shear.y_axis;
+		result.z_axis = scale_shear.z_axis;
+
+		return result;
+	}
+
+	//////////////////////////////////////////////////////////////////////////
 	// Returns the rotation part of a VQM transform.
 	//////////////////////////////////////////////////////////////////////////
 	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE quatf RTM_SIMD_CALL vqm_get_rotation(const vqmf& input) RTM_NO_EXCEPT
@@ -319,7 +335,9 @@ namespace rtm
 	}
 
 	//////////////////////////////////////////////////////////////////////////
-	// Returns the scale part of a VQM transform.
+	// Returns the scale part of a VQM transform: the diagonal of the scale/shear matrix.
+	// When the scale/shear matrix contains shear, the scale is not the length of its rows.
+	// Use vqm_get_scale_shear to get the full matrix.
 	//////////////////////////////////////////////////////////////////////////
 	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE vector4f RTM_SIMD_CALL vqm_get_scale(const vqmf& input) RTM_NO_EXCEPT
 	{
@@ -329,7 +347,7 @@ namespace rtm
 
 	//////////////////////////////////////////////////////////////////////////
 	// Sets the scale part of a VQM and returns the new value.
-	// This preserves existing shear.
+	// The function sets the diagonal of the scale/shear matrix and keeps the other entries (the shear).
 	//////////////////////////////////////////////////////////////////////////
 	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE vqmf RTM_SIMD_CALL vqm_set_scale(const vqmf& input, vector4f_arg0 scale) RTM_NO_EXCEPT
 	{
@@ -337,6 +355,28 @@ namespace rtm
 		result.x_axis = vector_set_x(input.x_axis, vector_get_x_as_scalar(scale));
 		result.y_axis = vector_set_y(input.y_axis, vector_get_y_as_scalar(scale));
 		result.z_axis = vector_set_z(input.z_axis, vector_get_z_as_scalar(scale));
+		return result;
+	}
+
+	//////////////////////////////////////////////////////////////////////////
+	// Returns the scale/shear part of a VQM transform as a 3x3 matrix.
+	// The matrix applies before the rotation: p' = p * M * R + t.
+	//////////////////////////////////////////////////////////////////////////
+	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE matrix3x3f RTM_SIMD_CALL vqm_get_scale_shear(const vqmf& input) RTM_NO_EXCEPT
+	{
+		return matrix_set(input.x_axis, input.y_axis, input.z_axis);
+	}
+
+	//////////////////////////////////////////////////////////////////////////
+	// Sets the scale/shear part of a VQM and returns the new value.
+	// The matrix applies before the rotation: p' = p * M * R + t.
+	//////////////////////////////////////////////////////////////////////////
+	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE vqmf RTM_SIMD_CALL vqm_set_scale_shear(const vqmf& input, matrix3x3f_arg0 scale_shear) RTM_NO_EXCEPT
+	{
+		vqmf result = input;
+		result.x_axis = scale_shear.x_axis;
+		result.y_axis = scale_shear.y_axis;
+		result.z_axis = scale_shear.z_axis;
 		return result;
 	}
 

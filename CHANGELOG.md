@@ -38,6 +38,7 @@
 *  Add `vqm_cast`, `vqm_from_matrix`, `vqm_lerp`, `vqm_slerp`, and a `vqm_inverse` overload with a fallback scale to the experimental VQM. `vqm_from_matrix` finds the rotation with the Gram-Schmidt process, and the scale/shear part contains the reflection, if any
 *  The experimental `vqm_slerp` interpolates the scale (the diagonal of the scale/shear part) with eerp and the remaining shear with lerp. `vqm_lerp` interpolates the scale/shear part with lerp
 *  Rename the experimental `vqm_to_matrix` to `matrix_from_vqm`, as `matrix_from_vqv` uses
+*  Add `vqm_get_scale_shear`, `vqm_set_scale_shear`, and a `vqm_set` overload with a 3x3 scale/shear matrix to the experimental VQM. `vqm_get_scale` returns the diagonal of the scale/shear part
 *  Add `scalar_exp`, `scalar_log`, `vector_exp`, and `vector_log` for float32 and float64. All the code paths use the same approximations (Cephes): for the same input, the scalar and the vector functions give the same result, and the result does not depend on the C runtime library. The results can differ in the last bit on ARM because the code uses FMA there. The largest error that we measured is 1 ulp for float32 and 2 ulp for float64
 *  Add `scalar_eerp` and `vector_eerp` for float32 and float64: the exponential interpolation `start * (end / start)^alpha`
 *  Fix `quat_slerp` when the two quaternions are equal or nearly equal: the result was NaN. When the angle is near zero, the function uses the weights (1.0 - alpha) and alpha

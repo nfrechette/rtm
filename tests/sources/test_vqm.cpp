@@ -111,6 +111,43 @@ static void test_vqm_impl(const FloatType threshold)
 		CHECK(quat_near_equal(vqm_get_rotation(tx), rotation, threshold));
 		CHECK(vector_all_near_equal3(vqm_get_scale(tx), scale, threshold));
 		CHECK(vector_all_near_equal3(vqm_get_translation(tx), translation, threshold));
+
+		const Matrix3x3Type scale_shear = matrix_set(
+			vector_set(FloatType(2.0), FloatType(0.5), FloatType(-0.25)),
+			vector_set(FloatType(0.75), FloatType(-3.0), FloatType(0.125)),
+			vector_set(FloatType(-1.5), FloatType(0.375), FloatType(1.25)));
+		const Vector4Type scale_shear_diagonal = vector_set(FloatType(2.0), FloatType(-3.0), FloatType(1.25));
+
+		tx = vqm_set_scale_shear(tx, scale_shear);
+		CHECK(quat_near_equal(vqm_get_rotation(tx), rotation, threshold));
+		CHECK(vector_all_near_equal3(vqm_get_translation(tx), translation, threshold));
+		CHECK(vector_all_near_equal3(vqm_get_scale(tx), scale_shear_diagonal, threshold));
+
+		Matrix3x3Type tx_scale_shear = vqm_get_scale_shear(tx);
+		CHECK(vector_all_near_equal3(tx_scale_shear.x_axis, scale_shear.x_axis, threshold));
+		CHECK(vector_all_near_equal3(tx_scale_shear.y_axis, scale_shear.y_axis, threshold));
+		CHECK(vector_all_near_equal3(tx_scale_shear.z_axis, scale_shear.z_axis, threshold));
+
+		// vqm_set_scale changes the diagonal and keeps the shear
+		tx = vqm_set_scale(tx, scale);
+		CHECK(vector_all_near_equal3(vqm_get_scale(tx), scale, threshold));
+		tx_scale_shear = vqm_get_scale_shear(tx);
+		CHECK(vector_all_near_equal3(tx_scale_shear.x_axis, vector_set(FloatType(4.0), FloatType(0.5), FloatType(-0.25)), threshold));
+		CHECK(vector_all_near_equal3(tx_scale_shear.y_axis, vector_set(FloatType(0.75), FloatType(5.0), FloatType(0.125)), threshold));
+		CHECK(vector_all_near_equal3(tx_scale_shear.z_axis, vector_set(FloatType(-1.5), FloatType(0.375), FloatType(6.0)), threshold));
+
+		// vqm_set with a scale/shear matrix: p' = p * M * R + t
+		tx = vqm_set(rotation, translation, scale_shear);
+		CHECK(quat_near_equal(vqm_get_rotation(tx), rotation, threshold));
+		CHECK(vector_all_near_equal3(vqm_get_translation(tx), translation, threshold));
+		tx_scale_shear = vqm_get_scale_shear(tx);
+		CHECK(vector_all_near_equal3(tx_scale_shear.x_axis, scale_shear.x_axis, threshold));
+		CHECK(vector_all_near_equal3(tx_scale_shear.y_axis, scale_shear.y_axis, threshold));
+		CHECK(vector_all_near_equal3(tx_scale_shear.z_axis, scale_shear.z_axis, threshold));
+
+		const Vector4Type point = vector_set(FloatType(-2.5), FloatType(1.75), FloatType(0.5));
+		const Vector4Type expected_point = vector_add(quat_mul_vector3(matrix_mul_vector3(point, scale_shear), rotation), translation);
+		CHECK(vector_all_near_equal3(vqm_mul_point3(point, tx), expected_point, threshold));
 	}
 
 	// Matrix conversion validation
