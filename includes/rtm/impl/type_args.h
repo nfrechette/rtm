@@ -56,6 +56,20 @@ namespace rtm
 	RTM_IMPL_VERSION_NAMESPACE_BEGIN
 
 	//////////////////////////////////////////////////////////////////////////
+	// The previous names of the vqsf_arg0, vqsf_arg1, and vqsf_argn types.
+	//////////////////////////////////////////////////////////////////////////
+	using qvsf_arg0 RTM_DEPRECATED("Use 'vqsf_arg0' instead. To be removed in 2.5.") = vqsf_arg0;
+	using qvsf_arg1 RTM_DEPRECATED("Use 'vqsf_arg1' instead. To be removed in 2.5.") = vqsf_arg1;
+	using qvsf_argn RTM_DEPRECATED("Use 'vqsf_argn' instead. To be removed in 2.5.") = vqsf_argn;
+
+	//////////////////////////////////////////////////////////////////////////
+	// The previous names of the vqsd_arg0, vqsd_arg1, and vqsd_argn types.
+	//////////////////////////////////////////////////////////////////////////
+	using qvsd_arg0 RTM_DEPRECATED("Use 'vqsd_arg0' instead. To be removed in 2.5.") = vqsd_arg0;
+	using qvsd_arg1 RTM_DEPRECATED("Use 'vqsd_arg1' instead. To be removed in 2.5.") = vqsd_arg1;
+	using qvsd_argn RTM_DEPRECATED("Use 'vqsd_argn' instead. To be removed in 2.5.") = vqsd_argn;
+
+	//////////////////////////////////////////////////////////////////////////
 	// The previous names of the vqvf_arg0, vqvf_arg1, and vqvf_argn types.
 	//////////////////////////////////////////////////////////////////////////
 	using qvvf_arg0 RTM_DEPRECATED("Use 'vqvf_arg0' instead. To be removed in 2.5.") = vqvf_arg0;

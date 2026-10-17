@@ -500,6 +500,16 @@ namespace rtm
 	};
 
 	//////////////////////////////////////////////////////////////////////////
+	// The previous name of vqsf.
+	//////////////////////////////////////////////////////////////////////////
+	using qvsf RTM_DEPRECATED("Use 'vqsf' instead. To be removed in 2.5.") = vqsf;
+
+	//////////////////////////////////////////////////////////////////////////
+	// The previous name of vqsd.
+	//////////////////////////////////////////////////////////////////////////
+	using qvsd RTM_DEPRECATED("Use 'vqsd' instead. To be removed in 2.5.") = vqsd;
+
+	//////////////////////////////////////////////////////////////////////////
 	// A VQV transform represents a 3D rotation (quaternion), 3D translation (vector), and 3D non-uniform scale (vector).
 	// WARNING: VQV transforms do _NOT_ form a group. It has no well defined multiplication and inverse.
 	// This is because when non-uniform scale is rotated (e.g. as the result of two VQV multiplying),

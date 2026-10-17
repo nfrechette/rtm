@@ -59,6 +59,7 @@ namespace rtm
 		using vqs = vqsf;
 		using vqv = vqvf;
 
+		using qvs RTM_DEPRECATED("Use 'vqs' instead. To be removed in 2.5.") = vqsf;
 		using qvv RTM_DEPRECATED("Use 'vqv' instead. To be removed in 2.5.") = vqvf;
 
 		using matrix3x3 = matrix3x3f;
@@ -86,6 +87,7 @@ namespace rtm
 		using vqs = vqsd;
 		using vqv = vqvd;
 
+		using qvs RTM_DEPRECATED("Use 'vqs' instead. To be removed in 2.5.") = vqsd;
 		using qvv RTM_DEPRECATED("Use 'vqv' instead. To be removed in 2.5.") = vqvd;
 
 		using matrix3x3 = matrix3x3d;

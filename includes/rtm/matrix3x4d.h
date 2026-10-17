@@ -28,6 +28,7 @@
 #include "rtm/math.h"
 #include "rtm/matrix3x3d.h"
 #include "rtm/quatd.h"
+#include "rtm/qvsd.h"		// The deprecated qvs names stay available through this header
 #include "rtm/vector4d.h"
 #include "rtm/version.h"
 #include "rtm/vqsd.h"
@@ -125,6 +126,24 @@ namespace rtm
 	RTM_DISABLE_SECURITY_COOKIE_CHECK inline matrix3x4d RTM_SIMD_CALL matrix_from_vqs(vqsd_arg0 transform) RTM_NO_EXCEPT
 	{
 		return matrix_from_vqs(transform.rotation, transform.translation_scale, vqs_get_scale(transform));
+	}
+
+	//////////////////////////////////////////////////////////////////////////
+	// Sets a 3x4 affine matrix from a rotation quaternion, translation, and scalar scale.
+	//////////////////////////////////////////////////////////////////////////
+	RTM_DEPRECATED("Use 'matrix_from_vqs' instead. To be removed in 2.5.")
+	RTM_DISABLE_SECURITY_COOKIE_CHECK inline matrix3x4d RTM_SIMD_CALL matrix_from_qvs(quatd_arg0 quat, vector4d_arg1 translation, double scale) RTM_NO_EXCEPT
+	{
+		return matrix_from_vqs(quat, translation, scale);
+	}
+
+	//////////////////////////////////////////////////////////////////////////
+	// Converts a VQS transform into a 3x4 affine matrix.
+	//////////////////////////////////////////////////////////////////////////
+	RTM_DEPRECATED("Use 'matrix_from_vqs' instead. To be removed in 2.5.")
+	RTM_DISABLE_SECURITY_COOKIE_CHECK inline matrix3x4d RTM_SIMD_CALL matrix_from_qvs(vqsd_arg0 transform) RTM_NO_EXCEPT
+	{
+		return matrix_from_vqs(transform);
 	}
 
 	//////////////////////////////////////////////////////////////////////////
