@@ -92,7 +92,7 @@ RTM_FORCE_NOINLINE vector4f RTM_SIMD_CALL vector_cos_neon(vector4f_arg0 input) R
 	float32x4_t reference = vreinterpretq_f32_u32(vorrq_u32(sign, vreinterpretq_u32_f32(vdupq_n_f32(rtm::constants::pi()))));
 
 	float32x4_t reflection = vsubq_f32(reference, x);
-	float32x4_t is_less_equal_than_half_pi = vcaleq_f32(x, vdupq_n_f32(rtm::constants::half_pi()));
+	uint32x4_t is_less_equal_than_half_pi = vcaleq_f32(x, vdupq_n_f32(rtm::constants::half_pi()));
 	x = vbslq_f32(is_less_equal_than_half_pi, x, reflection);
 
 	// Calculate our value

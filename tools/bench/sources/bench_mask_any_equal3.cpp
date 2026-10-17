@@ -49,7 +49,7 @@ RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_NOINLINE bool RTM_SIMD_CALL mask_any
     // cset   w0, ne
     // ret
 
-	uint32x4_t mask = veorq_u32(vreinterpretq_u32_f32(lhs), vreinterpretq_u32_f32(rhs));
+	uint32x4_t mask = veorq_u32(lhs, rhs);
 	uint16x4_t truncated_mask = vmovn_u32(mask);
 	return (vget_lane_u64(vreinterpret_u64_u16(truncated_mask), 0) & 0x0000FFFFFFFFFFFFULL) != 0x0000FFFFFFFFFFFFULL;
 }
@@ -65,7 +65,7 @@ RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_NOINLINE bool RTM_SIMD_CALL mask_any
     // cset   w0, ne
     // ret
 
-	uint32x4_t mask = veorq_u32(vreinterpretq_u32_f32(lhs), vreinterpretq_u32_f32(rhs));
+	uint32x4_t mask = veorq_u32(lhs, rhs);
 	uint16x4_t truncated_mask = vmovn_u32(mask);
 	return (~vget_lane_u64(vreinterpret_u64_u16(truncated_mask), 0) << 16) != 0;
 }
