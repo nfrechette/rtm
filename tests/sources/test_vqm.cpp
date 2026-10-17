@@ -654,12 +654,20 @@ static void test_vqm_impl(const FloatType threshold)
 		tx1.y_axis = vector_set(FloatType(1.25), FloatType(-2.0), FloatType(0.1));
 		tx1.z_axis = vector_set(FloatType(3.0), FloatType(0.4), FloatType(3.5));
 
-		// The function interpolates each component of the two transforms
+		// vqm_lerp interpolates each component of the two transforms
 		TransformType lerp_ref = vqm_set(quat_lerp(rotation0, rotation1, alpha), vector_lerp(translation0, translation1, alpha), vector_zero());
 		lerp_ref.x_axis = vector_lerp(tx0.x_axis, tx1.x_axis, alpha);
 		lerp_ref.y_axis = vector_lerp(tx0.y_axis, tx1.y_axis, alpha);
 		lerp_ref.z_axis = vector_lerp(tx0.z_axis, tx1.z_axis, alpha);
-		const TransformType slerp_ref = vqm_set_rotation(lerp_ref, quat_slerp(rotation0, rotation1, alpha));
+
+		// vqm_slerp divides each column by its scale, interpolates the scale with eerp and the shear with lerp,
+		// and multiplies each column by the new scale. The scales of the X and Y columns have a different sign:
+		// these columns use lerp. The scales of the Z column are 6.0 and 3.5.
+		TransformType slerp_ref = vqm_set_rotation(lerp_ref, quat_slerp(rotation0, rotation1, alpha));
+		const FloatType z_scale = scalar_eerp(FloatType(6.0), FloatType(3.5), alpha);
+		slerp_ref.x_axis = vector_set_z(slerp_ref.x_axis, scalar_lerp(FloatType(-0.25) / FloatType(6.0), FloatType(2.0) / FloatType(3.5), alpha) * z_scale);
+		slerp_ref.y_axis = vector_set_z(slerp_ref.y_axis, scalar_lerp(FloatType(0.75) / FloatType(6.0), FloatType(0.1) / FloatType(3.5), alpha) * z_scale);
+		slerp_ref.z_axis = vector_set_z(slerp_ref.z_axis, z_scale);
 
 		check_vqm_near_equal(vqm_lerp(tx0, tx1, alpha), lerp_ref, threshold);
 		check_vqm_near_equal(vqm_lerp(tx0, tx1, alpha_s), lerp_ref, threshold);
@@ -671,6 +679,18 @@ static void test_vqm_impl(const FloatType threshold)
 		check_vqm_near_equal(vqm_lerp(tx0, tx1, FloatType(1.0)), tx1, threshold);
 		check_vqm_near_equal(vqm_slerp(tx0, tx1, FloatType(0.0)), tx0, threshold);
 		check_vqm_near_equal(vqm_slerp(tx0, tx1, FloatType(1.0)), tx1, threshold);
+
+		// The end transform is the start transform with the X column scaled by 4.0: the result at alpha 0.5
+		// is the start transform with the X column scaled by 2.0. The shear does not change.
+		TransformType scaled_tx = tx1;
+		scaled_tx.x_axis = vector_mul(tx1.x_axis, vector_set(FloatType(4.0), FloatType(1.0), FloatType(1.0), FloatType(1.0)));
+		scaled_tx.y_axis = vector_mul(tx1.y_axis, vector_set(FloatType(4.0), FloatType(1.0), FloatType(1.0), FloatType(1.0)));
+		scaled_tx.z_axis = vector_mul(tx1.z_axis, vector_set(FloatType(4.0), FloatType(1.0), FloatType(1.0), FloatType(1.0)));
+		TransformType half_scaled_tx = tx1;
+		half_scaled_tx.x_axis = vector_mul(tx1.x_axis, vector_set(FloatType(2.0), FloatType(1.0), FloatType(1.0), FloatType(1.0)));
+		half_scaled_tx.y_axis = vector_mul(tx1.y_axis, vector_set(FloatType(2.0), FloatType(1.0), FloatType(1.0), FloatType(1.0)));
+		half_scaled_tx.z_axis = vector_mul(tx1.z_axis, vector_set(FloatType(2.0), FloatType(1.0), FloatType(1.0), FloatType(1.0)));
+		check_vqm_near_equal(vqm_slerp(tx1, scaled_tx, FloatType(0.5)), half_scaled_tx, threshold);
 	}
 
 	// VQM normalize validation

@@ -25,6 +25,7 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 #include "rtm/math.h"
+#include "rtm/mask4f.h"
 #include "rtm/matrix3x3f.h"
 #include "rtm/matrix3x4f.h"
 #include "rtm/quatf.h"
@@ -578,37 +579,70 @@ namespace rtm
 	}
 #endif
 
+	namespace rtm_impl
+	{
+		//////////////////////////////////////////////////////////////////////////
+		// Sets the scale/shear part of the vqm_slerp(..) result.
+		// The function does not change the rotation and the translation of the result.
+		//////////////////////////////////////////////////////////////////////////
+		RTM_DISABLE_SECURITY_COOKIE_CHECK inline void RTM_SIMD_CALL vqm_slerp_scale_shear(const vqmf& start, const vqmf& end, vector4f_arg0 alpha, vqmf& result) RTM_NO_EXCEPT
+		{
+			// The scale is the diagonal of the scale/shear part: M = N * S with S = diag(M) and N the shear
+			// We divide each column by its scale to find N. Then we interpolate S with eerp and N with lerp,
+			// and we multiply each column of the result by the new scale.
+			// Eerp is not defined when the two scales of a column have a different sign or when one scale is zero.
+			// For these columns, we use a scale of 1.0 at the two ends: then the column is a lerp of M.
+			const vector4f zero = vector_zero();
+			const vector4f one = vector_set(1.0F);
+			const vector4f start_scale = vqm_get_scale(start);
+			const vector4f end_scale = vqm_get_scale(end);
+			const mask4f is_eerp_defined = mask_or(vector_greater_than(vector_min(start_scale, end_scale), zero), vector_less_than(vector_max(start_scale, end_scale), zero));
+			const vector4f safe_start_scale = vector_select(is_eerp_defined, start_scale, one);
+			const vector4f safe_end_scale = vector_select(is_eerp_defined, end_scale, one);
+
+			// eerp(1.0, 1.0) is 1.0
+			const vector4f scale = vector_eerp(safe_start_scale, safe_end_scale, alpha);
+
+			// Each axis is a row of M: a division by the scale vector divides each column by its scale
+			result.x_axis = vector_mul(vector_lerp(vector_div(start.x_axis, safe_start_scale), vector_div(end.x_axis, safe_end_scale), alpha), scale);
+			result.y_axis = vector_mul(vector_lerp(vector_div(start.y_axis, safe_start_scale), vector_div(end.y_axis, safe_end_scale), alpha), scale);
+			result.z_axis = vector_mul(vector_lerp(vector_div(start.z_axis, safe_start_scale), vector_div(end.z_axis, safe_end_scale), alpha), scale);
+		}
+	}
+
 	//////////////////////////////////////////////////////////////////////////
-	// Per component spherical interpolation of the two inputs at the specified alpha.
-	// The function interpolates the rotation with quat_slerp(..). It interpolates the
-	// translation and each axis of the scale/shear part with vector_lerp(..).
+	// Spherical interpolation of the two inputs at the specified alpha.
+	// The function interpolates the rotation with quat_slerp(..) and the translation with vector_lerp(..).
+	// The scale is the diagonal of the scale/shear part. The function interpolates the scale with
+	// vector_eerp(..) and the remaining shear with vector_lerp(..).
+	// If the two scales of a column have a different sign or if one scale is zero, the function
+	// interpolates that column of the scale/shear part with vector_lerp(..).
 	//////////////////////////////////////////////////////////////////////////
 	RTM_DISABLE_SECURITY_COOKIE_CHECK inline vqmf RTM_SIMD_CALL vqm_slerp(const vqmf& start, const vqmf& end, float alpha) RTM_NO_EXCEPT
 	{
 		vqmf result;
 		result.rotation = quat_slerp(start.rotation, end.rotation, alpha);
 		result.translation = vector_lerp(start.translation, end.translation, alpha);
-		result.x_axis = vector_lerp(start.x_axis, end.x_axis, alpha);
-		result.y_axis = vector_lerp(start.y_axis, end.y_axis, alpha);
-		result.z_axis = vector_lerp(start.z_axis, end.z_axis, alpha);
+		rtm_impl::vqm_slerp_scale_shear(start, end, vector_set(alpha), result);
 
 		return result;
 	}
 
 #if defined(RTM_SSE2_INTRINSICS)
 	//////////////////////////////////////////////////////////////////////////
-	// Per component spherical interpolation of the two inputs at the specified alpha.
-	// The function interpolates the rotation with quat_slerp(..). It interpolates the
-	// translation and each axis of the scale/shear part with vector_lerp(..).
+	// Spherical interpolation of the two inputs at the specified alpha.
+	// The function interpolates the rotation with quat_slerp(..) and the translation with vector_lerp(..).
+	// The scale is the diagonal of the scale/shear part. The function interpolates the scale with
+	// vector_eerp(..) and the remaining shear with vector_lerp(..).
+	// If the two scales of a column have a different sign or if one scale is zero, the function
+	// interpolates that column of the scale/shear part with vector_lerp(..).
 	//////////////////////////////////////////////////////////////////////////
 	RTM_DISABLE_SECURITY_COOKIE_CHECK inline vqmf RTM_SIMD_CALL vqm_slerp(const vqmf& start, const vqmf& end, scalarf_arg0 alpha) RTM_NO_EXCEPT
 	{
 		vqmf result;
 		result.rotation = quat_slerp(start.rotation, end.rotation, alpha);
 		result.translation = vector_lerp(start.translation, end.translation, alpha);
-		result.x_axis = vector_lerp(start.x_axis, end.x_axis, alpha);
-		result.y_axis = vector_lerp(start.y_axis, end.y_axis, alpha);
-		result.z_axis = vector_lerp(start.z_axis, end.z_axis, alpha);
+		rtm_impl::vqm_slerp_scale_shear(start, end, vector_set(alpha), result);
 
 		return result;
 	}
