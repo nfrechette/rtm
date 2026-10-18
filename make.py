@@ -672,6 +672,26 @@ def parse_analyzer_findings(output, root_dir):
 
 	return [[normalize_analyzer_line(line, root_dir) for line in finding] for finding in findings]
 
+def escape_github_command_data(value):
+	return value.replace('%', '%25').replace('\r', '%0D').replace('\n', '%0A')
+
+def escape_github_command_property(value):
+	return escape_github_command_data(value).replace(':', '%3A').replace(',', '%2C')
+
+def print_github_annotation(finding):
+	# GitHub Actions shows this line as an annotation on the line of the finding
+	# The message is the warning and its notes, without the source lines
+	match = re.match(r'^(.+?):(\d+):(\d+): warning: (.*?)(?: \[([\w.-]+)\])?$', finding[0])
+	filename = match.group(1).replace(os.sep, '/')
+	checker = match.group(5)
+	title = 'Static analyzer ({})'.format(checker) if checker else 'Static analyzer'
+	notes = [line for line in finding[1:] if re.match(r'^.+?:\d+:\d+: note: ', line)]
+	message = '\n'.join([match.group(4)] + notes)
+
+	print('::error file={},line={},col={},title={}::{}'.format(
+		escape_github_command_property(filename), match.group(2), match.group(3),
+		escape_github_command_property(title), escape_github_command_data(message)))
+
 def do_analyze(build_dir, args):
 	print('Running the static analyzer ...')
 
@@ -735,8 +755,12 @@ def do_analyze(build_dir, args):
 				unique_findings.setdefault(finding[0], finding)
 
 	# Sort the findings by file, line, and column
+	# On GitHub Actions, we also print each finding as an annotation
+	is_github_actions = os.environ.get('GITHUB_ACTIONS') == 'true'
 	for warning_line in sorted(unique_findings.keys(), key=get_finding_location):
 		print('\n'.join(unique_findings[warning_line]))
+		if is_github_actions:
+			print_github_annotation(unique_findings[warning_line])
 
 	if ignored_findings:
 		print('The static analyzer ignored {} issues in files outside of the repository'.format(len(ignored_findings)))

@@ -17,7 +17,7 @@ In order to contribute to RTM you will first need to setup your environment.
 
 On all three platforms, *AVX* support can be enabled by using the `-avx` switch and *AVX2* with `-avx2`. Intrinsic usage can be turned off with `-nosimd`.
 
-The `-analyze` switch runs the clang static analyzer on the include validation files, one file for each public header. It analyzes the functions in the headers and enables the array bound checker. It needs clang and a Makefile or Ninja generator: use the default compiler on OS X, or `-compiler clang19` (or a later version) on Linux. It prints each issue one time and returns an error code if it finds an issue. The other switches apply: for example, `-nosimd` analyzes the scalar code path.
+The `-analyze` switch runs the clang static analyzer on the include validation files, one file for each public header. It analyzes the functions in the headers and enables the array bound checker. It needs clang and a Makefile or Ninja generator: use the default compiler on OS X, or `-compiler clang19` (or a later version) on Linux. It prints each issue one time and returns an error code if it finds an issue. On GitHub Actions, it also prints each issue as an annotation on the line of the issue. The other switches apply: for example, `-nosimd` analyzes the scalar code path.
 
 ### Linux riscv64
 
