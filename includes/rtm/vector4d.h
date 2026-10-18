@@ -30,6 +30,7 @@
 #include "rtm/version.h"
 #include "rtm/impl/bit_cast.impl.h"
 #include "rtm/impl/compiler_utils.h"
+#include "rtm/impl/exp_log_common.h"
 #include "rtm/impl/macros.mask4.impl.h"
 #include "rtm/impl/memory_utils.h"
 #include "rtm/impl/vector_common.h"
@@ -4436,6 +4437,80 @@ namespace rtm
 		scalard w = scalar_round_bankers(scalard(vector_get_w(input)));
 		return vector_set(x, y, z, w);
 #endif
+	}
+
+	//////////////////////////////////////////////////////////////////////////
+	// Returns per component the natural exponential of the input: e^input.
+	//////////////////////////////////////////////////////////////////////////
+	RTM_DISABLE_SECURITY_COOKIE_CHECK inline vector4d RTM_SIMD_CALL vector_exp(vector4d_arg0 input) RTM_NO_EXCEPT
+	{
+#if defined(RTM_SSE2_INTRINSICS) || defined(RTM_WASM128_INTRINSICS) || defined(RTM_NEON64_INTRINSICS)
+		return vector4d{ rtm_impl::exp_f64x2(input.xy), rtm_impl::exp_f64x2(input.zw) };
+#else
+		scalard x = scalar_exp(vector_get_x_as_scalar(input));
+		scalard y = scalar_exp(vector_get_y_as_scalar(input));
+		scalard z = scalar_exp(vector_get_z_as_scalar(input));
+		scalard w = scalar_exp(vector_get_w_as_scalar(input));
+		return vector_set(x, y, z, w);
+#endif
+	}
+
+	//////////////////////////////////////////////////////////////////////////
+	// Returns per component the natural logarithm of the input.
+	// The result is -inf when the input is zero, and NaN when the input is negative.
+	//////////////////////////////////////////////////////////////////////////
+	RTM_DISABLE_SECURITY_COOKIE_CHECK inline vector4d RTM_SIMD_CALL vector_log(vector4d_arg0 input) RTM_NO_EXCEPT
+	{
+#if defined(RTM_SSE2_INTRINSICS) || defined(RTM_WASM128_INTRINSICS) || defined(RTM_NEON64_INTRINSICS)
+		return vector4d{ rtm_impl::log_f64x2(input.xy), rtm_impl::log_f64x2(input.zw) };
+#else
+		scalard x = scalar_log(vector_get_x_as_scalar(input));
+		scalard y = scalar_log(vector_get_y_as_scalar(input));
+		scalard z = scalar_log(vector_get_z_as_scalar(input));
+		scalard w = scalar_log(vector_get_w_as_scalar(input));
+		return vector_set(x, y, z, w);
+#endif
+	}
+
+	//////////////////////////////////////////////////////////////////////////
+	// Per component exponential interpolation of the two inputs at the specified alpha.
+	// The formula used is: start * (end / start)^alpha.
+	// For equal steps of alpha, the result changes by the same ratio. Use it to interpolate a scale.
+	// The result is 'start' when alpha is 0.0. It is approximately 'end' when alpha is 1.0.
+	// The two inputs must have the same sign and must not be zero. Otherwise, the result is undefined.
+	//////////////////////////////////////////////////////////////////////////
+	RTM_DISABLE_SECURITY_COOKIE_CHECK inline vector4d RTM_SIMD_CALL vector_eerp(vector4d_arg0 start, vector4d_arg1 end, double alpha) RTM_NO_EXCEPT
+	{
+		// start * (end / start)^alpha == start * exp(alpha * log(end / start))
+		return vector_mul(start, vector_exp(vector_mul(vector_log(vector_div(end, start)), alpha)));
+	}
+
+#if defined(RTM_SSE2_INTRINSICS)
+	//////////////////////////////////////////////////////////////////////////
+	// Per component exponential interpolation of the two inputs at the specified alpha.
+	// The formula used is: start * (end / start)^alpha.
+	// For equal steps of alpha, the result changes by the same ratio. Use it to interpolate a scale.
+	// The result is 'start' when alpha is 0.0. It is approximately 'end' when alpha is 1.0.
+	// The two inputs must have the same sign and must not be zero. Otherwise, the result is undefined.
+	//////////////////////////////////////////////////////////////////////////
+	RTM_DISABLE_SECURITY_COOKIE_CHECK inline vector4d RTM_SIMD_CALL vector_eerp(vector4d_arg0 start, vector4d_arg1 end, scalard_arg4 alpha) RTM_NO_EXCEPT
+	{
+		// start * (end / start)^alpha == start * exp(alpha * log(end / start))
+		return vector_mul(start, vector_exp(vector_mul(vector_log(vector_div(end, start)), vector_set(alpha))));
+	}
+#endif
+
+	//////////////////////////////////////////////////////////////////////////
+	// Per component exponential interpolation of the two inputs at the specified alpha.
+	// The formula used is: start * (end / start)^alpha.
+	// For equal steps of alpha, the result changes by the same ratio. Use it to interpolate a scale.
+	// The result is 'start' when alpha is 0.0. It is approximately 'end' when alpha is 1.0.
+	// The two inputs must have the same sign and must not be zero. Otherwise, the result is undefined.
+	//////////////////////////////////////////////////////////////////////////
+	RTM_DISABLE_SECURITY_COOKIE_CHECK inline vector4d RTM_SIMD_CALL vector_eerp(vector4d_arg0 start, vector4d_arg1 end, vector4d_arg2 alpha) RTM_NO_EXCEPT
+	{
+		// start * (end / start)^alpha == start * exp(alpha * log(end / start))
+		return vector_mul(start, vector_exp(vector_mul(vector_log(vector_div(end, start)), alpha)));
 	}
 
 	//////////////////////////////////////////////////////////////////////////

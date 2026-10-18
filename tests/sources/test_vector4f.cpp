@@ -74,3 +74,8 @@ TEST_CASE("vector4f math misc", "[math][vector4]")
 
 	test_vector4_impl<float>(threshold);
 }
+
+TEST_CASE("vector4f math exp/log", "[math][vector4]")
+{
+	test_vector4_exp_log_impl<float>(1.0E-6F);
+}

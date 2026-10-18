@@ -173,6 +173,15 @@ namespace rtm
 	using vqvd_arg1 = const vqvd&;
 	using vqvd_argn = const vqvd&;
 
+	// A VQM transform has the same layout as a 3x4 matrix: 4 vectors. Thus it uses the same choices.
+	using vqmf_arg0 = const vqmf;
+	using vqmf_arg1 = const vqmf;
+	using vqmf_argn = const vqmf&;
+
+	using vqmd_arg0 = const vqmd&;
+	using vqmd_arg1 = const vqmd&;
+	using vqmd_argn = const vqmd&;
+
 	using matrix3x3f_arg0 = const matrix3x3f;
 	using matrix3x3f_arg1 = const matrix3x3f;
 	using matrix3x3f_argn = const matrix3x3f&;

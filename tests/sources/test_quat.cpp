@@ -446,6 +446,31 @@ static void test_quat_impl(const FloatType threshold)
 		CHECK(vector_all_near_equal(quat_to_vector(result1_s), quat_to_vector(result_ref), threshold));
 	}
 
+	// Slerp of equal or nearly equal rotations
+	{
+		const QuatType quat0 = quat_normalize(quat_from_euler(scalar_deg_to_rad(FloatType(45.0)), scalar_deg_to_rad(FloatType(60.0)), scalar_deg_to_rad(FloatType(120.0))));
+		const FloatType alpha = FloatType(0.33);
+
+		// The angle is zero: the result is the input, for the same quaternion and for the negated quaternion
+		CHECK(quat_is_finite(quat_slerp(quat0, quat0, alpha)));
+		CHECK(vector_all_near_equal(quat_to_vector(quat_slerp(quat0, quat0, alpha)), quat_to_vector(quat0), threshold));
+		CHECK(vector_all_near_equal(quat_to_vector(quat_slerp(quat0, quat0, scalar_set(alpha))), quat_to_vector(quat0), threshold));
+		CHECK(vector_all_near_equal(quat_to_vector(quat_slerp(quat0, quat_neg(quat0), alpha)), quat_to_vector(quat0), threshold));
+
+		// For small angles, the result is the rotation of alpha * angle
+		// Before, the computation of sin(half_angle) lost precision and the float32 error was 3.0E-5 for the angle 0.0336
+		const Vector4Type axis = vector_normalize3(vector_set(FloatType(1.0), FloatType(2.0), FloatType(3.0)));
+		const FloatType small_angles[] = { FloatType(0.0336), FloatType(0.002), FloatType(1.0E-5) };
+		for (const FloatType small_angle : small_angles)
+		{
+			INFO("The angle is " << small_angle);
+			const QuatType quat1 = quat_mul(quat_from_axis_angle(axis, small_angle), quat0);
+			const QuatType ref = quat_mul(quat_from_axis_angle(axis, small_angle * alpha), quat0);
+			CHECK(vector_all_near_equal(quat_to_vector(quat_slerp(quat0, quat1, alpha)), quat_to_vector(ref), FloatType(1.0E-6)));
+			CHECK(vector_all_near_equal(quat_to_vector(quat_slerp(quat0, quat1, scalar_set(alpha))), quat_to_vector(ref), FloatType(1.0E-6)));
+		}
+	}
+
 	{
 		QuatType quat0 = quat_from_euler(scalar_deg_to_rad(FloatType(30.0)), scalar_deg_to_rad(FloatType(-45.0)), scalar_deg_to_rad(FloatType(90.0)));
 		QuatType quat1 = quat_neg(quat0);

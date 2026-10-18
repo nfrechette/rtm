@@ -35,6 +35,20 @@
 *  Remove the deprecated implicit coercion to `scalarf`, `scalard`, `vector4f`, and `vector4d`: use the functions with the `as_scalar` and `as_vector` suffixes
 *  Change the argument order of the experimental `vqm_set` to rotation, translation, and scale, as `vqv_set` uses
 *  Rename the experimental `qvv_normalize` and `qvv_is_finite` for `vqmf` and `vqmd` to `vqm_normalize` and `vqm_is_finite`
+*  Add `vqm_cast`, `vqm_from_matrix`, `vqm_lerp`, `vqm_slerp`, and a `vqm_inverse` overload with a fallback scale to the experimental VQM. `vqm_from_matrix` finds the rotation with the Gram-Schmidt process, and the scale/shear part contains the reflection, if any
+*  The experimental `vqm_slerp` interpolates the scale (the diagonal of the scale/shear part) with eerp and the remaining shear with lerp. `vqm_lerp` interpolates the scale/shear part with lerp
+*  Rename the experimental `vqm_to_matrix` to `matrix_from_vqm`, as `matrix_from_vqv` uses
+*  Add `vqm_get_scale_shear`, `vqm_set_scale_shear`, and a `vqm_set` overload with a 3x3 scale/shear matrix to the experimental VQM. `vqm_get_scale` returns the diagonal of the scale/shear part
+*  Change the memory layout of the experimental `vqmf` and `vqmd` from 5 to 4 registers (64 bytes for vqmf instead of 80): the [w] lanes of the translation and of the first two rows hold the third row of the scale/shear part. Code that reads the members directly must use the vqm accessors
+*  The experimental VQM stores a flag in the m22 slot when the scale/shear part is exactly the identity: a quiet NaN with a fixed payload. `vqm_identity`, `vqm_set`, `vqm_set_scale`, and `vqm_set_scale_shear` set the flag. `vqm_mul`, `vqm_mul_point3`, `vqm_mul_vector3`, `vqm_inverse`, `vqm_lerp`, and `vqm_slerp` then skip the scale/shear part, and keep the flag when the result has the identity scale/shear part. When the scale/shear part of the second input of `vqm_mul` is the identity, the result has the exact scale/shear part of the first input
+*  The experimental `vqm_mul` and `vqm_inverse` build the rotation matrix once from the quaternion and use matrix multiplications, instead of 6 rotations of a row with `quat_mul_vector3`. On an Apple M1 Max, with a scale/shear part, float32 `vqm_mul` is 42% faster (39% in a chain of products) and float32 `vqm_inverse` is 53% faster. For float64, the gains are 20% and 24%. The rounding error of the scale/shear part is about 30% larger (rms), for example 1.4 instead of 1.1 float32 epsilon
+*  Move VQM out of the experimental directory: include `rtm/vqmf.h` and `rtm/vqmd.h`. `rtm/types.h` declares `vqmf` and `vqmd`, and `rtm/type_traits.h` adds `related_types::vqm`. The functions take the new `vqmf_arg` and `vqmd_arg` types, with the same choices as the 3x4 matrices: on ARM64, a `vqmf` goes in registers
+*  Deprecate the headers `rtm/experimental/vqmf.h`, `rtm/experimental/vqmd.h`, and `rtm/experimental/types.h`: use `rtm/vqmf.h`, `rtm/vqmd.h`, and `rtm/types.h`. To be removed in 2.5
+*  Add `scalar_exp`, `scalar_log`, `vector_exp`, and `vector_log` for float32 and float64. All the code paths use the same approximations (Cephes): for the same input, the scalar and the vector functions give the same result, and the result does not depend on the C runtime library. The results can differ in the last bit on ARM because the code uses FMA there. The largest error that we measured is 1 ulp for float32 and 2 ulp for float64
+*  Add `scalar_eerp` and `vector_eerp` for float32 and float64: the exponential interpolation `start * (end / start)^alpha`
+*  Fix `quat_slerp` when the two quaternions are equal or nearly equal: the result was NaN. When the angle is near zero, the function uses the weights (1.0 - alpha) and alpha
+*  Compute sin(half angle) in `quat_slerp` as sqrt((1 - cos) * (1 + cos)) instead of sqrt(1 - cos^2): the result is more accurate for small angles. For example, the float32 error for an angle of 0.0336 rad is 1.0E-7 instead of 3.0E-5
+*  `vqv_slerp` and the deprecated `qvv_slerp` interpolate the scale with eerp instead of lerp. If the two scales of a component have a different sign or if one scale is zero, they use lerp for that component. `vqv_lerp` does not change
 *  Rename qvvf and qvvd to vqvf and vqvd, and the qvv functions to vqv: the name follows the order of operations, as with vqm. The new headers are rtm/vqvf.h and rtm/vqvd.h
 *  Deprecate qvvf, qvvd, the qvv functions, matrix_from_qvv, the qvvf_arg and qvvd_arg types, related_types::qvv, and the headers rtm/qvvf.h and rtm/qvvd.h: use the vqv names. To be removed in 2.5
 *  Code that forward declares struct qvvf or struct qvvd does not compile: include rtm/fwd.h instead
@@ -45,6 +59,7 @@
 *  Deprecate qvf, qvd, the qv functions, matrix_from_qv, the qvf_arg and qvd_arg types, related_types::qv, and the headers rtm/qvf.h and rtm/qvd.h: use the vq names. To be removed in 2.5
 *  Code that forward declares struct qvf or struct qvd does not compile: include rtm/fwd.h instead
 *  Fix vector_cast and quat_cast (float64 to float32) with SSE2 and MSVC 19.34 to 19.44: when [xy] and [zw] are the same constant, the compiler sets [zw] to 0
+*  Fix an internal compiler error with MSVC 19.44 for arm64 in some functions that call quat_set_w (quatd, double)
 
 ## 2.3.1
 

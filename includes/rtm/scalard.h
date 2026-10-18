@@ -30,6 +30,7 @@
 #include "rtm/version.h"
 #include "rtm/impl/cmath.impl.h"
 #include "rtm/impl/compiler_utils.h"
+#include "rtm/impl/exp_log_common.h"
 #include "rtm/impl/scalar_common.h"
 
 #if defined(RTM_SSE2_INTRINSICS)
@@ -463,6 +464,92 @@ namespace rtm
 	{
 		// ((1.0 - alpha) * start) + (alpha * end) == (start - alpha * start) + (alpha * end)
 		return scalar_mul_add(end, alpha, scalar_neg_mul_sub(start, alpha, start));
+	}
+
+#if defined(RTM_SSE2_INTRINSICS)
+	//////////////////////////////////////////////////////////////////////////
+	// Returns the natural exponential of the input: e^input.
+	// The function uses the same algorithm as vector_exp(..): for the same input, the results are equal.
+	//////////////////////////////////////////////////////////////////////////
+	RTM_DISABLE_SECURITY_COOKIE_CHECK inline scalard RTM_SIMD_CALL scalar_exp(scalard_arg0 input) RTM_NO_EXCEPT
+	{
+		return scalard{ rtm_impl::exp_f64x2(input.value) };
+	}
+#endif
+
+	//////////////////////////////////////////////////////////////////////////
+	// Returns the natural exponential of the input: e^input.
+	// The function uses the same algorithm as vector_exp(..): for the same input, the results are equal.
+	//////////////////////////////////////////////////////////////////////////
+	RTM_DISABLE_SECURITY_COOKIE_CHECK inline double RTM_SIMD_CALL scalar_exp(double input) RTM_NO_EXCEPT
+	{
+#if defined(RTM_SSE2_INTRINSICS)
+		return _mm_cvtsd_f64(rtm_impl::exp_f64x2(_mm_set1_pd(input)));
+#elif defined(RTM_WASM128_INTRINSICS)
+		return wasm_f64x2_extract_lane(rtm_impl::exp_f64x2(wasm_f64x2_splat(input)), 0);
+#elif defined(RTM_NEON64_INTRINSICS)
+		return vgetq_lane_f64(rtm_impl::exp_f64x2(vdupq_n_f64(input)), 0);
+#else
+		return rtm_impl::exp_f64(input);
+#endif
+	}
+
+#if defined(RTM_SSE2_INTRINSICS)
+	//////////////////////////////////////////////////////////////////////////
+	// Returns the natural logarithm of the input.
+	// The function uses the same algorithm as vector_log(..): for the same input, the results are equal.
+	// The result is -inf when the input is zero, and NaN when the input is negative.
+	//////////////////////////////////////////////////////////////////////////
+	RTM_DISABLE_SECURITY_COOKIE_CHECK inline scalard RTM_SIMD_CALL scalar_log(scalard_arg0 input) RTM_NO_EXCEPT
+	{
+		return scalard{ rtm_impl::log_f64x2(input.value) };
+	}
+#endif
+
+	//////////////////////////////////////////////////////////////////////////
+	// Returns the natural logarithm of the input.
+	// The function uses the same algorithm as vector_log(..): for the same input, the results are equal.
+	// The result is -inf when the input is zero, and NaN when the input is negative.
+	//////////////////////////////////////////////////////////////////////////
+	RTM_DISABLE_SECURITY_COOKIE_CHECK inline double RTM_SIMD_CALL scalar_log(double input) RTM_NO_EXCEPT
+	{
+#if defined(RTM_SSE2_INTRINSICS)
+		return _mm_cvtsd_f64(rtm_impl::log_f64x2(_mm_set1_pd(input)));
+#elif defined(RTM_WASM128_INTRINSICS)
+		return wasm_f64x2_extract_lane(rtm_impl::log_f64x2(wasm_f64x2_splat(input)), 0);
+#elif defined(RTM_NEON64_INTRINSICS)
+		return vgetq_lane_f64(rtm_impl::log_f64x2(vdupq_n_f64(input)), 0);
+#else
+		return rtm_impl::log_f64(input);
+#endif
+	}
+
+#if defined(RTM_SSE2_INTRINSICS)
+	//////////////////////////////////////////////////////////////////////////
+	// Returns the exponential interpolation of the two inputs at the specified alpha.
+	// The formula used is: start * (end / start)^alpha.
+	// For equal steps of alpha, the result changes by the same ratio. Use it to interpolate a scale.
+	// The result is 'start' when alpha is 0.0. It is approximately 'end' when alpha is 1.0.
+	// The two inputs must have the same sign and must not be zero. Otherwise, the result is undefined.
+	//////////////////////////////////////////////////////////////////////////
+	RTM_DISABLE_SECURITY_COOKIE_CHECK inline scalard RTM_SIMD_CALL scalar_eerp(scalard_arg0 start, scalard_arg1 end, scalard_arg2 alpha) RTM_NO_EXCEPT
+	{
+		// start * (end / start)^alpha == start * exp(alpha * log(end / start))
+		return scalar_mul(start, scalar_exp(scalar_mul(scalar_log(scalar_div(end, start)), alpha)));
+	}
+#endif
+
+	//////////////////////////////////////////////////////////////////////////
+	// Returns the exponential interpolation of the two inputs at the specified alpha.
+	// The formula used is: start * (end / start)^alpha.
+	// For equal steps of alpha, the result changes by the same ratio. Use it to interpolate a scale.
+	// The result is 'start' when alpha is 0.0. It is approximately 'end' when alpha is 1.0.
+	// The two inputs must have the same sign and must not be zero. Otherwise, the result is undefined.
+	//////////////////////////////////////////////////////////////////////////
+	RTM_DISABLE_SECURITY_COOKIE_CHECK inline double RTM_SIMD_CALL scalar_eerp(double start, double end, double alpha) RTM_NO_EXCEPT
+	{
+		// start * (end / start)^alpha == start * exp(alpha * log(end / start))
+		return start * scalar_exp(scalar_log(end / start) * alpha);
 	}
 
 #if defined(RTM_SSE2_INTRINSICS)

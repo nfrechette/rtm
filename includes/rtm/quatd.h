@@ -389,7 +389,9 @@ namespace rtm
 #elif defined(RTM_WASM128_INTRINSICS)
 		return quatd{ input.xy, wasm_f64x2_replace_lane(input.zw, 1, lane_value) };
 #elif defined(RTM_NEON64_INTRINSICS)
-		return quatd{ input.xy, vsetq_lane_f64(lane_value, input.zw, 1) };
+		// Do not use vsetq_lane_f64 here. In some functions that call quat_set_w, MSVC 19.44 for arm64
+		// stops with an internal compiler error (C1001). The two forms give the same instruction.
+		return quatd{ input.xy, vcombine_f64(vget_low_f64(input.zw), vdup_n_f64(lane_value)) };
 #else
 		return quatd{ input.x, input.y, input.z, lane_value };
 #endif
@@ -941,6 +943,7 @@ namespace rtm
 #if defined(RTM_SSE2_INTRINSICS)
 	//////////////////////////////////////////////////////////////////////////
 	// Returns the spherical interpolation between start and end for a given alpha value.
+	// If the angle between the two inputs is near zero, the function uses the weights (1.0 - alpha) and alpha.
 	// See: https://www.euclideanspace.com/maths/algebra/realNormedAlgebra/quaternions/slerp/index.htm
 	// Perhaps try this someday: http://number-none.com/product/Understanding%20Slerp,%20Then%20Not%20Using%20It/
 	//////////////////////////////////////////////////////////////////////////
@@ -961,13 +964,23 @@ namespace rtm
 
 		scalard cos_half_angle = vector_get_x_as_scalar(cos_half_angle_v);
 		scalard half_angle = scalar_acos(cos_half_angle);
-		scalard sin_half_angle = scalar_sqrt(scalar_sub(scalar_set(1.0), scalar_mul(cos_half_angle, cos_half_angle)));
+
+		// sin^2 = 1 - cos^2 = (1 - cos) * (1 + cos): the second form does not lose precision when the angle is small
+		scalard sin_half_angle = scalar_sqrt(scalar_mul(scalar_sub(scalar_set(1.0), cos_half_angle), scalar_add(scalar_set(1.0), cos_half_angle)));
 		scalard inv_sin_half_angle = scalar_reciprocal(sin_half_angle);
 
 		scalard start_contribution_angle = scalar_mul(scalar_sub(scalar_set(1.0), alpha), half_angle);
 		scalard end_contribution_angle = scalar_mul(alpha, half_angle);
 		vector4d contribution_angles = vector_set(start_contribution_angle, end_contribution_angle, start_contribution_angle, end_contribution_angle);
 		vector4d contributions = vector_mul(vector_sin(contribution_angles), inv_sin_half_angle);
+
+		// When the angle is near zero, sin(half_angle) is near zero and the division is not finite (0 / 0) when the
+		// two inputs are equal. Then sin(x * half_angle) / sin(half_angle) is approximately x: we use the linear weights.
+		const scalard start_weight = scalar_sub(scalar_set(1.0), alpha);
+		const vector4d linear_contributions = vector_set(start_weight, alpha, start_weight, alpha);
+		const mask4d is_angle_small = vector_less_than(vector_set(sin_half_angle), vector_set(1.0E-8));
+		contributions = vector_select(is_angle_small, linear_contributions, contributions);
+
 		vector4d start_contribution = vector_dup_x(contributions);
 		vector4d end_contribution = vector_dup_y(contributions);
 
@@ -978,6 +991,7 @@ namespace rtm
 
 	//////////////////////////////////////////////////////////////////////////
 	// Returns the spherical interpolation between start and end for a given alpha value.
+	// If the angle between the two inputs is near zero, the function uses the weights (1.0 - alpha) and alpha.
 	// See: https://www.euclideanspace.com/maths/algebra/realNormedAlgebra/quaternions/slerp/index.htm
 	// Perhaps try this someday: http://number-none.com/product/Understanding%20Slerp,%20Then%20Not%20Using%20It/
 	//////////////////////////////////////////////////////////////////////////
@@ -999,13 +1013,23 @@ namespace rtm
 
 		scalard cos_half_angle = vector_get_x_as_scalar(cos_half_angle_v);
 		scalard half_angle = scalar_acos(cos_half_angle);
-		scalard sin_half_angle = scalar_sqrt(scalar_sub(scalar_set(1.0), scalar_mul(cos_half_angle, cos_half_angle)));
+
+		// sin^2 = 1 - cos^2 = (1 - cos) * (1 + cos): the second form does not lose precision when the angle is small
+		scalard sin_half_angle = scalar_sqrt(scalar_mul(scalar_sub(scalar_set(1.0), cos_half_angle), scalar_add(scalar_set(1.0), cos_half_angle)));
 		scalard inv_sin_half_angle = scalar_reciprocal(sin_half_angle);
 
 		scalard start_contribution_angle = scalar_mul(scalar_sub(scalar_set(1.0), alpha_s), half_angle);
 		scalard end_contribution_angle = scalar_mul(alpha_s, half_angle);
 		vector4d contribution_angles = vector_set(start_contribution_angle, end_contribution_angle, start_contribution_angle, end_contribution_angle);
 		vector4d contributions = vector_mul(vector_sin(contribution_angles), inv_sin_half_angle);
+
+		// When the angle is near zero, sin(half_angle) is near zero and the division is not finite (0 / 0) when the
+		// two inputs are equal. Then sin(x * half_angle) / sin(half_angle) is approximately x: we use the linear weights.
+		const scalard start_weight = scalar_sub(scalar_set(1.0), alpha_s);
+		const vector4d linear_contributions = vector_set(start_weight, alpha_s, start_weight, alpha_s);
+		const mask4d is_angle_small = vector_less_than(vector_set(sin_half_angle), vector_set(1.0E-8));
+		contributions = vector_select(is_angle_small, linear_contributions, contributions);
+
 		vector4d start_contribution = vector_dup_x(contributions);
 		vector4d end_contribution = vector_dup_y(contributions);
 
