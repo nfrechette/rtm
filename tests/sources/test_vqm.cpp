@@ -62,13 +62,11 @@ static void check_vqm_near_equal(const TransformType& lhs, const TransformType& 
 }
 
 template<typename TransformType, typename FloatType>
-static void test_vqm_impl(const FloatType threshold)
+static void test_vqm_getset_impl(const FloatType threshold)
 {
 	using QuatType = typename related_types<FloatType>::quat;
 	using Vector4Type = typename related_types<FloatType>::vector4;
-	using ScalarType = typename related_types<FloatType>::scalar;
 	using Matrix3x3Type = typename related_types<FloatType>::matrix3x3;
-	using Matrix3x4Type = typename related_types<FloatType>::matrix3x4;
 
 	// Identity validation
 	{
@@ -149,6 +147,15 @@ static void test_vqm_impl(const FloatType threshold)
 		const Vector4Type expected_point = vector_add(quat_mul_vector3(matrix_mul_vector3(point, scale_shear), rotation), translation);
 		CHECK(vector_all_near_equal3(vqm_mul_point3(point, tx), expected_point, threshold));
 	}
+}
+
+template<typename TransformType, typename FloatType>
+static void test_vqm_matrix_impl(const FloatType threshold)
+{
+	using QuatType = typename related_types<FloatType>::quat;
+	using Vector4Type = typename related_types<FloatType>::vector4;
+	using Matrix3x3Type = typename related_types<FloatType>::matrix3x3;
+	using Matrix3x4Type = typename related_types<FloatType>::matrix3x4;
 
 	// Matrix conversion validation
 	{
@@ -214,6 +221,15 @@ static void test_vqm_impl(const FloatType threshold)
 			check_vqm_near_equal(dst_tx3x3, vqm_set_translation(dst_tx, vector_zero()), threshold);
 		}
 	}
+}
+
+template<typename TransformType, typename FloatType>
+static void test_vqm_arithmetic_impl(const FloatType threshold)
+{
+	using QuatType = typename related_types<FloatType>::quat;
+	using Vector4Type = typename related_types<FloatType>::vector4;
+	using Matrix3x3Type = typename related_types<FloatType>::matrix3x3;
+	using Matrix3x4Type = typename related_types<FloatType>::matrix3x4;
 
 	// VQM + VQM validation
 	{
@@ -394,6 +410,14 @@ static void test_vqm_impl(const FloatType threshold)
 		CHECK(vector_all_near_equal3(vqm_get_translation(mul_one_result), vqm_get_translation(tx), threshold));
 		check_scale_shear_near_equal(mul_one_result, tx, threshold);
 	}
+}
+
+template<typename TransformType, typename FloatType>
+static void test_vqm_mul_point_impl(const FloatType threshold)
+{
+	using QuatType = typename related_types<FloatType>::quat;
+	using Vector4Type = typename related_types<FloatType>::vector4;
+	using Matrix3x4Type = typename related_types<FloatType>::matrix3x4;
 
 	// point/vec3 * VQM validation
 	{
@@ -500,6 +524,15 @@ static void test_vqm_impl(const FloatType threshold)
 		dst_point = vqm_mul_vector3(point, dst_tx);
 		CHECK(vector_all_near_equal3(src_point, dst_point, threshold));
 	}
+}
+
+template<typename TransformType, typename FloatType>
+static void test_vqm_inverse_impl(const FloatType threshold)
+{
+	using QuatType = typename related_types<FloatType>::quat;
+	using Vector4Type = typename related_types<FloatType>::vector4;
+	using Matrix3x3Type = typename related_types<FloatType>::matrix3x3;
+	using Matrix3x4Type = typename related_types<FloatType>::matrix3x4;
 
 	// VQM inverse validation
 	{
@@ -650,6 +683,15 @@ static void test_vqm_impl(const FloatType threshold)
 		CHECK(vqm_is_finite(inverse_result));
 		check_vqm_near_equal(inverse_result, vqm_inverse(vqm_set(rotation, translation, fallback_scale)), threshold);
 	}
+}
+
+template<typename TransformType, typename FloatType>
+static void test_vqm_interpolation_impl(const FloatType threshold)
+{
+	using QuatType = typename related_types<FloatType>::quat;
+	using Vector4Type = typename related_types<FloatType>::vector4;
+	using ScalarType = typename related_types<FloatType>::scalar;
+	using Matrix3x3Type = typename related_types<FloatType>::matrix3x3;
 
 	// VQM lerp and slerp validation
 	{
@@ -710,6 +752,15 @@ static void test_vqm_impl(const FloatType threshold)
 		const TransformType half_scaled_tx = vqm_set_scale_shear(tx1, matrix_set(vector_mul(scale_shear1.x_axis, x_scale2), vector_mul(scale_shear1.y_axis, x_scale2), vector_mul(scale_shear1.z_axis, x_scale2)));
 		check_vqm_near_equal(vqm_slerp(tx1, scaled_tx, FloatType(0.5)), half_scaled_tx, threshold);
 	}
+}
+
+template<typename TransformType, typename FloatType>
+static void test_vqm_identity_scale_shear_impl(const FloatType threshold)
+{
+	using QuatType = typename related_types<FloatType>::quat;
+	using Vector4Type = typename related_types<FloatType>::vector4;
+	using Matrix3x3Type = typename related_types<FloatType>::matrix3x3;
+	using Matrix3x4Type = typename related_types<FloatType>::matrix3x4;
 
 	// Transforms with the identity scale/shear part: the m22 slot holds a flag and the functions skip the scale/shear part
 	{
@@ -837,6 +888,13 @@ static void test_vqm_impl(const FloatType threshold)
 		CHECK(!rtm_impl::vqm_has_identity_scale_shear(slerp_mixed_result));
 		check_vqm_near_equal(slerp_mixed_result, vqm_set(quat_slerp(rotation0, rotation1, alpha), vector_lerp(translation0, translation1, alpha), vector_eerp(one, positive_scale, alpha)), threshold);
 	}
+}
+
+template<typename TransformType, typename FloatType>
+static void test_vqm_misc_impl(const FloatType threshold)
+{
+	using QuatType = typename related_types<FloatType>::quat;
+	using Vector4Type = typename related_types<FloatType>::vector4;
 
 	// VQM normalize validation
 	{
@@ -898,12 +956,49 @@ static void test_vqm_impl(const FloatType threshold)
 	}
 }
 
-TEST_CASE("vqmf math", "[math][vqm]")
+// The tests are in several test cases: a single function with all the tests needs a stack frame that is too large
+
+TEST_CASE("vqmf math get/set", "[math][vqm]")
+{
+	test_vqm_getset_impl<vqmf, float>(1.0E-3F);
+}
+
+TEST_CASE("vqmf math matrix", "[math][vqm]")
+{
+	test_vqm_matrix_impl<vqmf, float>(1.0E-3F);
+}
+
+TEST_CASE("vqmf math arithmetic", "[math][vqm]")
+{
+	test_vqm_arithmetic_impl<vqmf, float>(1.0E-3F);
+}
+
+TEST_CASE("vqmf math mul point", "[math][vqm]")
+{
+	test_vqm_mul_point_impl<vqmf, float>(1.0E-3F);
+}
+
+TEST_CASE("vqmf math inverse", "[math][vqm]")
+{
+	test_vqm_inverse_impl<vqmf, float>(1.0E-3F);
+}
+
+TEST_CASE("vqmf math interpolation", "[math][vqm]")
+{
+	test_vqm_interpolation_impl<vqmf, float>(1.0E-3F);
+}
+
+TEST_CASE("vqmf math identity scale/shear", "[math][vqm]")
+{
+	test_vqm_identity_scale_shear_impl<vqmf, float>(1.0E-3F);
+}
+
+TEST_CASE("vqmf math misc", "[math][vqm]")
 {
 	// The transform uses 4 registers: the [w] lanes hold the third row of the scale/shear part
 	static_assert(sizeof(vqmf) == 4 * sizeof(vector4f), "vqmf must use 4 registers");
 
-	test_vqm_impl<vqmf, float>(1.0E-3F);
+	test_vqm_misc_impl<vqmf, float>(1.0E-3F);
 
 	const quatf src_rotation = quat_set(0.39564531008956383F, 0.044254239301713752F, 0.22768840967675355F, 0.88863059760894492F);
 	const vector4f src_translation = vector_set(-2.65F, 2.996113F, 0.68123521F);
@@ -915,12 +1010,47 @@ TEST_CASE("vqmf math", "[math][vqm]")
 	check_vqm_near_equal(src, vqm_cast(dst), 1.0E-6F);
 }
 
-TEST_CASE("vqmd math", "[math][vqm]")
+TEST_CASE("vqmd math get/set", "[math][vqm]")
+{
+	test_vqm_getset_impl<vqmd, double>(1.0E-8);
+}
+
+TEST_CASE("vqmd math matrix", "[math][vqm]")
+{
+	test_vqm_matrix_impl<vqmd, double>(1.0E-8);
+}
+
+TEST_CASE("vqmd math arithmetic", "[math][vqm]")
+{
+	test_vqm_arithmetic_impl<vqmd, double>(1.0E-8);
+}
+
+TEST_CASE("vqmd math mul point", "[math][vqm]")
+{
+	test_vqm_mul_point_impl<vqmd, double>(1.0E-8);
+}
+
+TEST_CASE("vqmd math inverse", "[math][vqm]")
+{
+	test_vqm_inverse_impl<vqmd, double>(1.0E-8);
+}
+
+TEST_CASE("vqmd math interpolation", "[math][vqm]")
+{
+	test_vqm_interpolation_impl<vqmd, double>(1.0E-8);
+}
+
+TEST_CASE("vqmd math identity scale/shear", "[math][vqm]")
+{
+	test_vqm_identity_scale_shear_impl<vqmd, double>(1.0E-8);
+}
+
+TEST_CASE("vqmd math misc", "[math][vqm]")
 {
 	// The transform uses 4 registers: the [w] lanes hold the third row of the scale/shear part
 	static_assert(sizeof(vqmd) == 4 * sizeof(vector4d), "vqmd must use 4 registers");
 
-	test_vqm_impl<vqmd, double>(1.0E-8);
+	test_vqm_misc_impl<vqmd, double>(1.0E-8);
 
 	const quatd src_rotation = quat_set(0.39564531008956383, 0.044254239301713752, 0.22768840967675355, 0.88863059760894492);
 	const vector4d src_translation = vector_set(-2.65, 2.996113, 0.68123521);
