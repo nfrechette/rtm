@@ -710,10 +710,16 @@ def do_analyze(build_dir, args):
 	thread_pool.close()
 	thread_pool.join()
 
+	def get_finding_location(warning_line):
+		match = re.match(r'^(.+?):(\d+):(\d+): ', warning_line)
+		return (match.group(1), int(match.group(2)), int(match.group(3)))
+
 	# Each header is analyzed once for each cpp file that includes it, we print each finding once
+	# The headers of the compiler are analyzed too (e.g. the intrinsic headers), we ignore the findings in them
 	root_dir = os.path.realpath(os.path.dirname(build_dir))
 	is_failure = False
 	unique_findings = {}
+	ignored_findings = set()
 	for entry, (result, output) in zip(entries, results):
 		if result != 0:
 			print('The static analyzer failed on {}:'.format(entry['file']))
@@ -722,15 +728,18 @@ def do_analyze(build_dir, args):
 			continue
 
 		for finding in parse_analyzer_findings(output, root_dir):
-			unique_findings.setdefault(finding[0], finding)
+			# A finding in the repository has a relative path
+			if os.path.isabs(get_finding_location(finding[0])[0]):
+				ignored_findings.add(finding[0])
+			else:
+				unique_findings.setdefault(finding[0], finding)
 
 	# Sort the findings by file, line, and column
-	def get_finding_location(warning_line):
-		match = re.match(r'^(.+?):(\d+):(\d+): ', warning_line)
-		return (match.group(1), int(match.group(2)), int(match.group(3)))
-
 	for warning_line in sorted(unique_findings.keys(), key=get_finding_location):
 		print('\n'.join(unique_findings[warning_line]))
+
+	if ignored_findings:
+		print('The static analyzer ignored {} issues in files outside of the repository'.format(len(ignored_findings)))
 
 	print('The static analyzer found {} issues in {} files'.format(len(unique_findings), len(entries)))
 	if is_failure or unique_findings:
