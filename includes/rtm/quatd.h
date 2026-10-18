@@ -389,7 +389,9 @@ namespace rtm
 #elif defined(RTM_WASM128_INTRINSICS)
 		return quatd{ input.xy, wasm_f64x2_replace_lane(input.zw, 1, lane_value) };
 #elif defined(RTM_NEON64_INTRINSICS)
-		return quatd{ input.xy, vsetq_lane_f64(lane_value, input.zw, 1) };
+		// Do not use vsetq_lane_f64 here. In some functions that call quat_set_w, MSVC 19.44 for arm64
+		// stops with an internal compiler error (C1001). The two forms give the same instruction.
+		return quatd{ input.xy, vcombine_f64(vget_low_f64(input.zw), vdup_n_f64(lane_value)) };
 #else
 		return quatd{ input.x, input.y, input.z, lane_value };
 #endif
