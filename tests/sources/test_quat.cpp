@@ -258,6 +258,11 @@ static void test_quat_impl(const FloatType threshold)
 
 		result = quat_mul(quat0, scalar_set(FloatType(123.13)));
 		CHECK(quat_near_equal(result, result_ref, threshold));
+
+		// The other lanes of the scalar have different values. The function must use only lane 0.
+		const Vector4Type scalar_lanes = vector_set(FloatType(123.13), FloatType(2.0), FloatType(3.0), FloatType(4.0));
+		result = quat_mul(quat0, vector_get_x_as_scalar(scalar_lanes));
+		CHECK(quat_near_equal(result, result_ref, threshold));
 	}
 
 	{

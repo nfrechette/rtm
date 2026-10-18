@@ -647,7 +647,8 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE quatd RTM_SIMD_CALL quat_mul(quatd_arg0 quat, scalard_arg1 scalar) RTM_NO_EXCEPT
 	{
-		return quatd{ _mm_mul_pd(quat.xy, scalar.value), _mm_mul_pd(quat.zw, scalar.value) };
+		const __m128d scalar_xx = _mm_shuffle_pd(scalar.value, scalar.value, _MM_SHUFFLE2(0, 0));
+		return quatd{ _mm_mul_pd(quat.xy, scalar_xx), _mm_mul_pd(quat.zw, scalar_xx) };
 	}
 #endif
 
