@@ -17,6 +17,7 @@ python3 make.py -build -unit_test -config Debug
 python3 make.py -unit_test -tests_matching "quat"   # ctest --tests-regex; tests are discovered per Catch2 TEST_CASE
 python3 make.py -clean -build        # clean rebuild
 python3 make.py -build -bench        # build benchmarks
+python3 make.py -analyze             # clang static analyzer on the public headers (clang only)
 ```
 
 Useful variants: `-compiler {osx,clang18,gcc13,vs2022,...}`, `-cpu {x64,x86,arm64,...}`, `-cpp_version {11,14,17,20}`, `-avx`, `-avx2`, `-nosimd` (scalar fallback path), `-vector_mix_test` (enables the slow exhaustive `vector_mix` tests via `RTM_IMPL_WITH_VECTOR_MIX_TESTS`). Changing these flags regenerates CMake; use `-clean` if the cache seems stale.

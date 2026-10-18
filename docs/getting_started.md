@@ -13,8 +13,11 @@ In order to contribute to RTM you will first need to setup your environment.
 4. Build the IDE solution with: `python make.py -build`
 5. Run the unit tests with: `python make.py -unit_test`
 6. Build and run benchmarks with the `-bench` switch
+7. Run the clang static analyzer on the public headers with: `python make.py -analyze`
 
 On all three platforms, *AVX* support can be enabled by using the `-avx` switch and *AVX2* with `-avx2`. Intrinsic usage can be turned off with `-nosimd`.
+
+The `-analyze` switch runs the clang static analyzer on the include validation files, one file for each public header. It analyzes the functions in the headers and enables the array bound checker. It needs clang and a Makefile or Ninja generator: use the default compiler on OS X, or `-compiler clang19` (or a later version) on Linux. It prints each issue one time and returns an error code if it finds an issue. The other switches apply: for example, `-nosimd` analyzes the scalar code path.
 
 ### Linux riscv64
 
