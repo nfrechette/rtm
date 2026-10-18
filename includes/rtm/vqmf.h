@@ -244,7 +244,10 @@ namespace rtm
 		// and might not yield a normalized result
 		const float zero_scale_threshold = 1.0E-8F;
 
-		const vector4f* input_axes = &input.x_axis;
+		// Get a pointer to the three axes of the input matrix. The code below indexes into it.
+		// Cast the address of the matrix, not the address of x_axis: an index past x_axis is out of bounds.
+		static_assert(sizeof(matrix3x3f) == 3 * sizeof(vector4f), "The matrix must hold only its three axes");
+		const vector4f* input_axes = rtm_impl::bit_cast<const vector4f*>(&input);
 
 		const float axis_lengths[3] = { vector_length3(input.x_axis), vector_length3(input.y_axis), vector_length3(input.z_axis) };
 
@@ -309,7 +312,11 @@ namespace rtm
 		const vector4f third_axis = vector_cross3(first_axis, second_axis);
 
 		matrix3x3f rotation;
-		vector4f* rotation_axes = &rotation.x_axis;
+
+		// Get a pointer to the three axes of the matrix. The code below indexes into it.
+		// Cast the address of the matrix, not the address of x_axis: an index past x_axis is out of bounds.
+		static_assert(sizeof(matrix3x3f) == 3 * sizeof(vector4f), "The matrix must hold only its three axes");
+		vector4f* rotation_axes = rtm_impl::bit_cast<vector4f*>(&rotation);
 		rotation_axes[first_index] = first_axis;
 		rotation_axes[second_index] = second_axis;
 
