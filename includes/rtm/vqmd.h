@@ -384,9 +384,9 @@ namespace rtm
 	}
 
 	//////////////////////////////////////////////////////////////////////////
-	// Returns the scale part of a VQM transform: the diagonal of the scale/shear matrix.
-	// When the scale/shear matrix contains shear, the scale is not the length of its rows.
-	// Use vqm_get_scale_shear to get the full matrix.
+	// Returns the scale part of a VQM transform: the diagonal of the scale/shear matrix [m00, m11, m22].
+	// The rows of the scale/shear matrix are the x, y, and z axes. When the matrix contains shear,
+	// the scale is not the length of a row. Use vqm_get_scale_shear to get the full matrix.
 	//////////////////////////////////////////////////////////////////////////
 	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE vector4d RTM_SIMD_CALL vqm_get_scale(vqmd_arg0 input) RTM_NO_EXCEPT
 	{
@@ -688,11 +688,13 @@ namespace rtm
 		//////////////////////////////////////////////////////////////////////////
 		RTM_DISABLE_SECURITY_COOKIE_CHECK inline matrix3x3d RTM_SIMD_CALL vqm_slerp_scale_shear(const vqmd& start, const vqmd& end, vector4d_arg0 alpha) RTM_NO_EXCEPT
 		{
-			// The scale is the diagonal of the scale/shear part: M = N * S with S = diag(M) and N the shear
-			// We divide each column by its scale to find N. Then we interpolate S with eerp and N with lerp,
-			// and we multiply each column of the result by the new scale.
-			// Eerp is not defined when the two scales of a column have a different sign or when one scale is zero.
-			// For these columns, we use a scale of 1.0 at the two ends: then the column is a lerp of M.
+			// The rows of the scale/shear matrix M are the x, y, and z axes. The scale is the diagonal of M.
+			// M = N * S with S = diag(m00, m11, m22) and N the shear: lane j of each row of M is lane j of N multiplied by m_jj.
+			// We divide lane j of each row by m_jj (its diagonal entry, not the length of a row) to find N.
+			// Then N has 1.0 on its diagonal. We interpolate S with eerp and N with lerp.
+			// Then we multiply lane j of each row of the result by the new m_jj.
+			// Eerp is not defined when the two values of a scale have a different sign or when one value is zero.
+			// For these lanes, we use a scale of 1.0 at the two ends: then the lane is a lerp of M.
 			const vector4d zero = vector_zero();
 			const vector4d one = vector_set(1.0);
 			const vector4d start_scale = vqm_get_scale(start);
@@ -707,7 +709,7 @@ namespace rtm
 			const matrix3x3d start_scale_shear = vqm_get_scale_shear(start);
 			const matrix3x3d end_scale_shear = vqm_get_scale_shear(end);
 
-			// Each axis is a row of M: a division by the scale vector divides each column by its scale
+			// A division of a row by the scale vector divides lane j of the row by m_jj
 			const vector4d x_axis = vector_mul(vector_lerp(vector_div(start_scale_shear.x_axis, safe_start_scale), vector_div(end_scale_shear.x_axis, safe_end_scale), alpha), scale);
 			const vector4d y_axis = vector_mul(vector_lerp(vector_div(start_scale_shear.y_axis, safe_start_scale), vector_div(end_scale_shear.y_axis, safe_end_scale), alpha), scale);
 			const vector4d z_axis = vector_mul(vector_lerp(vector_div(start_scale_shear.z_axis, safe_start_scale), vector_div(end_scale_shear.z_axis, safe_end_scale), alpha), scale);
@@ -720,8 +722,8 @@ namespace rtm
 	// The function interpolates the rotation with quat_slerp(..) and the translation with vector_lerp(..).
 	// The scale is the diagonal of the scale/shear part. The function interpolates the scale with
 	// vector_eerp(..) and the remaining shear with vector_lerp(..).
-	// If the two scales of a column have a different sign or if one scale is zero, the function
-	// interpolates that column of the scale/shear part with vector_lerp(..).
+	// If the two values of a scale have a different sign or if one value is zero, the function
+	// interpolates that lane of the rows of the scale/shear part with vector_lerp(..).
 	//////////////////////////////////////////////////////////////////////////
 	RTM_DISABLE_SECURITY_COOKIE_CHECK inline vqmd RTM_SIMD_CALL vqm_slerp(vqmd_arg0 start, vqmd_arg1 end, double alpha) RTM_NO_EXCEPT
 	{
@@ -742,8 +744,8 @@ namespace rtm
 	// The function interpolates the rotation with quat_slerp(..) and the translation with vector_lerp(..).
 	// The scale is the diagonal of the scale/shear part. The function interpolates the scale with
 	// vector_eerp(..) and the remaining shear with vector_lerp(..).
-	// If the two scales of a column have a different sign or if one scale is zero, the function
-	// interpolates that column of the scale/shear part with vector_lerp(..).
+	// If the two values of a scale have a different sign or if one value is zero, the function
+	// interpolates that lane of the rows of the scale/shear part with vector_lerp(..).
 	//////////////////////////////////////////////////////////////////////////
 	RTM_DISABLE_SECURITY_COOKIE_CHECK inline vqmd RTM_SIMD_CALL vqm_slerp(vqmd_arg0 start, vqmd_arg1 end, scalard_arg2 alpha) RTM_NO_EXCEPT
 	{
