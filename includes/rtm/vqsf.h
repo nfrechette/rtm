@@ -152,8 +152,10 @@ namespace rtm
 		// Copy the rotation part from our input
 		matrix3x3f rotation = matrix_cast(input);
 
-		// Grab a pointer to the first axis, we'll index into it
-		vector4f* rotation_axes = &rotation.x_axis;
+		// Get a pointer to the three axes of the matrix. The code below indexes into it.
+		// Cast the address of the matrix, not the address of x_axis: an index past x_axis is out of bounds.
+		static_assert(sizeof(matrix3x3f) == 3 * sizeof(vector4f), "The matrix must hold only its three axes");
+		vector4f* rotation_axes = rtm_impl::bit_cast<vector4f*>(&rotation);
 
 		// We use a threshold to test for zero because division with near zero values is imprecise
 		// and might not yield a normalized result
