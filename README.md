@@ -3,6 +3,7 @@
 [![Build status](https://github.com/nfrechette/rtm/actions/workflows/build_push.yml/badge.svg)](https://github.com/nfrechette/rtm/actions/workflows/build_push.yml)
 [![Sonar Status](https://sonarcloud.io/api/project_badges/measure?project=nfrechette_rtm&metric=alert_status)](https://sonarcloud.io/dashboard?id=nfrechette_rtm)
 [![GitHub release](https://img.shields.io/github/release/nfrechette/rtm.svg)](https://github.com/nfrechette/rtm/releases)
+[![Documentation](https://img.shields.io/badge/docs-API%20reference-blue)](https://nfrechette.github.io/rtm/)
 [![GitHub license](https://img.shields.io/badge/license-MIT-blue.svg)](https://raw.githubusercontent.com/nfrechette/rtm/master/LICENSE)
 [![Conan](https://img.shields.io/conan/v/rtm)](https://conan.io/center/recipes/rtm)
 [![Discord](https://img.shields.io/discord/691048241864769647?label=discord)](https://discord.gg/UERt4bS)
@@ -12,6 +13,10 @@
 This library is geared towards realtime applications that require their math to be as fast as possible. Much care was taken to maximize inlining opportunities and for code generation to be optimal when a function isn't inlined by passing values in registers whenever possible. It contains 3D and 4D arithmetic commonly used in video games and realtime applications.
 
 It offers an alternative to [GLM](https://github.com/g-truc/glm) and [DirectX Math](https://github.com/Microsoft/DirectXMath). See [here](https://nfrechette.github.io/2019/01/19/introducing_realtime_math/) for a comparison with similar libraries.
+
+## Documentation
+
+The [documentation site](https://nfrechette.github.io/rtm/) has the guides and the API reference of each public header. The site has one version for the `develop` branch and one version for each new release.
 
 ## Philosophy
 
