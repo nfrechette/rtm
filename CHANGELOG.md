@@ -12,6 +12,7 @@
 *  Fix vector floor and ceil on ARMv7 to keep the sign of a zero result, as the other code paths do
 *  Add support for native ARMv7 builds on Linux to `make.py`
 *  Add GCC 14, GCC 15, and Clang 19 to 23 to `make.py`
+*  Add VS2026 (`vs2026` and `vs2026-clang`) to `make.py`
 *  Add the `-analyze` action to `make.py` to run the clang static analyzer on the public headers
 *  Update Google Benchmark to 1.9.5
 *  Use float64 SIMD on ARM64: vector4d, quatd, mask4d, and mask4q are now two 2-lane registers, as with SSE2

@@ -34,7 +34,7 @@ def parse_argv():
 	actions.add_argument('-analyze', action='store_true', help='Run the clang static analyzer on the public headers')
 
 	target = parser.add_argument_group(title='Target')
-	target.add_argument('-compiler', choices=['vs2015', 'vs2017', 'vs2019', 'vs2019-clang', 'vs2022', 'vs2022-clang', 'android', 'clang4', 'clang5', 'clang6', 'clang7', 'clang8', 'clang9', 'clang10', 'clang11', 'clang12', 'clang13', 'clang14', 'clang15', 'clang16', 'clang17', 'clang18', 'clang19', 'clang20', 'clang21', 'clang22', 'clang23', 'gcc5', 'gcc6', 'gcc7', 'gcc8', 'gcc9', 'gcc10', 'gcc11', 'gcc12', 'gcc13', 'gcc14', 'gcc15', 'osx', 'ios', 'emscripten'], help='Defaults to the host system\'s default compiler')
+	target.add_argument('-compiler', choices=['vs2015', 'vs2017', 'vs2019', 'vs2019-clang', 'vs2022', 'vs2022-clang', 'vs2026', 'vs2026-clang', 'android', 'clang4', 'clang5', 'clang6', 'clang7', 'clang8', 'clang9', 'clang10', 'clang11', 'clang12', 'clang13', 'clang14', 'clang15', 'clang16', 'clang17', 'clang18', 'clang19', 'clang20', 'clang21', 'clang22', 'clang23', 'gcc5', 'gcc6', 'gcc7', 'gcc8', 'gcc9', 'gcc10', 'gcc11', 'gcc12', 'gcc13', 'gcc14', 'gcc15', 'osx', 'ios', 'emscripten'], help='Defaults to the host system\'s default compiler')
 	target.add_argument('-config', choices=['Debug', 'Release'], type=str.capitalize)
 	target.add_argument('-cpu', choices=['x86', 'x64', 'armv7', 'arm64', 'arm64ec', 'riscv64', 'wasm'], help='Defaults to the host system\'s architecture')
 	target.add_argument('-cpp_version', choices=['11', '14', '17', '20'], help='Defaults to C++11')
@@ -137,7 +137,7 @@ def parse_argv():
 		is_arm_supported = False
 
 		# Cross compilation
-		if args.compiler in ['vs2017', 'vs2019', 'vs2022', 'ios', 'android']:
+		if args.compiler in ['vs2017', 'vs2019', 'vs2022', 'vs2026', 'ios', 'android']:
 			is_arm_supported = True
 
 		# Native compilation
@@ -147,11 +147,11 @@ def parse_argv():
 			is_arm_supported = True
 
 		if not is_arm_supported:
-			print('arm64 is only supported with VS2017, VS2019, VS2022, OS X (M* processors), Linux, Android, and iOS')
+			print('arm64 is only supported with VS2017, VS2019, VS2022, VS2026, OS X (M* processors), Linux, Android, and iOS')
 			sys.exit(1)
 	elif args.cpu == 'arm64ec':
-		if not args.compiler in ['vs2019', 'vs2022']:
-			print('arm64ec is only supported with VS2019 and VS2022')
+		if not args.compiler in ['vs2019', 'vs2022', 'vs2026']:
+			print('arm64ec is only supported with VS2019, VS2022, and VS2026')
 			sys.exit(1)
 	elif args.cpu == 'armv7':
 		is_armv7_supported = False
@@ -178,7 +178,7 @@ def parse_argv():
 
 	if args.analyze:
 		# The static analyzer reads compile_commands.json, which only the Makefile and Ninja generators write
-		if args.compiler in ['vs2015', 'vs2017', 'vs2019', 'vs2019-clang', 'vs2022', 'vs2022-clang', 'android', 'osx', 'ios', 'emscripten'] or (args.compiler and args.compiler.startswith('gcc')):
+		if args.compiler in ['vs2015', 'vs2017', 'vs2019', 'vs2019-clang', 'vs2022', 'vs2022-clang', 'vs2026', 'vs2026-clang', 'android', 'osx', 'ios', 'emscripten'] or (args.compiler and args.compiler.startswith('gcc')):
 			print('The static analyzer is only supported with clang on Linux and with the default compiler on OS X')
 			sys.exit(1)
 
@@ -213,6 +213,9 @@ def get_generator(compiler, cpu):
 			return 'Visual Studio 16 2019'
 		elif compiler == 'vs2022' or compiler == 'vs2022-clang':
 			return 'Visual Studio 17 2022'
+		elif compiler == 'vs2026' or compiler == 'vs2026-clang':
+			# VS2026 support needs cmake 4.2 and up
+			return 'Visual Studio 18 2026'
 		elif compiler == 'android':
 			# For Android, we use the default generator since we don't build with CMake
 			return None
@@ -246,6 +249,8 @@ def get_architecture(compiler, cpu):
 		if compiler == 'vs2019' or compiler == 'vs2019-clang':
 			is_modern_vs = True
 		elif compiler == 'vs2022' or compiler == 'vs2022-clang':
+			is_modern_vs = True
+		elif compiler == 'vs2026' or compiler == 'vs2026-clang':
 			is_modern_vs = True
 
 		if is_modern_vs:
@@ -442,7 +447,7 @@ def do_generate_solution(build_dir, cmake_script_dir, args):
 			print('Using default generator')
 		else:
 			generator_suffix = ''
-			if compiler == 'vs2019-clang' or compiler == 'vs2022-clang':
+			if compiler == 'vs2019-clang' or compiler == 'vs2022-clang' or compiler == 'vs2026-clang':
 				extra_switches.append('-T ClangCL')
 				generator_suffix = 'Clang CL'
 
