@@ -47,7 +47,7 @@ namespace rtm
 	RTM_IMPL_VERSION_NAMESPACE_BEGIN
 
 	//////////////////////////////////////////////////////////////////////////
-	// Creates a scalar from a floating point value.
+	/// Creates a scalar from a floating point value.
 	//////////////////////////////////////////////////////////////////////////
 	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE scalard RTM_SIMD_CALL scalar_set(double xyzw) RTM_NO_EXCEPT
 	{
@@ -60,7 +60,7 @@ namespace rtm
 
 #if defined(RTM_SSE2_INTRINSICS)
 	//////////////////////////////////////////////////////////////////////////
-	// Writes a scalar to memory.
+	/// Writes a scalar to memory.
 	//////////////////////////////////////////////////////////////////////////
 	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE void RTM_SIMD_CALL scalar_store(scalard_arg0 input, double* output) RTM_NO_EXCEPT
 	{
@@ -69,7 +69,7 @@ namespace rtm
 #endif
 
 	//////////////////////////////////////////////////////////////////////////
-	// Writes a scalar to memory.
+	/// Writes a scalar to memory.
 	//////////////////////////////////////////////////////////////////////////
 	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE void RTM_SIMD_CALL scalar_store(double input, double* output) RTM_NO_EXCEPT
 	{
@@ -77,7 +77,7 @@ namespace rtm
 	}
 
 	//////////////////////////////////////////////////////////////////////////
-	// Casts a scalar into a floating point value.
+	/// Casts a scalar into a floating point value.
 	//////////////////////////////////////////////////////////////////////////
 	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE double RTM_SIMD_CALL scalar_cast(scalard_arg0 input) RTM_NO_EXCEPT
 	{
@@ -90,9 +90,9 @@ namespace rtm
 
 #if defined(RTM_SSE2_INTRINSICS)
 	//////////////////////////////////////////////////////////////////////////
-	// Returns the largest integer value not greater than the input (round towards minus infinity).
-	// scalar_floor(1.8) = 1.0
-	// scalar_floor(-1.8) = -2.0
+	/// Returns the largest integer value not greater than the input (round towards minus infinity).
+	/// scalar_floor(1.8) = 1.0
+	/// scalar_floor(-1.8) = -2.0
 	//////////////////////////////////////////////////////////////////////////
 	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE scalard RTM_SIMD_CALL scalar_floor(scalard_arg0 input) RTM_NO_EXCEPT
 	{
@@ -138,9 +138,9 @@ namespace rtm
 #endif
 
 	//////////////////////////////////////////////////////////////////////////
-	// Returns the largest integer value not greater than the input (round towards negative infinity).
-	// scalar_floor(1.8) = 1.0
-	// scalar_floor(-1.8) = -2.0
+	/// Returns the largest integer value not greater than the input (round towards negative infinity).
+	/// scalar_floor(1.8) = 1.0
+	/// scalar_floor(-1.8) = -2.0
 	//////////////////////////////////////////////////////////////////////////
 	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE double RTM_SIMD_CALL scalar_floor(double input) RTM_NO_EXCEPT
 	{
@@ -153,9 +153,9 @@ namespace rtm
 
 #if defined(RTM_SSE2_INTRINSICS)
 	//////////////////////////////////////////////////////////////////////////
-	// Returns the smallest integer value not less than the input (round towards positive infinity).
-	// scalar_ceil(1.8) = 2.0
-	// scalar_ceil(-1.8) = -1.0
+	/// Returns the smallest integer value not less than the input (round towards positive infinity).
+	/// scalar_ceil(1.8) = 2.0
+	/// scalar_ceil(-1.8) = -1.0
 	//////////////////////////////////////////////////////////////////////////
 	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE scalard RTM_SIMD_CALL scalar_ceil(scalard_arg0 input) RTM_NO_EXCEPT
 	{
@@ -201,9 +201,9 @@ namespace rtm
 #endif
 
 	//////////////////////////////////////////////////////////////////////////
-	// Returns the smallest integer value not less than the input (round towards positive infinity).
-	// scalar_ceil(1.8) = 2.0
-	// scalar_ceil(-1.8) = -1.0
+	/// Returns the smallest integer value not less than the input (round towards positive infinity).
+	/// scalar_ceil(1.8) = 2.0
+	/// scalar_ceil(-1.8) = -1.0
 	//////////////////////////////////////////////////////////////////////////
 	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE double RTM_SIMD_CALL scalar_ceil(double input) RTM_NO_EXCEPT
 	{
@@ -216,8 +216,8 @@ namespace rtm
 
 #if defined(RTM_SSE2_INTRINSICS)
 	//////////////////////////////////////////////////////////////////////////
-	// Returns the input if it is within the min/max values otherwise the
-	// exceeded boundary is returned.
+	/// Returns the input if it is within the min/max values otherwise the
+	/// exceeded boundary is returned.
 	//////////////////////////////////////////////////////////////////////////
 	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE scalard RTM_SIMD_CALL scalar_clamp(scalard_arg0 input, scalard_arg1 min, scalard_arg2 max) RTM_NO_EXCEPT
 	{
@@ -226,8 +226,8 @@ namespace rtm
 #endif
 
 	//////////////////////////////////////////////////////////////////////////
-	// Returns the input if it is within the min/max values otherwise the
-	// exceeded boundary is returned.
+	/// Returns the input if it is within the min/max values otherwise the
+	/// exceeded boundary is returned.
 	//////////////////////////////////////////////////////////////////////////
 	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE double RTM_SIMD_CALL scalar_clamp(double input, double min, double max) RTM_NO_EXCEPT
 	{
@@ -240,7 +240,7 @@ namespace rtm
 
 #if defined(RTM_SSE2_INTRINSICS)
 	//////////////////////////////////////////////////////////////////////////
-	// Returns the absolute value of the input.
+	/// Returns the absolute value of the input.
 	//////////////////////////////////////////////////////////////////////////
 	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE scalard RTM_SIMD_CALL scalar_abs(scalard_arg0 input) RTM_NO_EXCEPT
 	{
@@ -250,7 +250,7 @@ namespace rtm
 #endif
 
 	//////////////////////////////////////////////////////////////////////////
-	// Returns the absolute value of the input.
+	/// Returns the absolute value of the input.
 	//////////////////////////////////////////////////////////////////////////
 	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE double RTM_SIMD_CALL scalar_abs(double input) RTM_NO_EXCEPT
 	{
@@ -259,7 +259,7 @@ namespace rtm
 
 #if defined(RTM_SSE2_INTRINSICS)
 	//////////////////////////////////////////////////////////////////////////
-	// Returns the square root of the input.
+	/// Returns the square root of the input.
 	//////////////////////////////////////////////////////////////////////////
 	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE scalard RTM_SIMD_CALL scalar_sqrt(scalard_arg0 input) RTM_NO_EXCEPT
 	{
@@ -268,7 +268,7 @@ namespace rtm
 #endif
 
 	//////////////////////////////////////////////////////////////////////////
-	// Returns the square root of the input.
+	/// Returns the square root of the input.
 	//////////////////////////////////////////////////////////////////////////
 	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE double RTM_SIMD_CALL scalar_sqrt(double input) RTM_NO_EXCEPT
 	{
@@ -282,7 +282,7 @@ namespace rtm
 
 #if defined(RTM_SSE2_INTRINSICS)
 	//////////////////////////////////////////////////////////////////////////
-	// Returns the reciprocal square root of the input.
+	/// Returns the reciprocal square root of the input.
 	//////////////////////////////////////////////////////////////////////////
 	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE scalard RTM_SIMD_CALL scalar_sqrt_reciprocal(scalard_arg0 input) RTM_NO_EXCEPT
 	{
@@ -293,7 +293,7 @@ namespace rtm
 #endif
 
 	//////////////////////////////////////////////////////////////////////////
-	// Returns the reciprocal square root of the input.
+	/// Returns the reciprocal square root of the input.
 	//////////////////////////////////////////////////////////////////////////
 	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE double RTM_SIMD_CALL scalar_sqrt_reciprocal(double input) RTM_NO_EXCEPT
 	{
@@ -308,7 +308,7 @@ namespace rtm
 
 #if defined(RTM_SSE2_INTRINSICS)
 	//////////////////////////////////////////////////////////////////////////
-	// Returns the reciprocal of the input.
+	/// Returns the reciprocal of the input.
 	//////////////////////////////////////////////////////////////////////////
 	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE scalard RTM_SIMD_CALL scalar_reciprocal(scalard_arg0 input) RTM_NO_EXCEPT
 	{
@@ -317,7 +317,7 @@ namespace rtm
 #endif
 
 	//////////////////////////////////////////////////////////////////////////
-	// Returns the reciprocal of the input.
+	/// Returns the reciprocal of the input.
 	//////////////////////////////////////////////////////////////////////////
 	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE constexpr double RTM_SIMD_CALL scalar_reciprocal(double input) RTM_NO_EXCEPT
 	{
@@ -326,7 +326,7 @@ namespace rtm
 
 #if defined(RTM_SSE2_INTRINSICS)
 	//////////////////////////////////////////////////////////////////////////
-	// Returns the addition of the two scalar inputs.
+	/// Returns the addition of the two scalar inputs.
 	//////////////////////////////////////////////////////////////////////////
 	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE scalard RTM_SIMD_CALL scalar_add(scalard_arg0 lhs, scalard_arg1 rhs) RTM_NO_EXCEPT
 	{
@@ -335,7 +335,7 @@ namespace rtm
 #endif
 
 	//////////////////////////////////////////////////////////////////////////
-	// Returns the addition of the two scalar inputs.
+	/// Returns the addition of the two scalar inputs.
 	//////////////////////////////////////////////////////////////////////////
 	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE constexpr double RTM_SIMD_CALL scalar_add(double lhs, double rhs) RTM_NO_EXCEPT
 	{
@@ -344,7 +344,7 @@ namespace rtm
 
 #if defined(RTM_SSE2_INTRINSICS)
 	//////////////////////////////////////////////////////////////////////////
-	// Returns the subtraction of the two scalar inputs.
+	/// Returns the subtraction of the two scalar inputs.
 	//////////////////////////////////////////////////////////////////////////
 	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE scalard RTM_SIMD_CALL scalar_sub(scalard_arg0 lhs, scalard_arg1 rhs) RTM_NO_EXCEPT
 	{
@@ -353,7 +353,7 @@ namespace rtm
 #endif
 
 	//////////////////////////////////////////////////////////////////////////
-	// Returns the subtraction of the two scalar inputs.
+	/// Returns the subtraction of the two scalar inputs.
 	//////////////////////////////////////////////////////////////////////////
 	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE constexpr double RTM_SIMD_CALL scalar_sub(double lhs, double rhs) RTM_NO_EXCEPT
 	{
@@ -362,7 +362,7 @@ namespace rtm
 
 #if defined(RTM_SSE2_INTRINSICS)
 	//////////////////////////////////////////////////////////////////////////
-	// Returns the multiplication of the two scalar inputs.
+	/// Returns the multiplication of the two scalar inputs.
 	//////////////////////////////////////////////////////////////////////////
 	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE scalard RTM_SIMD_CALL scalar_mul(scalard_arg0 lhs, scalard_arg1 rhs) RTM_NO_EXCEPT
 	{
@@ -371,7 +371,7 @@ namespace rtm
 #endif
 
 	//////////////////////////////////////////////////////////////////////////
-	// Returns the multiplication of the two scalar inputs.
+	/// Returns the multiplication of the two scalar inputs.
 	//////////////////////////////////////////////////////////////////////////
 	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE constexpr double RTM_SIMD_CALL scalar_mul(double lhs, double rhs) RTM_NO_EXCEPT
 	{
@@ -380,7 +380,7 @@ namespace rtm
 
 #if defined(RTM_SSE2_INTRINSICS)
 	//////////////////////////////////////////////////////////////////////////
-	// Returns the division of the two scalar inputs.
+	/// Returns the division of the two scalar inputs.
 	//////////////////////////////////////////////////////////////////////////
 	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE scalard RTM_SIMD_CALL scalar_div(scalard_arg0 lhs, scalard_arg1 rhs) RTM_NO_EXCEPT
 	{
@@ -389,7 +389,7 @@ namespace rtm
 #endif
 
 	//////////////////////////////////////////////////////////////////////////
-	// Returns the division of the two scalar inputs.
+	/// Returns the division of the two scalar inputs.
 	//////////////////////////////////////////////////////////////////////////
 	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE constexpr double RTM_SIMD_CALL scalar_div(double lhs, double rhs) RTM_NO_EXCEPT
 	{
@@ -398,7 +398,7 @@ namespace rtm
 
 #if defined(RTM_SSE2_INTRINSICS)
 	//////////////////////////////////////////////////////////////////////////
-	// Returns the multiplication/addition of the three inputs: s2 + (s0 * s1)
+	/// Returns the multiplication/addition of the three inputs: s2 + (s0 * s1)
 	//////////////////////////////////////////////////////////////////////////
 	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE scalard RTM_SIMD_CALL scalar_mul_add(scalard_arg0 s0, scalard_arg1 s1, scalard_arg2 s2) RTM_NO_EXCEPT
 	{
@@ -407,7 +407,7 @@ namespace rtm
 #endif
 
 	//////////////////////////////////////////////////////////////////////////
-	// Returns the multiplication/addition of the three inputs: s2 + (s0 * s1)
+	/// Returns the multiplication/addition of the three inputs: s2 + (s0 * s1)
 	//////////////////////////////////////////////////////////////////////////
 	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE double RTM_SIMD_CALL scalar_mul_add(double s0, double s1, double s2) RTM_NO_EXCEPT
 	{
@@ -420,8 +420,8 @@ namespace rtm
 
 #if defined(RTM_SSE2_INTRINSICS)
 	//////////////////////////////////////////////////////////////////////////
-	// Returns the negative multiplication/subtraction of the three inputs: -((s0 * s1) - s2)
-	// This is mathematically equivalent to: s2 - (s0 * s1)
+	/// Returns the negative multiplication/subtraction of the three inputs: -((s0 * s1) - s2)
+	/// This is mathematically equivalent to: s2 - (s0 * s1)
 	//////////////////////////////////////////////////////////////////////////
 	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE scalard RTM_SIMD_CALL scalar_neg_mul_sub(scalard_arg0 s0, scalard_arg1 s1, scalard_arg2 s2) RTM_NO_EXCEPT
 	{
@@ -430,8 +430,8 @@ namespace rtm
 #endif
 
 	//////////////////////////////////////////////////////////////////////////
-	// Returns the negative multiplication/subtraction of the three inputs: -((s0 * s1) - s2)
-	// This is mathematically equivalent to: s2 - (s0 * s1)
+	/// Returns the negative multiplication/subtraction of the three inputs: -((s0 * s1) - s2)
+	/// This is mathematically equivalent to: s2 - (s0 * s1)
 	//////////////////////////////////////////////////////////////////////////
 	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE constexpr double RTM_SIMD_CALL scalar_neg_mul_sub(double s0, double s1, double s2) RTM_NO_EXCEPT
 	{
@@ -440,11 +440,11 @@ namespace rtm
 
 #if defined(RTM_SSE2_INTRINSICS)
 	//////////////////////////////////////////////////////////////////////////
-	// Returns the linear interpolation of the two inputs at the specified alpha.
-	// The formula used is: ((1.0 - alpha) * start) + (alpha * end).
-	// Interpolation is stable and will return 'start' when alpha is 0.0 and 'end' when it is 1.0.
-	// This is the same instruction count when FMA is present but it might be slightly slower
-	// due to the extra multiplication compared to: start + (alpha * (end - start)).
+	/// Returns the linear interpolation of the two inputs at the specified alpha.
+	/// The formula used is: ((1.0 - alpha) * start) + (alpha * end).
+	/// Interpolation is stable and will return 'start' when alpha is 0.0 and 'end' when it is 1.0.
+	/// This is the same instruction count when FMA is present but it might be slightly slower
+	/// due to the extra multiplication compared to: start + (alpha * (end - start)).
 	//////////////////////////////////////////////////////////////////////////
 	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE scalard RTM_SIMD_CALL scalar_lerp(scalard_arg0 start, scalard_arg1 end, scalard_arg2 alpha) RTM_NO_EXCEPT
 	{
@@ -454,11 +454,11 @@ namespace rtm
 #endif
 
 	//////////////////////////////////////////////////////////////////////////
-	// Returns the linear interpolation of the two inputs at the specified alpha.
-	// The formula used is: ((1.0 - alpha) * start) + (alpha * end).
-	// Interpolation is stable and will return 'start' when alpha is 0.0 and 'end' when it is 1.0.
-	// This is the same instruction count when FMA is present but it might be slightly slower
-	// due to the extra multiplication compared to: start + (alpha * (end - start)).
+	/// Returns the linear interpolation of the two inputs at the specified alpha.
+	/// The formula used is: ((1.0 - alpha) * start) + (alpha * end).
+	/// Interpolation is stable and will return 'start' when alpha is 0.0 and 'end' when it is 1.0.
+	/// This is the same instruction count when FMA is present but it might be slightly slower
+	/// due to the extra multiplication compared to: start + (alpha * (end - start)).
 	//////////////////////////////////////////////////////////////////////////
 	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE double RTM_SIMD_CALL scalar_lerp(double start, double end, double alpha) RTM_NO_EXCEPT
 	{
@@ -468,8 +468,8 @@ namespace rtm
 
 #if defined(RTM_SSE2_INTRINSICS)
 	//////////////////////////////////////////////////////////////////////////
-	// Returns the natural exponential of the input: e^input.
-	// The function uses the same algorithm as vector_exp(..): for the same input, the results are equal.
+	/// Returns the natural exponential of the input: e^input.
+	/// The function uses the same algorithm as vector_exp(..): for the same input, the results are equal.
 	//////////////////////////////////////////////////////////////////////////
 	RTM_DISABLE_SECURITY_COOKIE_CHECK inline scalard RTM_SIMD_CALL scalar_exp(scalard_arg0 input) RTM_NO_EXCEPT
 	{
@@ -478,8 +478,8 @@ namespace rtm
 #endif
 
 	//////////////////////////////////////////////////////////////////////////
-	// Returns the natural exponential of the input: e^input.
-	// The function uses the same algorithm as vector_exp(..): for the same input, the results are equal.
+	/// Returns the natural exponential of the input: e^input.
+	/// The function uses the same algorithm as vector_exp(..): for the same input, the results are equal.
 	//////////////////////////////////////////////////////////////////////////
 	RTM_DISABLE_SECURITY_COOKIE_CHECK inline double RTM_SIMD_CALL scalar_exp(double input) RTM_NO_EXCEPT
 	{
@@ -496,9 +496,9 @@ namespace rtm
 
 #if defined(RTM_SSE2_INTRINSICS)
 	//////////////////////////////////////////////////////////////////////////
-	// Returns the natural logarithm of the input.
-	// The function uses the same algorithm as vector_log(..): for the same input, the results are equal.
-	// The result is -inf when the input is zero, and NaN when the input is negative.
+	/// Returns the natural logarithm of the input.
+	/// The function uses the same algorithm as vector_log(..): for the same input, the results are equal.
+	/// The result is -inf when the input is zero, and NaN when the input is negative.
 	//////////////////////////////////////////////////////////////////////////
 	RTM_DISABLE_SECURITY_COOKIE_CHECK inline scalard RTM_SIMD_CALL scalar_log(scalard_arg0 input) RTM_NO_EXCEPT
 	{
@@ -507,9 +507,9 @@ namespace rtm
 #endif
 
 	//////////////////////////////////////////////////////////////////////////
-	// Returns the natural logarithm of the input.
-	// The function uses the same algorithm as vector_log(..): for the same input, the results are equal.
-	// The result is -inf when the input is zero, and NaN when the input is negative.
+	/// Returns the natural logarithm of the input.
+	/// The function uses the same algorithm as vector_log(..): for the same input, the results are equal.
+	/// The result is -inf when the input is zero, and NaN when the input is negative.
 	//////////////////////////////////////////////////////////////////////////
 	RTM_DISABLE_SECURITY_COOKIE_CHECK inline double RTM_SIMD_CALL scalar_log(double input) RTM_NO_EXCEPT
 	{
@@ -526,11 +526,11 @@ namespace rtm
 
 #if defined(RTM_SSE2_INTRINSICS)
 	//////////////////////////////////////////////////////////////////////////
-	// Returns the exponential interpolation of the two inputs at the specified alpha.
-	// The formula used is: start * (end / start)^alpha.
-	// For equal steps of alpha, the result changes by the same ratio. Use it to interpolate a scale.
-	// The result is 'start' when alpha is 0.0. It is approximately 'end' when alpha is 1.0.
-	// The two inputs must have the same sign and must not be zero. Otherwise, the result is undefined.
+	/// Returns the exponential interpolation of the two inputs at the specified alpha.
+	/// The formula used is: start * (end / start)^alpha.
+	/// For equal steps of alpha, the result changes by the same ratio. Use it to interpolate a scale.
+	/// The result is 'start' when alpha is 0.0. It is approximately 'end' when alpha is 1.0.
+	/// The two inputs must have the same sign and must not be zero. Otherwise, the result is undefined.
 	//////////////////////////////////////////////////////////////////////////
 	RTM_DISABLE_SECURITY_COOKIE_CHECK inline scalard RTM_SIMD_CALL scalar_eerp(scalard_arg0 start, scalard_arg1 end, scalard_arg2 alpha) RTM_NO_EXCEPT
 	{
@@ -540,11 +540,11 @@ namespace rtm
 #endif
 
 	//////////////////////////////////////////////////////////////////////////
-	// Returns the exponential interpolation of the two inputs at the specified alpha.
-	// The formula used is: start * (end / start)^alpha.
-	// For equal steps of alpha, the result changes by the same ratio. Use it to interpolate a scale.
-	// The result is 'start' when alpha is 0.0. It is approximately 'end' when alpha is 1.0.
-	// The two inputs must have the same sign and must not be zero. Otherwise, the result is undefined.
+	/// Returns the exponential interpolation of the two inputs at the specified alpha.
+	/// The formula used is: start * (end / start)^alpha.
+	/// For equal steps of alpha, the result changes by the same ratio. Use it to interpolate a scale.
+	/// The result is 'start' when alpha is 0.0. It is approximately 'end' when alpha is 1.0.
+	/// The two inputs must have the same sign and must not be zero. Otherwise, the result is undefined.
 	//////////////////////////////////////////////////////////////////////////
 	RTM_DISABLE_SECURITY_COOKIE_CHECK inline double RTM_SIMD_CALL scalar_eerp(double start, double end, double alpha) RTM_NO_EXCEPT
 	{
@@ -554,7 +554,7 @@ namespace rtm
 
 #if defined(RTM_SSE2_INTRINSICS)
 	//////////////////////////////////////////////////////////////////////////
-	// Returns the smallest of the two inputs.
+	/// Returns the smallest of the two inputs.
 	//////////////////////////////////////////////////////////////////////////
 	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE scalard RTM_SIMD_CALL scalar_min(scalard_arg0 lhs, scalard_arg1 rhs) RTM_NO_EXCEPT
 	{
@@ -563,7 +563,7 @@ namespace rtm
 #endif
 
 	//////////////////////////////////////////////////////////////////////////
-	// Returns the smallest of the two inputs.
+	/// Returns the smallest of the two inputs.
 	//////////////////////////////////////////////////////////////////////////
 	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE double RTM_SIMD_CALL scalar_min(double left, double right) RTM_NO_EXCEPT
 	{
@@ -576,7 +576,7 @@ namespace rtm
 
 #if defined(RTM_SSE2_INTRINSICS)
 	//////////////////////////////////////////////////////////////////////////
-	// Returns the largest of the two inputs.
+	/// Returns the largest of the two inputs.
 	//////////////////////////////////////////////////////////////////////////
 	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE scalard RTM_SIMD_CALL scalar_max(scalard_arg0 lhs, scalard_arg1 rhs) RTM_NO_EXCEPT
 	{
@@ -585,7 +585,7 @@ namespace rtm
 #endif
 
 	//////////////////////////////////////////////////////////////////////////
-	// Returns the largest of the two inputs.
+	/// Returns the largest of the two inputs.
 	//////////////////////////////////////////////////////////////////////////
 	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE double RTM_SIMD_CALL scalar_max(double left, double right) RTM_NO_EXCEPT
 	{
@@ -598,7 +598,7 @@ namespace rtm
 
 #if defined(RTM_SSE2_INTRINSICS)
 	//////////////////////////////////////////////////////////////////////////
-	// Returns true if both inputs are equal, false otherwise.
+	/// Returns true if both inputs are equal, false otherwise.
 	//////////////////////////////////////////////////////////////////////////
 	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE bool RTM_SIMD_CALL scalar_equal(scalard_arg0 lhs, scalard_arg1 rhs) RTM_NO_EXCEPT
 	{
@@ -607,7 +607,7 @@ namespace rtm
 #endif
 
 	//////////////////////////////////////////////////////////////////////////
-	// Returns true if both inputs are equal, false otherwise.
+	/// Returns true if both inputs are equal, false otherwise.
 	//////////////////////////////////////////////////////////////////////////
 	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE constexpr bool RTM_SIMD_CALL scalar_equal(double lhs, double rhs) RTM_NO_EXCEPT
 	{
@@ -616,7 +616,7 @@ namespace rtm
 
 #if defined(RTM_SSE2_INTRINSICS)
 	//////////////////////////////////////////////////////////////////////////
-	// Returns true if lhs < rhs, false otherwise.
+	/// Returns true if lhs < rhs, false otherwise.
 	//////////////////////////////////////////////////////////////////////////
 	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE bool RTM_SIMD_CALL scalar_lower_than(scalard_arg0 lhs, scalard_arg1 rhs) RTM_NO_EXCEPT
 	{
@@ -625,7 +625,7 @@ namespace rtm
 #endif
 
 	//////////////////////////////////////////////////////////////////////////
-	// Returns true if lhs < rhs, false otherwise.
+	/// Returns true if lhs < rhs, false otherwise.
 	//////////////////////////////////////////////////////////////////////////
 	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE constexpr bool RTM_SIMD_CALL scalar_lower_than(double lhs, double rhs) RTM_NO_EXCEPT
 	{
@@ -634,7 +634,7 @@ namespace rtm
 
 #if defined(RTM_SSE2_INTRINSICS)
 	//////////////////////////////////////////////////////////////////////////
-	// Returns true if lhs <= rhs, false otherwise.
+	/// Returns true if lhs <= rhs, false otherwise.
 	//////////////////////////////////////////////////////////////////////////
 	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE bool RTM_SIMD_CALL scalar_lower_equal(scalard_arg0 lhs, scalard_arg1 rhs) RTM_NO_EXCEPT
 	{
@@ -643,7 +643,7 @@ namespace rtm
 #endif
 
 	//////////////////////////////////////////////////////////////////////////
-	// Returns true if lhs <= rhs, false otherwise.
+	/// Returns true if lhs <= rhs, false otherwise.
 	//////////////////////////////////////////////////////////////////////////
 	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE constexpr bool RTM_SIMD_CALL scalar_lower_equal(double lhs, double rhs) RTM_NO_EXCEPT
 	{
@@ -652,7 +652,7 @@ namespace rtm
 
 #if defined(RTM_SSE2_INTRINSICS)
 	//////////////////////////////////////////////////////////////////////////
-	// Returns true if lhs > rhs, false otherwise.
+	/// Returns true if lhs > rhs, false otherwise.
 	//////////////////////////////////////////////////////////////////////////
 	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE bool RTM_SIMD_CALL scalar_greater_than(scalard_arg0 lhs, scalard_arg1 rhs) RTM_NO_EXCEPT
 	{
@@ -661,7 +661,7 @@ namespace rtm
 #endif
 
 	//////////////////////////////////////////////////////////////////////////
-	// Returns true if lhs > rhs, false otherwise.
+	/// Returns true if lhs > rhs, false otherwise.
 	//////////////////////////////////////////////////////////////////////////
 	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE constexpr bool RTM_SIMD_CALL scalar_greater_than(double lhs, double rhs) RTM_NO_EXCEPT
 	{
@@ -670,7 +670,7 @@ namespace rtm
 
 #if defined(RTM_SSE2_INTRINSICS)
 	//////////////////////////////////////////////////////////////////////////
-	// Returns true if lhs >= rhs, false otherwise.
+	/// Returns true if lhs >= rhs, false otherwise.
 	//////////////////////////////////////////////////////////////////////////
 	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE bool RTM_SIMD_CALL scalar_greater_equal(scalard_arg0 lhs, scalard_arg1 rhs) RTM_NO_EXCEPT
 	{
@@ -679,7 +679,7 @@ namespace rtm
 #endif
 
 	//////////////////////////////////////////////////////////////////////////
-	// Returns true if lhs >= rhs, false otherwise.
+	/// Returns true if lhs >= rhs, false otherwise.
 	//////////////////////////////////////////////////////////////////////////
 	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE constexpr bool RTM_SIMD_CALL scalar_greater_equal(double lhs, double rhs) RTM_NO_EXCEPT
 	{
@@ -688,7 +688,7 @@ namespace rtm
 
 #if defined(RTM_SSE2_INTRINSICS)
 	//////////////////////////////////////////////////////////////////////////
-	// Returns true if both inputs are nearly equal, otherwise false: abs(lhs - rhs) <= threshold
+	/// Returns true if both inputs are nearly equal, otherwise false: abs(lhs - rhs) <= threshold
 	//////////////////////////////////////////////////////////////////////////
 	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE bool RTM_SIMD_CALL scalar_near_equal(scalard_arg0 lhs, scalard_arg1 rhs, scalard_arg2 threshold) RTM_NO_EXCEPT
 	{
@@ -697,7 +697,7 @@ namespace rtm
 #endif
 
 	//////////////////////////////////////////////////////////////////////////
-	// Returns true if both inputs are nearly equal, otherwise false: abs(lhs - rhs) <= threshold
+	/// Returns true if both inputs are nearly equal, otherwise false: abs(lhs - rhs) <= threshold
 	//////////////////////////////////////////////////////////////////////////
 	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE bool RTM_SIMD_CALL scalar_near_equal(double lhs, double rhs, double threshold) RTM_NO_EXCEPT
 	{
@@ -706,7 +706,7 @@ namespace rtm
 
 #if defined(RTM_SSE2_INTRINSICS)
 	//////////////////////////////////////////////////////////////////////////
-	// Returns true if the input is finite (not NaN or Inf), false otherwise.
+	/// Returns true if the input is finite (not NaN or Inf), false otherwise.
 	//////////////////////////////////////////////////////////////////////////
 	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE bool RTM_SIMD_CALL scalar_is_finite(scalard_arg0 input) RTM_NO_EXCEPT
 	{
@@ -724,7 +724,7 @@ namespace rtm
 #endif
 
 	//////////////////////////////////////////////////////////////////////////
-	// Returns true if the input is finite (not NaN or Inf), false otherwise.
+	/// Returns true if the input is finite (not NaN or Inf), false otherwise.
 	//////////////////////////////////////////////////////////////////////////
 	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE bool RTM_SIMD_CALL scalar_is_finite(double input) RTM_NO_EXCEPT
 	{
@@ -733,12 +733,12 @@ namespace rtm
 
 #if defined(RTM_SSE2_INTRINSICS)
 	//////////////////////////////////////////////////////////////////////////
-	// Returns the rounded input using a symmetric algorithm.
-	// scalar_symmetric_round(1.5) = 2.0
-	// scalar_symmetric_round(1.2) = 1.0
-	// scalar_symmetric_round(-1.5) = -2.0
-	// scalar_symmetric_round(-1.2) = -1.0
-	// Note: This function relies on the default floating point rounding mode (banker's rounding).
+	/// Returns the rounded input using a symmetric algorithm.
+	/// scalar_symmetric_round(1.5) = 2.0
+	/// scalar_symmetric_round(1.2) = 1.0
+	/// scalar_symmetric_round(-1.5) = -2.0
+	/// scalar_symmetric_round(-1.2) = -1.0
+	/// Note: This function relies on the default floating point rounding mode (banker's rounding).
 	//////////////////////////////////////////////////////////////////////////
 	RTM_DISABLE_SECURITY_COOKIE_CHECK inline scalard RTM_SIMD_CALL scalar_round_symmetric(scalard_arg0 input) RTM_NO_EXCEPT
 	{
@@ -799,11 +799,11 @@ namespace rtm
 #endif
 
 	//////////////////////////////////////////////////////////////////////////
-	// Returns the rounded input using a symmetric algorithm.
-	// scalar_round_symmetric(1.5) = 2.0
-	// scalar_round_symmetric(1.2) = 1.0
-	// scalar_round_symmetric(-1.5) = -2.0
-	// scalar_round_symmetric(-1.2) = -1.0
+	/// Returns the rounded input using a symmetric algorithm.
+	/// scalar_round_symmetric(1.5) = 2.0
+	/// scalar_round_symmetric(1.2) = 1.0
+	/// scalar_round_symmetric(-1.5) = -2.0
+	/// scalar_round_symmetric(-1.2) = -1.0
 	//////////////////////////////////////////////////////////////////////////
 	RTM_DISABLE_SECURITY_COOKIE_CHECK inline double RTM_SIMD_CALL scalar_round_symmetric(double input) RTM_NO_EXCEPT
 	{
@@ -839,14 +839,14 @@ namespace rtm
 
 #if defined(RTM_SSE2_INTRINSICS)
 	//////////////////////////////////////////////////////////////////////////
-	// Returns the rounded input using banker's rounding (half to even).
-	// scalar_round_bankers(2.5) = 2.0
-	// scalar_round_bankers(1.5) = 2.0
-	// scalar_round_bankers(1.2) = 1.0
-	// scalar_round_bankers(-2.5) = -2.0
-	// scalar_round_bankers(-1.5) = -2.0
-	// scalar_round_bankers(-1.2) = -1.0
-	// Note: This function relies on the default floating point rounding mode (banker's rounding).
+	/// Returns the rounded input using banker's rounding (half to even).
+	/// scalar_round_bankers(2.5) = 2.0
+	/// scalar_round_bankers(1.5) = 2.0
+	/// scalar_round_bankers(1.2) = 1.0
+	/// scalar_round_bankers(-2.5) = -2.0
+	/// scalar_round_bankers(-1.5) = -2.0
+	/// scalar_round_bankers(-1.2) = -1.0
+	/// Note: This function relies on the default floating point rounding mode (banker's rounding).
 	//////////////////////////////////////////////////////////////////////////
 	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE scalard RTM_SIMD_CALL scalar_round_bankers(scalard_arg0 input) RTM_NO_EXCEPT
 	{
@@ -880,13 +880,13 @@ namespace rtm
 #endif
 
 	//////////////////////////////////////////////////////////////////////////
-	// Returns the rounded input using banker's rounding (half to even).
-	// scalar_round_bankers(2.5) = 2.0
-	// scalar_round_bankers(1.5) = 2.0
-	// scalar_round_bankers(1.2) = 1.0
-	// scalar_round_bankers(-2.5) = -2.0
-	// scalar_round_bankers(-1.5) = -2.0
-	// scalar_round_bankers(-1.2) = -1.0
+	/// Returns the rounded input using banker's rounding (half to even).
+	/// scalar_round_bankers(2.5) = 2.0
+	/// scalar_round_bankers(1.5) = 2.0
+	/// scalar_round_bankers(1.2) = 1.0
+	/// scalar_round_bankers(-2.5) = -2.0
+	/// scalar_round_bankers(-1.5) = -2.0
+	/// scalar_round_bankers(-1.2) = -1.0
 	//////////////////////////////////////////////////////////////////////////
 	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE double RTM_SIMD_CALL scalar_round_bankers(double input) RTM_NO_EXCEPT
 	{
@@ -919,7 +919,7 @@ namespace rtm
 	}
 
 	//////////////////////////////////////////////////////////////////////////
-	// Returns the fractional part of the input.
+	/// Returns the fractional part of the input.
 	//////////////////////////////////////////////////////////////////////////
 	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE double RTM_SIMD_CALL scalar_fraction(double value) RTM_NO_EXCEPT
 	{
@@ -927,7 +927,7 @@ namespace rtm
 	}
 
 	//////////////////////////////////////////////////////////////////////////
-	// Safely casts an integral input into a float64 output.
+	/// Safely casts an integral input into a float64 output.
 	//////////////////////////////////////////////////////////////////////////
 	template<typename SrcIntegralType>
 	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE double RTM_SIMD_CALL scalar_safe_to_double(SrcIntegralType input) RTM_NO_EXCEPT
@@ -938,12 +938,13 @@ namespace rtm
 	}
 
 	//////////////////////////////////////////////////////////////////////////
-	// Trigonometric functions
+	/// \name Trigonometric functions
+	/// \{
 	//////////////////////////////////////////////////////////////////////////
 
 #if defined(RTM_SSE2_INTRINSICS)
 	//////////////////////////////////////////////////////////////////////////
-	// Returns the sine of the input angle.
+	/// Returns the sine of the input angle.
 	//////////////////////////////////////////////////////////////////////////
 	RTM_DISABLE_SECURITY_COOKIE_CHECK inline scalard RTM_SIMD_CALL scalar_sin(scalard_arg0 angle) RTM_NO_EXCEPT
 	{
@@ -952,7 +953,7 @@ namespace rtm
 #endif
 
 	//////////////////////////////////////////////////////////////////////////
-	// Returns the sine of the input angle.
+	/// Returns the sine of the input angle.
 	//////////////////////////////////////////////////////////////////////////
 	RTM_DISABLE_SECURITY_COOKIE_CHECK inline double RTM_SIMD_CALL scalar_sin(double angle) RTM_NO_EXCEPT
 	{
@@ -961,7 +962,7 @@ namespace rtm
 
 #if defined(RTM_SSE2_INTRINSICS)
 	//////////////////////////////////////////////////////////////////////////
-	// Returns the cosine of the input angle.
+	/// Returns the cosine of the input angle.
 	//////////////////////////////////////////////////////////////////////////
 	RTM_DISABLE_SECURITY_COOKIE_CHECK inline scalard RTM_SIMD_CALL scalar_cos(scalard_arg0 angle) RTM_NO_EXCEPT
 	{
@@ -970,7 +971,7 @@ namespace rtm
 #endif
 
 	//////////////////////////////////////////////////////////////////////////
-	// Returns the cosine of the input angle.
+	/// Returns the cosine of the input angle.
 	//////////////////////////////////////////////////////////////////////////
 	RTM_DISABLE_SECURITY_COOKIE_CHECK inline double RTM_SIMD_CALL scalar_cos(double angle) RTM_NO_EXCEPT
 	{
@@ -979,7 +980,7 @@ namespace rtm
 
 #if defined(RTM_SSE2_INTRINSICS)
 	//////////////////////////////////////////////////////////////////////////
-	// Returns both sine and cosine of the input angle.
+	/// Returns both sine and cosine of the input angle.
 	//////////////////////////////////////////////////////////////////////////
 	RTM_DISABLE_SECURITY_COOKIE_CHECK inline vector4d RTM_SIMD_CALL scalar_sincos(scalard_arg0 angle) RTM_NO_EXCEPT
 	{
@@ -992,10 +993,10 @@ namespace rtm
 #endif
 
 	//////////////////////////////////////////////////////////////////////////
-	// Returns both sine and cosine of the input angle.
-	// The result's [x] component contains sin(angle).
-	// The result's [y] component contains cos(angle).
-	// [zw] are undefined.
+	/// Returns both sine and cosine of the input angle.
+	/// The result's [x] component contains sin(angle).
+	/// The result's [y] component contains cos(angle).
+	/// [zw] are undefined.
 	//////////////////////////////////////////////////////////////////////////
 	RTM_DISABLE_SECURITY_COOKIE_CHECK inline vector4d RTM_SIMD_CALL scalar_sincos(double angle) RTM_NO_EXCEPT
 	{
@@ -1018,7 +1019,7 @@ namespace rtm
 	}
 
 	//////////////////////////////////////////////////////////////////////////
-	// Returns both sine and cosine of the input angle.
+	/// Returns both sine and cosine of the input angle.
 	//////////////////////////////////////////////////////////////////////////
 	RTM_DISABLE_SECURITY_COOKIE_CHECK inline void RTM_SIMD_CALL scalar_sincos(double angle, double& out_sin, double& out_cos) RTM_NO_EXCEPT
 	{
@@ -1028,8 +1029,8 @@ namespace rtm
 
 #if defined(RTM_SSE2_INTRINSICS)
 	//////////////////////////////////////////////////////////////////////////
-	// Returns the arc-sine of the input.
-	// Input value must be in the range [-1.0, 1.0].
+	/// Returns the arc-sine of the input.
+	/// Input value must be in the range [-1.0, 1.0].
 	//////////////////////////////////////////////////////////////////////////
 	RTM_DISABLE_SECURITY_COOKIE_CHECK inline scalard RTM_SIMD_CALL scalar_asin(scalard_arg0 value) RTM_NO_EXCEPT
 	{
@@ -1038,8 +1039,8 @@ namespace rtm
 #endif
 
 	//////////////////////////////////////////////////////////////////////////
-	// Returns the arc-sine of the input.
-	// Input value must be in the range [-1.0, 1.0].
+	/// Returns the arc-sine of the input.
+	/// Input value must be in the range [-1.0, 1.0].
 	//////////////////////////////////////////////////////////////////////////
 	RTM_DISABLE_SECURITY_COOKIE_CHECK inline double RTM_SIMD_CALL scalar_asin(double value) RTM_NO_EXCEPT
 	{
@@ -1048,8 +1049,8 @@ namespace rtm
 
 #if defined(RTM_SSE2_INTRINSICS)
 	//////////////////////////////////////////////////////////////////////////
-	// Returns the arc-cosine of the input.
-	// Input value must be in the range [-1.0, 1.0].
+	/// Returns the arc-cosine of the input.
+	/// Input value must be in the range [-1.0, 1.0].
 	//////////////////////////////////////////////////////////////////////////
 	RTM_DISABLE_SECURITY_COOKIE_CHECK inline scalard RTM_SIMD_CALL scalar_acos(scalard_arg0 value) RTM_NO_EXCEPT
 	{
@@ -1058,8 +1059,8 @@ namespace rtm
 #endif
 
 	//////////////////////////////////////////////////////////////////////////
-	// Returns the arc-cosine of the input.
-	// Input value must be in the range [-1.0, 1.0].
+	/// Returns the arc-cosine of the input.
+	/// Input value must be in the range [-1.0, 1.0].
 	//////////////////////////////////////////////////////////////////////////
 	RTM_DISABLE_SECURITY_COOKIE_CHECK inline double RTM_SIMD_CALL scalar_acos(double value) RTM_NO_EXCEPT
 	{
@@ -1068,7 +1069,7 @@ namespace rtm
 
 #if defined(RTM_SSE2_INTRINSICS)
 	//////////////////////////////////////////////////////////////////////////
-	// Returns the tangent of the input angle.
+	/// Returns the tangent of the input angle.
 	//////////////////////////////////////////////////////////////////////////
 	RTM_DISABLE_SECURITY_COOKIE_CHECK inline scalard RTM_SIMD_CALL scalar_tan(scalard_arg0 angle) RTM_NO_EXCEPT
 	{
@@ -1077,7 +1078,7 @@ namespace rtm
 #endif
 
 	//////////////////////////////////////////////////////////////////////////
-	// Returns the tangent of the input angle.
+	/// Returns the tangent of the input angle.
 	//////////////////////////////////////////////////////////////////////////
 	RTM_DISABLE_SECURITY_COOKIE_CHECK inline double RTM_SIMD_CALL scalar_tan(double angle) RTM_NO_EXCEPT
 	{
@@ -1086,9 +1087,9 @@ namespace rtm
 
 #if defined(RTM_SSE2_INTRINSICS)
 	//////////////////////////////////////////////////////////////////////////
-	// Returns the arc-tangent of the input.
-	// Note that due to the sign ambiguity, atan cannot determine which quadrant
-	// the value resides in. See scalar_atan2.
+	/// Returns the arc-tangent of the input.
+	/// Note that due to the sign ambiguity, atan cannot determine which quadrant
+	/// the value resides in. See scalar_atan2.
 	//////////////////////////////////////////////////////////////////////////
 	RTM_DISABLE_SECURITY_COOKIE_CHECK inline scalard RTM_SIMD_CALL scalar_atan(scalard_arg0 value) RTM_NO_EXCEPT
 	{
@@ -1097,9 +1098,9 @@ namespace rtm
 #endif
 
 	//////////////////////////////////////////////////////////////////////////
-	// Returns the arc-tangent of the input.
-	// Note that due to the sign ambiguity, atan cannot determine which quadrant
-	// the value resides in. See scalar_atan2.
+	/// Returns the arc-tangent of the input.
+	/// Note that due to the sign ambiguity, atan cannot determine which quadrant
+	/// the value resides in. See scalar_atan2.
 	//////////////////////////////////////////////////////////////////////////
 	RTM_DISABLE_SECURITY_COOKIE_CHECK inline double RTM_SIMD_CALL scalar_atan(double value) RTM_NO_EXCEPT
 	{
@@ -1108,10 +1109,10 @@ namespace rtm
 
 #if defined(RTM_SSE2_INTRINSICS)
 	//////////////////////////////////////////////////////////////////////////
-	// Returns the arc-tangent of [y/x] using the sign of the arguments to
-	// determine the correct quadrant.
-	// Y represents the proportion of the y-coordinate.
-	// X represents the proportion of the x-coordinate.
+	/// Returns the arc-tangent of [y/x] using the sign of the arguments to
+	/// determine the correct quadrant.
+	/// Y represents the proportion of the y-coordinate.
+	/// X represents the proportion of the x-coordinate.
 	//////////////////////////////////////////////////////////////////////////
 	RTM_DISABLE_SECURITY_COOKIE_CHECK inline scalard RTM_SIMD_CALL scalar_atan2(scalard_arg0 y, scalard_arg1 x) RTM_NO_EXCEPT
 	{
@@ -1158,10 +1159,10 @@ namespace rtm
 #endif
 
 	//////////////////////////////////////////////////////////////////////////
-	// Returns the arc-tangent of [y/x] using the sign of the arguments to
-	// determine the correct quadrant.
-	// Y represents the proportion of the y-coordinate.
-	// X represents the proportion of the x-coordinate.
+	/// Returns the arc-tangent of [y/x] using the sign of the arguments to
+	/// determine the correct quadrant.
+	/// Y represents the proportion of the y-coordinate.
+	/// X represents the proportion of the x-coordinate.
 	//////////////////////////////////////////////////////////////////////////
 	RTM_DISABLE_SECURITY_COOKIE_CHECK inline double RTM_SIMD_CALL scalar_atan2(double y, double x) RTM_NO_EXCEPT
 	{
@@ -1188,7 +1189,7 @@ namespace rtm
 	}
 
 	//////////////////////////////////////////////////////////////////////////
-	// Converts degrees into radians.
+	/// Converts degrees into radians.
 	//////////////////////////////////////////////////////////////////////////
 	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE constexpr double RTM_SIMD_CALL scalar_deg_to_rad(double deg) RTM_NO_EXCEPT
 	{
@@ -1196,12 +1197,14 @@ namespace rtm
 	}
 
 	//////////////////////////////////////////////////////////////////////////
-	// Converts radians into degrees.
+	/// Converts radians into degrees.
 	//////////////////////////////////////////////////////////////////////////
 	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE constexpr double RTM_SIMD_CALL scalar_rad_to_deg(double rad) RTM_NO_EXCEPT
 	{
 		return rad * constants::one_eighty_div_pi();
 	}
+
+	/// \}
 
 	RTM_IMPL_VERSION_NAMESPACE_END
 }

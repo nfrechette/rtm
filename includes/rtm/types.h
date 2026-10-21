@@ -37,14 +37,14 @@ namespace rtm
 
 #if defined(RTM_SSE2_INTRINSICS)
 	//////////////////////////////////////////////////////////////////////////
-	// A quaternion (4D complex number) where the imaginary part is the [w] component.
-	// It accurately represents a 3D rotation with no gimbal lock as long as it is kept normalized.
+	/// A quaternion (4D complex number) where the imaginary part is the [w] component.
+	/// It accurately represents a 3D rotation with no gimbal lock as long as it is kept normalized.
 	//////////////////////////////////////////////////////////////////////////
 	using quatf = __m128;
 
 	//////////////////////////////////////////////////////////////////////////
-	// A quaternion (4D complex number) where the imaginary part is the [w] component.
-	// It accurately represents a 3D rotation with no gimbal lock as long as it is kept normalized.
+	/// A quaternion (4D complex number) where the imaginary part is the [w] component.
+	/// It accurately represents a 3D rotation with no gimbal lock as long as it is kept normalized.
 	//////////////////////////////////////////////////////////////////////////
 	struct quatd
 	{
@@ -53,12 +53,12 @@ namespace rtm
 	};
 
 	//////////////////////////////////////////////////////////////////////////
-	// A 4D vector.
+	/// A 4D vector.
 	//////////////////////////////////////////////////////////////////////////
 	using vector4f = __m128;
 
 	//////////////////////////////////////////////////////////////////////////
-	// A 4D vector.
+	/// A 4D vector.
 	//////////////////////////////////////////////////////////////////////////
 	struct vector4d
 	{
@@ -67,12 +67,12 @@ namespace rtm
 	};
 
 	//////////////////////////////////////////////////////////////////////////
-	// A 4x32 bit vector comparison mask for 32 bit floats: ~0 if true, 0 otherwise.
+	/// A 4x32 bit vector comparison mask for 32 bit floats: ~0 if true, 0 otherwise.
 	//////////////////////////////////////////////////////////////////////////
 	using mask4f = __m128;
 
 	//////////////////////////////////////////////////////////////////////////
-	// A 4x64 bit vector comparison mask for 64 bit floats: ~0 if true, 0 otherwise.
+	/// A 4x64 bit vector comparison mask for 64 bit floats: ~0 if true, 0 otherwise.
 	//////////////////////////////////////////////////////////////////////////
 	struct mask4d
 	{
@@ -81,12 +81,12 @@ namespace rtm
 	};
 
 	//////////////////////////////////////////////////////////////////////////
-	// A 4x32 bit vector comparison mask: ~0 if true, 0 otherwise.
+	/// A 4x32 bit vector comparison mask: ~0 if true, 0 otherwise.
 	//////////////////////////////////////////////////////////////////////////
 	using mask4i = __m128i;
 
 	//////////////////////////////////////////////////////////////////////////
-	// A 4x64 bit vector comparison mask: ~0 if true, 0 otherwise.
+	/// A 4x64 bit vector comparison mask: ~0 if true, 0 otherwise.
 	//////////////////////////////////////////////////////////////////////////
 	struct mask4q
 	{
@@ -95,15 +95,15 @@ namespace rtm
 	};
 #elif defined(RTM_NEON_INTRINSICS)
 	//////////////////////////////////////////////////////////////////////////
-	// A quaternion (4D complex number) where the imaginary part is the [w] component.
-	// It accurately represents a 3D rotation with no gimbal lock as long as it is kept normalized.
+	/// A quaternion (4D complex number) where the imaginary part is the [w] component.
+	/// It accurately represents a 3D rotation with no gimbal lock as long as it is kept normalized.
 	//////////////////////////////////////////////////////////////////////////
 	using quatf = float32x4_t;
 
 #if defined(RTM_NEON64_INTRINSICS)
 	//////////////////////////////////////////////////////////////////////////
-	// A quaternion (4D complex number) where the imaginary part is the [w] component.
-	// It accurately represents a 3D rotation with no gimbal lock as long as it is kept normalized.
+	/// A quaternion (4D complex number) where the imaginary part is the [w] component.
+	/// It accurately represents a 3D rotation with no gimbal lock as long as it is kept normalized.
 	//////////////////////////////////////////////////////////////////////////
 	struct quatd
 	{
@@ -112,8 +112,8 @@ namespace rtm
 	};
 #else
 	//////////////////////////////////////////////////////////////////////////
-	// A quaternion (4D complex number) where the imaginary part is the [w] component.
-	// It accurately represents a 3D rotation with no gimbal lock as long as it is kept normalized.
+	/// A quaternion (4D complex number) where the imaginary part is the [w] component.
+	/// It accurately represents a 3D rotation with no gimbal lock as long as it is kept normalized.
 	//////////////////////////////////////////////////////////////////////////
 	struct alignas(16) quatd
 	{
@@ -125,13 +125,13 @@ namespace rtm
 #endif
 
 	//////////////////////////////////////////////////////////////////////////
-	// A 4D vector.
+	/// A 4D vector.
 	//////////////////////////////////////////////////////////////////////////
 	using vector4f = float32x4_t;
 
 #if defined(RTM_NEON64_INTRINSICS)
 	//////////////////////////////////////////////////////////////////////////
-	// A 4D vector.
+	/// A 4D vector.
 	//////////////////////////////////////////////////////////////////////////
 	struct vector4d
 	{
@@ -140,7 +140,7 @@ namespace rtm
 	};
 #else
 	//////////////////////////////////////////////////////////////////////////
-	// A 4D vector.
+	/// A 4D vector.
 	//////////////////////////////////////////////////////////////////////////
 	struct alignas(16) vector4d
 	{
@@ -152,13 +152,13 @@ namespace rtm
 #endif
 
 	//////////////////////////////////////////////////////////////////////////
-	// A 4x32 bit vector comparison mask for 32 bit floats: ~0 if true, 0 otherwise.
+	/// A 4x32 bit vector comparison mask for 32 bit floats: ~0 if true, 0 otherwise.
 	//////////////////////////////////////////////////////////////////////////
 	using mask4f = uint32x4_t;
 
 #if defined(RTM_NEON64_INTRINSICS)
 	//////////////////////////////////////////////////////////////////////////
-	// A 4x64 bit vector comparison mask for 64 bit floats: ~0 if true, 0 otherwise.
+	/// A 4x64 bit vector comparison mask for 64 bit floats: ~0 if true, 0 otherwise.
 	//////////////////////////////////////////////////////////////////////////
 	struct mask4d
 	{
@@ -167,7 +167,7 @@ namespace rtm
 	};
 #else
 	//////////////////////////////////////////////////////////////////////////
-	// A 4x64 bit vector comparison mask for 64 bit floats: ~0 if true, 0 otherwise.
+	/// A 4x64 bit vector comparison mask for 64 bit floats: ~0 if true, 0 otherwise.
 	//////////////////////////////////////////////////////////////////////////
 	struct alignas(16) mask4d
 	{
@@ -183,7 +183,7 @@ namespace rtm
 	// To avoid issues of duplicate symbols, we introduce a concrete type for mask4i
 
 	//////////////////////////////////////////////////////////////////////////
-	// A 4x32 bit vector comparison mask for 32 bit integers: ~0 if true, 0 otherwise.
+	/// A 4x32 bit vector comparison mask for 32 bit integers: ~0 if true, 0 otherwise.
 	//////////////////////////////////////////////////////////////////////////
 	struct alignas(16) mask4i
 	{
@@ -196,7 +196,7 @@ namespace rtm
 
 #if defined(RTM_NEON64_INTRINSICS)
 	//////////////////////////////////////////////////////////////////////////
-	// A 4x64 bit vector comparison mask for 64 bit integers: ~0 if true, 0 otherwise.
+	/// A 4x64 bit vector comparison mask for 64 bit integers: ~0 if true, 0 otherwise.
 	//////////////////////////////////////////////////////////////////////////
 	struct mask4q
 	{
@@ -205,7 +205,7 @@ namespace rtm
 	};
 #else
 	//////////////////////////////////////////////////////////////////////////
-	// A 4x64 bit vector comparison mask for 64 bit integers: ~0 if true, 0 otherwise.
+	/// A 4x64 bit vector comparison mask for 64 bit integers: ~0 if true, 0 otherwise.
 	//////////////////////////////////////////////////////////////////////////
 	struct alignas(16) mask4q
 	{
@@ -220,14 +220,14 @@ namespace rtm
 	// Thus, quatf, vector4f, and mask4f are aliases of the same type, as they are with SSE2.
 
 	//////////////////////////////////////////////////////////////////////////
-	// A quaternion (4D complex number) where the imaginary part is the [w] component.
-	// It accurately represents a 3D rotation with no gimbal lock as long as it is kept normalized.
+	/// A quaternion (4D complex number) where the imaginary part is the [w] component.
+	/// It accurately represents a 3D rotation with no gimbal lock as long as it is kept normalized.
 	//////////////////////////////////////////////////////////////////////////
 	using quatf = v128_t;
 
 	//////////////////////////////////////////////////////////////////////////
-	// A quaternion (4D complex number) where the imaginary part is the [w] component.
-	// It accurately represents a 3D rotation with no gimbal lock as long as it is kept normalized.
+	/// A quaternion (4D complex number) where the imaginary part is the [w] component.
+	/// It accurately represents a 3D rotation with no gimbal lock as long as it is kept normalized.
 	//////////////////////////////////////////////////////////////////////////
 	struct quatd
 	{
@@ -236,12 +236,12 @@ namespace rtm
 	};
 
 	//////////////////////////////////////////////////////////////////////////
-	// A 4D vector.
+	/// A 4D vector.
 	//////////////////////////////////////////////////////////////////////////
 	using vector4f = v128_t;
 
 	//////////////////////////////////////////////////////////////////////////
-	// A 4D vector.
+	/// A 4D vector.
 	//////////////////////////////////////////////////////////////////////////
 	struct vector4d
 	{
@@ -250,12 +250,12 @@ namespace rtm
 	};
 
 	//////////////////////////////////////////////////////////////////////////
-	// A 4x32 bit vector comparison mask for 32 bit floats: ~0 if true, 0 otherwise.
+	/// A 4x32 bit vector comparison mask for 32 bit floats: ~0 if true, 0 otherwise.
 	//////////////////////////////////////////////////////////////////////////
 	using mask4f = v128_t;
 
 	//////////////////////////////////////////////////////////////////////////
-	// A 4x64 bit vector comparison mask for 64 bit floats: ~0 if true, 0 otherwise.
+	/// A 4x64 bit vector comparison mask for 64 bit floats: ~0 if true, 0 otherwise.
 	//////////////////////////////////////////////////////////////////////////
 	struct mask4d
 	{
@@ -267,7 +267,7 @@ namespace rtm
 	// Thus, we introduce a concrete type for mask4i.
 
 	//////////////////////////////////////////////////////////////////////////
-	// A 4x32 bit vector comparison mask for 32 bit integers: ~0 if true, 0 otherwise.
+	/// A 4x32 bit vector comparison mask for 32 bit integers: ~0 if true, 0 otherwise.
 	//////////////////////////////////////////////////////////////////////////
 	struct mask4i
 	{
@@ -279,7 +279,7 @@ namespace rtm
 	#define RTM_IMPL_MASK4i_SET(mask) mask4i{ mask }
 
 	//////////////////////////////////////////////////////////////////////////
-	// A 4x64 bit vector comparison mask for 64 bit integers: ~0 if true, 0 otherwise.
+	/// A 4x64 bit vector comparison mask for 64 bit integers: ~0 if true, 0 otherwise.
 	//////////////////////////////////////////////////////////////////////////
 	struct mask4q
 	{
@@ -288,93 +288,93 @@ namespace rtm
 	};
 #else
 	//////////////////////////////////////////////////////////////////////////
-	// A quaternion (4D complex number) where the imaginary part is the [w] component.
-	// It accurately represents a 3D rotation with no gimbal lock as long as it is kept normalized.
+	/// A quaternion (4D complex number) where the imaginary part is the [w] component.
+	/// It accurately represents a 3D rotation with no gimbal lock as long as it is kept normalized.
 	//////////////////////////////////////////////////////////////////////////
 	struct alignas(16) quatf
 	{
-		float x;
-		float y;
-		float z;
-		float w;
+		float x; ///< The [x] component.
+		float y; ///< The [y] component.
+		float z; ///< The [z] component.
+		float w; ///< The [w] component.
 	};
 
 	//////////////////////////////////////////////////////////////////////////
-	// A quaternion (4D complex number) where the imaginary part is the [w] component.
-	// It accurately represents a 3D rotation with no gimbal lock as long as it is kept normalized.
+	/// A quaternion (4D complex number) where the imaginary part is the [w] component.
+	/// It accurately represents a 3D rotation with no gimbal lock as long as it is kept normalized.
 	//////////////////////////////////////////////////////////////////////////
 	struct alignas(16) quatd
 	{
-		double x;
-		double y;
-		double z;
-		double w;
+		double x; ///< The [x] component.
+		double y; ///< The [y] component.
+		double z; ///< The [z] component.
+		double w; ///< The [w] component.
 	};
 
 	//////////////////////////////////////////////////////////////////////////
-	// A 4D vector.
+	/// A 4D vector.
 	//////////////////////////////////////////////////////////////////////////
 	struct alignas(16) vector4f
 	{
-		float x;
-		float y;
-		float z;
-		float w;
+		float x; ///< The [x] component.
+		float y; ///< The [y] component.
+		float z; ///< The [z] component.
+		float w; ///< The [w] component.
 	};
 
 	//////////////////////////////////////////////////////////////////////////
-	// A 4D vector.
+	/// A 4D vector.
 	//////////////////////////////////////////////////////////////////////////
 	struct alignas(16) vector4d
 	{
-		double x;
-		double y;
-		double z;
-		double w;
+		double x; ///< The [x] component.
+		double y; ///< The [y] component.
+		double z; ///< The [z] component.
+		double w; ///< The [w] component.
 	};
 
 	//////////////////////////////////////////////////////////////////////////
-	// A 4x32 bit vector comparison mask for 32 bit floats: ~0 if true, 0 otherwise.
+	/// A 4x32 bit vector comparison mask for 32 bit floats: ~0 if true, 0 otherwise.
 	//////////////////////////////////////////////////////////////////////////
 	struct alignas(16) mask4f
 	{
-		uint32_t x;
-		uint32_t y;
-		uint32_t z;
-		uint32_t w;
+		uint32_t x; ///< The [x] lane.
+		uint32_t y; ///< The [y] lane.
+		uint32_t z; ///< The [z] lane.
+		uint32_t w; ///< The [w] lane.
 	};
 
 	//////////////////////////////////////////////////////////////////////////
-	// A 4x64 bit vector comparison mask for 64 bit floats: ~0 if true, 0 otherwise.
+	/// A 4x64 bit vector comparison mask for 64 bit floats: ~0 if true, 0 otherwise.
 	//////////////////////////////////////////////////////////////////////////
 	struct alignas(16) mask4d
 	{
-		uint64_t x;
-		uint64_t y;
-		uint64_t z;
-		uint64_t w;
+		uint64_t x; ///< The [x] lane.
+		uint64_t y; ///< The [y] lane.
+		uint64_t z; ///< The [z] lane.
+		uint64_t w; ///< The [w] lane.
 	};
 
 	//////////////////////////////////////////////////////////////////////////
-	// A 4x32 bit vector comparison mask: ~0 if true, 0 otherwise.
+	/// A 4x32 bit vector comparison mask: ~0 if true, 0 otherwise.
 	//////////////////////////////////////////////////////////////////////////
 	struct alignas(16) mask4i
 	{
-		uint32_t x;
-		uint32_t y;
-		uint32_t z;
-		uint32_t w;
+		uint32_t x; ///< The [x] lane.
+		uint32_t y; ///< The [y] lane.
+		uint32_t z; ///< The [z] lane.
+		uint32_t w; ///< The [w] lane.
 	};
 
 	//////////////////////////////////////////////////////////////////////////
-	// A 4x64 bit vector comparison mask: ~0 if true, 0 otherwise.
+	/// A 4x64 bit vector comparison mask: ~0 if true, 0 otherwise.
 	//////////////////////////////////////////////////////////////////////////
 	struct alignas(16) mask4q
 	{
-		uint64_t x;
-		uint64_t y;
-		uint64_t z;
-		uint64_t w;
+		uint64_t x; ///< The [x] lane.
+		uint64_t y; ///< The [y] lane.
+		uint64_t z; ///< The [z] lane.
+		uint64_t w; ///< The [w] lane.
 	};
 #endif
 
@@ -395,16 +395,16 @@ namespace rtm
 	// when required. The compiler should still be able to optimize properly.
 
 	//////////////////////////////////////////////////////////////////////////
-	// A SIMD friendly scalar type. Different architectures have an easier or harder time
-	// working with scalar floating point numbers. For example, older PowerPC processors
-	// had to write to memory and reload from it to transfer from one register file into
-	// another (e.g convert from a float to a SIMD vector). Modern processors handle
-	// this much better but inefficiencies remain, especially with SSE. While it is
-	// free to convert a SIMD scalar into a float with _mm_cvtss_f32(..) the reverse generally
-	// requires the compiler to fill the unused SIMD lanes with known values (either zero or the same).
-	// This introduces an extra instruction that isn't always required when only the first lane is used
-	// such as with scalar_sqrt_reciprocal(..). By introducing a type for SIMD scalar values,
-	// each platform is free to make an optimal choice.
+	/// A SIMD friendly scalar type. Different architectures have an easier or harder time
+	/// working with scalar floating point numbers. For example, older PowerPC processors
+	/// had to write to memory and reload from it to transfer from one register file into
+	/// another (e.g convert from a float to a SIMD vector). Modern processors handle
+	/// this much better but inefficiencies remain, especially with SSE. While it is
+	/// free to convert a SIMD scalar into a float with _mm_cvtss_f32(..) the reverse generally
+	/// requires the compiler to fill the unused SIMD lanes with known values (either zero or the same).
+	/// This introduces an extra instruction that isn't always required when only the first lane is used
+	/// such as with scalar_sqrt_reciprocal(..). By introducing a type for SIMD scalar values,
+	/// each platform is free to make an optimal choice.
 	//////////////////////////////////////////////////////////////////////////
 	struct scalarf
 	{
@@ -412,16 +412,16 @@ namespace rtm
 	};
 
 	//////////////////////////////////////////////////////////////////////////
-	// A SIMD friendly scalar type. Different architectures have an easier or harder time
-	// working with scalar floating point numbers. For example, older PowerPC processors
-	// had to write to memory and reload from it to transfer from one register file into
-	// another (e.g convert from a float to a SIMD vector). Modern processors handle
-	// this much better but inefficiencies remain, especially with SSE. While it is
-	// free to convert a SIMD scalar into a float with _mm_cvtss_f32(..) the reverse generally
-	// requires the compiler to fill the unused SIMD lanes with known values (either zero or the same).
-	// This introduces an extra instruction that isn't always required when only the first lane is used
-	// such as with scalar_sqrt_reciprocal(..). By introducing a type for SIMD scalar values,
-	// each platform is free to make an optimal choice.
+	/// A SIMD friendly scalar type. Different architectures have an easier or harder time
+	/// working with scalar floating point numbers. For example, older PowerPC processors
+	/// had to write to memory and reload from it to transfer from one register file into
+	/// another (e.g convert from a float to a SIMD vector). Modern processors handle
+	/// this much better but inefficiencies remain, especially with SSE. While it is
+	/// free to convert a SIMD scalar into a float with _mm_cvtss_f32(..) the reverse generally
+	/// requires the compiler to fill the unused SIMD lanes with known values (either zero or the same).
+	/// This introduces an extra instruction that isn't always required when only the first lane is used
+	/// such as with scalar_sqrt_reciprocal(..). By introducing a type for SIMD scalar values,
+	/// each platform is free to make an optimal choice.
 	//////////////////////////////////////////////////////////////////////////
 	struct scalard
 	{
@@ -429,261 +429,261 @@ namespace rtm
 	};
 #else
 	//////////////////////////////////////////////////////////////////////////
-	// A SIMD friendly scalar type. Different architectures have an easier or harder time
-	// working with scalar floating point numbers. For example, older PowerPC processors
-	// had to write to memory and reload from it to transfer from one register file into
-	// another (e.g convert from a float to a SIMD vector). Modern processors handle
-	// this much better but inefficiencies remain, especially with SSE. While it is
-	// free to convert a SIMD scalar into a float with _mm_cvtss_f32(..) the reverse generally
-	// requires the compiler to fill the unused SIMD lanes with known values (either zero or the same).
-	// This introduces an extra instruction that isn't always required when only the first lane is used
-	// such as with scalar_sqrt_reciprocal(..). By introducing a type for SIMD scalar values,
-	// each platform is free to make an optimal choice.
+	/// A SIMD friendly scalar type. Different architectures have an easier or harder time
+	/// working with scalar floating point numbers. For example, older PowerPC processors
+	/// had to write to memory and reload from it to transfer from one register file into
+	/// another (e.g convert from a float to a SIMD vector). Modern processors handle
+	/// this much better but inefficiencies remain, especially with SSE. While it is
+	/// free to convert a SIMD scalar into a float with _mm_cvtss_f32(..) the reverse generally
+	/// requires the compiler to fill the unused SIMD lanes with known values (either zero or the same).
+	/// This introduces an extra instruction that isn't always required when only the first lane is used
+	/// such as with scalar_sqrt_reciprocal(..). By introducing a type for SIMD scalar values,
+	/// each platform is free to make an optimal choice.
 	//////////////////////////////////////////////////////////////////////////
 	using scalarf = float;
 
 	//////////////////////////////////////////////////////////////////////////
-	// A SIMD friendly scalar type. Different architectures have an easier or harder time
-	// working with scalar floating point numbers. For example, older PowerPC processors
-	// had to write to memory and reload from it to transfer from one register file into
-	// another (e.g convert from a float to a SIMD vector). Modern processors handle
-	// this much better but inefficiencies remain, especially with SSE. While it is
-	// free to convert a SIMD scalar into a float with _mm_cvtss_f32(..) the reverse generally
-	// requires the compiler to fill the unused SIMD lanes with known values (either zero or the same).
-	// This introduces an extra instruction that isn't always required when only the first lane is used
-	// such as with scalar_sqrt_reciprocal(..). By introducing a type for SIMD scalar values,
-	// each platform is free to make an optimal choice.
+	/// A SIMD friendly scalar type. Different architectures have an easier or harder time
+	/// working with scalar floating point numbers. For example, older PowerPC processors
+	/// had to write to memory and reload from it to transfer from one register file into
+	/// another (e.g convert from a float to a SIMD vector). Modern processors handle
+	/// this much better but inefficiencies remain, especially with SSE. While it is
+	/// free to convert a SIMD scalar into a float with _mm_cvtss_f32(..) the reverse generally
+	/// requires the compiler to fill the unused SIMD lanes with known values (either zero or the same).
+	/// This introduces an extra instruction that isn't always required when only the first lane is used
+	/// such as with scalar_sqrt_reciprocal(..). By introducing a type for SIMD scalar values,
+	/// each platform is free to make an optimal choice.
 	//////////////////////////////////////////////////////////////////////////
 	using scalard = double;
 #endif
 
 	//////////////////////////////////////////////////////////////////////////
-	// A VQ transform represents a 3D rotation (quaternion) and a 3D translation (vector).
-	// VQ transforms form a group with a well defined multiplication and inverse.
+	/// A VQ transform represents a 3D rotation (quaternion) and a 3D translation (vector).
+	/// VQ transforms form a group with a well defined multiplication and inverse.
 	//////////////////////////////////////////////////////////////////////////
 	struct vqf
 	{
-		quatf		rotation;
-		vector4f	translation;	// [w] is undefined
+		quatf		rotation; ///< The rotation part.
+		vector4f	translation; ///< The translation part. The [w] component is undefined.
 	};
 
 	//////////////////////////////////////////////////////////////////////////
-	// A VQ transform represents a 3D rotation (quaternion) and a 3D translation (vector).
-	// VQ transforms form a group with a well defined multiplication and inverse.
+	/// A VQ transform represents a 3D rotation (quaternion) and a 3D translation (vector).
+	/// VQ transforms form a group with a well defined multiplication and inverse.
 	//////////////////////////////////////////////////////////////////////////
 	struct vqd
 	{
-		quatd		rotation;
-		vector4d	translation;	// [w] is undefined
+		quatd		rotation; ///< The rotation part.
+		vector4d	translation; ///< The translation part. The [w] component is undefined.
 	};
 
 	//////////////////////////////////////////////////////////////////////////
-	// The previous name of vqf.
+	/// The previous name of vqf.
 	//////////////////////////////////////////////////////////////////////////
 	using qvf RTM_DEPRECATED("Use 'vqf' instead. To be removed in 2.5.") = vqf;
 
 	//////////////////////////////////////////////////////////////////////////
-	// The previous name of vqd.
+	/// The previous name of vqd.
 	//////////////////////////////////////////////////////////////////////////
 	using qvd RTM_DEPRECATED("Use 'vqd' instead. To be removed in 2.5.") = vqd;
 
 	//////////////////////////////////////////////////////////////////////////
-	// A VQS transform represents a 3D rotation (quaternion), a 3D translation (vector),
-	// and a single scalar uniform scale value.
-	// VQS transforms form a group with a well defined multiplication and inverse.
+	/// A VQS transform represents a 3D rotation (quaternion), a 3D translation (vector),
+	/// and a single scalar uniform scale value.
+	/// VQS transforms form a group with a well defined multiplication and inverse.
 	//////////////////////////////////////////////////////////////////////////
 	struct vqsf
 	{
-		quatf		rotation;
-		vector4f	translation_scale;	// [xyz] for translation, [w] for scale
+		quatf		rotation; ///< The rotation part.
+		vector4f	translation_scale; ///< The translation part in [xyz] and the scale part in [w].
 	};
 
 	//////////////////////////////////////////////////////////////////////////
-	// A VQS transform represents a 3D rotation (quaternion), a 3D translation (vector),
-	// and a single scalar uniform scale value.
-	// VQS transforms form a group with a well defined multiplication and inverse.
+	/// A VQS transform represents a 3D rotation (quaternion), a 3D translation (vector),
+	/// and a single scalar uniform scale value.
+	/// VQS transforms form a group with a well defined multiplication and inverse.
 	//////////////////////////////////////////////////////////////////////////
 	struct vqsd
 	{
-		quatd		rotation;
-		vector4d	translation_scale;	// [xyz] for translation, [w] for scale
+		quatd		rotation; ///< The rotation part.
+		vector4d	translation_scale; ///< The translation part in [xyz] and the scale part in [w].
 	};
 
 	//////////////////////////////////////////////////////////////////////////
-	// The previous name of vqsf.
+	/// The previous name of vqsf.
 	//////////////////////////////////////////////////////////////////////////
 	using qvsf RTM_DEPRECATED("Use 'vqsf' instead. To be removed in 2.5.") = vqsf;
 
 	//////////////////////////////////////////////////////////////////////////
-	// The previous name of vqsd.
+	/// The previous name of vqsd.
 	//////////////////////////////////////////////////////////////////////////
 	using qvsd RTM_DEPRECATED("Use 'vqsd' instead. To be removed in 2.5.") = vqsd;
 
 	//////////////////////////////////////////////////////////////////////////
-	// A VQV transform represents a 3D rotation (quaternion), 3D translation (vector), and 3D non-uniform scale (vector).
-	// WARNING: VQV transforms do _NOT_ form a group. It has no well defined multiplication and inverse.
-	// This is because when non-uniform scale is rotated (e.g. as the result of two VQV multiplying),
-	// shear is introduced and there is no place to store it. As such, VQV discards the introduced shear
-	// which is mathematically incorrect. As a result of this, VQV multiplication is _NOT_ associative and
-	// the inverse is incorrect. USE AT YOUR OWN RISK.
+	/// A VQV transform represents a 3D rotation (quaternion), 3D translation (vector), and 3D non-uniform scale (vector).
+	/// WARNING: VQV transforms do _NOT_ form a group. It has no well defined multiplication and inverse.
+	/// This is because when non-uniform scale is rotated (e.g. as the result of two VQV multiplying),
+	/// shear is introduced and there is no place to store it. As such, VQV discards the introduced shear
+	/// which is mathematically incorrect. As a result of this, VQV multiplication is _NOT_ associative and
+	/// the inverse is incorrect. USE AT YOUR OWN RISK.
 	//////////////////////////////////////////////////////////////////////////
 	struct vqvf
 	{
-		quatf		rotation;
-		vector4f	translation;	// [w] is undefined
-		vector4f	scale;			// [w] is undefined
+		quatf		rotation; ///< The rotation part.
+		vector4f	translation; ///< The translation part. The [w] component is undefined.
+		vector4f	scale; ///< The scale part. The [w] component is undefined.
 	};
 
 	//////////////////////////////////////////////////////////////////////////
-	// A VQV transform represents a 3D rotation (quaternion), 3D translation (vector), and 3D non-uniform scale (vector).
-	// WARNING: VQV transforms do _NOT_ form a group. It has no well defined multiplication and inverse.
-	// This is because when non-uniform scale is rotated (e.g. as the result of two VQV multiplying),
-	// shear is introduced and there is no place to store it. As such, VQV discards the introduced shear
-	// which is mathematically incorrect. As a result of this, VQV multiplication is _NOT_ associative and
-	// the inverse is incorrect. USE AT YOUR OWN RISK.
+	/// A VQV transform represents a 3D rotation (quaternion), 3D translation (vector), and 3D non-uniform scale (vector).
+	/// WARNING: VQV transforms do _NOT_ form a group. It has no well defined multiplication and inverse.
+	/// This is because when non-uniform scale is rotated (e.g. as the result of two VQV multiplying),
+	/// shear is introduced and there is no place to store it. As such, VQV discards the introduced shear
+	/// which is mathematically incorrect. As a result of this, VQV multiplication is _NOT_ associative and
+	/// the inverse is incorrect. USE AT YOUR OWN RISK.
 	//////////////////////////////////////////////////////////////////////////
 	struct vqvd
 	{
-		quatd		rotation;
-		vector4d	translation;	// [w] is undefined
-		vector4d	scale;			// [w] is undefined
+		quatd		rotation; ///< The rotation part.
+		vector4d	translation; ///< The translation part. The [w] component is undefined.
+		vector4d	scale; ///< The scale part. The [w] component is undefined.
 	};
 
 	//////////////////////////////////////////////////////////////////////////
-	// The previous name of vqvf.
+	/// The previous name of vqvf.
 	//////////////////////////////////////////////////////////////////////////
 	using qvvf RTM_DEPRECATED("Use 'vqvf' instead. To be removed in 2.5.") = vqvf;
 
 	//////////////////////////////////////////////////////////////////////////
-	// The previous name of vqvd.
+	/// The previous name of vqvd.
 	//////////////////////////////////////////////////////////////////////////
 	using qvvd RTM_DEPRECATED("Use 'vqvd' instead. To be removed in 2.5.") = vqvd;
 
 	//////////////////////////////////////////////////////////////////////////
-	// A VQM transform represents a 3D rotation (quaternion), a 3D translation (vector), and a 3D scale/shear (3x3 matrix).
-	// The scale/shear part can contain a non-uniform scale, shear, and a reflection. A point transforms as follows:
-	// p' = p * M * R + t, with M the scale/shear matrix and R the rotation matrix of the quaternion.
-	// VQM transforms form a group: the multiplication and the inverse are well defined.
-	// The multiplication is associative but not commutative, as with quaternions and matrices.
-	// The rotation must be a normalized quaternion.
-	// The internal format is opaque: use the vqm_* functions. The [w] lanes hold the third row of M:
-	// m20 = z_axis.x, m21 = z_axis.y, and m22 = z_axis.z. Thus the transform uses 4 registers.
+	/// A VQM transform represents a 3D rotation (quaternion), a 3D translation (vector), and a 3D scale/shear (3x3 matrix).
+	/// The scale/shear part can contain a non-uniform scale, shear, and a reflection. A point transforms as follows:
+	/// p' = p * M * R + t, with M the scale/shear matrix and R the rotation matrix of the quaternion.
+	/// VQM transforms form a group: the multiplication and the inverse are well defined.
+	/// The multiplication is associative but not commutative, as with quaternions and matrices.
+	/// The rotation must be a normalized quaternion.
+	/// The internal format is opaque: use the vqm_* functions. The [w] lanes hold the third row of M:
+	/// m20 = z_axis.x, m21 = z_axis.y, and m22 = z_axis.z. Thus the transform uses 4 registers.
 	//////////////////////////////////////////////////////////////////////////
 	struct vqmf
 	{
-		quatf		rotation;
-		vector4f	translation_m22;	// [xyz] = translation, [w] = m22
-		vector4f	x_axis_m20;			// [xyz] = x_axis, [w] = m20
-		vector4f	y_axis_m21;			// [xyz] = y_axis, [w] = m21
+		quatf		rotation; ///< The rotation part.
+		vector4f	translation_m22; ///< The translation part in [xyz] and the m22 value of the scale/shear matrix in [w].
+		vector4f	x_axis_m20; ///< The X axis of the scale/shear matrix in [xyz] and the m20 value of that matrix in [w].
+		vector4f	y_axis_m21; ///< The Y axis of the scale/shear matrix in [xyz] and the m21 value of that matrix in [w].
 	};
 
 	//////////////////////////////////////////////////////////////////////////
-	// A VQM transform represents a 3D rotation (quaternion), a 3D translation (vector), and a 3D scale/shear (3x3 matrix).
-	// The scale/shear part can contain a non-uniform scale, shear, and a reflection. A point transforms as follows:
-	// p' = p * M * R + t, with M the scale/shear matrix and R the rotation matrix of the quaternion.
-	// VQM transforms form a group: the multiplication and the inverse are well defined.
-	// The multiplication is associative but not commutative, as with quaternions and matrices.
-	// The rotation must be a normalized quaternion.
-	// The internal format is opaque: use the vqm_* functions. The [w] lanes hold the third row of M:
-	// m20 = z_axis.x, m21 = z_axis.y, and m22 = z_axis.z. Thus the transform uses 4 registers.
+	/// A VQM transform represents a 3D rotation (quaternion), a 3D translation (vector), and a 3D scale/shear (3x3 matrix).
+	/// The scale/shear part can contain a non-uniform scale, shear, and a reflection. A point transforms as follows:
+	/// p' = p * M * R + t, with M the scale/shear matrix and R the rotation matrix of the quaternion.
+	/// VQM transforms form a group: the multiplication and the inverse are well defined.
+	/// The multiplication is associative but not commutative, as with quaternions and matrices.
+	/// The rotation must be a normalized quaternion.
+	/// The internal format is opaque: use the vqm_* functions. The [w] lanes hold the third row of M:
+	/// m20 = z_axis.x, m21 = z_axis.y, and m22 = z_axis.z. Thus the transform uses 4 registers.
 	//////////////////////////////////////////////////////////////////////////
 	struct vqmd
 	{
-		quatd		rotation;
-		vector4d	translation_m22;	// [xyz] = translation, [w] = m22
-		vector4d	x_axis_m20;			// [xyz] = x_axis, [w] = m20
-		vector4d	y_axis_m21;			// [xyz] = y_axis, [w] = m21
+		quatd		rotation; ///< The rotation part.
+		vector4d	translation_m22; ///< The translation part in [xyz] and the m22 value of the scale/shear matrix in [w].
+		vector4d	x_axis_m20; ///< The X axis of the scale/shear matrix in [xyz] and the m20 value of that matrix in [w].
+		vector4d	y_axis_m21; ///< The Y axis of the scale/shear matrix in [xyz] and the m21 value of that matrix in [w].
 	};
 
 	//////////////////////////////////////////////////////////////////////////
-	// A generic 3x3 matrix.
-	// Note: The [w] component of every column vector is undefined.
+	/// A generic 3x3 matrix.
+	/// Note: The [w] component of every column vector is undefined.
 	//////////////////////////////////////////////////////////////////////////
 	struct matrix3x3f
 	{
-		vector4f	x_axis;
-		vector4f	y_axis;
-		vector4f	z_axis;
+		vector4f	x_axis; ///< The X axis.
+		vector4f	y_axis; ///< The Y axis.
+		vector4f	z_axis; ///< The Z axis.
 	};
 
 	//////////////////////////////////////////////////////////////////////////
-	// A generic 3x3 matrix.
-	// Note: The [w] component of every column vector is undefined.
+	/// A generic 3x3 matrix.
+	/// Note: The [w] component of every column vector is undefined.
 	//////////////////////////////////////////////////////////////////////////
 	struct matrix3x3d
 	{
-		vector4d	x_axis;
-		vector4d	y_axis;
-		vector4d	z_axis;
+		vector4d	x_axis; ///< The X axis.
+		vector4d	y_axis; ///< The Y axis.
+		vector4d	z_axis; ///< The Z axis.
 	};
 
 	//////////////////////////////////////////////////////////////////////////
-	// An 3x4 affine matrix represents a 3D rotation, 3D translation, and 3D scale.
-	// It properly deals with skew/shear when present but once scale with mirroring is combined,
-	// it cannot be safely extracted back.
-	//
-	// Affine matrices are 4x4 but have their last row always equal to [0, 0, 0, 1] which is why it is 3x4.
-	// Note: We do not track the implicit last row and it is thus undefined.
-	//
-	// Left handed coordinate system:
-	// X axis == forward
-	// Y axis == right
-	// Z axis == up
+	/// An 3x4 affine matrix represents a 3D rotation, 3D translation, and 3D scale.
+	/// It properly deals with skew/shear when present but once scale with mirroring is combined,
+	/// it cannot be safely extracted back.
+	///
+	/// Affine matrices are 4x4 but have their last row always equal to [0, 0, 0, 1] which is why it is 3x4.
+	/// Note: We do not track the implicit last row and it is thus undefined.
+	///
+	/// Left handed coordinate system:
+	/// X axis == forward
+	/// Y axis == right
+	/// Z axis == up
 	//////////////////////////////////////////////////////////////////////////
 	struct matrix3x4f
 	{
-		vector4f	x_axis;
-		vector4f	y_axis;
-		vector4f	z_axis;
-		vector4f	w_axis;
+		vector4f	x_axis; ///< The X axis.
+		vector4f	y_axis; ///< The Y axis.
+		vector4f	z_axis; ///< The Z axis.
+		vector4f	w_axis; ///< The W axis. It holds the translation.
 	};
 
 	//////////////////////////////////////////////////////////////////////////
-	// An 3x4 affine matrix represents a 3D rotation, 3D translation, and 3D scale.
-	// It properly deals with skew/shear when present but once scale with mirroring is combined,
-	// it cannot be safely extracted back.
-	//
-	// Affine matrices are 4x4 but have their last row always equal to [0, 0, 0, 1] which is why it is 3x4.
-	// Note: We do not track the implicit last row and it is thus undefined.
-	//
-	// Left handed coordinate system:
-	// X axis == forward
-	// Y axis == right
-	// Z axis == up
+	/// An 3x4 affine matrix represents a 3D rotation, 3D translation, and 3D scale.
+	/// It properly deals with skew/shear when present but once scale with mirroring is combined,
+	/// it cannot be safely extracted back.
+	///
+	/// Affine matrices are 4x4 but have their last row always equal to [0, 0, 0, 1] which is why it is 3x4.
+	/// Note: We do not track the implicit last row and it is thus undefined.
+	///
+	/// Left handed coordinate system:
+	/// X axis == forward
+	/// Y axis == right
+	/// Z axis == up
 	//////////////////////////////////////////////////////////////////////////
 	struct matrix3x4d
 	{
-		vector4d	x_axis;
-		vector4d	y_axis;
-		vector4d	z_axis;
-		vector4d	w_axis;
+		vector4d	x_axis; ///< The X axis.
+		vector4d	y_axis; ///< The Y axis.
+		vector4d	z_axis; ///< The Z axis.
+		vector4d	w_axis; ///< The W axis. It holds the translation.
 	};
 
 	//////////////////////////////////////////////////////////////////////////
-	// A generic 4x4 matrix.
+	/// A generic 4x4 matrix.
 	//////////////////////////////////////////////////////////////////////////
 	struct matrix4x4f
 	{
-		vector4f	x_axis;
-		vector4f	y_axis;
-		vector4f	z_axis;
-		vector4f	w_axis;
+		vector4f	x_axis; ///< The X axis.
+		vector4f	y_axis; ///< The Y axis.
+		vector4f	z_axis; ///< The Z axis.
+		vector4f	w_axis; ///< The W axis.
 	};
 
 	//////////////////////////////////////////////////////////////////////////
-	// A generic 4x4 matrix.
+	/// A generic 4x4 matrix.
 	//////////////////////////////////////////////////////////////////////////
 	struct matrix4x4d
 	{
-		vector4d	x_axis;
-		vector4d	y_axis;
-		vector4d	z_axis;
-		vector4d	w_axis;
+		vector4d	x_axis; ///< The X axis.
+		vector4d	y_axis; ///< The Y axis.
+		vector4d	z_axis; ///< The Z axis.
+		vector4d	w_axis; ///< The W axis.
 	};
 
 	//////////////////////////////////////////////////////////////////////////
-	// Represents a component when mixing/shuffling/permuting vectors.
-	// [xyzw] are used to refer to the first input while [abcd] refer to the second input.
+	/// Represents a component when mixing/shuffling/permuting vectors.
+	/// [xyzw] are used to refer to the first input while [abcd] refer to the second input.
 	//////////////////////////////////////////////////////////////////////////
 	enum class mix4
 	{
@@ -699,7 +699,7 @@ namespace rtm
 	};
 
 	//////////////////////////////////////////////////////////////////////////
-	// Represents an axis in 3D.
+	/// Represents an axis in 3D.
 	//////////////////////////////////////////////////////////////////////////
 	enum class axis3
 	{
@@ -709,7 +709,7 @@ namespace rtm
 	};
 
 	//////////////////////////////////////////////////////////////////////////
-	// Represents an axis in 4D.
+	/// Represents an axis in 4D.
 	//////////////////////////////////////////////////////////////////////////
 	enum class axis4
 	{
@@ -720,7 +720,7 @@ namespace rtm
 	};
 
 	//////////////////////////////////////////////////////////////////////////
-	// Represents 2D vector components.
+	/// Represents 2D vector components.
 	//////////////////////////////////////////////////////////////////////////
 	enum class component2
 	{
@@ -729,7 +729,7 @@ namespace rtm
 	};
 
 	//////////////////////////////////////////////////////////////////////////
-	// Represents 3D vector components.
+	/// Represents 3D vector components.
 	//////////////////////////////////////////////////////////////////////////
 	enum class component3
 	{
@@ -739,7 +739,7 @@ namespace rtm
 	};
 
 	//////////////////////////////////////////////////////////////////////////
-	// Represents 4D vector components.
+	/// Represents 4D vector components.
 	//////////////////////////////////////////////////////////////////////////
 	enum class component4
 	{
@@ -755,46 +755,64 @@ namespace rtm
 	//////////////////////////////////////////////////////////////////////////
 
 
+	//////////////////////////////////////////////////////////////////////////
+	/// An unaligned 2D vector of float32 values, suitable for interop. with GPUs, etc.
+	//////////////////////////////////////////////////////////////////////////
 	struct float2f
 	{
-		float x;
-		float y;
+		float x; ///< The [x] component.
+		float y; ///< The [y] component.
 	};
 
+	//////////////////////////////////////////////////////////////////////////
+	/// An unaligned 3D vector of float32 values, suitable for interop. with GPUs, etc.
+	//////////////////////////////////////////////////////////////////////////
 	struct float3f
 	{
-		float x;
-		float y;
-		float z;
+		float x; ///< The [x] component.
+		float y; ///< The [y] component.
+		float z; ///< The [z] component.
 	};
 
+	//////////////////////////////////////////////////////////////////////////
+	/// An unaligned 4D vector of float32 values, suitable for interop. with GPUs, etc.
+	//////////////////////////////////////////////////////////////////////////
 	struct float4f
 	{
-		float x;
-		float y;
-		float z;
-		float w;
+		float x; ///< The [x] component.
+		float y; ///< The [y] component.
+		float z; ///< The [z] component.
+		float w; ///< The [w] component.
 	};
 
+	//////////////////////////////////////////////////////////////////////////
+	/// An unaligned 2D vector of float64 values, suitable for interop. with GPUs, etc.
+	//////////////////////////////////////////////////////////////////////////
 	struct float2d
 	{
-		double x;
-		double y;
+		double x; ///< The [x] component.
+		double y; ///< The [y] component.
 	};
 
+	//////////////////////////////////////////////////////////////////////////
+	/// An unaligned 3D vector of float64 values, suitable for interop. with GPUs, etc.
+	//////////////////////////////////////////////////////////////////////////
 	struct float3d
 	{
-		double x;
-		double y;
-		double z;
+		double x; ///< The [x] component.
+		double y; ///< The [y] component.
+		double z; ///< The [z] component.
 	};
 
+	//////////////////////////////////////////////////////////////////////////
+	/// An unaligned 4D vector of float64 values, suitable for interop. with GPUs, etc.
+	//////////////////////////////////////////////////////////////////////////
 	struct float4d
 	{
-		double x;
-		double y;
-		double z;
-		double w;
+		double x; ///< The [x] component.
+		double y; ///< The [y] component.
+		double z; ///< The [z] component.
+		double w; ///< The [w] component.
 	};
 
 	RTM_IMPL_VERSION_NAMESPACE_END

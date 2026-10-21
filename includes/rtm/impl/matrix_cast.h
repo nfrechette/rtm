@@ -310,9 +310,9 @@ namespace rtm
 	}
 
 	//////////////////////////////////////////////////////////////////////////
-	// Casts a matrix from one variant to another.
-	// Note: When casting a smaller matrix into a larger one, new elements are
-	// undefined.
+	/// Casts a matrix from one variant to another.
+	/// Note: When casting a smaller matrix into a larger one, new elements are
+	/// undefined.
 	//////////////////////////////////////////////////////////////////////////
 	template<typename matrix_type>
 	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE constexpr rtm_impl::matrix_caster<matrix_type> RTM_SIMD_CALL matrix_cast(const matrix_type& input) RTM_NO_EXCEPT

@@ -102,33 +102,36 @@ namespace rtm
 	namespace constants
 	{
 		//////////////////////////////////////////////////////////////////////////
-		// Constants are defined here. Usage is meant to be as natural as possible.
-		// e.g. float foo = rtm::constants::pi();
-		//      double bar = rtm::constants::pi() * 0.5;
+		/// \namespace rtm::constants
+		/// Constants are defined here. Usage is meant to be as natural as possible.
+		/// \code
+		/// float foo = rtm::constants::pi();
+		/// double bar = rtm::constants::pi() * 0.5;
+		/// \endcode
 		//////////////////////////////////////////////////////////////////////////
 
 		//////////////////////////////////////////////////////////////////////////
-		// PI
+		/// PI
 		RTM_DEFINE_FLOAT_CONSTANT(pi, 3.141592653589793238462643383279502884)
 
 		//////////////////////////////////////////////////////////////////////////
-		// PI / 2
+		/// PI / 2
 		RTM_DEFINE_FLOAT_CONSTANT(half_pi, 1.570796326794896619231321691639751442)
 
 		//////////////////////////////////////////////////////////////////////////
-		// PI * 2
+		/// PI * 2
 		RTM_DEFINE_FLOAT_CONSTANT(two_pi, 6.283185307179586476925286766559005768)
 
 		//////////////////////////////////////////////////////////////////////////
-		// 1.0 / (PI * 2)
+		/// 1.0 / (PI * 2)
 		RTM_DEFINE_FLOAT_CONSTANT(one_div_two_pi, 1.591549430918953357688837633725143620e-01)
 
 		//////////////////////////////////////////////////////////////////////////
-		// PI / 180
+		/// PI / 180
 		RTM_DEFINE_FLOAT_CONSTANT(pi_div_one_eighty, 0.01745329251994329576923690768489)
 
 		//////////////////////////////////////////////////////////////////////////
-		// 180 / PI
+		/// 180 / PI
 		RTM_DEFINE_FLOAT_CONSTANT(one_eighty_div_pi, 57.295779513082320876798154814105)
 	}
 

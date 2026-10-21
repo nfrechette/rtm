@@ -62,7 +62,51 @@ nav:
       - Getting started: getting_started.md
   - API reference:
       - api/index.md
+      - Types and constants:
+          - api/types.md
+          - api/type_traits.md
+          - api/constants.md
+          - api/macros.md
+          - api/version.md
+      - Scalars:
+          - api/scalarf.md
+          - api/scalard.md
       - Vectors:
           - api/vector4f.md
+          - api/vector4d.md
+      - Masks:
+          - api/mask4f.md
+          - api/mask4d.md
+          - api/mask4i.md
+          - api/mask4q.md
       - Quaternions:
           - api/quatf.md
+          - api/quatd.md
+          - api/packing_quatf.md
+          - api/packing_quatd.md
+      - Matrices:
+          - api/matrix3x3f.md
+          - api/matrix3x3d.md
+          - api/matrix3x4f.md
+          - api/matrix3x4d.md
+          - api/matrix4x4f.md
+          - api/matrix4x4d.md
+      - Transforms:
+          - api/vqf.md
+          - api/vqd.md
+          - api/vqsf.md
+          - api/vqsd.md
+          - api/vqvf.md
+          - api/vqvd.md
+          - api/vqmf.md
+          - api/vqmd.md
+      - Camera:
+          - api/camera_utilsf.md
+          - api/camera_utilsd.md
+      - Deprecated:
+          - api/qvf.md
+          - api/qvd.md
+          - api/qvsf.md
+          - api/qvsd.md
+          - api/qvvf.md
+          - api/qvvd.md

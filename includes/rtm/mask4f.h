@@ -42,7 +42,7 @@ namespace rtm
 	RTM_IMPL_VERSION_NAMESPACE_BEGIN
 
 	//////////////////////////////////////////////////////////////////////////
-	// Returns the mask4f [x] component.
+	/// Returns the mask4f [x] component.
 	//////////////////////////////////////////////////////////////////////////
 	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE uint32_t RTM_SIMD_CALL mask_get_x(mask4f_arg0 input) RTM_NO_EXCEPT
 	{
@@ -58,7 +58,7 @@ namespace rtm
 	}
 
 	//////////////////////////////////////////////////////////////////////////
-	// Returns the mask4f [y] component.
+	/// Returns the mask4f [y] component.
 	//////////////////////////////////////////////////////////////////////////
 	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE uint32_t RTM_SIMD_CALL mask_get_y(mask4f_arg0 input) RTM_NO_EXCEPT
 	{
@@ -74,7 +74,7 @@ namespace rtm
 	}
 
 	//////////////////////////////////////////////////////////////////////////
-	// Returns the mask4f [z] component.
+	/// Returns the mask4f [z] component.
 	//////////////////////////////////////////////////////////////////////////
 	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE uint32_t RTM_SIMD_CALL mask_get_z(mask4f_arg0 input) RTM_NO_EXCEPT
 	{
@@ -90,7 +90,7 @@ namespace rtm
 	}
 
 	//////////////////////////////////////////////////////////////////////////
-	// Returns the mask4f [w] component.
+	/// Returns the mask4f [w] component.
 	//////////////////////////////////////////////////////////////////////////
 	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE uint32_t RTM_SIMD_CALL mask_get_w(mask4f_arg0 input) RTM_NO_EXCEPT
 	{
@@ -106,7 +106,7 @@ namespace rtm
 	}
 
 	//////////////////////////////////////////////////////////////////////////
-	// Returns true if all 4 components are true, otherwise false: all(input.xyzw != 0)
+	/// Returns true if all 4 components are true, otherwise false: all(input.xyzw != 0)
 	//////////////////////////////////////////////////////////////////////////
 	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE bool RTM_SIMD_CALL mask_all_true(mask4f_arg0 input) RTM_NO_EXCEPT
 	{
@@ -116,7 +116,7 @@ namespace rtm
 	}
 
 	//////////////////////////////////////////////////////////////////////////
-	// Returns true if all [xy] components are true, otherwise false: all(input.xy != 0)
+	/// Returns true if all [xy] components are true, otherwise false: all(input.xy != 0)
 	//////////////////////////////////////////////////////////////////////////
 	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE bool RTM_SIMD_CALL mask_all_true2(mask4f_arg0 input) RTM_NO_EXCEPT
 	{
@@ -126,7 +126,7 @@ namespace rtm
 	}
 
 	//////////////////////////////////////////////////////////////////////////
-	// Returns true if all [xyz] components are true, otherwise false: all(input.xyz != 0)
+	/// Returns true if all [xyz] components are true, otherwise false: all(input.xyz != 0)
 	//////////////////////////////////////////////////////////////////////////
 	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE bool RTM_SIMD_CALL mask_all_true3(mask4f_arg0 input) RTM_NO_EXCEPT
 	{
@@ -136,7 +136,7 @@ namespace rtm
 	}
 
 	//////////////////////////////////////////////////////////////////////////
-	// Returns true if any 4 components are true, otherwise false: any(input.xyzw != 0)
+	/// Returns true if any 4 components are true, otherwise false: any(input.xyzw != 0)
 	//////////////////////////////////////////////////////////////////////////
 	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE bool RTM_SIMD_CALL mask_any_true(mask4f_arg0 input) RTM_NO_EXCEPT
 	{
@@ -146,7 +146,7 @@ namespace rtm
 	}
 
 	//////////////////////////////////////////////////////////////////////////
-	// Returns true if any [xy] components are true, otherwise false: any(input.xy != 0)
+	/// Returns true if any [xy] components are true, otherwise false: any(input.xy != 0)
 	//////////////////////////////////////////////////////////////////////////
 	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE bool RTM_SIMD_CALL mask_any_true2(mask4f_arg0 input) RTM_NO_EXCEPT
 	{
@@ -156,7 +156,7 @@ namespace rtm
 	}
 
 	//////////////////////////////////////////////////////////////////////////
-	// Returns true if any [xyz] components are true, otherwise false: any(input.xyz != 0)
+	/// Returns true if any [xyz] components are true, otherwise false: any(input.xyz != 0)
 	//////////////////////////////////////////////////////////////////////////
 	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE bool RTM_SIMD_CALL mask_any_true3(mask4f_arg0 input) RTM_NO_EXCEPT
 	{
@@ -166,7 +166,7 @@ namespace rtm
 	}
 
 	//////////////////////////////////////////////////////////////////////////
-	// Returns true if all 4 components are equal, otherwise false: all(lhs.xyzw == rhs.xyzw)
+	/// Returns true if all 4 components are equal, otherwise false: all(lhs.xyzw == rhs.xyzw)
 	//////////////////////////////////////////////////////////////////////////
 	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE bool RTM_SIMD_CALL mask_all_equal(mask4f_arg0 lhs, mask4f_arg1 rhs) RTM_NO_EXCEPT
 	{
@@ -187,7 +187,7 @@ namespace rtm
 	}
 
 	//////////////////////////////////////////////////////////////////////////
-	// Returns true if all [xy] components are equal, otherwise false: all(lhs.xy == rhs.xy)
+	/// Returns true if all [xy] components are equal, otherwise false: all(lhs.xy == rhs.xy)
 	//////////////////////////////////////////////////////////////////////////
 	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE bool RTM_SIMD_CALL mask_all_equal2(mask4f_arg0 lhs, mask4f_arg1 rhs) RTM_NO_EXCEPT
 	{
@@ -207,7 +207,7 @@ namespace rtm
 	}
 
 	//////////////////////////////////////////////////////////////////////////
-	// Returns true if all [xyz] components are equal, otherwise false: all(lhs.xyz == rhs.xyz)
+	/// Returns true if all [xyz] components are equal, otherwise false: all(lhs.xyz == rhs.xyz)
 	//////////////////////////////////////////////////////////////////////////
 	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE bool RTM_SIMD_CALL mask_all_equal3(mask4f_arg0 lhs, mask4f_arg1 rhs) RTM_NO_EXCEPT
 	{
@@ -228,7 +228,7 @@ namespace rtm
 	}
 
 	//////////////////////////////////////////////////////////////////////////
-	// Returns true if any 4 components are equal, otherwise false: any(lhs.xyzw == rhs.xyzw)
+	/// Returns true if any 4 components are equal, otherwise false: any(lhs.xyzw == rhs.xyzw)
 	//////////////////////////////////////////////////////////////////////////
 	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE bool RTM_SIMD_CALL mask_any_equal(mask4f_arg0 lhs, mask4f_arg1 rhs) RTM_NO_EXCEPT
 	{
@@ -252,7 +252,7 @@ namespace rtm
 	}
 
 	//////////////////////////////////////////////////////////////////////////
-	// Returns true if any [xy] components are equal, otherwise false: any(lhs.xy == rhs.xy)
+	/// Returns true if any [xy] components are equal, otherwise false: any(lhs.xy == rhs.xy)
 	//////////////////////////////////////////////////////////////////////////
 	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE bool RTM_SIMD_CALL mask_any_equal2(mask4f_arg0 lhs, mask4f_arg1 rhs) RTM_NO_EXCEPT
 	{
@@ -273,7 +273,7 @@ namespace rtm
 	}
 
 	//////////////////////////////////////////////////////////////////////////
-	// Returns true if any [xyz] components are equal, otherwise false: any(lhs.xyz == rhs.xyz)
+	/// Returns true if any [xyz] components are equal, otherwise false: any(lhs.xyz == rhs.xyz)
 	//////////////////////////////////////////////////////////////////////////
 	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE bool RTM_SIMD_CALL mask_any_equal3(mask4f_arg0 lhs, mask4f_arg1 rhs) RTM_NO_EXCEPT
 	{
@@ -296,7 +296,7 @@ namespace rtm
 	}
 
 	//////////////////////////////////////////////////////////////////////////
-	// Per component logical AND between the inputs: lhs & rhs
+	/// Per component logical AND between the inputs: lhs & rhs
 	//////////////////////////////////////////////////////////////////////////
 	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE mask4f RTM_SIMD_CALL mask_and(mask4f_arg0 lhs, mask4f_arg1 rhs) RTM_NO_EXCEPT
 	{
@@ -326,7 +326,7 @@ namespace rtm
 	}
 
 	//////////////////////////////////////////////////////////////////////////
-	// Per component logical OR between the inputs: lhs | rhs
+	/// Per component logical OR between the inputs: lhs | rhs
 	//////////////////////////////////////////////////////////////////////////
 	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE mask4f RTM_SIMD_CALL mask_or(mask4f_arg0 lhs, mask4f_arg1 rhs) RTM_NO_EXCEPT
 	{
@@ -356,7 +356,7 @@ namespace rtm
 	}
 
 	//////////////////////////////////////////////////////////////////////////
-	// Per component logical XOR between the inputs: lhs ^ rhs
+	/// Per component logical XOR between the inputs: lhs ^ rhs
 	//////////////////////////////////////////////////////////////////////////
 	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE mask4f RTM_SIMD_CALL mask_xor(mask4f_arg0 lhs, mask4f_arg1 rhs) RTM_NO_EXCEPT
 	{
@@ -386,7 +386,7 @@ namespace rtm
 	}
 
 	//////////////////////////////////////////////////////////////////////////
-	// Per component logical NOT of the input: ~input
+	/// Per component logical NOT of the input: ~input
 	//////////////////////////////////////////////////////////////////////////
 	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE mask4f RTM_SIMD_CALL mask_not(mask4f_arg0 input) RTM_NO_EXCEPT
 	{

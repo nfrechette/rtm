@@ -135,7 +135,7 @@ namespace rtm
 	}
 
 	//////////////////////////////////////////////////////////////////////////
-	// Returns the identity VQM transform.
+	/// Returns the identity VQM transform.
 	//////////////////////////////////////////////////////////////////////////
 	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE constexpr rtm_impl::vqm_identity_impl RTM_SIMD_CALL vqm_identity() RTM_NO_EXCEPT
 	{

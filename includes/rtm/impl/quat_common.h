@@ -35,7 +35,7 @@ namespace rtm
 	RTM_IMPL_VERSION_NAMESPACE_BEGIN
 
 	//////////////////////////////////////////////////////////////////////////
-	// Creates a quaternion from all 4 components.
+	/// Creates a quaternion from all 4 components.
 	//////////////////////////////////////////////////////////////////////////
 	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE quatf RTM_SIMD_CALL quat_set(float x, float y, float z, float w) RTM_NO_EXCEPT
 	{
@@ -53,7 +53,7 @@ namespace rtm
 	}
 
 	//////////////////////////////////////////////////////////////////////////
-	// Creates a quaternion from all 4 components.
+	/// Creates a quaternion from all 4 components.
 	//////////////////////////////////////////////////////////////////////////
 	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE quatd RTM_SIMD_CALL quat_set(double x, double y, double z, double w) RTM_NO_EXCEPT
 	{
@@ -91,7 +91,7 @@ namespace rtm
 	}
 
 	//////////////////////////////////////////////////////////////////////////
-	// Returns the identity quaternion.
+	/// Returns the identity quaternion.
 	//////////////////////////////////////////////////////////////////////////
 	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE constexpr rtm_impl::quat_identity_impl RTM_SIMD_CALL quat_identity() RTM_NO_EXCEPT
 	{

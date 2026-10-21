@@ -129,7 +129,7 @@ namespace rtm
 	}
 
 	//////////////////////////////////////////////////////////////////////////
-	// Sets all 3 axes and creates a matrix.
+	/// Sets all 3 axes and creates a matrix.
 	//////////////////////////////////////////////////////////////////////////
 	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE constexpr matrix3x3f RTM_SIMD_CALL matrix_set(vector4f_arg0 x_axis, vector4f_arg1 y_axis, vector4f_arg2 z_axis) RTM_NO_EXCEPT
 	{
@@ -137,7 +137,7 @@ namespace rtm
 	}
 
 	//////////////////////////////////////////////////////////////////////////
-	// Sets all 3 axes and creates a matrix.
+	/// Sets all 3 axes and creates a matrix.
 	//////////////////////////////////////////////////////////////////////////
 	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE constexpr matrix3x3d RTM_SIMD_CALL matrix_set(vector4d_arg0 x_axis, vector4d_arg1 y_axis, vector4d_arg2 z_axis) RTM_NO_EXCEPT
 	{
@@ -145,7 +145,7 @@ namespace rtm
 	}
 
 	//////////////////////////////////////////////////////////////////////////
-	// Sets all 4 axes and creates a matrix.
+	/// Sets all 4 axes and creates a matrix.
 	//////////////////////////////////////////////////////////////////////////
 	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE constexpr rtm_impl::matrix_setter4x4<float> RTM_SIMD_CALL matrix_set(vector4f_arg0 x_axis, vector4f_arg1 y_axis, vector4f_arg2 z_axis, vector4f_arg3 w_axis) RTM_NO_EXCEPT
 	{
@@ -153,7 +153,7 @@ namespace rtm
 	}
 
 	//////////////////////////////////////////////////////////////////////////
-	// Sets all 4 axes and creates a matrix.
+	/// Sets all 4 axes and creates a matrix.
 	//////////////////////////////////////////////////////////////////////////
 	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE constexpr rtm_impl::matrix_setter4x4<double> RTM_SIMD_CALL matrix_set(vector4d_arg0 x_axis, vector4d_arg1 y_axis, vector4d_arg2 z_axis, vector4d_arg3 w_axis) RTM_NO_EXCEPT
 	{
@@ -161,7 +161,7 @@ namespace rtm
 	}
 
 	//////////////////////////////////////////////////////////////////////////
-	// Returns the identity matrix.
+	/// Returns the identity matrix.
 	//////////////////////////////////////////////////////////////////////////
 	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE constexpr rtm_impl::matrix_identity_impl RTM_SIMD_CALL matrix_identity() RTM_NO_EXCEPT
 	{

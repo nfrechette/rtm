@@ -37,8 +37,8 @@ RTM_IMPL_FILE_PRAGMA_PUSH
 
 #if defined(RTM_NEON_INTRINSICS)
 	//////////////////////////////////////////////////////////////////////////
-	// Transposes a 4x4 matrix.
-	// All inputs and outputs must be rtm::vector4f.
+	/// Transposes a 4x4 matrix.
+	/// All inputs and outputs must be rtm::vector4f.
 	//////////////////////////////////////////////////////////////////////////
 	#define RTM_MATRIXF_TRANSPOSE_4X4(input_xyzw0, input_xyzw1, input_xyzw2, input_xyzw3, output_xxxx, output_yyyy, output_zzzz, output_wwww) \
 		do { \
@@ -53,8 +53,8 @@ RTM_IMPL_FILE_PRAGMA_PUSH
 		} while(0)
 #elif defined(RTM_SSE2_INTRINSICS)
 	//////////////////////////////////////////////////////////////////////////
-	// Transposes a 4x4 matrix.
-	// All inputs and outputs must be rtm::vector4f.
+	/// Transposes a 4x4 matrix.
+	/// All inputs and outputs must be rtm::vector4f.
 	//////////////////////////////////////////////////////////////////////////
 	#define RTM_MATRIXF_TRANSPOSE_4X4(input_xyzw0, input_xyzw1, input_xyzw2, input_xyzw3, output_xxxx, output_yyyy, output_zzzz, output_wwww) \
 		do { \
@@ -69,8 +69,8 @@ RTM_IMPL_FILE_PRAGMA_PUSH
 		} while(0)
 #elif defined(RTM_WASM128_INTRINSICS)
 	//////////////////////////////////////////////////////////////////////////
-	// Transposes a 4x4 matrix.
-	// All inputs and outputs must be rtm::vector4f.
+	/// Transposes a 4x4 matrix.
+	/// All inputs and outputs must be rtm::vector4f.
 	//////////////////////////////////////////////////////////////////////////
 	#define RTM_MATRIXF_TRANSPOSE_4X4(input_xyzw0, input_xyzw1, input_xyzw2, input_xyzw3, output_xxxx, output_yyyy, output_zzzz, output_wwww) \
 		do { \
@@ -85,8 +85,8 @@ RTM_IMPL_FILE_PRAGMA_PUSH
 		} while(0)
 #else
 	//////////////////////////////////////////////////////////////////////////
-	// Transposes a 4x4 matrix.
-	// All inputs and outputs must be rtm::vector4f.
+	/// Transposes a 4x4 matrix.
+	/// All inputs and outputs must be rtm::vector4f.
 	//////////////////////////////////////////////////////////////////////////
 	#define RTM_MATRIXF_TRANSPOSE_4X4(input_xyzw0, input_xyzw1, input_xyzw2, input_xyzw3, output_xxxx, output_yyyy, output_zzzz, output_wwww) \
 		do { \
@@ -115,8 +115,8 @@ RTM_IMPL_FILE_PRAGMA_PUSH
 
 #if defined(RTM_SSE2_INTRINSICS)
 	//////////////////////////////////////////////////////////////////////////
-	// Transposes a 4x4 matrix.
-	// All inputs and outputs must be rtm::vector4d.
+	/// Transposes a 4x4 matrix.
+	/// All inputs and outputs must be rtm::vector4d.
 	//////////////////////////////////////////////////////////////////////////
 	#define RTM_MATRIXD_TRANSPOSE_4X4(input_xyzw0, input_xyzw1, input_xyzw2, input_xyzw3, output_xxxx, output_yyyy, output_zzzz, output_wwww) \
 		do { \
@@ -135,8 +135,8 @@ RTM_IMPL_FILE_PRAGMA_PUSH
 		} while(0)
 #elif defined(RTM_NEON64_INTRINSICS)
 	//////////////////////////////////////////////////////////////////////////
-	// Transposes a 4x4 matrix.
-	// All inputs and outputs must be rtm::vector4d.
+	/// Transposes a 4x4 matrix.
+	/// All inputs and outputs must be rtm::vector4d.
 	//////////////////////////////////////////////////////////////////////////
 	#define RTM_MATRIXD_TRANSPOSE_4X4(input_xyzw0, input_xyzw1, input_xyzw2, input_xyzw3, output_xxxx, output_yyyy, output_zzzz, output_wwww) \
 		do { \
@@ -155,8 +155,8 @@ RTM_IMPL_FILE_PRAGMA_PUSH
 		} while(0)
 #elif defined(RTM_WASM128_INTRINSICS)
 	//////////////////////////////////////////////////////////////////////////
-	// Transposes a 4x4 matrix.
-	// All inputs and outputs must be rtm::vector4d.
+	/// Transposes a 4x4 matrix.
+	/// All inputs and outputs must be rtm::vector4d.
 	//////////////////////////////////////////////////////////////////////////
 	#define RTM_MATRIXD_TRANSPOSE_4X4(input_xyzw0, input_xyzw1, input_xyzw2, input_xyzw3, output_xxxx, output_yyyy, output_zzzz, output_wwww) \
 		do { \
@@ -175,8 +175,8 @@ RTM_IMPL_FILE_PRAGMA_PUSH
 		} while(0)
 #else
 	//////////////////////////////////////////////////////////////////////////
-	// Transposes a 4x4 matrix.
-	// All inputs and outputs must be rtm::vector4d.
+	/// Transposes a 4x4 matrix.
+	/// All inputs and outputs must be rtm::vector4d.
 	//////////////////////////////////////////////////////////////////////////
 	#define RTM_MATRIXD_TRANSPOSE_4X4(input_xyzw0, input_xyzw1, input_xyzw2, input_xyzw3, output_xxxx, output_yyyy, output_zzzz, output_wwww) \
 		do { \
@@ -205,8 +205,8 @@ RTM_IMPL_FILE_PRAGMA_PUSH
 
 #if defined(RTM_NEON_INTRINSICS)
 	//////////////////////////////////////////////////////////////////////////
-	// Transposes a 3x3 matrix.
-	// All inputs and outputs must be rtm::vector4f.
+	/// Transposes a 3x3 matrix.
+	/// All inputs and outputs must be rtm::vector4f.
 	//////////////////////////////////////////////////////////////////////////
 	#define RTM_MATRIXF_TRANSPOSE_3X3(input_xyz0, input_xyz1, input_xyz2, output_xxx, output_yyy, output_zzz) \
 		do { \
@@ -220,8 +220,8 @@ RTM_IMPL_FILE_PRAGMA_PUSH
 		} while(0)
 #elif defined(RTM_SSE2_INTRINSICS)
 	//////////////////////////////////////////////////////////////////////////
-	// Transposes a 3x3 matrix.
-	// All inputs and outputs must be rtm::vector4f.
+	/// Transposes a 3x3 matrix.
+	/// All inputs and outputs must be rtm::vector4f.
 	//////////////////////////////////////////////////////////////////////////
 	#define RTM_MATRIXF_TRANSPOSE_3X3(input_xyz0, input_xyz1, input_xyz2, output_xxx, output_yyy, output_zzz) \
 		do { \
@@ -234,8 +234,8 @@ RTM_IMPL_FILE_PRAGMA_PUSH
 		} while(0)
 #elif defined(RTM_WASM128_INTRINSICS)
 	//////////////////////////////////////////////////////////////////////////
-	// Transposes a 3x3 matrix.
-	// All inputs and outputs must be rtm::vector4f.
+	/// Transposes a 3x3 matrix.
+	/// All inputs and outputs must be rtm::vector4f.
 	//////////////////////////////////////////////////////////////////////////
 	#define RTM_MATRIXF_TRANSPOSE_3X3(input_xyz0, input_xyz1, input_xyz2, output_xxx, output_yyy, output_zzz) \
 		do { \
@@ -248,8 +248,8 @@ RTM_IMPL_FILE_PRAGMA_PUSH
 		} while(0)
 #else
 	//////////////////////////////////////////////////////////////////////////
-	// Transposes a 3x3 matrix.
-	// All inputs and outputs must be rtm::vector4f.
+	/// Transposes a 3x3 matrix.
+	/// All inputs and outputs must be rtm::vector4f.
 	//////////////////////////////////////////////////////////////////////////
 	#define RTM_MATRIXF_TRANSPOSE_3X3(input_xyz0, input_xyz1, input_xyz2, output_xxx, output_yyy, output_zzz) \
 		do { \
@@ -270,8 +270,8 @@ RTM_IMPL_FILE_PRAGMA_PUSH
 
 #if defined(RTM_SSE2_INTRINSICS)
 	//////////////////////////////////////////////////////////////////////////
-	// Transposes a 3x3 matrix.
-	// All inputs and outputs must be rtm::vector4d.
+	/// Transposes a 3x3 matrix.
+	/// All inputs and outputs must be rtm::vector4d.
 	//////////////////////////////////////////////////////////////////////////
 	#define RTM_MATRIXD_TRANSPOSE_3X3(input_xyz0, input_xyz1, input_xyz2, output_xxx, output_yyy, output_zzz) \
 		do { \
@@ -285,8 +285,8 @@ RTM_IMPL_FILE_PRAGMA_PUSH
 		} while(0)
 #elif defined(RTM_NEON64_INTRINSICS)
 	//////////////////////////////////////////////////////////////////////////
-	// Transposes a 3x3 matrix.
-	// All inputs and outputs must be rtm::vector4d.
+	/// Transposes a 3x3 matrix.
+	/// All inputs and outputs must be rtm::vector4d.
 	//////////////////////////////////////////////////////////////////////////
 	#define RTM_MATRIXD_TRANSPOSE_3X3(input_xyz0, input_xyz1, input_xyz2, output_xxx, output_yyy, output_zzz) \
 		do { \
@@ -300,8 +300,8 @@ RTM_IMPL_FILE_PRAGMA_PUSH
 		} while(0)
 #elif defined(RTM_WASM128_INTRINSICS)
 	//////////////////////////////////////////////////////////////////////////
-	// Transposes a 3x3 matrix.
-	// All inputs and outputs must be rtm::vector4d.
+	/// Transposes a 3x3 matrix.
+	/// All inputs and outputs must be rtm::vector4d.
 	//////////////////////////////////////////////////////////////////////////
 	#define RTM_MATRIXD_TRANSPOSE_3X3(input_xyz0, input_xyz1, input_xyz2, output_xxx, output_yyy, output_zzz) \
 		do { \
@@ -315,8 +315,8 @@ RTM_IMPL_FILE_PRAGMA_PUSH
 		} while(0)
 #else
 	//////////////////////////////////////////////////////////////////////////
-	// Transposes a 3x3 matrix.
-	// All inputs and outputs must be rtm::vector4d.
+	/// Transposes a 3x3 matrix.
+	/// All inputs and outputs must be rtm::vector4d.
 	//////////////////////////////////////////////////////////////////////////
 	#define RTM_MATRIXD_TRANSPOSE_3X3(input_xyz0, input_xyz1, input_xyz2, output_xxx, output_yyy, output_zzz) \
 		do { \
@@ -337,8 +337,8 @@ RTM_IMPL_FILE_PRAGMA_PUSH
 
 #if defined(RTM_NEON64_INTRINSICS)
 	//////////////////////////////////////////////////////////////////////////
-	// Transposes a 2x2 matrix.
-	// All inputs and outputs must be rtm::vector4f.
+	/// Transposes a 2x2 matrix.
+	/// All inputs and outputs must be rtm::vector4f.
 	//////////////////////////////////////////////////////////////////////////
 	#define RTM_MATRIXF_TRANSPOSE_2X2(input_xy0, input_xy1, output_xx, output_yy) \
 		do { \
@@ -348,9 +348,9 @@ RTM_IMPL_FILE_PRAGMA_PUSH
 		} while(0)
 #elif defined(RTM_NEON_INTRINSICS)
 	//////////////////////////////////////////////////////////////////////////
-	// Transposes a 2x2 matrix.
-	// All inputs and outputs must be rtm::vector4f.
-	// vzip1q_f32 is only available with ARM64, the first half of vzipq_f32 has the same lanes.
+	/// Transposes a 2x2 matrix.
+	/// All inputs and outputs must be rtm::vector4f.
+	/// vzip1q_f32 is only available with ARM64, the first half of vzipq_f32 has the same lanes.
 	//////////////////////////////////////////////////////////////////////////
 	#define RTM_MATRIXF_TRANSPOSE_2X2(input_xy0, input_xy1, output_xx, output_yy) \
 		do { \
@@ -360,8 +360,8 @@ RTM_IMPL_FILE_PRAGMA_PUSH
 		} while(0)
 #elif defined(RTM_SSE2_INTRINSICS)
 	//////////////////////////////////////////////////////////////////////////
-	// Transposes a 2x2 matrix.
-	// All inputs and outputs must be rtm::vector4f.
+	/// Transposes a 2x2 matrix.
+	/// All inputs and outputs must be rtm::vector4f.
 	//////////////////////////////////////////////////////////////////////////
 	#define RTM_MATRIXF_TRANSPOSE_2X2(input_xy0, input_xy1, output_xx, output_yy) \
 		do { \
@@ -371,8 +371,8 @@ RTM_IMPL_FILE_PRAGMA_PUSH
 		} while(0)
 #elif defined(RTM_WASM128_INTRINSICS)
 	//////////////////////////////////////////////////////////////////////////
-	// Transposes a 2x2 matrix.
-	// All inputs and outputs must be rtm::vector4f.
+	/// Transposes a 2x2 matrix.
+	/// All inputs and outputs must be rtm::vector4f.
 	//////////////////////////////////////////////////////////////////////////
 	#define RTM_MATRIXF_TRANSPOSE_2X2(input_xy0, input_xy1, output_xx, output_yy) \
 		do { \
@@ -382,8 +382,8 @@ RTM_IMPL_FILE_PRAGMA_PUSH
 		} while(0)
 #else
 	//////////////////////////////////////////////////////////////////////////
-	// Transposes a 2x2 matrix.
-	// All inputs and outputs must be rtm::vector4f.
+	/// Transposes a 2x2 matrix.
+	/// All inputs and outputs must be rtm::vector4f.
 	//////////////////////////////////////////////////////////////////////////
 	#define RTM_MATRIXF_TRANSPOSE_2X2(input_xy0, input_xy1, output_xx, output_yy) \
 		do { \
@@ -398,8 +398,8 @@ RTM_IMPL_FILE_PRAGMA_PUSH
 
 #if defined(RTM_SSE2_INTRINSICS)
 	//////////////////////////////////////////////////////////////////////////
-	// Transposes a 2x2 matrix.
-	// All inputs and outputs must be rtm::vector4d.
+	/// Transposes a 2x2 matrix.
+	/// All inputs and outputs must be rtm::vector4d.
 	//////////////////////////////////////////////////////////////////////////
 	#define RTM_MATRIXD_TRANSPOSE_2X2(input_xy0, input_xy1, output_xx, output_yy) \
 		do { \
@@ -410,8 +410,8 @@ RTM_IMPL_FILE_PRAGMA_PUSH
 		} while(0)
 #elif defined(RTM_NEON64_INTRINSICS)
 	//////////////////////////////////////////////////////////////////////////
-	// Transposes a 2x2 matrix.
-	// All inputs and outputs must be rtm::vector4d.
+	/// Transposes a 2x2 matrix.
+	/// All inputs and outputs must be rtm::vector4d.
 	//////////////////////////////////////////////////////////////////////////
 	#define RTM_MATRIXD_TRANSPOSE_2X2(input_xy0, input_xy1, output_xx, output_yy) \
 		do { \
@@ -422,8 +422,8 @@ RTM_IMPL_FILE_PRAGMA_PUSH
 		} while(0)
 #elif defined(RTM_WASM128_INTRINSICS)
 	//////////////////////////////////////////////////////////////////////////
-	// Transposes a 2x2 matrix.
-	// All inputs and outputs must be rtm::vector4d.
+	/// Transposes a 2x2 matrix.
+	/// All inputs and outputs must be rtm::vector4d.
 	//////////////////////////////////////////////////////////////////////////
 	#define RTM_MATRIXD_TRANSPOSE_2X2(input_xy0, input_xy1, output_xx, output_yy) \
 		do { \
@@ -434,8 +434,8 @@ RTM_IMPL_FILE_PRAGMA_PUSH
 		} while(0)
 #else
 	//////////////////////////////////////////////////////////////////////////
-	// Transposes a 2x2 matrix.
-	// All inputs and outputs must be rtm::vector4d.
+	/// Transposes a 2x2 matrix.
+	/// All inputs and outputs must be rtm::vector4d.
 	//////////////////////////////////////////////////////////////////////////
 	#define RTM_MATRIXD_TRANSPOSE_2X2(input_xy0, input_xy1, output_xx, output_yy) \
 		do { \
@@ -450,8 +450,8 @@ RTM_IMPL_FILE_PRAGMA_PUSH
 
 #if defined(RTM_NEON_INTRINSICS)
 	//////////////////////////////////////////////////////////////////////////
-	// Transposes a 4x3 matrix.
-	// All inputs and outputs must be rtm::vector4f.
+	/// Transposes a 4x3 matrix.
+	/// All inputs and outputs must be rtm::vector4f.
 	//////////////////////////////////////////////////////////////////////////
 	#define RTM_MATRIXF_TRANSPOSE_4X3(input_xyz0, input_xyz1, input_xyz2, input_xyz3, output_xxxx, output_yyyy, output_zzzz) \
 		do { \
@@ -465,8 +465,8 @@ RTM_IMPL_FILE_PRAGMA_PUSH
 		} while(0)
 #elif defined(RTM_SSE2_INTRINSICS)
 	//////////////////////////////////////////////////////////////////////////
-	// Transposes a 4x3 matrix.
-	// All inputs and outputs must be rtm::vector4f.
+	/// Transposes a 4x3 matrix.
+	/// All inputs and outputs must be rtm::vector4f.
 	//////////////////////////////////////////////////////////////////////////
 	#define RTM_MATRIXF_TRANSPOSE_4X3(input_xyz0, input_xyz1, input_xyz2, input_xyz3, output_xxxx, output_yyyy, output_zzzz) \
 		do { \
@@ -480,8 +480,8 @@ RTM_IMPL_FILE_PRAGMA_PUSH
 		} while(0)
 #elif defined(RTM_WASM128_INTRINSICS)
 	//////////////////////////////////////////////////////////////////////////
-	// Transposes a 4x3 matrix.
-	// All inputs and outputs must be rtm::vector4f.
+	/// Transposes a 4x3 matrix.
+	/// All inputs and outputs must be rtm::vector4f.
 	//////////////////////////////////////////////////////////////////////////
 	#define RTM_MATRIXF_TRANSPOSE_4X3(input_xyz0, input_xyz1, input_xyz2, input_xyz3, output_xxxx, output_yyyy, output_zzzz) \
 		do { \
@@ -495,8 +495,8 @@ RTM_IMPL_FILE_PRAGMA_PUSH
 		} while(0)
 #else
 	//////////////////////////////////////////////////////////////////////////
-	// Transposes a 4x3 matrix.
-	// All inputs and outputs must be rtm::vector4f.
+	/// Transposes a 4x3 matrix.
+	/// All inputs and outputs must be rtm::vector4f.
 	//////////////////////////////////////////////////////////////////////////
 	#define RTM_MATRIXF_TRANSPOSE_4X3(input_xyz0, input_xyz1, input_xyz2, input_xyz3, output_xxxx, output_yyyy, output_zzzz) \
 		do { \
@@ -520,8 +520,8 @@ RTM_IMPL_FILE_PRAGMA_PUSH
 
 #if defined(RTM_SSE2_INTRINSICS)
 	//////////////////////////////////////////////////////////////////////////
-	// Transposes a 4x3 matrix.
-	// All inputs and outputs must be rtm::vector4d.
+	/// Transposes a 4x3 matrix.
+	/// All inputs and outputs must be rtm::vector4d.
 	//////////////////////////////////////////////////////////////////////////
 	#define RTM_MATRIXD_TRANSPOSE_4X3(input_xyz0, input_xyz1, input_xyz2, input_xyz3, output_xxxx, output_yyyy, output_zzzz) \
 		do { \
@@ -537,8 +537,8 @@ RTM_IMPL_FILE_PRAGMA_PUSH
 		} while(0)
 #elif defined(RTM_NEON64_INTRINSICS)
 	//////////////////////////////////////////////////////////////////////////
-	// Transposes a 4x3 matrix.
-	// All inputs and outputs must be rtm::vector4d.
+	/// Transposes a 4x3 matrix.
+	/// All inputs and outputs must be rtm::vector4d.
 	//////////////////////////////////////////////////////////////////////////
 	#define RTM_MATRIXD_TRANSPOSE_4X3(input_xyz0, input_xyz1, input_xyz2, input_xyz3, output_xxxx, output_yyyy, output_zzzz) \
 		do { \
@@ -554,8 +554,8 @@ RTM_IMPL_FILE_PRAGMA_PUSH
 		} while(0)
 #elif defined(RTM_WASM128_INTRINSICS)
 	//////////////////////////////////////////////////////////////////////////
-	// Transposes a 4x3 matrix.
-	// All inputs and outputs must be rtm::vector4d.
+	/// Transposes a 4x3 matrix.
+	/// All inputs and outputs must be rtm::vector4d.
 	//////////////////////////////////////////////////////////////////////////
 	#define RTM_MATRIXD_TRANSPOSE_4X3(input_xyz0, input_xyz1, input_xyz2, input_xyz3, output_xxxx, output_yyyy, output_zzzz) \
 		do { \
@@ -571,8 +571,8 @@ RTM_IMPL_FILE_PRAGMA_PUSH
 		} while(0)
 #else
 	//////////////////////////////////////////////////////////////////////////
-	// Transposes a 4x3 matrix.
-	// All inputs and outputs must be rtm::vector4d.
+	/// Transposes a 4x3 matrix.
+	/// All inputs and outputs must be rtm::vector4d.
 	//////////////////////////////////////////////////////////////////////////
 	#define RTM_MATRIXD_TRANSPOSE_4X3(input_xyz0, input_xyz1, input_xyz2, input_xyz3, output_xxxx, output_yyyy, output_zzzz) \
 		do { \
@@ -596,8 +596,8 @@ RTM_IMPL_FILE_PRAGMA_PUSH
 
 #if defined(RTM_NEON_INTRINSICS)
 	//////////////////////////////////////////////////////////////////////////
-	// Transposes a 3x4 matrix.
-	// All inputs and outputs must be rtm::vector4f.
+	/// Transposes a 3x4 matrix.
+	/// All inputs and outputs must be rtm::vector4f.
 	//////////////////////////////////////////////////////////////////////////
 	#define RTM_MATRIXF_TRANSPOSE_3X4(input_xyzw0, input_xyzw1, input_xyzw2, output_xxx, output_yyy, output_zzz, output_www) \
 		do { \
@@ -612,8 +612,8 @@ RTM_IMPL_FILE_PRAGMA_PUSH
 		} while(0)
 #elif defined(RTM_SSE2_INTRINSICS)
 	//////////////////////////////////////////////////////////////////////////
-	// Transposes a 3x4 matrix.
-	// All inputs and outputs must be rtm::vector4f.
+	/// Transposes a 3x4 matrix.
+	/// All inputs and outputs must be rtm::vector4f.
 	//////////////////////////////////////////////////////////////////////////
 	#define RTM_MATRIXF_TRANSPOSE_3X4(input_xyzw0, input_xyzw1, input_xyzw2, output_xxx, output_yyy, output_zzz, output_www) \
 		do { \
@@ -627,8 +627,8 @@ RTM_IMPL_FILE_PRAGMA_PUSH
 		} while(0)
 #elif defined(RTM_WASM128_INTRINSICS)
 	//////////////////////////////////////////////////////////////////////////
-	// Transposes a 3x4 matrix.
-	// All inputs and outputs must be rtm::vector4f.
+	/// Transposes a 3x4 matrix.
+	/// All inputs and outputs must be rtm::vector4f.
 	//////////////////////////////////////////////////////////////////////////
 	#define RTM_MATRIXF_TRANSPOSE_3X4(input_xyzw0, input_xyzw1, input_xyzw2, output_xxx, output_yyy, output_zzz, output_www) \
 		do { \
@@ -642,8 +642,8 @@ RTM_IMPL_FILE_PRAGMA_PUSH
 		} while(0)
 #else
 	//////////////////////////////////////////////////////////////////////////
-	// Transposes a 3x4 matrix.
-	// All inputs and outputs must be rtm::vector4f.
+	/// Transposes a 3x4 matrix.
+	/// All inputs and outputs must be rtm::vector4f.
 	//////////////////////////////////////////////////////////////////////////
 	#define RTM_MATRIXF_TRANSPOSE_3X4(input_xyzw0, input_xyzw1, input_xyzw2, output_xxx, output_yyy, output_zzz, output_www) \
 		do { \
@@ -668,8 +668,8 @@ RTM_IMPL_FILE_PRAGMA_PUSH
 
 #if defined(RTM_SSE2_INTRINSICS)
 	//////////////////////////////////////////////////////////////////////////
-	// Transposes a 3x4 matrix.
-	// All inputs and outputs must be rtm::vector4d.
+	/// Transposes a 3x4 matrix.
+	/// All inputs and outputs must be rtm::vector4d.
 	//////////////////////////////////////////////////////////////////////////
 	#define RTM_MATRIXD_TRANSPOSE_3X4(input_xyzw0, input_xyzw1, input_xyzw2, output_xxx, output_yyy, output_zzz, output_www) \
 		do { \
@@ -686,8 +686,8 @@ RTM_IMPL_FILE_PRAGMA_PUSH
 		} while(0)
 #elif defined(RTM_NEON64_INTRINSICS)
 	//////////////////////////////////////////////////////////////////////////
-	// Transposes a 3x4 matrix.
-	// All inputs and outputs must be rtm::vector4d.
+	/// Transposes a 3x4 matrix.
+	/// All inputs and outputs must be rtm::vector4d.
 	//////////////////////////////////////////////////////////////////////////
 	#define RTM_MATRIXD_TRANSPOSE_3X4(input_xyzw0, input_xyzw1, input_xyzw2, output_xxx, output_yyy, output_zzz, output_www) \
 		do { \
@@ -704,8 +704,8 @@ RTM_IMPL_FILE_PRAGMA_PUSH
 		} while(0)
 #elif defined(RTM_WASM128_INTRINSICS)
 	//////////////////////////////////////////////////////////////////////////
-	// Transposes a 3x4 matrix.
-	// All inputs and outputs must be rtm::vector4d.
+	/// Transposes a 3x4 matrix.
+	/// All inputs and outputs must be rtm::vector4d.
 	//////////////////////////////////////////////////////////////////////////
 	#define RTM_MATRIXD_TRANSPOSE_3X4(input_xyzw0, input_xyzw1, input_xyzw2, output_xxx, output_yyy, output_zzz, output_www) \
 		do { \
@@ -722,8 +722,8 @@ RTM_IMPL_FILE_PRAGMA_PUSH
 		} while(0)
 #else
 	//////////////////////////////////////////////////////////////////////////
-	// Transposes a 3x4 matrix.
-	// All inputs and outputs must be rtm::vector4d.
+	/// Transposes a 3x4 matrix.
+	/// All inputs and outputs must be rtm::vector4d.
 	//////////////////////////////////////////////////////////////////////////
 	#define RTM_MATRIXD_TRANSPOSE_3X4(input_xyzw0, input_xyzw1, input_xyzw2, output_xxx, output_yyy, output_zzz, output_www) \
 		do { \

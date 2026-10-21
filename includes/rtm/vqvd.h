@@ -38,11 +38,12 @@
 RTM_IMPL_FILE_PRAGMA_PUSH
 
 ////////////////////////////////////////////////////////////////////////////////
-// WARNING: VQV transforms do _NOT_ form a group. It has no well defined multiplication and inverse.
-// This is because when non-uniform scale is rotated (e.g. as the result of two VQV multiplying),
-// shear is introduced and there is no place to store it. As such, VQV discards the introduced shear
-// which is mathematically incorrect. As a result of this, VQV multiplication is _NOT_ associative and
-// the inverse is incorrect. USE AT YOUR OWN RISK.
+/// \file
+/// WARNING: VQV transforms do _NOT_ form a group. It has no well defined multiplication and inverse.
+/// This is because when non-uniform scale is rotated (e.g. as the result of two VQV multiplying),
+/// shear is introduced and there is no place to store it. As such, VQV discards the introduced shear
+/// which is mathematically incorrect. As a result of this, VQV multiplication is _NOT_ associative and
+/// the inverse is incorrect. USE AT YOUR OWN RISK.
 ////////////////////////////////////////////////////////////////////////////////
 
 namespace rtm
@@ -50,7 +51,7 @@ namespace rtm
 	RTM_IMPL_VERSION_NAMESPACE_BEGIN
 
 	//////////////////////////////////////////////////////////////////////////
-	// Casts a VQV transform float32 variant to a float64 variant.
+	/// Casts a VQV transform float32 variant to a float64 variant.
 	//////////////////////////////////////////////////////////////////////////
 	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE vqvd RTM_SIMD_CALL vqv_cast(vqvf_arg0 input) RTM_NO_EXCEPT
 	{
@@ -58,8 +59,8 @@ namespace rtm
 	}
 
 	//////////////////////////////////////////////////////////////////////////
-	// Converts a pure rotation 3x3 matrix into a VQV transform.
-	// The translation/scale will be the identity.
+	/// Converts a pure rotation 3x3 matrix into a VQV transform.
+	/// The translation/scale will be the identity.
 	//////////////////////////////////////////////////////////////////////////
 	RTM_DISABLE_SECURITY_COOKIE_CHECK inline vqvd RTM_SIMD_CALL vqv_from_matrix(matrix3x3d_arg0 input) RTM_NO_EXCEPT
 	{
@@ -70,7 +71,7 @@ namespace rtm
 	}
 
 	//////////////////////////////////////////////////////////////////////////
-	// Converts a 3x4 affine matrix into a VQV transform.
+	/// Converts a 3x4 affine matrix into a VQV transform.
 	//////////////////////////////////////////////////////////////////////////
 	RTM_DISABLE_SECURITY_COOKIE_CHECK inline vqvd RTM_SIMD_CALL vqv_from_matrix(matrix3x4d_arg0 input) RTM_NO_EXCEPT
 	{
@@ -318,10 +319,10 @@ namespace rtm
 	}
 
 	//////////////////////////////////////////////////////////////////////////
-	// Multiplies two VQV transforms.
-	// Multiplication order is as follow: local_to_world = vqv_mul(local_to_object, object_to_world)
-	// NOTE: When scale is present, multiplication will not properly handle skew/shear,
-	// use affine matrices if you have issues.
+	/// Multiplies two VQV transforms.
+	/// Multiplication order is as follow: local_to_world = vqv_mul(local_to_object, object_to_world)
+	/// NOTE: When scale is present, multiplication will not properly handle skew/shear,
+	/// use affine matrices if you have issues.
 	//////////////////////////////////////////////////////////////////////////
 	RTM_DISABLE_SECURITY_COOKIE_CHECK inline vqvd RTM_SIMD_CALL vqv_mul(vqvd_arg0 lhs, vqvd_arg1 rhs) RTM_NO_EXCEPT
 	{
@@ -354,9 +355,9 @@ namespace rtm
 	}
 
 	//////////////////////////////////////////////////////////////////////////
-	// Multiplies two VQV transforms ignoring 3D scale.
-	// The resulting VQV transform will have the LHS scale.
-	// Multiplication order is as follow: local_to_world = vqv_mul(local_to_object, object_to_world)
+	/// Multiplies two VQV transforms ignoring 3D scale.
+	/// The resulting VQV transform will have the LHS scale.
+	/// Multiplication order is as follow: local_to_world = vqv_mul(local_to_object, object_to_world)
 	//////////////////////////////////////////////////////////////////////////
 	RTM_DISABLE_SECURITY_COOKIE_CHECK inline vqvd RTM_SIMD_CALL vqv_mul_no_scale(vqvd_arg0 lhs, vqvd_arg1 rhs) RTM_NO_EXCEPT
 	{
@@ -366,8 +367,8 @@ namespace rtm
 	}
 
 	//////////////////////////////////////////////////////////////////////////
-	// Multiplies a VQV transform and a 3D point.
-	// Multiplication order is as follow: world_position = vqv_mul_point3(local_position, local_to_world)
+	/// Multiplies a VQV transform and a 3D point.
+	/// Multiplication order is as follow: world_position = vqv_mul_point3(local_position, local_to_world)
 	//////////////////////////////////////////////////////////////////////////
 	RTM_DISABLE_SECURITY_COOKIE_CHECK inline vector4d RTM_SIMD_CALL vqv_mul_point3(vector4d_arg0 point, vqvd_arg1 vqv) RTM_NO_EXCEPT
 	{
@@ -375,8 +376,8 @@ namespace rtm
 	}
 
 	//////////////////////////////////////////////////////////////////////////
-	// Multiplies a VQV transform and a 3D point ignoring 3D scale.
-	// Multiplication order is as follow: world_position = vqv_mul_point3_no_scale(local_position, local_to_world)
+	/// Multiplies a VQV transform and a 3D point ignoring 3D scale.
+	/// Multiplication order is as follow: world_position = vqv_mul_point3_no_scale(local_position, local_to_world)
 	//////////////////////////////////////////////////////////////////////////
 	RTM_DISABLE_SECURITY_COOKIE_CHECK inline vector4d RTM_SIMD_CALL vqv_mul_point3_no_scale(vector4d_arg0 point, vqvd_arg1 vqv) RTM_NO_EXCEPT
 	{
@@ -384,9 +385,9 @@ namespace rtm
 	}
 
 	//////////////////////////////////////////////////////////////////////////
-	// Returns the inverse of the input VQV transform.
-	// If zero scale is contained, the result is undefined.
-	// For a safe alternative, supply a fallback scale value and a threshold.
+	/// Returns the inverse of the input VQV transform.
+	/// If zero scale is contained, the result is undefined.
+	/// For a safe alternative, supply a fallback scale value and a threshold.
 	//////////////////////////////////////////////////////////////////////////
 	RTM_DISABLE_SECURITY_COOKIE_CHECK inline vqvd RTM_SIMD_CALL vqv_inverse(vqvd_arg0 input) RTM_NO_EXCEPT
 	{
@@ -397,9 +398,9 @@ namespace rtm
 	}
 
 	//////////////////////////////////////////////////////////////////////////
-	// Returns the inverse of the input VQV transform.
-	// If the input scale has an absolute value below the supplied threshold, the
-	// fallback value is used instead.
+	/// Returns the inverse of the input VQV transform.
+	/// If the input scale has an absolute value below the supplied threshold, the
+	/// fallback value is used instead.
 	//////////////////////////////////////////////////////////////////////////
 	RTM_DISABLE_SECURITY_COOKIE_CHECK inline vqvd RTM_SIMD_CALL vqv_inverse(vqvd_arg0 input, vector4d_arg3 fallback_scale, double threshold = 1.0E-8) RTM_NO_EXCEPT
 	{
@@ -412,8 +413,8 @@ namespace rtm
 	}
 
 	//////////////////////////////////////////////////////////////////////////
-	// Returns the inverse of the input VQV transform ignoring 3D scale.
-	// The resulting VQV transform will have the input scale.
+	/// Returns the inverse of the input VQV transform ignoring 3D scale.
+	/// The resulting VQV transform will have the input scale.
 	//////////////////////////////////////////////////////////////////////////
 	RTM_DISABLE_SECURITY_COOKIE_CHECK inline vqvd RTM_SIMD_CALL vqv_inverse_no_scale(vqvd_arg0 input) RTM_NO_EXCEPT
 	{
@@ -423,7 +424,7 @@ namespace rtm
 	}
 
 	//////////////////////////////////////////////////////////////////////////
-	// Returns a VQV transforms with the rotation part normalized.
+	/// Returns a VQV transforms with the rotation part normalized.
 	//////////////////////////////////////////////////////////////////////////
 	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE vqvd RTM_SIMD_CALL vqv_normalize(vqvd_arg0 input) RTM_NO_EXCEPT
 	{
@@ -432,11 +433,11 @@ namespace rtm
 	}
 
 	//////////////////////////////////////////////////////////////////////////
-	// Per component linear interpolation of the two inputs at the specified alpha.
-	// The formula used is: ((1.0 - alpha) * start) + (alpha * end).
-	// Interpolation is stable and will return 'start' when alpha is 0.0 and 'end' when it is 1.0.
-	// This is the same instruction count when FMA is present but it might be slightly slower
-	// due to the extra multiplication compared to: start + (alpha * (end - start)).
+	/// Per component linear interpolation of the two inputs at the specified alpha.
+	/// The formula used is: ((1.0 - alpha) * start) + (alpha * end).
+	/// Interpolation is stable and will return 'start' when alpha is 0.0 and 'end' when it is 1.0.
+	/// This is the same instruction count when FMA is present but it might be slightly slower
+	/// due to the extra multiplication compared to: start + (alpha * (end - start)).
 	//////////////////////////////////////////////////////////////////////////
 	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE vqvd RTM_SIMD_CALL vqv_lerp(vqvd_arg0 start, vqvd_arg1 end, double alpha) RTM_NO_EXCEPT
 	{
@@ -448,11 +449,11 @@ namespace rtm
 
 #if defined(RTM_SSE2_INTRINSICS)
 	//////////////////////////////////////////////////////////////////////////
-	// Per component linear interpolation of the two inputs at the specified alpha.
-	// The formula used is: ((1.0 - alpha) * start) + (alpha * end).
-	// Interpolation is stable and will return 'start' when alpha is 0.0 and 'end' when it is 1.0.
-	// This is the same instruction count when FMA is present but it might be slightly slower
-	// due to the extra multiplication compared to: start + (alpha * (end - start)).
+	/// Per component linear interpolation of the two inputs at the specified alpha.
+	/// The formula used is: ((1.0 - alpha) * start) + (alpha * end).
+	/// Interpolation is stable and will return 'start' when alpha is 0.0 and 'end' when it is 1.0.
+	/// This is the same instruction count when FMA is present but it might be slightly slower
+	/// due to the extra multiplication compared to: start + (alpha * (end - start)).
 	//////////////////////////////////////////////////////////////////////////
 	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE vqvd RTM_SIMD_CALL vqv_lerp(vqvd_arg0 start, vqvd_arg1 end, scalard_argn alpha) RTM_NO_EXCEPT
 	{
@@ -464,12 +465,12 @@ namespace rtm
 #endif
 
 	//////////////////////////////////////////////////////////////////////////
-	// Per component linear interpolation of the two inputs at the specified alpha.
-	// The formula used is: ((1.0 - alpha) * start) + (alpha * end).
-	// Interpolation is stable and will return 'start' when alpha is 0.0 and 'end' when it is 1.0.
-	// This is the same instruction count when FMA is present but it might be slightly slower
-	// due to the extra multiplication compared to: start + (alpha * (end - start)).
-	// The resulting VQV transform will have the start scale.
+	/// Per component linear interpolation of the two inputs at the specified alpha.
+	/// The formula used is: ((1.0 - alpha) * start) + (alpha * end).
+	/// Interpolation is stable and will return 'start' when alpha is 0.0 and 'end' when it is 1.0.
+	/// This is the same instruction count when FMA is present but it might be slightly slower
+	/// due to the extra multiplication compared to: start + (alpha * (end - start)).
+	/// The resulting VQV transform will have the start scale.
 	//////////////////////////////////////////////////////////////////////////
 	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE vqvd RTM_SIMD_CALL vqv_lerp_no_scale(vqvd_arg0 start, vqvd_arg1 end, double alpha) RTM_NO_EXCEPT
 	{
@@ -480,12 +481,12 @@ namespace rtm
 
 #if defined(RTM_SSE2_INTRINSICS)
 	//////////////////////////////////////////////////////////////////////////
-	// Per component linear interpolation of the two inputs at the specified alpha.
-	// The formula used is: ((1.0 - alpha) * start) + (alpha * end).
-	// Interpolation is stable and will return 'start' when alpha is 0.0 and 'end' when it is 1.0.
-	// This is the same instruction count when FMA is present but it might be slightly slower
-	// due to the extra multiplication compared to: start + (alpha * (end - start)).
-	// The resulting VQV transform will have the start scale.
+	/// Per component linear interpolation of the two inputs at the specified alpha.
+	/// The formula used is: ((1.0 - alpha) * start) + (alpha * end).
+	/// Interpolation is stable and will return 'start' when alpha is 0.0 and 'end' when it is 1.0.
+	/// This is the same instruction count when FMA is present but it might be slightly slower
+	/// due to the extra multiplication compared to: start + (alpha * (end - start)).
+	/// The resulting VQV transform will have the start scale.
 	//////////////////////////////////////////////////////////////////////////
 	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE vqvd RTM_SIMD_CALL vqv_lerp_no_scale(vqvd_arg0 start, vqvd_arg1 end, scalard_argn alpha) RTM_NO_EXCEPT
 	{
@@ -515,10 +516,10 @@ namespace rtm
 	}
 
 	//////////////////////////////////////////////////////////////////////////
-	// Per component spherical interpolation of the two inputs at the specified alpha.
-	// The function interpolates the rotation with quat_slerp(..), the translation with vector_lerp(..),
-	// and the scale with vector_eerp(..). If the two scales of a component have a different sign or if
-	// one scale is zero, the function uses vector_lerp(..) for that component.
+	/// Per component spherical interpolation of the two inputs at the specified alpha.
+	/// The function interpolates the rotation with quat_slerp(..), the translation with vector_lerp(..),
+	/// and the scale with vector_eerp(..). If the two scales of a component have a different sign or if
+	/// one scale is zero, the function uses vector_lerp(..) for that component.
 	//////////////////////////////////////////////////////////////////////////
 	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE vqvd RTM_SIMD_CALL vqv_slerp(vqvd_arg0 start, vqvd_arg1 end, double alpha) RTM_NO_EXCEPT
 	{
@@ -530,10 +531,10 @@ namespace rtm
 
 #if defined(RTM_SSE2_INTRINSICS)
 	//////////////////////////////////////////////////////////////////////////
-	// Per component spherical interpolation of the two inputs at the specified alpha.
-	// The function interpolates the rotation with quat_slerp(..), the translation with vector_lerp(..),
-	// and the scale with vector_eerp(..). If the two scales of a component have a different sign or if
-	// one scale is zero, the function uses vector_lerp(..) for that component.
+	/// Per component spherical interpolation of the two inputs at the specified alpha.
+	/// The function interpolates the rotation with quat_slerp(..), the translation with vector_lerp(..),
+	/// and the scale with vector_eerp(..). If the two scales of a component have a different sign or if
+	/// one scale is zero, the function uses vector_lerp(..) for that component.
 	//////////////////////////////////////////////////////////////////////////
 	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE vqvd RTM_SIMD_CALL vqv_slerp(vqvd_arg0 start, vqvd_arg1 end, scalard_argn alpha) RTM_NO_EXCEPT
 	{
@@ -545,8 +546,8 @@ namespace rtm
 #endif
 
 	//////////////////////////////////////////////////////////////////////////
-	// Per component spherical interpolation of the two inputs at the specified alpha.
-	// See quat_slerp(..)
+	/// Per component spherical interpolation of the two inputs at the specified alpha.
+	/// See quat_slerp(..)
 	//////////////////////////////////////////////////////////////////////////
 	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE vqvd RTM_SIMD_CALL vqv_slerp_no_scale(vqvd_arg0 start, vqvd_arg1 end, double alpha) RTM_NO_EXCEPT
 	{
@@ -557,8 +558,8 @@ namespace rtm
 
 #if defined(RTM_SSE2_INTRINSICS)
 	//////////////////////////////////////////////////////////////////////////
-	// Per component spherical interpolation of the two inputs at the specified alpha.
-	// See quat_slerp(..)
+	/// Per component spherical interpolation of the two inputs at the specified alpha.
+	/// See quat_slerp(..)
 	//////////////////////////////////////////////////////////////////////////
 	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE vqvd RTM_SIMD_CALL vqv_slerp_no_scale(vqvd_arg0 start, vqvd_arg1 end, scalard_argn alpha) RTM_NO_EXCEPT
 	{
@@ -569,7 +570,7 @@ namespace rtm
 #endif
 
 	//////////////////////////////////////////////////////////////////////////
-	// Returns true if the input VQV does not contain any NaN or Inf, otherwise false.
+	/// Returns true if the input VQV does not contain any NaN or Inf, otherwise false.
 	//////////////////////////////////////////////////////////////////////////
 	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE bool RTM_SIMD_CALL vqv_is_finite(vqvd_arg0 input) RTM_NO_EXCEPT
 	{

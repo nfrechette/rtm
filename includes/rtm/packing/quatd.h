@@ -37,8 +37,8 @@ namespace rtm
 	RTM_IMPL_VERSION_NAMESPACE_BEGIN
 
 	//////////////////////////////////////////////////////////////////////////
-	// Returns the quaternion on the hypersphere with a positive [w] component
-	// that represents the same 3D rotation as the input.
+	/// Returns the quaternion on the hypersphere with a positive [w] component
+	/// that represents the same 3D rotation as the input.
 	//////////////////////////////////////////////////////////////////////////
 	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE quatd quat_ensure_positive_w(const quatd& input) RTM_NO_EXCEPT
 	{
@@ -46,12 +46,12 @@ namespace rtm
 	}
 
 	//////////////////////////////////////////////////////////////////////////
-	// Returns a quaternion constructed from a vector3 representing the [xyz]
-	// components while reconstructing the [w] component by assuming it is positive.
-	// Note: When the squared length of [xyz] is very small, the square-root might not
-	// be very accurate when [w] is reconstructed. As such, the resulting quaternion
-	// might be near but not quite normalized. If high accuracy is required, make
-	// sure to normalize explicitly afterwards.
+	/// Returns a quaternion constructed from a vector3 representing the [xyz]
+	/// components while reconstructing the [w] component by assuming it is positive.
+	/// Note: When the squared length of [xyz] is very small, the square-root might not
+	/// be very accurate when [w] is reconstructed. As such, the resulting quaternion
+	/// might be near but not quite normalized. If high accuracy is required, make
+	/// sure to normalize explicitly afterwards.
 	//////////////////////////////////////////////////////////////////////////
 	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE quatd quat_from_positive_w(const vector4d& input) RTM_NO_EXCEPT
 	{

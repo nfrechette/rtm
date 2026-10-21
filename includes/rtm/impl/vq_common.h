@@ -35,7 +35,7 @@ namespace rtm
 	RTM_IMPL_VERSION_NAMESPACE_BEGIN
 
 	//////////////////////////////////////////////////////////////////////////
-	// Creates a VQ transform from a rotation quaternion and a translation.
+	/// Creates a VQ transform from a rotation quaternion and a translation.
 	//////////////////////////////////////////////////////////////////////////
 	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE constexpr vqf RTM_SIMD_CALL vq_set(quatf_arg0 rotation, vector4f_arg1 translation) RTM_NO_EXCEPT
 	{
@@ -43,7 +43,7 @@ namespace rtm
 	}
 
 	//////////////////////////////////////////////////////////////////////////
-	// Creates a VQ transform from a rotation quaternion and a translation.
+	/// Creates a VQ transform from a rotation quaternion and a translation.
 	//////////////////////////////////////////////////////////////////////////
 	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE constexpr vqd RTM_SIMD_CALL vq_set(quatd_arg0 rotation, vector4d_arg1 translation) RTM_NO_EXCEPT
 	{
@@ -77,7 +77,7 @@ namespace rtm
 	}
 
 	//////////////////////////////////////////////////////////////////////////
-	// Returns the identity VQ transform.
+	/// Returns the identity VQ transform.
 	//////////////////////////////////////////////////////////////////////////
 	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE constexpr rtm_impl::vq_identity_impl RTM_SIMD_CALL vq_identity() RTM_NO_EXCEPT
 	{

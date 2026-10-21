@@ -70,7 +70,7 @@ namespace rtm
 	}
 
 	//////////////////////////////////////////////////////////////////////////
-	// Loads a scalar from memory.
+	/// Loads a scalar from memory.
 	//////////////////////////////////////////////////////////////////////////
 	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE constexpr rtm_impl::scalar_loaderf RTM_SIMD_CALL scalar_load(const float* input) RTM_NO_EXCEPT
 	{
@@ -78,7 +78,7 @@ namespace rtm
 	}
 
 	//////////////////////////////////////////////////////////////////////////
-	// Loads a scalar from memory.
+	/// Loads a scalar from memory.
 	//////////////////////////////////////////////////////////////////////////
 	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE scalarf RTM_SIMD_CALL scalar_load_as_scalar(const float* input) RTM_NO_EXCEPT
 	{
@@ -90,7 +90,7 @@ namespace rtm
 	}
 
 	//////////////////////////////////////////////////////////////////////////
-	// Loads a scalar from memory.
+	/// Loads a scalar from memory.
 	//////////////////////////////////////////////////////////////////////////
 	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE constexpr rtm_impl::scalar_loaderd RTM_SIMD_CALL scalar_load(const double* input) RTM_NO_EXCEPT
 	{
@@ -98,7 +98,7 @@ namespace rtm
 	}
 
 	//////////////////////////////////////////////////////////////////////////
-	// Loads a scalar from memory.
+	/// Loads a scalar from memory.
 	//////////////////////////////////////////////////////////////////////////
 	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE scalard RTM_SIMD_CALL scalar_load_as_scalar(const double* input) RTM_NO_EXCEPT
 	{
