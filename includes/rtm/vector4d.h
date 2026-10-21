@@ -4188,7 +4188,13 @@ namespace rtm
 		scalard y_ = scalar_atan2(vector_get_y_as_scalar(y), vector_get_y_as_scalar(x));
 		scalard z_ = scalar_atan2(vector_get_z_as_scalar(y), vector_get_z_as_scalar(x));
 		scalard w_ = scalar_atan2(vector_get_w_as_scalar(y), vector_get_w_as_scalar(x));
+#if defined(RTM_SSE2_INTRINSICS)
+		// Do not use vector_set here. MSVC 19.51 for x64 (VS2026) uses the [xy] result for [zw]
+		// when vector_set packs the lanes with _mm_unpacklo_pd. The shuffle gives the same result.
+		return vector4d{ _mm_shuffle_pd(x_.value, y_.value, 0), _mm_shuffle_pd(z_.value, w_.value, 0) };
+#else
 		return vector_set(x_, y_, z_, w_);
+#endif
 	}
 
 	/// \}

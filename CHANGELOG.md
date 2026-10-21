@@ -13,6 +13,7 @@
 *  Add support for native ARMv7 builds on Linux to `make.py`
 *  Add GCC 14, GCC 15, and Clang 19 to 23 to `make.py`
 *  Add VS2026 (`vs2026` and `vs2026-clang`) to `make.py`
+*  Fix vector_atan2 (vector4d) with SSE2 and MSVC 19.51 for x64: the compiler uses the [xy] result for [zw]
 *  Add the `-analyze` action to `make.py` to run the clang static analyzer on the public headers
 *  Update Google Benchmark to 1.9.5
 *  Use float64 SIMD on ARM64: vector4d, quatd, mask4d, and mask4q are now two 2-lane registers, as with SSE2
