@@ -1,0 +1,5 @@
+/// \namespace rtm
+/// The public API of Realtime Math.
+///
+/// Doxygen warns about an undocumented function only when its namespace has a comment.
+/// This comment lets Doxygen find public API that has no comment.

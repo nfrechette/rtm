@@ -1,0 +1,47 @@
+# Doxygen configuration for the RTM API reference.
+# Doxygen writes XML only. tools/docs/generate_api_docs.py runs Doxygen from the repository root,
+# then it converts the XML to Markdown for MkDocs.
+
+PROJECT_NAME           = "Realtime Math"
+OUTPUT_DIRECTORY       = build/docs/doxygen
+QUIET                  = YES
+
+INPUT                  = includes/rtm includes/rtm/packing tools/docs/rtm.dox
+FILE_PATTERNS          = *.h *.dox
+RECURSIVE              = NO
+
+GENERATE_HTML          = NO
+GENERATE_LATEX         = NO
+GENERATE_XML           = YES
+XML_PROGRAMLISTING     = NO
+
+# Only the comments that start with /// are documentation.
+# The //////////// lines of a banner have more than three slashes and Doxygen ignores them.
+MARKDOWN_SUPPORT       = YES
+AUTOLINK_SUPPORT       = YES
+EXTRACT_ALL            = NO
+EXTRACT_STATIC         = YES
+EXCLUDE_SYMBOLS        = rtm_impl
+
+# Doxygen sees the scalar code path only: no header defines RTM_SSE2_INTRINSICS and the others.
+# The declaration macros expand to nothing.
+ENABLE_PREPROCESSING   = YES
+MACRO_EXPANSION        = YES
+EXPAND_ONLY_PREDEF     = YES
+SEARCH_INCLUDES        = NO
+PREDEFINED             = RTM_NO_INTRINSICS \
+                         RTM_DISABLE_SECURITY_COOKIE_CHECK= \
+                         RTM_FORCE_INLINE=inline \
+                         RTM_SIMD_CALL= \
+                         RTM_NO_EXCEPT= \
+                         "RTM_DEPRECATED(msg)=[[deprecated(msg)]]" \
+                         RTM_IMPL_VERSION_NAMESPACE_BEGIN= \
+                         RTM_IMPL_VERSION_NAMESPACE_END= \
+                         RTM_IMPL_FILE_PRAGMA_PUSH= \
+                         RTM_IMPL_FILE_PRAGMA_POP=
+
+# TODO: Set WARN_AS_ERROR = FAIL_ON_WARNINGS when all of the public headers use /// comments.
+WARN_IF_UNDOCUMENTED   = YES
+WARN_IF_DOC_ERROR      = YES
+WARN_NO_PARAMDOC       = NO
+WARN_AS_ERROR          = NO

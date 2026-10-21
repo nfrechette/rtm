@@ -1,5 +1,7 @@
 # Temporary data rules
 build/
+docs/api/
 *.suo
 **/__pycache__/
 .vscode/
+.cache/
