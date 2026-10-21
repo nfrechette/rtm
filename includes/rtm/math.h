@@ -29,9 +29,7 @@
 #include "rtm/impl/detect_arch.h"
 #include "rtm/impl/detect_compiler.h"
 
-//////////////////////////////////////////////////////////////////////////
 // Detect which intrinsics the current compilation environment supports.
-//////////////////////////////////////////////////////////////////////////
 
 #if !defined(RTM_NO_INTRINSICS)
 	#if defined(RTM_ARCH_X86) || defined(RTM_ARCH_X64)

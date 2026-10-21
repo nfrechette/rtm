@@ -37,31 +37,25 @@
 
 RTM_IMPL_FILE_PRAGMA_PUSH
 
-////////////////////////////////////////////////////////////////////////////////
 /// \file
 /// WARNING: VQV transforms do _NOT_ form a group. It has no well defined multiplication and inverse.
 /// This is because when non-uniform scale is rotated (e.g. as the result of two VQV multiplying),
 /// shear is introduced and there is no place to store it. As such, VQV discards the introduced shear
 /// which is mathematically incorrect. As a result of this, VQV multiplication is _NOT_ associative and
 /// the inverse is incorrect. USE AT YOUR OWN RISK.
-////////////////////////////////////////////////////////////////////////////////
 
 namespace rtm
 {
 	RTM_IMPL_VERSION_NAMESPACE_BEGIN
 
-	//////////////////////////////////////////////////////////////////////////
 	/// Casts a VQV transform float64 variant to a float32 variant.
-	//////////////////////////////////////////////////////////////////////////
 	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE vqvf RTM_SIMD_CALL vqv_cast(const vqvd& input) RTM_NO_EXCEPT
 	{
 		return vqvf{ quat_cast(input.rotation), vector_cast(input.translation), vector_cast(input.scale) };
 	}
 
-	//////////////////////////////////////////////////////////////////////////
 	/// Converts a pure rotation 3x3 matrix into a VQV transform.
 	/// The translation/scale will be the identity.
-	//////////////////////////////////////////////////////////////////////////
 	RTM_DISABLE_SECURITY_COOKIE_CHECK inline vqvf RTM_SIMD_CALL vqv_from_matrix(matrix3x3f_arg0 input) RTM_NO_EXCEPT
 	{
 		const quatf rotation = rtm_impl::quat_from_matrix(input.x_axis, input.y_axis, input.z_axis);
@@ -70,9 +64,7 @@ namespace rtm
 		return vqvf{ rotation, translation, scale };
 	}
 
-	//////////////////////////////////////////////////////////////////////////
 	/// Converts a 3x4 affine matrix into a VQV transform.
-	//////////////////////////////////////////////////////////////////////////
 	RTM_DISABLE_SECURITY_COOKIE_CHECK inline vqvf RTM_SIMD_CALL vqv_from_matrix(matrix3x4f_arg0 input) RTM_NO_EXCEPT
 	{
 		// Let us define the following:
@@ -318,12 +310,10 @@ namespace rtm
 		return vqvf{ rotation_q, translation, scale };
 	}
 
-	//////////////////////////////////////////////////////////////////////////
 	/// Multiplies two VQV transforms.
 	/// Multiplication order is as follow: local_to_world = vqv_mul(local_to_object, object_to_world)
 	/// NOTE: When scale is present, multiplication will not properly handle skew/shear,
 	/// use affine matrices if you have issues.
-	//////////////////////////////////////////////////////////////////////////
 	RTM_DISABLE_SECURITY_COOKIE_CHECK inline vqvf RTM_SIMD_CALL vqv_mul(vqvf_arg0 lhs, vqvf_arg1 rhs) RTM_NO_EXCEPT
 	{
 		const vector4f min_scale = vector_min(lhs.scale, rhs.scale);
@@ -369,11 +359,9 @@ namespace rtm
 		}
 	}
 
-	//////////////////////////////////////////////////////////////////////////
 	/// Multiplies two VQV transforms ignoring 3D scale.
 	/// The resulting VQV transform will have the LHS scale.
 	/// Multiplication order is as follow: local_to_world = vqv_mul(local_to_object, object_to_world)
-	//////////////////////////////////////////////////////////////////////////
 	RTM_DISABLE_SECURITY_COOKIE_CHECK inline vqvf RTM_SIMD_CALL vqv_mul_no_scale(vqvf_arg0 lhs, vqvf_arg1 rhs) RTM_NO_EXCEPT
 	{
 		const quatf rotation = quat_mul(lhs.rotation, rhs.rotation);
@@ -381,29 +369,23 @@ namespace rtm
 		return vqv_set(rotation, translation, lhs.scale);
 	}
 
-	//////////////////////////////////////////////////////////////////////////
 	/// Multiplies a VQV transform and a 3D point.
 	/// Multiplication order is as follow: world_position = vqv_mul_point3(local_position, local_to_world)
-	//////////////////////////////////////////////////////////////////////////
 	RTM_DISABLE_SECURITY_COOKIE_CHECK inline vector4f RTM_SIMD_CALL vqv_mul_point3(vector4f_arg0 point, vqvf_arg1 vqv) RTM_NO_EXCEPT
 	{
 		return vector_add(quat_mul_vector3(vector_mul(vqv.scale, point), vqv.rotation), vqv.translation);
 	}
 
-	//////////////////////////////////////////////////////////////////////////
 	/// Multiplies a VQV transform and a 3D point ignoring 3D scale.
 	/// Multiplication order is as follow: world_position = vqv_mul_point3_no_scale(local_position, local_to_world)
-	//////////////////////////////////////////////////////////////////////////
 	RTM_DISABLE_SECURITY_COOKIE_CHECK inline vector4f RTM_SIMD_CALL vqv_mul_point3_no_scale(vector4f_arg0 point, vqvf_arg1 vqv) RTM_NO_EXCEPT
 	{
 		return vector_add(quat_mul_vector3(point, vqv.rotation), vqv.translation);
 	}
 
-	//////////////////////////////////////////////////////////////////////////
 	/// Returns the inverse of the input VQV transform.
 	/// If zero scale is contained, the result is undefined.
 	/// For a safe alternative, supply a fallback scale value and a threshold.
-	//////////////////////////////////////////////////////////////////////////
 	RTM_DISABLE_SECURITY_COOKIE_CHECK inline vqvf RTM_SIMD_CALL vqv_inverse(vqvf_arg0 input) RTM_NO_EXCEPT
 	{
 		const quatf inv_rotation = quat_conjugate(input.rotation);
@@ -412,11 +394,9 @@ namespace rtm
 		return vqv_set(inv_rotation, inv_translation, inv_scale);
 	}
 
-	//////////////////////////////////////////////////////////////////////////
 	/// Returns the inverse of the input VQV transform.
 	/// If the input scale has an absolute value below the supplied threshold, the
 	/// fallback value is used instead.
-	//////////////////////////////////////////////////////////////////////////
 	RTM_DISABLE_SECURITY_COOKIE_CHECK inline vqvf RTM_SIMD_CALL vqv_inverse(vqvf_arg0 input, vector4f_arg3 fallback_scale, float threshold = 1.0E-8F) RTM_NO_EXCEPT
 	{
 		const quatf inv_rotation = quat_conjugate(input.rotation);
@@ -427,10 +407,8 @@ namespace rtm
 		return vqv_set(inv_rotation, inv_translation, inv_scale);
 	}
 
-	//////////////////////////////////////////////////////////////////////////
 	/// Returns the inverse of the input VQV transform ignoring 3D scale.
 	/// The resulting VQV transform will have the input scale.
-	//////////////////////////////////////////////////////////////////////////
 	RTM_DISABLE_SECURITY_COOKIE_CHECK inline vqvf RTM_SIMD_CALL vqv_inverse_no_scale(vqvf_arg0 input) RTM_NO_EXCEPT
 	{
 		const quatf inv_rotation = quat_conjugate(input.rotation);
@@ -438,22 +416,18 @@ namespace rtm
 		return vqv_set(inv_rotation, inv_translation, input.scale);
 	}
 
-	//////////////////////////////////////////////////////////////////////////
 	/// Returns a VQV transforms with the rotation part normalized.
-	//////////////////////////////////////////////////////////////////////////
 	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE vqvf RTM_SIMD_CALL vqv_normalize(vqvf_arg0 input) RTM_NO_EXCEPT
 	{
 		const quatf rotation = quat_normalize(input.rotation);
 		return vqv_set(rotation, input.translation, input.scale);
 	}
 
-	//////////////////////////////////////////////////////////////////////////
 	/// Per component linear interpolation of the two inputs at the specified alpha.
 	/// The formula used is: ((1.0 - alpha) * start) + (alpha * end).
 	/// Interpolation is stable and will return 'start' when alpha is 0.0 and 'end' when it is 1.0.
 	/// This is the same instruction count when FMA is present but it might be slightly slower
 	/// due to the extra multiplication compared to: start + (alpha * (end - start)).
-	//////////////////////////////////////////////////////////////////////////
 	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE vqvf RTM_SIMD_CALL vqv_lerp(vqvf_arg0 start, vqvf_arg1 end, float alpha) RTM_NO_EXCEPT
 	{
 		const quatf rotation = quat_lerp(start.rotation, end.rotation, alpha);
@@ -463,13 +437,11 @@ namespace rtm
 	}
 
 #if defined(RTM_SSE2_INTRINSICS)
-	//////////////////////////////////////////////////////////////////////////
 	/// Per component linear interpolation of the two inputs at the specified alpha.
 	/// The formula used is: ((1.0 - alpha) * start) + (alpha * end).
 	/// Interpolation is stable and will return 'start' when alpha is 0.0 and 'end' when it is 1.0.
 	/// This is the same instruction count when FMA is present but it might be slightly slower
 	/// due to the extra multiplication compared to: start + (alpha * (end - start)).
-	//////////////////////////////////////////////////////////////////////////
 	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE vqvf RTM_SIMD_CALL vqv_lerp(vqvf_arg0 start, vqvf_arg1 end, scalarf_arg2 alpha) RTM_NO_EXCEPT
 	{
 		const quatf rotation = quat_lerp(start.rotation, end.rotation, alpha);
@@ -479,14 +451,12 @@ namespace rtm
 	}
 #endif
 
-	//////////////////////////////////////////////////////////////////////////
 	/// Per component linear interpolation of the two inputs at the specified alpha.
 	/// The formula used is: ((1.0 - alpha) * start) + (alpha * end).
 	/// Interpolation is stable and will return 'start' when alpha is 0.0 and 'end' when it is 1.0.
 	/// This is the same instruction count when FMA is present but it might be slightly slower
 	/// due to the extra multiplication compared to: start + (alpha * (end - start)).
 	/// The resulting VQV transform will have the start scale.
-	//////////////////////////////////////////////////////////////////////////
 	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE vqvf RTM_SIMD_CALL vqv_lerp_no_scale(vqvf_arg0 start, vqvf_arg1 end, float alpha) RTM_NO_EXCEPT
 	{
 		const quatf rotation = quat_lerp(start.rotation, end.rotation, alpha);
@@ -495,14 +465,12 @@ namespace rtm
 	}
 
 #if defined(RTM_SSE2_INTRINSICS)
-	//////////////////////////////////////////////////////////////////////////
 	/// Per component linear interpolation of the two inputs at the specified alpha.
 	/// The formula used is: ((1.0 - alpha) * start) + (alpha * end).
 	/// Interpolation is stable and will return 'start' when alpha is 0.0 and 'end' when it is 1.0.
 	/// This is the same instruction count when FMA is present but it might be slightly slower
 	/// due to the extra multiplication compared to: start + (alpha * (end - start)).
 	/// The resulting VQV transform will have the start scale.
-	//////////////////////////////////////////////////////////////////////////
 	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE vqvf RTM_SIMD_CALL vqv_lerp_no_scale(vqvf_arg0 start, vqvf_arg1 end, scalarf_arg2 alpha) RTM_NO_EXCEPT
 	{
 		const quatf rotation = quat_lerp(start.rotation, end.rotation, alpha);
@@ -513,11 +481,9 @@ namespace rtm
 
 	namespace rtm_impl
 	{
-		//////////////////////////////////////////////////////////////////////////
 		// Returns per component the exponential interpolation of the two scales.
 		// Eerp is not defined when the two scales have a different sign or when one scale is zero.
 		// For these components, the function returns the linear interpolation.
-		//////////////////////////////////////////////////////////////////////////
 		RTM_DISABLE_SECURITY_COOKIE_CHECK inline vector4f RTM_SIMD_CALL vqv_slerp_scale(vector4f_arg0 start, vector4f_arg1 end, vector4f_arg2 alpha) RTM_NO_EXCEPT
 		{
 			const vector4f zero = vector_zero();
@@ -530,12 +496,10 @@ namespace rtm
 		}
 	}
 
-	//////////////////////////////////////////////////////////////////////////
 	/// Per component spherical interpolation of the two inputs at the specified alpha.
 	/// The function interpolates the rotation with quat_slerp(..), the translation with vector_lerp(..),
 	/// and the scale with vector_eerp(..). If the two scales of a component have a different sign or if
 	/// one scale is zero, the function uses vector_lerp(..) for that component.
-	//////////////////////////////////////////////////////////////////////////
 	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE vqvf RTM_SIMD_CALL vqv_slerp(vqvf_arg0 start, vqvf_arg1 end, float alpha) RTM_NO_EXCEPT
 	{
 		const quatf rotation = quat_slerp(start.rotation, end.rotation, alpha);
@@ -545,12 +509,10 @@ namespace rtm
 	}
 
 #if defined(RTM_SSE2_INTRINSICS)
-	//////////////////////////////////////////////////////////////////////////
 	/// Per component spherical interpolation of the two inputs at the specified alpha.
 	/// The function interpolates the rotation with quat_slerp(..), the translation with vector_lerp(..),
 	/// and the scale with vector_eerp(..). If the two scales of a component have a different sign or if
 	/// one scale is zero, the function uses vector_lerp(..) for that component.
-	//////////////////////////////////////////////////////////////////////////
 	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE vqvf RTM_SIMD_CALL vqv_slerp(vqvf_arg0 start, vqvf_arg1 end, scalarf_arg2 alpha) RTM_NO_EXCEPT
 	{
 		const quatf rotation = quat_slerp(start.rotation, end.rotation, alpha);
@@ -560,10 +522,8 @@ namespace rtm
 	}
 #endif
 
-	//////////////////////////////////////////////////////////////////////////
 	/// Per component spherical interpolation of the two inputs at the specified alpha.
 	/// See quat_slerp(..)
-	//////////////////////////////////////////////////////////////////////////
 	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE vqvf RTM_SIMD_CALL vqv_slerp_no_scale(vqvf_arg0 start, vqvf_arg1 end, float alpha) RTM_NO_EXCEPT
 	{
 		const quatf rotation = quat_slerp(start.rotation, end.rotation, alpha);
@@ -572,10 +532,8 @@ namespace rtm
 	}
 
 #if defined(RTM_SSE2_INTRINSICS)
-	//////////////////////////////////////////////////////////////////////////
 	/// Per component spherical interpolation of the two inputs at the specified alpha.
 	/// See quat_slerp(..)
-	//////////////////////////////////////////////////////////////////////////
 	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE vqvf RTM_SIMD_CALL vqv_slerp_no_scale(vqvf_arg0 start, vqvf_arg1 end, scalarf_arg2 alpha) RTM_NO_EXCEPT
 	{
 		const quatf rotation = quat_slerp(start.rotation, end.rotation, alpha);
@@ -584,9 +542,7 @@ namespace rtm
 	}
 #endif
 
-	//////////////////////////////////////////////////////////////////////////
 	/// Returns true if the input VQV does not contain any NaN or Inf, otherwise false.
-	//////////////////////////////////////////////////////////////////////////
 	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE bool RTM_SIMD_CALL vqv_is_finite(vqvf_arg0 input) RTM_NO_EXCEPT
 	{
 		return quat_is_finite(input.rotation) && vector_is_finite3(input.translation) && vector_is_finite3(input.scale);

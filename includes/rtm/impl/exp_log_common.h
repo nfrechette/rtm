@@ -35,7 +35,6 @@
 
 RTM_IMPL_FILE_PRAGMA_PUSH
 
-////////////////////////////////////////////////////////////////////////////////
 // The natural exponential and logarithm functions.
 //
 // The scalar and the vector functions use the same algorithm with the same order of operations.
@@ -58,7 +57,6 @@ RTM_IMPL_FILE_PRAGMA_PUSH
 //
 // In the scalar code, each multiplication and each addition is a separate statement:
 // the compiler does not fuse them into an FMA.
-////////////////////////////////////////////////////////////////////////////////
 
 namespace rtm
 {
@@ -66,9 +64,7 @@ namespace rtm
 
 	namespace rtm_impl
 	{
-		//////////////////////////////////////////////////////////////////////////
 		// Constants of the float32 functions
-		//////////////////////////////////////////////////////////////////////////
 
 		// Below -104.0, e^x is zero. Above 89.0, e^x is +inf.
 		// The clamp keeps n in the range [-150, 128] that the two powers of two support.
@@ -98,9 +94,7 @@ namespace rtm
 		constexpr float k_log_f32_c7 = -2.4999993993E-1F;
 		constexpr float k_log_f32_c8 = 3.3333331174E-1F;
 
-		//////////////////////////////////////////////////////////////////////////
 		// Constants of the float64 functions
-		//////////////////////////////////////////////////////////////////////////
 
 		// Below -746.0, e^x is zero. Above 710.0, e^x is +inf.
 		// The clamp keeps n in the range [-1076, 1024] that the two powers of two support.
@@ -131,9 +125,7 @@ namespace rtm
 		constexpr double k_log_f64_s1 = 3.12093766372244180303E2;
 		constexpr double k_log_f64_s2 = -7.69691943550460008604E2;
 
-		//////////////////////////////////////////////////////////////////////////
 		// Bit conversions for the scalar code
-		//////////////////////////////////////////////////////////////////////////
 
 		RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE uint32_t float_to_bits(float input) RTM_NO_EXCEPT
 		{
@@ -163,9 +155,7 @@ namespace rtm
 			return result;
 		}
 
-		//////////////////////////////////////////////////////////////////////////
 		// Returns e^input for a float32 value.
-		//////////////////////////////////////////////////////////////////////////
 		RTM_DISABLE_SECURITY_COOKIE_CHECK inline float exp_f32(float input) RTM_NO_EXCEPT
 		{
 			if (input != input)
@@ -208,9 +198,7 @@ namespace rtm
 			return result;
 		}
 
-		//////////////////////////////////////////////////////////////////////////
 		// Returns the natural logarithm of a float32 value.
-		//////////////////////////////////////////////////////////////////////////
 		RTM_DISABLE_SECURITY_COOKIE_CHECK inline float log_f32(float input) RTM_NO_EXCEPT
 		{
 			if (input != input)
@@ -270,9 +258,7 @@ namespace rtm
 			return result;
 		}
 
-		//////////////////////////////////////////////////////////////////////////
 		// Returns e^input for a float64 value.
-		//////////////////////////////////////////////////////////////////////////
 		RTM_DISABLE_SECURITY_COOKIE_CHECK inline double exp_f64(double input) RTM_NO_EXCEPT
 		{
 			if (input != input)
@@ -318,9 +304,7 @@ namespace rtm
 			return result;
 		}
 
-		//////////////////////////////////////////////////////////////////////////
 		// Returns the natural logarithm of a float64 value.
-		//////////////////////////////////////////////////////////////////////////
 		RTM_DISABLE_SECURITY_COOKIE_CHECK inline double log_f64(double input) RTM_NO_EXCEPT
 		{
 			if (input != input)
@@ -388,9 +372,7 @@ namespace rtm
 		}
 
 #if defined(RTM_SSE2_INTRINSICS)
-		//////////////////////////////////////////////////////////////////////////
 		// Returns e^input for each float32 lane.
-		//////////////////////////////////////////////////////////////////////////
 		RTM_DISABLE_SECURITY_COOKIE_CHECK inline __m128 RTM_SIMD_CALL exp_f32x4(__m128 input) RTM_NO_EXCEPT
 		{
 			const __m128 x = _mm_min_ps(_mm_max_ps(input, _mm_set_ps1(k_exp_f32_min_input)), _mm_set_ps1(k_exp_f32_max_input));
@@ -422,9 +404,7 @@ namespace rtm
 			return RTM_VECTOR4F_SELECT(_mm_cmpunord_ps(input, input), input, result);
 		}
 
-		//////////////////////////////////////////////////////////////////////////
 		// Returns the natural logarithm of each float32 lane.
-		//////////////////////////////////////////////////////////////////////////
 		RTM_DISABLE_SECURITY_COOKIE_CHECK inline __m128 RTM_SIMD_CALL log_f32x4(__m128 input) RTM_NO_EXCEPT
 		{
 			const __m128 is_denormal = _mm_cmplt_ps(input, _mm_set_ps1((std::numeric_limits<float>::min)()));
@@ -467,9 +447,7 @@ namespace rtm
 			return RTM_VECTOR4F_SELECT(_mm_cmpunord_ps(input, input), input, result);
 		}
 
-		//////////////////////////////////////////////////////////////////////////
 		// Returns e^input for each float64 lane.
-		//////////////////////////////////////////////////////////////////////////
 		RTM_DISABLE_SECURITY_COOKIE_CHECK inline __m128d RTM_SIMD_CALL exp_f64x2(__m128d input) RTM_NO_EXCEPT
 		{
 			const __m128d x = _mm_min_pd(_mm_max_pd(input, _mm_set1_pd(k_exp_f64_min_input)), _mm_set1_pd(k_exp_f64_max_input));
@@ -506,9 +484,7 @@ namespace rtm
 			return RTM_VECTOR2D_SELECT(_mm_cmpunord_pd(input, input), input, result);
 		}
 
-		//////////////////////////////////////////////////////////////////////////
 		// Returns the natural logarithm of each float64 lane.
-		//////////////////////////////////////////////////////////////////////////
 		RTM_DISABLE_SECURITY_COOKIE_CHECK inline __m128d RTM_SIMD_CALL log_f64x2(__m128d input) RTM_NO_EXCEPT
 		{
 			const __m128d is_denormal = _mm_cmplt_pd(input, _mm_set1_pd((std::numeric_limits<double>::min)()));
@@ -559,9 +535,7 @@ namespace rtm
 			return RTM_VECTOR2D_SELECT(_mm_cmpunord_pd(input, input), input, result);
 		}
 #elif defined(RTM_WASM128_INTRINSICS)
-		//////////////////////////////////////////////////////////////////////////
 		// Returns e^input for each float32 lane.
-		//////////////////////////////////////////////////////////////////////////
 		RTM_DISABLE_SECURITY_COOKIE_CHECK inline v128_t RTM_SIMD_CALL exp_f32x4(v128_t input) RTM_NO_EXCEPT
 		{
 			const v128_t x = wasm_f32x4_pmin(wasm_f32x4_pmax(input, wasm_f32x4_splat(k_exp_f32_min_input)), wasm_f32x4_splat(k_exp_f32_max_input));
@@ -593,9 +567,7 @@ namespace rtm
 			return RTM_VECTOR4F_SELECT(wasm_f32x4_ne(input, input), input, result);
 		}
 
-		//////////////////////////////////////////////////////////////////////////
 		// Returns the natural logarithm of each float32 lane.
-		//////////////////////////////////////////////////////////////////////////
 		RTM_DISABLE_SECURITY_COOKIE_CHECK inline v128_t RTM_SIMD_CALL log_f32x4(v128_t input) RTM_NO_EXCEPT
 		{
 			const v128_t is_denormal = wasm_f32x4_lt(input, wasm_f32x4_splat((std::numeric_limits<float>::min)()));
@@ -637,9 +609,7 @@ namespace rtm
 			return RTM_VECTOR4F_SELECT(wasm_f32x4_ne(input, input), input, result);
 		}
 
-		//////////////////////////////////////////////////////////////////////////
 		// Returns e^input for each float64 lane.
-		//////////////////////////////////////////////////////////////////////////
 		RTM_DISABLE_SECURITY_COOKIE_CHECK inline v128_t RTM_SIMD_CALL exp_f64x2(v128_t input) RTM_NO_EXCEPT
 		{
 			const v128_t x = wasm_f64x2_pmin(wasm_f64x2_pmax(input, wasm_f64x2_splat(k_exp_f64_min_input)), wasm_f64x2_splat(k_exp_f64_max_input));
@@ -674,9 +644,7 @@ namespace rtm
 			return RTM_VECTOR2D_SELECT(wasm_f64x2_ne(input, input), input, result);
 		}
 
-		//////////////////////////////////////////////////////////////////////////
 		// Returns the natural logarithm of each float64 lane.
-		//////////////////////////////////////////////////////////////////////////
 		RTM_DISABLE_SECURITY_COOKIE_CHECK inline v128_t RTM_SIMD_CALL log_f64x2(v128_t input) RTM_NO_EXCEPT
 		{
 			const v128_t is_denormal = wasm_f64x2_lt(input, wasm_f64x2_splat((std::numeric_limits<double>::min)()));
@@ -724,9 +692,7 @@ namespace rtm
 			return RTM_VECTOR2D_SELECT(wasm_f64x2_ne(input, input), input, result);
 		}
 #elif defined(RTM_NEON_INTRINSICS)
-		//////////////////////////////////////////////////////////////////////////
 		// Returns e^input for each float32 lane.
-		//////////////////////////////////////////////////////////////////////////
 		RTM_DISABLE_SECURITY_COOKIE_CHECK inline float32x4_t RTM_SIMD_CALL exp_f32x4(float32x4_t input) RTM_NO_EXCEPT
 		{
 			const float32x4_t x = vminq_f32(vmaxq_f32(input, vdupq_n_f32(k_exp_f32_min_input)), vdupq_n_f32(k_exp_f32_max_input));
@@ -758,9 +724,7 @@ namespace rtm
 			return vbslq_f32(vceqq_f32(input, input), result, input);
 		}
 
-		//////////////////////////////////////////////////////////////////////////
 		// Returns the natural logarithm of each float32 lane.
-		//////////////////////////////////////////////////////////////////////////
 		RTM_DISABLE_SECURITY_COOKIE_CHECK inline float32x4_t RTM_SIMD_CALL log_f32x4(float32x4_t input) RTM_NO_EXCEPT
 		{
 			const uint32x4_t is_denormal = vcltq_f32(input, vdupq_n_f32((std::numeric_limits<float>::min)()));
@@ -804,9 +768,7 @@ namespace rtm
 		}
 
 #if defined(RTM_NEON64_INTRINSICS)
-		//////////////////////////////////////////////////////////////////////////
 		// Returns e^input for each float64 lane.
-		//////////////////////////////////////////////////////////////////////////
 		RTM_DISABLE_SECURITY_COOKIE_CHECK inline float64x2_t RTM_SIMD_CALL exp_f64x2(float64x2_t input) RTM_NO_EXCEPT
 		{
 			const float64x2_t x = vminq_f64(vmaxq_f64(input, vdupq_n_f64(k_exp_f64_min_input)), vdupq_n_f64(k_exp_f64_max_input));
@@ -841,9 +803,7 @@ namespace rtm
 			return vbslq_f64(vceqq_f64(input, input), result, input);
 		}
 
-		//////////////////////////////////////////////////////////////////////////
 		// Returns the natural logarithm of each float64 lane.
-		//////////////////////////////////////////////////////////////////////////
 		RTM_DISABLE_SECURITY_COOKIE_CHECK inline float64x2_t RTM_SIMD_CALL log_f64x2(float64x2_t input) RTM_NO_EXCEPT
 		{
 			const uint64x2_t is_denormal = vcltq_f64(input, vdupq_n_f64((std::numeric_limits<double>::min)()));

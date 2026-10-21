@@ -31,9 +31,7 @@ namespace rtm
 {
 	RTM_IMPL_VERSION_NAMESPACE_BEGIN
 
-	//////////////////////////////////////////////////////////////////////////
 	// Register passing typedefs
-	//////////////////////////////////////////////////////////////////////////
 
 #if defined(RTM_NEON64_INTRINSICS)
 	// On ARM64 NEON, the first 8x vector4f/quatf arguments can be passed by value in a register,

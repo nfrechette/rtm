@@ -26,9 +26,7 @@
 
 #include "rtm/impl/detect_compiler.h"
 
-////////////////////////////////////////////////////////////////////////////////
 // Macros to detect the Realtime Math version
-////////////////////////////////////////////////////////////////////////////////
 
 /// The major version of Realtime Math.
 #define RTM_VERSION_MAJOR 2
@@ -37,7 +35,6 @@
 /// The patch version of Realtime Math.
 #define RTM_VERSION_PATCH 99
 
-////////////////////////////////////////////////////////////////////////////////
 /// \file
 /// In order to allow multiple versions of this library to coexist side by side
 /// within the same executable/library, the symbols have to be unique per version.
@@ -45,7 +42,6 @@
 /// To disable namespace inlining, define RTM_NO_INLINE_NAMESPACE before including
 /// any Realtime Math header. To disable the versioned namespace altogether,
 /// define RTM_NO_VERSION_NAMESPACE before including any Realtime Math header.
-////////////////////////////////////////////////////////////////////////////////
 
 #if !defined(RTM_NO_VERSION_NAMESPACE)
 	#if defined(RTM_COMPILER_MSVC) && RTM_COMPILER_MSVC == RTM_COMPILER_MSVC_2015

@@ -42,7 +42,6 @@ namespace rtm
 
 	namespace rtm_impl
 	{
-		//////////////////////////////////////////////////////////////////////////
 		// When the scale/shear part of a VQM transform is exactly the identity, the m22 slot can hold a flag.
 		// Then the functions skip the scale/shear part. The other entries of the scale/shear part hold their
 		// identity values: m00 = m11 = 1.0, and the entries that are not on the diagonal are 0.0.
@@ -54,13 +53,10 @@ namespace rtm
 		// A float32 to float64 conversion of the float32 flag gives the float64 flag, and the reverse conversion gives
 		// the float32 flag. The functions do not use this because some targets do not keep the payload of a NaN.
 		// The flag goes only through loads, stores, and shuffles, which keep its bits. The functions remove it before arithmetic.
-		//////////////////////////////////////////////////////////////////////////
 		constexpr uint32_t k_vqmf_identity_scale_shear_flag = 0x7FC00001U;
 		constexpr uint64_t k_vqmd_identity_scale_shear_flag = 0x7FF8000020000000ULL;
 
-		//////////////////////////////////////////////////////////////////////////
 		// Returns the value of the flag for the m22 slot.
-		//////////////////////////////////////////////////////////////////////////
 		template<typename FloatType>
 		FloatType vqm_identity_scale_shear_flag() RTM_NO_EXCEPT;
 
@@ -82,10 +78,8 @@ namespace rtm
 			return value;
 		}
 
-		//////////////////////////////////////////////////////////////////////////
 		// Returns true if the m22 slot of the input holds the flag: the scale/shear part is exactly the identity.
 		// The function compares the bits, not the value. A lane extraction keeps the bits of a NaN.
-		//////////////////////////////////////////////////////////////////////////
 		RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE bool vqm_has_identity_scale_shear(const vqmf& input) RTM_NO_EXCEPT
 		{
 			const float m22 = vector_get_w(input.translation_m22);
@@ -102,12 +96,10 @@ namespace rtm
 			return m22_bits == k_vqmd_identity_scale_shear_flag;
 		}
 
-		//////////////////////////////////////////////////////////////////////////
 		// This is a helper struct to allow a single consistent API between
 		// various VQM transform types when the semantics are identical but the return
 		// type differs. Implicit coercion is used to return the desired value
 		// at the call site.
-		//////////////////////////////////////////////////////////////////////////
 		struct vqm_identity_impl
 		{
 			RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE RTM_SIMD_CALL operator vqmd() const RTM_NO_EXCEPT
@@ -134,9 +126,7 @@ namespace rtm
 		};
 	}
 
-	//////////////////////////////////////////////////////////////////////////
 	/// Returns the identity VQM transform.
-	//////////////////////////////////////////////////////////////////////////
 	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE constexpr rtm_impl::vqm_identity_impl RTM_SIMD_CALL vqm_identity() RTM_NO_EXCEPT
 	{
 		return rtm_impl::vqm_identity_impl();

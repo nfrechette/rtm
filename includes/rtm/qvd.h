@@ -40,72 +40,56 @@ namespace rtm
 {
 	RTM_IMPL_VERSION_NAMESPACE_BEGIN
 
-	//////////////////////////////////////////////////////////////////////////
 	/// Casts a VQ transform float32 variant to a float64 variant.
-	//////////////////////////////////////////////////////////////////////////
 	RTM_DEPRECATED("Use 'vq_cast' instead. To be removed in 2.5.")
 	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE vqd RTM_SIMD_CALL qv_cast(vqf_arg0 input) RTM_NO_EXCEPT
 	{
 		return vq_cast(input);
 	}
 
-	//////////////////////////////////////////////////////////////////////////
 	/// Converts a rotation 3x3 matrix into a VQ transform.
-	//////////////////////////////////////////////////////////////////////////
 	RTM_DEPRECATED("Use 'vq_from_matrix' instead. To be removed in 2.5.")
 	RTM_DISABLE_SECURITY_COOKIE_CHECK inline vqd RTM_SIMD_CALL qv_from_matrix(matrix3x3d_arg0 input) RTM_NO_EXCEPT
 	{
 		return vq_from_matrix(input);
 	}
 
-	//////////////////////////////////////////////////////////////////////////
 	/// Converts a rotation 3x4 affine matrix into a VQ transform.
-	//////////////////////////////////////////////////////////////////////////
 	RTM_DEPRECATED("Use 'vq_from_matrix' instead. To be removed in 2.5.")
 	RTM_DISABLE_SECURITY_COOKIE_CHECK inline vqd RTM_SIMD_CALL qv_from_matrix(matrix3x4d_arg0 input) RTM_NO_EXCEPT
 	{
 		return vq_from_matrix(input);
 	}
 
-	//////////////////////////////////////////////////////////////////////////
 	/// Multiplies two VQ transforms.
-	//////////////////////////////////////////////////////////////////////////
 	RTM_DEPRECATED("Use 'vq_mul' instead. To be removed in 2.5.")
 	RTM_DISABLE_SECURITY_COOKIE_CHECK inline vqd RTM_SIMD_CALL qv_mul(vqd_arg0 lhs, vqd_arg1 rhs) RTM_NO_EXCEPT
 	{
 		return vq_mul(lhs, rhs);
 	}
 
-	//////////////////////////////////////////////////////////////////////////
 	/// Multiplies a VQ transform and a 3D point.
-	//////////////////////////////////////////////////////////////////////////
 	RTM_DEPRECATED("Use 'vq_mul_point3' instead. To be removed in 2.5.")
 	RTM_DISABLE_SECURITY_COOKIE_CHECK inline vector4d RTM_SIMD_CALL qv_mul_point3(vector4d_arg0 point, vqd_arg1 vq) RTM_NO_EXCEPT
 	{
 		return vq_mul_point3(point, vq);
 	}
 
-	//////////////////////////////////////////////////////////////////////////
 	/// Returns the inverse of the input VQ transform.
-	//////////////////////////////////////////////////////////////////////////
 	RTM_DEPRECATED("Use 'vq_inverse' instead. To be removed in 2.5.")
 	RTM_DISABLE_SECURITY_COOKIE_CHECK inline vqd RTM_SIMD_CALL qv_inverse(vqd_arg0 input) RTM_NO_EXCEPT
 	{
 		return vq_inverse(input);
 	}
 
-	//////////////////////////////////////////////////////////////////////////
 	/// Returns a VQ transform with the rotation part normalized.
-	//////////////////////////////////////////////////////////////////////////
 	RTM_DEPRECATED("Use 'vq_normalize' instead. To be removed in 2.5.")
 	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE vqd RTM_SIMD_CALL qv_normalize(vqd_arg0 input) RTM_NO_EXCEPT
 	{
 		return vq_normalize(input);
 	}
 
-	//////////////////////////////////////////////////////////////////////////
 	/// Per component linear interpolation of the two inputs at the specified alpha.
-	//////////////////////////////////////////////////////////////////////////
 	RTM_DEPRECATED("Use 'vq_lerp' instead. To be removed in 2.5.")
 	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE vqd RTM_SIMD_CALL qv_lerp(vqd_arg0 start, vqd_arg1 end, double alpha) RTM_NO_EXCEPT
 	{
@@ -113,9 +97,7 @@ namespace rtm
 	}
 
 #if defined(RTM_SSE2_INTRINSICS)
-	//////////////////////////////////////////////////////////////////////////
 	/// Per component linear interpolation of the two inputs at the specified alpha.
-	//////////////////////////////////////////////////////////////////////////
 	RTM_DEPRECATED("Use 'vq_lerp' instead. To be removed in 2.5.")
 	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE vqd RTM_SIMD_CALL qv_lerp(vqd_arg0 start, vqd_arg1 end, scalard_argn alpha) RTM_NO_EXCEPT
 	{
@@ -123,9 +105,7 @@ namespace rtm
 	}
 #endif
 
-	//////////////////////////////////////////////////////////////////////////
 	/// Per component spherical interpolation of the two inputs at the specified alpha.
-	//////////////////////////////////////////////////////////////////////////
 	RTM_DEPRECATED("Use 'vq_slerp' instead. To be removed in 2.5.")
 	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE vqd RTM_SIMD_CALL qv_slerp(vqd_arg0 start, vqd_arg1 end, double alpha) RTM_NO_EXCEPT
 	{
@@ -133,9 +113,7 @@ namespace rtm
 	}
 
 #if defined(RTM_SSE2_INTRINSICS)
-	//////////////////////////////////////////////////////////////////////////
 	/// Per component spherical interpolation of the two inputs at the specified alpha.
-	//////////////////////////////////////////////////////////////////////////
 	RTM_DEPRECATED("Use 'vq_slerp' instead. To be removed in 2.5.")
 	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE vqd RTM_SIMD_CALL qv_slerp(vqd_arg0 start, vqd_arg1 end, scalard_argn alpha) RTM_NO_EXCEPT
 	{
@@ -143,9 +121,7 @@ namespace rtm
 	}
 #endif
 
-	//////////////////////////////////////////////////////////////////////////
 	/// Returns true if the input VQ does not contain any NaN or Inf, otherwise false.
-	//////////////////////////////////////////////////////////////////////////
 	RTM_DEPRECATED("Use 'vq_is_finite' instead. To be removed in 2.5.")
 	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE bool RTM_SIMD_CALL qv_is_finite(vqd_arg0 input) RTM_NO_EXCEPT
 	{

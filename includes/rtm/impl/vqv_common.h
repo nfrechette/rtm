@@ -34,17 +34,13 @@ namespace rtm
 {
 	RTM_IMPL_VERSION_NAMESPACE_BEGIN
 
-	//////////////////////////////////////////////////////////////////////////
 	/// Creates a VQV transform from a rotation quaternion, a translation, and a 3D scale.
-	//////////////////////////////////////////////////////////////////////////
 	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE constexpr vqvf RTM_SIMD_CALL vqv_set(quatf_arg0 rotation, vector4f_arg1 translation, vector4f_arg2 scale) RTM_NO_EXCEPT
 	{
 		return vqvf{ rotation, translation, scale };
 	}
 
-	//////////////////////////////////////////////////////////////////////////
 	/// Creates a VQV transform from a rotation quaternion, a translation, and a 3D scale.
-	//////////////////////////////////////////////////////////////////////////
 	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE constexpr vqvd RTM_SIMD_CALL vqv_set(quatd_arg0 rotation, vector4d_arg1 translation, vector4d_arg2 scale) RTM_NO_EXCEPT
 	{
 		return vqvd{ rotation, translation, scale };
@@ -52,12 +48,10 @@ namespace rtm
 
 	namespace rtm_impl
 	{
-		//////////////////////////////////////////////////////////////////////////
 		// This is a helper struct to allow a single consistent API between
 		// various VQV transform types when the semantics are identical but the return
 		// type differs. Implicit coercion is used to return the desired value
 		// at the call site.
-		//////////////////////////////////////////////////////////////////////////
 		struct vqv_identity_impl
 		{
 			RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE RTM_SIMD_CALL operator vqvd() const RTM_NO_EXCEPT
@@ -72,9 +66,7 @@ namespace rtm
 		};
 	}
 
-	//////////////////////////////////////////////////////////////////////////
 	/// Returns the identity VQV transform.
-	//////////////////////////////////////////////////////////////////////////
 	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE constexpr rtm_impl::vqv_identity_impl RTM_SIMD_CALL vqv_identity() RTM_NO_EXCEPT
 	{
 		return rtm_impl::vqv_identity_impl();

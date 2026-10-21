@@ -31,9 +31,7 @@ namespace rtm
 {
 	RTM_IMPL_VERSION_NAMESPACE_BEGIN
 
-	//////////////////////////////////////////////////////////////////////////
 	// Register passing typedefs
-	//////////////////////////////////////////////////////////////////////////
 
 #if defined(RTM_USE_VECTORCALL)
 	// On x64 with __vectorcall, the first 6x vector4f/quatf arguments can be passed by value in a register,

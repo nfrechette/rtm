@@ -41,11 +41,9 @@ namespace rtm
 
 	namespace rtm_impl
 	{
-		//////////////////////////////////////////////////////////////////////////
 		// A helper struct to convert a quaternion to matrices of similar width.
 		// Note: We use a float type as a template argument because GCC loses alignment
 		// attributes on template argument types.
-		//////////////////////////////////////////////////////////////////////////
 		template<typename float_type>
 		struct matrix_from_quat_helper
 		{
@@ -104,11 +102,9 @@ namespace rtm
 			quat quat_input;
 		};
 
-		//////////////////////////////////////////////////////////////////////////
 		// A helper struct to convert a 3D scale vector to matrices of similar width.
 		// Note: We use a float type as a template argument because GCC loses alignment
 		// attributes on template argument types.
-		//////////////////////////////////////////////////////////////////////////
 		template<typename float_type>
 		struct matrix_from_scale_helper
 		{
@@ -147,9 +143,7 @@ namespace rtm
 			return axis == axis3::x ? x_axis : (axis == axis3::y ? y_axis : z_axis);
 		}
 
-		//////////////////////////////////////////////////////////////////////////
 		// Converts a 3x3 matrix into a rotation quaternion.
-		//////////////////////////////////////////////////////////////////////////
 		RTM_DISABLE_SECURITY_COOKIE_CHECK inline quatf RTM_SIMD_CALL quat_from_matrix(vector4f_arg0 x_axis, vector4f_arg1 y_axis, vector4f_arg2 z_axis) RTM_NO_EXCEPT
 		{
 			// TODO: Rework this function, we should be able to handle one axis with zero scale by using the largest diagonal element
@@ -224,9 +218,7 @@ namespace rtm
 			}
 		}
 
-		//////////////////////////////////////////////////////////////////////////
 		// Converts a 3x3 matrix into a rotation quaternion.
-		//////////////////////////////////////////////////////////////////////////
 		RTM_DISABLE_SECURITY_COOKIE_CHECK inline quatd RTM_SIMD_CALL quat_from_matrix(vector4d_arg0 x_axis, vector4d_arg1 y_axis, vector4d_arg2 z_axis) RTM_NO_EXCEPT
 		{
 			const vector4d zero = vector_zero();
@@ -296,49 +288,37 @@ namespace rtm
 		}
 	}
 
-	//////////////////////////////////////////////////////////////////////////
 	/// Converts a rotation quaternion into a 3x3 or 3x4 affine matrix.
-	//////////////////////////////////////////////////////////////////////////
 	RTM_DISABLE_SECURITY_COOKIE_CHECK constexpr rtm_impl::matrix_from_quat_helper<float> RTM_SIMD_CALL matrix_from_quat(quatf_arg0 quat) RTM_NO_EXCEPT
 	{
 		return rtm_impl::matrix_from_quat_helper<float>{ quat };
 	}
 
-	//////////////////////////////////////////////////////////////////////////
 	/// Converts a rotation quaternion into a 3x3 or 3x4 affine matrix.
-	//////////////////////////////////////////////////////////////////////////
 	RTM_DISABLE_SECURITY_COOKIE_CHECK constexpr rtm_impl::matrix_from_quat_helper<double> RTM_SIMD_CALL matrix_from_quat(quatd_arg0 quat) RTM_NO_EXCEPT
 	{
 		return rtm_impl::matrix_from_quat_helper<double>{ quat };
 	}
 
-	//////////////////////////////////////////////////////////////////////////
 	/// Converts a rotation quaternion into a 3x3 or 3x4 affine matrix.
-	//////////////////////////////////////////////////////////////////////////
 	RTM_DISABLE_SECURITY_COOKIE_CHECK constexpr rtm_impl::matrix_from_quat_helper<float> RTM_SIMD_CALL matrix_from_rotation(quatf_arg0 quat) RTM_NO_EXCEPT
 	{
 		return rtm_impl::matrix_from_quat_helper<float>{ quat };
 	}
 
-	//////////////////////////////////////////////////////////////////////////
 	/// Converts a rotation quaternion into a 3x3 or 3x4 affine matrix.
-	//////////////////////////////////////////////////////////////////////////
 	RTM_DISABLE_SECURITY_COOKIE_CHECK constexpr rtm_impl::matrix_from_quat_helper<double> RTM_SIMD_CALL matrix_from_rotation(quatd_arg0 quat) RTM_NO_EXCEPT
 	{
 		return rtm_impl::matrix_from_quat_helper<double>{ quat };
 	}
 
-	//////////////////////////////////////////////////////////////////////////
 	/// Converts a 3D scale vector into a 3x3 or 3x4 affine matrix.
-	//////////////////////////////////////////////////////////////////////////
 	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE constexpr rtm_impl::matrix_from_scale_helper<float> RTM_SIMD_CALL matrix_from_scale(vector4f_arg0 scale) RTM_NO_EXCEPT
 	{
 		return rtm_impl::matrix_from_scale_helper<float>{ scale };
 	}
 
-	//////////////////////////////////////////////////////////////////////////
 	/// Converts a 3D scale vector into a 3x3 or 3x4 affine matrix.
-	//////////////////////////////////////////////////////////////////////////
 	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE constexpr rtm_impl::matrix_from_scale_helper<double> RTM_SIMD_CALL matrix_from_scale(vector4d_arg0 scale) RTM_NO_EXCEPT
 	{
 		return rtm_impl::matrix_from_scale_helper<double>{ scale };

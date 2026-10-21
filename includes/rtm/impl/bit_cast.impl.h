@@ -29,9 +29,7 @@
 #include "rtm/impl/compiler_utils.h"
 #include "rtm/impl/detect_cpp_version.h"
 
-//////////////////////////////////////////////////////////////////////////
 // Detect if the current compilation environment supports bit operations.
-//////////////////////////////////////////////////////////////////////////
 
 #if !defined(RTM_NO_BIT_CAST)
 	#if !defined(__cpp_lib_bitops)
@@ -54,9 +52,7 @@ namespace rtm
 
 	namespace rtm_impl
 	{
-		//////////////////////////////////////////////////////////////////////////
 		// C++20 introduced std::bit_cast which is safer than reinterpret_cast
-		//////////////////////////////////////////////////////////////////////////
 
 	#if RTM_CPP_VERSION >= RTM_CPP_VERSION_20 && !defined(RTM_NO_BIT_CAST)
 		using std::bit_cast;

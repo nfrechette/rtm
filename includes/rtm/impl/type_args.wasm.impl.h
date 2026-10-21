@@ -31,9 +31,7 @@ namespace rtm
 {
 	RTM_IMPL_VERSION_NAMESPACE_BEGIN
 
-	//////////////////////////////////////////////////////////////////////////
 	// Register passing typedefs
-	//////////////////////////////////////////////////////////////////////////
 
 	// With WASM SIMD, a v128_t and an aggregate with a single v128_t member are passed by value.
 	// Other aggregates are passed by a pointer to a copy. Thus, we pass them by const& to avoid the copy.
