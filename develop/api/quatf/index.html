@@ -1,0 +1,3737 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="A C++11 math library for animation and realtime applications">
+      
+      
+      
+        <link rel="canonical" href="https://nfrechette.github.io/rtm/develop/api/quatf/">
+      
+      
+        <link rel="prev" href="../mask4q/">
+      
+      
+        <link rel="next" href="../quatd/">
+      
+      
+        
+      
+      
+      <link rel="icon" href="../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.7">
+    
+    
+      
+        <title>rtm/quatf.h - Realtime Math</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/main.ec1eaa64.min.css">
+      
+        
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.ab4e12ef.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#rtmquatfh" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+      <div data-md-color-scheme="default" data-md-component="outdated" hidden>
+        
+      </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../.." title="Realtime Math" class="md-header__button md-logo" aria-label="Realtime Math" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            Realtime Math
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              rtm/quatf.h
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: light)" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="Use the dark theme"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="Use the dark theme" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a4 4 0 0 0-4 4 4 4 0 0 0 4 4 4 4 0 0 0 4-4 4 4 0 0 0-4-4m0 10a6 6 0 0 1-6-6 6 6 0 0 1 6-6 6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: dark)" data-md-color-scheme="slate" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="Use the light theme"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="Use the light theme" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 18c-.89 0-1.74-.2-2.5-.55C11.56 16.5 13 14.42 13 12s-1.44-4.5-3.5-5.45C10.26 6.2 11.11 6 12 6a6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/nfrechette/rtm" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    nfrechette/rtm
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../.." title="Realtime Math" class="md-nav__button md-logo" aria-label="Realtime Math" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    Realtime Math
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/nfrechette/rtm" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    nfrechette/rtm
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../.." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Home
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Guides
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Guides
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../api_conventions/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    API and other conventions
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../types_supported/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Types supported
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../simd_support/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    SIMD support
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../handling_asserts/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Handling asserts
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../getting_started/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Getting started
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    API reference
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    API reference
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    API reference
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_3_2" id="__nav_3_2_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Types and constants
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_3_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Types and constants
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../types/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    rtm/types.h
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../type_traits/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    rtm/type_traits.h
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../constants/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    rtm/constants.h
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../macros/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    rtm/macros.h
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../version/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    rtm/version.h
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_3_3" id="__nav_3_3_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Scalars
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_3_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Scalars
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../scalarf/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    rtm/scalarf.h
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../scalard/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    rtm/scalard.h
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3_4" >
+        
+          
+          <label class="md-nav__link" for="__nav_3_4" id="__nav_3_4_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vectors
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_3_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Vectors
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vector4f/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    rtm/vector4f.h
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vector4d/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    rtm/vector4d.h
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3_5" >
+        
+          
+          <label class="md-nav__link" for="__nav_3_5" id="__nav_3_5_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Masks
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_3_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3_5">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Masks
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../mask4f/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    rtm/mask4f.h
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../mask4d/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    rtm/mask4d.h
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../mask4i/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    rtm/mask4i.h
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../mask4q/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    rtm/mask4q.h
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    
+    
+    
+    
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3_6" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_3_6" id="__nav_3_6_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Quaternions
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_3_6_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_3_6">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Quaternions
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    rtm/quatf.h
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    rtm/quatf.h
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#quat_set" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        quat_set
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#quat_identity" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        quat_identity
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#setters-getters-and-casts" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Setters, getters, and casts
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Setters, getters, and casts">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#quat_load" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        quat_load
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#vector_to_quat" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        vector_to_quat
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#quat_cast" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        quat_cast
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#quat_get_x" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        quat_get_x
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#quat_get_x_as_scalar" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        quat_get_x_as_scalar
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#quat_get_y" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        quat_get_y
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#quat_get_y_as_scalar" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        quat_get_y_as_scalar
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#quat_get_z" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        quat_get_z
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#quat_get_z_as_scalar" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        quat_get_z_as_scalar
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#quat_get_w" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        quat_get_w
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#quat_get_w_as_scalar" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        quat_get_w_as_scalar
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#quat_set_x" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        quat_set_x
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#quat_set_y" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        quat_set_y
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#quat_set_z" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        quat_set_z
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#quat_set_w" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        quat_set_w
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#quat_store" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        quat_store
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#arithmetic" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Arithmetic
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Arithmetic">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#quat_conjugate" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        quat_conjugate
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#quat_add" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        quat_add
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#quat_mul" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        quat_mul
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#quat_mul_vector3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        quat_mul_vector3
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#quat_dot" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        quat_dot
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#quat_dot_as_scalar" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        quat_dot_as_scalar
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#quat_length_squared" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        quat_length_squared
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#quat_length_squared_as_scalar" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        quat_length_squared_as_scalar
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#quat_length" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        quat_length
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#quat_length_as_scalar" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        quat_length_as_scalar
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#quat_length_reciprocal" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        quat_length_reciprocal
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#quat_length_reciprocal_as_scalar" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        quat_length_reciprocal_as_scalar
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#quat_normalize" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        quat_normalize
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#quat_normalize_deterministic" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        quat_normalize_deterministic
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#quat_lerp" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        quat_lerp
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#quat_slerp" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        quat_slerp
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#quat_neg" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        quat_neg
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#quat_rotation_log" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        quat_rotation_log
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#quat_rotation_exp" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        quat_rotation_exp
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#conversion-tofrom-axisangleeuler" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Conversion to/from axis/angle/euler
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Conversion to/from axis/angle/euler">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#quat_to_axis_angle" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        quat_to_axis_angle
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#quat_get_axis" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        quat_get_axis
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#quat_get_angle" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        quat_get_angle
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#quat_from_axis_angle" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        quat_from_axis_angle
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#quat_from_euler" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        quat_from_euler
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#comparisons-and-masking" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Comparisons and masking
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Comparisons and masking">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#quat_is_finite" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        quat_is_finite
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#quat_is_normalized" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        quat_is_normalized
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#quat_are_equal" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        quat_are_equal
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#quat_near_equal" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        quat_near_equal
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#quat_near_identity" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        quat_near_identity
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#quat_select" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        quat_select
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../quatd/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    rtm/quatd.h
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../packing_quatf/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    rtm/packing/quatf.h
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../packing_quatd/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    rtm/packing/quatd.h
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3_7" >
+        
+          
+          <label class="md-nav__link" for="__nav_3_7" id="__nav_3_7_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Matrices
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_3_7_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3_7">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Matrices
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../matrix3x3f/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    rtm/matrix3x3f.h
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../matrix3x3d/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    rtm/matrix3x3d.h
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../matrix3x4f/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    rtm/matrix3x4f.h
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../matrix3x4d/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    rtm/matrix3x4d.h
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../matrix4x4f/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    rtm/matrix4x4f.h
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../matrix4x4d/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    rtm/matrix4x4d.h
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3_8" >
+        
+          
+          <label class="md-nav__link" for="__nav_3_8" id="__nav_3_8_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Transforms
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_3_8_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3_8">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Transforms
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vqf/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    rtm/vqf.h
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vqd/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    rtm/vqd.h
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vqsf/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    rtm/vqsf.h
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vqsd/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    rtm/vqsd.h
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vqvf/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    rtm/vqvf.h
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vqvd/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    rtm/vqvd.h
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vqmf/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    rtm/vqmf.h
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vqmd/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    rtm/vqmd.h
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3_9" >
+        
+          
+          <label class="md-nav__link" for="__nav_3_9" id="__nav_3_9_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Camera
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_3_9_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3_9">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Camera
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../camera_utilsf/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    rtm/camera_utilsf.h
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../camera_utilsd/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    rtm/camera_utilsd.h
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3_10" >
+        
+          
+          <label class="md-nav__link" for="__nav_3_10" id="__nav_3_10_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Deprecated
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_3_10_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3_10">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Deprecated
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../qvf/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    rtm/qvf.h
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../qvd/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    rtm/qvd.h
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../qvsf/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    rtm/qvsf.h
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../qvsd/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    rtm/qvsd.h
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../qvvf/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    rtm/qvvf.h
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../qvvd/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    rtm/qvvd.h
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#quat_set" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        quat_set
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#quat_identity" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        quat_identity
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#setters-getters-and-casts" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Setters, getters, and casts
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Setters, getters, and casts">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#quat_load" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        quat_load
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#vector_to_quat" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        vector_to_quat
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#quat_cast" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        quat_cast
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#quat_get_x" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        quat_get_x
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#quat_get_x_as_scalar" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        quat_get_x_as_scalar
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#quat_get_y" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        quat_get_y
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#quat_get_y_as_scalar" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        quat_get_y_as_scalar
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#quat_get_z" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        quat_get_z
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#quat_get_z_as_scalar" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        quat_get_z_as_scalar
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#quat_get_w" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        quat_get_w
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#quat_get_w_as_scalar" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        quat_get_w_as_scalar
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#quat_set_x" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        quat_set_x
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#quat_set_y" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        quat_set_y
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#quat_set_z" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        quat_set_z
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#quat_set_w" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        quat_set_w
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#quat_store" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        quat_store
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#arithmetic" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Arithmetic
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Arithmetic">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#quat_conjugate" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        quat_conjugate
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#quat_add" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        quat_add
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#quat_mul" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        quat_mul
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#quat_mul_vector3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        quat_mul_vector3
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#quat_dot" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        quat_dot
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#quat_dot_as_scalar" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        quat_dot_as_scalar
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#quat_length_squared" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        quat_length_squared
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#quat_length_squared_as_scalar" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        quat_length_squared_as_scalar
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#quat_length" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        quat_length
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#quat_length_as_scalar" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        quat_length_as_scalar
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#quat_length_reciprocal" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        quat_length_reciprocal
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#quat_length_reciprocal_as_scalar" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        quat_length_reciprocal_as_scalar
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#quat_normalize" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        quat_normalize
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#quat_normalize_deterministic" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        quat_normalize_deterministic
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#quat_lerp" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        quat_lerp
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#quat_slerp" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        quat_slerp
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#quat_neg" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        quat_neg
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#quat_rotation_log" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        quat_rotation_log
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#quat_rotation_exp" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        quat_rotation_exp
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#conversion-tofrom-axisangleeuler" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Conversion to/from axis/angle/euler
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Conversion to/from axis/angle/euler">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#quat_to_axis_angle" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        quat_to_axis_angle
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#quat_get_axis" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        quat_get_axis
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#quat_get_angle" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        quat_get_angle
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#quat_from_axis_angle" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        quat_from_axis_angle
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#quat_from_euler" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        quat_from_euler
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#comparisons-and-masking" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Comparisons and masking
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Comparisons and masking">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#quat_is_finite" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        quat_is_finite
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#quat_is_normalized" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        quat_is_normalized
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#quat_are_equal" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        quat_are_equal
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#quat_near_equal" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        quat_near_equal
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#quat_near_identity" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        quat_near_identity
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#quat_select" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        quat_select
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+
+<h1 id="rtmquatfh">rtm/quatf.h<a class="headerlink" href="#rtmquatfh" title="Permanent link">&para;</a></h1>
+<div class="highlight"><pre><span></span><code><span class="cp">#include</span><span class="w"> </span><span class="cpf">"rtm/quatf.h"</span>
+</code></pre></div>
+<h3 id="quat_set">quat_set<a class="headerlink" href="#quat_set" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><span class="n">quatf</span><span class="w"> </span><span class="n">quat_set</span><span class="p">(</span><span class="kt">float</span><span class="w"> </span><span class="n">x</span><span class="p">,</span><span class="w"> </span><span class="kt">float</span><span class="w"> </span><span class="n">y</span><span class="p">,</span><span class="w"> </span><span class="kt">float</span><span class="w"> </span><span class="n">z</span><span class="p">,</span><span class="w"> </span><span class="kt">float</span><span class="w"> </span><span class="n">w</span><span class="p">)</span>
+</code></pre></div>
+<p>Creates a quaternion from all 4 components.</p>
+<h3 id="quat_identity">quat_identity<a class="headerlink" href="#quat_identity" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><span class="n">quatf</span><span class="w"> </span><span class="n">quat_identity</span><span class="p">()</span>
+</code></pre></div>
+<p>Returns the identity quaternion.</p>
+<p>The return value also converts to <code>quatd</code>.</p>
+<h2 id="setters-getters-and-casts">Setters, getters, and casts<a class="headerlink" href="#setters-getters-and-casts" title="Permanent link">&para;</a></h2>
+<h3 id="quat_load">quat_load<a class="headerlink" href="#quat_load" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><span class="n">quatf</span><span class="w"> </span><span class="n">quat_load</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="kt">float</span><span class="o">*</span><span class="w"> </span><span class="n">input</span><span class="p">)</span>
+</code></pre></div>
+<p>Loads an unaligned quaternion from memory.</p>
+<div class="highlight"><pre><span></span><code><span class="n">quatf</span><span class="w"> </span><span class="n">quat_load</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">float4f</span><span class="o">*</span><span class="w"> </span><span class="n">input</span><span class="p">)</span>
+</code></pre></div>
+<p>Loads an unaligned quat from memory.</p>
+<h3 id="vector_to_quat">vector_to_quat<a class="headerlink" href="#vector_to_quat" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><span class="n">quatf</span><span class="w"> </span><span class="n">vector_to_quat</span><span class="p">(</span><span class="n">vector4f</span><span class="w"> </span><span class="n">input</span><span class="p">)</span>
+</code></pre></div>
+<p>Casts a vector4 to a quaternion.</p>
+<h3 id="quat_cast">quat_cast<a class="headerlink" href="#quat_cast" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><span class="n">quatf</span><span class="w"> </span><span class="n">quat_cast</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">quatd</span><span class="o">&amp;</span><span class="w"> </span><span class="n">input</span><span class="p">)</span>
+</code></pre></div>
+<p>Casts a quaternion float64 variant to a float32 variant.</p>
+<h3 id="quat_get_x">quat_get_x<a class="headerlink" href="#quat_get_x" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><span class="kt">float</span><span class="w"> </span><span class="n">quat_get_x</span><span class="p">(</span><span class="n">quatf</span><span class="w"> </span><span class="n">input</span><span class="p">)</span>
+</code></pre></div>
+<p>Returns the quaternion [x] component (real part).</p>
+<h3 id="quat_get_x_as_scalar">quat_get_x_as_scalar<a class="headerlink" href="#quat_get_x_as_scalar" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><span class="n">scalarf</span><span class="w"> </span><span class="n">quat_get_x_as_scalar</span><span class="p">(</span><span class="n">quatf</span><span class="w"> </span><span class="n">input</span><span class="p">)</span>
+</code></pre></div>
+<p>Returns the quaternion [x] component (real part).</p>
+<h3 id="quat_get_y">quat_get_y<a class="headerlink" href="#quat_get_y" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><span class="kt">float</span><span class="w"> </span><span class="n">quat_get_y</span><span class="p">(</span><span class="n">quatf</span><span class="w"> </span><span class="n">input</span><span class="p">)</span>
+</code></pre></div>
+<p>Returns the quaternion [y] component (real part).</p>
+<h3 id="quat_get_y_as_scalar">quat_get_y_as_scalar<a class="headerlink" href="#quat_get_y_as_scalar" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><span class="n">scalarf</span><span class="w"> </span><span class="n">quat_get_y_as_scalar</span><span class="p">(</span><span class="n">quatf</span><span class="w"> </span><span class="n">input</span><span class="p">)</span>
+</code></pre></div>
+<p>Returns the quaternion [y] component (real part).</p>
+<h3 id="quat_get_z">quat_get_z<a class="headerlink" href="#quat_get_z" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><span class="kt">float</span><span class="w"> </span><span class="n">quat_get_z</span><span class="p">(</span><span class="n">quatf</span><span class="w"> </span><span class="n">input</span><span class="p">)</span>
+</code></pre></div>
+<p>Returns the quaternion [z] component (real part).</p>
+<h3 id="quat_get_z_as_scalar">quat_get_z_as_scalar<a class="headerlink" href="#quat_get_z_as_scalar" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><span class="n">scalarf</span><span class="w"> </span><span class="n">quat_get_z_as_scalar</span><span class="p">(</span><span class="n">quatf</span><span class="w"> </span><span class="n">input</span><span class="p">)</span>
+</code></pre></div>
+<p>Returns the quaternion [z] component (real part).</p>
+<h3 id="quat_get_w">quat_get_w<a class="headerlink" href="#quat_get_w" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><span class="kt">float</span><span class="w"> </span><span class="n">quat_get_w</span><span class="p">(</span><span class="n">quatf</span><span class="w"> </span><span class="n">input</span><span class="p">)</span>
+</code></pre></div>
+<p>Returns the quaternion [w] component (imaginary part).</p>
+<h3 id="quat_get_w_as_scalar">quat_get_w_as_scalar<a class="headerlink" href="#quat_get_w_as_scalar" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><span class="n">scalarf</span><span class="w"> </span><span class="n">quat_get_w_as_scalar</span><span class="p">(</span><span class="n">quatf</span><span class="w"> </span><span class="n">input</span><span class="p">)</span>
+</code></pre></div>
+<p>Returns the quaternion [w] component (imaginary part).</p>
+<h3 id="quat_set_x">quat_set_x<a class="headerlink" href="#quat_set_x" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><span class="n">quatf</span><span class="w"> </span><span class="n">quat_set_x</span><span class="p">(</span><span class="n">quatf</span><span class="w"> </span><span class="n">input</span><span class="p">,</span><span class="w"> </span><span class="kt">float</span><span class="w"> </span><span class="n">lane_value</span><span class="p">)</span>
+</code></pre></div>
+<p>Sets the quaternion [x] component (real part) and returns the new value.</p>
+<h3 id="quat_set_y">quat_set_y<a class="headerlink" href="#quat_set_y" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><span class="n">quatf</span><span class="w"> </span><span class="n">quat_set_y</span><span class="p">(</span><span class="n">quatf</span><span class="w"> </span><span class="n">input</span><span class="p">,</span><span class="w"> </span><span class="kt">float</span><span class="w"> </span><span class="n">lane_value</span><span class="p">)</span>
+</code></pre></div>
+<p>Sets the quaternion [y] component (real part) and returns the new value.</p>
+<h3 id="quat_set_z">quat_set_z<a class="headerlink" href="#quat_set_z" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><span class="n">quatf</span><span class="w"> </span><span class="n">quat_set_z</span><span class="p">(</span><span class="n">quatf</span><span class="w"> </span><span class="n">input</span><span class="p">,</span><span class="w"> </span><span class="kt">float</span><span class="w"> </span><span class="n">lane_value</span><span class="p">)</span>
+</code></pre></div>
+<p>Sets the quaternion [z] component (real part) and returns the new value.</p>
+<h3 id="quat_set_w">quat_set_w<a class="headerlink" href="#quat_set_w" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><span class="n">quatf</span><span class="w"> </span><span class="n">quat_set_w</span><span class="p">(</span><span class="n">quatf</span><span class="w"> </span><span class="n">input</span><span class="p">,</span><span class="w"> </span><span class="kt">float</span><span class="w"> </span><span class="n">lane_value</span><span class="p">)</span>
+</code></pre></div>
+<p>Sets the quaternion [w] component (imaginary part) and returns the new value.</p>
+<h3 id="quat_store">quat_store<a class="headerlink" href="#quat_store" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">quat_store</span><span class="p">(</span><span class="n">quatf</span><span class="w"> </span><span class="n">input</span><span class="p">,</span><span class="w"> </span><span class="kt">float</span><span class="o">*</span><span class="w"> </span><span class="n">output</span><span class="p">)</span>
+<span class="kt">void</span><span class="w"> </span><span class="n">quat_store</span><span class="p">(</span><span class="n">quatf</span><span class="w"> </span><span class="n">input</span><span class="p">,</span><span class="w"> </span><span class="n">float4f</span><span class="o">*</span><span class="w"> </span><span class="n">output</span><span class="p">)</span>
+</code></pre></div>
+<p>Writes a quaternion to unaligned memory.</p>
+<h2 id="arithmetic">Arithmetic<a class="headerlink" href="#arithmetic" title="Permanent link">&para;</a></h2>
+<h3 id="quat_conjugate">quat_conjugate<a class="headerlink" href="#quat_conjugate" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><span class="n">quatf</span><span class="w"> </span><span class="n">quat_conjugate</span><span class="p">(</span><span class="n">quatf</span><span class="w"> </span><span class="n">input</span><span class="p">)</span>
+</code></pre></div>
+<p>Returns the quaternion conjugate.</p>
+<h3 id="quat_add">quat_add<a class="headerlink" href="#quat_add" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><span class="n">quatf</span><span class="w"> </span><span class="n">quat_add</span><span class="p">(</span><span class="n">quatf</span><span class="w"> </span><span class="n">lhs</span><span class="p">,</span><span class="w"> </span><span class="n">quatf</span><span class="w"> </span><span class="n">rhs</span><span class="p">)</span>
+</code></pre></div>
+<p>Adds two quaternions.</p>
+<h3 id="quat_mul">quat_mul<a class="headerlink" href="#quat_mul" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><span class="n">quatf</span><span class="w"> </span><span class="n">quat_mul</span><span class="p">(</span><span class="n">quatf</span><span class="w"> </span><span class="n">lhs</span><span class="p">,</span><span class="w"> </span><span class="n">quatf</span><span class="w"> </span><span class="n">rhs</span><span class="p">)</span>
+</code></pre></div>
+<p>Multiplies two quaternions. Note that due to floating point rounding, the result might not be perfectly normalized. Multiplication order is as follow: local_to_world = quat_mul(local_to_object, object_to_world)</p>
+<div class="highlight"><pre><span></span><code><span class="n">quatf</span><span class="w"> </span><span class="n">quat_mul</span><span class="p">(</span><span class="n">quatf</span><span class="w"> </span><span class="n">quat</span><span class="p">,</span><span class="w"> </span><span class="kt">float</span><span class="w"> </span><span class="n">scalar</span><span class="p">)</span>
+</code></pre></div>
+<p>Multiplies a quaternion with a scalar.</p>
+<h3 id="quat_mul_vector3">quat_mul_vector3<a class="headerlink" href="#quat_mul_vector3" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><span class="n">vector4f</span><span class="w"> </span><span class="n">quat_mul_vector3</span><span class="p">(</span><span class="n">vector4f</span><span class="w"> </span><span class="n">vector</span><span class="p">,</span><span class="w"> </span><span class="n">quatf</span><span class="w"> </span><span class="n">rotation</span><span class="p">)</span>
+</code></pre></div>
+<p>Multiplies a quaternion and a 3D vector, rotating it. Multiplication order is as follow: world_position = quat_mul_vector3(local_vector, local_to_world)</p>
+<h3 id="quat_dot">quat_dot<a class="headerlink" href="#quat_dot" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><span class="kt">float</span><span class="w"> </span><span class="n">quat_dot</span><span class="p">(</span><span class="n">quatf</span><span class="w"> </span><span class="n">lhs</span><span class="p">,</span><span class="w"> </span><span class="n">quatf</span><span class="w"> </span><span class="n">rhs</span><span class="p">)</span>
+</code></pre></div>
+<p>Quaternion dot product: lhs . rhs.</p>
+<h3 id="quat_dot_as_scalar">quat_dot_as_scalar<a class="headerlink" href="#quat_dot_as_scalar" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><span class="n">scalarf</span><span class="w"> </span><span class="n">quat_dot_as_scalar</span><span class="p">(</span><span class="n">quatf</span><span class="w"> </span><span class="n">lhs</span><span class="p">,</span><span class="w"> </span><span class="n">quatf</span><span class="w"> </span><span class="n">rhs</span><span class="p">)</span>
+</code></pre></div>
+<p>Quaternion dot product: lhs . rhs.</p>
+<h3 id="quat_length_squared">quat_length_squared<a class="headerlink" href="#quat_length_squared" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><span class="kt">float</span><span class="w"> </span><span class="n">quat_length_squared</span><span class="p">(</span><span class="n">quatf</span><span class="w"> </span><span class="n">input</span><span class="p">)</span>
+</code></pre></div>
+<p>Returns the squared length/norm of the quaternion.</p>
+<h3 id="quat_length_squared_as_scalar">quat_length_squared_as_scalar<a class="headerlink" href="#quat_length_squared_as_scalar" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><span class="n">scalarf</span><span class="w"> </span><span class="n">quat_length_squared_as_scalar</span><span class="p">(</span><span class="n">quatf</span><span class="w"> </span><span class="n">input</span><span class="p">)</span>
+</code></pre></div>
+<p>Returns the squared length/norm of the quaternion.</p>
+<h3 id="quat_length">quat_length<a class="headerlink" href="#quat_length" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><span class="kt">float</span><span class="w"> </span><span class="n">quat_length</span><span class="p">(</span><span class="n">quatf</span><span class="w"> </span><span class="n">input</span><span class="p">)</span>
+</code></pre></div>
+<p>Returns the length/norm of the quaternion.</p>
+<h3 id="quat_length_as_scalar">quat_length_as_scalar<a class="headerlink" href="#quat_length_as_scalar" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><span class="n">scalarf</span><span class="w"> </span><span class="n">quat_length_as_scalar</span><span class="p">(</span><span class="n">quatf</span><span class="w"> </span><span class="n">input</span><span class="p">)</span>
+</code></pre></div>
+<p>Returns the length/norm of the quaternion.</p>
+<h3 id="quat_length_reciprocal">quat_length_reciprocal<a class="headerlink" href="#quat_length_reciprocal" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><span class="kt">float</span><span class="w"> </span><span class="n">quat_length_reciprocal</span><span class="p">(</span><span class="n">quatf</span><span class="w"> </span><span class="n">input</span><span class="p">)</span>
+</code></pre></div>
+<p>Returns the reciprocal length/norm of the quaternion.</p>
+<h3 id="quat_length_reciprocal_as_scalar">quat_length_reciprocal_as_scalar<a class="headerlink" href="#quat_length_reciprocal_as_scalar" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><span class="n">scalarf</span><span class="w"> </span><span class="n">quat_length_reciprocal_as_scalar</span><span class="p">(</span><span class="n">quatf</span><span class="w"> </span><span class="n">input</span><span class="p">)</span>
+</code></pre></div>
+<p>Returns the reciprocal length/norm of the quaternion.</p>
+<h3 id="quat_normalize">quat_normalize<a class="headerlink" href="#quat_normalize" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><span class="n">quatf</span><span class="w"> </span><span class="n">quat_normalize</span><span class="p">(</span><span class="n">quatf</span><span class="w"> </span><span class="n">input</span><span class="p">)</span>
+</code></pre></div>
+<p>Returns a normalized quaternion. Note that if the input quaternion is invalid (pure zero or with NaN/Inf), the result is undefined.</p>
+<h3 id="quat_normalize_deterministic">quat_normalize_deterministic<a class="headerlink" href="#quat_normalize_deterministic" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><span class="n">quatf</span><span class="w"> </span><span class="n">quat_normalize_deterministic</span><span class="p">(</span><span class="n">quatf</span><span class="w"> </span><span class="n">input</span><span class="p">)</span>
+</code></pre></div>
+<p>Returns a normalized quaternion using a deterministic algorithm. This ensures that for a given input, the output will be identical on all platforms that implement IEEE-754. This can be slower than <code>quat_normalize</code>. This is only guaranteed if the rounding modes are consistent. Note that if the input quaternion is invalid (pure zero or with NaN/Inf), the result is undefined.</p>
+<h3 id="quat_lerp">quat_lerp<a class="headerlink" href="#quat_lerp" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><span class="n">quatf</span><span class="w"> </span><span class="n">quat_lerp</span><span class="p">(</span><span class="n">quatf</span><span class="w"> </span><span class="n">start</span><span class="p">,</span><span class="w"> </span><span class="n">quatf</span><span class="w"> </span><span class="n">end</span><span class="p">,</span><span class="w"> </span><span class="kt">float</span><span class="w"> </span><span class="n">alpha</span><span class="p">)</span>
+</code></pre></div>
+<p>Returns the linear interpolation between start and end for a given alpha value. The formula used is: ((1.0 - alpha) * start) + (alpha * end). Interpolation is stable and will return 'start' when 'alpha' is 0.0 and 'end' when it is 1.0. This is the same instruction count when FMA is present but it might be slightly slower due to the extra multiplication compared to: start + (alpha * (end - start)). Note that if 'start' and 'end' are on the opposite ends of the hypersphere, 'end' is negated before we interpolate. As such, when 'alpha' is 1.0, either 'end' or its negated equivalent is returned. Furthermore, if 'start' and 'end' aren't exactly normalized, the result might not match exactly when 'alpha' is 0.0 or 1.0 because we normalize the resulting quaternion.</p>
+<h3 id="quat_slerp">quat_slerp<a class="headerlink" href="#quat_slerp" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><span class="n">quatf</span><span class="w"> </span><span class="n">quat_slerp</span><span class="p">(</span><span class="n">quatf</span><span class="w"> </span><span class="n">start</span><span class="p">,</span><span class="w"> </span><span class="n">quatf</span><span class="w"> </span><span class="n">end</span><span class="p">,</span><span class="w"> </span><span class="kt">float</span><span class="w"> </span><span class="n">alpha</span><span class="p">)</span>
+</code></pre></div>
+<p>Returns the spherical interpolation between start and end for a given alpha value. If the angle between the two inputs is near zero, the function uses the weights (1.0 - alpha) and alpha. See: <a href="https://www.euclideanspace.com/maths/algebra/realNormedAlgebra/quaternions/slerp/index.htm">https://www.euclideanspace.com/maths/algebra/realNormedAlgebra/quaternions/slerp/index.htm</a> Perhaps try this someday: <a href="http://number-none.com/product/Understanding%20Slerp,%20Then%20Not%20Using%20It/">http://number-none.com/product/Understanding%20Slerp,%20Then%20Not%20Using%20It/</a></p>
+<h3 id="quat_neg">quat_neg<a class="headerlink" href="#quat_neg" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><span class="n">quatf</span><span class="w"> </span><span class="n">quat_neg</span><span class="p">(</span><span class="n">quatf</span><span class="w"> </span><span class="n">input</span><span class="p">)</span>
+</code></pre></div>
+<p>Returns a component wise negated quaternion.</p>
+<h3 id="quat_rotation_log">quat_rotation_log<a class="headerlink" href="#quat_rotation_log" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><span class="n">quatf</span><span class="w"> </span><span class="n">quat_rotation_log</span><span class="p">(</span><span class="n">quatf</span><span class="w"> </span><span class="n">input</span><span class="p">)</span>
+</code></pre></div>
+<p>Returns the quaternion logarithm for a 3D rotation.</p>
+<h3 id="quat_rotation_exp">quat_rotation_exp<a class="headerlink" href="#quat_rotation_exp" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><span class="n">quatf</span><span class="w"> </span><span class="n">quat_rotation_exp</span><span class="p">(</span><span class="n">quatf</span><span class="w"> </span><span class="n">input</span><span class="p">)</span>
+</code></pre></div>
+<p>Returns the quaternion exponential for a 3D rotation. The result might not be fully normalized if the input is near zero.</p>
+<h2 id="conversion-tofrom-axisangleeuler">Conversion to/from axis/angle/euler<a class="headerlink" href="#conversion-tofrom-axisangleeuler" title="Permanent link">&para;</a></h2>
+<h3 id="quat_to_axis_angle">quat_to_axis_angle<a class="headerlink" href="#quat_to_axis_angle" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">quat_to_axis_angle</span><span class="p">(</span><span class="n">quatf</span><span class="w"> </span><span class="n">input</span><span class="p">,</span><span class="w"> </span><span class="n">vector4f</span><span class="o">&amp;</span><span class="w"> </span><span class="n">out_axis</span><span class="p">,</span><span class="w"> </span><span class="kt">float</span><span class="o">&amp;</span><span class="w"> </span><span class="n">out_angle</span><span class="p">)</span>
+</code></pre></div>
+<p>Returns the rotation axis and rotation angle that make up the input quaternion.</p>
+<h3 id="quat_get_axis">quat_get_axis<a class="headerlink" href="#quat_get_axis" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><span class="n">vector4f</span><span class="w"> </span><span class="n">quat_get_axis</span><span class="p">(</span><span class="n">quatf</span><span class="w"> </span><span class="n">input</span><span class="p">)</span>
+</code></pre></div>
+<p>Returns the rotation axis part of the input quaternion.</p>
+<h3 id="quat_get_angle">quat_get_angle<a class="headerlink" href="#quat_get_angle" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><span class="kt">float</span><span class="w"> </span><span class="n">quat_get_angle</span><span class="p">(</span><span class="n">quatf</span><span class="w"> </span><span class="n">input</span><span class="p">)</span>
+</code></pre></div>
+<p>Returns the rotation angle part of the input quaternion.</p>
+<h3 id="quat_from_axis_angle">quat_from_axis_angle<a class="headerlink" href="#quat_from_axis_angle" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><span class="n">quatf</span><span class="w"> </span><span class="n">quat_from_axis_angle</span><span class="p">(</span><span class="n">vector4f</span><span class="w"> </span><span class="n">axis</span><span class="p">,</span><span class="w"> </span><span class="kt">float</span><span class="w"> </span><span class="n">angle</span><span class="p">)</span>
+</code></pre></div>
+<p>Creates a quaternion from a rotation axis and a rotation angle.</p>
+<h3 id="quat_from_euler">quat_from_euler<a class="headerlink" href="#quat_from_euler" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><span class="n">quatf</span><span class="w"> </span><span class="n">quat_from_euler</span><span class="p">(</span><span class="kt">float</span><span class="w"> </span><span class="n">pitch</span><span class="p">,</span><span class="w"> </span><span class="kt">float</span><span class="w"> </span><span class="n">yaw</span><span class="p">,</span><span class="w"> </span><span class="kt">float</span><span class="w"> </span><span class="n">roll</span><span class="p">)</span>
+</code></pre></div>
+<p>Creates a quaternion from Euler Pitch/Yaw/Roll angles. Pitch is around the Y axis (right) Yaw is around the Z axis (up) Roll is around the X axis (forward)</p>
+<h2 id="comparisons-and-masking">Comparisons and masking<a class="headerlink" href="#comparisons-and-masking" title="Permanent link">&para;</a></h2>
+<h3 id="quat_is_finite">quat_is_finite<a class="headerlink" href="#quat_is_finite" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><span class="kt">bool</span><span class="w"> </span><span class="n">quat_is_finite</span><span class="p">(</span><span class="n">quatf</span><span class="w"> </span><span class="n">input</span><span class="p">)</span>
+</code></pre></div>
+<p>Returns true if the input quaternion does not contain any NaN or Inf, otherwise false.</p>
+<h3 id="quat_is_normalized">quat_is_normalized<a class="headerlink" href="#quat_is_normalized" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><span class="kt">bool</span><span class="w"> </span><span class="n">quat_is_normalized</span><span class="p">(</span><span class="n">quatf</span><span class="w"> </span><span class="n">input</span><span class="p">,</span><span class="w"> </span><span class="kt">float</span><span class="w"> </span><span class="n">threshold</span><span class="o">=</span><span class="mf">0.00001F</span><span class="p">)</span>
+</code></pre></div>
+<p>Returns true if the input quaternion is normalized, otherwise false.</p>
+<h3 id="quat_are_equal">quat_are_equal<a class="headerlink" href="#quat_are_equal" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><span class="kt">bool</span><span class="w"> </span><span class="n">quat_are_equal</span><span class="p">(</span><span class="n">quatf</span><span class="w"> </span><span class="n">lhs</span><span class="p">,</span><span class="w"> </span><span class="n">quatf</span><span class="w"> </span><span class="n">rhs</span><span class="p">)</span>
+</code></pre></div>
+<p>Returns true if the two quaternions are equal component wise, otherwise false.</p>
+<h3 id="quat_near_equal">quat_near_equal<a class="headerlink" href="#quat_near_equal" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><span class="kt">bool</span><span class="w"> </span><span class="n">quat_near_equal</span><span class="p">(</span><span class="n">quatf</span><span class="w"> </span><span class="n">lhs</span><span class="p">,</span><span class="w"> </span><span class="n">quatf</span><span class="w"> </span><span class="n">rhs</span><span class="p">,</span><span class="w"> </span><span class="kt">float</span><span class="w"> </span><span class="n">threshold</span><span class="o">=</span><span class="mf">0.00001F</span><span class="p">)</span>
+</code></pre></div>
+<p>Returns true if the two quaternions are nearly equal component wise, otherwise false.</p>
+<h3 id="quat_near_identity">quat_near_identity<a class="headerlink" href="#quat_near_identity" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><span class="kt">bool</span><span class="w"> </span><span class="n">quat_near_identity</span><span class="p">(</span><span class="n">quatf</span><span class="w"> </span><span class="n">input</span><span class="p">,</span><span class="w"> </span><span class="kt">float</span><span class="w"> </span><span class="n">threshold_angle</span><span class="o">=</span><span class="mf">0.00284714461F</span><span class="p">)</span>
+</code></pre></div>
+<p>Returns true if the input quaternion is nearly equal to the identity quaternion by comparing its rotation angle.</p>
+<h3 id="quat_select">quat_select<a class="headerlink" href="#quat_select" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><span class="n">quatf</span><span class="w"> </span><span class="n">quat_select</span><span class="p">(</span><span class="n">mask4f</span><span class="w"> </span><span class="n">mask</span><span class="p">,</span><span class="w"> </span><span class="n">quatf</span><span class="w"> </span><span class="n">if_true</span><span class="p">,</span><span class="w"> </span><span class="n">quatf</span><span class="w"> </span><span class="n">if_false</span><span class="p">)</span>
+</code></pre></div>
+<p>Per component selection depending on the mask: mask != 0 ? if_true : if_false Note that if the mask lanes are not all identical, the resulting quaternion may not be normalized.</p>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  Back to top
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+    <div class="md-copyright__highlight">
+      Copyright (c) 2018 Nicholas Frechette and Realtime Math contributors
+    </div>
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "../..", "features": ["navigation.sections", "navigation.top", "search.highlight", "content.code.copy"], "search": "../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"default": "latest", "provider": "mike"}}</script>
+    
+    
+      <script src="../../assets/javascripts/bundle.d7400e89.min.js"></script>
+      
+    
+  </body>
+</html>

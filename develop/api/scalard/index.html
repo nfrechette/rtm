@@ -1,0 +1,3550 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="A C++11 math library for animation and realtime applications">
+      
+      
+      
+        <link rel="canonical" href="https://nfrechette.github.io/rtm/develop/api/scalard/">
+      
+      
+        <link rel="prev" href="../scalarf/">
+      
+      
+        <link rel="next" href="../vector4f/">
+      
+      
+        
+      
+      
+      <link rel="icon" href="../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.7">
+    
+    
+      
+        <title>rtm/scalard.h - Realtime Math</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/main.ec1eaa64.min.css">
+      
+        
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.ab4e12ef.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#rtmscalardh" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+      <div data-md-color-scheme="default" data-md-component="outdated" hidden>
+        
+      </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../.." title="Realtime Math" class="md-header__button md-logo" aria-label="Realtime Math" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            Realtime Math
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              rtm/scalard.h
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: light)" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="Use the dark theme"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="Use the dark theme" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a4 4 0 0 0-4 4 4 4 0 0 0 4 4 4 4 0 0 0 4-4 4 4 0 0 0-4-4m0 10a6 6 0 0 1-6-6 6 6 0 0 1 6-6 6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: dark)" data-md-color-scheme="slate" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="Use the light theme"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="Use the light theme" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 18c-.89 0-1.74-.2-2.5-.55C11.56 16.5 13 14.42 13 12s-1.44-4.5-3.5-5.45C10.26 6.2 11.11 6 12 6a6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/nfrechette/rtm" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    nfrechette/rtm
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../.." title="Realtime Math" class="md-nav__button md-logo" aria-label="Realtime Math" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    Realtime Math
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/nfrechette/rtm" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    nfrechette/rtm
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../.." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Home
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Guides
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Guides
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../api_conventions/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    API and other conventions
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../types_supported/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Types supported
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../simd_support/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    SIMD support
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../handling_asserts/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Handling asserts
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../getting_started/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Getting started
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    API reference
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    API reference
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    API reference
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_3_2" id="__nav_3_2_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Types and constants
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_3_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Types and constants
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../types/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    rtm/types.h
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../type_traits/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    rtm/type_traits.h
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../constants/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    rtm/constants.h
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../macros/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    rtm/macros.h
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../version/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    rtm/version.h
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    
+    
+    
+    
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3_3" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_3_3" id="__nav_3_3_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Scalars
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_3_3_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_3_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Scalars
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../scalarf/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    rtm/scalarf.h
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    rtm/scalard.h
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    rtm/scalard.h
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#scalar_set" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        scalar_set
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#scalar_store" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        scalar_store
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#scalar_cast" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        scalar_cast
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#scalar_floor" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        scalar_floor
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#scalar_ceil" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        scalar_ceil
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#scalar_clamp" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        scalar_clamp
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#scalar_abs" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        scalar_abs
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#scalar_sqrt" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        scalar_sqrt
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#scalar_sqrt_reciprocal" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        scalar_sqrt_reciprocal
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#scalar_reciprocal" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        scalar_reciprocal
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#scalar_add" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        scalar_add
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#scalar_sub" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        scalar_sub
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#scalar_mul" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        scalar_mul
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#scalar_div" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        scalar_div
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#scalar_mul_add" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        scalar_mul_add
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#scalar_neg_mul_sub" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        scalar_neg_mul_sub
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#scalar_lerp" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        scalar_lerp
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#scalar_exp" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        scalar_exp
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#scalar_log" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        scalar_log
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#scalar_eerp" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        scalar_eerp
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#scalar_min" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        scalar_min
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#scalar_max" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        scalar_max
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#scalar_equal" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        scalar_equal
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#scalar_lower_than" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        scalar_lower_than
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#scalar_lower_equal" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        scalar_lower_equal
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#scalar_greater_than" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        scalar_greater_than
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#scalar_greater_equal" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        scalar_greater_equal
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#scalar_near_equal" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        scalar_near_equal
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#scalar_is_finite" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        scalar_is_finite
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#scalar_round_symmetric" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        scalar_round_symmetric
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#scalar_round_bankers" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        scalar_round_bankers
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#scalar_fraction" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        scalar_fraction
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#scalar_safe_to_double" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        scalar_safe_to_double
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#scalar_load" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        scalar_load
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#scalar_load_as_scalar" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        scalar_load_as_scalar
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#trigonometric-functions" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Trigonometric functions
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Trigonometric functions">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#scalar_sin" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        scalar_sin
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#scalar_cos" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        scalar_cos
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#scalar_sincos" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        scalar_sincos
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#scalar_asin" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        scalar_asin
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#scalar_acos" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        scalar_acos
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#scalar_tan" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        scalar_tan
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#scalar_atan" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        scalar_atan
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#scalar_atan2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        scalar_atan2
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#scalar_deg_to_rad" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        scalar_deg_to_rad
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#scalar_rad_to_deg" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        scalar_rad_to_deg
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3_4" >
+        
+          
+          <label class="md-nav__link" for="__nav_3_4" id="__nav_3_4_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vectors
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_3_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Vectors
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vector4f/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    rtm/vector4f.h
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vector4d/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    rtm/vector4d.h
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3_5" >
+        
+          
+          <label class="md-nav__link" for="__nav_3_5" id="__nav_3_5_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Masks
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_3_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3_5">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Masks
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../mask4f/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    rtm/mask4f.h
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../mask4d/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    rtm/mask4d.h
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../mask4i/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    rtm/mask4i.h
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../mask4q/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    rtm/mask4q.h
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3_6" >
+        
+          
+          <label class="md-nav__link" for="__nav_3_6" id="__nav_3_6_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Quaternions
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_3_6_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3_6">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Quaternions
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../quatf/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    rtm/quatf.h
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../quatd/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    rtm/quatd.h
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../packing_quatf/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    rtm/packing/quatf.h
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../packing_quatd/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    rtm/packing/quatd.h
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3_7" >
+        
+          
+          <label class="md-nav__link" for="__nav_3_7" id="__nav_3_7_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Matrices
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_3_7_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3_7">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Matrices
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../matrix3x3f/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    rtm/matrix3x3f.h
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../matrix3x3d/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    rtm/matrix3x3d.h
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../matrix3x4f/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    rtm/matrix3x4f.h
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../matrix3x4d/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    rtm/matrix3x4d.h
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../matrix4x4f/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    rtm/matrix4x4f.h
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../matrix4x4d/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    rtm/matrix4x4d.h
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3_8" >
+        
+          
+          <label class="md-nav__link" for="__nav_3_8" id="__nav_3_8_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Transforms
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_3_8_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3_8">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Transforms
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vqf/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    rtm/vqf.h
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vqd/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    rtm/vqd.h
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vqsf/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    rtm/vqsf.h
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vqsd/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    rtm/vqsd.h
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vqvf/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    rtm/vqvf.h
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vqvd/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    rtm/vqvd.h
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vqmf/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    rtm/vqmf.h
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vqmd/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    rtm/vqmd.h
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3_9" >
+        
+          
+          <label class="md-nav__link" for="__nav_3_9" id="__nav_3_9_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Camera
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_3_9_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3_9">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Camera
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../camera_utilsf/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    rtm/camera_utilsf.h
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../camera_utilsd/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    rtm/camera_utilsd.h
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3_10" >
+        
+          
+          <label class="md-nav__link" for="__nav_3_10" id="__nav_3_10_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Deprecated
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_3_10_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3_10">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Deprecated
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../qvf/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    rtm/qvf.h
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../qvd/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    rtm/qvd.h
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../qvsf/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    rtm/qvsf.h
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../qvsd/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    rtm/qvsd.h
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../qvvf/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    rtm/qvvf.h
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../qvvd/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    rtm/qvvd.h
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#scalar_set" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        scalar_set
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#scalar_store" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        scalar_store
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#scalar_cast" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        scalar_cast
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#scalar_floor" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        scalar_floor
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#scalar_ceil" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        scalar_ceil
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#scalar_clamp" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        scalar_clamp
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#scalar_abs" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        scalar_abs
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#scalar_sqrt" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        scalar_sqrt
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#scalar_sqrt_reciprocal" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        scalar_sqrt_reciprocal
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#scalar_reciprocal" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        scalar_reciprocal
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#scalar_add" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        scalar_add
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#scalar_sub" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        scalar_sub
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#scalar_mul" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        scalar_mul
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#scalar_div" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        scalar_div
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#scalar_mul_add" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        scalar_mul_add
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#scalar_neg_mul_sub" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        scalar_neg_mul_sub
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#scalar_lerp" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        scalar_lerp
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#scalar_exp" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        scalar_exp
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#scalar_log" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        scalar_log
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#scalar_eerp" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        scalar_eerp
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#scalar_min" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        scalar_min
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#scalar_max" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        scalar_max
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#scalar_equal" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        scalar_equal
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#scalar_lower_than" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        scalar_lower_than
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#scalar_lower_equal" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        scalar_lower_equal
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#scalar_greater_than" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        scalar_greater_than
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#scalar_greater_equal" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        scalar_greater_equal
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#scalar_near_equal" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        scalar_near_equal
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#scalar_is_finite" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        scalar_is_finite
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#scalar_round_symmetric" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        scalar_round_symmetric
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#scalar_round_bankers" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        scalar_round_bankers
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#scalar_fraction" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        scalar_fraction
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#scalar_safe_to_double" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        scalar_safe_to_double
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#scalar_load" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        scalar_load
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#scalar_load_as_scalar" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        scalar_load_as_scalar
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#trigonometric-functions" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Trigonometric functions
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Trigonometric functions">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#scalar_sin" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        scalar_sin
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#scalar_cos" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        scalar_cos
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#scalar_sincos" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        scalar_sincos
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#scalar_asin" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        scalar_asin
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#scalar_acos" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        scalar_acos
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#scalar_tan" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        scalar_tan
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#scalar_atan" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        scalar_atan
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#scalar_atan2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        scalar_atan2
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#scalar_deg_to_rad" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        scalar_deg_to_rad
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#scalar_rad_to_deg" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        scalar_rad_to_deg
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+
+<h1 id="rtmscalardh">rtm/scalard.h<a class="headerlink" href="#rtmscalardh" title="Permanent link">&para;</a></h1>
+<div class="highlight"><pre><span></span><code><span class="cp">#include</span><span class="w"> </span><span class="cpf">"rtm/scalard.h"</span>
+</code></pre></div>
+<h3 id="scalar_set">scalar_set<a class="headerlink" href="#scalar_set" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><span class="n">scalard</span><span class="w"> </span><span class="n">scalar_set</span><span class="p">(</span><span class="kt">double</span><span class="w"> </span><span class="n">xyzw</span><span class="p">)</span>
+</code></pre></div>
+<p>Creates a scalar from a floating point value.</p>
+<h3 id="scalar_store">scalar_store<a class="headerlink" href="#scalar_store" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">scalar_store</span><span class="p">(</span><span class="kt">double</span><span class="w"> </span><span class="n">input</span><span class="p">,</span><span class="w"> </span><span class="kt">double</span><span class="o">*</span><span class="w"> </span><span class="n">output</span><span class="p">)</span>
+</code></pre></div>
+<p>Writes a scalar to memory.</p>
+<h3 id="scalar_cast">scalar_cast<a class="headerlink" href="#scalar_cast" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><span class="kt">double</span><span class="w"> </span><span class="n">scalar_cast</span><span class="p">(</span><span class="n">scalard</span><span class="w"> </span><span class="n">input</span><span class="p">)</span>
+</code></pre></div>
+<p>Casts a scalar into a floating point value.</p>
+<h3 id="scalar_floor">scalar_floor<a class="headerlink" href="#scalar_floor" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><span class="kt">double</span><span class="w"> </span><span class="n">scalar_floor</span><span class="p">(</span><span class="kt">double</span><span class="w"> </span><span class="n">input</span><span class="p">)</span>
+</code></pre></div>
+<p>Returns the largest integer value not greater than the input (round towards negative infinity). scalar_floor(1.8) = 1.0 scalar_floor(-1.8) = -2.0</p>
+<h3 id="scalar_ceil">scalar_ceil<a class="headerlink" href="#scalar_ceil" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><span class="kt">double</span><span class="w"> </span><span class="n">scalar_ceil</span><span class="p">(</span><span class="kt">double</span><span class="w"> </span><span class="n">input</span><span class="p">)</span>
+</code></pre></div>
+<p>Returns the smallest integer value not less than the input (round towards positive infinity). scalar_ceil(1.8) = 2.0 scalar_ceil(-1.8) = -1.0</p>
+<h3 id="scalar_clamp">scalar_clamp<a class="headerlink" href="#scalar_clamp" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><span class="kt">double</span><span class="w"> </span><span class="n">scalar_clamp</span><span class="p">(</span><span class="kt">double</span><span class="w"> </span><span class="n">input</span><span class="p">,</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="n">min</span><span class="p">,</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="n">max</span><span class="p">)</span>
+</code></pre></div>
+<p>Returns the input if it is within the min/max values otherwise the exceeded boundary is returned.</p>
+<h3 id="scalar_abs">scalar_abs<a class="headerlink" href="#scalar_abs" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><span class="kt">double</span><span class="w"> </span><span class="n">scalar_abs</span><span class="p">(</span><span class="kt">double</span><span class="w"> </span><span class="n">input</span><span class="p">)</span>
+</code></pre></div>
+<p>Returns the absolute value of the input.</p>
+<h3 id="scalar_sqrt">scalar_sqrt<a class="headerlink" href="#scalar_sqrt" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><span class="kt">double</span><span class="w"> </span><span class="n">scalar_sqrt</span><span class="p">(</span><span class="kt">double</span><span class="w"> </span><span class="n">input</span><span class="p">)</span>
+</code></pre></div>
+<p>Returns the square root of the input.</p>
+<h3 id="scalar_sqrt_reciprocal">scalar_sqrt_reciprocal<a class="headerlink" href="#scalar_sqrt_reciprocal" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><span class="kt">double</span><span class="w"> </span><span class="n">scalar_sqrt_reciprocal</span><span class="p">(</span><span class="kt">double</span><span class="w"> </span><span class="n">input</span><span class="p">)</span>
+</code></pre></div>
+<p>Returns the reciprocal square root of the input.</p>
+<h3 id="scalar_reciprocal">scalar_reciprocal<a class="headerlink" href="#scalar_reciprocal" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><span class="k">constexpr</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="n">scalar_reciprocal</span><span class="p">(</span><span class="kt">double</span><span class="w"> </span><span class="n">input</span><span class="p">)</span>
+</code></pre></div>
+<p>Returns the reciprocal of the input.</p>
+<h3 id="scalar_add">scalar_add<a class="headerlink" href="#scalar_add" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><span class="k">constexpr</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="n">scalar_add</span><span class="p">(</span><span class="kt">double</span><span class="w"> </span><span class="n">lhs</span><span class="p">,</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="n">rhs</span><span class="p">)</span>
+</code></pre></div>
+<p>Returns the addition of the two scalar inputs.</p>
+<h3 id="scalar_sub">scalar_sub<a class="headerlink" href="#scalar_sub" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><span class="k">constexpr</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="n">scalar_sub</span><span class="p">(</span><span class="kt">double</span><span class="w"> </span><span class="n">lhs</span><span class="p">,</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="n">rhs</span><span class="p">)</span>
+</code></pre></div>
+<p>Returns the subtraction of the two scalar inputs.</p>
+<h3 id="scalar_mul">scalar_mul<a class="headerlink" href="#scalar_mul" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><span class="k">constexpr</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="n">scalar_mul</span><span class="p">(</span><span class="kt">double</span><span class="w"> </span><span class="n">lhs</span><span class="p">,</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="n">rhs</span><span class="p">)</span>
+</code></pre></div>
+<p>Returns the multiplication of the two scalar inputs.</p>
+<h3 id="scalar_div">scalar_div<a class="headerlink" href="#scalar_div" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><span class="k">constexpr</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="n">scalar_div</span><span class="p">(</span><span class="kt">double</span><span class="w"> </span><span class="n">lhs</span><span class="p">,</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="n">rhs</span><span class="p">)</span>
+</code></pre></div>
+<p>Returns the division of the two scalar inputs.</p>
+<h3 id="scalar_mul_add">scalar_mul_add<a class="headerlink" href="#scalar_mul_add" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><span class="kt">double</span><span class="w"> </span><span class="n">scalar_mul_add</span><span class="p">(</span><span class="kt">double</span><span class="w"> </span><span class="n">s0</span><span class="p">,</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="n">s1</span><span class="p">,</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="n">s2</span><span class="p">)</span>
+</code></pre></div>
+<p>Returns the multiplication/addition of the three inputs: s2 + (s0 * s1).</p>
+<h3 id="scalar_neg_mul_sub">scalar_neg_mul_sub<a class="headerlink" href="#scalar_neg_mul_sub" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><span class="k">constexpr</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="n">scalar_neg_mul_sub</span><span class="p">(</span><span class="kt">double</span><span class="w"> </span><span class="n">s0</span><span class="p">,</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="n">s1</span><span class="p">,</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="n">s2</span><span class="p">)</span>
+</code></pre></div>
+<p>Returns the negative multiplication/subtraction of the three inputs: -((s0 * s1) - s2) This is mathematically equivalent to: s2 - (s0 * s1)</p>
+<h3 id="scalar_lerp">scalar_lerp<a class="headerlink" href="#scalar_lerp" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><span class="kt">double</span><span class="w"> </span><span class="n">scalar_lerp</span><span class="p">(</span><span class="kt">double</span><span class="w"> </span><span class="n">start</span><span class="p">,</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="n">end</span><span class="p">,</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="n">alpha</span><span class="p">)</span>
+</code></pre></div>
+<p>Returns the linear interpolation of the two inputs at the specified alpha. The formula used is: ((1.0 - alpha) * start) + (alpha * end). Interpolation is stable and will return 'start' when alpha is 0.0 and 'end' when it is 1.0. This is the same instruction count when FMA is present but it might be slightly slower due to the extra multiplication compared to: start + (alpha * (end - start)).</p>
+<h3 id="scalar_exp">scalar_exp<a class="headerlink" href="#scalar_exp" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><span class="kt">double</span><span class="w"> </span><span class="n">scalar_exp</span><span class="p">(</span><span class="kt">double</span><span class="w"> </span><span class="n">input</span><span class="p">)</span>
+</code></pre></div>
+<p>Returns the natural exponential of the input: e^input. The function uses the same algorithm as vector_exp(..): for the same input, the results are equal.</p>
+<h3 id="scalar_log">scalar_log<a class="headerlink" href="#scalar_log" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><span class="kt">double</span><span class="w"> </span><span class="n">scalar_log</span><span class="p">(</span><span class="kt">double</span><span class="w"> </span><span class="n">input</span><span class="p">)</span>
+</code></pre></div>
+<p>Returns the natural logarithm of the input. The function uses the same algorithm as vector_log(..): for the same input, the results are equal. The result is -inf when the input is zero, and NaN when the input is negative.</p>
+<h3 id="scalar_eerp">scalar_eerp<a class="headerlink" href="#scalar_eerp" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><span class="kt">double</span><span class="w"> </span><span class="n">scalar_eerp</span><span class="p">(</span><span class="kt">double</span><span class="w"> </span><span class="n">start</span><span class="p">,</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="n">end</span><span class="p">,</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="n">alpha</span><span class="p">)</span>
+</code></pre></div>
+<p>Returns the exponential interpolation of the two inputs at the specified alpha. The formula used is: start * (end / start)^alpha. For equal steps of alpha, the result changes by the same ratio. Use it to interpolate a scale. The result is 'start' when alpha is 0.0. It is approximately 'end' when alpha is 1.0. The two inputs must have the same sign and must not be zero. Otherwise, the result is undefined.</p>
+<h3 id="scalar_min">scalar_min<a class="headerlink" href="#scalar_min" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><span class="kt">double</span><span class="w"> </span><span class="n">scalar_min</span><span class="p">(</span><span class="kt">double</span><span class="w"> </span><span class="n">left</span><span class="p">,</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="n">right</span><span class="p">)</span>
+</code></pre></div>
+<p>Returns the smallest of the two inputs.</p>
+<h3 id="scalar_max">scalar_max<a class="headerlink" href="#scalar_max" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><span class="kt">double</span><span class="w"> </span><span class="n">scalar_max</span><span class="p">(</span><span class="kt">double</span><span class="w"> </span><span class="n">left</span><span class="p">,</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="n">right</span><span class="p">)</span>
+</code></pre></div>
+<p>Returns the largest of the two inputs.</p>
+<h3 id="scalar_equal">scalar_equal<a class="headerlink" href="#scalar_equal" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><span class="k">constexpr</span><span class="w"> </span><span class="kt">bool</span><span class="w"> </span><span class="n">scalar_equal</span><span class="p">(</span><span class="kt">double</span><span class="w"> </span><span class="n">lhs</span><span class="p">,</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="n">rhs</span><span class="p">)</span>
+</code></pre></div>
+<p>Returns true if both inputs are equal, false otherwise.</p>
+<h3 id="scalar_lower_than">scalar_lower_than<a class="headerlink" href="#scalar_lower_than" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><span class="k">constexpr</span><span class="w"> </span><span class="kt">bool</span><span class="w"> </span><span class="n">scalar_lower_than</span><span class="p">(</span><span class="kt">double</span><span class="w"> </span><span class="n">lhs</span><span class="p">,</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="n">rhs</span><span class="p">)</span>
+</code></pre></div>
+<p>Returns true if lhs &lt; rhs, false otherwise.</p>
+<h3 id="scalar_lower_equal">scalar_lower_equal<a class="headerlink" href="#scalar_lower_equal" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><span class="k">constexpr</span><span class="w"> </span><span class="kt">bool</span><span class="w"> </span><span class="n">scalar_lower_equal</span><span class="p">(</span><span class="kt">double</span><span class="w"> </span><span class="n">lhs</span><span class="p">,</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="n">rhs</span><span class="p">)</span>
+</code></pre></div>
+<p>Returns true if lhs &lt;= rhs, false otherwise.</p>
+<h3 id="scalar_greater_than">scalar_greater_than<a class="headerlink" href="#scalar_greater_than" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><span class="k">constexpr</span><span class="w"> </span><span class="kt">bool</span><span class="w"> </span><span class="n">scalar_greater_than</span><span class="p">(</span><span class="kt">double</span><span class="w"> </span><span class="n">lhs</span><span class="p">,</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="n">rhs</span><span class="p">)</span>
+</code></pre></div>
+<p>Returns true if lhs &gt; rhs, false otherwise.</p>
+<h3 id="scalar_greater_equal">scalar_greater_equal<a class="headerlink" href="#scalar_greater_equal" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><span class="k">constexpr</span><span class="w"> </span><span class="kt">bool</span><span class="w"> </span><span class="n">scalar_greater_equal</span><span class="p">(</span><span class="kt">double</span><span class="w"> </span><span class="n">lhs</span><span class="p">,</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="n">rhs</span><span class="p">)</span>
+</code></pre></div>
+<p>Returns true if lhs &gt;= rhs, false otherwise.</p>
+<h3 id="scalar_near_equal">scalar_near_equal<a class="headerlink" href="#scalar_near_equal" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><span class="kt">bool</span><span class="w"> </span><span class="n">scalar_near_equal</span><span class="p">(</span><span class="kt">double</span><span class="w"> </span><span class="n">lhs</span><span class="p">,</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="n">rhs</span><span class="p">,</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="n">threshold</span><span class="p">)</span>
+</code></pre></div>
+<p>Returns true if both inputs are nearly equal, otherwise false: abs(lhs - rhs) &lt;= threshold.</p>
+<h3 id="scalar_is_finite">scalar_is_finite<a class="headerlink" href="#scalar_is_finite" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><span class="kt">bool</span><span class="w"> </span><span class="n">scalar_is_finite</span><span class="p">(</span><span class="kt">double</span><span class="w"> </span><span class="n">input</span><span class="p">)</span>
+</code></pre></div>
+<p>Returns true if the input is finite (not NaN or Inf), false otherwise.</p>
+<h3 id="scalar_round_symmetric">scalar_round_symmetric<a class="headerlink" href="#scalar_round_symmetric" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><span class="kt">double</span><span class="w"> </span><span class="n">scalar_round_symmetric</span><span class="p">(</span><span class="kt">double</span><span class="w"> </span><span class="n">input</span><span class="p">)</span>
+</code></pre></div>
+<p>Returns the rounded input using a symmetric algorithm. scalar_round_symmetric(1.5) = 2.0 scalar_round_symmetric(1.2) = 1.0 scalar_round_symmetric(-1.5) = -2.0 scalar_round_symmetric(-1.2) = -1.0</p>
+<h3 id="scalar_round_bankers">scalar_round_bankers<a class="headerlink" href="#scalar_round_bankers" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><span class="kt">double</span><span class="w"> </span><span class="n">scalar_round_bankers</span><span class="p">(</span><span class="kt">double</span><span class="w"> </span><span class="n">input</span><span class="p">)</span>
+</code></pre></div>
+<p>Returns the rounded input using banker's rounding (half to even). scalar_round_bankers(2.5) = 2.0 scalar_round_bankers(1.5) = 2.0 scalar_round_bankers(1.2) = 1.0 scalar_round_bankers(-2.5) = -2.0 scalar_round_bankers(-1.5) = -2.0 scalar_round_bankers(-1.2) = -1.0</p>
+<h3 id="scalar_fraction">scalar_fraction<a class="headerlink" href="#scalar_fraction" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><span class="kt">double</span><span class="w"> </span><span class="n">scalar_fraction</span><span class="p">(</span><span class="kt">double</span><span class="w"> </span><span class="n">value</span><span class="p">)</span>
+</code></pre></div>
+<p>Returns the fractional part of the input.</p>
+<h3 id="scalar_safe_to_double">scalar_safe_to_double<a class="headerlink" href="#scalar_safe_to_double" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><span class="k">template</span><span class="o">&lt;</span><span class="k">typename</span><span class="w"> </span><span class="nc">SrcIntegralType</span><span class="o">&gt;</span>
+<span class="kt">double</span><span class="w"> </span><span class="n">scalar_safe_to_double</span><span class="p">(</span><span class="n">SrcIntegralType</span><span class="w"> </span><span class="n">input</span><span class="p">)</span>
+</code></pre></div>
+<p>Safely casts an integral input into a float64 output.</p>
+<h3 id="scalar_load">scalar_load<a class="headerlink" href="#scalar_load" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><span class="kt">double</span><span class="w"> </span><span class="n">scalar_load</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="kt">double</span><span class="o">*</span><span class="w"> </span><span class="n">input</span><span class="p">)</span>
+</code></pre></div>
+<p>Loads a scalar from memory.</p>
+<h3 id="scalar_load_as_scalar">scalar_load_as_scalar<a class="headerlink" href="#scalar_load_as_scalar" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><span class="n">scalard</span><span class="w"> </span><span class="n">scalar_load_as_scalar</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="kt">double</span><span class="o">*</span><span class="w"> </span><span class="n">input</span><span class="p">)</span>
+</code></pre></div>
+<p>Loads a scalar from memory.</p>
+<h2 id="trigonometric-functions">Trigonometric functions<a class="headerlink" href="#trigonometric-functions" title="Permanent link">&para;</a></h2>
+<h3 id="scalar_sin">scalar_sin<a class="headerlink" href="#scalar_sin" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><span class="kt">double</span><span class="w"> </span><span class="n">scalar_sin</span><span class="p">(</span><span class="kt">double</span><span class="w"> </span><span class="n">angle</span><span class="p">)</span>
+</code></pre></div>
+<p>Returns the sine of the input angle.</p>
+<h3 id="scalar_cos">scalar_cos<a class="headerlink" href="#scalar_cos" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><span class="kt">double</span><span class="w"> </span><span class="n">scalar_cos</span><span class="p">(</span><span class="kt">double</span><span class="w"> </span><span class="n">angle</span><span class="p">)</span>
+</code></pre></div>
+<p>Returns the cosine of the input angle.</p>
+<h3 id="scalar_sincos">scalar_sincos<a class="headerlink" href="#scalar_sincos" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><span class="n">vector4d</span><span class="w"> </span><span class="n">scalar_sincos</span><span class="p">(</span><span class="kt">double</span><span class="w"> </span><span class="n">angle</span><span class="p">)</span>
+</code></pre></div>
+<p>Returns both sine and cosine of the input angle. The result's [x] component contains sin(angle). The result's [y] component contains cos(angle). [zw] are undefined.</p>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">scalar_sincos</span><span class="p">(</span><span class="kt">double</span><span class="w"> </span><span class="n">angle</span><span class="p">,</span><span class="w"> </span><span class="kt">double</span><span class="o">&amp;</span><span class="w"> </span><span class="n">out_sin</span><span class="p">,</span><span class="w"> </span><span class="kt">double</span><span class="o">&amp;</span><span class="w"> </span><span class="n">out_cos</span><span class="p">)</span>
+</code></pre></div>
+<p>Returns both sine and cosine of the input angle.</p>
+<h3 id="scalar_asin">scalar_asin<a class="headerlink" href="#scalar_asin" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><span class="kt">double</span><span class="w"> </span><span class="n">scalar_asin</span><span class="p">(</span><span class="kt">double</span><span class="w"> </span><span class="n">value</span><span class="p">)</span>
+</code></pre></div>
+<p>Returns the arc-sine of the input. Input value must be in the range [-1.0, 1.0].</p>
+<h3 id="scalar_acos">scalar_acos<a class="headerlink" href="#scalar_acos" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><span class="kt">double</span><span class="w"> </span><span class="n">scalar_acos</span><span class="p">(</span><span class="kt">double</span><span class="w"> </span><span class="n">value</span><span class="p">)</span>
+</code></pre></div>
+<p>Returns the arc-cosine of the input. Input value must be in the range [-1.0, 1.0].</p>
+<h3 id="scalar_tan">scalar_tan<a class="headerlink" href="#scalar_tan" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><span class="kt">double</span><span class="w"> </span><span class="n">scalar_tan</span><span class="p">(</span><span class="kt">double</span><span class="w"> </span><span class="n">angle</span><span class="p">)</span>
+</code></pre></div>
+<p>Returns the tangent of the input angle.</p>
+<h3 id="scalar_atan">scalar_atan<a class="headerlink" href="#scalar_atan" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><span class="kt">double</span><span class="w"> </span><span class="n">scalar_atan</span><span class="p">(</span><span class="kt">double</span><span class="w"> </span><span class="n">value</span><span class="p">)</span>
+</code></pre></div>
+<p>Returns the arc-tangent of the input. Note that due to the sign ambiguity, atan cannot determine which quadrant the value resides in. See scalar_atan2.</p>
+<h3 id="scalar_atan2">scalar_atan2<a class="headerlink" href="#scalar_atan2" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><span class="kt">double</span><span class="w"> </span><span class="n">scalar_atan2</span><span class="p">(</span><span class="kt">double</span><span class="w"> </span><span class="n">y</span><span class="p">,</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="n">x</span><span class="p">)</span>
+</code></pre></div>
+<p>Returns the arc-tangent of [y/x] using the sign of the arguments to determine the correct quadrant. Y represents the proportion of the y-coordinate. X represents the proportion of the x-coordinate.</p>
+<h3 id="scalar_deg_to_rad">scalar_deg_to_rad<a class="headerlink" href="#scalar_deg_to_rad" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><span class="k">constexpr</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="n">scalar_deg_to_rad</span><span class="p">(</span><span class="kt">double</span><span class="w"> </span><span class="n">deg</span><span class="p">)</span>
+</code></pre></div>
+<p>Converts degrees into radians.</p>
+<h3 id="scalar_rad_to_deg">scalar_rad_to_deg<a class="headerlink" href="#scalar_rad_to_deg" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><span class="k">constexpr</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="n">scalar_rad_to_deg</span><span class="p">(</span><span class="kt">double</span><span class="w"> </span><span class="n">rad</span><span class="p">)</span>
+</code></pre></div>
+<p>Converts radians into degrees.</p>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  Back to top
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+    <div class="md-copyright__highlight">
+      Copyright (c) 2018 Nicholas Frechette and Realtime Math contributors
+    </div>
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "../..", "features": ["navigation.sections", "navigation.top", "search.highlight", "content.code.copy"], "search": "../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"default": "latest", "provider": "mike"}}</script>
+    
+    
+      <script src="../../assets/javascripts/bundle.d7400e89.min.js"></script>
+      
+    
+  </body>
+</html>
