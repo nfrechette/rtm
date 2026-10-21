@@ -5,8 +5,8 @@
 # Markdown page for each public header. MkDocs then makes the site from docs/ (see mkdocs.yml).
 #
 # Usage, from any directory: python3 tools/docs/generate_api_docs.py
+# Doxygen 1.18 must be on the PATH.
 
-import argparse
 import copy
 import os
 import re
@@ -19,6 +19,7 @@ ROOT_DIR = os.path.normpath(os.path.join(os.path.dirname(os.path.abspath(__file_
 DOXYFILE = os.path.join('tools', 'docs', 'Doxyfile')
 DOXYGEN_OUTPUT_DIR = os.path.join('build', 'docs', 'doxygen')
 API_OUTPUT_DIR = os.path.join('docs', 'api')
+RTM_NAMESPACE_PREFIX = 'rtm::'
 
 # Some public functions are in the shared headers of includes/rtm/impl/. Each of these functions goes on
 # the pages of the public headers that it applies to (see find_pages_of_shared_function).
@@ -48,16 +49,11 @@ EXTRA_COERCION_TYPES = {'float_constant': ['float', 'double']}
 # The type names that end with the precision suffix: f = float32, d = float64.
 PRECISION_TYPE_PATTERN = re.compile(r'^(vector4|quat|scalar|mask4|matrix\dx\d|vq|vqs|vqv|vqm|qv|qvs|qvv|float\d)([fd])$')
 
-def parse_argv():
-	parser = argparse.ArgumentParser(description='Generates the Markdown pages of the RTM API reference.')
-	parser.add_argument('--doxygen', default='doxygen', help='The Doxygen executable to run')
-	return parser.parse_args()
-
-def run_doxygen(doxygen):
+def run_doxygen():
 	os.makedirs(os.path.join(ROOT_DIR, DOXYGEN_OUTPUT_DIR), exist_ok=True)
 
 	# Doxyfile sets WARN_AS_ERROR: a public symbol without a comment stops Doxygen with an error
-	result = subprocess.run([doxygen, DOXYFILE], cwd=ROOT_DIR, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, universal_newlines=True)
+	result = subprocess.run(['doxygen', DOXYFILE], cwd=ROOT_DIR, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, universal_newlines=True)
 	for line in result.stdout.splitlines():
 		if line.strip():
 			print(line)
@@ -97,7 +93,7 @@ def find_opaque_types(headers):
 	# A type with more than one definition in types.h has a different definition for each SIMD code path.
 	# Doxygen sees only the scalar code path, thus the page does not show the definition of these types.
 	names = re.findall(r'^\t(?:struct(?: alignas\(\d+\))?|using) (\w+)\b', headers['includes/rtm/types.h'], re.M)
-	return set(name for name in names if names.count(name) > 1)
+	return {name for name in names if names.count(name) > 1}
 
 def text_of(node):
 	return '' if node is None else ''.join(node.itertext())
@@ -219,7 +215,7 @@ def collect_entries(xml_dir):
 		name = compound.findtext('name')
 		if kind not in ('namespace', 'struct', 'class', 'file'):
 			continue
-		if kind != 'file' and not (name == 'rtm' or name.startswith('rtm::')):
+		if kind != 'file' and not (name == 'rtm' or name.startswith(RTM_NAMESPACE_PREFIX)):
 			continue
 
 		node = ET.parse(os.path.join(xml_dir, compound.get('refid') + '.xml')).getroot().find('compounddef')
@@ -230,14 +226,14 @@ def collect_entries(xml_dir):
 				file_descriptions.setdefault(node.find('location').get('file'), node)
 
 			# rtm::constants::pi -> constants::pi
-			prefix = name[len('rtm::'):] + '::' if name != 'rtm' else ''
+			prefix = name[len(RTM_NAMESPACE_PREFIX):] + '::' if name != 'rtm' else ''
 			for section in node.iter('sectiondef'):
 				for member in section.findall('memberdef'):
 					if member.get('kind') in ('function', 'typedef', 'enum', 'variable') and has_description(member):
 						entries.append(Entry(member.get('kind'), prefix + member.findtext('name'), member, member.find('location'), section.findtext('header')))
 		elif kind in ('struct', 'class'):
 			if has_description(node):
-				entries.append(Entry('struct', name[len('rtm::'):].replace(' ', ''), node, node.find('location')))
+				entries.append(Entry('struct', name[len(RTM_NAMESPACE_PREFIX):].replace(' ', ''), node, node.find('location')))
 		else:
 			location = node.find('location')
 			if location is None:
@@ -480,9 +476,7 @@ def write_index(output_dir, pages):
 		f.write('\n'.join(lines))
 
 def main():
-	args = parse_argv()
-
-	run_doxygen(args.doxygen)
+	run_doxygen()
 
 	headers = read_headers()
 	signature_writer = SignatureWriter(find_coercion_types(headers), find_opaque_types(headers))
@@ -528,7 +522,7 @@ def main():
 				entry.section = own_sections[entry.name]
 			entries.append(entry)
 
-		page_entries[page] = sorted(entries, key=lambda entry: (entry.file != page_files.get(page), entry.file, entry.line))
+		page_entries[page] = sorted(entries, key=lambda entry, page_file=page_files.get(page): (entry.file != page_file, entry.file, entry.line))
 
 	# Each entry links to its heading. A shared function links to its first page.
 	links = {}

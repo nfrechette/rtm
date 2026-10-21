@@ -20,14 +20,13 @@ def parse_argv():
 	parser = argparse.ArgumentParser(description='Deploys the documentation site to the gh-pages branch with mike.')
 	parser.add_argument('--ref', required=True, help='The git ref to deploy, for example refs/heads/develop or refs/tags/v2.4.0')
 	parser.add_argument('--push', action='store_true', help='Push the gh-pages branch to the remote')
-	parser.add_argument('--mike', default='mike', help='The mike executable to run')
 	return parser.parse_args()
 
 def version_key(version):
 	return tuple(int(value) for value in version.split('.'))
 
 def run_mike(args, mike_args):
-	command = [args.mike] + mike_args
+	command = ['mike'] + mike_args
 	if args.push and mike_args[0] in ('deploy', 'set-default'):
 		command.append('--push')
 	print(' '.join(command))
@@ -46,7 +45,7 @@ def main():
 		version = '{}.{}'.format(match.group(1), match.group(2))
 
 	# The gh-pages branch does not exist before the first deploy, and mike then lists no version
-	deployed = json.loads(subprocess.check_output([args.mike, 'list', '--json']).decode('utf-8') or '[]')
+	deployed = json.loads(subprocess.check_output(['mike', 'list', '--json']).decode('utf-8') or '[]')
 	releases = [entry['version'] for entry in deployed if re.match(r'^\d+\.\d+$', entry['version'])]
 
 	if version == 'develop':

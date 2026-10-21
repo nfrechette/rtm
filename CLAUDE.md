@@ -26,7 +26,7 @@ The test executable can also be run directly with Catch2 filters: `./build/bin/r
 
 Builds use `-Wall -Wextra -Werror` (GCC/Clang) and `/W4 /WX` (MSVC) -- warnings break the build. Tests define `RTM_ON_ASSERT_THROW` so asserts can be caught.
 
-The API reference site uses Doxygen 1.18 and MkDocs (`pip install -r tools/docs/requirements.txt`). Run `python3 tools/docs/generate_api_docs.py` to write the pages to `docs/api/`, then `mkdocs build --strict` or `mkdocs serve`. Doxygen stops with an error when public API has no `///` comment. `.github/workflows/docs.yml` deploys the site to GitHub Pages for `develop` and for each release tag.
+The API reference site uses Doxygen 1.18 (on the `PATH`) and MkDocs (`pip install -r tools/docs/requirements.txt`). `requirements.txt` is a lock file with hashes: to change a dependency, edit `tools/docs/requirements.in` and run the `uv pip compile` command in it. Run `python3 tools/docs/generate_api_docs.py` to write the pages to `docs/api/`, then `mkdocs build --strict` or `mkdocs serve`. Doxygen stops with an error when public API has no `///` comment. `.github/workflows/docs.yml` deploys the site to GitHub Pages for `develop` and for each release tag.
 
 `tests/validate_includes` generates one `.cpp` per public header (`includes/rtm/*.h`, `includes/rtm/packing/*.h`) to verify each header compiles standalone -- every public header must include everything it uses.
 

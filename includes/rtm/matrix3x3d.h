@@ -410,8 +410,8 @@ namespace rtm
 	/// Note that if the scaling is 0.0 for a particular axis, the original rotation axis cannot
 	/// be recovered trivially and no attempt is done to do so. In theory, we could use the other axes
 	/// to try and recover it.
-	/// TODO: Implement rotation recovering, perhaps in a separate function and rename this
-	/// one to matrix_remove_non_zero_scale(..)
+	// TODO: Implement rotation recovering, perhaps in a separate function and rename this
+	// one to matrix_remove_non_zero_scale(..)
 	RTM_DISABLE_SECURITY_COOKIE_CHECK inline matrix3x3d RTM_SIMD_CALL matrix_remove_scale(matrix3x3d_arg0 input) RTM_NO_EXCEPT
 	{
 		matrix3x3d result;
