@@ -12,7 +12,7 @@
 *  Fix vector floor and ceil on ARMv7 to keep the sign of a zero result, as the other code paths do
 *  Add support for native ARMv7 builds on Linux to `make.py`
 *  Add GCC 14, GCC 15, and Clang 19 to 23 to `make.py`
-*  Add VS2026 (`vs2026` and `vs2026-clang`) to `make.py`
+*  Add support for VS2026: add `vs2026` and `vs2026-clang` to `make.py` and add `RTM_COMPILER_MSVC_2026`
 *  Fix vector_atan2 (vector4d) with SSE2 and MSVC 19.51 for x64: the compiler uses the [xy] result for [zw]
 *  Add the `-analyze` action to `make.py` to run the clang static analyzer on the public headers
 *  Update Google Benchmark to 1.9.5
