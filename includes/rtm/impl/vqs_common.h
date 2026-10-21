@@ -38,9 +38,7 @@ namespace rtm
 {
 	RTM_IMPL_VERSION_NAMESPACE_BEGIN
 
-	//////////////////////////////////////////////////////////////////////////
-	// Creates a VQS transform from a rotation quaternion, a translation, and scalar scale.
-	//////////////////////////////////////////////////////////////////////////
+	/// Creates a VQS transform from a rotation quaternion, a translation, and scalar scale.
 	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE vqsf RTM_SIMD_CALL vqs_set(quatf_arg0 rotation, vector4f_arg1 translation, float scale) RTM_NO_EXCEPT
 	{
 		const vector4f translation_scale = vector_set_w(translation, scale);
@@ -48,9 +46,7 @@ namespace rtm
 	}
 
 #if defined(RTM_SSE2_INTRINSICS)
-	//////////////////////////////////////////////////////////////////////////
-	// Creates a VQS transform from a rotation quaternion, a translation, and scalar scale.
-	//////////////////////////////////////////////////////////////////////////
+	/// Creates a VQS transform from a rotation quaternion, a translation, and scalar scale.
 	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE vqsf RTM_SIMD_CALL vqs_set(quatf_arg0 rotation, vector4f_arg1 translation, scalarf_arg2 scale) RTM_NO_EXCEPT
 	{
 		const vector4f translation_scale = vector_set_w(translation, scale);
@@ -58,9 +54,7 @@ namespace rtm
 	}
 #endif
 
-	//////////////////////////////////////////////////////////////////////////
-	// Creates a VQS transform from a rotation quaternion, a translation, and scale scale.
-	//////////////////////////////////////////////////////////////////////////
+	/// Creates a VQS transform from a rotation quaternion, a translation, and scale scale.
 	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE vqsd RTM_SIMD_CALL vqs_set(quatd_arg0 rotation, vector4d_arg1 translation, double scale) RTM_NO_EXCEPT
 	{
 		const vector4d translation_scale = vector_set_w(translation, scale);
@@ -68,9 +62,7 @@ namespace rtm
 	}
 
 #if defined(RTM_SSE2_INTRINSICS)
-	//////////////////////////////////////////////////////////////////////////
-	// Creates a VQS transform from a rotation quaternion, a translation, and scalar scale.
-	//////////////////////////////////////////////////////////////////////////
+	/// Creates a VQS transform from a rotation quaternion, a translation, and scalar scale.
 	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE vqsd RTM_SIMD_CALL vqs_set(quatd_arg0 rotation, vector4d_arg1 translation, scalard_arg5 scale) RTM_NO_EXCEPT
 	{
 		const vector4d translation_scale = vector_set_w(translation, scale);
@@ -80,12 +72,10 @@ namespace rtm
 
 	namespace rtm_impl
 	{
-		//////////////////////////////////////////////////////////////////////////
 		// This is a helper struct to allow a single consistent API between
 		// various VQS transform types when the semantics are identical but the return
 		// type differs. Implicit coercion is used to return the desired value
 		// at the call site.
-		//////////////////////////////////////////////////////////////////////////
 		struct vqs_identity_impl
 		{
 			RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE RTM_SIMD_CALL operator vqsd() const RTM_NO_EXCEPT
@@ -100,9 +90,7 @@ namespace rtm
 		};
 	}
 
-	//////////////////////////////////////////////////////////////////////////
-	// Returns the identity VQS transform.
-	//////////////////////////////////////////////////////////////////////////
+	/// Returns the identity VQS transform.
 	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE constexpr rtm_impl::vqs_identity_impl RTM_SIMD_CALL vqs_identity() RTM_NO_EXCEPT
 	{
 		return rtm_impl::vqs_identity_impl();

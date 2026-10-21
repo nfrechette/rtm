@@ -40,70 +40,70 @@ namespace rtm
 #endif
 #endif
 
-	//////////////////////////////////////////////////////////////////////////
-	// Specifies the related types given a source type.
-	//////////////////////////////////////////////////////////////////////////
+	/// Specifies the related types given a source type.
 	template<typename source_type>
 	struct related_types {};
 
+	/// The related types of float32 values.
 	template<>
 	struct related_types<float>
 	{
-		using mask4 = mask4f;
+		using mask4 = mask4f; ///< The 4 lane mask type.
 
-		using scalar = scalarf;
-		using vector4 = vector4f;
-		using quat = quatf;
+		using scalar = scalarf; ///< The SIMD scalar type.
+		using vector4 = vector4f; ///< The 4D vector type.
+		using quat = quatf; ///< The quaternion type.
 
-		using vq = vqf;
-		using vqs = vqsf;
-		using vqv = vqvf;
-		using vqm = vqmf;
+		using vq = vqf; ///< The VQ transform type.
+		using vqs = vqsf; ///< The VQS transform type.
+		using vqv = vqvf; ///< The VQV transform type.
+		using vqm = vqmf; ///< The VQM transform type.
 
-		using qv RTM_DEPRECATED("Use 'vq' instead. To be removed in 2.5.") = vqf;
-		using qvs RTM_DEPRECATED("Use 'vqs' instead. To be removed in 2.5.") = vqsf;
-		using qvv RTM_DEPRECATED("Use 'vqv' instead. To be removed in 2.5.") = vqvf;
+		using qv RTM_DEPRECATED("Use 'vq' instead. To be removed in 2.5.") = vqf; ///< The previous name of vq.
+		using qvs RTM_DEPRECATED("Use 'vqs' instead. To be removed in 2.5.") = vqsf; ///< The previous name of vqs.
+		using qvv RTM_DEPRECATED("Use 'vqv' instead. To be removed in 2.5.") = vqvf; ///< The previous name of vqv.
 
-		using matrix3x3 = matrix3x3f;
-		using matrix3x4 = matrix3x4f;
-		using matrix4x4 = matrix4x4f;
+		using matrix3x3 = matrix3x3f; ///< The 3x3 matrix type.
+		using matrix3x4 = matrix3x4f; ///< The 3x4 affine matrix type.
+		using matrix4x4 = matrix4x4f; ///< The 4x4 matrix type.
 
-		using float1 = float;
-		using float2 = float2f;
-		using float3 = float3f;
-		using float4 = float4f;
+		using float1 = float; ///< The scalar type for memory storage.
+		using float2 = float2f; ///< The 2D vector type for memory storage.
+		using float3 = float3f; ///< The 3D vector type for memory storage.
+		using float4 = float4f; ///< The 4D vector type for memory storage.
 
-		using int1 = uint32_t;
+		using int1 = uint32_t; ///< The unsigned integer type with the same size as the float type.
 	};
 
+	/// The related types of float64 values.
 	template<>
 	struct related_types<double>
 	{
-		using mask4 = mask4d;
+		using mask4 = mask4d; ///< The 4 lane mask type.
 
-		using scalar = scalard;
-		using vector4 = vector4d;
-		using quat = quatd;
+		using scalar = scalard; ///< The SIMD scalar type.
+		using vector4 = vector4d; ///< The 4D vector type.
+		using quat = quatd; ///< The quaternion type.
 
-		using vq = vqd;
-		using vqs = vqsd;
-		using vqv = vqvd;
-		using vqm = vqmd;
+		using vq = vqd; ///< The VQ transform type.
+		using vqs = vqsd; ///< The VQS transform type.
+		using vqv = vqvd; ///< The VQV transform type.
+		using vqm = vqmd; ///< The VQM transform type.
 
-		using qv RTM_DEPRECATED("Use 'vq' instead. To be removed in 2.5.") = vqd;
-		using qvs RTM_DEPRECATED("Use 'vqs' instead. To be removed in 2.5.") = vqsd;
-		using qvv RTM_DEPRECATED("Use 'vqv' instead. To be removed in 2.5.") = vqvd;
+		using qv RTM_DEPRECATED("Use 'vq' instead. To be removed in 2.5.") = vqd; ///< The previous name of vq.
+		using qvs RTM_DEPRECATED("Use 'vqs' instead. To be removed in 2.5.") = vqsd; ///< The previous name of vqs.
+		using qvv RTM_DEPRECATED("Use 'vqv' instead. To be removed in 2.5.") = vqvd; ///< The previous name of vqv.
 
-		using matrix3x3 = matrix3x3d;
-		using matrix3x4 = matrix3x4d;
-		using matrix4x4 = matrix4x4d;
+		using matrix3x3 = matrix3x3d; ///< The 3x3 matrix type.
+		using matrix3x4 = matrix3x4d; ///< The 3x4 affine matrix type.
+		using matrix4x4 = matrix4x4d; ///< The 4x4 matrix type.
 
-		using float1 = double;
-		using float2 = float2d;
-		using float3 = float3d;
-		using float4 = float4d;
+		using float1 = double; ///< The scalar type for memory storage.
+		using float2 = float2d; ///< The 2D vector type for memory storage.
+		using float3 = float3d; ///< The 3D vector type for memory storage.
+		using float4 = float4d; ///< The 4D vector type for memory storage.
 
-		using int1 = uint64_t;
+		using int1 = uint64_t; ///< The unsigned integer type with the same size as the float type.
 	};
 
 	// Alias all related float types

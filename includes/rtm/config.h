@@ -27,7 +27,6 @@
 // This file gathers all defines that can be used to control RTM's behavior
 // along with context.
 
-//////////////////////////////////////////////////////////////////////////
 // This library uses a simple system to handle asserts. Asserts are fatal and must terminate
 // otherwise the behavior is undefined if execution continues.
 //
@@ -66,7 +65,6 @@
 // No checks:
 //    By default if no macro mentioned above is defined, all asserts will be stripped
 //    at compile time.
-//////////////////////////////////////////////////////////////////////////
 
 // You can uncomment one of these or specify it on the compilation command line
 //#define RTM_ON_ASSERT_ABORT

@@ -26,12 +26,10 @@
 
 #include "rtm/version.h"
 
-////////////////////////////////////////////////////////////////////////////////
 // This header provides forward declarations for all public Realtime Math types.
 // Forward declaring symbols from a 3rd party library is a bad idea, use this
 // header instead.
 // See also: https://blog.libtorrent.org/2017/12/forward-declarations-and-abi/
-////////////////////////////////////////////////////////////////////////////////
 
 // For now, just include the types header since it is already very compact and lightweight
 #include "rtm/types.h"

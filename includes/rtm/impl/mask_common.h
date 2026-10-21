@@ -36,12 +36,10 @@ namespace rtm
 
 	namespace rtm_impl
 	{
-		//////////////////////////////////////////////////////////////////////////
 		// This is a helper struct to allow a single consistent API between
 		// various vector types when the semantics are identical but the return
 		// type differs. Implicit coercion is used to return the desired value
 		// at the call site.
-		//////////////////////////////////////////////////////////////////////////
 		struct mask4_bool_set
 		{
 			RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE RTM_SIMD_CALL operator mask4d() const RTM_NO_EXCEPT
@@ -157,9 +155,7 @@ namespace rtm
 		};
 	}
 
-	//////////////////////////////////////////////////////////////////////////
-	// Creates a mask4 from all 4 bool components.
-	//////////////////////////////////////////////////////////////////////////
+	/// Creates a mask4 from all 4 bool components.
 	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE constexpr rtm_impl::mask4_bool_set RTM_SIMD_CALL mask_set(bool x, bool y, bool z, bool w) RTM_NO_EXCEPT
 	{
 		return rtm_impl::mask4_bool_set{ x, y, z, w };
@@ -167,12 +163,10 @@ namespace rtm
 
 	namespace rtm_impl
 	{
-		//////////////////////////////////////////////////////////////////////////
 		// This is a helper struct to allow a single consistent API between
 		// various vector types when the semantics are identical but the return
 		// type differs. Implicit coercion is used to return the desired value
 		// at the call site.
-		//////////////////////////////////////////////////////////////////////////
 		struct mask4_uint32_set
 		{
 			RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE RTM_SIMD_CALL operator mask4f() const RTM_NO_EXCEPT
@@ -212,9 +206,7 @@ namespace rtm
 		};
 	}
 
-	//////////////////////////////////////////////////////////////////////////
-	// Creates a mask4 from 4 uint32 components.
-	//////////////////////////////////////////////////////////////////////////
+	/// Creates a mask4 from 4 uint32 components.
 	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE constexpr rtm_impl::mask4_uint32_set RTM_SIMD_CALL mask_set(uint32_t x, uint32_t y, uint32_t z, uint32_t w) RTM_NO_EXCEPT
 	{
 		return rtm_impl::mask4_uint32_set{ x, y, z, w };
@@ -222,24 +214,20 @@ namespace rtm
 
 	namespace rtm_impl
 	{
-		//////////////////////////////////////////////////////////////////////////
 		// This is a helper struct to allow a single consistent API between
 		// various vector types when the semantics are identical but the return
 		// type differs. Implicit coercion is used to return the desired value
 		// at the call site.
-		//////////////////////////////////////////////////////////////////////////
 		struct mask4_uint64_set
 		{
 			RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE RTM_SIMD_CALL operator mask4d() const RTM_NO_EXCEPT
 			{
 #if defined(RTM_SSE2_INTRINSICS)
-	//////////////////////////////////////////////////////////////////////////
 	// HACK ALERT!
 	// VS2015 and VS2017 crash when compiling with _mm_set_epi64x() here.
 	// To work around this, we use alternative code. We assume that the high and low words
 	// are identical in the mask, which should be true.
 	// See: https://github.com/nfrechette/rtm/issues/84
-	//////////////////////////////////////////////////////////////////////////
 	#if defined(RTM_COMPILER_MSVC) && RTM_COMPILER_MSVC < RTM_COMPILER_MSVC_2019 && defined(RTM_ARCH_X86) && !defined(NDEBUG)
 				const uint32_t x_mask = x ? 0xFFFFFFFFU : 0;
 				const uint32_t y_mask = y ? 0xFFFFFFFFU : 0;
@@ -262,13 +250,11 @@ namespace rtm
 			RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE RTM_SIMD_CALL operator mask4q() const RTM_NO_EXCEPT
 			{
 #if defined(RTM_SSE2_INTRINSICS)
-	//////////////////////////////////////////////////////////////////////////
 	// HACK ALERT!
 	// VS2015 and VS2017 crash when compiling with _mm_set_epi64x() here.
 	// To work around this, we use alternative code. We assume that the high and low words
 	// are identical in the mask, which should be true.
 	// See: https://github.com/nfrechette/rtm/issues/84
-	//////////////////////////////////////////////////////////////////////////
 	#if defined(RTM_COMPILER_MSVC) && RTM_COMPILER_MSVC < RTM_COMPILER_MSVC_2019 && defined(RTM_ARCH_X86) && !defined(NDEBUG)
 				const uint32_t x_mask = x ? 0xFFFFFFFFU : 0;
 				const uint32_t y_mask = y ? 0xFFFFFFFFU : 0;
@@ -295,25 +281,19 @@ namespace rtm
 		};
 	}
 
-	//////////////////////////////////////////////////////////////////////////
-	// Creates a mask4 from 4 uint64 components.
-	//////////////////////////////////////////////////////////////////////////
+	/// Creates a mask4 from 4 uint64 components.
 	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE constexpr rtm_impl::mask4_uint64_set RTM_SIMD_CALL mask_set(uint64_t x, uint64_t y, uint64_t z, uint64_t w) RTM_NO_EXCEPT
 	{
 		return rtm_impl::mask4_uint64_set{ x, y, z, w };
 	}
 
-	//////////////////////////////////////////////////////////////////////////
-	// Creates a mask4 with all 4 components set to true.
-	//////////////////////////////////////////////////////////////////////////
+	/// Creates a mask4 with all 4 components set to true.
 	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE constexpr rtm_impl::mask4_bool_set RTM_SIMD_CALL mask_true() RTM_NO_EXCEPT
 	{
 		return rtm_impl::mask4_bool_set{ true, true, true, true };
 	}
 
-	//////////////////////////////////////////////////////////////////////////
-	// Creates a mask4 with all 4 components set to false.
-	//////////////////////////////////////////////////////////////////////////
+	/// Creates a mask4 with all 4 components set to false.
 	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE constexpr rtm_impl::mask4_bool_set RTM_SIMD_CALL mask_false() RTM_NO_EXCEPT
 	{
 		return rtm_impl::mask4_bool_set{ false, false, false, false };

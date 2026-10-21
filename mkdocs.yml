@@ -1,0 +1,112 @@
+site_name: Realtime Math
+site_description: A C++11 math library for animation and realtime applications
+site_url: https://nfrechette.github.io/rtm/
+repo_url: https://github.com/nfrechette/rtm
+repo_name: nfrechette/rtm
+edit_uri: ''
+copyright: Copyright (c) 2018 Nicholas Frechette and Realtime Math contributors
+
+# The pages in docs/api/ are generated: run tools/docs/generate_api_docs.py before mkdocs.
+docs_dir: docs
+site_dir: build/docs/site
+
+theme:
+  name: material
+  features:
+    - navigation.sections
+    - navigation.top
+    - search.highlight
+    - content.code.copy
+  palette:
+    - media: '(prefers-color-scheme: light)'
+      scheme: default
+      toggle:
+        icon: material/brightness-7
+        name: Use the dark theme
+    - media: '(prefers-color-scheme: dark)'
+      scheme: slate
+      toggle:
+        icon: material/brightness-4
+        name: Use the light theme
+
+extra:
+  # mike writes one copy of the site for each version, and Material shows a version selector.
+  version:
+    provider: mike
+    default: latest
+
+plugins:
+  - search
+
+markdown_extensions:
+  - admonition
+  - toc:
+      permalink: true
+  - pymdownx.highlight
+  - pymdownx.superfences
+
+# With --strict, a page that is not in the nav or a link to a page that does not exist stops the build.
+validation:
+  omitted_files: warn
+  absolute_links: warn
+  unrecognized_links: warn
+  anchors: warn
+
+nav:
+  - Home: README.md
+  - Guides:
+      - API and other conventions: api_conventions.md
+      - Types supported: types_supported.md
+      - SIMD support: simd_support.md
+      - Handling asserts: handling_asserts.md
+      - Getting started: getting_started.md
+  - API reference:
+      - api/index.md
+      - Types and constants:
+          - api/types.md
+          - api/type_traits.md
+          - api/constants.md
+          - api/macros.md
+          - api/version.md
+      - Scalars:
+          - api/scalarf.md
+          - api/scalard.md
+      - Vectors:
+          - api/vector4f.md
+          - api/vector4d.md
+      - Masks:
+          - api/mask4f.md
+          - api/mask4d.md
+          - api/mask4i.md
+          - api/mask4q.md
+      - Quaternions:
+          - api/quatf.md
+          - api/quatd.md
+          - api/packing_quatf.md
+          - api/packing_quatd.md
+      - Matrices:
+          - api/matrix3x3f.md
+          - api/matrix3x3d.md
+          - api/matrix3x4f.md
+          - api/matrix3x4d.md
+          - api/matrix4x4f.md
+          - api/matrix4x4d.md
+      - Transforms:
+          - api/vqf.md
+          - api/vqd.md
+          - api/vqsf.md
+          - api/vqsd.md
+          - api/vqvf.md
+          - api/vqvd.md
+          - api/vqmf.md
+          - api/vqmd.md
+      - Camera:
+          - api/camera_utilsf.md
+          - api/camera_utilsd.md
+      - Deprecated:
+          - api/qvf.md
+          - api/qvd.md
+          - api/qvsf.md
+          - api/qvsd.md
+          - api/qvvf.md
+          - api/qvvd.md

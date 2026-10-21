@@ -40,12 +40,10 @@ namespace rtm
 
 	namespace rtm_impl
 	{
-		//////////////////////////////////////////////////////////////////////////
 		// This is a helper struct to allow a single consistent API between
 		// various matrix types when the semantics are identical but the return
 		// type differs. Implicit coercion is used to return the desired value
 		// at the call site.
-		//////////////////////////////////////////////////////////////////////////
 		struct matrix_identity_impl
 		{
 			RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE RTM_SIMD_CALL operator matrix3x3d() const RTM_NO_EXCEPT
@@ -79,43 +77,33 @@ namespace rtm
 			}
 		};
 
-		//////////////////////////////////////////////////////////////////////////
 		// A helper struct to set matrices with similar width.
 		// Note: We use a float type as a template argument because GCC loses alignment
 		// attributes on template argument types.
-		//////////////////////////////////////////////////////////////////////////
 		template<typename float_type>
 		struct matrix_setter4x4
 		{
 			using vector4 = typename related_types<float_type>::vector4;
 
-			//////////////////////////////////////////////////////////////////////////
 			// Sets all 4 axes and creates a 3x4 affine matrix.
-			//////////////////////////////////////////////////////////////////////////
 			RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE constexpr RTM_SIMD_CALL operator matrix3x4d() const RTM_NO_EXCEPT
 			{
 				return matrix3x4d{ x_axis, y_axis, z_axis, w_axis };
 			}
 
-			//////////////////////////////////////////////////////////////////////////
 			// Sets all 4 axes and creates a 3x4 affine matrix.
-			//////////////////////////////////////////////////////////////////////////
 			RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE constexpr RTM_SIMD_CALL operator matrix3x4f() const RTM_NO_EXCEPT
 			{
 				return matrix3x4f{ x_axis, y_axis, z_axis, w_axis };
 			}
 
-			//////////////////////////////////////////////////////////////////////////
 			// Sets all 4 axes and creates a 4x4 matrix.
-			//////////////////////////////////////////////////////////////////////////
 			RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE constexpr RTM_SIMD_CALL operator matrix4x4d() const RTM_NO_EXCEPT
 			{
 				return matrix4x4d{ x_axis, y_axis, z_axis, w_axis };
 			}
 
-			//////////////////////////////////////////////////////////////////////////
 			// Sets all 4 axes and creates a 4x4 matrix.
-			//////////////////////////////////////////////////////////////////////////
 			RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE constexpr RTM_SIMD_CALL operator matrix4x4f() const RTM_NO_EXCEPT
 			{
 				return matrix4x4f{ x_axis, y_axis, z_axis, w_axis };
@@ -128,41 +116,31 @@ namespace rtm
 		};
 	}
 
-	//////////////////////////////////////////////////////////////////////////
-	// Sets all 3 axes and creates a matrix.
-	//////////////////////////////////////////////////////////////////////////
+	/// Sets all 3 axes and creates a matrix.
 	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE constexpr matrix3x3f RTM_SIMD_CALL matrix_set(vector4f_arg0 x_axis, vector4f_arg1 y_axis, vector4f_arg2 z_axis) RTM_NO_EXCEPT
 	{
 		return matrix3x3f{ x_axis, y_axis, z_axis };
 	}
 
-	//////////////////////////////////////////////////////////////////////////
-	// Sets all 3 axes and creates a matrix.
-	//////////////////////////////////////////////////////////////////////////
+	/// Sets all 3 axes and creates a matrix.
 	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE constexpr matrix3x3d RTM_SIMD_CALL matrix_set(vector4d_arg0 x_axis, vector4d_arg1 y_axis, vector4d_arg2 z_axis) RTM_NO_EXCEPT
 	{
 		return matrix3x3d{ x_axis, y_axis, z_axis };
 	}
 
-	//////////////////////////////////////////////////////////////////////////
-	// Sets all 4 axes and creates a matrix.
-	//////////////////////////////////////////////////////////////////////////
+	/// Sets all 4 axes and creates a matrix.
 	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE constexpr rtm_impl::matrix_setter4x4<float> RTM_SIMD_CALL matrix_set(vector4f_arg0 x_axis, vector4f_arg1 y_axis, vector4f_arg2 z_axis, vector4f_arg3 w_axis) RTM_NO_EXCEPT
 	{
 		return rtm_impl::matrix_setter4x4<float>{ x_axis, y_axis, z_axis, w_axis };
 	}
 
-	//////////////////////////////////////////////////////////////////////////
-	// Sets all 4 axes and creates a matrix.
-	//////////////////////////////////////////////////////////////////////////
+	/// Sets all 4 axes and creates a matrix.
 	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE constexpr rtm_impl::matrix_setter4x4<double> RTM_SIMD_CALL matrix_set(vector4d_arg0 x_axis, vector4d_arg1 y_axis, vector4d_arg2 z_axis, vector4d_arg3 w_axis) RTM_NO_EXCEPT
 	{
 		return rtm_impl::matrix_setter4x4<double>{ x_axis, y_axis, z_axis, w_axis };
 	}
 
-	//////////////////////////////////////////////////////////////////////////
-	// Returns the identity matrix.
-	//////////////////////////////////////////////////////////////////////////
+	/// Returns the identity matrix.
 	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE constexpr rtm_impl::matrix_identity_impl RTM_SIMD_CALL matrix_identity() RTM_NO_EXCEPT
 	{
 		return rtm_impl::matrix_identity_impl();

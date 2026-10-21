@@ -38,20 +38,18 @@ namespace rtm
 {
 	RTM_IMPL_VERSION_NAMESPACE_BEGIN
 
-	//////////////////////////////////////////////////////////////////////////
-	// Returns a left-handed affine 3x4 matrix representing a camera transform.
-	// A camera transform multiplied by a point3 transforms a point3 local to the camera
-	// into world space.
-	// The camera transform is located at the specified position,
-	// looking towards the specified direction, and using the specified up direction.
-	//
-	// The look to direction and up inputs do not need to be normalized.
-	//
-	// In this frame of reference:
-	//    - X axis: right direction
-	//    - Y axis: up direction
-	//    - Z axis: forward/look direction
-	//////////////////////////////////////////////////////////////////////////
+	/// Returns a left-handed affine 3x4 matrix representing a camera transform.
+	/// A camera transform multiplied by a point3 transforms a point3 local to the camera
+	/// into world space.
+	/// The camera transform is located at the specified position,
+	/// looking towards the specified direction, and using the specified up direction.
+	///
+	/// The look to direction and up inputs do not need to be normalized.
+	///
+	/// In this frame of reference:
+	///    - X axis: right direction
+	///    - Y axis: up direction
+	///    - Z axis: forward/look direction
 	RTM_DISABLE_SECURITY_COOKIE_CHECK inline matrix3x4d RTM_SIMD_CALL matrix_look_to(vector4d_arg0 position, vector4d_arg1 direction, vector4d_arg2 up) RTM_NO_EXCEPT
 	{
 		RTM_ASSERT(vector_is_finite3(position), "Look position must be finite");
@@ -66,44 +64,40 @@ namespace rtm
 		return matrix3x4d{ right_axis, up_axis, forward_axis, position };
 	}
 
-	//////////////////////////////////////////////////////////////////////////
-	// Returns a left-handed affine 3x4 matrix representing a camera transform.
-	// A camera transform multiplied by a point3 transforms a point3 local to the camera
-	// into world space.
-	// The camera transform is located at the specified position,
-	// looking towards the specified location, and using the specified up direction.
-	//
-	// The up input does not need to be normalized.
-	//
-	// In this frame of reference:
-	//    - X axis: right direction
-	//    - Y axis: up direction
-	//    - Z axis: forward/look direction
-	//////////////////////////////////////////////////////////////////////////
+	/// Returns a left-handed affine 3x4 matrix representing a camera transform.
+	/// A camera transform multiplied by a point3 transforms a point3 local to the camera
+	/// into world space.
+	/// The camera transform is located at the specified position,
+	/// looking towards the specified location, and using the specified up direction.
+	///
+	/// The up input does not need to be normalized.
+	///
+	/// In this frame of reference:
+	///    - X axis: right direction
+	///    - Y axis: up direction
+	///    - Z axis: forward/look direction
 	RTM_DISABLE_SECURITY_COOKIE_CHECK inline matrix3x4d RTM_SIMD_CALL matrix_look_at(vector4d_arg0 position, vector4d_arg1 location, vector4d_arg2 up) RTM_NO_EXCEPT
 	{
 		vector4d look_direction = vector_sub(location, position);
 		return matrix_look_to(position, look_direction, up);
 	}
 
-	//////////////////////////////////////////////////////////////////////////
-	// Returns a left-handed affine 3x4 matrix representing a camera view transform.
-	// A camera view transform is the inverse of a camera transform.
-	// A camera transform multiplied by a point3 transforms a point3 local to the camera
-	// into world space while a camera view transform multiplied by a point3 does the
-	// opposite: it transforms a world space point3 into local space of the camera.
-	// This is typically used before applying a projection matrix.
-	// The camera transform is located at the specified position,
-	// looking towards the specified direction, and using the specified up direction.
-	// The camera view transform is then constructed from its inverse.
-	//
-	// The look to direction and up inputs do not need to be normalized.
-	//
-	// In this frame of reference:
-	//    - X axis: right direction
-	//    - Y axis: up direction
-	//    - Z axis: forward/look direction
-	//////////////////////////////////////////////////////////////////////////
+	/// Returns a left-handed affine 3x4 matrix representing a camera view transform.
+	/// A camera view transform is the inverse of a camera transform.
+	/// A camera transform multiplied by a point3 transforms a point3 local to the camera
+	/// into world space while a camera view transform multiplied by a point3 does the
+	/// opposite: it transforms a world space point3 into local space of the camera.
+	/// This is typically used before applying a projection matrix.
+	/// The camera transform is located at the specified position,
+	/// looking towards the specified direction, and using the specified up direction.
+	/// The camera view transform is then constructed from its inverse.
+	///
+	/// The look to direction and up inputs do not need to be normalized.
+	///
+	/// In this frame of reference:
+	///    - X axis: right direction
+	///    - Y axis: up direction
+	///    - Z axis: forward/look direction
 	RTM_DISABLE_SECURITY_COOKIE_CHECK inline matrix3x4d RTM_SIMD_CALL view_look_to(vector4d_arg0 position, vector4d_arg1 direction, vector4d_arg2 up) RTM_NO_EXCEPT
 	{
 		RTM_ASSERT(vector_is_finite3(position), "Look position must be finite");
@@ -137,38 +131,34 @@ namespace rtm
 		return matrix3x4d{ right_axis, up_axis, forward_axis, position_axis };
 	}
 
-	//////////////////////////////////////////////////////////////////////////
-	// Returns a left-handed affine 3x4 matrix representing a camera view transform.
-	// A camera view transform is the inverse of a camera transform.
-	// A camera transform multiplied by a point3 transforms a point3 local to the camera
-	// into world space while a camera view transform multiplied by a point3 does the
-	// opposite: it transforms a world space point3 into local space of the camera.
-	// This is typically used before applying a projection matrix.
-	// The camera transform is located at the specified position,
-	// looking towards the specified location, and using the specified up direction.
-	// The camera view transform is then constructed from its inverse.
-	//
-	// The look to direction and up inputs do not need to be normalized.
-	//
-	// In this frame of reference:
-	//    - X axis: right direction
-	//    - Y axis: up direction
-	//    - Z axis: forward/look direction
-	//////////////////////////////////////////////////////////////////////////
+	/// Returns a left-handed affine 3x4 matrix representing a camera view transform.
+	/// A camera view transform is the inverse of a camera transform.
+	/// A camera transform multiplied by a point3 transforms a point3 local to the camera
+	/// into world space while a camera view transform multiplied by a point3 does the
+	/// opposite: it transforms a world space point3 into local space of the camera.
+	/// This is typically used before applying a projection matrix.
+	/// The camera transform is located at the specified position,
+	/// looking towards the specified location, and using the specified up direction.
+	/// The camera view transform is then constructed from its inverse.
+	///
+	/// The look to direction and up inputs do not need to be normalized.
+	///
+	/// In this frame of reference:
+	///    - X axis: right direction
+	///    - Y axis: up direction
+	///    - Z axis: forward/look direction
 	RTM_DISABLE_SECURITY_COOKIE_CHECK inline matrix3x4d RTM_SIMD_CALL view_look_at(vector4d_arg0 position, vector4d_arg1 location, vector4d_arg2 up) RTM_NO_EXCEPT
 	{
 		vector4d look_direction = vector_sub(location, position);
 		return view_look_to(position, look_direction, up);
 	}
 
-	//////////////////////////////////////////////////////////////////////////
-	// Returns a left-handed 4x4 perspective projection matrix using the screen dimensions.
-	//
-	// In this frame of reference:
-	//    - X axis: right direction
-	//    - Y axis: up direction
-	//    - Z axis: forward/look direction
-	//////////////////////////////////////////////////////////////////////////
+	/// Returns a left-handed 4x4 perspective projection matrix using the screen dimensions.
+	///
+	/// In this frame of reference:
+	///    - X axis: right direction
+	///    - Y axis: up direction
+	///    - Z axis: forward/look direction
 	RTM_DISABLE_SECURITY_COOKIE_CHECK inline matrix4x4d RTM_SIMD_CALL proj_perspective(double view_width, double view_height, double near_distance, double far_distance) RTM_NO_EXCEPT
 	{
 		RTM_ASSERT(view_width > 1.0E-8, "View width must be non-zero and positive");
@@ -187,14 +177,12 @@ namespace rtm
 		return matrix4x4d{ x_axis, y_axis, z_axis, w_axis };
 	}
 
-	//////////////////////////////////////////////////////////////////////////
-	// Returns a left-handed 4x4 perspective projection matrix using the screen field of view.
-	//
-	// In this frame of reference:
-	//    - X axis: right direction
-	//    - Y axis: up direction
-	//    - Z axis: forward/look direction
-	//////////////////////////////////////////////////////////////////////////
+	/// Returns a left-handed 4x4 perspective projection matrix using the screen field of view.
+	///
+	/// In this frame of reference:
+	///    - X axis: right direction
+	///    - Y axis: up direction
+	///    - Z axis: forward/look direction
 	RTM_DISABLE_SECURITY_COOKIE_CHECK inline matrix4x4d RTM_SIMD_CALL proj_perspective_fov(double fov_angle_y, double aspect_ratio, double near_distance, double far_distance) RTM_NO_EXCEPT
 	{
 		RTM_ASSERT(fov_angle_y > 2.0E-8, "View FoV must be non-zero and positive");
@@ -218,14 +206,12 @@ namespace rtm
 		return matrix4x4d{ x_axis, y_axis, z_axis, w_axis };
 	}
 
-	//////////////////////////////////////////////////////////////////////////
-	// Returns a left-handed 4x4 orthographic projection matrix.
-	//
-	// In this frame of reference:
-	//    - X axis: right direction
-	//    - Y axis: up direction
-	//    - Z axis: forward/look direction
-	//////////////////////////////////////////////////////////////////////////
+	/// Returns a left-handed 4x4 orthographic projection matrix.
+	///
+	/// In this frame of reference:
+	///    - X axis: right direction
+	///    - Y axis: up direction
+	///    - Z axis: forward/look direction
 	RTM_DISABLE_SECURITY_COOKIE_CHECK inline matrix4x4d RTM_SIMD_CALL proj_orthographic(double view_width, double view_height, double near_distance, double far_distance) RTM_NO_EXCEPT
 	{
 		RTM_ASSERT(view_width > 1.0E-8, "View width must be non-zero and positive");

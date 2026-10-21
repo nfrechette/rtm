@@ -5,3 +5,4 @@
 *  [SIMD support](simd_support.md)
 *  [Handling asserts](handling_asserts.md)
 *  [Getting started](getting_started.md)
+*  [API reference](https://nfrechette.github.io/rtm/) on the documentation site

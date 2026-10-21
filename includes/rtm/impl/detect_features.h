@@ -27,9 +27,7 @@
 #include "rtm/impl/detect_arch.h"
 #include "rtm/impl/detect_compiler.h"
 
-//////////////////////////////////////////////////////////////////////////
 // Helper macro to determine if vrndns_f32 is supported (ARM64 only)
-//////////////////////////////////////////////////////////////////////////
 #if defined(RTM_ARCH_ARM64) && !defined(RTM_IMPL_VRNDNS_SUPPORTED)
 	// ARM documentation states __ARM_FEATURE_DIRECTED_ROUNDING must be defined
 	#if defined(__ARM_FEATURE_DIRECTED_ROUNDING)
@@ -58,9 +56,7 @@
 	#endif
 #endif
 
-//////////////////////////////////////////////////////////////////////////
 // Helper macro to determine if the vca* (e.g vcagtq_f32) family of intrinsics are supported (ARM64 only)
-//////////////////////////////////////////////////////////////////////////
 #if defined(RTM_ARCH_ARM64) && !defined(RTM_IMPL_VCA_SUPPORTED)
 	#if defined(RTM_COMPILER_MSVC)
 		#if defined(vcaleq_f32)
@@ -74,9 +70,7 @@
 	#endif
 #endif
 
-//////////////////////////////////////////////////////////////////////////
 // Helper macro to determine if the vc*z* (e.g vceqq_f32) family of intrinsics are supported (ARM64 only)
-//////////////////////////////////////////////////////////////////////////
 #if defined(RTM_ARCH_ARM64) && !defined(RTM_IMPL_VCZ_SUPPORTED)
 	#if defined(RTM_COMPILER_MSVC)
 		#if defined(vceqzq_f32)
@@ -90,9 +84,7 @@
 	#endif
 #endif
 
-//////////////////////////////////////////////////////////////////////////
 // Helper macro to determine if the vsqrtq_f32 intrinsic is supported (ARM64 only)
-//////////////////////////////////////////////////////////////////////////
 #if defined(RTM_ARCH_ARM64) && !defined(RTM_IMPL_VSQRT_SUPPORTED)
 	#if defined(RTM_COMPILER_MSVC)
 		#if defined(vsqrtq_f32)
@@ -106,9 +98,7 @@
 	#endif
 #endif
 
-//////////////////////////////////////////////////////////////////////////
 // Helper macro to determine if vfmss_laneq_f32 is supported (ARM64 only)
-//////////////////////////////////////////////////////////////////////////
 #if defined(RTM_ARCH_ARM64) && !defined(RTM_IMPL_VFMSS_SUPPORTED)
 	#if defined(RTM_COMPILER_MSVC)
 		#if defined(vfmss_laneq_f32)
@@ -122,9 +112,7 @@
 	#endif
 #endif
 
-//////////////////////////////////////////////////////////////////////////
 // Helper macro to determine if vaddvq_f32 is supported (ARM64 only)
-//////////////////////////////////////////////////////////////////////////
 #if defined(RTM_ARCH_ARM64) && !defined(RTM_IMPL_VADDVQ_SUPPORTED)
 	#if defined(RTM_COMPILER_MSVC)
 		#if defined(vaddvq_f32)

@@ -9,7 +9,7 @@ A total of 4 behaviors are supported:
 *  We can call a custom function
 *  Do nothing and strip the check at compile time (**default behavior**)
 
-Everything necessary is implemented in [**rtm/impl/error.h**](../includes/rtm/impl/error.h).
+Everything necessary is implemented in [**rtm/impl/error.h**](https://github.com/nfrechette/rtm/blob/develop/includes/rtm/impl/error.h).
 
 *Note: It is **NOT** possible to have different assert behaviors in two or more C++ object files. All the C++ files within your static or dynamic library that reference RTM must all use the same assert handling strategy.*
 

@@ -62,6 +62,7 @@
 *  Fix vector_cast and quat_cast (float64 to float32) with SSE2 and MSVC 19.34 to 19.44: when [xy] and [zw] are the same constant, the compiler sets [zw] to 0
 *  Fix an internal compiler error with MSVC 19.44 for arm64 in some functions that call quat_set_w (quatd, double)
 *  Fix quat_mul (quatd, scalard) with SSE2: the function used lane 1 of the scalar to multiply [y] and [w]
+*  Add an API reference site: Doxygen reads the `///` comments, and MkDocs makes the site for develop and for each release
 
 ## 2.3.1
 

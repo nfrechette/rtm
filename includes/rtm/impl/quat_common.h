@@ -34,9 +34,7 @@ namespace rtm
 {
 	RTM_IMPL_VERSION_NAMESPACE_BEGIN
 
-	//////////////////////////////////////////////////////////////////////////
-	// Creates a quaternion from all 4 components.
-	//////////////////////////////////////////////////////////////////////////
+	/// Creates a quaternion from all 4 components.
 	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE quatf RTM_SIMD_CALL quat_set(float x, float y, float z, float w) RTM_NO_EXCEPT
 	{
 #if defined(RTM_SSE2_INTRINSICS)
@@ -52,9 +50,7 @@ namespace rtm
 #endif
 	}
 
-	//////////////////////////////////////////////////////////////////////////
-	// Creates a quaternion from all 4 components.
-	//////////////////////////////////////////////////////////////////////////
+	/// Creates a quaternion from all 4 components.
 	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE quatd RTM_SIMD_CALL quat_set(double x, double y, double z, double w) RTM_NO_EXCEPT
 	{
 #if defined(RTM_SSE2_INTRINSICS)
@@ -70,12 +66,10 @@ namespace rtm
 
 	namespace rtm_impl
 	{
-		//////////////////////////////////////////////////////////////////////////
 		// This is a helper struct to allow a single consistent API between
 		// various quaternion types when the semantics are identical but the return
 		// type differs. Implicit coercion is used to return the desired value
 		// at the call site.
-		//////////////////////////////////////////////////////////////////////////
 		struct quat_identity_impl
 		{
 			RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE RTM_SIMD_CALL operator quatd() const RTM_NO_EXCEPT
@@ -90,9 +84,7 @@ namespace rtm
 		};
 	}
 
-	//////////////////////////////////////////////////////////////////////////
-	// Returns the identity quaternion.
-	//////////////////////////////////////////////////////////////////////////
+	/// Returns the identity quaternion.
 	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE constexpr rtm_impl::quat_identity_impl RTM_SIMD_CALL quat_identity() RTM_NO_EXCEPT
 	{
 		return rtm_impl::quat_identity_impl();

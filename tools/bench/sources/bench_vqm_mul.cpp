@@ -43,11 +43,9 @@ using namespace rtm;
 //     - soa_quat_split: as soa_quat, but vqm_mul computes (M1 * R1) * (M2 * R1^T) as ref does, not M1 * (R1 * M2 * R1^T).
 //       M1 * R1 does not depend on rhs, thus a chain of products has a shorter dependency path
 
-//////////////////////////////////////////////////////////////////////////
 // Rotates three vectors with a quaternion: v' = v * R.
 // The vectors are in structure of arrays form: x, y, and z hold the components, one vector in each lane.
 // v' = v + w * t + cross(q.xyz, t) with t = 2 * cross(q.xyz, v)
-//////////////////////////////////////////////////////////////////////////
 template<typename QuatType, typename Vector4Type>
 RTM_FORCE_INLINE void RTM_SIMD_CALL quat_mul_vector3_soa_cross(const QuatType& rotation, Vector4Type& x, Vector4Type& y, Vector4Type& z) RTM_NO_EXCEPT
 {
@@ -75,11 +73,9 @@ RTM_FORCE_INLINE void RTM_SIMD_CALL quat_mul_vector3_soa_cross(const QuatType& r
 	z = rz;
 }
 
-//////////////////////////////////////////////////////////////////////////
 // Rotates three vectors with a quaternion: v' = v * R.
 // The vectors are in structure of arrays form: x, y, and z hold the components, one vector in each lane.
 // The function computes the two quaternion products q * v * q^-1 (Hamilton order) with v a pure quaternion.
-//////////////////////////////////////////////////////////////////////////
 template<typename QuatType, typename Vector4Type>
 RTM_FORCE_INLINE void RTM_SIMD_CALL quat_mul_vector3_soa_quat(const QuatType& rotation, Vector4Type& x, Vector4Type& y, Vector4Type& z) RTM_NO_EXCEPT
 {
@@ -101,9 +97,7 @@ RTM_FORCE_INLINE void RTM_SIMD_CALL quat_mul_vector3_soa_quat(const QuatType& ro
 	z = vector_neg_mul_sub(tx, qy, vector_mul_add(ty, qx, vector_neg_mul_sub(tw, qz, vector_mul(tz, qw))));
 }
 
-//////////////////////////////////////////////////////////////////////////
 // Rotates three vectors in structure of arrays form with one of the two formulas.
-//////////////////////////////////////////////////////////////////////////
 template<bool use_quat_products, typename QuatType, typename Vector4Type>
 RTM_FORCE_INLINE void RTM_SIMD_CALL quat_mul_vector3_soa(const QuatType& rotation, Vector4Type& x, Vector4Type& y, Vector4Type& z) RTM_NO_EXCEPT
 {
@@ -113,11 +107,9 @@ RTM_FORCE_INLINE void RTM_SIMD_CALL quat_mul_vector3_soa(const QuatType& rotatio
 		quat_mul_vector3_soa_cross(rotation, x, y, z);
 }
 
-//////////////////////////////////////////////////////////////////////////
 // Returns R^T * M * R where R is the rotation matrix of the quaternion.
 // The function rotates the rows of M with the quaternion (M * R), then the columns of the result (R^T * X).
 // A rotation of the column vectors with the quaternion gives R^T * X because (X^T * R)^T = R^T * X.
-//////////////////////////////////////////////////////////////////////////
 template<bool use_quat_products, typename Matrix3x3Type, typename QuatType>
 RTM_FORCE_INLINE Matrix3x3Type RTM_SIMD_CALL matrix_rotate_soa(const Matrix3x3Type& input, const QuatType& rotation) RTM_NO_EXCEPT
 {
@@ -132,9 +124,7 @@ RTM_FORCE_INLINE Matrix3x3Type RTM_SIMD_CALL matrix_rotate_soa(const Matrix3x3Ty
 	return result;
 }
 
-//////////////////////////////////////////////////////////////////////////
 // The fast path of vqm_mul: the scale/shear part of rhs is the identity.
-//////////////////////////////////////////////////////////////////////////
 template<typename TransformType, typename QuatType>
 RTM_FORCE_INLINE TransformType RTM_SIMD_CALL vqm_mul_rhs_identity(const TransformType& lhs, const TransformType& rhs, const QuatType& rotation) RTM_NO_EXCEPT
 {

@@ -26,6 +26,8 @@ The test executable can also be run directly with Catch2 filters: `./build/bin/r
 
 Builds use `-Wall -Wextra -Werror` (GCC/Clang) and `/W4 /WX` (MSVC) -- warnings break the build. Tests define `RTM_ON_ASSERT_THROW` so asserts can be caught.
 
+The API reference site uses Doxygen 1.18 (on the `PATH`) and MkDocs (`pip install -r tools/docs/requirements.txt`). `requirements.txt` is a lock file with hashes: to change a dependency, edit `tools/docs/requirements.in` and run the `uv pip compile` command in it. Run `python3 tools/docs/generate_api_docs.py` to write the pages to `docs/api/`, then `mkdocs build --strict` or `mkdocs serve`. Doxygen stops with an error when public API has no `///` comment. `.github/workflows/docs.yml` deploys the site to GitHub Pages for `develop` and for each release tag.
+
 `tests/validate_includes` generates one `.cpp` per public header (`includes/rtm/*.h`, `includes/rtm/packing/*.h`) to verify each header compiles standalone -- every public header must include everything it uses.
 
 ## Architecture & conventions
@@ -36,7 +38,7 @@ Builds use `-Wall -Wextra -Werror` (GCC/Clang) and `/W4 /WX` (MSVC) -- warnings 
 - **Argument-passing aliases**: SIMD params use `vector4f_arg0..N`, `quatf_arg0`, etc. rather than raw types; these are defined per ABI in `impl/type_args.*.impl.h` (vectorcall, NEON, WASM, x64 gcc/clang, other) to maximize register passing. Use the correct arg index for the parameter position.
 - **Header skeleton**: every header wraps content in `RTM_IMPL_FILE_PRAGMA_PUSH`/`POP` (forces non-fast-math) and `namespace rtm { RTM_IMPL_VERSION_NAMESPACE_BEGIN ... RTM_IMPL_VERSION_NAMESPACE_END }`. New types should also be forward declared in `fwd.h`.
 - **Implementation details**: put code that is not public API in the nested `rtm_impl` namespace and/or in a header under `includes/rtm/impl/`. Client code must not use either.
-- **Public API comments**: all public API must have a comment. Put it in the `//////` banner block above the function or type, as the existing headers do.
+- **Public API comments**: all public API must have a comment. Put it in `///` lines directly above the function, type, or macro. Put a `///<` comment after each data member of a public struct. Doxygen reads only these comments to make the API reference; a `//` comment is for implementation details. A section of a header is a Doxygen member group: a `//////` banner with `/// \name <title>` and `/// \{`, and a `/// \}` after the last member.
 - **Return-type coercion helpers**: some functions return small `rtm_impl::*_impl`/`*_loader` structs with an implicit conversion operator to `float` or `double`. To get a `scalarf` or a `vector4f`, use the function with the `_as_scalar` / `_as_vector` suffix.
 - **Math conventions**: row vectors (`v' = v * M`, `local_to_world = local_to_object * object_to_world`); left-handed frame with X forward, Y right, Z up; quaternion `[xyz]` = vector part, `[w]` = scalar part. Functions with a numeric suffix (`vector_dot3`) operate on fewer lanes and leave unused lanes undefined.
 - **Asserts** (`impl/error.h`) are stripped by default; `RTM_ON_ASSERT_ABORT`, `RTM_ON_ASSERT_THROW`, or `RTM_ON_ASSERT_CUSTOM` enable them.

@@ -1,0 +1,69 @@
+# Doxygen configuration for the RTM API reference.
+# Doxygen writes XML only. tools/docs/generate_api_docs.py runs Doxygen from the repository root,
+# then it converts the XML to Markdown for MkDocs.
+
+PROJECT_NAME           = "Realtime Math"
+OUTPUT_DIRECTORY       = build/docs/doxygen
+QUIET                  = YES
+
+# Some public functions and the public macros are in headers under includes/rtm/impl/.
+# tools/docs/generate_api_docs.py puts them on the pages of the public headers.
+INPUT                  = includes/rtm \
+                         includes/rtm/packing \
+                         includes/rtm/impl/mask_common.h \
+                         includes/rtm/impl/matrix_affine_common.h \
+                         includes/rtm/impl/matrix_cast.h \
+                         includes/rtm/impl/matrix_common.h \
+                         includes/rtm/impl/quat_common.h \
+                         includes/rtm/impl/qv_common.h \
+                         includes/rtm/impl/qvs_common.h \
+                         includes/rtm/impl/qvv_common.h \
+                         includes/rtm/impl/scalar_common.h \
+                         includes/rtm/impl/vector_common.h \
+                         includes/rtm/impl/vq_common.h \
+                         includes/rtm/impl/vqm_common.h \
+                         includes/rtm/impl/vqs_common.h \
+                         includes/rtm/impl/vqv_common.h \
+                         includes/rtm/impl/macros.mask4.impl.h \
+                         includes/rtm/impl/macros.matrix.impl.h \
+                         includes/rtm/impl/macros.vector4.impl.h \
+                         tools/docs/rtm.dox
+FILE_PATTERNS          = *.h *.dox
+RECURSIVE              = NO
+
+GENERATE_HTML          = NO
+GENERATE_LATEX         = NO
+GENERATE_XML           = YES
+XML_PROGRAMLISTING     = NO
+
+# Only the comments that start with /// are documentation.
+# The //////////// lines of a banner have more than three slashes and Doxygen ignores them.
+MARKDOWN_SUPPORT       = YES
+AUTOLINK_SUPPORT       = YES
+EXTRACT_ALL            = NO
+EXTRACT_STATIC         = YES
+EXCLUDE_SYMBOLS        = rtm_impl RTM_IMPL_*
+
+# Doxygen sees the scalar code path only: no header defines RTM_SSE2_INTRINSICS and the others.
+# The declaration macros expand to nothing. Each constant of rtm::constants is a function that returns an rtm_impl struct.
+ENABLE_PREPROCESSING   = YES
+MACRO_EXPANSION        = YES
+EXPAND_ONLY_PREDEF     = YES
+SEARCH_INCLUDES        = NO
+PREDEFINED             = RTM_NO_INTRINSICS \
+                         RTM_DISABLE_SECURITY_COOKIE_CHECK= \
+                         RTM_FORCE_INLINE=inline \
+                         RTM_SIMD_CALL= \
+                         RTM_NO_EXCEPT= \
+                         "RTM_DEPRECATED(msg)=[[deprecated(msg)]]" \
+                         RTM_IMPL_VERSION_NAMESPACE_BEGIN= \
+                         RTM_IMPL_VERSION_NAMESPACE_END= \
+                         RTM_IMPL_FILE_PRAGMA_PUSH= \
+                         RTM_IMPL_FILE_PRAGMA_POP= \
+                         "RTM_DEFINE_FLOAT_CONSTANT(name, value)=rtm_impl::float_constant name();"
+
+# A public symbol without a /// comment stops the build.
+WARN_IF_UNDOCUMENTED   = YES
+WARN_IF_DOC_ERROR      = YES
+WARN_NO_PARAMDOC       = NO
+WARN_AS_ERROR          = FAIL_ON_WARNINGS

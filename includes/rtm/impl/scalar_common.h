@@ -36,12 +36,10 @@ namespace rtm
 
 	namespace rtm_impl
 	{
-		//////////////////////////////////////////////////////////////////////////
 		// This is a helper struct to allow a single consistent API between
 		// various scalar types when the semantics are identical but the return
 		// type differs. Implicit coercion is used to return the desired value
 		// at the call site.
-		//////////////////////////////////////////////////////////////////////////
 		struct scalar_loaderf
 		{
 			RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE constexpr RTM_SIMD_CALL operator float() const RTM_NO_EXCEPT
@@ -52,12 +50,10 @@ namespace rtm
 			const float* ptr;
 		};
 
-		//////////////////////////////////////////////////////////////////////////
 		// This is a helper struct to allow a single consistent API between
 		// various scalar types when the semantics are identical but the return
 		// type differs. Implicit coercion is used to return the desired value
 		// at the call site.
-		//////////////////////////////////////////////////////////////////////////
 		struct scalar_loaderd
 		{
 			RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE constexpr RTM_SIMD_CALL operator double() const RTM_NO_EXCEPT
@@ -69,17 +65,13 @@ namespace rtm
 		};
 	}
 
-	//////////////////////////////////////////////////////////////////////////
-	// Loads a scalar from memory.
-	//////////////////////////////////////////////////////////////////////////
+	/// Loads a scalar from memory.
 	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE constexpr rtm_impl::scalar_loaderf RTM_SIMD_CALL scalar_load(const float* input) RTM_NO_EXCEPT
 	{
 		return rtm_impl::scalar_loaderf{ input };
 	}
 
-	//////////////////////////////////////////////////////////////////////////
-	// Loads a scalar from memory.
-	//////////////////////////////////////////////////////////////////////////
+	/// Loads a scalar from memory.
 	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE scalarf RTM_SIMD_CALL scalar_load_as_scalar(const float* input) RTM_NO_EXCEPT
 	{
 #if defined(RTM_SSE2_INTRINSICS)
@@ -89,17 +81,13 @@ namespace rtm
 #endif
 	}
 
-	//////////////////////////////////////////////////////////////////////////
-	// Loads a scalar from memory.
-	//////////////////////////////////////////////////////////////////////////
+	/// Loads a scalar from memory.
 	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE constexpr rtm_impl::scalar_loaderd RTM_SIMD_CALL scalar_load(const double* input) RTM_NO_EXCEPT
 	{
 		return rtm_impl::scalar_loaderd{ input };
 	}
 
-	//////////////////////////////////////////////////////////////////////////
-	// Loads a scalar from memory.
-	//////////////////////////////////////////////////////////////////////////
+	/// Loads a scalar from memory.
 	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE scalard RTM_SIMD_CALL scalar_load_as_scalar(const double* input) RTM_NO_EXCEPT
 	{
 #if defined(RTM_SSE2_INTRINSICS)

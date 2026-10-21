@@ -26,7 +26,6 @@
 
 #include "rtm/impl/detect_compiler.h"
 
-//////////////////////////////////////////////////////////////////////////
 // Because this library is made entirely of headers, we have no control over the
 // compilation flags used. However, in some cases, certain options must be forced.
 // To do this, every header is wrapped in two macros to push and pop the necessary
@@ -34,7 +33,6 @@
 //
 // Options we use:
 //    - Disable fast math, it can hurt precision for little to no performance gain due to the high level of hand tuned optimizations.
-//////////////////////////////////////////////////////////////////////////
 #if defined(RTM_COMPILER_MSVC)
 	#define RTM_IMPL_FILE_PRAGMA_PUSH \
 		__pragma(float_control(precise, on, push))
@@ -76,19 +74,15 @@
 	#define RTM_IMPL_FILE_PRAGMA_POP
 #endif
 
-//////////////////////////////////////////////////////////////////////////
 // In some cases, for performance reasons, we wish to disable stack security
 // check cookies. This macro serves this purpose.
-//////////////////////////////////////////////////////////////////////////
 #if defined(RTM_COMPILER_MSVC)
 	#define RTM_DISABLE_SECURITY_COOKIE_CHECK __declspec(safebuffers)
 #else
 	#define RTM_DISABLE_SECURITY_COOKIE_CHECK
 #endif
 
-//////////////////////////////////////////////////////////////////////////
 // Force inline macros for when it is necessary.
-//////////////////////////////////////////////////////////////////////////
 #if defined(RTM_COMPILER_MSVC)
 	#define RTM_FORCE_INLINE __forceinline
 #elif defined(RTM_COMPILER_GCC) || defined(RTM_COMPILER_CLANG)
@@ -97,9 +91,7 @@
 	#define RTM_FORCE_INLINE inline
 #endif
 
-//////////////////////////////////////////////////////////////////////////
 // Force no-inline macros for when it is necessary.
-//////////////////////////////////////////////////////////////////////////
 #if defined(RTM_COMPILER_MSVC)
 	#define RTM_FORCE_NOINLINE __declspec(noinline)
 #elif defined(RTM_COMPILER_GCC) || defined(RTM_COMPILER_CLANG)
@@ -108,15 +100,11 @@
 	#define RTM_FORCE_NOINLINE
 #endif
 
-//////////////////////////////////////////////////////////////////////////
 // Joins two pre-processor tokens: RTM_JOIN_TOKENS(foo, bar) yields 'foobar'
-//////////////////////////////////////////////////////////////////////////
 #define RTM_JOIN_TOKENS(a, b) a ## b
 
-//////////////////////////////////////////////////////////////////////////
 // Wraps the __has_builtin pre-processor macro to handle non-clang and early
 // GCC compilers
-//////////////////////////////////////////////////////////////////////////
 #if defined(__has_builtin)
 	#define RTM_HAS_BUILTIN(x) __has_builtin(x)
 #else
