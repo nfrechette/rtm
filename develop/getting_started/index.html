@@ -573,6 +573,17 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#windows-arm64ec" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Windows ARM64EC
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#android" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -2412,6 +2423,17 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#windows-arm64ec" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Windows ARM64EC
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#android" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -2482,7 +2504,7 @@
 <h2 id="setting-up-your-environment">Setting up your environment<a class="headerlink" href="#setting-up-your-environment" title="Permanent link">&para;</a></h2>
 <h3 id="windows-linux-and-os-x-for-x86-and-x64">Windows, Linux, and OS X for x86 and x64<a class="headerlink" href="#windows-linux-and-os-x-for-x86-and-x64" title="Permanent link">&para;</a></h3>
 <ol>
-<li>Install <em>CMake 3.2</em> or higher (<em>3.14</em> for Visual Studio 2019, or <em>3.10</em> on OS X with <em>Xcode 10</em>), <em>Python 2.7 or 3</em>, and the proper compiler for your platform.</li>
+<li>Install <em>CMake 3.2</em> or higher (<em>3.14</em> for Visual Studio 2019, <em>4.2</em> for Visual Studio 2026, or <em>3.10</em> on OS X with <em>Xcode 10</em>), <em>Python 2.7 or 3</em>, and the proper compiler for your platform.</li>
 <li>Execute <code>git submodule update --init</code> to get the files of external submodules (e.g. Catch2).</li>
 <li>Generate the IDE solution with: <code>python make.py</code><br />
    The solution is generated under <code>./build</code></li>
@@ -2501,6 +2523,9 @@
 <p>With SIMD enabled, the build adds <code>-mfpu=neon</code> because the Linux <code>armhf</code> compilers do not enable NEON by default.</p>
 <h3 id="windows-arm64">Windows ARM64<a class="headerlink" href="#windows-arm64" title="Permanent link">&para;</a></h3>
 <p>For <em>Windows on ARM64</em>, the steps are identical to <em>x86 and x64</em> but you will need <em>CMake 3.13 or higher</em> and you must provide the architecture on the command line: <code>python make.py -compiler vs2017 -cpu arm64</code></p>
+<h3 id="windows-arm64ec">Windows ARM64EC<a class="headerlink" href="#windows-arm64ec" title="Permanent link">&para;</a></h3>
+<p>For <em>Windows on ARM64EC</em>, the steps are identical to <em>Windows ARM64</em>. ARM64EC needs <em>Visual Studio 2019</em> or later. You must provide the architecture on the command line: <code>python make.py -compiler vs2022 -cpu arm64ec</code></p>
+<p>On an x64 host, <code>make.py</code> cross-compiles. It does not register the unit tests with CTest, thus <code>-unit_test</code> does not run them. To run the unit tests, use an ARM64 host.</p>
 <h3 id="android">Android<a class="headerlink" href="#android" title="Permanent link">&para;</a></h3>
 <p>For <em>Android</em>, the steps are identical to <em>Windows, Linux, and OS X</em> but you also need to install <em>Android NDK 21</em> (or higher). The build uses <code>gradle</code> and <code>-unit_test</code> as well as <code>-bench</code> will deploy and run on the device when executed (make sure that the <code>adb</code> executable is in your <code>PATH</code> for this to work).</p>
 <p><em>Android Studio v3.5</em> can be used to launch and debug. After running <em>CMake</em> to build and generate everything, the <em>Android Studio</em> projects can be found under the <code>./build</code> directory.</p>

@@ -2626,7 +2626,7 @@
 </code></pre></div>
 <p>WARNING: VQV transforms do <em>NOT</em> form a group. It has no well defined multiplication and inverse. This is because when non-uniform scale is rotated (e.g. as the result of two VQV multiplying), shear is introduced and there is no place to store it. As such, VQV discards the introduced shear which is mathematically incorrect. As a result of this, VQV multiplication is <em>NOT</em> associative and the inverse is incorrect. USE AT YOUR OWN RISK.</p>
 <h3 id="vqv_cast">vqv_cast<a class="headerlink" href="#vqv_cast" title="Permanent link">&para;</a></h3>
-<div class="highlight"><pre><span></span><code><span class="n">vqvf</span><span class="w"> </span><span class="n">vqv_cast</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">vqvd</span><span class="o">&amp;</span><span class="w"> </span><span class="n">input</span><span class="p">)</span>
+<div class="highlight"><pre><span></span><code><span class="n">vqvf</span><span class="w"> </span><span class="n">vqv_cast</span><span class="p">(</span><span class="n">vqvd</span><span class="w"> </span><span class="n">input</span><span class="p">)</span>
 </code></pre></div>
 <p>Casts a VQV transform float64 variant to a float32 variant.</p>
 <h3 id="vqv_from_matrix">vqv_from_matrix<a class="headerlink" href="#vqv_from_matrix" title="Permanent link">&para;</a></h3>

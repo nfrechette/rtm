@@ -2340,6 +2340,7 @@
 <p><em>Note that even when FMA is enabled, its intrinsics are not used because they appear slower on at least Haswell and Ryzen.</em></p>
 <h2 id="arm">ARM<a class="headerlink" href="#arm" title="Permanent link">&para;</a></h2>
 <p>Both ARM NEON and ARM64 NEON are supported.</p>
+<p>ARM64EC uses the ARM64 NEON code path. MSVC also defines <code>_M_X64</code> for ARM64EC, but RTM does not use the SSE intrinsics there because ARM64EC emulates them. RTM does not use <code>__vectorcall</code> on ARM64EC.</p>
 <h2 id="webassembly">WebAssembly<a class="headerlink" href="#webassembly" title="Permanent link">&para;</a></h2>
 <p>WebAssembly SIMD128 is supported. To enable it, compile with <code>-msimd128</code>. Clang then defines <code>__wasm_simd128__</code> and RTM defines <code>RTM_WASM128_INTRINSICS</code>. Without <code>-msimd128</code>, RTM uses the scalar code path.</p>
 <ul>
