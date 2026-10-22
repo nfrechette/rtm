@@ -35,6 +35,12 @@ With SIMD enabled, the build adds `-mfpu=neon` because the Linux `armhf` compile
 
 For *Windows on ARM64*, the steps are identical to *x86 and x64* but you will need *CMake 3.13 or higher* and you must provide the architecture on the command line: `python make.py -compiler vs2017 -cpu arm64`
 
+### Windows ARM64EC
+
+For *Windows on ARM64EC*, the steps are identical to *Windows ARM64*. ARM64EC needs *Visual Studio 2019* or later. You must provide the architecture on the command line: `python make.py -compiler vs2022 -cpu arm64ec`
+
+On an x64 host, `make.py` cross-compiles. It does not register the unit tests with CTest, thus `-unit_test` does not run them. To run the unit tests, use an ARM64 host.
+
 ### Android
 
 For *Android*, the steps are identical to *Windows, Linux, and OS X* but you also need to install *Android NDK 21* (or higher). The build uses `gradle` and `-unit_test` as well as `-bench` will deploy and run on the device when executed (make sure that the `adb` executable is in your `PATH` for this to work).
