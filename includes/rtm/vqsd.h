@@ -273,7 +273,7 @@ namespace rtm
 
 	/// Multiplies a VQS transform and a 3D point.
 	/// Multiplication order is as follow: world_position = vqs_mul_point3(local_position, local_to_world)
-	RTM_DISABLE_SECURITY_COOKIE_CHECK inline vector4d RTM_SIMD_CALL vqs_mul_point3(vector4d_arg0 point, vqsd_arg1 vqs) RTM_NO_EXCEPT
+	RTM_DISABLE_SECURITY_COOKIE_CHECK inline vector4d RTM_SIMD_CALL vqs_mul_point3(vector4d_arg0 point, vqsd_arg0 vqs) RTM_NO_EXCEPT
 	{
 		const vector4d scale = vector_dup_w(vqs.translation_scale);
 		return vector_add(quat_mul_vector3(vector_mul(scale, point), vqs.rotation), vqs.translation_scale);
@@ -281,7 +281,7 @@ namespace rtm
 
 	/// Multiplies a VQS transform and a 3D point ignoring 3D scale.
 	/// Multiplication order is as follow: world_position = vqs_mul_point3_no_scale(local_position, local_to_world)
-	RTM_DISABLE_SECURITY_COOKIE_CHECK inline vector4d RTM_SIMD_CALL vqs_mul_point3_no_scale(vector4d_arg0 point, vqsd_arg1 vqs) RTM_NO_EXCEPT
+	RTM_DISABLE_SECURITY_COOKIE_CHECK inline vector4d RTM_SIMD_CALL vqs_mul_point3_no_scale(vector4d_arg0 point, vqsd_arg0 vqs) RTM_NO_EXCEPT
 	{
 		return vector_add(quat_mul_vector3(point, vqs.rotation), vqs.translation_scale);
 	}

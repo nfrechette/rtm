@@ -186,7 +186,7 @@ namespace rtm
 	}
 
 	/// Casts a vector4 float64 variant to a float32 variant.
-	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE vector4f RTM_SIMD_CALL vector_cast(const vector4d& input) RTM_NO_EXCEPT
+	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE vector4f RTM_SIMD_CALL vector_cast(vector4d_arg0 input) RTM_NO_EXCEPT
 	{
 #if defined(RTM_SSE2_INTRINSICS)
 		// Do not use _mm_shuffle_ps here. MSVC 19.34 to 19.44 removes the shuffle when [xy] and [zw]

@@ -68,7 +68,7 @@ namespace rtm
 	}
 
 	/// Returns a new 4x4 matrix where the specified axis has been replaced on the input matrix.
-	RTM_DISABLE_SECURITY_COOKIE_CHECK inline matrix4x4d RTM_SIMD_CALL matrix_set_axis(matrix4x4d_arg0 input, vector4d_arg4 axis_value, axis4 axis) RTM_NO_EXCEPT
+	RTM_DISABLE_SECURITY_COOKIE_CHECK inline matrix4x4d RTM_SIMD_CALL matrix_set_axis(matrix4x4d_arg0 input, vector4d_arg1 axis_value, axis4 axis) RTM_NO_EXCEPT
 	{
 		switch (axis)
 		{

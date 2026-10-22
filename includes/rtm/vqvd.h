@@ -382,7 +382,7 @@ namespace rtm
 	/// Returns the inverse of the input VQV transform.
 	/// If the input scale has an absolute value below the supplied threshold, the
 	/// fallback value is used instead.
-	RTM_DISABLE_SECURITY_COOKIE_CHECK inline vqvd RTM_SIMD_CALL vqv_inverse(vqvd_arg0 input, vector4d_arg3 fallback_scale, double threshold = 1.0E-8) RTM_NO_EXCEPT
+	RTM_DISABLE_SECURITY_COOKIE_CHECK inline vqvd RTM_SIMD_CALL vqv_inverse(vqvd_arg0 input, vector4d_arg1 fallback_scale, double threshold = 1.0E-8) RTM_NO_EXCEPT
 	{
 		const quatd inv_rotation = quat_conjugate(input.rotation);
 		const mask4d is_scale_zero = vector_less_equal(vector_abs(input.scale), vector_set(threshold));

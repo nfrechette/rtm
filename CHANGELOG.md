@@ -26,6 +26,11 @@
 *  Fix symmetric rounding for values near 0.5 and for odd values above 2^23 (float32) or 2^52 (float64) on all code paths, for example round(0.49999997) = 0.0
 *  Use the ARM64 round instruction (half away from zero) for vector and scalar symmetric rounding
 *  Pass vqvd, matrix3x4d, and matrix4x4d by reference on ARM64 to remove a copy to the stack
+*  Pass the third vector4d, quatd, mask4d, and mask4q argument by register with `__vectorcall`
+*  Pass the vqd or vqsd of vq_mul_point3, vqs_mul_point3, and vqs_mul_point3_no_scale by register with `__vectorcall`
+*  Pass the vector4d of matrix_set_axis (double) by register with `__vectorcall` and on ARM64
+*  Pass the vector4d of vqv_inverse (double) and qvv_inverse (double) by register with `__vectorcall`
+*  Use the type arg aliases in the casts from double to float types
 *  Fix the argument type of the second input of vq_slerp, vqs_lerp, vqs_lerp_no_scale, vqs_slerp, quat_slerp (double), and vector_neg_mul_sub (vector4d, scalard)
 *  Use a float64 default threshold in quat_near_identity (double): 2.82729655E-7 rad (an error of 1.0E-14 on [w]) replaces the float32 value of 0.00284714461 rad. To keep the previous behavior, give 0.00284714461 as the threshold
 *  Use a square root and a division instead of the reciprocal square root estimate in float32 quat_normalize and quat_lerp with SSE2: the results are more accurate and do not change between Intel and AMD CPUs

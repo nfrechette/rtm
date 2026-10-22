@@ -820,7 +820,7 @@ namespace rtm
 #endif
 
 	/// Returns a floating point pointer to the vector4 data.
-	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE const double* vector_to_pointer(const vector4d& input) RTM_NO_EXCEPT
+	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE const double* RTM_SIMD_CALL vector_to_pointer(const vector4d& input) RTM_NO_EXCEPT
 	{
 		return rtm_impl::bit_cast<const double*>(&input);
 	}

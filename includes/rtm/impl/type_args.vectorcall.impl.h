@@ -96,13 +96,18 @@ namespace rtm
 	using mask4i_arg7 = const mask4i&;
 	using mask4i_argn = const mask4i&;
 
-	// With __vectorcall, vector aggregates are also passed by register and they can use up to 6 registers.
-	// Due to how registers are assigned, we reserve some slack and might not use all 6 available registers.
-	// Non-scalar types using doubles are aggregate types
+	// With __vectorcall, an aggregate of up to 4 vectors of the same type (an HVA) can also use the 6 registers.
+	// The HVA arguments get the registers that remain after the other vector and scalar arguments get their registers.
+	// When not sufficient registers remain, the caller copies the HVA to the stack and passes a pointer to it.
+	// The non-scalar types that use doubles are aggregate types.
+	// A vector4d, quatd, mask4d, or mask4q uses 2 registers. Thus the first 3 arguments can use registers.
+	// A vqd or vqsd uses 4 registers. Thus only the first one can use registers.
+	// When a vqd or vqsd follows a single argument of 2 registers, use vqd_arg0 or vqsd_arg0 because 6 registers are sufficient.
+	// A vqvd or a matrix has more than 4 vectors. It is not an HVA and the caller always passes a pointer.
 
 	using vector4d_arg0 = const vector4d;
 	using vector4d_arg1 = const vector4d;
-	using vector4d_arg2 = const vector4d&;
+	using vector4d_arg2 = const vector4d;
 	using vector4d_arg3 = const vector4d&;
 	using vector4d_arg4 = const vector4d&;
 	using vector4d_arg5 = const vector4d&;
@@ -112,7 +117,7 @@ namespace rtm
 
 	using quatd_arg0 = const quatd;
 	using quatd_arg1 = const quatd;
-	using quatd_arg2 = const quatd&;
+	using quatd_arg2 = const quatd;
 	using quatd_arg3 = const quatd&;
 	using quatd_arg4 = const quatd&;
 	using quatd_arg5 = const quatd&;
@@ -122,7 +127,7 @@ namespace rtm
 
 	using mask4d_arg0 = const mask4d;
 	using mask4d_arg1 = const mask4d;
-	using mask4d_arg2 = const mask4d&;
+	using mask4d_arg2 = const mask4d;
 	using mask4d_arg3 = const mask4d&;
 	using mask4d_arg4 = const mask4d&;
 	using mask4d_arg5 = const mask4d&;
@@ -132,7 +137,7 @@ namespace rtm
 
 	using mask4q_arg0 = const mask4q;
 	using mask4q_arg1 = const mask4q;
-	using mask4q_arg2 = const mask4q&;
+	using mask4q_arg2 = const mask4q;
 	using mask4q_arg3 = const mask4q&;
 	using mask4q_arg4 = const mask4q&;
 	using mask4q_arg5 = const mask4q&;
