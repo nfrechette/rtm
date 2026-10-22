@@ -25,7 +25,7 @@
 *  Compile the Emscripten unit tests with WebAssembly SIMD by default in `make.py`, use `-nosimd` for the scalar code path
 *  Fix symmetric rounding for values near 0.5 and for odd values above 2^23 (float32) or 2^52 (float64) on all code paths, for example round(0.49999997) = 0.0
 *  Use the ARM64 round instruction (half away from zero) for vector and scalar symmetric rounding
-*  Pass vqvd, matrix3x4d, and matrix4x4d by reference on ARM64 to remove a copy to the stack
+*  Pass vqvd, matrix3x3d, matrix3x4d, and matrix4x4d by reference on ARM64 to remove a copy to the stack
 *  Pass the third vector4d, quatd, mask4d, and mask4q argument by register with `__vectorcall`
 *  Pass the vqd or vqsd of vq_mul_point3, vqs_mul_point3, and vqs_mul_point3_no_scale by register with `__vectorcall`
 *  Pass the vector4d of matrix_set_axis (double) by register with `__vectorcall` and on ARM64

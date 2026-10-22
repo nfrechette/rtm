@@ -184,9 +184,7 @@ namespace rtm
 	using matrix3x3f_arg1 = const matrix3x3f;
 	using matrix3x3f_argn = const matrix3x3f&;
 
-	// TODO: Pass by const& as well. With const&, GCC 15.2 stops with an internal compiler error
-	// in simplify-rtx.cc when it compiles test_matrix4x4.cpp.
-	using matrix3x3d_arg0 = const matrix3x3d;
+	using matrix3x3d_arg0 = const matrix3x3d&;
 	using matrix3x3d_arg1 = const matrix3x3d&;
 	using matrix3x3d_argn = const matrix3x3d&;
 
