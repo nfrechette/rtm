@@ -29,10 +29,10 @@ jobs:
           if [ ! -z "${{ secrets.SONAR_TOKEN }}" ]; then
             echo "ok=true" >> $GITHUB_OUTPUT
           fi
-  vs2022:
+  vs2026:
     needs:
       - condition-check
-    runs-on: windows-2022
+    runs-on: windows-2025
     permissions:
       contents: read
       security-events: write    # Upload the SARIF file
@@ -42,7 +42,7 @@ jobs:
         with:
           submodules: 'recursive'
       - name: Generate solution (release-x64)
-        run: python3 make.py -ci -compiler vs2022 -config Release -cpu x64
+        run: python3 make.py -ci -compiler vs2026 -config Release -cpu x64
       - name: Run MSVC Code Analysis
         uses: microsoft/msvc-code-analysis-action@v0.1.1
         id: run-analysis
