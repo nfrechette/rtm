@@ -98,7 +98,7 @@ namespace rtm
 
 	/// Returns the inverse of the input VQV transform with a fallback scale.
 	RTM_DEPRECATED("Use 'vqv_inverse' instead. To be removed in 2.5.")
-	RTM_DISABLE_SECURITY_COOKIE_CHECK inline vqvd RTM_SIMD_CALL qvv_inverse(vqvd_arg0 input, vector4d_arg3 fallback_scale, double threshold = 1.0E-8) RTM_NO_EXCEPT
+	RTM_DISABLE_SECURITY_COOKIE_CHECK inline vqvd RTM_SIMD_CALL qvv_inverse(vqvd_arg0 input, vector4d_arg1 fallback_scale, double threshold = 1.0E-8) RTM_NO_EXCEPT
 	{
 		return vqv_inverse(input, fallback_scale, threshold);
 	}

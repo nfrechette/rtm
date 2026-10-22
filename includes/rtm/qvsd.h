@@ -98,14 +98,14 @@ namespace rtm
 
 	/// Multiplies a VQS transform and a 3D point.
 	RTM_DEPRECATED("Use 'vqs_mul_point3' instead. To be removed in 2.5.")
-	RTM_DISABLE_SECURITY_COOKIE_CHECK inline vector4d RTM_SIMD_CALL qvs_mul_point3(vector4d_arg0 point, vqsd_arg1 vqs) RTM_NO_EXCEPT
+	RTM_DISABLE_SECURITY_COOKIE_CHECK inline vector4d RTM_SIMD_CALL qvs_mul_point3(vector4d_arg0 point, vqsd_arg0 vqs) RTM_NO_EXCEPT
 	{
 		return vqs_mul_point3(point, vqs);
 	}
 
 	/// Multiplies a VQS transform and a 3D point ignoring 3D scale.
 	RTM_DEPRECATED("Use 'vqs_mul_point3_no_scale' instead. To be removed in 2.5.")
-	RTM_DISABLE_SECURITY_COOKIE_CHECK inline vector4d RTM_SIMD_CALL qvs_mul_point3_no_scale(vector4d_arg0 point, vqsd_arg1 vqs) RTM_NO_EXCEPT
+	RTM_DISABLE_SECURITY_COOKIE_CHECK inline vector4d RTM_SIMD_CALL qvs_mul_point3_no_scale(vector4d_arg0 point, vqsd_arg0 vqs) RTM_NO_EXCEPT
 	{
 		return vqs_mul_point3_no_scale(point, vqs);
 	}

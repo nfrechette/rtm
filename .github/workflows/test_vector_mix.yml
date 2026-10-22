@@ -105,19 +105,14 @@ jobs:
       - name: Running unit tests (release-arm64 ${{ matrix.simd }})
         run: python3 make.py -ci -compiler osx -config Release ${{ matrix.simd }} -vector_mix_test -unit_test
 
-  vs2022:
-    runs-on: windows-2022
+  vs2026:
+    runs-on: windows-2025
     strategy:
       fail-fast: false
       matrix:
-        compiler: [vs2022, vs2022-clang]
+        compiler: [vs2026, vs2026-clang]
         cpu: [x86, x64]
         simd: [-simd, -nosimd, -avx]
-        exclude:
-          # Don't run x86 AVX with VS2022 to avoid toolchain code generation bug, see #248
-          - compiler: vs2022
-            cpu: x86
-            simd: -avx
     steps:
       - name: Git checkout
         uses: actions/checkout@v7

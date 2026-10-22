@@ -820,7 +820,7 @@ namespace rtm
 #endif
 
 	/// Returns a floating point pointer to the vector4 data.
-	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE const double* vector_to_pointer(const vector4d& input) RTM_NO_EXCEPT
+	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE const double* RTM_SIMD_CALL vector_to_pointer(const vector4d& input) RTM_NO_EXCEPT
 	{
 		return rtm_impl::bit_cast<const double*>(&input);
 	}
@@ -2904,6 +2904,27 @@ namespace rtm
 #endif
 	}
 
+#if defined(RTM_SSE4_INTRINSICS)
+	namespace rtm_impl
+	{
+		//////////////////////////////////////////////////////////////////////////
+		// Returns _mm_blend_pd(input0, input1, mask).
+		//////////////////////////////////////////////////////////////////////////
+		template<int mask>
+		RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE __m128d RTM_SIMD_CALL vector_mix_blend_pd(__m128d input0, __m128d input1) RTM_NO_EXCEPT
+		{
+	#if defined(RTM_COMPILER_MSVC) && defined(RTM_ARCH_X86) && defined(RTM_AVX_INTRINSICS)
+			// MSVC 19.44 and 19.51 for x86 with AVX remove the blend when the mask is 1 and input1 is zero.
+			// The result is then input0. _mm_move_sd gives the same result as the blend.
+			if (static_condition<mask == 1>::test())
+				return _mm_move_sd(input0, input1);
+	#endif
+
+			return _mm_blend_pd(input0, input1, mask);
+		}
+	}
+#endif
+
 #if defined(RTM_NEON64_INTRINSICS)
 	namespace rtm_impl
 	{
@@ -2973,21 +2994,21 @@ namespace rtm
 		else if (rtm_impl::static_condition<(comp0 == mix4::x || comp0 == mix4::z) && (comp1 == mix4::y || comp1 == mix4::w)>::test())
 		{
 			constexpr int mask = (comp0 == mix4::z ? 1 : 0) | (comp1 == mix4::w ? 2 : 0);
-			result_xy = _mm_blend_pd(input0.xy, input0.zw, mask);
+			result_xy = rtm_impl::vector_mix_blend_pd<mask>(input0.xy, input0.zw);
 		}
 
 		// xy0 xy1
 		else if (rtm_impl::static_condition<(comp0 == mix4::x || comp0 == mix4::a) && (comp1 == mix4::y || comp1 == mix4::b)>::test())
 		{
 			constexpr int mask = (comp0 == mix4::a ? 1 : 0) | (comp1 == mix4::b ? 2 : 0);
-			result_xy = _mm_blend_pd(input0.xy, input1.xy, mask);
+			result_xy = rtm_impl::vector_mix_blend_pd<mask>(input0.xy, input1.xy);
 		}
 
 		// xy0 zw1
 		else if (rtm_impl::static_condition<(comp0 == mix4::x || comp0 == mix4::c) && (comp1 == mix4::y || comp1 == mix4::d)>::test())
 		{
 			constexpr int mask = (comp0 == mix4::c ? 1 : 0) | (comp1 == mix4::d ? 2 : 0);
-			result_xy = _mm_blend_pd(input0.xy, input1.zw, mask);
+			result_xy = rtm_impl::vector_mix_blend_pd<mask>(input0.xy, input1.zw);
 		}
 
 		// xy1 xy0	duplicate
@@ -2995,7 +3016,7 @@ namespace rtm
 		else if (rtm_impl::static_condition<(comp0 == mix4::a || comp0 == mix4::z) && (comp1 == mix4::b || comp1 == mix4::w)>::test())
 		{
 			constexpr int mask = (comp0 == mix4::z ? 1 : 0) | (comp1 == mix4::w ? 2 : 0);
-			result_xy = _mm_blend_pd(input1.xy, input0.zw, mask);
+			result_xy = rtm_impl::vector_mix_blend_pd<mask>(input1.xy, input0.zw);
 		}
 
 		// xy1 xy1	duplicate
@@ -3003,7 +3024,7 @@ namespace rtm
 		else if (rtm_impl::static_condition<(comp0 == mix4::a || comp0 == mix4::c) && (comp1 == mix4::b || comp1 == mix4::d)>::test())
 		{
 			constexpr int mask = (comp0 == mix4::c ? 1 : 0) | (comp1 == mix4::d ? 2 : 0);
-			result_xy = _mm_blend_pd(input1.xy, input1.zw, mask);
+			result_xy = rtm_impl::vector_mix_blend_pd<mask>(input1.xy, input1.zw);
 		}
 	#endif // defined(RTM_SSE4_INTRINSICS)
 
@@ -3294,21 +3315,21 @@ namespace rtm
 		else if (rtm_impl::static_condition<(comp2 == mix4::x || comp2 == mix4::z) && (comp3 == mix4::y || comp3 == mix4::w)>::test())
 		{
 			constexpr int mask = (comp2 == mix4::z ? 1 : 0) | (comp3 == mix4::w ? 2 : 0);
-			result_zw = _mm_blend_pd(input0.xy, input0.zw, mask);
+			result_zw = rtm_impl::vector_mix_blend_pd<mask>(input0.xy, input0.zw);
 		}
 
 		// xy0 xy1
 		else if (rtm_impl::static_condition<(comp2 == mix4::x || comp2 == mix4::a) && (comp3 == mix4::y || comp3 == mix4::b)>::test())
 		{
 			constexpr int mask = (comp2 == mix4::a ? 1 : 0) | (comp3 == mix4::b ? 2 : 0);
-			result_zw = _mm_blend_pd(input0.xy, input1.xy, mask);
+			result_zw = rtm_impl::vector_mix_blend_pd<mask>(input0.xy, input1.xy);
 		}
 
 		// xy0 zw1
 		else if (rtm_impl::static_condition<(comp2 == mix4::x || comp2 == mix4::c) && (comp3 == mix4::y || comp3 == mix4::d)>::test())
 		{
 			constexpr int mask = (comp2 == mix4::c ? 1 : 0) | (comp3 == mix4::d ? 2 : 0);
-			result_zw = _mm_blend_pd(input0.xy, input1.zw, mask);
+			result_zw = rtm_impl::vector_mix_blend_pd<mask>(input0.xy, input1.zw);
 		}
 
 		// xy1 xy0	duplicate
@@ -3316,7 +3337,7 @@ namespace rtm
 		else if (rtm_impl::static_condition<(comp2 == mix4::a || comp2 == mix4::z) && (comp3 == mix4::b || comp3 == mix4::w)>::test())
 		{
 			constexpr int mask = (comp2 == mix4::z ? 1 : 0) | (comp3 == mix4::w ? 2 : 0);
-			result_zw = _mm_blend_pd(input1.xy, input0.zw, mask);
+			result_zw = rtm_impl::vector_mix_blend_pd<mask>(input1.xy, input0.zw);
 		}
 
 		// xy1 xy1	duplicate
@@ -3324,7 +3345,7 @@ namespace rtm
 		else if (rtm_impl::static_condition<(comp2 == mix4::a || comp2 == mix4::c) && (comp3 == mix4::b || comp3 == mix4::d)>::test())
 		{
 			constexpr int mask = (comp2 == mix4::c ? 1 : 0) | (comp3 == mix4::d ? 2 : 0);
-			result_zw = _mm_blend_pd(input1.xy, input1.zw, mask);
+			result_zw = rtm_impl::vector_mix_blend_pd<mask>(input1.xy, input1.zw);
 		}
 	#endif // defined(RTM_SSE4_INTRINSICS)
 
@@ -4188,7 +4209,15 @@ namespace rtm
 		scalard y_ = scalar_atan2(vector_get_y_as_scalar(y), vector_get_y_as_scalar(x));
 		scalard z_ = scalar_atan2(vector_get_z_as_scalar(y), vector_get_z_as_scalar(x));
 		scalard w_ = scalar_atan2(vector_get_w_as_scalar(y), vector_get_w_as_scalar(x));
+#if defined(RTM_SSE2_INTRINSICS)
+		// Do not use vector_set here. With vector_set, MSVC 19.51 for x64 (VS2026) returns the [xy] result
+		// in the place of the [zw] result. The cause is in the optimizer, not in _mm_unpacklo_pd. The shuffle
+		// changes the code enough to avoid the defect, but a small change can bring it back.
+		// The shuffle gives the same result as vector_set.
+		return vector4d{ _mm_shuffle_pd(x_.value, y_.value, 0), _mm_shuffle_pd(z_.value, w_.value, 0) };
+#else
 		return vector_set(x_, y_, z_, w_);
+#endif
 	}
 
 	/// \}

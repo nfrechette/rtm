@@ -42,7 +42,7 @@ namespace rtm
 
 	/// Casts a VQ transform float64 variant to a float32 variant.
 	RTM_DEPRECATED("Use 'vq_cast' instead. To be removed in 2.5.")
-	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE vqf RTM_SIMD_CALL qv_cast(const vqd& input) RTM_NO_EXCEPT
+	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE vqf RTM_SIMD_CALL qv_cast(vqd_arg0 input) RTM_NO_EXCEPT
 	{
 		return vq_cast(input);
 	}

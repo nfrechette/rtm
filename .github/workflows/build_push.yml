@@ -197,20 +197,20 @@ jobs:
         with:
           args: 'python3 make.py -ci -compiler emscripten -config release -unit_test -nosimd'
 
-  vs2022:
-    runs-on: windows-2022
+  vs2026:
+    runs-on: windows-2025
     strategy:
       matrix:
-        compiler: [vs2022, vs2022-clang]
+        compiler: [vs2026, vs2026-clang]
         build_config: [debug, release]
         cpu: [x64, arm64, arm64ec]
         simd: [-simd, -nosimd, -avx]
         exclude:
           # Don't run arm64 with clang
-          - compiler: vs2022-clang
+          - compiler: vs2026-clang
             cpu: arm64
           # Don't run arm64ec with clang
-          - compiler: vs2022-clang
+          - compiler: vs2026-clang
             cpu: arm64ec
           # Don't run AVX with arm64
           - cpu: arm64

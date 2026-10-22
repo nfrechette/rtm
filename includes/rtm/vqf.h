@@ -41,7 +41,7 @@ namespace rtm
 	RTM_IMPL_VERSION_NAMESPACE_BEGIN
 
 	/// Casts a VQ transform float64 variant to a float32 variant.
-	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE vqf RTM_SIMD_CALL vq_cast(const vqd& input) RTM_NO_EXCEPT
+	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE vqf RTM_SIMD_CALL vq_cast(vqd_arg0 input) RTM_NO_EXCEPT
 	{
 		return vqf{ quat_cast(input.rotation), vector_cast(input.translation) };
 	}

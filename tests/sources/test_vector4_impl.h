@@ -1565,6 +1565,27 @@ void test_vector4_logical_impl()
 	CHECK(vector_all_near_equal(vector_xor(test_value0, test_value2), reference_vector_xor<FloatType>(test_value0, test_value2), FloatType(0.0)));
 }
 
+// A mix that takes one lane from a zero input. MSVC for x86 with AVX removes a blend with mask 1
+// when the second input is zero (VS2022 and VS2026). This function is small because the optimizer
+// does not remove the blend in a large function such as test_vector4_impl.
+template<typename FloatType>
+void test_vector4_mix_zero_impl()
+{
+	using Vector4Type = typename related_types<FloatType>::vector4;
+
+	const Vector4Type zero = vector_zero();
+
+	const FloatType test_value0_flt[4] = { FloatType(2.0), FloatType(9.34), FloatType(-54.12), FloatType(6000.0) };
+	const Vector4Type test_value0 = vector_set(test_value0_flt[0], test_value0_flt[1], test_value0_flt[2], test_value0_flt[3]);
+
+	CHECK(vector_all_near_equal(vector_mix<mix4::a, mix4::y, mix4::z, mix4::w>(test_value0, zero), vector_set(FloatType(0.0), test_value0_flt[1], test_value0_flt[2], test_value0_flt[3]), FloatType(0.0)));
+	CHECK(vector_all_near_equal(vector_mix<mix4::x, mix4::b, mix4::z, mix4::w>(test_value0, zero), vector_set(test_value0_flt[0], FloatType(0.0), test_value0_flt[2], test_value0_flt[3]), FloatType(0.0)));
+	CHECK(vector_all_near_equal(vector_mix<mix4::x, mix4::y, mix4::c, mix4::w>(test_value0, zero), vector_set(test_value0_flt[0], test_value0_flt[1], FloatType(0.0), test_value0_flt[3]), FloatType(0.0)));
+	CHECK(vector_all_near_equal(vector_mix<mix4::x, mix4::y, mix4::z, mix4::d>(test_value0, zero), vector_set(test_value0_flt[0], test_value0_flt[1], test_value0_flt[2], FloatType(0.0)), FloatType(0.0)));
+	CHECK(vector_all_near_equal(vector_mix<mix4::c, mix4::y, mix4::z, mix4::w>(test_value0, zero), vector_set(FloatType(0.0), test_value0_flt[1], test_value0_flt[2], test_value0_flt[3]), FloatType(0.0)));
+	CHECK(vector_all_near_equal(vector_mix<mix4::z, mix4::b, mix4::z, mix4::w>(zero, test_value0), vector_set(FloatType(0.0), test_value0_flt[1], FloatType(0.0), FloatType(0.0)), FloatType(0.0)));
+}
+
 template<typename FloatType>
 void test_vector4_impl(const FloatType threshold)
 {

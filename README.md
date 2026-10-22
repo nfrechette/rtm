@@ -33,6 +33,7 @@ Much thought was put into designing the library for it to be as flexible and pow
 Continuous integration tests a variety of platforms and configurations but it generally runs as-is anywhere where C++11 (or later) is supported. CI currently tests:
 
 *  Windows VS2022: x86, x64, ARM64, ARM64EC
+*  Windows VS2026: x86, x64, ARM64, ARM64EC
 *  Linux GCC 14+: x86, x64, ARMv7, ARM64
 *  Linux Clang 22+: x86, x64, ARMv7, ARM64
 *  OS X XCode 16+: ARM64

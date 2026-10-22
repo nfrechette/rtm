@@ -70,7 +70,7 @@ namespace rtm
 
 	/// Multiplies a VQ transform and a 3D point.
 	RTM_DEPRECATED("Use 'vq_mul_point3' instead. To be removed in 2.5.")
-	RTM_DISABLE_SECURITY_COOKIE_CHECK inline vector4d RTM_SIMD_CALL qv_mul_point3(vector4d_arg0 point, vqd_arg1 vq) RTM_NO_EXCEPT
+	RTM_DISABLE_SECURITY_COOKIE_CHECK inline vector4d RTM_SIMD_CALL qv_mul_point3(vector4d_arg0 point, vqd_arg0 vq) RTM_NO_EXCEPT
 	{
 		return vq_mul_point3(point, vq);
 	}

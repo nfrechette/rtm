@@ -12,6 +12,10 @@
 *  Fix vector floor and ceil on ARMv7 to keep the sign of a zero result, as the other code paths do
 *  Add support for native ARMv7 builds on Linux to `make.py`
 *  Add GCC 14, GCC 15, and Clang 19 to 23 to `make.py`
+*  Add support for VS2026: add `vs2026` and `vs2026-clang` to `make.py` and add `RTM_COMPILER_MSVC_2026`
+*  Add support for ARM64EC with MSVC: RTM defines `RTM_ARCH_ARM64` and uses the ARM64 NEON code path, and `make.py` adds `-cpu arm64ec`
+*  Fix vector_atan2 (vector4d) with SSE2 and MSVC 19.51 for x64: the compiler uses the [xy] result for [zw]
+*  Fix vector_mix and matrix_from_scale with MSVC 19.44 and 19.51 for x86 with AVX: when the mix takes only [x] from a zero input, the compiler removes the blend
 *  Add the `-analyze` action to `make.py` to run the clang static analyzer on the public headers
 *  Update Google Benchmark to 1.9.5
 *  Use float64 SIMD on ARM64: vector4d, quatd, mask4d, and mask4q are now two 2-lane registers, as with SSE2
@@ -21,7 +25,12 @@
 *  Compile the Emscripten unit tests with WebAssembly SIMD by default in `make.py`, use `-nosimd` for the scalar code path
 *  Fix symmetric rounding for values near 0.5 and for odd values above 2^23 (float32) or 2^52 (float64) on all code paths, for example round(0.49999997) = 0.0
 *  Use the ARM64 round instruction (half away from zero) for vector and scalar symmetric rounding
-*  Pass vqvd, matrix3x4d, and matrix4x4d by reference on ARM64 to remove a copy to the stack
+*  Pass vqvd, matrix3x3d, matrix3x4d, and matrix4x4d by reference on ARM64 to remove a copy to the stack
+*  Pass the third vector4d, quatd, mask4d, and mask4q argument by register with `__vectorcall`
+*  Pass the vqd or vqsd of vq_mul_point3, vqs_mul_point3, and vqs_mul_point3_no_scale by register with `__vectorcall`
+*  Pass the vector4d of matrix_set_axis (double) by register with `__vectorcall` and on ARM64
+*  Pass the vector4d of vqv_inverse (double) and qvv_inverse (double) by register with `__vectorcall`
+*  Use the type arg aliases in the casts from double to float types
 *  Fix the argument type of the second input of vq_slerp, vqs_lerp, vqs_lerp_no_scale, vqs_slerp, quat_slerp (double), and vector_neg_mul_sub (vector4d, scalard)
 *  Use a float64 default threshold in quat_near_identity (double): 2.82729655E-7 rad (an error of 1.0E-14 on [w]) replaces the float32 value of 0.00284714461 rad. To keep the previous behavior, give 0.00284714461 as the threshold
 *  Use a square root and a division instead of the reciprocal square root estimate in float32 quat_normalize and quat_lerp with SSE2: the results are more accurate and do not change between Intel and AMD CPUs

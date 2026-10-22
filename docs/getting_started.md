@@ -6,7 +6,7 @@ In order to contribute to RTM you will first need to setup your environment.
 
 ### Windows, Linux, and OS X for x86 and x64
 
-1. Install *CMake 3.2* or higher (*3.14* for Visual Studio 2019, or *3.10* on OS X with *Xcode 10*), *Python 2.7 or 3*, and the proper compiler for your platform.
+1. Install *CMake 3.2* or higher (*3.14* for Visual Studio 2019, *4.2* for Visual Studio 2026, or *3.10* on OS X with *Xcode 10*), *Python 2.7 or 3*, and the proper compiler for your platform.
 2. Execute `git submodule update --init` to get the files of external submodules (e.g. Catch2).
 3. Generate the IDE solution with: `python make.py`  
    The solution is generated under `./build`
@@ -34,6 +34,12 @@ With SIMD enabled, the build adds `-mfpu=neon` because the Linux `armhf` compile
 ### Windows ARM64
 
 For *Windows on ARM64*, the steps are identical to *x86 and x64* but you will need *CMake 3.13 or higher* and you must provide the architecture on the command line: `python make.py -compiler vs2017 -cpu arm64`
+
+### Windows ARM64EC
+
+For *Windows on ARM64EC*, the steps are identical to *Windows ARM64*. ARM64EC needs *Visual Studio 2019* or later. You must provide the architecture on the command line: `python make.py -compiler vs2022 -cpu arm64ec`
+
+On an x64 host, `make.py` cross-compiles. It does not register the unit tests with CTest, thus `-unit_test` does not run them. To run the unit tests, use an ARM64 host.
 
 ### Android
 

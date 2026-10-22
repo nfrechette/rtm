@@ -12,6 +12,8 @@ Various versions of SSE are supported: SSE2, SSE3, SSE4, AVX, AVX2, and FMA.
 
 Both ARM NEON and ARM64 NEON are supported.
 
+ARM64EC uses the ARM64 NEON code path. MSVC also defines `_M_X64` for ARM64EC, but RTM does not use the SSE intrinsics there because ARM64EC emulates them. RTM does not use `__vectorcall` on ARM64EC.
+
 ## WebAssembly
 
 WebAssembly SIMD128 is supported. To enable it, compile with `-msimd128`. Clang then defines `__wasm_simd128__` and RTM defines `RTM_WASM128_INTRINSICS`. Without `-msimd128`, RTM uses the scalar code path.

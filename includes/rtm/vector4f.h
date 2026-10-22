@@ -186,7 +186,7 @@ namespace rtm
 	}
 
 	/// Casts a vector4 float64 variant to a float32 variant.
-	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE vector4f RTM_SIMD_CALL vector_cast(const vector4d& input) RTM_NO_EXCEPT
+	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE vector4f RTM_SIMD_CALL vector_cast(vector4d_arg0 input) RTM_NO_EXCEPT
 	{
 #if defined(RTM_SSE2_INTRINSICS)
 		// Do not use _mm_shuffle_ps here. MSVC 19.34 to 19.44 removes the shuffle when [xy] and [zw]
@@ -3404,6 +3404,14 @@ namespace rtm
         {
             constexpr int mask = (comp0 == mix4::a ? 1 : 0) | (comp1 == mix4::b ? 2 : 0) |
                                  (comp2 == mix4::c ? 4 : 0) | (comp3 == mix4::d ? 8 : 0);
+
+		#if defined(RTM_COMPILER_MSVC) && defined(RTM_ARCH_X86) && defined(RTM_AVX_INTRINSICS)
+            // MSVC 19.44 and 19.51 for x86 with AVX remove the blend when the mask is 1 and input1 is zero.
+            // The result is then input0. _mm_move_ss gives the same result as the blend.
+            if (rtm_impl::static_condition<mask == 1>::test())
+                return _mm_move_ss(input0, input1);
+		#endif
+
             return _mm_blend_ps(input0, input1, mask);
         }
 
