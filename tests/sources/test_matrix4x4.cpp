@@ -280,10 +280,12 @@ static void test_matrix4x4_transformations(const FloatType threshold)
 		Vector4Type translation = vector_set(FloatType(1.0), FloatType(2.0), FloatType(3.0));
 		Vector4Type scale = vector_set(FloatType(4.0), FloatType(5.0), FloatType(6.0));
 		Matrix3x4Type mtx3x4 = matrix_from_vqv(rotation_around_z, translation, scale);
-		mtx3x4.x_axis = vector_set(vector_get_x(mtx3x4.x_axis), vector_get_y(mtx3x4.x_axis), vector_get_z(mtx3x4.x_axis), FloatType(0.0));
-		mtx3x4.y_axis = vector_set(vector_get_x(mtx3x4.y_axis), vector_get_y(mtx3x4.y_axis), vector_get_z(mtx3x4.y_axis), FloatType(0.0));
-		mtx3x4.z_axis = vector_set(vector_get_x(mtx3x4.z_axis), vector_get_y(mtx3x4.z_axis), vector_get_z(mtx3x4.z_axis), FloatType(0.0));
-		mtx3x4.w_axis = vector_set(vector_get_x(mtx3x4.w_axis), vector_get_y(mtx3x4.w_axis), vector_get_z(mtx3x4.w_axis), FloatType(1.0));
+		// Do not use vector_set with the [xyz] components of the axis: that code causes an internal
+		// compiler error with GCC 14 to 16 on ARM64, see GCC bug 127976.
+		mtx3x4.x_axis = vector_set_w(mtx3x4.x_axis, FloatType(0.0));
+		mtx3x4.y_axis = vector_set_w(mtx3x4.y_axis, FloatType(0.0));
+		mtx3x4.z_axis = vector_set_w(mtx3x4.z_axis, FloatType(0.0));
+		mtx3x4.w_axis = vector_set_w(mtx3x4.w_axis, FloatType(1.0));
 		Matrix4x4Type mtx = matrix_cast(mtx3x4);
 		Matrix4x4Type inv_mtx = matrix_inverse(mtx);
 		Matrix4x4Type result = matrix_mul(mtx, inv_mtx);
@@ -298,10 +300,12 @@ static void test_matrix4x4_transformations(const FloatType threshold)
 		Vector4Type translation = vector_set(FloatType(1.0), FloatType(2.0), FloatType(3.0));
 		Vector4Type scale = vector_set(FloatType(4.0), FloatType(5.0), FloatType(6.0));
 		Matrix3x4Type mtx3x4 = matrix_from_vqv(rotation_around_z, translation, scale);
-		mtx3x4.x_axis = vector_set(vector_get_x(mtx3x4.x_axis), vector_get_y(mtx3x4.x_axis), vector_get_z(mtx3x4.x_axis), FloatType(0.0));
-		mtx3x4.y_axis = vector_set(vector_get_x(mtx3x4.y_axis), vector_get_y(mtx3x4.y_axis), vector_get_z(mtx3x4.y_axis), FloatType(0.0));
-		mtx3x4.z_axis = vector_set(vector_get_x(mtx3x4.z_axis), vector_get_y(mtx3x4.z_axis), vector_get_z(mtx3x4.z_axis), FloatType(0.0));
-		mtx3x4.w_axis = vector_set(vector_get_x(mtx3x4.w_axis), vector_get_y(mtx3x4.w_axis), vector_get_z(mtx3x4.w_axis), FloatType(1.0));
+		// Do not use vector_set with the [xyz] components of the axis: that code causes an internal
+		// compiler error with GCC 14 to 16 on ARM64, see GCC bug 127976.
+		mtx3x4.x_axis = vector_set_w(mtx3x4.x_axis, FloatType(0.0));
+		mtx3x4.y_axis = vector_set_w(mtx3x4.y_axis, FloatType(0.0));
+		mtx3x4.z_axis = vector_set_w(mtx3x4.z_axis, FloatType(0.0));
+		mtx3x4.w_axis = vector_set_w(mtx3x4.w_axis, FloatType(1.0));
 		Matrix4x4Type mtx = matrix_cast(mtx3x4);
 		Matrix4x4Type inv_mtx = matrix_inverse(mtx, mtx);
 		Matrix4x4Type result = matrix_mul(mtx, inv_mtx);
