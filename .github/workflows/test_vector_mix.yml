@@ -113,11 +113,6 @@ jobs:
         compiler: [vs2022, vs2022-clang]
         cpu: [x86, x64]
         simd: [-simd, -nosimd, -avx]
-        exclude:
-          # Don't run x86 AVX with VS2022 to avoid toolchain code generation bug, see #248
-          - compiler: vs2022
-            cpu: x86
-            simd: -avx
     steps:
       - name: Git checkout
         uses: actions/checkout@v7

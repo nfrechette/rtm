@@ -277,10 +277,6 @@ jobs:
           # Don't run AVX with arm64ec
           - cpu: arm64ec
             simd: -avx
-          # Don't run x86 AVX with VS2022 to avoid toolchain code generation bug, see #248
-          - compiler: vs2022
-            cpu: x86
-            simd: -avx
     steps:
       - name: Git checkout
         uses: actions/checkout@v7
