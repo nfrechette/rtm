@@ -75,16 +75,10 @@ RTM_FORCE_NOINLINE float RTM_SIMD_CALL scalar_round_symmetric_2(float input) RTM
 
 	const float fractional_limit = 8388608.0F; // 2^23
 
-	// Build our mask, larger values that have no fractional part, and infinities will be true
-	// Smaller values and NaN will be false
+	// Build our mask, larger values that have no fractional part, infinities, and NaN will be true
+	// The comparison is false for NaN
 	float abs_input = std::abs(input);
-	bool is_input_large = abs_input >= fractional_limit;
-
-	// Test if our input is NaN with (value != value), it is only true for NaN
-	bool is_nan = input != input;
-
-	// Combine our masks to determine if we should return the original value
-	bool use_original_input = is_input_large | is_nan;
+	bool use_original_input = !(abs_input < fractional_limit);
 
 	// For positive values, we add a bias of 0.5.
 	// For negative values, we add a bias of -0.5.
