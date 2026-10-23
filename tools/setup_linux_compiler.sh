@@ -20,7 +20,7 @@ fi
 
 # If using clang, add our apt source key
 if [[ $COMPILER == clang* ]]; then
-    curl -sSL "https://apt.llvm.org/llvm-snapshot.gpg.key" | sudo -E apt-key add - ;
+    curl --proto "=https" -sSL "https://apt.llvm.org/llvm-snapshot.gpg.key" | sudo -E apt-key add - ;
 fi
 
 # Convert our clang compiler into a list of packages it needs and its source
