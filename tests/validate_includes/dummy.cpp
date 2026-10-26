@@ -24,4 +24,7 @@
 
 // We define a single symbol here to avoid a warning when we build our static library
 // to validate includes
-void some_function() {}
+void some_function()
+{
+	// This function is empty because the library only needs the symbol
+}
