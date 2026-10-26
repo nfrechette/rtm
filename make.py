@@ -77,7 +77,7 @@ def parse_argv():
 		if not args.cpu:
 			args.cpu = 'arm64'
 
-		if not platform.system() == 'Windows':
+		if platform.system() != 'Windows':
 			print('Android is only supported on Windows')
 			sys.exit(1)
 
@@ -85,14 +85,14 @@ def parse_argv():
 			print('AVX and AVX2 are not supported on Android')
 			sys.exit(1)
 
-		if not args.cpu in ['armv7', 'arm64']:
+		if args.cpu not in ['armv7', 'arm64']:
 			print('{} cpu architecture not in supported list [armv7, arm64] for Android'.format(args.cpu))
 			sys.exit(1)
 	elif args.compiler == 'ios':
 		if not args.cpu:
 			args.cpu = 'arm64'
 
-		if not platform.system() == 'Darwin':
+		if platform.system() != 'Darwin':
 			print('iOS is only supported on OS X')
 			sys.exit(1)
 
@@ -104,14 +104,14 @@ def parse_argv():
 			print('Unit tests cannot run from the command line on iOS')
 			sys.exit(1)
 
-		if not args.cpu in ['arm64']:
+		if args.cpu not in ['arm64']:
 			print('{} cpu architecture not in supported list [arm64] for iOS'.format(args.cpu))
 			sys.exit(1)
 	elif args.compiler == 'emscripten':
 		if not args.cpu:
 			args.cpu = 'wasm'
 
-		if not platform.system() == 'Darwin' and not platform.system() == 'Linux':
+		if platform.system() != 'Darwin' and platform.system() != 'Linux':
 			print('Emscripten is only supported on OS X and Linux')
 			sys.exit(1)
 
@@ -119,7 +119,7 @@ def parse_argv():
 			print('AVX and AVX2 are not supported on Emscripten')
 			sys.exit(1)
 
-		if not args.cpu in ['wasm']:
+		if args.cpu not in ['wasm']:
 			print('{} cpu architecture not in supported list [wasm] for Emscripten'.format(args.cpu))
 			sys.exit(1)
 	else:
@@ -141,16 +141,14 @@ def parse_argv():
 			is_arm_supported = True
 
 		# Native compilation
-		if platform.system() == 'Darwin' and is_arm64_cpu:
-			is_arm_supported = True
-		elif platform.system() == 'Linux' and is_arm64_cpu:
+		if platform.system() in ['Darwin', 'Linux'] and is_arm64_cpu:
 			is_arm_supported = True
 
 		if not is_arm_supported:
 			print('arm64 is only supported with VS2017, VS2019, VS2022, VS2026, OS X (M* processors), Linux, Android, and iOS')
 			sys.exit(1)
 	elif args.cpu == 'arm64ec':
-		if not args.compiler in ['vs2019', 'vs2022', 'vs2026']:
+		if args.compiler not in ['vs2019', 'vs2022', 'vs2026']:
 			print('arm64ec is only supported with VS2019, VS2022, and VS2026')
 			sys.exit(1)
 	elif args.cpu == 'armv7':
@@ -168,13 +166,12 @@ def parse_argv():
 			print('armv7 is only supported with Linux and Android')
 			sys.exit(1)
 	elif args.cpu == 'riscv64':
-		if not platform.system() == 'Linux' or not is_riscv64_cpu:
+		if platform.system() != 'Linux' or not is_riscv64_cpu:
 			print('riscv64 is only supported natively on Linux hosts with a riscv64 compiler target; use CMake directly with a proper toolchain file for cross-compilation')
 			sys.exit(1)
-	elif args.cpu == 'wasm':
-		if not args.compiler == 'emscripten':
-			print('wasm is only supported with Emscripten')
-			sys.exit(1)
+	elif args.cpu == 'wasm' and args.compiler != 'emscripten':
+		print('wasm is only supported with Emscripten')
+		sys.exit(1)
 
 	if args.analyze:
 		# The static analyzer reads compile_commands.json, which only the Makefile and Ninja generators write
@@ -241,18 +238,10 @@ def get_architecture(compiler, cpu):
 		return None
 
 	if platform.system() == 'Windows':
-		if compiler == 'vs2017':
-			if cpu == 'arm64':
-				return 'ARM64'
+		if compiler == 'vs2017' and cpu == 'arm64':
+			return 'ARM64'
 
-		is_modern_vs = False
-		if compiler == 'vs2019' or compiler == 'vs2019-clang':
-			is_modern_vs = True
-		elif compiler == 'vs2022' or compiler == 'vs2022-clang':
-			is_modern_vs = True
-		elif compiler == 'vs2026' or compiler == 'vs2026-clang':
-			is_modern_vs = True
-
+		is_modern_vs = compiler in ['vs2019', 'vs2019-clang', 'vs2022', 'vs2022-clang', 'vs2026', 'vs2026-clang']
 		if is_modern_vs:
 			if cpu == 'x86':
 				return 'Win32'
@@ -271,7 +260,7 @@ def get_toolchain(compiler, cmake_script_dir):
 	# No toolchain
 	return None
 
-def set_compiler_env(compiler, args):
+def set_compiler_env(compiler):
 	if platform.system() == 'Linux':
 		if compiler == 'clang4':
 			os.environ['CC'] = 'clang-4.0'
@@ -382,7 +371,7 @@ def do_generate_solution(build_dir, cmake_script_dir, args):
 	is_arm64_cpu = is_arm64_host()
 
 	if compiler:
-		set_compiler_env(compiler, args)
+		set_compiler_env(compiler)
 
 	extra_switches = ['--no-warn-unused-cli']
 	extra_switches.append('-DCPU_INSTRUCTION_SET:STRING={}'.format(cpu))
