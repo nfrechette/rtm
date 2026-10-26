@@ -77,7 +77,7 @@ def parse_argv():
 		if not args.cpu:
 			args.cpu = 'arm64'
 
-		if not platform.system() == 'Windows':
+		if platform.system() != 'Windows':
 			print('Android is only supported on Windows')
 			sys.exit(1)
 
@@ -85,14 +85,14 @@ def parse_argv():
 			print('AVX and AVX2 are not supported on Android')
 			sys.exit(1)
 
-		if not args.cpu in ['armv7', 'arm64']:
+		if args.cpu not in ['armv7', 'arm64']:
 			print('{} cpu architecture not in supported list [armv7, arm64] for Android'.format(args.cpu))
 			sys.exit(1)
 	elif args.compiler == 'ios':
 		if not args.cpu:
 			args.cpu = 'arm64'
 
-		if not platform.system() == 'Darwin':
+		if platform.system() != 'Darwin':
 			print('iOS is only supported on OS X')
 			sys.exit(1)
 
@@ -104,14 +104,14 @@ def parse_argv():
 			print('Unit tests cannot run from the command line on iOS')
 			sys.exit(1)
 
-		if not args.cpu in ['arm64']:
+		if args.cpu not in ['arm64']:
 			print('{} cpu architecture not in supported list [arm64] for iOS'.format(args.cpu))
 			sys.exit(1)
 	elif args.compiler == 'emscripten':
 		if not args.cpu:
 			args.cpu = 'wasm'
 
-		if not platform.system() == 'Darwin' and not platform.system() == 'Linux':
+		if platform.system() != 'Darwin' and platform.system() != 'Linux':
 			print('Emscripten is only supported on OS X and Linux')
 			sys.exit(1)
 
@@ -119,7 +119,7 @@ def parse_argv():
 			print('AVX and AVX2 are not supported on Emscripten')
 			sys.exit(1)
 
-		if not args.cpu in ['wasm']:
+		if args.cpu not in ['wasm']:
 			print('{} cpu architecture not in supported list [wasm] for Emscripten'.format(args.cpu))
 			sys.exit(1)
 	else:
@@ -141,16 +141,14 @@ def parse_argv():
 			is_arm_supported = True
 
 		# Native compilation
-		if platform.system() == 'Darwin' and is_arm64_cpu:
-			is_arm_supported = True
-		elif platform.system() == 'Linux' and is_arm64_cpu:
+		if platform.system() in ['Darwin', 'Linux'] and is_arm64_cpu:
 			is_arm_supported = True
 
 		if not is_arm_supported:
 			print('arm64 is only supported with VS2017, VS2019, VS2022, VS2026, OS X (M* processors), Linux, Android, and iOS')
 			sys.exit(1)
 	elif args.cpu == 'arm64ec':
-		if not args.compiler in ['vs2019', 'vs2022', 'vs2026']:
+		if args.compiler not in ['vs2019', 'vs2022', 'vs2026']:
 			print('arm64ec is only supported with VS2019, VS2022, and VS2026')
 			sys.exit(1)
 	elif args.cpu == 'armv7':
@@ -168,13 +166,12 @@ def parse_argv():
 			print('armv7 is only supported with Linux and Android')
 			sys.exit(1)
 	elif args.cpu == 'riscv64':
-		if not platform.system() == 'Linux' or not is_riscv64_cpu:
+		if platform.system() != 'Linux' or not is_riscv64_cpu:
 			print('riscv64 is only supported natively on Linux hosts with a riscv64 compiler target; use CMake directly with a proper toolchain file for cross-compilation')
 			sys.exit(1)
-	elif args.cpu == 'wasm':
-		if not args.compiler == 'emscripten':
-			print('wasm is only supported with Emscripten')
-			sys.exit(1)
+	elif args.cpu == 'wasm' and args.compiler != 'emscripten':
+		print('wasm is only supported with Emscripten')
+		sys.exit(1)
 
 	if args.analyze:
 		# The static analyzer reads compile_commands.json, which only the Makefile and Ninja generators write
@@ -241,18 +238,10 @@ def get_architecture(compiler, cpu):
 		return None
 
 	if platform.system() == 'Windows':
-		if compiler == 'vs2017':
-			if cpu == 'arm64':
-				return 'ARM64'
+		if compiler == 'vs2017' and cpu == 'arm64':
+			return 'ARM64'
 
-		is_modern_vs = False
-		if compiler == 'vs2019' or compiler == 'vs2019-clang':
-			is_modern_vs = True
-		elif compiler == 'vs2022' or compiler == 'vs2022-clang':
-			is_modern_vs = True
-		elif compiler == 'vs2026' or compiler == 'vs2026-clang':
-			is_modern_vs = True
-
+		is_modern_vs = compiler in ['vs2019', 'vs2019-clang', 'vs2022', 'vs2022-clang', 'vs2026', 'vs2026-clang']
 		if is_modern_vs:
 			if cpu == 'x86':
 				return 'Win32'
@@ -271,108 +260,55 @@ def get_toolchain(compiler, cmake_script_dir):
 	# No toolchain
 	return None
 
-def set_compiler_env(compiler, args):
-	if platform.system() == 'Linux':
-		if compiler == 'clang4':
-			os.environ['CC'] = 'clang-4.0'
-			os.environ['CXX'] = 'clang++-4.0'
-		elif compiler == 'clang5':
-			os.environ['CC'] = 'clang-5.0'
-			os.environ['CXX'] = 'clang++-5.0'
-		elif compiler == 'clang6':
-			os.environ['CC'] = 'clang-6.0'
-			os.environ['CXX'] = 'clang++-6.0'
-		elif compiler == 'clang7':
-			os.environ['CC'] = 'clang-7'
-			os.environ['CXX'] = 'clang++-7'
-		elif compiler == 'clang8':
-			os.environ['CC'] = 'clang-8'
-			os.environ['CXX'] = 'clang++-8'
-		elif compiler == 'clang9':
-			os.environ['CC'] = 'clang-9'
-			os.environ['CXX'] = 'clang++-9'
-		elif compiler == 'clang10':
-			os.environ['CC'] = 'clang-10'
-			os.environ['CXX'] = 'clang++-10'
-		elif compiler == 'clang11':
-			os.environ['CC'] = 'clang-11'
-			os.environ['CXX'] = 'clang++-11'
-		elif compiler == 'clang12':
-			os.environ['CC'] = 'clang-12'
-			os.environ['CXX'] = 'clang++-12'
-		elif compiler == 'clang13':
-			os.environ['CC'] = 'clang-13'
-			os.environ['CXX'] = 'clang++-13'
-		elif compiler == 'clang14':
-			os.environ['CC'] = 'clang-14'
-			os.environ['CXX'] = 'clang++-14'
-		elif compiler == 'clang15':
-			os.environ['CC'] = 'clang-15'
-			os.environ['CXX'] = 'clang++-15'
-		elif compiler == 'clang16':
-			os.environ['CC'] = 'clang-16'
-			os.environ['CXX'] = 'clang++-16'
-		elif compiler == 'clang17':
-			os.environ['CC'] = 'clang-17'
-			os.environ['CXX'] = 'clang++-17'
-		elif compiler == 'clang18':
-			os.environ['CC'] = 'clang-18'
-			os.environ['CXX'] = 'clang++-18'
-		elif compiler == 'clang19':
-			os.environ['CC'] = 'clang-19'
-			os.environ['CXX'] = 'clang++-19'
-		elif compiler == 'clang20':
-			os.environ['CC'] = 'clang-20'
-			os.environ['CXX'] = 'clang++-20'
-		elif compiler == 'clang21':
-			os.environ['CC'] = 'clang-21'
-			os.environ['CXX'] = 'clang++-21'
-		elif compiler == 'clang22':
-			os.environ['CC'] = 'clang-22'
-			os.environ['CXX'] = 'clang++-22'
-		elif compiler == 'clang23':
-			os.environ['CC'] = 'clang-23'
-			os.environ['CXX'] = 'clang++-23'
-		elif compiler == 'gcc5':
-			os.environ['CC'] = 'gcc-5'
-			os.environ['CXX'] = 'g++-5'
-		elif compiler == 'gcc6':
-			os.environ['CC'] = 'gcc-6'
-			os.environ['CXX'] = 'g++-6'
-		elif compiler == 'gcc7':
-			os.environ['CC'] = 'gcc-7'
-			os.environ['CXX'] = 'g++-7'
-		elif compiler == 'gcc8':
-			os.environ['CC'] = 'gcc-8'
-			os.environ['CXX'] = 'g++-8'
-		elif compiler == 'gcc9':
-			os.environ['CC'] = 'gcc-9'
-			os.environ['CXX'] = 'g++-9'
-		elif compiler == 'gcc10':
-			os.environ['CC'] = 'gcc-10'
-			os.environ['CXX'] = 'g++-10'
-		elif compiler == 'gcc11':
-			os.environ['CC'] = 'gcc-11'
-			os.environ['CXX'] = 'g++-11'
-		elif compiler == 'gcc12':
-			os.environ['CC'] = 'gcc-12'
-			os.environ['CXX'] = 'g++-12'
-		elif compiler == 'gcc13':
-			os.environ['CC'] = 'gcc-13'
-			os.environ['CXX'] = 'g++-13'
-		elif compiler == 'gcc14':
-			os.environ['CC'] = 'gcc-14'
-			os.environ['CXX'] = 'g++-14'
-		elif compiler == 'gcc15':
-			os.environ['CC'] = 'gcc-15'
-			os.environ['CXX'] = 'g++-15'
-		elif compiler == 'emscripten':
-			# Nothing to do for Emscripten
-			return
-		else:
-			print('Unknown compiler: {}'.format(compiler))
-			print('See help with: python make.py -help')
-			sys.exit(1)
+def set_compiler_env(compiler):
+	if platform.system() != 'Linux':
+		return
+
+	if compiler == 'emscripten':
+		# Nothing to do for Emscripten
+		return
+
+	# The C and C++ compiler executables for each compiler
+	linux_compilers = {
+		'clang4':  ('clang-4.0', 'clang++-4.0'),
+		'clang5':  ('clang-5.0', 'clang++-5.0'),
+		'clang6':  ('clang-6.0', 'clang++-6.0'),
+		'clang7':  ('clang-7', 'clang++-7'),
+		'clang8':  ('clang-8', 'clang++-8'),
+		'clang9':  ('clang-9', 'clang++-9'),
+		'clang10': ('clang-10', 'clang++-10'),
+		'clang11': ('clang-11', 'clang++-11'),
+		'clang12': ('clang-12', 'clang++-12'),
+		'clang13': ('clang-13', 'clang++-13'),
+		'clang14': ('clang-14', 'clang++-14'),
+		'clang15': ('clang-15', 'clang++-15'),
+		'clang16': ('clang-16', 'clang++-16'),
+		'clang17': ('clang-17', 'clang++-17'),
+		'clang18': ('clang-18', 'clang++-18'),
+		'clang19': ('clang-19', 'clang++-19'),
+		'clang20': ('clang-20', 'clang++-20'),
+		'clang21': ('clang-21', 'clang++-21'),
+		'clang22': ('clang-22', 'clang++-22'),
+		'clang23': ('clang-23', 'clang++-23'),
+		'gcc5':    ('gcc-5', 'g++-5'),
+		'gcc6':    ('gcc-6', 'g++-6'),
+		'gcc7':    ('gcc-7', 'g++-7'),
+		'gcc8':    ('gcc-8', 'g++-8'),
+		'gcc9':    ('gcc-9', 'g++-9'),
+		'gcc10':   ('gcc-10', 'g++-10'),
+		'gcc11':   ('gcc-11', 'g++-11'),
+		'gcc12':   ('gcc-12', 'g++-12'),
+		'gcc13':   ('gcc-13', 'g++-13'),
+		'gcc14':   ('gcc-14', 'g++-14'),
+		'gcc15':   ('gcc-15', 'g++-15'),
+	}
+
+	if compiler not in linux_compilers:
+		print('Unknown compiler: {}'.format(compiler))
+		print('See help with: python make.py -help')
+		sys.exit(1)
+
+	os.environ['CC'], os.environ['CXX'] = linux_compilers[compiler]
 
 def do_generate_solution(build_dir, cmake_script_dir, args):
 	compiler = args.compiler
@@ -382,7 +318,7 @@ def do_generate_solution(build_dir, cmake_script_dir, args):
 	is_arm64_cpu = is_arm64_host()
 
 	if compiler:
-		set_compiler_env(compiler, args)
+		set_compiler_env(compiler)
 
 	extra_switches = ['--no-warn-unused-cli']
 	extra_switches.append('-DCPU_INSTRUCTION_SET:STRING={}'.format(cpu))

@@ -33,14 +33,14 @@
 class androidbuf final : public std::streambuf
 {
 public:
-	enum { bufsize = 4096 };
+	static constexpr int bufsize = 4096;
 	androidbuf()
 	{
 		this->setp(buffer, buffer + bufsize - 1);
 	}
 
 private:
-	int overflow(int c)
+	int overflow(int c) override
 	{
 		if (c == traits_type::eof())
 		{
@@ -50,7 +50,7 @@ private:
 		return this->sync() ? traits_type::eof() : traits_type::not_eof(c);
 	}
 
-	int sync()
+	int sync() override
 	{
 		int rc = 0;
 		if (this->pbase() != this->pptr())
@@ -68,7 +68,7 @@ private:
 	char buffer[bufsize];
 };
 
-extern "C" jint Java_com_rtm_benchmark_MainActivity_runBenchmark(JNIEnv* env, jobject caller)
+extern "C" jint Java_com_rtm_benchmark_MainActivity_runBenchmark(JNIEnv*, jobject)
 {
 	std::cout.rdbuf(new androidbuf());
 

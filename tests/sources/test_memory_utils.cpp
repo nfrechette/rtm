@@ -95,9 +95,9 @@ TEST_CASE("misc tests", "[core][memory]")
 	CHECK(is_aligned_to(align_to(8, 4), 4) == true);
 	CHECK(align_to(8, 4) == 8);
 
-	void* ptr = (void*)0x00000000;
-	CHECK(align_to(ptr, 4) == (void*)0x00000000);
-	CHECK(align_to(ptr, 8) == (void*)0x00000000);
+	void* ptr = nullptr;
+	CHECK(align_to(ptr, 4) == nullptr);
+	CHECK(align_to(ptr, 8) == nullptr);
 	ptr = (void*)0x00000001;
 	CHECK(align_to(ptr, 4) == (void*)0x00000004);
 	CHECK(align_to(ptr, 8) == (void*)0x00000008);

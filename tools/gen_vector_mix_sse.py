@@ -406,31 +406,31 @@ def rule_neon_getset(x, y, z, w):
 		return vector_set(x, y, z, w);'''.format(inner_x, x % 4, inner_y, y % 4, inner_z, z % 4, inner_w, w % 4)
 	return (inner_txt, 'RTM_NEON_INTRINSICS')
 
-rules = []
-rules.append(rule_self0)
-rules.append(rule_self1)
-rules.append(rule_sse4_blend)
-rules.append(rule_sse4_insert)
-rules.append(rule_sse3_moveldup)
-rules.append(rule_sse3_movehdup)
-rules.append(rule_sse2_unpacklo)
-rules.append(rule_sse2_unpackhi)
-rules.append(rule_sse2_movelh)
-rules.append(rule_sse2_movehl)
-rules.append(rule_sse2_shuffle)
-rules.append(rule_neon64_zip1)
-rules.append(rule_neon64_zip2)
-rules.append(rule_neon64_uzp1)
-rules.append(rule_neon64_uzp2)
-rules.append(rule_neon64_trn1)
-rules.append(rule_neon64_trn2)
-rules.append(rule_neon_ext)
-rules.append(rule_neon_rev64)
-rules.append(rule_neon_movn)
-rules.append(rule_neon_getset)
+rules = [
+	rule_self0,
+	rule_self1,
+	rule_sse4_blend,
+	rule_sse4_insert,
+	rule_sse3_moveldup,
+	rule_sse3_movehdup,
+	rule_sse2_unpacklo,
+	rule_sse2_unpackhi,
+	rule_sse2_movelh,
+	rule_sse2_movehl,
+	rule_sse2_shuffle,
+	rule_neon64_zip1,
+	rule_neon64_zip2,
+	rule_neon64_uzp1,
+	rule_neon64_uzp2,
+	rule_neon64_trn1,
+	rule_neon64_trn2,
+	rule_neon_ext,
+	rule_neon_rev64,
+	rule_neon_movn,
+	rule_neon_getset,
+]
 
 def print_xyzw(x, y, z, w):
-	needs_format = True
 	inner_txt = ''
 
 	matching_results = []
