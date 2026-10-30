@@ -370,9 +370,11 @@ def do_generate_solution(build_dir, cmake_script_dir, args):
 	if platform.system() != 'Windows' and compiler == 'android':
 		# The NDK toolchain builds the generic unit test executable, we run it on the device with adb
 		android_abis = {'armv7': 'armeabi-v7a', 'arm64': 'arm64-v8a'}
-		extra_switches.append('-DANDROID_ABI={}'.format(android_abis[cpu]))
-		extra_switches.append('-DANDROID_PLATFORM=android-24')
-		extra_switches.append('-DIS_CROSS_COMPILING:BOOL=true')
+		extra_switches.extend([
+			'-DANDROID_ABI={}'.format(android_abis[cpu]),
+			'-DANDROID_PLATFORM=android-24',
+			'-DIS_CROSS_COMPILING:BOOL=true',
+		])
 
 	if args.use_avx:
 		print('Enabling AVX usage')
