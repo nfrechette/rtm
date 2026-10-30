@@ -43,11 +43,23 @@ On an x64 host, `make.py` cross-compiles. It does not register the unit tests wi
 
 ### Android
 
-For *Android*, the steps are identical to *Windows, Linux, and OS X* but you also need to install *Android NDK 21* (or higher). The build uses `gradle` and `-unit_test` as well as `-bench` will deploy and run on the device when executed (make sure that the `adb` executable is in your `PATH` for this to work).
+For *Android*, the steps are identical to *Windows, Linux, and OS X* but you also need to install *Android NDK 21* (or higher). Use `-compiler android`. The default architecture is `arm64`. Use `-cpu armv7` for 32-bit ARM. Make sure that the `adb` executable is in your `PATH`. The `-tests_matching` switch is not supported on Android.
+
+On *Windows*, the build uses `gradle`. The `-unit_test` and `-bench` switches install the app on the device and run it.
 
 *Android Studio v3.5* can be used to launch and debug. After running *CMake* to build and generate everything, the *Android Studio* projects can be found under the `./build` directory.
 
 Note that running the benchmark on Android can be done but it currently involves a number of manual steps.
+
+On *OS X* and *Linux*, the build uses the CMake toolchain of the NDK. `make.py` finds the NDK with the `ANDROID_NDK_HOME` or `ANDROID_NDK_ROOT` environment variable. If neither is set, it uses the most recent version in the `ndk` directory of `ANDROID_HOME` or `ANDROID_SDK_ROOT`. The `-unit_test` switch copies the unit test executable to `/data/local/tmp` on the device with `adb` and runs it there. The output of the unit tests shows in the terminal, and `make.py` returns an error code if a test fails. Use the `ANDROID_SERIAL` environment variable to select a device when more than one is connected. The benchmark is not supported with this build.
+
+For example, on *OS X* with *Homebrew*:
+
+```bash
+brew install --cask android-platform-tools android-ndk
+export ANDROID_NDK_HOME="/opt/homebrew/share/android-ndk"
+python3 make.py -compiler android -build -unit_test
+```
 
 ### iOS
 

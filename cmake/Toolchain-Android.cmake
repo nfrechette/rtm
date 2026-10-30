@@ -2,6 +2,7 @@
 # Instead Gradle is used through CMake.
 
 set(PLATFORM_ANDROID 1)
+set(PLATFORM_ANDROID_GRADLE 1)
 set(PLATFORM_NAME "Android")
 
 # Remap our CPU instruction set

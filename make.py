@@ -20,6 +20,29 @@ def is_armv7_host():
 def is_riscv64_host():
 	return platform.machine() == 'riscv64'
 
+def get_android_ndk_dir():
+	for env_var in ['ANDROID_NDK_HOME', 'ANDROID_NDK_ROOT']:
+		ndk_dir = os.environ.get(env_var)
+		if ndk_dir and os.path.isdir(ndk_dir):
+			return ndk_dir
+
+	# The SDK manager installs each NDK version under <sdk>/ndk/<version>, we use the most recent one
+	for env_var in ['ANDROID_HOME', 'ANDROID_SDK_ROOT']:
+		sdk_dir = os.environ.get(env_var)
+		if not sdk_dir:
+			continue
+
+		ndk_root_dir = os.path.join(sdk_dir, 'ndk')
+		if not os.path.isdir(ndk_root_dir):
+			continue
+
+		ndk_versions = [entry for entry in os.listdir(ndk_root_dir) if re.match(r'^\d+(\.\d+)*$', entry)]
+		if ndk_versions:
+			ndk_version = max(ndk_versions, key=lambda version: [int(part) for part in version.split('.')])
+			return os.path.join(ndk_root_dir, ndk_version)
+
+	return None
+
 def parse_argv():
 	parser = argparse.ArgumentParser(add_help=False)
 
@@ -77,13 +100,27 @@ def parse_argv():
 		if not args.cpu:
 			args.cpu = 'arm64'
 
-		if platform.system() != 'Windows':
-			print('Android is only supported on Windows')
+		if platform.system() not in ['Windows', 'Darwin', 'Linux']:
+			print('Android is only supported on Windows, OS X, and Linux')
 			sys.exit(1)
 
 		if args.use_avx or args.use_avx2:
 			print('AVX and AVX2 are not supported on Android')
 			sys.exit(1)
+
+		if args.tests_matching:
+			print('-tests_matching is not supported on Android')
+			sys.exit(1)
+
+		if platform.system() != 'Windows':
+			# On OS X and Linux, we build with the NDK CMake toolchain instead of gradle
+			if not get_android_ndk_dir():
+				print('Failed to find the Android NDK, set ANDROID_NDK_HOME to its directory')
+				sys.exit(1)
+
+			if args.bench or args.run_bench or args.pull_bench:
+				print('Android benchmarks are only supported on Windows')
+				sys.exit(1)
 
 		if args.cpu not in ['armv7', 'arm64']:
 			print('{} cpu architecture not in supported list [armv7, arm64] for Android'.format(args.cpu))
@@ -219,12 +256,12 @@ def get_generator(compiler, cpu):
 	elif platform.system() == 'Darwin':
 		if compiler == 'osx' or compiler == 'ios':
 			return 'Xcode'
-		elif compiler == 'emscripten':
-			# Emscripten uses the default generator
+		elif compiler == 'emscripten' or compiler == 'android':
+			# Emscripten and the Android NDK use the default generator
 			return None
 	elif platform.system() == 'Linux':
-		if compiler == 'emscripten':
-			# Emscripten uses the default generator
+		if compiler == 'emscripten' or compiler == 'android':
+			# Emscripten and the Android NDK use the default generator
 			return None
 
 		return 'Unix Makefiles'
@@ -254,6 +291,8 @@ def get_architecture(compiler, cpu):
 def get_toolchain(compiler, cmake_script_dir):
 	if platform.system() == 'Windows' and compiler == 'android':
 		return os.path.join(cmake_script_dir, 'Toolchain-Android.cmake')
+	elif compiler == 'android':
+		return os.path.join(get_android_ndk_dir(), 'build', 'cmake', 'android.toolchain.cmake')
 	elif platform.system() == 'Darwin' and compiler == 'ios':
 		return os.path.join(cmake_script_dir, 'Toolchain-iOS.cmake')
 
@@ -327,6 +366,15 @@ def do_generate_solution(build_dir, cmake_script_dir, args):
 	if platform.system() == 'Windows' and not is_arm64_cpu:
 		if cpu == 'arm64' or cpu == 'arm64ec':
 			extra_switches.append('-DIS_CROSS_COMPILING:BOOL=true')
+
+	if platform.system() != 'Windows' and compiler == 'android':
+		# The NDK toolchain builds the generic unit test executable, we run it on the device with adb
+		android_abis = {'armv7': 'armeabi-v7a', 'arm64': 'arm64-v8a'}
+		extra_switches.extend([
+			'-DANDROID_ABI={}'.format(android_abis[cpu]),
+			'-DANDROID_PLATFORM=android-24',
+			'-DIS_CROSS_COMPILING:BOOL=true',
+		])
 
 	if args.use_avx:
 		print('Enabling AVX usage')
@@ -456,6 +504,26 @@ def do_tests_android(build_dir, args):
 	# Restore working directory
 	os.chdir(build_dir)
 
+def do_tests_adb(build_dir):
+	# Push the unit test executable to the device and run it there, adb returns its exit code
+	test_exe = os.path.join(build_dir, 'bin', 'rtm_unit_tests')
+	device_test_exe = '/data/local/tmp/rtm_unit_tests'
+	adb_cmds = [
+		['adb', 'push', test_exe, device_test_exe],
+		['adb', 'shell', 'chmod', '755', device_test_exe],
+		['adb', 'shell', device_test_exe],
+	]
+
+	for adb_cmd in adb_cmds:
+		try:
+			result = subprocess.call(adb_cmd)
+		except OSError:
+			print('Failed to run adb, add the Android SDK platform tools to your PATH')
+			sys.exit(1)
+
+		if result != 0:
+			sys.exit(result)
+
 def do_tests_cmake(args):
 	ctest_cmd = ['ctest', '--output-on-failure', '--parallel', str(args.num_threads)]
 
@@ -472,7 +540,10 @@ def do_tests(build_dir, args):
 	print('Running unit tests ...')
 
 	if args.compiler == 'android':
-		do_tests_android(build_dir, args)
+		if platform.system() == 'Windows':
+			do_tests_android(build_dir, args)
+		else:
+			do_tests_adb(build_dir)
 	else:
 		do_tests_cmake(args)
 
