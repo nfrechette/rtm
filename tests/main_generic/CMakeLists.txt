@@ -36,6 +36,11 @@ endif()
 
 setup_default_compiler_flags(${PROJECT_NAME})
 
+if(PLATFORM_ANDROID)
+	# On Android, Catch2 writes its debug output with __android_log_write
+	target_link_libraries(${PROJECT_NAME} PRIVATE log)
+endif()
+
 if(MSVC)
 	if(CPU_INSTRUCTION_SET MATCHES "arm64" OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
 		# Exceptions are not enabled by default for ARM targets and clang-cl, enable them

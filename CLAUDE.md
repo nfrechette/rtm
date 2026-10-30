@@ -20,7 +20,7 @@ python3 make.py -build -bench        # build benchmarks
 python3 make.py -analyze             # clang static analyzer on the public headers (clang only)
 ```
 
-Useful variants: `-compiler {osx,clang18,gcc13,vs2022,...}`, `-cpu {x64,x86,arm64,...}`, `-cpp_version {11,14,17,20}`, `-avx`, `-avx2`, `-nosimd` (scalar fallback path), `-vector_mix_test` (enables the slow exhaustive `vector_mix` tests via `RTM_IMPL_WITH_VECTOR_MIX_TESTS`). Changing these flags regenerates CMake; use `-clean` if the cache seems stale.
+Useful variants: `-compiler {osx,clang18,gcc13,vs2022,android,...}`, `-cpu {x64,x86,arm64,...}`, `-cpp_version {11,14,17,20}`, `-avx`, `-avx2`, `-nosimd` (scalar fallback path), `-vector_mix_test` (enables the slow exhaustive `vector_mix` tests via `RTM_IMPL_WITH_VECTOR_MIX_TESTS`). Changing these flags regenerates CMake; use `-clean` if the cache seems stale. On OS X and Linux, `-compiler android` builds with the NDK CMake toolchain (set `ANDROID_NDK_HOME`), and `-unit_test` runs the tests on the device with `adb`. On Windows, it uses Gradle.
 
 The test executable can also be run directly with Catch2 filters: `./build/bin/rtm_unit_tests "[quat]"` (`-build` installs it into `build/bin`).
 

@@ -11,6 +11,7 @@
 *  Fix compilation errors with GCC on ARMv7 in vector floor, vector ceil, and the 2x2 transpose macro
 *  Fix vector floor and ceil on ARMv7 to keep the sign of a zero result, as the other code paths do
 *  Add support for native ARMv7 builds on Linux to `make.py`
+*  Add support for Android builds on OS X and Linux to `make.py`: the build uses the CMake toolchain of the NDK and `-unit_test` runs the unit tests on the device with `adb`
 *  Add GCC 14, GCC 15, and Clang 19 to 23 to `make.py`
 *  Add support for VS2026: add `vs2026` and `vs2026-clang` to `make.py` and add `RTM_COMPILER_MSVC_2026`
 *  Add support for ARM64EC with MSVC: RTM defines `RTM_ARCH_ARM64` and uses the ARM64 NEON code path, and `make.py` adds `-cpu arm64ec`
