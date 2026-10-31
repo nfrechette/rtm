@@ -59,7 +59,7 @@ VQM keeps the advantages of VQV: the rotation stays a normalized quaternion, and
 
 A VQM uses four SIMD registers: 16 components, or 64 bytes for `vqmf`. When the scale/shear part is exactly the identity, the transform holds a flag. Then `vqm_mul`, `vqm_mul_point3`, `vqm_mul_vector3`, `vqm_inverse`, `vqm_lerp`, and `vqm_slerp` skip the scale/shear part and use only the rotation and the translation. With a scale/shear part, a VQM costs more than a VQV because the multiplication computes three 3x3 matrix products.
 
-Include `rtm/vqmf.h` or `rtm/vqmd.h`. Before 2.4, VQM was experimental and its headers were in `rtm/experimental/`. These headers are deprecated and will be removed in 2.5.
+Include `rtm/vqmf.h` or `rtm/vqmd.h`.
 
 For the theory, see *The VQM-Group and its Applications* by Michael Aristidou and Xin Li.
 
