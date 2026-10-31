@@ -2569,7 +2569,7 @@
 <li><code>vqm_inverse</code> has a variant with a fallback scale for a scale/shear part that is not invertible.</li>
 </ul>
 <p>A VQM uses four SIMD registers: 16 components, or 64 bytes for <code>vqmf</code>. When the scale/shear part is exactly the identity, the transform holds a flag. Then <code>vqm_mul</code>, <code>vqm_mul_point3</code>, <code>vqm_mul_vector3</code>, <code>vqm_inverse</code>, <code>vqm_lerp</code>, and <code>vqm_slerp</code> skip the scale/shear part and use only the rotation and the translation. With a scale/shear part, a VQM costs more than a VQV because the multiplication computes three 3x3 matrix products.</p>
-<p>Include <code>rtm/vqmf.h</code> or <code>rtm/vqmd.h</code>. Before 2.4, VQM was experimental and its headers were in <code>rtm/experimental/</code>. These headers are deprecated and will be removed in 2.5.</p>
+<p>Include <code>rtm/vqmf.h</code> or <code>rtm/vqmd.h</code>.</p>
 <p>For the theory, see <em>The VQM-Group and its Applications</em> by Michael Aristidou and Xin Li.</p>
 <h2 id="matrix-3x3">Matrix 3x3<a class="headerlink" href="#matrix-3x3" title="Permanent link">&para;</a></h2>
 <p>A generic 3x3 matrix. Suitable to represent rotations mixed with 3D scale or anything else that might fit.</p>
