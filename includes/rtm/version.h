@@ -33,7 +33,7 @@
 /// The minor version of Realtime Math.
 #define RTM_VERSION_MINOR 4
 /// The patch version of Realtime Math.
-#define RTM_VERSION_PATCH 0
+#define RTM_VERSION_PATCH 99
 
 /// \file
 /// In order to allow multiple versions of this library to coexist side by side
