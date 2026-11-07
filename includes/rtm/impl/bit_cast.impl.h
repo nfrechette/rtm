@@ -29,10 +29,21 @@
 #include "rtm/impl/compiler_utils.h"
 #include "rtm/impl/detect_cpp_version.h"
 
-// Detect if the current compilation environment supports bit operations.
+// Detect if the standard library supports std::bit_cast.
+// Some toolchains support the C++20 language but their standard library does not
+// have the <bit> or <version> header. Thus RTM includes <version> only when it exists.
+// The __cpp_lib_bit_cast macro is defined only when the standard library has std::bit_cast.
 
 #if !defined(RTM_NO_BIT_CAST)
-	#if !defined(__cpp_lib_bitops)
+	#if RTM_CPP_VERSION >= RTM_CPP_VERSION_20 && defined(__has_include)
+		// __has_include must be on its own line: a compiler that does not support it
+		// can fail to parse it, even when the test before it is false
+		#if __has_include(<version>)
+			#include <version>
+		#endif
+	#endif
+
+	#if !defined(__cpp_lib_bit_cast)
 		#define RTM_NO_BIT_CAST
 	#endif
 #endif
