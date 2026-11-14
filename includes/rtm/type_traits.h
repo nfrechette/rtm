@@ -59,10 +59,6 @@ namespace rtm
 		using vqv = vqvf; ///< The VQV transform type.
 		using vqm = vqmf; ///< The VQM transform type.
 
-		using qv RTM_DEPRECATED("Use 'vq' instead. To be removed in 2.5.") = vqf; ///< The previous name of vq.
-		using qvs RTM_DEPRECATED("Use 'vqs' instead. To be removed in 2.5.") = vqsf; ///< The previous name of vqs.
-		using qvv RTM_DEPRECATED("Use 'vqv' instead. To be removed in 2.5.") = vqvf; ///< The previous name of vqv.
-
 		using matrix3x3 = matrix3x3f; ///< The 3x3 matrix type.
 		using matrix3x4 = matrix3x4f; ///< The 3x4 affine matrix type.
 		using matrix4x4 = matrix4x4f; ///< The 4x4 matrix type.
@@ -89,10 +85,6 @@ namespace rtm
 		using vqs = vqsd; ///< The VQS transform type.
 		using vqv = vqvd; ///< The VQV transform type.
 		using vqm = vqmd; ///< The VQM transform type.
-
-		using qv RTM_DEPRECATED("Use 'vq' instead. To be removed in 2.5.") = vqd; ///< The previous name of vq.
-		using qvs RTM_DEPRECATED("Use 'vqs' instead. To be removed in 2.5.") = vqsd; ///< The previous name of vqs.
-		using qvv RTM_DEPRECATED("Use 'vqv' instead. To be removed in 2.5.") = vqvd; ///< The previous name of vqv.
 
 		using matrix3x3 = matrix3x3d; ///< The 3x3 matrix type.
 		using matrix3x4 = matrix3x4d; ///< The 3x4 affine matrix type.

@@ -29,9 +29,6 @@ SHARED_HEADER_PAGES = {
 	'matrix_cast.h': ['matrix3x3f', 'matrix3x3d', 'matrix3x4f', 'matrix3x4d', 'matrix4x4f', 'matrix4x4d'],
 	'matrix_common.h': ['matrix3x3f', 'matrix3x3d', 'matrix3x4f', 'matrix3x4d', 'matrix4x4f', 'matrix4x4d'],
 	'quat_common.h': ['quatf', 'quatd'],
-	'qv_common.h': ['qvf', 'qvd'],
-	'qvs_common.h': ['qvsf', 'qvsd'],
-	'qvv_common.h': ['qvvf', 'qvvd'],
 	'scalar_common.h': ['scalarf', 'scalard'],
 	'vector_common.h': ['vector4f', 'vector4d'],
 	'vq_common.h': ['vqf', 'vqd'],
@@ -47,7 +44,7 @@ MACRO_HEADER_PATTERN = re.compile(r'^includes/rtm/impl/macros\.\w+\.impl\.h$')
 EXTRA_COERCION_TYPES = {'float_constant': ['float', 'double']}
 
 # The type names that end with the precision suffix: f = float32, d = float64.
-PRECISION_TYPE_PATTERN = re.compile(r'^(vector4|quat|scalar|mask4|matrix\dx\d|vq|vqs|vqv|vqm|qv|qvs|qvv|float\d)([fd])$')
+PRECISION_TYPE_PATTERN = re.compile(r'^(vector4|quat|scalar|mask4|matrix\dx\d|vq|vqs|vqv|vqm|float\d)([fd])$')
 
 def run_doxygen():
 	os.makedirs(os.path.join(ROOT_DIR, DOXYGEN_OUTPUT_DIR), exist_ok=True)

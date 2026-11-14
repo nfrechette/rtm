@@ -1,5 +1,12 @@
 # Significant changes per release
 
+## 2.5.0
+
+### Breaking changes
+
+*  Remove the deprecated qv, qvs, and qvv names: the types, the functions, matrix_from_qv, matrix_from_qvs, matrix_from_qvv, the `_arg` types, related_types::qv, related_types::qvs, related_types::qvv, and the headers rtm/qvf.h, rtm/qvd.h, rtm/qvsf.h, rtm/qvsd.h, rtm/qvvf.h, and rtm/qvvd.h. Use the vq, vqs, and vqv names
+*  rtm/matrix3x4f.h and rtm/matrix3x4d.h do not include rtm/qvsf.h and rtm/qvsd.h. They include rtm/vqsf.h and rtm/vqsd.h
+
 ## 2.4.0
 
 ### Breaking changes

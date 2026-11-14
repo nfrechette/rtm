@@ -15,9 +15,6 @@ INPUT                  = includes/rtm \
                          includes/rtm/impl/matrix_cast.h \
                          includes/rtm/impl/matrix_common.h \
                          includes/rtm/impl/quat_common.h \
-                         includes/rtm/impl/qv_common.h \
-                         includes/rtm/impl/qvs_common.h \
-                         includes/rtm/impl/qvv_common.h \
                          includes/rtm/impl/scalar_common.h \
                          includes/rtm/impl/vector_common.h \
                          includes/rtm/impl/vq_common.h \
