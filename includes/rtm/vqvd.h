@@ -319,7 +319,7 @@ namespace rtm
 		// Returns the rotation of a matrix that contains the scale and the rotation of a VQV transform.
 		// The function removes the scale of the matrix. Then, for each negative scale component,
 		// it negates the matrix axis to remove the reflection.
-		RTM_DISABLE_SECURITY_COOKIE_CHECK inline quatd RTM_SIMD_CALL vqv_rotation_from_matrix(matrix3x4d_arg0 input, vector4d_arg1 scale) RTM_NO_EXCEPT
+		RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE quatd RTM_SIMD_CALL vqv_rotation_from_matrix(matrix3x4d_arg0 input, vector4d_arg1 scale) RTM_NO_EXCEPT
 		{
 			matrix3x4d result_mtx = matrix_remove_scale(input);
 
@@ -333,7 +333,7 @@ namespace rtm
 
 		// Returns the 3x4 affine matrix of the inverse of the rotation and the scale of a VQV transform.
 		// The translation of the matrix is zero.
-		RTM_DISABLE_SECURITY_COOKIE_CHECK inline matrix3x4d RTM_SIMD_CALL vqv_inverse_rotation_scale_matrix(vqvd_arg0 input) RTM_NO_EXCEPT
+		RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE matrix3x4d RTM_SIMD_CALL vqv_inverse_rotation_scale_matrix(vqvd_arg0 input) RTM_NO_EXCEPT
 		{
 			// The inverse of (scale * rotation) is (inverse rotation * inverse scale).
 			// The inverse scale multiplies the columns of the inverse rotation matrix.
@@ -347,7 +347,7 @@ namespace rtm
 
 		// Returns the input VQV transform. If a scale component has an absolute value below
 		// or equal to the threshold, the function uses the fallback scale component instead.
-		RTM_DISABLE_SECURITY_COOKIE_CHECK inline vqvd RTM_SIMD_CALL vqv_with_fallback_scale(vqvd_arg0 input, vector4d_arg1 fallback_scale, double threshold) RTM_NO_EXCEPT
+		RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE vqvd RTM_SIMD_CALL vqv_with_fallback_scale(vqvd_arg0 input, vector4d_arg1 fallback_scale, double threshold) RTM_NO_EXCEPT
 		{
 			const mask4d is_scale_zero = vector_less_equal(vector_abs(input.scale), vector_set(threshold));
 			const vector4d scale = vector_select(is_scale_zero, fallback_scale, input.scale);
