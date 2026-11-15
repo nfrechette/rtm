@@ -1,5 +1,23 @@
 # Significant changes per release
 
+## 2.5.0
+
+### Breaking changes
+
+*  Remove the deprecated qv, qvs, and qvv names: the types, the functions, matrix_from_qv, matrix_from_qvs, matrix_from_qvv, the `_arg` types, related_types::qv, related_types::qvs, related_types::qvv, and the headers rtm/qvf.h, rtm/qvd.h, rtm/qvsf.h, rtm/qvsd.h, rtm/qvvf.h, and rtm/qvvd.h. Use the vq, vqs, and vqv names
+*  rtm/matrix3x4f.h and rtm/matrix3x4d.h do not include rtm/qvsf.h and rtm/qvsd.h. They include rtm/vqsf.h and rtm/vqsd.h
+
+### Deprecations
+
+*  Deprecate `vqv_inverse`: a VQV transform cannot hold the inverse of a non-uniform scale, thus the result is incorrect for a point and for a multiplication. Use `vqv_inverse_mul_point3`, `vqv_mul_inverse`, or `vqv_inverse_mul`. To be removed in 2.6
+
+### New features
+
+*  Add `vqv_inverse_mul_point3(point, vqv)`: it multiplies a point with the inverse of a VQV transform. The result is exact, also with a non-uniform scale
+*  Add `vqv_mul_inverse(lhs, rhs)`: it computes lhs * inverse(rhs). When the scales are positive, `vqv_mul(vqv_mul_inverse(lhs, rhs), rhs)` is equal to lhs
+*  Add `vqv_inverse_mul(lhs, rhs)`: it computes inverse(lhs) * rhs. When the scales are positive, `vqv_mul(lhs, vqv_inverse_mul(lhs, rhs))` is equal to rhs. The result does not change when the origin of the world moves
+*  The three functions compute the inverse when they need it and do not store it. An overload of each function takes a fallback scale and a threshold
+
 ## 2.4.0
 
 ### Breaking changes

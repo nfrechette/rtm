@@ -27,7 +27,6 @@
 
 #include "rtm/math.h"
 #include "rtm/version.h"
-#include "rtm/impl/error.h"
 
 #include <cstdint>
 
@@ -393,12 +392,6 @@ namespace rtm
 		vector4d	translation; ///< The translation part. The [w] component is undefined.
 	};
 
-	/// The previous name of vqf.
-	using qvf RTM_DEPRECATED("Use 'vqf' instead. To be removed in 2.5.") = vqf;
-
-	/// The previous name of vqd.
-	using qvd RTM_DEPRECATED("Use 'vqd' instead. To be removed in 2.5.") = vqd;
-
 	/// A VQS transform represents a 3D rotation (quaternion), a 3D translation (vector),
 	/// and a single scalar uniform scale value.
 	/// VQS transforms form a group with a well defined multiplication and inverse.
@@ -416,12 +409,6 @@ namespace rtm
 		quatd		rotation; ///< The rotation part.
 		vector4d	translation_scale; ///< The translation part in [xyz] and the scale part in [w].
 	};
-
-	/// The previous name of vqsf.
-	using qvsf RTM_DEPRECATED("Use 'vqsf' instead. To be removed in 2.5.") = vqsf;
-
-	/// The previous name of vqsd.
-	using qvsd RTM_DEPRECATED("Use 'vqsd' instead. To be removed in 2.5.") = vqsd;
 
 	/// A VQV transform represents a 3D rotation (quaternion), 3D translation (vector), and 3D non-uniform scale (vector).
 	/// WARNING: VQV transforms do _NOT_ form a group. It has no well defined multiplication and inverse.
@@ -448,12 +435,6 @@ namespace rtm
 		vector4d	translation; ///< The translation part. The [w] component is undefined.
 		vector4d	scale; ///< The scale part. The [w] component is undefined.
 	};
-
-	/// The previous name of vqvf.
-	using qvvf RTM_DEPRECATED("Use 'vqvf' instead. To be removed in 2.5.") = vqvf;
-
-	/// The previous name of vqvd.
-	using qvvd RTM_DEPRECATED("Use 'vqvd' instead. To be removed in 2.5.") = vqvd;
 
 	/// A VQM transform represents a 3D rotation (quaternion), a 3D translation (vector), and a 3D scale/shear (3x3 matrix).
 	/// The scale/shear part can contain a non-uniform scale, shear, and a reflection. A point transforms as follows:

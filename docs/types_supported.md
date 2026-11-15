@@ -44,6 +44,8 @@ Before 2.4, the name of this type was QVS. The new name follows the order of ope
 
 A VQV represents an affine transform in three distinct parts: a rotation quaternion, a vector3 translation, and a vector3 non-uniform scale. This type is commonly used in video games as it is very fast to work with and more compact than a full affine matrix. It properly handles positive non-uniform scaling but negative scaling is a bit more problematic. A best effort is made by converting the quaternion to a matrix when necessary. If scale fidelity is important, consider using VQM or an affine matrix 3x4 instead. When multiplying transforms of this type, scale combines as it would with matrices.
 
+A VQV cannot hold the inverse of a non-uniform scale: the inverse applies the rotation before the scale. To transform with the inverse, use `vqv_inverse_mul_point3`, `vqv_mul_inverse`, or `vqv_inverse_mul`. They compute the inverse when they need it and do not store it. `vqv_inverse_mul_point3` is exact. When the scales are positive, `vqv_mul_inverse` and `vqv_inverse_mul` give the input back when you multiply the result with the other input.
+
 Before 2.4, the name of this type was QVV. The new name follows the order of operations from right to left (scale, rotation, translation), as VQS does in the literature.
 
 ## VQM (vector-quaternion-matrix)

@@ -32,6 +32,7 @@
 #include "rtm/matrix3x4f.h"
 #include "rtm/version.h"
 #include "rtm/impl/compiler_utils.h"
+#include "rtm/impl/error.h"
 #include "rtm/impl/vqv_common.h"
 #include "rtm/impl/matrix_affine_common.h"
 
@@ -43,6 +44,9 @@ RTM_IMPL_FILE_PRAGMA_PUSH
 /// shear is introduced and there is no place to store it. As such, VQV discards the introduced shear
 /// which is mathematically incorrect. As a result of this, VQV multiplication is _NOT_ associative and
 /// the inverse is incorrect. USE AT YOUR OWN RISK.
+/// A VQV transform cannot hold the inverse of a non-uniform scale. To transform with the inverse,
+/// use vqv_inverse_mul_point3(..), vqv_mul_inverse(..), or vqv_inverse_mul(..). They compute the
+/// inverse when they need it and do not store it.
 
 namespace rtm
 {
@@ -310,22 +314,14 @@ namespace rtm
 		return vqvf{ rotation_q, translation, scale };
 	}
 
-	/// Multiplies two VQV transforms.
-	/// Multiplication order is as follow: local_to_world = vqv_mul(local_to_object, object_to_world)
-	/// NOTE: When scale is present, multiplication will not properly handle skew/shear,
-	/// use affine matrices if you have issues.
-	RTM_DISABLE_SECURITY_COOKIE_CHECK inline vqvf RTM_SIMD_CALL vqv_mul(vqvf_arg0 lhs, vqvf_arg1 rhs) RTM_NO_EXCEPT
+	namespace rtm_impl
 	{
-		const vector4f min_scale = vector_min(lhs.scale, rhs.scale);
-		const vector4f scale = vector_mul(lhs.scale, rhs.scale);
-
-		if (vector_any_less_than3(min_scale, vector_zero()))
+		// Returns the rotation of a matrix that contains the scale and the rotation of a VQV transform.
+		// The function removes the scale of the matrix. Then, for each negative scale component,
+		// it negates the matrix axis to remove the reflection.
+		RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE quatf RTM_SIMD_CALL vqv_rotation_from_matrix(matrix3x4f_arg0 input, vector4f_arg4 scale) RTM_NO_EXCEPT
 		{
-			// If we have negative scale, we go through a matrix
-			const matrix3x4f lhs_mtx = matrix_from_vqv(lhs);
-			const matrix3x4f rhs_mtx = matrix_from_vqv(rhs);
-			matrix3x4f result_mtx = matrix_mul(lhs_mtx, rhs_mtx);
-			result_mtx = matrix_remove_scale(result_mtx);
+			matrix3x4f result_mtx = matrix_remove_scale(input);
 
 #if defined(RTM_SSE2_INTRINSICS)
 			constexpr __m128 signs = RTM_VECTOR4F_MAKE(-0.0F, -0.0F, -0.0F, -0.0F);
@@ -347,7 +343,50 @@ namespace rtm
 			result_mtx.z_axis = vector_mul(result_mtx.z_axis, vector_dup_z(sign));
 #endif
 
-			const quatf rotation = quat_from_matrix(result_mtx);
+			return quat_from_matrix(result_mtx);
+		}
+
+		// Returns the 3x4 affine matrix of the inverse of the rotation and the scale of a VQV transform.
+		// The translation of the matrix is zero.
+		RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE matrix3x4f RTM_SIMD_CALL vqv_inverse_rotation_scale_matrix(vqvf_arg0 input) RTM_NO_EXCEPT
+		{
+			// The inverse of (scale * rotation) is (inverse rotation * inverse scale).
+			// The inverse scale multiplies the columns of the inverse rotation matrix.
+			const vector4f inv_scale = vector_reciprocal(input.scale);
+			const matrix3x4f inv_rotation_mtx = matrix_from_vq(quat_conjugate(input.rotation), vector_zero());
+			const vector4f x_axis = vector_mul(inv_rotation_mtx.x_axis, inv_scale);
+			const vector4f y_axis = vector_mul(inv_rotation_mtx.y_axis, inv_scale);
+			const vector4f z_axis = vector_mul(inv_rotation_mtx.z_axis, inv_scale);
+			return matrix3x4f{ x_axis, y_axis, z_axis, inv_rotation_mtx.w_axis };
+		}
+
+		// Returns the input VQV transform. If a scale component has an absolute value below
+		// or equal to the threshold, the function uses the fallback scale component instead.
+		RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE vqvf RTM_SIMD_CALL vqv_with_fallback_scale(vqvf_arg0 input, vector4f_arg3 fallback_scale, float threshold) RTM_NO_EXCEPT
+		{
+			const mask4f is_scale_zero = vector_less_equal(vector_abs(input.scale), vector_set(threshold));
+			const vector4f scale = vector_select(is_scale_zero, fallback_scale, input.scale);
+			return vqv_set(input.rotation, input.translation, scale);
+		}
+	}
+
+	/// Multiplies two VQV transforms.
+	/// Multiplication order is as follow: local_to_world = vqv_mul(local_to_object, object_to_world)
+	/// NOTE: When scale is present, multiplication will not properly handle skew/shear,
+	/// use affine matrices if you have issues.
+	RTM_DISABLE_SECURITY_COOKIE_CHECK inline vqvf RTM_SIMD_CALL vqv_mul(vqvf_arg0 lhs, vqvf_arg1 rhs) RTM_NO_EXCEPT
+	{
+		const vector4f min_scale = vector_min(lhs.scale, rhs.scale);
+		const vector4f scale = vector_mul(lhs.scale, rhs.scale);
+
+		if (vector_any_less_than3(min_scale, vector_zero()))
+		{
+			// If we have negative scale, we go through a matrix
+			const matrix3x4f lhs_mtx = matrix_from_vqv(lhs);
+			const matrix3x4f rhs_mtx = matrix_from_vqv(rhs);
+			const matrix3x4f result_mtx = matrix_mul(lhs_mtx, rhs_mtx);
+
+			const quatf rotation = rtm_impl::vqv_rotation_from_matrix(result_mtx, scale);
 			const vector4f translation = result_mtx.w_axis;
 			return vqv_set(rotation, translation, scale);
 		}
@@ -383,9 +422,121 @@ namespace rtm
 		return vector_add(quat_mul_vector3(point, vqv.rotation), vqv.translation);
 	}
 
+	/// Multiplies a 3D point with the inverse of a VQV transform.
+	/// Multiplication order is as follow: local_position = vqv_inverse_mul_point3(world_position, local_to_world)
+	/// The result is exact, also when the scale is not uniform: the function removes the translation,
+	/// then the rotation, then the scale.
+	/// If the scale contains zero, the result is undefined.
+	/// For a safe alternative, supply a fallback scale value and a threshold.
+	RTM_DISABLE_SECURITY_COOKIE_CHECK inline vector4f RTM_SIMD_CALL vqv_inverse_mul_point3(vector4f_arg0 point, vqvf_arg1 vqv) RTM_NO_EXCEPT
+	{
+		return vector_div(quat_mul_vector3(vector_sub(point, vqv.translation), quat_conjugate(vqv.rotation)), vqv.scale);
+	}
+
+	/// Multiplies a 3D point with the inverse of a VQV transform.
+	/// Multiplication order is as follow: local_position = vqv_inverse_mul_point3(world_position, local_to_world)
+	/// If a scale component has an absolute value below or equal to the supplied threshold,
+	/// the function uses the fallback scale component instead.
+	RTM_DISABLE_SECURITY_COOKIE_CHECK inline vector4f RTM_SIMD_CALL vqv_inverse_mul_point3(vector4f_arg0 point, vqvf_arg1 vqv, vector4f_arg4 fallback_scale, float threshold = 1.0E-8F) RTM_NO_EXCEPT
+	{
+		return vqv_inverse_mul_point3(point, rtm_impl::vqv_with_fallback_scale(vqv, fallback_scale, threshold));
+	}
+
+	/// Multiplies a VQV transform with the inverse of a second VQV transform.
+	/// The function computes lhs * inverse(rhs) and does not store the inverse.
+	/// Multiplication order is as follow: local_to_object = vqv_mul_inverse(local_to_world, object_to_world)
+	/// The result has the rotation lhs.rotation * inverse(rhs.rotation) and the scale lhs.scale / rhs.scale.
+	/// Its translation is exact: vqv_mul(vqv_mul_inverse(lhs, rhs), rhs) has the translation of lhs.
+	/// When the scales are positive, vqv_mul(vqv_mul_inverse(lhs, rhs), rhs) is equal to lhs.
+	/// When a scale component is negative, the function goes through a matrix, as vqv_mul does.
+	/// If the scale of rhs contains zero, the result is undefined.
+	/// For a safe alternative, supply a fallback scale value and a threshold.
+	RTM_DISABLE_SECURITY_COOKIE_CHECK inline vqvf RTM_SIMD_CALL vqv_mul_inverse(vqvf_arg0 lhs, vqvf_arg1 rhs) RTM_NO_EXCEPT
+	{
+		const vector4f min_scale = vector_min(lhs.scale, rhs.scale);
+		const vector4f scale = vector_div(lhs.scale, rhs.scale);
+
+		// The translation of lhs is the position of its origin. The inverse of rhs gives its exact position.
+		const vector4f translation = vqv_inverse_mul_point3(lhs.translation, rhs);
+
+		if (vector_any_less_than3(min_scale, vector_zero()))
+		{
+			// If we have negative scale, we go through a matrix
+			const matrix3x4f lhs_mtx = matrix_from_vqv(lhs);
+			const matrix3x4f inv_rhs_mtx = rtm_impl::vqv_inverse_rotation_scale_matrix(rhs);
+			const matrix3x4f result_mtx = matrix_mul(lhs_mtx, inv_rhs_mtx);
+
+			const quatf rotation = rtm_impl::vqv_rotation_from_matrix(result_mtx, scale);
+			return vqv_set(rotation, translation, scale);
+		}
+		else
+		{
+			const quatf rotation = quat_mul(lhs.rotation, quat_conjugate(rhs.rotation));
+			return vqv_set(rotation, translation, scale);
+		}
+	}
+
+	/// Multiplies a VQV transform with the inverse of a second VQV transform.
+	/// The function computes lhs * inverse(rhs) and does not store the inverse.
+	/// Multiplication order is as follow: local_to_object = vqv_mul_inverse(local_to_world, object_to_world)
+	/// If a scale component of rhs has an absolute value below or equal to the supplied threshold,
+	/// the function uses the fallback scale component instead.
+	RTM_DISABLE_SECURITY_COOKIE_CHECK inline vqvf RTM_SIMD_CALL vqv_mul_inverse(vqvf_arg0 lhs, vqvf_arg1 rhs, vector4f_arg6 fallback_scale, float threshold = 1.0E-8F) RTM_NO_EXCEPT
+	{
+		return vqv_mul_inverse(lhs, rtm_impl::vqv_with_fallback_scale(rhs, fallback_scale, threshold));
+	}
+
+	/// Multiplies the inverse of a VQV transform with a second VQV transform.
+	/// The function computes inverse(lhs) * rhs and does not store the inverse.
+	/// The result is the transform that vqv_mul(lhs, result) changes into rhs.
+	/// The result has the rotation inverse(lhs.rotation) * rhs.rotation and the scale rhs.scale / lhs.scale.
+	/// Its translation is exact: vqv_mul(lhs, vqv_inverse_mul(lhs, rhs)) has the translation of rhs.
+	/// When the scales are positive, vqv_mul(lhs, vqv_inverse_mul(lhs, rhs)) is equal to rhs.
+	/// When a scale component is negative, the function goes through a matrix, as vqv_mul does.
+	/// If the scale of lhs contains zero, the result is undefined.
+	/// For a safe alternative, supply a fallback scale value and a threshold.
+	RTM_DISABLE_SECURITY_COOKIE_CHECK inline vqvf RTM_SIMD_CALL vqv_inverse_mul(vqvf_arg0 lhs, vqvf_arg1 rhs) RTM_NO_EXCEPT
+	{
+		const vector4f min_scale = vector_min(lhs.scale, rhs.scale);
+		const vector4f scale = vector_div(rhs.scale, lhs.scale);
+
+		quatf rotation;
+		if (vector_any_less_than3(min_scale, vector_zero()))
+		{
+			// If we have negative scale, we go through a matrix
+			const matrix3x4f inv_lhs_mtx = rtm_impl::vqv_inverse_rotation_scale_matrix(lhs);
+			const matrix3x4f rhs_mtx = matrix_from_vqv(rhs);
+			const matrix3x4f result_mtx = matrix_mul(inv_lhs_mtx, rhs_mtx);
+
+			rotation = rtm_impl::vqv_rotation_from_matrix(result_mtx, scale);
+		}
+		else
+		{
+			rotation = quat_mul(quat_conjugate(lhs.rotation), rhs.rotation);
+		}
+
+		// vqv_mul(lhs, result) moves the translation of lhs with the scale and the rotation of the result.
+		// This translation cancels that change and gives the translation of rhs.
+		// Thus the result does not change when the origin of the world moves.
+		const vector4f translation = vector_sub(rhs.translation, quat_mul_vector3(vector_mul(lhs.translation, scale), rotation));
+		return vqv_set(rotation, translation, scale);
+	}
+
+	/// Multiplies the inverse of a VQV transform with a second VQV transform.
+	/// The function computes inverse(lhs) * rhs and does not store the inverse.
+	/// If a scale component of lhs has an absolute value below or equal to the supplied threshold,
+	/// the function uses the fallback scale component instead.
+	RTM_DISABLE_SECURITY_COOKIE_CHECK inline vqvf RTM_SIMD_CALL vqv_inverse_mul(vqvf_arg0 lhs, vqvf_arg1 rhs, vector4f_arg6 fallback_scale, float threshold = 1.0E-8F) RTM_NO_EXCEPT
+	{
+		return vqv_inverse_mul(rtm_impl::vqv_with_fallback_scale(lhs, fallback_scale, threshold), rhs);
+	}
+
 	/// Returns the inverse of the input VQV transform.
 	/// If zero scale is contained, the result is undefined.
 	/// For a safe alternative, supply a fallback scale value and a threshold.
+	/// WARNING: A VQV transform cannot hold the inverse when the scale is not uniform.
+	/// The result is incorrect for a point and for a multiplication.
+	RTM_DEPRECATED("Use 'vqv_inverse_mul_point3', 'vqv_mul_inverse', or 'vqv_inverse_mul' instead. To be removed in 2.6.")
 	RTM_DISABLE_SECURITY_COOKIE_CHECK inline vqvf RTM_SIMD_CALL vqv_inverse(vqvf_arg0 input) RTM_NO_EXCEPT
 	{
 		const quatf inv_rotation = quat_conjugate(input.rotation);
@@ -397,6 +548,9 @@ namespace rtm
 	/// Returns the inverse of the input VQV transform.
 	/// If the input scale has an absolute value below the supplied threshold, the
 	/// fallback value is used instead.
+	/// WARNING: A VQV transform cannot hold the inverse when the scale is not uniform.
+	/// The result is incorrect for a point and for a multiplication.
+	RTM_DEPRECATED("Use 'vqv_inverse_mul_point3', 'vqv_mul_inverse', or 'vqv_inverse_mul' instead. To be removed in 2.6.")
 	RTM_DISABLE_SECURITY_COOKIE_CHECK inline vqvf RTM_SIMD_CALL vqv_inverse(vqvf_arg0 input, vector4f_arg3 fallback_scale, float threshold = 1.0E-8F) RTM_NO_EXCEPT
 	{
 		const quatf inv_rotation = quat_conjugate(input.rotation);
