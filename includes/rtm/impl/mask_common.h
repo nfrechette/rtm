@@ -223,21 +223,7 @@ namespace rtm
 			RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE RTM_SIMD_CALL operator mask4d() const RTM_NO_EXCEPT
 			{
 #if defined(RTM_SSE2_INTRINSICS)
-	// HACK ALERT!
-	// VS2015 and VS2017 crash when compiling with _mm_set_epi64x() here.
-	// To work around this, we use alternative code. We assume that the high and low words
-	// are identical in the mask, which should be true.
-	// See: https://github.com/nfrechette/rtm/issues/84
-	#if defined(RTM_COMPILER_MSVC) && RTM_COMPILER_MSVC < RTM_COMPILER_MSVC_2019 && defined(RTM_ARCH_X86) && !defined(NDEBUG)
-				const uint32_t x_mask = x ? 0xFFFFFFFFU : 0;
-				const uint32_t y_mask = y ? 0xFFFFFFFFU : 0;
-				const uint32_t z_mask = z ? 0xFFFFFFFFU : 0;
-				const uint32_t w_mask = w ? 0xFFFFFFFFU : 0;
-
-				return mask4d{ _mm_castsi128_pd(_mm_set_epi32(static_cast<int32_t>(y_mask), static_cast<int32_t>(y_mask), static_cast<int32_t>(x_mask), static_cast<int32_t>(x_mask))), _mm_castsi128_pd(_mm_set_epi32(static_cast<int32_t>(w_mask), static_cast<int32_t>(w_mask), static_cast<int32_t>(z_mask), static_cast<int32_t>(z_mask))) };
-	#else
 				return mask4d{ _mm_castsi128_pd(_mm_set_epi64x(static_cast<int64_t>(y), static_cast<int64_t>(x))), _mm_castsi128_pd(_mm_set_epi64x(static_cast<int64_t>(w), static_cast<int64_t>(z))) };
-	#endif
 #elif defined(RTM_NEON64_INTRINSICS)
 				return mask4d{ vcombine_u64(vcreate_u64(x), vcreate_u64(y)), vcombine_u64(vcreate_u64(z), vcreate_u64(w)) };
 #elif defined(RTM_WASM128_INTRINSICS)
@@ -250,21 +236,7 @@ namespace rtm
 			RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE RTM_SIMD_CALL operator mask4q() const RTM_NO_EXCEPT
 			{
 #if defined(RTM_SSE2_INTRINSICS)
-	// HACK ALERT!
-	// VS2015 and VS2017 crash when compiling with _mm_set_epi64x() here.
-	// To work around this, we use alternative code. We assume that the high and low words
-	// are identical in the mask, which should be true.
-	// See: https://github.com/nfrechette/rtm/issues/84
-	#if defined(RTM_COMPILER_MSVC) && RTM_COMPILER_MSVC < RTM_COMPILER_MSVC_2019 && defined(RTM_ARCH_X86) && !defined(NDEBUG)
-				const uint32_t x_mask = x ? 0xFFFFFFFFU : 0;
-				const uint32_t y_mask = y ? 0xFFFFFFFFU : 0;
-				const uint32_t z_mask = z ? 0xFFFFFFFFU : 0;
-				const uint32_t w_mask = w ? 0xFFFFFFFFU : 0;
-
-				return mask4q{ _mm_set_epi32(static_cast<int32_t>(y_mask), static_cast<int32_t>(y_mask), static_cast<int32_t>(x_mask), static_cast<int32_t>(x_mask)), _mm_set_epi32(static_cast<int32_t>(w_mask), static_cast<int32_t>(w_mask), static_cast<int32_t>(z_mask), static_cast<int32_t>(z_mask)) };
-	#else
 				return mask4q{ _mm_set_epi64x(static_cast<int64_t>(y), static_cast<int64_t>(x)), _mm_set_epi64x(static_cast<int64_t>(w), static_cast<int64_t>(z)) };
-	#endif
 #elif defined(RTM_NEON64_INTRINSICS)
 				return mask4q{ vcombine_u64(vcreate_u64(x), vcreate_u64(y)), vcombine_u64(vcreate_u64(z), vcreate_u64(w)) };
 #elif defined(RTM_WASM128_INTRINSICS)
