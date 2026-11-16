@@ -43,14 +43,6 @@
 /// any Realtime Math header. To disable the versioned namespace altogether,
 /// define RTM_NO_VERSION_NAMESPACE before including any Realtime Math header.
 
-#if !defined(RTM_NO_VERSION_NAMESPACE)
-	#if defined(RTM_COMPILER_MSVC) && RTM_COMPILER_MSVC == RTM_COMPILER_MSVC_2015
-		// VS2015 struggles with type resolution when inline namespaces are used
-		// For that reason, we disable it explicitly
-		#define RTM_NO_VERSION_NAMESPACE
-	#endif
-#endif
-
 // Force macro expansion to concatenate namespace identifier
 #define RTM_IMPL_VERSION_CONCAT_IMPL(prefix, major, minor, patch) prefix ## major ## minor ## patch
 #define RTM_IMPL_VERSION_CONCAT(prefix, major, minor, patch) RTM_IMPL_VERSION_CONCAT_IMPL(prefix, major, minor, patch)
