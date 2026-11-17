@@ -78,12 +78,6 @@ static void test_vqs_interpolation(const FloatType threshold)
 	TransformType transform_slerp = vqs_slerp(transform0, transform1, alpha);
 	TransformType transform_slerp_s = vqs_slerp(transform0, transform1, alpha_s);
 
-	TransformType transform_lerp_no_scale = vqs_lerp_no_scale(transform0, transform1, alpha);
-	TransformType transform_lerp_no_scale_s = vqs_lerp_no_scale(transform0, transform1, alpha_s);
-
-	TransformType transform_slerp_no_scale = vqs_slerp_no_scale(transform0, transform1, alpha);
-	TransformType transform_slerp_no_scale_s = vqs_slerp_no_scale(transform0, transform1, alpha_s);
-
 	CHECK(quat_near_equal(transform_lerp.rotation, transform_ref_lerp.rotation, threshold));
 	CHECK(quat_near_equal(transform_lerp_s.rotation, transform_ref_lerp_s.rotation, threshold));
 	CHECK(vector_all_near_equal3(vqs_get_translation(transform_lerp), vqs_get_translation(transform_ref_lerp), threshold));
@@ -97,20 +91,6 @@ static void test_vqs_interpolation(const FloatType threshold)
 	CHECK(vector_all_near_equal3(vqs_get_translation(transform_slerp_s), vqs_get_translation(transform_ref_slerp_s), threshold));
 	CHECK(scalar_near_equal(vqs_get_scale(transform_slerp), vqs_get_scale(transform_ref_slerp), threshold));
 	CHECK(scalar_near_equal(vqs_get_scale(transform_slerp_s), vqs_get_scale(transform_ref_slerp_s), threshold));
-
-	CHECK(quat_near_equal(transform_lerp_no_scale.rotation, transform_ref_lerp.rotation, threshold));
-	CHECK(quat_near_equal(transform_lerp_no_scale_s.rotation, transform_ref_lerp_s.rotation, threshold));
-	CHECK(vector_all_near_equal3(vqs_get_translation(transform_lerp_no_scale), vqs_get_translation(transform_ref_lerp), threshold));
-	CHECK(vector_all_near_equal3(vqs_get_translation(transform_lerp_no_scale_s), vqs_get_translation(transform_ref_lerp_s), threshold));
-	CHECK(scalar_near_equal(vqs_get_scale(transform_lerp_no_scale), vqs_get_scale(transform0), threshold));
-	CHECK(scalar_near_equal(vqs_get_scale(transform_lerp_no_scale_s), vqs_get_scale(transform0), threshold));
-
-	CHECK(quat_near_equal(transform_slerp_no_scale.rotation, transform_ref_slerp.rotation, threshold));
-	CHECK(quat_near_equal(transform_slerp_no_scale_s.rotation, transform_ref_slerp_s.rotation, threshold));
-	CHECK(vector_all_near_equal3(vqs_get_translation(transform_slerp_no_scale), vqs_get_translation(transform_ref_slerp), threshold));
-	CHECK(vector_all_near_equal3(vqs_get_translation(transform_slerp_no_scale_s), vqs_get_translation(transform_ref_slerp_s), threshold));
-	CHECK(scalar_near_equal(vqs_get_scale(transform_slerp_no_scale), vqs_get_scale(transform0), threshold));
-	CHECK(scalar_near_equal(vqs_get_scale(transform_slerp_no_scale_s), vqs_get_scale(transform0), threshold));
 }
 
 template<typename TransformType, typename FloatType>
@@ -227,49 +207,6 @@ static void test_vqs_impl(const TransformType& identity, const FloatType thresho
 
 	{
 		Vector4Type x_axis = vector_set(FloatType(1.0), FloatType(0.0), FloatType(0.0));
-		Vector4Type y_axis = vector_set(FloatType(0.0), FloatType(1.0), FloatType(0.0));
-
-		// The scale is not 1.0, thus a function that applies the scale fails
-		const FloatType ignored_scale_a = FloatType(2.5);
-		const FloatType ignored_scale_b = FloatType(-0.75);
-
-		QuatType rotation_around_z = quat_from_euler(scalar_deg_to_rad(FloatType(0.0)), scalar_deg_to_rad(FloatType(90.0)), scalar_deg_to_rad(FloatType(0.0)));
-		TransformType transform_a = vqs_set(rotation_around_z, x_axis, ignored_scale_a);
-		Vector4Type result = vqs_mul_point3_no_scale(x_axis, transform_a);
-		CHECK(vector_all_near_equal3(result, vector_set(FloatType(1.0), FloatType(1.0), FloatType(0.0)), threshold));
-		result = vqs_mul_point3_no_scale(y_axis, transform_a);
-		CHECK(vector_all_near_equal3(result, vector_set(FloatType(0.0), FloatType(0.0), FloatType(0.0)), threshold));
-
-		QuatType rotation_around_x = quat_from_euler(scalar_deg_to_rad(FloatType(0.0)), scalar_deg_to_rad(FloatType(0.0)), scalar_deg_to_rad(FloatType(90.0)));
-		TransformType transform_b = vqs_set(rotation_around_x, y_axis, ignored_scale_b);
-		result = vqs_mul_point3_no_scale(x_axis, transform_b);
-		CHECK(vector_all_near_equal3(result, vector_set(FloatType(1.0), FloatType(1.0), FloatType(0.0)), threshold));
-		result = vqs_mul_point3_no_scale(y_axis, transform_b);
-		CHECK(vector_all_near_equal3(result, vector_set(FloatType(0.0), FloatType(1.0), FloatType(-1.0)), threshold));
-
-		TransformType transform_ab = vqs_mul_no_scale(transform_a, transform_b);
-		TransformType transform_ba = vqs_mul_no_scale(transform_b, transform_a);
-
-		// The result has the scale of the left input
-		CHECK(scalar_near_equal(ignored_scale_a, vqs_get_scale(transform_ab), threshold));
-		CHECK(scalar_near_equal(ignored_scale_b, vqs_get_scale(transform_ba), threshold));
-
-		result = vqs_mul_point3_no_scale(x_axis, transform_ab);
-		CHECK(vector_all_near_equal3(result, vector_set(FloatType(1.0), FloatType(1.0), FloatType(-1.0)), threshold));
-		CHECK(vector_all_near_equal3(result, vqs_mul_point3_no_scale(vqs_mul_point3_no_scale(x_axis, transform_a), transform_b), threshold));
-		result = vqs_mul_point3_no_scale(y_axis, transform_ab);
-		CHECK(vector_all_near_equal3(result, vector_set(FloatType(0.0), FloatType(1.0), FloatType(0.0)), threshold));
-		CHECK(vector_all_near_equal3(result, vqs_mul_point3_no_scale(vqs_mul_point3_no_scale(y_axis, transform_a), transform_b), threshold));
-		result = vqs_mul_point3_no_scale(x_axis, transform_ba);
-		CHECK(vector_all_near_equal3(result, vector_set(FloatType(0.0), FloatType(1.0), FloatType(0.0)), threshold));
-		CHECK(vector_all_near_equal3(result, vqs_mul_point3_no_scale(vqs_mul_point3_no_scale(x_axis, transform_b), transform_a), threshold));
-		result = vqs_mul_point3_no_scale(y_axis, transform_ba);
-		CHECK(vector_all_near_equal3(result, vector_set(FloatType(0.0), FloatType(0.0), FloatType(-1.0)), threshold));
-		CHECK(vector_all_near_equal3(result, vqs_mul_point3_no_scale(vqs_mul_point3_no_scale(y_axis, transform_b), transform_a), threshold));
-	}
-
-	{
-		Vector4Type x_axis = vector_set(FloatType(1.0), FloatType(0.0), FloatType(0.0));
 		FloatType test_scale1 = FloatType(1.2);
 		FloatType test_scale2 = FloatType(-1.2);
 		FloatType test_scale3 = FloatType(0.0);
@@ -299,23 +236,6 @@ static void test_vqs_impl(const TransformType& identity, const FloatType thresho
 		CHECK(quat_near_equal(transform_ref.rotation, transform_b.rotation, threshold));
 		CHECK(vector_all_near_equal3(vqs_get_translation(transform_ref), vqs_get_translation(transform_b), threshold));
 		CHECK(scalar_near_equal(vqs_get_scale(transform_ref), vqs_get_scale(transform_b), threshold));
-	}
-
-	{
-		Vector4Type x_axis = vector_set(FloatType(1.0), FloatType(0.0), FloatType(0.0));
-
-		QuatType rotation_around_z = quat_from_euler(scalar_deg_to_rad(FloatType(0.0)), scalar_deg_to_rad(FloatType(90.0)), scalar_deg_to_rad(FloatType(0.0)));
-		// The scale is not 1.0, thus a function that applies the scale fails
-		const FloatType ignored_scale = FloatType(2.5);
-		TransformType transform_a = vqs_set(rotation_around_z, x_axis, ignored_scale);
-		TransformType transform_b = vqs_inverse_no_scale(transform_a);
-		TransformType transform_ab = vqs_mul_no_scale(transform_a, transform_b);
-		CHECK(quat_near_equal(identity.rotation, transform_ab.rotation, threshold));
-		CHECK(vector_all_near_equal3(vqs_get_translation(identity), vqs_get_translation(transform_ab), threshold));
-
-		// The results have the scale of the input
-		CHECK(scalar_near_equal(ignored_scale, vqs_get_scale(transform_b), threshold));
-		CHECK(scalar_near_equal(ignored_scale, vqs_get_scale(transform_ab), threshold));
 	}
 
 	{

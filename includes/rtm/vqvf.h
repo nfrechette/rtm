@@ -401,6 +401,8 @@ namespace rtm
 	/// Multiplies two VQV transforms ignoring 3D scale.
 	/// The resulting VQV transform will have the LHS scale.
 	/// Multiplication order is as follow: local_to_world = vqv_mul(local_to_object, object_to_world)
+	/// Deprecated: use a VQ transform and vq_mul(..) instead.
+	RTM_DEPRECATED("Use a VQ transform and 'vq_mul' instead. To be removed in 2.6.")
 	RTM_DISABLE_SECURITY_COOKIE_CHECK inline vqvf RTM_SIMD_CALL vqv_mul_no_scale(vqvf_arg0 lhs, vqvf_arg1 rhs) RTM_NO_EXCEPT
 	{
 		const quatf rotation = quat_mul(lhs.rotation, rhs.rotation);
@@ -417,6 +419,8 @@ namespace rtm
 
 	/// Multiplies a VQV transform and a 3D point ignoring 3D scale.
 	/// Multiplication order is as follow: world_position = vqv_mul_point3_no_scale(local_position, local_to_world)
+	/// Deprecated: use a VQ transform and vq_mul_point3(..) instead.
+	RTM_DEPRECATED("Use a VQ transform and 'vq_mul_point3' instead. To be removed in 2.6.")
 	RTM_DISABLE_SECURITY_COOKIE_CHECK inline vector4f RTM_SIMD_CALL vqv_mul_point3_no_scale(vector4f_arg0 point, vqvf_arg1 vqv) RTM_NO_EXCEPT
 	{
 		return vector_add(quat_mul_vector3(point, vqv.rotation), vqv.translation);
@@ -563,6 +567,8 @@ namespace rtm
 
 	/// Returns the inverse of the input VQV transform ignoring 3D scale.
 	/// The resulting VQV transform will have the input scale.
+	/// Deprecated: use a VQ transform and vq_inverse(..) instead.
+	RTM_DEPRECATED("Use a VQ transform and 'vq_inverse' instead. To be removed in 2.6.")
 	RTM_DISABLE_SECURITY_COOKIE_CHECK inline vqvf RTM_SIMD_CALL vqv_inverse_no_scale(vqvf_arg0 input) RTM_NO_EXCEPT
 	{
 		const quatf inv_rotation = quat_conjugate(input.rotation);
@@ -611,6 +617,8 @@ namespace rtm
 	/// This is the same instruction count when FMA is present but it might be slightly slower
 	/// due to the extra multiplication compared to: start + (alpha * (end - start)).
 	/// The resulting VQV transform will have the start scale.
+	/// Deprecated: use a VQ transform and vq_lerp(..) instead.
+	RTM_DEPRECATED("Use a VQ transform and 'vq_lerp' instead. To be removed in 2.6.")
 	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE vqvf RTM_SIMD_CALL vqv_lerp_no_scale(vqvf_arg0 start, vqvf_arg1 end, float alpha) RTM_NO_EXCEPT
 	{
 		const quatf rotation = quat_lerp(start.rotation, end.rotation, alpha);
@@ -625,6 +633,8 @@ namespace rtm
 	/// This is the same instruction count when FMA is present but it might be slightly slower
 	/// due to the extra multiplication compared to: start + (alpha * (end - start)).
 	/// The resulting VQV transform will have the start scale.
+	/// Deprecated: use a VQ transform and vq_lerp(..) instead.
+	RTM_DEPRECATED("Use a VQ transform and 'vq_lerp' instead. To be removed in 2.6.")
 	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE vqvf RTM_SIMD_CALL vqv_lerp_no_scale(vqvf_arg0 start, vqvf_arg1 end, scalarf_arg2 alpha) RTM_NO_EXCEPT
 	{
 		const quatf rotation = quat_lerp(start.rotation, end.rotation, alpha);
@@ -678,6 +688,8 @@ namespace rtm
 
 	/// Per component spherical interpolation of the two inputs at the specified alpha.
 	/// See quat_slerp(..)
+	/// Deprecated: use a VQ transform and vq_slerp(..) instead.
+	RTM_DEPRECATED("Use a VQ transform and 'vq_slerp' instead. To be removed in 2.6.")
 	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE vqvf RTM_SIMD_CALL vqv_slerp_no_scale(vqvf_arg0 start, vqvf_arg1 end, float alpha) RTM_NO_EXCEPT
 	{
 		const quatf rotation = quat_slerp(start.rotation, end.rotation, alpha);
@@ -688,6 +700,8 @@ namespace rtm
 #if defined(RTM_SSE2_INTRINSICS)
 	/// Per component spherical interpolation of the two inputs at the specified alpha.
 	/// See quat_slerp(..)
+	/// Deprecated: use a VQ transform and vq_slerp(..) instead.
+	RTM_DEPRECATED("Use a VQ transform and 'vq_slerp' instead. To be removed in 2.6.")
 	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE vqvf RTM_SIMD_CALL vqv_slerp_no_scale(vqvf_arg0 start, vqvf_arg1 end, scalarf_arg2 alpha) RTM_NO_EXCEPT
 	{
 		const quatf rotation = quat_slerp(start.rotation, end.rotation, alpha);
