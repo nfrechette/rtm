@@ -800,14 +800,14 @@ namespace rtm
 			result = vmulq_f64(vmulq_f64(result, pow2_n0), pow2_n1);
 
 			// The result is NaN when the input is NaN
-			return vbslq_f64(vceqq_f64(input, input), result, input);
+			return RTM_VECTOR2D_SELECT(vceqq_f64(input, input), result, input);
 		}
 
 		// Returns the natural logarithm of each float64 lane.
 		RTM_DISABLE_SECURITY_COOKIE_CHECK inline float64x2_t RTM_SIMD_CALL log_f64x2(float64x2_t input) RTM_NO_EXCEPT
 		{
 			const uint64x2_t is_denormal = vcltq_f64(input, vdupq_n_f64((std::numeric_limits<double>::min)()));
-			const float64x2_t x = vbslq_f64(is_denormal, vmulq_n_f64(input, k_log_f64_denormal_scale), input);
+			const float64x2_t x = RTM_VECTOR2D_SELECT(is_denormal, vmulq_n_f64(input, k_log_f64_denormal_scale), input);
 			const float64x2_t exponent_offset = vreinterpretq_f64_u64(vandq_u64(is_denormal, vreinterpretq_u64_f64(vdupq_n_f64(54.0))));
 
 			// The exponent bits minus 1022 give a mantissa in the range [0.5, 1.0)
@@ -827,8 +827,8 @@ namespace rtm
 			const float64x2_t y_small = vfmaq_f64(half, z_small, half);
 			const float64x2_t z_large = vsubq_f64(vsubq_f64(mantissa, half), half);
 			const float64x2_t y_large = vfmaq_f64(half, mantissa, half);
-			const float64x2_t z = vbslq_f64(is_mantissa_small, z_small, z_large);
-			const float64x2_t y = vbslq_f64(is_mantissa_small, y_small, y_large);
+			const float64x2_t z = RTM_VECTOR2D_SELECT(is_mantissa_small, z_small, z_large);
+			const float64x2_t y = RTM_VECTOR2D_SELECT(is_mantissa_small, y_small, y_large);
 
 			const float64x2_t s = vdivq_f64(z, y);
 			const float64x2_t s2 = vmulq_f64(s, s);
@@ -846,10 +846,10 @@ namespace rtm
 			// Special values: log(+inf) = +inf, log(0) = -inf, log(negative) = NaN, log(NaN) = NaN
 			const float64x2_t infinity = vdupq_n_f64(std::numeric_limits<double>::infinity());
 			const float64x2_t zero = vdupq_n_f64(0.0);
-			result = vbslq_f64(vceqq_f64(input, infinity), infinity, result);
-			result = vbslq_f64(vceqq_f64(input, zero), vdupq_n_f64(-std::numeric_limits<double>::infinity()), result);
-			result = vbslq_f64(vcltq_f64(input, zero), vdupq_n_f64(std::numeric_limits<double>::quiet_NaN()), result);
-			return vbslq_f64(vceqq_f64(input, input), result, input);
+			result = RTM_VECTOR2D_SELECT(vceqq_f64(input, infinity), infinity, result);
+			result = RTM_VECTOR2D_SELECT(vceqq_f64(input, zero), vdupq_n_f64(-std::numeric_limits<double>::infinity()), result);
+			result = RTM_VECTOR2D_SELECT(vcltq_f64(input, zero), vdupq_n_f64(std::numeric_limits<double>::quiet_NaN()), result);
+			return RTM_VECTOR2D_SELECT(vceqq_f64(input, input), result, input);
 		}
 #endif
 #endif

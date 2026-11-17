@@ -186,7 +186,7 @@ RTM_IMPL_FILE_PRAGMA_PUSH
 		#define RTM_VECTOR2D_MAKE(x, y) { x, y }
 	#endif
 #elif defined(RTM_NEON_INTRINSICS)
-	// RTM_VECTOR2D_SELECT not defined for NEON yet, TODO
+	// RTM_VECTOR4F_MAKE and RTM_VECTOR2D_MAKE are not defined for NEON
 #elif defined(RTM_WASM128_INTRINSICS)
 	// Use wasm_f32x4_const and wasm_f64x2_const to create a vector constant
 #else

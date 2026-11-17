@@ -125,8 +125,22 @@ TEST_CASE("macros vector4d", "[math][macros][vector4]")
 		const rtm::vector4d result = rtm::vector4d{ xy, zw };
 		CHECK(rtm::vector_all_near_equal(rtm::vector_set(1.0, 20.0, -30.0, 4.0), result, threshold));
 	}
+#elif defined(RTM_NEON64_INTRINSICS)
+	const double threshold = 0.0;	// Result must be binary exact!
+
+	const rtm::vector4d v0 = rtm::vector_set(1.0, -2.0, 3.5, 4.0);
+	const rtm::vector4d v2 = rtm::vector_set(10.0, 20.0, -30.0, 40.0);
+
+	{
+		// RTM_VECTOR2D_SELECT is also available with ARM64 NEON
+		const rtm::mask4d mask = rtm::mask_set(true, false, false, true);
+		const float64x2_t xy = RTM_VECTOR2D_SELECT(mask.xy, v0.xy, v2.xy);
+		const float64x2_t zw = RTM_VECTOR2D_SELECT(mask.zw, v0.zw, v2.zw);
+		const rtm::vector4d result = rtm::vector4d{ xy, zw };
+		CHECK(rtm::vector_all_near_equal(rtm::vector_set(1.0, 20.0, -30.0, 4.0), result, threshold));
+	}
 #else
-	// The float64 vector macros are only available with SSE2 and WASM SIMD
+	// The float64 vector macros are only available with SSE2, WASM SIMD, and ARM64 NEON
 	SUCCEED();
 #endif
 }
