@@ -2484,7 +2484,11 @@
 <h3 id="vqv_mul_no_scale">vqv_mul_no_scale<a class="headerlink" href="#vqv_mul_no_scale" title="Permanent link">&para;</a></h3>
 <div class="highlight"><pre><span></span><code><span class="n">vqvf</span><span class="w"> </span><span class="n">vqv_mul_no_scale</span><span class="p">(</span><span class="n">vqvf</span><span class="w"> </span><span class="n">lhs</span><span class="p">,</span><span class="w"> </span><span class="n">vqvf</span><span class="w"> </span><span class="n">rhs</span><span class="p">)</span>
 </code></pre></div>
-<p>Multiplies two VQV transforms ignoring 3D scale. The resulting VQV transform will have the LHS scale. Multiplication order is as follow: local_to_world = vqv_mul(local_to_object, object_to_world)</p>
+<p>Multiplies two VQV transforms ignoring 3D scale. The resulting VQV transform will have the LHS scale. Multiplication order is as follow: local_to_world = vqv_mul(local_to_object, object_to_world) Deprecated: use a VQ transform and vq_mul(..) instead.  </p>
+<div class="admonition warning">
+<p class="admonition-title">Deprecated</p>
+<p>Use a VQ transform and 'vq_mul' instead. To be removed in 2.6.</p>
+</div>
 <h3 id="vqv_mul_point3">vqv_mul_point3<a class="headerlink" href="#vqv_mul_point3" title="Permanent link">&para;</a></h3>
 <div class="highlight"><pre><span></span><code><span class="n">vector4f</span><span class="w"> </span><span class="n">vqv_mul_point3</span><span class="p">(</span><span class="n">vector4f</span><span class="w"> </span><span class="n">point</span><span class="p">,</span><span class="w"> </span><span class="n">vqvf</span><span class="w"> </span><span class="n">vqv</span><span class="p">)</span>
 </code></pre></div>
@@ -2492,7 +2496,11 @@
 <h3 id="vqv_mul_point3_no_scale">vqv_mul_point3_no_scale<a class="headerlink" href="#vqv_mul_point3_no_scale" title="Permanent link">&para;</a></h3>
 <div class="highlight"><pre><span></span><code><span class="n">vector4f</span><span class="w"> </span><span class="n">vqv_mul_point3_no_scale</span><span class="p">(</span><span class="n">vector4f</span><span class="w"> </span><span class="n">point</span><span class="p">,</span><span class="w"> </span><span class="n">vqvf</span><span class="w"> </span><span class="n">vqv</span><span class="p">)</span>
 </code></pre></div>
-<p>Multiplies a VQV transform and a 3D point ignoring 3D scale. Multiplication order is as follow: world_position = vqv_mul_point3_no_scale(local_position, local_to_world)</p>
+<p>Multiplies a VQV transform and a 3D point ignoring 3D scale. Multiplication order is as follow: world_position = vqv_mul_point3_no_scale(local_position, local_to_world) Deprecated: use a VQ transform and vq_mul_point3(..) instead.  </p>
+<div class="admonition warning">
+<p class="admonition-title">Deprecated</p>
+<p>Use a VQ transform and 'vq_mul_point3' instead. To be removed in 2.6.</p>
+</div>
 <h3 id="vqv_inverse_mul_point3">vqv_inverse_mul_point3<a class="headerlink" href="#vqv_inverse_mul_point3" title="Permanent link">&para;</a></h3>
 <div class="highlight"><pre><span></span><code><span class="n">vector4f</span><span class="w"> </span><span class="n">vqv_inverse_mul_point3</span><span class="p">(</span><span class="n">vector4f</span><span class="w"> </span><span class="n">point</span><span class="p">,</span><span class="w"> </span><span class="n">vqvf</span><span class="w"> </span><span class="n">vqv</span><span class="p">)</span>
 </code></pre></div>
@@ -2532,7 +2540,11 @@
 <h3 id="vqv_inverse_no_scale">vqv_inverse_no_scale<a class="headerlink" href="#vqv_inverse_no_scale" title="Permanent link">&para;</a></h3>
 <div class="highlight"><pre><span></span><code><span class="n">vqvf</span><span class="w"> </span><span class="n">vqv_inverse_no_scale</span><span class="p">(</span><span class="n">vqvf</span><span class="w"> </span><span class="n">input</span><span class="p">)</span>
 </code></pre></div>
-<p>Returns the inverse of the input VQV transform ignoring 3D scale. The resulting VQV transform will have the input scale.</p>
+<p>Returns the inverse of the input VQV transform ignoring 3D scale. The resulting VQV transform will have the input scale. Deprecated: use a VQ transform and vq_inverse(..) instead.  </p>
+<div class="admonition warning">
+<p class="admonition-title">Deprecated</p>
+<p>Use a VQ transform and 'vq_inverse' instead. To be removed in 2.6.</p>
+</div>
 <h3 id="vqv_normalize">vqv_normalize<a class="headerlink" href="#vqv_normalize" title="Permanent link">&para;</a></h3>
 <div class="highlight"><pre><span></span><code><span class="n">vqvf</span><span class="w"> </span><span class="n">vqv_normalize</span><span class="p">(</span><span class="n">vqvf</span><span class="w"> </span><span class="n">input</span><span class="p">)</span>
 </code></pre></div>
@@ -2544,7 +2556,11 @@
 <h3 id="vqv_lerp_no_scale">vqv_lerp_no_scale<a class="headerlink" href="#vqv_lerp_no_scale" title="Permanent link">&para;</a></h3>
 <div class="highlight"><pre><span></span><code><span class="n">vqvf</span><span class="w"> </span><span class="n">vqv_lerp_no_scale</span><span class="p">(</span><span class="n">vqvf</span><span class="w"> </span><span class="n">start</span><span class="p">,</span><span class="w"> </span><span class="n">vqvf</span><span class="w"> </span><span class="n">end</span><span class="p">,</span><span class="w"> </span><span class="kt">float</span><span class="w"> </span><span class="n">alpha</span><span class="p">)</span>
 </code></pre></div>
-<p>Per component linear interpolation of the two inputs at the specified alpha. The formula used is: ((1.0 - alpha) * start) + (alpha * end). Interpolation is stable and will return 'start' when alpha is 0.0 and 'end' when it is 1.0. This is the same instruction count when FMA is present but it might be slightly slower due to the extra multiplication compared to: start + (alpha * (end - start)). The resulting VQV transform will have the start scale.</p>
+<p>Per component linear interpolation of the two inputs at the specified alpha. The formula used is: ((1.0 - alpha) * start) + (alpha * end). Interpolation is stable and will return 'start' when alpha is 0.0 and 'end' when it is 1.0. This is the same instruction count when FMA is present but it might be slightly slower due to the extra multiplication compared to: start + (alpha * (end - start)). The resulting VQV transform will have the start scale. Deprecated: use a VQ transform and vq_lerp(..) instead.  </p>
+<div class="admonition warning">
+<p class="admonition-title">Deprecated</p>
+<p>Use a VQ transform and 'vq_lerp' instead. To be removed in 2.6.</p>
+</div>
 <h3 id="vqv_slerp">vqv_slerp<a class="headerlink" href="#vqv_slerp" title="Permanent link">&para;</a></h3>
 <div class="highlight"><pre><span></span><code><span class="n">vqvf</span><span class="w"> </span><span class="n">vqv_slerp</span><span class="p">(</span><span class="n">vqvf</span><span class="w"> </span><span class="n">start</span><span class="p">,</span><span class="w"> </span><span class="n">vqvf</span><span class="w"> </span><span class="n">end</span><span class="p">,</span><span class="w"> </span><span class="kt">float</span><span class="w"> </span><span class="n">alpha</span><span class="p">)</span>
 </code></pre></div>
@@ -2552,7 +2568,11 @@
 <h3 id="vqv_slerp_no_scale">vqv_slerp_no_scale<a class="headerlink" href="#vqv_slerp_no_scale" title="Permanent link">&para;</a></h3>
 <div class="highlight"><pre><span></span><code><span class="n">vqvf</span><span class="w"> </span><span class="n">vqv_slerp_no_scale</span><span class="p">(</span><span class="n">vqvf</span><span class="w"> </span><span class="n">start</span><span class="p">,</span><span class="w"> </span><span class="n">vqvf</span><span class="w"> </span><span class="n">end</span><span class="p">,</span><span class="w"> </span><span class="kt">float</span><span class="w"> </span><span class="n">alpha</span><span class="p">)</span>
 </code></pre></div>
-<p>Per component spherical interpolation of the two inputs at the specified alpha. See quat_slerp(..)</p>
+<p>Per component spherical interpolation of the two inputs at the specified alpha. See quat_slerp(..) Deprecated: use a VQ transform and vq_slerp(..) instead.  </p>
+<div class="admonition warning">
+<p class="admonition-title">Deprecated</p>
+<p>Use a VQ transform and 'vq_slerp' instead. To be removed in 2.6.</p>
+</div>
 <h3 id="vqv_is_finite">vqv_is_finite<a class="headerlink" href="#vqv_is_finite" title="Permanent link">&para;</a></h3>
 <div class="highlight"><pre><span></span><code><span class="kt">bool</span><span class="w"> </span><span class="n">vqv_is_finite</span><span class="p">(</span><span class="n">vqvf</span><span class="w"> </span><span class="n">input</span><span class="p">)</span>
 </code></pre></div>
