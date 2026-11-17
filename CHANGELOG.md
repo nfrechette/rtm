@@ -11,6 +11,7 @@
 ### Deprecations
 
 *  Deprecate `vqv_inverse`: a VQV transform cannot hold the inverse of a non-uniform scale, thus the result is incorrect for a point and for a multiplication. Use `vqv_inverse_mul_point3`, `vqv_mul_inverse`, or `vqv_inverse_mul`. To be removed in 2.6
+*  Deprecate `vqv_mul_no_scale`, `vqv_mul_point3_no_scale`, `vqv_inverse_no_scale`, `vqv_lerp_no_scale`, and `vqv_slerp_no_scale`: to ignore the scale, use a VQ transform and `vq_mul`, `vq_mul_point3`, `vq_inverse`, `vq_lerp`, or `vq_slerp`. To be removed in 2.6
 
 ### New features
 
