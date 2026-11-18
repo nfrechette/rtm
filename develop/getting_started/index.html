@@ -2295,6 +2295,7 @@
 <p>Cross-compilation to <code>riscv64</code> is not handled by <code>make.py</code>. Use CMake directly with a proper RISC-V compiler and toolchain file instead.</p>
 <h3 id="linux-armv7">Linux ARMv7<a class="headerlink" href="#linux-armv7" title="Permanent link">&para;</a></h3>
 <p>For native <em>Linux on ARMv7</em>, the steps are identical to <em>x86 and x64</em> and <code>make.py</code> selects the <code>armv7</code> architecture automatically. You can generate build files with: <code>python make.py -cpu armv7</code></p>
+<p>On a Linux host that is not ARMv7, <code>make.py</code> cross-compiles with GCC or Clang: <code>python make.py -compiler gcc15 -cpu armv7 -build -unit_test</code>. GCC uses the <code>arm-linux-gnueabihf-g++-15</code> cross compiler, and Clang uses the headers and the libraries of that cross compiler. <code>qemu-arm</code> runs the unit tests. On Ubuntu, install the <code>g++-15-arm-linux-gnueabihf</code> and <code>qemu-user</code> packages. The benchmarks do not run when <code>make.py</code> cross-compiles.</p>
 <p>With SIMD enabled, the build adds <code>-mfpu=neon</code> because the Linux <code>armhf</code> compilers do not enable NEON by default.</p>
 <h3 id="windows-arm64">Windows ARM64<a class="headerlink" href="#windows-arm64" title="Permanent link">&para;</a></h3>
 <p>For <em>Windows on ARM64</em>, the steps are identical to <em>x86 and x64</em> but you will need <em>CMake 3.13 or higher</em> and you must provide the architecture on the command line: <code>python make.py -compiler vs2017 -cpu arm64</code></p>
