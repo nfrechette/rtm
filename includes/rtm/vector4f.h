@@ -2021,12 +2021,14 @@ namespace rtm
 	}
 
 	/// Returns a normalized vector2.
-	/// If the length of the input is below the supplied threshold, the
-	/// fall back value is returned instead.
-	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE vector4f RTM_SIMD_CALL vector_normalize2(vector4f_arg0 input, vector4f_arg1 fallback, float threshold = 1.0E-8F) RTM_NO_EXCEPT
+	/// If the squared length of the input is below or equal to the supplied threshold,
+	/// the function returns the fallback value.
+	/// The default threshold is the smallest normal value. Do not use a smaller threshold:
+	/// a squared length below the smallest normal value gives a result that is not normalized.
+	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE vector4f RTM_SIMD_CALL vector_normalize2(vector4f_arg0 input, vector4f_arg1 fallback, float threshold = (std::numeric_limits<float>::min)()) RTM_NO_EXCEPT
 	{
 		const scalarf len_sq = vector_length_squared2_as_scalar(input);
-		if (scalar_cast(len_sq) >= threshold)
+		if (scalar_cast(len_sq) > threshold)
 			return RTM_IMPL_VECTOR4F_NORMALIZE(input, len_sq);
 		else
 			return fallback;
@@ -2042,12 +2044,14 @@ namespace rtm
 	}
 
 	/// Returns a normalized vector3.
-	/// If the length of the input is below the supplied threshold, the
-	/// fall back value is returned instead.
-	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE vector4f RTM_SIMD_CALL vector_normalize3(vector4f_arg0 input, vector4f_arg1 fallback, float threshold = 1.0E-8F) RTM_NO_EXCEPT
+	/// If the squared length of the input is below or equal to the supplied threshold,
+	/// the function returns the fallback value.
+	/// The default threshold is the smallest normal value. Do not use a smaller threshold:
+	/// a squared length below the smallest normal value gives a result that is not normalized.
+	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE vector4f RTM_SIMD_CALL vector_normalize3(vector4f_arg0 input, vector4f_arg1 fallback, float threshold = (std::numeric_limits<float>::min)()) RTM_NO_EXCEPT
 	{
 		const scalarf len_sq = vector_length_squared3_as_scalar(input);
-		if (scalar_cast(len_sq) >= threshold)
+		if (scalar_cast(len_sq) > threshold)
 			return RTM_IMPL_VECTOR4F_NORMALIZE(input, len_sq);
 		else
 			return fallback;
@@ -2063,12 +2067,14 @@ namespace rtm
 	}
 
 	/// Returns a normalized vector4.
-	/// If the length of the input is below the supplied threshold, the
-	/// fall back value is returned instead.
-	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE vector4f RTM_SIMD_CALL vector_normalize(vector4f_arg0 input, vector4f_arg1 fallback, float threshold = 1.0E-8F) RTM_NO_EXCEPT
+	/// If the squared length of the input is below or equal to the supplied threshold,
+	/// the function returns the fallback value.
+	/// The default threshold is the smallest normal value. Do not use a smaller threshold:
+	/// a squared length below the smallest normal value gives a result that is not normalized.
+	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE vector4f RTM_SIMD_CALL vector_normalize(vector4f_arg0 input, vector4f_arg1 fallback, float threshold = (std::numeric_limits<float>::min)()) RTM_NO_EXCEPT
 	{
 		const scalarf len_sq = vector_length_squared_as_scalar(input);
-		if (scalar_cast(len_sq) >= threshold)
+		if (scalar_cast(len_sq) > threshold)
 			return RTM_IMPL_VECTOR4F_NORMALIZE(input, len_sq);
 		else
 			return fallback;

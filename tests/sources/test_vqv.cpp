@@ -28,6 +28,8 @@
 #include <rtm/vqvf.h>
 #include <rtm/vqvd.h>
 
+#include <limits>
+
 using namespace rtm;
 
 // Compares the 3x4 affine matrices of two VQV transforms.
@@ -493,6 +495,13 @@ static void test_vqv_impl(const TransformType& identity, const FloatType thresho
 		const TransformType inverse_mul_result = vqv_inverse_mul(transform_zero, transform_other, fallback_scale);
 		CHECK(vqv_is_finite(inverse_mul_result));
 		check_vqv_near_equal(vqv_inverse_mul(transform_ref, transform_other), inverse_mul_result, threshold);
+
+		// The reciprocal of this denormal scale is infinite: the functions use the fallback lane
+		const FloatType denormal_scale = (std::numeric_limits<FloatType>::min)() * FloatType(0.125);
+		const TransformType transform_denormal = vqv_set(rotation, translation, vector_set(FloatType(1.5), denormal_scale, FloatType(-2.0)));
+		CHECK(vector_all_near_equal3(vqv_inverse_mul_point3(point, transform_ref), vqv_inverse_mul_point3(point, transform_denormal, fallback_scale), threshold));
+		check_vqv_near_equal(vqv_mul_inverse(transform_other, transform_ref), vqv_mul_inverse(transform_other, transform_denormal, fallback_scale), threshold);
+		check_vqv_near_equal(vqv_inverse_mul(transform_ref, transform_other), vqv_inverse_mul(transform_denormal, transform_other, fallback_scale), threshold);
 	}
 
 	{

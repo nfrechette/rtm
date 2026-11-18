@@ -32,6 +32,8 @@
 #include "rtm/impl/compiler_utils.h"
 #include "rtm/impl/matrix_common.h"
 
+#include <limits>
+
 RTM_IMPL_FILE_PRAGMA_PUSH
 
 namespace rtm
@@ -284,9 +286,11 @@ namespace rtm
 	}
 
 	/// Inverses a 4x4 matrix.
-	/// If the input matrix has a determinant whose absolute value is below the supplied threshold, the
-	/// fall back value is returned instead.
-	RTM_DISABLE_SECURITY_COOKIE_CHECK inline matrix4x4f RTM_SIMD_CALL matrix_inverse(matrix4x4f_arg0 input, matrix4x4f_arg1 fallback, float threshold = 1.0E-8F) RTM_NO_EXCEPT
+	/// If the absolute value of the determinant is below or equal to the supplied threshold,
+	/// the function returns the fallback value.
+	/// The default threshold is the smallest normal value. It prevents a division by zero.
+	/// It does not find a matrix that is almost singular: the inverse of such a matrix has very large values.
+	RTM_DISABLE_SECURITY_COOKIE_CHECK inline matrix4x4f RTM_SIMD_CALL matrix_inverse(matrix4x4f_arg0 input, matrix4x4f_arg1 fallback, float threshold = (std::numeric_limits<float>::min)()) RTM_NO_EXCEPT
 	{
 		matrix4x4f input_transposed = matrix_transpose(input);
 
@@ -364,7 +368,7 @@ namespace rtm
 		vector4f w_axis = vector_mix<mix4::x, mix4::b, mix4::z, mix4::d>(c6, c7);
 
 		const scalarf det = vector_dot_as_scalar(x_axis, input_transposed.x_axis);
-		if (scalar_cast(scalar_abs(det)) < threshold)
+		if (scalar_cast(scalar_abs(det)) <= threshold)
 			return fallback;
 
 		const scalarf inv_det_s = scalar_reciprocal(det);

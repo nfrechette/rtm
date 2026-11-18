@@ -96,7 +96,7 @@ template<typename Vector4Type, typename FloatType>
 inline Vector4Type scalar_normalize2(const Vector4Type& input, const Vector4Type& fallback, FloatType threshold)
 {
 	FloatType len_sq = scalar_dot2<Vector4Type, FloatType>(input, input);
-	if (len_sq >= threshold)
+	if (len_sq > threshold)
 	{
 		FloatType inv_len = rtm::scalar_sqrt_reciprocal(len_sq);
 		return vector_set(vector_get_x(input) * inv_len, vector_get_y(input) * inv_len, (FloatType)0.0);
@@ -109,7 +109,7 @@ template<typename Vector4Type, typename FloatType>
 inline Vector4Type scalar_normalize3(const Vector4Type& input, const Vector4Type& fallback, FloatType threshold)
 {
 	FloatType len_sq = scalar_dot3<Vector4Type, FloatType>(input, input);
-	if (len_sq >= threshold)
+	if (len_sq > threshold)
 	{
 		FloatType inv_len = rtm::scalar_sqrt_reciprocal(len_sq);
 		return vector_set(vector_get_x(input) * inv_len, vector_get_y(input) * inv_len, vector_get_z(input) * inv_len);
@@ -122,7 +122,7 @@ template<typename Vector4Type, typename FloatType>
 inline Vector4Type scalar_normalize4(const Vector4Type& input, const Vector4Type& fallback, FloatType threshold)
 {
 	FloatType len_sq = scalar_dot4<Vector4Type, FloatType>(input, input);
-	if (len_sq >= threshold)
+	if (len_sq > threshold)
 	{
 		FloatType inv_len = rtm::scalar_sqrt_reciprocal(len_sq);
 		return vector_set(vector_get_x(input) * inv_len, vector_get_y(input) * inv_len, vector_get_z(input) * inv_len, vector_get_w(input) * inv_len);
@@ -847,6 +847,27 @@ void test_vector4_arithmetic_impl(const FloatType threshold)
 	CHECK(scalar_near_equal(vector_get_y(vector_normalize4_result0), vector_get_y(scalar_normalize4_result0), threshold));
 	CHECK(scalar_near_equal(vector_get_z(vector_normalize4_result0), vector_get_z(scalar_normalize4_result0), threshold));
 	CHECK(scalar_near_equal(vector_get_w(vector_normalize4_result0), vector_get_w(scalar_normalize4_result0), threshold));
+
+	{
+		// The default threshold is the smallest normal value: the functions normalize a very short vector
+		const FloatType small_length = std::sqrt((std::numeric_limits<FloatType>::min)()) * FloatType(2.0);
+		const Vector4Type small_input = vector_set(small_length, FloatType(0.0), FloatType(0.0), FloatType(0.0));
+		const Vector4Type unit_x = vector_set(FloatType(1.0), FloatType(0.0), FloatType(0.0), FloatType(0.0));
+		CHECK(vector_all_near_equal2(unit_x, vector_normalize2(small_input, fallback), threshold));
+		CHECK(vector_all_near_equal3(unit_x, vector_normalize3(small_input, fallback), threshold));
+		CHECK(vector_all_near_equal(unit_x, vector_normalize(small_input, fallback), threshold));
+
+		// The squared length of this vector is a denormal value: the functions return the fallback value
+		const Vector4Type denormal_input = vector_set(small_length * FloatType(0.25), FloatType(0.0), FloatType(0.0), FloatType(0.0));
+		CHECK(vector_all_near_equal2(fallback, vector_normalize2(denormal_input, fallback), threshold));
+		CHECK(vector_all_near_equal3(fallback, vector_normalize3(denormal_input, fallback), threshold));
+		CHECK(vector_all_near_equal(fallback, vector_normalize(denormal_input, fallback), threshold));
+
+		// With a threshold of zero, the functions return the fallback value for a zero vector
+		CHECK(vector_all_near_equal2(fallback, vector_normalize2(zero, fallback, FloatType(0.0)), threshold));
+		CHECK(vector_all_near_equal3(fallback, vector_normalize3(zero, fallback, FloatType(0.0)), threshold));
+		CHECK(vector_all_near_equal(fallback, vector_normalize(zero, fallback, FloatType(0.0)), threshold));
+	}
 
 	CHECK(scalar_near_equal(vector_get_x(vector_lerp(test_value10, test_value11, FloatType(0.33))), ((test_value11_flt[0] - test_value10_flt[0]) * FloatType(0.33)) + test_value10_flt[0], threshold));
 	CHECK(scalar_near_equal(vector_get_y(vector_lerp(test_value10, test_value11, FloatType(0.33))), ((test_value11_flt[1] - test_value10_flt[1]) * FloatType(0.33)) + test_value10_flt[1], threshold));

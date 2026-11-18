@@ -336,6 +336,23 @@ static void test_matrix4x4_transformations(const FloatType threshold)
 		CHECK(vector_all_near_equal(identity.z_axis, inv_mtx.z_axis, threshold));
 		CHECK(vector_all_near_equal(identity.w_axis, inv_mtx.w_axis, threshold));
 	}
+
+	{
+		// The default threshold prevents only a division by zero: a matrix with a small scale has an inverse
+		const FloatType scale = FloatType(0.002);
+		const FloatType zero_value = FloatType(0.0);
+		Matrix4x4Type mtx = matrix_set(
+			vector_set(scale, zero_value, zero_value, zero_value),
+			vector_set(zero_value, scale, zero_value, zero_value),
+			vector_set(zero_value, zero_value, scale, zero_value),
+			vector_set(zero_value, zero_value, zero_value, scale));
+		Matrix4x4Type inv_mtx = matrix_inverse(mtx, mtx);
+		Matrix4x4Type result = matrix_mul(mtx, inv_mtx);
+		CHECK(vector_all_near_equal(identity.x_axis, result.x_axis, threshold));
+		CHECK(vector_all_near_equal(identity.y_axis, result.y_axis, threshold));
+		CHECK(vector_all_near_equal(identity.z_axis, result.z_axis, threshold));
+		CHECK(vector_all_near_equal(identity.w_axis, result.w_axis, threshold));
+	}
 }
 
 template<typename FloatType>

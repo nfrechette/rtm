@@ -35,6 +35,8 @@
 #include "rtm/impl/matrix_affine_common.h"
 #include "rtm/impl/vqm_common.h"
 
+#include <limits>
+
 RTM_IMPL_FILE_PRAGMA_PUSH
 
 namespace rtm
@@ -520,17 +522,18 @@ namespace rtm
 	}
 
 	/// Returns the inverse of the input VQM transform.
-	/// If the scale/shear part has a determinant whose absolute value is below the supplied
-	/// threshold, the function uses the fallback scale in place of the scale/shear part.
+	/// If the scale/shear part has a determinant whose absolute value is below or equal to the
+	/// supplied threshold, the function uses the fallback scale in place of the scale/shear part.
+	/// The default threshold is the smallest normal value. It prevents a division by zero.
 	/// The fallback scale part has no shear. It must not contain a zero scale.
-	RTM_DISABLE_SECURITY_COOKIE_CHECK inline vqmf RTM_SIMD_CALL vqm_inverse(vqmf_arg0 input, vector4f_arg1 fallback_scale, float threshold = 1.0E-8F) RTM_NO_EXCEPT
+	RTM_DISABLE_SECURITY_COOKIE_CHECK inline vqmf RTM_SIMD_CALL vqm_inverse(vqmf_arg0 input, vector4f_arg1 fallback_scale, float threshold = (std::numeric_limits<float>::min)()) RTM_NO_EXCEPT
 	{
 		if (rtm_impl::vqm_has_identity_scale_shear(input))
 			return rtm_impl::vqm_inverse_identity_scale_shear(input);
 
 		const matrix3x3f scale_shear = rtm_impl::vqm_get_scale_shear_no_flag(input);
 
-		// matrix_inverse returns its fallback value when the determinant is below the threshold
+		// matrix_inverse returns its fallback value when the determinant is below or equal to the threshold
 		// Thus we give it the inverse of the fallback scale part
 		const vector4f inv_fallback_scale = vector_reciprocal(fallback_scale);
 		const vector4f zero = vector_zero();

@@ -31,6 +31,8 @@
 #include "rtm/impl/matrix_common.h"
 #include "rtm/impl/matrix_affine_common.h"
 
+#include <limits>
+
 RTM_IMPL_FILE_PRAGMA_PUSH
 
 namespace rtm
@@ -232,9 +234,11 @@ namespace rtm
 	}
 
 	/// Inverses a 3x3 matrix.
-	/// If the input matrix has a determinant whose absolute value is below the supplied threshold, the
-	/// fall back value is returned instead.
-	RTM_DISABLE_SECURITY_COOKIE_CHECK inline matrix3x3d RTM_SIMD_CALL matrix_inverse(matrix3x3d_arg0 input, matrix3x3d_arg1 fallback, double threshold = 1.0E-8) RTM_NO_EXCEPT
+	/// If the absolute value of the determinant is below or equal to the supplied threshold,
+	/// the function returns the fallback value.
+	/// The default threshold is the smallest normal value. It prevents a division by zero.
+	/// It does not find a matrix that is almost singular: the inverse of such a matrix has very large values.
+	RTM_DISABLE_SECURITY_COOKIE_CHECK inline matrix3x3d RTM_SIMD_CALL matrix_inverse(matrix3x3d_arg0 input, matrix3x3d_arg1 fallback, double threshold = (std::numeric_limits<double>::min)()) RTM_NO_EXCEPT
 	{
 		const vector4d v00_v01_v10_v11 = vector_mix<mix4::x, mix4::y, mix4::a, mix4::b>(input.x_axis, input.y_axis);
 		const vector4d v02_v03_v12_v13 = vector_mix<mix4::z, mix4::w, mix4::c, mix4::d>(input.x_axis, input.y_axis);
@@ -276,7 +280,7 @@ namespace rtm
 		const vector4d o00_o10_o20 = vector_mix<mix4::x, mix4::z, mix4::a, mix4::a>(o00_o00_o10_o10, z_axis);
 
 		const double det = vector_dot3(o00_o10_o20, input.x_axis);
-		if (scalar_abs(det) < threshold)
+		if (scalar_abs(det) <= threshold)
 			return fallback;
 
 		const vector4d inv_det = vector_set(scalar_reciprocal(det));
