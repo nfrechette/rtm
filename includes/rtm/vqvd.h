@@ -36,6 +36,8 @@
 #include "rtm/impl/vqv_common.h"
 #include "rtm/impl/matrix_affine_common.h"
 
+#include <limits>
+
 RTM_IMPL_FILE_PRAGMA_PUSH
 
 /// \file
@@ -426,7 +428,8 @@ namespace rtm
 	/// Multiplication order is as follow: local_position = vqv_inverse_mul_point3(world_position, local_to_world)
 	/// If a scale component has an absolute value below or equal to the supplied threshold,
 	/// the function uses the fallback scale component instead.
-	RTM_DISABLE_SECURITY_COOKIE_CHECK inline vector4d RTM_SIMD_CALL vqv_inverse_mul_point3(vector4d_arg0 point, vqvd_arg1 vqv, vector4d_arg2 fallback_scale, double threshold = 1.0E-8) RTM_NO_EXCEPT
+	/// The default threshold is the smallest normal value. It prevents a division by zero.
+	RTM_DISABLE_SECURITY_COOKIE_CHECK inline vector4d RTM_SIMD_CALL vqv_inverse_mul_point3(vector4d_arg0 point, vqvd_arg1 vqv, vector4d_arg2 fallback_scale, double threshold = (std::numeric_limits<double>::min)()) RTM_NO_EXCEPT
 	{
 		return vqv_inverse_mul_point3(point, rtm_impl::vqv_with_fallback_scale(vqv, fallback_scale, threshold));
 	}
@@ -470,7 +473,8 @@ namespace rtm
 	/// Multiplication order is as follow: local_to_object = vqv_mul_inverse(local_to_world, object_to_world)
 	/// If a scale component of rhs has an absolute value below or equal to the supplied threshold,
 	/// the function uses the fallback scale component instead.
-	RTM_DISABLE_SECURITY_COOKIE_CHECK inline vqvd RTM_SIMD_CALL vqv_mul_inverse(vqvd_arg0 lhs, vqvd_arg1 rhs, vector4d_arg2 fallback_scale, double threshold = 1.0E-8) RTM_NO_EXCEPT
+	/// The default threshold is the smallest normal value. It prevents a division by zero.
+	RTM_DISABLE_SECURITY_COOKIE_CHECK inline vqvd RTM_SIMD_CALL vqv_mul_inverse(vqvd_arg0 lhs, vqvd_arg1 rhs, vector4d_arg2 fallback_scale, double threshold = (std::numeric_limits<double>::min)()) RTM_NO_EXCEPT
 	{
 		return vqv_mul_inverse(lhs, rtm_impl::vqv_with_fallback_scale(rhs, fallback_scale, threshold));
 	}
@@ -515,7 +519,8 @@ namespace rtm
 	/// The function computes inverse(lhs) * rhs and does not store the inverse.
 	/// If a scale component of lhs has an absolute value below or equal to the supplied threshold,
 	/// the function uses the fallback scale component instead.
-	RTM_DISABLE_SECURITY_COOKIE_CHECK inline vqvd RTM_SIMD_CALL vqv_inverse_mul(vqvd_arg0 lhs, vqvd_arg1 rhs, vector4d_arg2 fallback_scale, double threshold = 1.0E-8) RTM_NO_EXCEPT
+	/// The default threshold is the smallest normal value. It prevents a division by zero.
+	RTM_DISABLE_SECURITY_COOKIE_CHECK inline vqvd RTM_SIMD_CALL vqv_inverse_mul(vqvd_arg0 lhs, vqvd_arg1 rhs, vector4d_arg2 fallback_scale, double threshold = (std::numeric_limits<double>::min)()) RTM_NO_EXCEPT
 	{
 		return vqv_inverse_mul(rtm_impl::vqv_with_fallback_scale(lhs, fallback_scale, threshold), rhs);
 	}
@@ -535,12 +540,13 @@ namespace rtm
 	}
 
 	/// Returns the inverse of the input VQV transform.
-	/// If the input scale has an absolute value below the supplied threshold, the
-	/// fallback value is used instead.
+	/// If a scale component has an absolute value below or equal to the supplied threshold,
+	/// the function uses the fallback scale component instead.
+	/// The default threshold is the smallest normal value. It prevents a division by zero.
 	/// WARNING: A VQV transform cannot hold the inverse when the scale is not uniform.
 	/// The result is incorrect for a point and for a multiplication.
 	RTM_DEPRECATED("Use 'vqv_inverse_mul_point3', 'vqv_mul_inverse', or 'vqv_inverse_mul' instead. To be removed in 2.6.")
-	RTM_DISABLE_SECURITY_COOKIE_CHECK inline vqvd RTM_SIMD_CALL vqv_inverse(vqvd_arg0 input, vector4d_arg1 fallback_scale, double threshold = 1.0E-8) RTM_NO_EXCEPT
+	RTM_DISABLE_SECURITY_COOKIE_CHECK inline vqvd RTM_SIMD_CALL vqv_inverse(vqvd_arg0 input, vector4d_arg1 fallback_scale, double threshold = (std::numeric_limits<double>::min)()) RTM_NO_EXCEPT
 	{
 		const quatd inv_rotation = quat_conjugate(input.rotation);
 		const mask4d is_scale_zero = vector_less_equal(vector_abs(input.scale), vector_set(threshold));

@@ -34,6 +34,8 @@
 #include "rtm/impl/vqs_common.h"
 #include "rtm/impl/matrix_affine_common.h"
 
+#include <limits>
+
 RTM_IMPL_FILE_PRAGMA_PUSH
 
 namespace rtm
@@ -306,9 +308,10 @@ namespace rtm
 	}
 
 	/// Returns the inverse of the input VQS transform.
-	/// If the input scale has an absolute value below the supplied threshold, the
-	/// fallback value is used instead.
-	RTM_DISABLE_SECURITY_COOKIE_CHECK inline vqsd RTM_SIMD_CALL vqs_inverse(vqsd_arg0 input, double fallback_scale, double threshold = 1.0E-8) RTM_NO_EXCEPT
+	/// If the input scale has an absolute value below or equal to the supplied threshold,
+	/// the function uses the fallback scale instead.
+	/// The default threshold is the smallest normal value. It prevents a division by zero.
+	RTM_DISABLE_SECURITY_COOKIE_CHECK inline vqsd RTM_SIMD_CALL vqs_inverse(vqsd_arg0 input, double fallback_scale, double threshold = (std::numeric_limits<double>::min)()) RTM_NO_EXCEPT
 	{
 		const quatd inv_rotation = quat_conjugate(input.rotation);
 		const mask4d is_scale_w_zero = vector_less_equal(vector_abs(input.translation_scale), vector_set(threshold));

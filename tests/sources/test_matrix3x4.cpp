@@ -438,6 +438,18 @@ static void test_affine_matrix_transformations(const FloatType threshold)
 	}
 
 	{
+		// The default threshold prevents only a division by zero: a matrix with a small scale has an inverse
+		const FloatType scale = FloatType(0.002);
+		Matrix3x4Type mtx = matrix_from_vqv(quat_identity(), vector_set(FloatType(1.0), FloatType(2.0), FloatType(3.0)), vector_set(scale));
+		Matrix3x4Type inv_mtx = matrix_inverse(mtx, mtx);
+		Matrix3x4Type result = matrix_mul(mtx, inv_mtx);
+		CHECK(vector_all_near_equal3(identity.x_axis, result.x_axis, threshold));
+		CHECK(vector_all_near_equal3(identity.y_axis, result.y_axis, threshold));
+		CHECK(vector_all_near_equal3(identity.z_axis, result.z_axis, threshold));
+		CHECK(vector_all_near_equal3(identity.w_axis, result.w_axis, threshold));
+	}
+
+	{
 		QuatType rotation = quat_from_euler(scalar_deg_to_rad(FloatType(12.3)), scalar_deg_to_rad(FloatType(42.8)), scalar_deg_to_rad(FloatType(33.41)));
 		Vector4Type translation = vector_set(FloatType(1.0), FloatType(2.0), FloatType(3.0));
 		Vector4Type scale = vector_set(FloatType(4.0), FloatType(5.0), FloatType(6.0));

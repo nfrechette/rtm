@@ -8,6 +8,12 @@
 *  rtm/matrix3x4f.h and rtm/matrix3x4d.h do not include rtm/qvsf.h and rtm/qvsd.h. They include rtm/vqsf.h and rtm/vqsd.h
 *  Remove the workarounds for VS2015 and VS2017 compiler bugs. With MSVC, RTM needs VS2019 or later and shows a warning message for an older version
 
+### Changes in behavior
+
+*  The default threshold of `vector_normalize`, `vector_normalize2`, `vector_normalize3`, `matrix_inverse`, `vqs_inverse`, `vqm_inverse`, `vqv_inverse_mul_point3`, `vqv_mul_inverse`, `vqv_inverse_mul`, and `vqv_inverse` is the smallest normal value (`std::numeric_limits<T>::min()`) and not 1.0E-8. The new value prevents a division by zero and by a denormal value. Thus a very short vector, a matrix with a small determinant, and a small scale can give a result where previous versions gave the fallback. To keep the previous behavior, give 1.0E-8 as the threshold
+*  The fallback overloads of `vector_normalize`, `vector_normalize2`, `vector_normalize3`, and `matrix_inverse` use the fallback when the value is equal to the threshold, as `vqs_inverse` and the `vqv` functions do. Thus a threshold of zero gives an exact test for zero
+*  The threshold of `vector_normalize`, `vector_normalize2`, and `vector_normalize3` applies to the squared length, as in previous versions. The previous comments said that it applies to the length
+
 ### Deprecations
 
 *  Deprecate `vqv_inverse`: a VQV transform cannot hold the inverse of a non-uniform scale, thus the result is incorrect for a point and for a multiplication. Use `vqv_inverse_mul_point3`, `vqv_mul_inverse`, or `vqv_inverse_mul`. To be removed in 2.6

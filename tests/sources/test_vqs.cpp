@@ -32,6 +32,8 @@
 #include <rtm/matrix3x4f.h>
 #include <rtm/matrix3x4d.h>
 
+#include <limits>
+
 using namespace rtm;
 
 template<typename TransformType, typename FloatType>
@@ -236,6 +238,18 @@ static void test_vqs_impl(const TransformType& identity, const FloatType thresho
 		CHECK(quat_near_equal(transform_ref.rotation, transform_b.rotation, threshold));
 		CHECK(vector_all_near_equal3(vqs_get_translation(transform_ref), vqs_get_translation(transform_b), threshold));
 		CHECK(scalar_near_equal(vqs_get_scale(transform_ref), vqs_get_scale(transform_b), threshold));
+
+		// The reciprocal of this denormal scale is infinite: the function uses the fallback
+		transform_a = vqs_set(rotation_around_z, x_axis, (std::numeric_limits<FloatType>::min)() * FloatType(0.125));
+		transform_b = vqs_inverse(transform_a, fallback_scale);
+		CHECK(vqs_is_finite(transform_b));
+		CHECK(vector_all_near_equal3(vqs_get_translation(transform_ref), vqs_get_translation(transform_b), threshold));
+		CHECK(scalar_near_equal(vqs_get_scale(transform_ref), vqs_get_scale(transform_b), threshold));
+
+		// The default threshold prevents only a division by zero: a small scale has an inverse
+		const FloatType small_scale = FloatType(1.0E-9);
+		transform_b = vqs_inverse(vqs_set(rotation_around_z, x_axis, small_scale), fallback_scale);
+		CHECK(scalar_near_equal(FloatType(1.0), vqs_get_scale(transform_b) * small_scale, threshold));
 	}
 
 	{

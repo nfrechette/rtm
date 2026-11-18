@@ -666,6 +666,10 @@ static void test_vqm_inverse_impl(const FloatType threshold)
 		TransformType tx = vqm_set(rotation, translation, scale_shear);
 		check_vqm_near_equal(vqm_inverse(tx, fallback_scale), vqm_inverse(tx), threshold);
 
+		// The default threshold prevents only a division by zero: a small scale has an inverse
+		const TransformType small_scale_tx = vqm_set(rotation, translation, vector_set(FloatType(0.002)));
+		check_vqm_near_equal(vqm_inverse(small_scale_tx, fallback_scale), vqm_inverse(small_scale_tx), threshold);
+
 		// The scale/shear part is not invertible: the function uses the fallback scale without shear
 		scale_shear.x_axis = vector_zero();
 		tx = vqm_set_scale_shear(tx, scale_shear);

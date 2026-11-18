@@ -268,6 +268,17 @@ static void test_matrix3x3_transformations(const FloatType threshold)
 		CHECK(vector_all_near_equal(identity.y_axis, inv_mtx.y_axis, threshold));
 		CHECK(vector_all_near_equal(identity.z_axis, inv_mtx.z_axis, threshold));
 	}
+
+	{
+		// The default threshold prevents only a division by zero: a matrix with a small scale has an inverse
+		const FloatType scale = FloatType(0.002);
+		Matrix3x3Type mtx = matrix_set(vector_set(scale, FloatType(0.0), FloatType(0.0)), vector_set(FloatType(0.0), scale, FloatType(0.0)), vector_set(FloatType(0.0), FloatType(0.0), scale));
+		Matrix3x3Type inv_mtx = matrix_inverse(mtx, mtx);
+		Matrix3x3Type result = matrix_mul(mtx, inv_mtx);
+		CHECK(vector_all_near_equal3(identity.x_axis, result.x_axis, threshold));
+		CHECK(vector_all_near_equal3(identity.y_axis, result.y_axis, threshold));
+		CHECK(vector_all_near_equal3(identity.z_axis, result.z_axis, threshold));
+	}
 }
 
 template<typename FloatType>
