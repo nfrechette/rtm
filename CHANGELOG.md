@@ -20,6 +20,7 @@
 *  Add `vqv_mul_inverse(lhs, rhs)`: it computes lhs * inverse(rhs). When the scales are positive, `vqv_mul(vqv_mul_inverse(lhs, rhs), rhs)` is equal to lhs
 *  Add `vqv_inverse_mul(lhs, rhs)`: it computes inverse(lhs) * rhs. When the scales are positive, `vqv_mul(lhs, vqv_inverse_mul(lhs, rhs))` is equal to rhs. The result does not change when the origin of the world moves
 *  The three functions compute the inverse when they need it and do not store it. An overload of each function takes a fallback scale and a threshold
+*  Add Linux ARMv7 cross compilation to `make.py` with GCC and Clang, `qemu-arm` runs the unit tests
 
 ## 2.4.0
 
