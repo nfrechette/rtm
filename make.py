@@ -20,6 +20,10 @@ def is_armv7_host():
 def is_riscv64_host():
 	return platform.machine() == 'riscv64'
 
+def is_linux_armv7_cross_compile(compiler, cpu):
+	# A Linux host that is not armv7 uses a cross compiler, and qemu-arm runs the armv7 programs
+	return platform.system() == 'Linux' and cpu == 'armv7' and compiler != 'android' and not is_armv7_host()
+
 def get_android_ndk_dir():
 	for env_var in ['ANDROID_NDK_HOME', 'ANDROID_NDK_ROOT']:
 		ndk_dir = os.environ.get(env_var)
@@ -195,9 +199,12 @@ def parse_argv():
 		if args.compiler == 'android':
 			is_armv7_supported = True
 
-		# Native compilation
-		if platform.system() == 'Linux' and is_armv7_cpu:
-			is_armv7_supported = True
+		# Native compilation, or cross compilation with GCC or Clang
+		if platform.system() == 'Linux':
+			if is_armv7_cpu:
+				is_armv7_supported = True
+			elif args.compiler and (args.compiler.startswith('gcc') or args.compiler.startswith('clang')):
+				is_armv7_supported = True
 
 		if not is_armv7_supported:
 			print('armv7 is only supported with Linux and Android')
@@ -288,18 +295,20 @@ def get_architecture(compiler, cpu):
 	# This compiler/cpu pair does not need the architecture switch
 	return None
 
-def get_toolchain(compiler, cmake_script_dir):
+def get_toolchain(compiler, cpu, cmake_script_dir):
 	if platform.system() == 'Windows' and compiler == 'android':
 		return os.path.join(cmake_script_dir, 'Toolchain-Android.cmake')
 	elif compiler == 'android':
 		return os.path.join(get_android_ndk_dir(), 'build', 'cmake', 'android.toolchain.cmake')
 	elif platform.system() == 'Darwin' and compiler == 'ios':
 		return os.path.join(cmake_script_dir, 'Toolchain-iOS.cmake')
+	elif is_linux_armv7_cross_compile(compiler, cpu):
+		return os.path.join(cmake_script_dir, 'Toolchain-Linux-armv7.cmake')
 
 	# No toolchain
 	return None
 
-def set_compiler_env(compiler):
+def set_compiler_env(compiler, cpu):
 	if platform.system() != 'Linux':
 		return
 
@@ -347,7 +356,14 @@ def set_compiler_env(compiler):
 		print('See help with: python make.py -help')
 		sys.exit(1)
 
-	os.environ['CC'], os.environ['CXX'] = linux_compilers[compiler]
+	cc, cxx = linux_compilers[compiler]
+
+	# The GCC cross compiler for armv7 has a prefix, Clang uses the target of the toolchain file
+	if is_linux_armv7_cross_compile(compiler, cpu) and compiler.startswith('gcc'):
+		cc = 'arm-linux-gnueabihf-' + cc
+		cxx = 'arm-linux-gnueabihf-' + cxx
+
+	os.environ['CC'], os.environ['CXX'] = cc, cxx
 
 def do_generate_solution(build_dir, cmake_script_dir, args):
 	compiler = args.compiler
@@ -357,7 +373,7 @@ def do_generate_solution(build_dir, cmake_script_dir, args):
 	is_arm64_cpu = is_arm64_host()
 
 	if compiler:
-		set_compiler_env(compiler)
+		set_compiler_env(compiler, cpu)
 
 	extra_switches = ['--no-warn-unused-cli']
 	extra_switches.append('-DCPU_INSTRUCTION_SET:STRING={}'.format(cpu))
@@ -375,6 +391,10 @@ def do_generate_solution(build_dir, cmake_script_dir, args):
 			'-DANDROID_PLATFORM=android-24',
 			'-DIS_CROSS_COMPILING:BOOL=true',
 		])
+
+	if is_linux_armv7_cross_compile(compiler, cpu):
+		# The toolchain file sets qemu-arm as the emulator that runs the unit tests
+		extra_switches.append('-DIS_CROSS_COMPILING:BOOL=true')
 
 	if args.use_avx:
 		print('Enabling AVX usage')
@@ -417,7 +437,7 @@ def do_generate_solution(build_dir, cmake_script_dir, args):
 		extra_switches.append('-DCMAKE_XCODE_ATTRIBUTE_CODE_SIGNING_REQUIRED=NO')
 		extra_switches.append('-DCMAKE_XCODE_ATTRIBUTE_CODE_SIGNING_ALLOWED=NO')
 
-	toolchain = get_toolchain(compiler, cmake_script_dir)
+	toolchain = get_toolchain(compiler, cpu, cmake_script_dir)
 	if toolchain:
 		extra_switches.append('-DCMAKE_TOOLCHAIN_FILE={}'.format(toolchain))
 
@@ -608,6 +628,10 @@ def do_run_bench_native(build_dir):
 def do_run_bench(build_dir, args):
 	if args.compiler == 'ios':
 		return	# Not supported on iOS
+
+	if is_linux_armv7_cross_compile(args.compiler, args.cpu):
+		print('The benchmark does not run when make.py cross-compiles: QEMU does not give valid timings')
+		return
 
 	print('Running benchmark ...')
 
