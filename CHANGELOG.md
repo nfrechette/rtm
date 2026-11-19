@@ -13,6 +13,8 @@
 *  The default threshold of `vector_normalize`, `vector_normalize2`, `vector_normalize3`, `matrix_inverse`, `vqs_inverse`, `vqm_inverse`, `vqv_inverse_mul_point3`, `vqv_mul_inverse`, `vqv_inverse_mul`, and `vqv_inverse` is the smallest normal value (`std::numeric_limits<T>::min()`) and not 1.0E-8. The new value prevents a division by zero and by a denormal value. Thus a very short vector, a matrix with a small determinant, and a small scale can give a result where previous versions gave the fallback. To keep the previous behavior, give 1.0E-8 as the threshold
 *  The fallback overloads of `vector_normalize`, `vector_normalize2`, `vector_normalize3`, and `matrix_inverse` use the fallback when the value is equal to the threshold, as `vqs_inverse` and the `vqv` functions do. Thus a threshold of zero gives an exact test for zero
 *  The threshold of `vector_normalize`, `vector_normalize2`, and `vector_normalize3` applies to the squared length, as in previous versions. The previous comments said that it applies to the length
+*  The documentation gives the quaternion basis: the Hamilton rule, the bivector basis (e32, e13, e21), and the rotation direction. The behavior does not change. The previous comments said that [xyz] is the real part and [w] is the imaginary part. [w] is the scalar (real) part
+*  The comments of `quat_from_euler` give the correct axes: the pitch is around -Y and the roll is around -X. The previous comments said +Y and +X. The behavior does not change
 
 ### Deprecations
 

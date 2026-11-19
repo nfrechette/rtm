@@ -35,12 +35,18 @@ namespace rtm
 	RTM_IMPL_VERSION_NAMESPACE_BEGIN
 
 #if defined(RTM_SSE2_INTRINSICS)
-	/// A quaternion (4D complex number) where the imaginary part is the [w] component.
+	/// A quaternion: the [xyz] components are the vector (imaginary) part and the [w] component is the scalar (real) part.
 	/// It accurately represents a 3D rotation with no gimbal lock as long as it is kept normalized.
+	/// The [x], [y], and [z] components use the Hamilton rule (ij = k) and the bivector basis e32, e13, and e21.
+	/// A positive angle around the Z axis turns the X axis onto the Y axis.
+	/// For more information, refer to the quaternion conventions in docs/api_conventions.md.
 	using quatf = __m128;
 
-	/// A quaternion (4D complex number) where the imaginary part is the [w] component.
+	/// A quaternion: the [xyz] components are the vector (imaginary) part and the [w] component is the scalar (real) part.
 	/// It accurately represents a 3D rotation with no gimbal lock as long as it is kept normalized.
+	/// The [x], [y], and [z] components use the Hamilton rule (ij = k) and the bivector basis e32, e13, and e21.
+	/// A positive angle around the Z axis turns the X axis onto the Y axis.
+	/// For more information, refer to the quaternion conventions in docs/api_conventions.md.
 	struct quatd
 	{
 		__m128d xy;
@@ -77,21 +83,30 @@ namespace rtm
 		__m128i zw;
 	};
 #elif defined(RTM_NEON_INTRINSICS)
-	/// A quaternion (4D complex number) where the imaginary part is the [w] component.
+	/// A quaternion: the [xyz] components are the vector (imaginary) part and the [w] component is the scalar (real) part.
 	/// It accurately represents a 3D rotation with no gimbal lock as long as it is kept normalized.
+	/// The [x], [y], and [z] components use the Hamilton rule (ij = k) and the bivector basis e32, e13, and e21.
+	/// A positive angle around the Z axis turns the X axis onto the Y axis.
+	/// For more information, refer to the quaternion conventions in docs/api_conventions.md.
 	using quatf = float32x4_t;
 
 #if defined(RTM_NEON64_INTRINSICS)
-	/// A quaternion (4D complex number) where the imaginary part is the [w] component.
+	/// A quaternion: the [xyz] components are the vector (imaginary) part and the [w] component is the scalar (real) part.
 	/// It accurately represents a 3D rotation with no gimbal lock as long as it is kept normalized.
+	/// The [x], [y], and [z] components use the Hamilton rule (ij = k) and the bivector basis e32, e13, and e21.
+	/// A positive angle around the Z axis turns the X axis onto the Y axis.
+	/// For more information, refer to the quaternion conventions in docs/api_conventions.md.
 	struct quatd
 	{
 		float64x2_t xy;
 		float64x2_t zw;
 	};
 #else
-	/// A quaternion (4D complex number) where the imaginary part is the [w] component.
+	/// A quaternion: the [xyz] components are the vector (imaginary) part and the [w] component is the scalar (real) part.
 	/// It accurately represents a 3D rotation with no gimbal lock as long as it is kept normalized.
+	/// The [x], [y], and [z] components use the Hamilton rule (ij = k) and the bivector basis e32, e13, and e21.
+	/// A positive angle around the Z axis turns the X axis onto the Y axis.
+	/// For more information, refer to the quaternion conventions in docs/api_conventions.md.
 	struct alignas(16) quatd
 	{
 		double x;
@@ -178,12 +193,18 @@ namespace rtm
 	// WASM SIMD uses a single type (v128_t) for every lane type.
 	// Thus, quatf, vector4f, and mask4f are aliases of the same type, as they are with SSE2.
 
-	/// A quaternion (4D complex number) where the imaginary part is the [w] component.
+	/// A quaternion: the [xyz] components are the vector (imaginary) part and the [w] component is the scalar (real) part.
 	/// It accurately represents a 3D rotation with no gimbal lock as long as it is kept normalized.
+	/// The [x], [y], and [z] components use the Hamilton rule (ij = k) and the bivector basis e32, e13, and e21.
+	/// A positive angle around the Z axis turns the X axis onto the Y axis.
+	/// For more information, refer to the quaternion conventions in docs/api_conventions.md.
 	using quatf = v128_t;
 
-	/// A quaternion (4D complex number) where the imaginary part is the [w] component.
+	/// A quaternion: the [xyz] components are the vector (imaginary) part and the [w] component is the scalar (real) part.
 	/// It accurately represents a 3D rotation with no gimbal lock as long as it is kept normalized.
+	/// The [x], [y], and [z] components use the Hamilton rule (ij = k) and the bivector basis e32, e13, and e21.
+	/// A positive angle around the Z axis turns the X axis onto the Y axis.
+	/// For more information, refer to the quaternion conventions in docs/api_conventions.md.
 	struct quatd
 	{
 		v128_t xy;
@@ -230,8 +251,11 @@ namespace rtm
 		v128_t zw;
 	};
 #else
-	/// A quaternion (4D complex number) where the imaginary part is the [w] component.
+	/// A quaternion: the [xyz] components are the vector (imaginary) part and the [w] component is the scalar (real) part.
 	/// It accurately represents a 3D rotation with no gimbal lock as long as it is kept normalized.
+	/// The [x], [y], and [z] components use the Hamilton rule (ij = k) and the bivector basis e32, e13, and e21.
+	/// A positive angle around the Z axis turns the X axis onto the Y axis.
+	/// For more information, refer to the quaternion conventions in docs/api_conventions.md.
 	struct alignas(16) quatf
 	{
 		float x; ///< The [x] component.
@@ -240,8 +264,11 @@ namespace rtm
 		float w; ///< The [w] component.
 	};
 
-	/// A quaternion (4D complex number) where the imaginary part is the [w] component.
+	/// A quaternion: the [xyz] components are the vector (imaginary) part and the [w] component is the scalar (real) part.
 	/// It accurately represents a 3D rotation with no gimbal lock as long as it is kept normalized.
+	/// The [x], [y], and [z] components use the Hamilton rule (ij = k) and the bivector basis e32, e13, and e21.
+	/// A positive angle around the Z axis turns the X axis onto the Y axis.
+	/// For more information, refer to the quaternion conventions in docs/api_conventions.md.
 	struct alignas(16) quatd
 	{
 		double x; ///< The [x] component.

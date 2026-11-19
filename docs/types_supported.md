@@ -26,7 +26,7 @@ A comparison mask used by vector selection/blending. Each SIMD lane consists of 
 
 ## Quaternion
 
-Quaternions are 4D complex numbers commonly used to represent 3D rotations (when normalized). The **[xyz]** components are the real part while the **[w]** component is the imaginary part.
+Quaternions are 4D complex numbers commonly used to represent 3D rotations (when normalized). The **[xyz]** components are the vector (imaginary) part while the **[w]** component is the scalar (real) part. Refer to [the quaternion basis](api_conventions.md#quaternion-basis) for the rotation direction and the bivector basis.
 
 ## VQ (vector-quaternion)
 

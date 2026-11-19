@@ -34,3 +34,48 @@ When relevant, a left-handed coordinate system is used:
 * Y axis = right
 * Z axis = up
 
+
+## Quaternion basis
+
+A quaternion stores the vector part in the **[xyz]** components and the scalar part in the **[w]** component. The library uses the axis and angle form: a rotation of `angle` around the unit vector `axis` is `[axis * sin(angle / 2), cos(angle / 2)]`.
+
+### Rotation direction
+
+A positive angle turns the first axis of each pair onto the second axis:
+
+| Rotation axis | Component | Positive rotation |
+| ------------- | --------- | ----------------- |
+| X (forward)   | [x]       | Y onto Z (right onto up) |
+| Y (right)     | [y]       | Z onto X (up onto forward) |
+| Z (up)        | [z]       | X onto Y (forward onto right) |
+
+This is the right-hand rule on the coordinates. Because the coordinate system is left-handed, a positive rotation is clockwise when you look from the tip of the axis toward the origin.
+
+To examine the convention of a library, apply these three quaternions to the X, Y, and Z basis vectors (here `s = sqrt(0.5)`). The table shows the result with RTM.
+
+| Quaternion `[x, y, z, w]` | X    | Y    | Z    |
+| ------------------------- | ---- | ---- | ---- |
+| `[s, 0, 0, s]`            | X    | Z    | -Y   |
+| `[0, s, 0, s]`            | -Z   | Y    | X    |
+| `[0, 0, s, s]`            | Y    | -X   | Z    |
+
+### Bivector basis
+
+Geometric algebra represents a rotation with a rotor: a scalar part and a bivector part. The bivector `e_ab` is the plane of the axes `a` and `b`. The rotation with the rotor `R` is `v' = R v ~R`. When the `e_ab` coefficient of `R` is positive, the rotation turns the axis `b` onto the axis `a`. For example, `e12` turns Y onto X.
+
+With this rule, the quaternion components map to these bivectors:
+
+* [x] = e32 (the Y-Z plane, Y onto Z)
+* [y] = e13 (the Z-X plane, Z onto X)
+* [z] = e21 (the X-Y plane, X onto Y)
+* [w] = the scalar part
+
+Some libraries use the basis e23, e31, and e12. Each bivector of that basis is the negative of the bivector that RTM uses. To convert a rotor in that basis to an RTM quaternion, negate [x], [y], and [z]. This gives the conjugate.
+
+### Multiplication
+
+The components obey the Hamilton rule: `i^2 = j^2 = k^2 = ijk = -1` and `ij = k`. Here `i`, `j`, and `k` are the units of the [x], [y], and [z] components.
+
+The library uses row vectors, thus `quat_mul(lhs, rhs)` applies `lhs` first and `rhs` second: `local_to_world = quat_mul(local_to_object, object_to_world)`. With the Hamilton notation, `quat_mul(lhs, rhs)` returns the product `rhs * lhs`. For example, `quat_mul(i, j)` returns `-k` and `quat_mul(j, i)` returns `k`.
+
+`quat_mul_vector3(v, q)` returns the Hamilton product `q * v * conjugate(q)`. `matrix_from_quat(q)` returns the same rotation as a matrix for row vectors: `matrix_mul_vector3(v, matrix_from_quat(q))` is equal to `quat_mul_vector3(v, q)`.
