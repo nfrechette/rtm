@@ -1060,6 +1060,34 @@
 
               
             
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../api/packing_vector4f/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    rtm/packing/vector4f.h
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
           </ul>
         </nav>
       
@@ -2113,8 +2141,10 @@
 <h2 id="x86-and-x64">x86 and x64<a class="headerlink" href="#x86-and-x64" title="Permanent link">&para;</a></h2>
 <p>Various versions of SSE are supported: SSE2, SSE3, SSE4, AVX, AVX2, and FMA.</p>
 <p><em>Note that even when FMA is enabled, its intrinsics are not used because they appear slower on at least Haswell and Ryzen.</em></p>
+<p><code>vector_pack_half</code> and <code>vector_unpack_half</code> use F16C when the compiler enables it. GCC and Clang define <code>__F16C__</code> with <code>-mf16c</code> or with a <code>-march</code> value that supports it. MSVC does not define <code>__F16C__</code>, thus RTM uses F16C with <code>/arch:AVX2</code>. Without F16C, these functions use SSE2 integer code.</p>
 <h2 id="arm">ARM<a class="headerlink" href="#arm" title="Permanent link">&para;</a></h2>
 <p>Both ARM NEON and ARM64 NEON are supported.</p>
+<p><code>vector_pack_half</code> and <code>vector_unpack_half</code> use the NEON half-precision conversions on ARM64. On ARMv7, they use them only when the half-precision extension is enabled (for example with <code>-mfpu=neon-fp16</code>). Otherwise, they use the scalar code.</p>
 <p>ARM64EC uses the ARM64 NEON code path. MSVC also defines <code>_M_X64</code> for ARM64EC, but RTM does not use the SSE intrinsics there because ARM64EC emulates them. RTM does not use <code>__vectorcall</code> on ARM64EC.</p>
 <h2 id="webassembly">WebAssembly<a class="headerlink" href="#webassembly" title="Permanent link">&para;</a></h2>
 <p>WebAssembly SIMD128 is supported. To enable it, compile with <code>-msimd128</code>. Clang then defines <code>__wasm_simd128__</code> and RTM defines <code>RTM_WASM128_INTRINSICS</code>. Without <code>-msimd128</code>, RTM uses the scalar code path.</p>
