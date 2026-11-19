@@ -2868,10 +2868,10 @@
 <div class="highlight"><pre><span></span><code><span class="cp">#include</span><span class="w"> </span><span class="cpf">"rtm/types.h"</span>
 </code></pre></div>
 <h3 id="quatf">quatf<a class="headerlink" href="#quatf" title="Permanent link">&para;</a></h3>
-<p>A quaternion (4D complex number) where the imaginary part is the [w] component. It accurately represents a 3D rotation with no gimbal lock as long as it is kept normalized.</p>
+<p>A quaternion: the [xyz] components are the vector (imaginary) part and the [w] component is the scalar (real) part. It accurately represents a 3D rotation with no gimbal lock as long as it is kept normalized. The [x], [y], and [z] components use the Hamilton rule (ij = k) and the bivector basis e32, e13, and e21. A positive angle around the Z axis turns the X axis onto the Y axis. For more information, refer to the quaternion conventions in docs/api_conventions.md.</p>
 <p>The definition of this type depends on the SIMD code path. Use the functions of RTM to read and write its values.</p>
 <h3 id="quatd">quatd<a class="headerlink" href="#quatd" title="Permanent link">&para;</a></h3>
-<p>A quaternion (4D complex number) where the imaginary part is the [w] component. It accurately represents a 3D rotation with no gimbal lock as long as it is kept normalized.</p>
+<p>A quaternion: the [xyz] components are the vector (imaginary) part and the [w] component is the scalar (real) part. It accurately represents a 3D rotation with no gimbal lock as long as it is kept normalized. The [x], [y], and [z] components use the Hamilton rule (ij = k) and the bivector basis e32, e13, and e21. A positive angle around the Z axis turns the X axis onto the Y axis. For more information, refer to the quaternion conventions in docs/api_conventions.md.</p>
 <p>The definition of this type depends on the SIMD code path. Use the functions of RTM to read and write its values.</p>
 <h3 id="vector4f">vector4f<a class="headerlink" href="#vector4f" title="Permanent link">&para;</a></h3>
 <p>A 4D vector.</p>

@@ -459,6 +459,56 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#quaternion-basis" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Quaternion basis
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Quaternion basis">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#rotation-direction" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Rotation direction
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#bivector-basis" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Bivector basis
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#multiplication" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Multiplication
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -2163,6 +2213,56 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#quaternion-basis" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Quaternion basis
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Quaternion basis">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#rotation-direction" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Rotation direction
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#bivector-basis" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Bivector basis
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#multiplication" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Multiplication
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -2201,6 +2301,82 @@
 <li>Y axis = right</li>
 <li>Z axis = up</li>
 </ul>
+<h2 id="quaternion-basis">Quaternion basis<a class="headerlink" href="#quaternion-basis" title="Permanent link">&para;</a></h2>
+<p>A quaternion stores the vector part in the <strong>[xyz]</strong> components and the scalar part in the <strong>[w]</strong> component. The library uses the axis and angle form: a rotation of <code>angle</code> around the unit vector <code>axis</code> is <code>[axis * sin(angle / 2), cos(angle / 2)]</code>.</p>
+<h3 id="rotation-direction">Rotation direction<a class="headerlink" href="#rotation-direction" title="Permanent link">&para;</a></h3>
+<p>A positive angle turns the first axis of each pair onto the second axis:</p>
+<table>
+<thead>
+<tr>
+<th>Rotation axis</th>
+<th>Component</th>
+<th>Positive rotation</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>X (forward)</td>
+<td>[x]</td>
+<td>Y onto Z (right onto up)</td>
+</tr>
+<tr>
+<td>Y (right)</td>
+<td>[y]</td>
+<td>Z onto X (up onto forward)</td>
+</tr>
+<tr>
+<td>Z (up)</td>
+<td>[z]</td>
+<td>X onto Y (forward onto right)</td>
+</tr>
+</tbody>
+</table>
+<p>This is the right-hand rule on the coordinates. Because the coordinate system is left-handed, a positive rotation is clockwise when you look from the tip of the axis toward the origin.</p>
+<p>To examine the convention of a library, apply these three quaternions to the X, Y, and Z basis vectors (here <code>s = sqrt(0.5)</code>). The table shows the result with RTM.</p>
+<table>
+<thead>
+<tr>
+<th>Quaternion <code>[x, y, z, w]</code></th>
+<th>X</th>
+<th>Y</th>
+<th>Z</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>[s, 0, 0, s]</code></td>
+<td>X</td>
+<td>Z</td>
+<td>-Y</td>
+</tr>
+<tr>
+<td><code>[0, s, 0, s]</code></td>
+<td>-Z</td>
+<td>Y</td>
+<td>X</td>
+</tr>
+<tr>
+<td><code>[0, 0, s, s]</code></td>
+<td>Y</td>
+<td>-X</td>
+<td>Z</td>
+</tr>
+</tbody>
+</table>
+<h3 id="bivector-basis">Bivector basis<a class="headerlink" href="#bivector-basis" title="Permanent link">&para;</a></h3>
+<p>Geometric algebra represents a rotation with a rotor: a scalar part and a bivector part. The bivector <code>e_ab</code> is the plane of the axes <code>a</code> and <code>b</code>. The rotation with the rotor <code>R</code> is <code>v' = R v ~R</code>. When the <code>e_ab</code> coefficient of <code>R</code> is positive, the rotation turns the axis <code>b</code> onto the axis <code>a</code>. For example, <code>e12</code> turns Y onto X.</p>
+<p>With this rule, the quaternion components map to these bivectors:</p>
+<ul>
+<li>[x] = e32 (the Y-Z plane, Y onto Z)</li>
+<li>[y] = e13 (the Z-X plane, Z onto X)</li>
+<li>[z] = e21 (the X-Y plane, X onto Y)</li>
+<li>[w] = the scalar part</li>
+</ul>
+<p>Some libraries use the basis e23, e31, and e12. Each bivector of that basis is the negative of the bivector that RTM uses. To convert a rotor in that basis to an RTM quaternion, negate [x], [y], and [z]. This gives the conjugate.</p>
+<h3 id="multiplication">Multiplication<a class="headerlink" href="#multiplication" title="Permanent link">&para;</a></h3>
+<p>The components obey the Hamilton rule: <code>i^2 = j^2 = k^2 = ijk = -1</code> and <code>ij = k</code>. Here <code>i</code>, <code>j</code>, and <code>k</code> are the units of the [x], [y], and [z] components.</p>
+<p>The library uses row vectors, thus <code>quat_mul(lhs, rhs)</code> applies <code>lhs</code> first and <code>rhs</code> second: <code>local_to_world = quat_mul(local_to_object, object_to_world)</code>. With the Hamilton notation, <code>quat_mul(lhs, rhs)</code> returns the product <code>rhs * lhs</code>. For example, <code>quat_mul(i, j)</code> returns <code>-k</code> and <code>quat_mul(j, i)</code> returns <code>k</code>.</p>
+<p><code>quat_mul_vector3(v, q)</code> returns the Hamilton product <code>q * v * conjugate(q)</code>. <code>matrix_from_quat(q)</code> returns the same rotation as a matrix for row vectors: <code>matrix_mul_vector3(v, matrix_from_quat(q))</code> is equal to <code>quat_mul_vector3(v, q)</code>.</p>
 
 
 

@@ -2352,7 +2352,7 @@
 <h2 id="mask-4d">Mask 4D<a class="headerlink" href="#mask-4d" title="Permanent link">&para;</a></h2>
 <p>A comparison mask used by vector selection/blending. Each SIMD lane consists of all ones (true) or zeroes (false) depending on the condition.</p>
 <h2 id="quaternion">Quaternion<a class="headerlink" href="#quaternion" title="Permanent link">&para;</a></h2>
-<p>Quaternions are 4D complex numbers commonly used to represent 3D rotations (when normalized). The <strong>[xyz]</strong> components are the real part while the <strong>[w]</strong> component is the imaginary part.</p>
+<p>Quaternions are 4D complex numbers commonly used to represent 3D rotations (when normalized). The <strong>[xyz]</strong> components are the vector (imaginary) part while the <strong>[w]</strong> component is the scalar (real) part. Refer to <a href="../api_conventions/#quaternion-basis">the quaternion basis</a> for the rotation direction and the bivector basis.</p>
 <h2 id="vq-vector-quaternion">VQ (vector-quaternion)<a class="headerlink" href="#vq-vector-quaternion" title="Permanent link">&para;</a></h2>
 <p>A VQ represents an affine transform in two distinct parts: a rotation quaternion and a vector3 translation. This type is commonly used in video games as it is very fast to work with and more compact than a full affine matrix.</p>
 <p>Before 2.4, the name of this type was QV. The new name follows the order of operations from right to left (rotation, translation), as in the literature.</p>
