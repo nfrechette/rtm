@@ -128,13 +128,13 @@ namespace rtm
 		};
 	}
 
-	/// Returns the quaternion [x] component (real part).
+	/// Returns the quaternion [x] component (vector part).
 	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE constexpr rtm_impl::quatf_quat_get_x RTM_SIMD_CALL quat_get_x(quatf_arg0 input) RTM_NO_EXCEPT
 	{
 		return rtm_impl::quatf_quat_get_x{ input };
 	}
 
-	/// Returns the quaternion [x] component (real part).
+	/// Returns the quaternion [x] component (vector part).
 	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE scalarf RTM_SIMD_CALL quat_get_x_as_scalar(quatf_arg0 input) RTM_NO_EXCEPT
 	{
 #if defined(RTM_SSE2_INTRINSICS)
@@ -169,13 +169,13 @@ namespace rtm
 		};
 	}
 
-	/// Returns the quaternion [y] component (real part).
+	/// Returns the quaternion [y] component (vector part).
 	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE constexpr rtm_impl::quatf_quat_get_y RTM_SIMD_CALL quat_get_y(quatf_arg0 input) RTM_NO_EXCEPT
 	{
 		return rtm_impl::quatf_quat_get_y{ input };
 	}
 
-	/// Returns the quaternion [y] component (real part).
+	/// Returns the quaternion [y] component (vector part).
 	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE scalarf RTM_SIMD_CALL quat_get_y_as_scalar(quatf_arg0 input) RTM_NO_EXCEPT
 	{
 #if defined(RTM_SSE2_INTRINSICS)
@@ -210,13 +210,13 @@ namespace rtm
 		};
 	}
 
-	/// Returns the quaternion [z] component (real part).
+	/// Returns the quaternion [z] component (vector part).
 	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE constexpr rtm_impl::quatf_quat_get_z RTM_SIMD_CALL quat_get_z(quatf_arg0 input) RTM_NO_EXCEPT
 	{
 		return rtm_impl::quatf_quat_get_z{ input };
 	}
 
-	/// Returns the quaternion [z] component (real part).
+	/// Returns the quaternion [z] component (vector part).
 	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE scalarf RTM_SIMD_CALL quat_get_z_as_scalar(quatf_arg0 input) RTM_NO_EXCEPT
 	{
 #if defined(RTM_SSE2_INTRINSICS)
@@ -251,13 +251,13 @@ namespace rtm
 		};
 	}
 
-	/// Returns the quaternion [w] component (imaginary part).
+	/// Returns the quaternion [w] component (scalar part).
 	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE constexpr rtm_impl::quatf_quat_get_w RTM_SIMD_CALL quat_get_w(quatf_arg0 input) RTM_NO_EXCEPT
 	{
 		return rtm_impl::quatf_quat_get_w{ input };
 	}
 
-	/// Returns the quaternion [w] component (imaginary part).
+	/// Returns the quaternion [w] component (scalar part).
 	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE scalarf RTM_SIMD_CALL quat_get_w_as_scalar(quatf_arg0 input) RTM_NO_EXCEPT
 	{
 #if defined(RTM_SSE2_INTRINSICS)
@@ -267,7 +267,7 @@ namespace rtm
 #endif
 	}
 
-	/// Sets the quaternion [x] component (real part) and returns the new value.
+	/// Sets the quaternion [x] component (vector part) and returns the new value.
 	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE quatf RTM_SIMD_CALL quat_set_x(quatf_arg0 input, float lane_value) RTM_NO_EXCEPT
 	{
 #if defined(RTM_SSE2_INTRINSICS)
@@ -282,14 +282,14 @@ namespace rtm
 	}
 
 #if defined(RTM_SSE2_INTRINSICS)
-	/// Sets the quaternion [x] component (real part) and returns the new value.
+	/// Sets the quaternion [x] component (vector part) and returns the new value.
 	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE quatf RTM_SIMD_CALL quat_set_x(quatf_arg0 input, scalarf_arg1 lane_value) RTM_NO_EXCEPT
 	{
 		return _mm_move_ss(input, lane_value.value);
 	}
 #endif
 
-	/// Sets the quaternion [y] component (real part) and returns the new value.
+	/// Sets the quaternion [y] component (vector part) and returns the new value.
 	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE quatf RTM_SIMD_CALL quat_set_y(quatf_arg0 input, float lane_value) RTM_NO_EXCEPT
 	{
 #if defined(RTM_SSE4_INTRINSICS)
@@ -308,7 +308,7 @@ namespace rtm
 	}
 
 #if defined(RTM_SSE2_INTRINSICS)
-	/// Sets the quaternion [y] component (real part) and returns the new value.
+	/// Sets the quaternion [y] component (vector part) and returns the new value.
 	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE quatf RTM_SIMD_CALL quat_set_y(quatf_arg0 input, scalarf_arg1 lane_value) RTM_NO_EXCEPT
 	{
 #if defined(RTM_SSE4_INTRINSICS)
@@ -321,7 +321,7 @@ namespace rtm
 	}
 #endif
 
-	/// Sets the quaternion [z] component (real part) and returns the new value.
+	/// Sets the quaternion [z] component (vector part) and returns the new value.
 	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE quatf RTM_SIMD_CALL quat_set_z(quatf_arg0 input, float lane_value) RTM_NO_EXCEPT
 	{
 #if defined(RTM_SSE4_INTRINSICS)
@@ -340,7 +340,7 @@ namespace rtm
 	}
 
 #if defined(RTM_SSE2_INTRINSICS)
-	/// Sets the quaternion [z] component (real part) and returns the new value.
+	/// Sets the quaternion [z] component (vector part) and returns the new value.
 	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE quatf RTM_SIMD_CALL quat_set_z(quatf_arg0 input, scalarf_arg1 lane_value) RTM_NO_EXCEPT
 	{
 #if defined(RTM_SSE4_INTRINSICS)
@@ -353,7 +353,7 @@ namespace rtm
 	}
 #endif
 
-	/// Sets the quaternion [w] component (imaginary part) and returns the new value.
+	/// Sets the quaternion [w] component (scalar part) and returns the new value.
 	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE quatf RTM_SIMD_CALL quat_set_w(quatf_arg0 input, float lane_value) RTM_NO_EXCEPT
 	{
 #if defined(RTM_SSE4_INTRINSICS)
@@ -372,7 +372,7 @@ namespace rtm
 	}
 
 #if defined(RTM_SSE2_INTRINSICS)
-	/// Sets the quaternion [w] component (imaginary part) and returns the new value.
+	/// Sets the quaternion [w] component (scalar part) and returns the new value.
 	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE quatf RTM_SIMD_CALL quat_set_w(quatf_arg0 input, scalarf_arg1 lane_value) RTM_NO_EXCEPT
 	{
 #if defined(RTM_SSE4_INTRINSICS)
@@ -1470,9 +1470,10 @@ namespace rtm
 	}
 
 	/// Creates a quaternion from Euler Pitch/Yaw/Roll angles.
-	/// Pitch is around the Y axis (right)
-	/// Yaw is around the Z axis (up)
-	/// Roll is around the X axis (forward)
+	/// Pitch is around the -Y axis (right): a positive pitch turns the X axis (forward) onto the Z axis (up).
+	/// Yaw is around the Z axis (up): a positive yaw turns the X axis (forward) onto the Y axis (right).
+	/// Roll is around the -X axis (forward): a positive roll turns the Y axis (right) onto the -Z axis (down).
+	/// The rotation applies the roll first, then the pitch, then the yaw.
 	RTM_DISABLE_SECURITY_COOKIE_CHECK inline quatf RTM_SIMD_CALL quat_from_euler(float pitch, float yaw, float roll) RTM_NO_EXCEPT
 	{
 		float sp;
