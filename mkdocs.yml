@@ -74,6 +74,7 @@ nav:
       - Vectors:
           - api/vector4f.md
           - api/vector4d.md
+          - api/packing_vector4f.md
       - Masks:
           - api/mask4f.md
           - api/mask4d.md

@@ -69,6 +69,7 @@ macro(setup_default_compiler_flags _project_name)
 					target_compile_options(${_project_name} PRIVATE "-mavx")
 					target_compile_options(${_project_name} PRIVATE "-mbmi")
 					target_compile_options(${_project_name} PRIVATE "-mfma")
+					target_compile_options(${_project_name} PRIVATE "-mf16c")	# All CPUs that support AVX2 also support F16C, MSVC enables it with /arch:AVX2
 				elseif(USE_AVX_INSTRUCTIONS)
 					target_compile_options(${_project_name} PRIVATE "-mavx")
 					target_compile_options(${_project_name} PRIVATE "-mbmi")

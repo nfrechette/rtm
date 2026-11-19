@@ -8,9 +8,13 @@ Various versions of SSE are supported: SSE2, SSE3, SSE4, AVX, AVX2, and FMA.
 
 *Note that even when FMA is enabled, its intrinsics are not used because they appear slower on at least Haswell and Ryzen.*
 
+`vector_pack_half` and `vector_unpack_half` use F16C when the compiler enables it. GCC and Clang define `__F16C__` with `-mf16c` or with a `-march` value that supports it. MSVC does not define `__F16C__`, thus RTM uses F16C with `/arch:AVX2`. Without F16C, these functions use SSE2 integer code.
+
 ## ARM
 
 Both ARM NEON and ARM64 NEON are supported.
+
+`vector_pack_half` and `vector_unpack_half` use the NEON half-precision conversions on ARM64. On ARMv7, they use them only when the half-precision extension is enabled (for example with `-mfpu=neon-fp16`). Otherwise, they use the scalar code.
 
 ARM64EC uses the ARM64 NEON code path. MSVC also defines `_M_X64` for ARM64EC, but RTM does not use the SSE intrinsics there because ARM64EC emulates them. RTM does not use `__vectorcall` on ARM64EC.
 
