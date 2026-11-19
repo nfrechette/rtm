@@ -202,8 +202,8 @@ TEST_CASE("vector4f packing half special values", "[math][vector4][packing]")
 	CHECK(pack_one(65536.0F) == 0x7C00);
 	CHECK(pack_one(1.0E10F) == 0x7C00);
 	CHECK(pack_one(-1.0E10F) == 0xFC00);
-	CHECK(pack_one(std::numeric_limits<float>::max()) == 0x7C00);
-	CHECK(pack_one(-std::numeric_limits<float>::max()) == 0xFC00);
+	CHECK(pack_one((std::numeric_limits<float>::max)()) == 0x7C00);
+	CHECK(pack_one(-(std::numeric_limits<float>::max)()) == 0xFC00);
 
 	// NaN
 	CHECK(is_half_nan(pack_one(std::numeric_limits<float>::quiet_NaN())));
@@ -220,7 +220,7 @@ TEST_CASE("vector4f packing half special values", "[math][vector4][packing]")
 	CHECK(pack_one(-std::ldexp(1.0F, -25)) == 0x8000);
 	CHECK(pack_one(std::nextafter(std::ldexp(1.0F, -25), 1.0F)) == 0x0001);
 	CHECK(pack_one(std::ldexp(1.0F, -26)) == 0x0000);
-	CHECK(pack_one(std::numeric_limits<float>::min()) == 0x0000);
+	CHECK(pack_one((std::numeric_limits<float>::min)()) == 0x0000);
 	CHECK(pack_one(std::numeric_limits<float>::denorm_min()) == 0x0000);
 	CHECK(pack_one(-std::numeric_limits<float>::denorm_min()) == 0x8000);
 
