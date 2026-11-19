@@ -27,6 +27,8 @@
 *  Add `vqv_inverse_mul(lhs, rhs)`: it computes inverse(lhs) * rhs. When the scales are positive, `vqv_mul(lhs, vqv_inverse_mul(lhs, rhs))` is equal to rhs. The result does not change when the origin of the world moves
 *  The three functions compute the inverse when they need it and do not store it. An overload of each function takes a fallback scale and a threshold
 *  Add Linux ARMv7 cross compilation to `make.py` with GCC and Clang, `qemu-arm` runs the unit tests
+*  Add `vector_pack_half(input, output)` and `vector_unpack_half(input)` in rtm/packing/vector4f.h: they convert between a `vector4f` and four half-precision (IEEE 754 binary16) values. The pack rounds to the nearest value, ties to even. They use F16C on x64 and x86 when it is enabled, the NEON conversions on ARM64, and integer SIMD code on SSE2 and WASM
+*  With `-avx2`, `make.py` also enables F16C (`-mf16c`) on GCC and Clang
 
 ## 2.4.0
 

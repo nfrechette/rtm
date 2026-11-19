@@ -125,3 +125,31 @@
 		#define RTM_IMPL_VADDVQ_SUPPORTED
 	#endif
 #endif
+
+// Helper macro to determine if the F16C intrinsics (_mm_cvtps_ph, _mm_cvtph_ps) are supported (x86 and x64 only)
+// math.h includes this header after it defines RTM_AVX_INTRINSICS
+#if defined(RTM_AVX_INTRINSICS) && !defined(RTM_IMPL_F16C_SUPPORTED)
+	#if defined(__F16C__)
+		// GCC and clang define __F16C__ with -mf16c and with -march values that support it
+		#define RTM_IMPL_F16C_SUPPORTED
+	#elif defined(RTM_COMPILER_MSVC) && defined(__AVX2__)
+		// MSVC does not define __F16C__, but all CPUs that support AVX2 also support F16C
+		#define RTM_IMPL_F16C_SUPPORTED
+	#endif
+#endif
+
+// Helper macro to determine if the NEON half-precision conversion intrinsics (vcvt_f16_f32, vcvt_f32_f16) are supported
+#if defined(RTM_NEON_INTRINSICS) && !defined(RTM_IMPL_NEON_FP16_CONVERSION_SUPPORTED)
+	#if defined(RTM_COMPILER_MSVC)
+		// MSVC uses defines for the ARM intrinsics, use them to perform feature detection
+		#if defined(RTM_ARCH_ARM64) && defined(vcvt_f16_f32) && defined(vcvt_f32_f16) && defined(vreinterpret_u16_f16) && defined(vreinterpret_f16_u16)
+			#define RTM_IMPL_NEON_FP16_CONVERSION_SUPPORTED
+		#endif
+	#elif defined(RTM_ARCH_ARM64)
+		// ARM64 always supports the conversions
+		#define RTM_IMPL_NEON_FP16_CONVERSION_SUPPORTED
+	#elif defined(__ARM_FP) && (__ARM_FP & 0x2)
+		// ARMv7 supports the conversions with the half-precision extension (for example -mfpu=neon-fp16 or -mfpu=neon-vfpv4)
+		#define RTM_IMPL_NEON_FP16_CONVERSION_SUPPORTED
+	#endif
+#endif
