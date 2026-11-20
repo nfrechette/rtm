@@ -15,6 +15,7 @@
 *  The threshold of `vector_normalize`, `vector_normalize2`, and `vector_normalize3` applies to the squared length, as in previous versions. The previous comments said that it applies to the length
 *  The documentation gives the quaternion basis: the Hamilton rule, the bivector basis (e32, e13, e21), and the rotation direction. The behavior does not change. The previous comments said that [xyz] is the real part and [w] is the imaginary part. [w] is the scalar (real) part
 *  The comments of `quat_from_euler` give the correct axes: the pitch is around -Y and the roll is around -X. The previous comments said +Y and +X. The behavior does not change
+*  On ARM64, the float64 results of `scalar_exp` and `vector_exp` can differ by 2 ulp from the other code paths. The 2.4.0 notes said that only the last bit can differ. The behavior does not change
 
 ### Deprecations
 
@@ -31,6 +32,7 @@
 *  Add Linux ARMv7 cross compilation to `make.py` with GCC and Clang, `qemu-arm` runs the unit tests
 *  Add `vector_pack_half(input, output)` and `vector_unpack_half(input)` in rtm/packing/vector4f.h: they convert between a `vector4f` and four half-precision (IEEE 754 binary16) values. The pack rounds to the nearest value, ties to even. They use F16C on x64 and x86 when it is enabled, the NEON conversions on ARM64, and integer SIMD code on SSE2 and WASM
 *  With `-avx2`, `make.py` also enables F16C (`-mf16c`) on GCC and Clang
+*  Add unit tests that measure the error of `scalar_exp`, `scalar_log`, `vector_exp`, and `vector_log` in ulp: 1 ulp for float32 and 2 ulp for float64. The tests compile the scalar code path in the same executable and compare each result of the SIMD code path with it. The tests also check that `quat_normalize_deterministic` gives the same result on all the code paths
 
 ## 2.4.0
 
