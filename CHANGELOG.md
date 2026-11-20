@@ -34,6 +34,10 @@
 *  With `-avx2`, `make.py` also enables F16C (`-mf16c`) on GCC and Clang
 *  Add unit tests that measure the error of `scalar_exp`, `scalar_log`, `vector_exp`, and `vector_log` in ulp: 1 ulp for float32 and 2 ulp for float64. The tests compile the scalar code path in the same executable and compare each result of the SIMD code path with it. The tests also check that `quat_normalize_deterministic` gives the same result on all the code paths
 
+### Fixes
+
+*  Fix `scalar_exp` and `vector_exp` without SIMD on 32-bit x86 with x87 (for example GCC with `-m32`). The x87 registers keep more precision than float32 and float64, thus the result had an error of up to a factor of sqrt(2)
+
 ## 2.4.0
 
 ### Breaking changes

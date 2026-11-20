@@ -166,8 +166,12 @@ namespace rtm
 
 			float biased_n = x * k_exp_f32_log2e;
 			biased_n = biased_n + k_exp_f32_round_bias;
-			const float n = biased_n - k_exp_f32_round_bias;
 			const int32_t n_i = int32_t(float_to_bits(biased_n)) - k_exp_f32_round_bias_bits;
+
+			// We get n from n_i and not from biased_n - k_exp_f32_round_bias.
+			// With x87, biased_n can keep more precision than float32 in a register. Then the subtraction
+			// does not give an integer, and n does not agree with n_i.
+			const float n = float(n_i);
 
 			float t = n * k_f32_ln2_hi;
 			float r = x - t;
@@ -269,8 +273,12 @@ namespace rtm
 
 			double biased_n = x * k_exp_f64_log2e;
 			biased_n = biased_n + k_exp_f64_round_bias;
-			const double n = biased_n - k_exp_f64_round_bias;
 			const int64_t n_i = int64_t(double_to_bits(biased_n)) - k_exp_f64_round_bias_bits;
+
+			// We get n from n_i and not from biased_n - k_exp_f64_round_bias.
+			// With x87, biased_n can keep more precision than float64 in a register. Then the subtraction
+			// does not give an integer, and n does not agree with n_i.
+			const double n = double(n_i);
 
 			double t = n * k_exp_f64_ln2_hi;
 			double r = x - t;
