@@ -27,6 +27,8 @@
 
 #include <rtm/type_traits.h>
 
+#include "test_float_utils.h"
+
 // cpp files that include this header must include the vector header they wish to use
 //#include <rtm/vector4f.h>
 //#include <rtm/vector4d.h>
@@ -2136,6 +2138,7 @@ void test_vector4_exp_log_impl(const FloatType threshold)
 	}
 
 	// The scalar and the vector functions use the same algorithm: the results are equal
+	// We round each result to FloatType before the comparison because of x87 (see round_to_float_type)
 	{
 		const FloatType inputs[] =
 		{
@@ -2146,14 +2149,14 @@ void test_vector4_exp_log_impl(const FloatType threshold)
 		for (const FloatType input : inputs)
 		{
 			INFO("The input is " << input);
-			const FloatType exp_result = FloatType(vector_get_x(vector_exp(vector_set(input))));
-			CHECK(scalar_exp(input) == exp_result);
-			CHECK(scalar_cast(scalar_exp(scalar_set(input))) == exp_result);
+			const FloatType exp_result = round_to_float_type(FloatType(vector_get_x(vector_exp(vector_set(input)))));
+			CHECK(round_to_float_type(scalar_exp(input)) == exp_result);
+			CHECK(round_to_float_type(scalar_cast(scalar_exp(scalar_set(input)))) == exp_result);
 
 			const FloatType log_input = scalar_abs(input);
-			const FloatType log_result = FloatType(vector_get_x(vector_log(vector_set(log_input))));
-			CHECK(scalar_log(log_input) == log_result);
-			CHECK(scalar_cast(scalar_log(scalar_set(log_input))) == log_result);
+			const FloatType log_result = round_to_float_type(FloatType(vector_get_x(vector_log(vector_set(log_input)))));
+			CHECK(round_to_float_type(scalar_log(log_input)) == log_result);
+			CHECK(round_to_float_type(scalar_cast(scalar_log(scalar_set(log_input)))) == log_result);
 		}
 	}
 
