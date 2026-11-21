@@ -4690,8 +4690,9 @@ namespace rtm
 		__m128 is_input_negative = _mm_cmplt_ps(input, _mm_setzero_ps());
 		__m128 offset = _mm_and_ps(is_input_negative, _mm_set_ps1(constants::pi()));
 
-		// And our result has the same sign of the input
-		__m128 input_sign = _mm_and_ps(input, sign_bit);
+		// And our result is negative when the input is negative.
+		// We do not use the sign bit of the input: for -0.0, the offset is 0.0 and the result must stay positive.
+		__m128 input_sign = _mm_and_ps(is_input_negative, sign_bit);
 		result = _mm_or_ps(result, input_sign);
 		return _mm_add_ps(result, offset);
 #elif defined(RTM_WASM128_INTRINSICS)
@@ -4728,8 +4729,9 @@ namespace rtm
 		v128_t is_input_negative = wasm_f32x4_lt(input, wasm_f32x4_splat(0.0F));
 		v128_t offset = wasm_v128_and(is_input_negative, wasm_f32x4_splat(constants::pi()));
 
-		// And our result has the same sign of the input
-		v128_t input_sign = wasm_v128_and(input, sign_bit);
+		// And our result is negative when the input is negative.
+		// We do not use the sign bit of the input: for -0.0, the offset is 0.0 and the result must stay positive.
+		v128_t input_sign = wasm_v128_and(is_input_negative, sign_bit);
 		result = wasm_v128_or(result, input_sign);
 		return wasm_f32x4_add(result, offset);
 #else

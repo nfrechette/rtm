@@ -36,6 +36,7 @@
 
 ### Fixes
 
+*  Fix float32 `vector_acos(-0.0)` with SSE2 and WASM: the result was -pi/2 and is now pi/2
 *  Fix `scalar_exp` and `vector_exp` without SIMD on 32-bit x86 with x87 (for example GCC with `-m32`). The x87 registers keep more precision than float32 and float64, thus the result had an error of up to a factor of sqrt(2)
 
 ## 2.4.0
