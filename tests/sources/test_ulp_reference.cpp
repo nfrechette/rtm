@@ -36,8 +36,6 @@
 
 #define rtm rtm_ref
 
-#include "test_ulp_reference.h"
-
 #include <rtm/quatd.h>
 #include <rtm/quatf.h>
 #include <rtm/vector4d.h>
@@ -45,30 +43,22 @@
 
 #include <cfloat>
 
+#include "test_ulp_functions.h"
+
 #if defined(RTM_SSE2_INTRINSICS) || defined(RTM_NEON_INTRINSICS) || defined(RTM_WASM128_INTRINSICS)
 	#error "The reference code path must not use SIMD intrinsics"
 #endif
 
 namespace rtm_ulp_ref
 {
-	void vector_exp(const float* input, float* output)
+	void compute_vector_function(ulp_function function, const float* input0, const float* input1, float* output)
 	{
-		rtm::vector_store(rtm::vector_exp(rtm::vector_load(input)), output);
+		compute_vector_function_impl(function, input0, input1, output);
 	}
 
-	void vector_exp(const double* input, double* output)
+	void compute_vector_function(ulp_function function, const double* input0, const double* input1, double* output)
 	{
-		rtm::vector_store(rtm::vector_exp(rtm::vector_load(input)), output);
-	}
-
-	void vector_log(const float* input, float* output)
-	{
-		rtm::vector_store(rtm::vector_log(rtm::vector_load(input)), output);
-	}
-
-	void vector_log(const double* input, double* output)
-	{
-		rtm::vector_store(rtm::vector_log(rtm::vector_load(input)), output);
+		compute_vector_function_impl(function, input0, input1, output);
 	}
 
 	void quat_normalize_deterministic(const float* input, float* output)

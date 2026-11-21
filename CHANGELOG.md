@@ -33,6 +33,7 @@
 *  Add `vector_pack_half(input, output)` and `vector_unpack_half(input)` in rtm/packing/vector4f.h: they convert between a `vector4f` and four half-precision (IEEE 754 binary16) values. The pack rounds to the nearest value, ties to even. They use F16C on x64 and x86 when it is enabled, the NEON conversions on ARM64, and integer SIMD code on SSE2 and WASM
 *  With `-avx2`, `make.py` also enables F16C (`-mf16c`) on GCC and Clang
 *  Add unit tests that measure the error of `scalar_exp`, `scalar_log`, `vector_exp`, and `vector_log` in ulp: 1 ulp for float32 and 2 ulp for float64. The tests compile the scalar code path in the same executable and compare each result of the SIMD code path with it. The tests also check that `quat_normalize_deterministic` gives the same result on all the code paths
+*  The same unit tests measure the error of the scalar and vector `sqrt`, `reciprocal`, and `sqrt_reciprocal` (0, 0, and 1 ulp), and of the float32 `sin`, `cos`, `tan`, `asin`, `acos`, `atan`, and `atan2`. The float32 trigonometric functions use polynomial approximations with an absolute error: below 1.0, the tests measure the error in units of epsilon. The largest errors are 2 (`sin`), 3 (`cos`, `asin`, `acos`), 5 (`atan`, `atan2`), and 25 (`tan`). The tests use the range [-2pi, 2pi] for `sin` and `cos`, and [-1.5, 1.5] for `tan`
 
 ### Fixes
 

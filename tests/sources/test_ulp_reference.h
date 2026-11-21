@@ -29,15 +29,31 @@
 //
 // The two files see different RTM types (for example, vector4f is __m128 in one file and a struct
 // in the other). Thus the functions use only arrays of float and double.
-// Each function reads 4 values from the input and writes 4 values to the output.
+// Each function reads 4 values from each input and writes 4 values to the output.
 
 namespace rtm_ulp_ref
 {
-	void vector_exp(const float* input, float* output);
-	void vector_exp(const double* input, double* output);
+	// The functions that the tests measure
+	enum class ulp_function
+	{
+		exp,
+		log,
+		sqrt,
+		reciprocal,
+		sqrt_reciprocal,
+		sin,
+		cos,
+		tan,
+		asin,
+		acos,
+		atan,
+		atan2,
+	};
 
-	void vector_log(const float* input, float* output);
-	void vector_log(const double* input, double* output);
+	// Computes the vector function with the scalar code path.
+	// atan2 reads y from input0 and x from input1. The other functions do not read input1.
+	void compute_vector_function(ulp_function function, const float* input0, const float* input1, float* output);
+	void compute_vector_function(ulp_function function, const double* input0, const double* input1, double* output);
 
 	void quat_normalize_deterministic(const float* input, float* output);
 	void quat_normalize_deterministic(const double* input, double* output);
