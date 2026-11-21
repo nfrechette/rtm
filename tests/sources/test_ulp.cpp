@@ -192,9 +192,8 @@ namespace
 		// Returns the largest difference that we permit between the code path of the build and the scalar code path
 		static double get_max_simd_path_difference(ulp_function function)
 		{
-#if defined(RTM_NEON_INTRINSICS) || (defined(RTM_FMA_INTRINSICS) && defined(RTM_COMPILER_CLANG))
-			// The NEON code path uses FMA and the scalar code path does not.
-			// With FMA on x86 and x64, Clang merges the multiply and the add intrinsics into one FMA instruction.
+#if defined(RTM_NEON_INTRINSICS)
+			// The NEON code path uses FMA and the scalar code path does not
 			return get_rounding_path_difference(function);
 #else
 			// The SSE2 and WASM vector_asin do the operations in a different order than the scalar code path
