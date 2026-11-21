@@ -33,7 +33,7 @@
 //
 // Options we use:
 //    - Disable fast math, it can hurt precision for little to no performance gain due to the high level of hand tuned optimizations.
-//    - Disable floating point contraction (GCC only), the compiler must not merge a multiply and an add into one FMA instruction.
+//    - Disable floating point contraction (GCC and clang), the compiler must not merge a multiply and an add into one FMA instruction.
 #if defined(RTM_COMPILER_MSVC)
 	#define RTM_IMPL_FILE_PRAGMA_PUSH \
 		__pragma(float_control(precise, on, push))
@@ -50,11 +50,23 @@
 	//    - Clang defines most SSE and NEON intrinsics with operators in system headers.
 	//      These headers are outside of our pragma region and fast math stays on for them.
 	//    - The pragma does not disable -ffinite-math-only. Clang can still assume that values are not NaN or infinity.
+	//    - The pragma turns floating point contraction on, even with -ffp-contract=off.
+	//      We turn it off again inside our region. The pop restores the setting of the caller.
+	//      We do this only where clang supports the pragma. Elsewhere, there is no push and pop to restore it.
+	#if defined(__x86_64__) || defined(__i386__) \
+		|| (defined(__aarch64__) && ((defined(__apple_build_version__) && __clang_major__ >= 15) || (!defined(__apple_build_version__) && __clang_major__ >= 16))) \
+		|| (defined(__riscv) && !defined(__apple_build_version__) && __clang_major__ >= 18)
+		#define RTM_IMPL_CLANG_FP_CONTRACT_OFF _Pragma("clang fp contract(off)")
+	#else
+		#define RTM_IMPL_CLANG_FP_CONTRACT_OFF
+	#endif
+
 	#define RTM_IMPL_FILE_PRAGMA_PUSH \
 		_Pragma("clang diagnostic push") \
 		_Pragma("clang diagnostic ignored \"-Wignored-pragmas\"") \
 		_Pragma("clang diagnostic ignored \"-Wunknown-pragmas\"") \
 		_Pragma("float_control(precise, on, push)") \
+		RTM_IMPL_CLANG_FP_CONTRACT_OFF \
 		_Pragma("clang diagnostic pop")
 
 	#define RTM_IMPL_FILE_PRAGMA_POP \
