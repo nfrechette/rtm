@@ -36,10 +36,15 @@
 
 #define rtm rtm_ref
 
+#include <rtm/matrix3x3d.h>
+#include <rtm/matrix3x3f.h>
 #include <rtm/quatd.h>
 #include <rtm/quatf.h>
+#include <rtm/scalard.h>
+#include <rtm/scalarf.h>
 #include <rtm/vector4d.h>
 #include <rtm/vector4f.h>
+#include <rtm/packing/quatf.h>
 
 #include <cfloat>
 
@@ -51,14 +56,14 @@
 
 namespace rtm_ulp_ref
 {
-	void compute_vector_function(ulp_function function, const float* input0, const float* input1, float* output)
+	void compute_vector_function(ulp_function function, const float* input0, const float* input1, const float* input2, float* output)
 	{
-		compute_vector_function_impl(function, input0, input1, output);
+		compute_vector_function_impl(function, input0, input1, input2, output);
 	}
 
-	void compute_vector_function(ulp_function function, const double* input0, const double* input1, double* output)
+	void compute_vector_function(ulp_function function, const double* input0, const double* input1, const double* input2, double* output)
 	{
-		compute_vector_function_impl(function, input0, input1, output);
+		compute_vector_function_impl(function, input0, input1, input2, output);
 	}
 
 	void quat_normalize_deterministic(const float* input, float* output)

@@ -36,6 +36,7 @@ namespace rtm_ulp_ref
 	// The functions that the tests measure
 	enum class ulp_function
 	{
+		// Element-wise functions with one input (atan2 has two)
 		exp,
 		log,
 		sqrt,
@@ -48,12 +49,50 @@ namespace rtm_ulp_ref
 		acos,
 		atan,
 		atan2,
+
+		// Vector functions
+		dot,
+		dot3,
+		dot2,
+		length,
+		length3,
+		length_squared,
+		length_squared3,
+		length_squared2,
+		length_reciprocal,
+		length_reciprocal3,
+		length_reciprocal2,
+		normalize,
+		normalize3,
+		normalize2,
+		distance3,
+		cross3,
+		mul_add,
+		neg_mul_sub,
+		lerp,
+
+		// Quaternion functions
+		quat_mul,
+		quat_mul_vector3,
+		quat_normalize,
+		quat_dot,
+		quat_length,
+		quat_length_squared,
+		quat_length_reciprocal,
+		quat_lerp,
+		quat_slerp,
+		quat_from_euler,
+		quat_get_angle,
+		quat_rotation_log,
+		quat_rotation_exp,
+		quat_from_matrix,
+		quat_ensure_positive_w,		// float32 only
+		quat_from_positive_w,		// float32 only
 	};
 
-	// Computes the vector function with the scalar code path.
-	// atan2 reads y from input0 and x from input1. The other functions do not read input1.
-	void compute_vector_function(ulp_function function, const float* input0, const float* input1, float* output);
-	void compute_vector_function(ulp_function function, const double* input0, const double* input1, double* output);
+	// Computes the function with the scalar code path. See compute_vector_function_impl for the inputs and the output.
+	void compute_vector_function(ulp_function function, const float* input0, const float* input1, const float* input2, float* output);
+	void compute_vector_function(ulp_function function, const double* input0, const double* input1, const double* input2, double* output);
 
 	void quat_normalize_deterministic(const float* input, float* output);
 	void quat_normalize_deterministic(const double* input, double* output);
