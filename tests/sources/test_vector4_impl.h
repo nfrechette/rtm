@@ -2113,12 +2113,13 @@ void test_vector4_exp_log_impl(const FloatType threshold)
 
 	// Special values
 	{
+		// With x87, a result is not 0.0, infinity, or a denormal value before the store (see round_to_float_type)
 		const Vector4Type exp_result = vector_exp(vector_set(-infinity, infinity, nan, FloatType(-800.0)));
-		CHECK(FloatType(vector_get_x(exp_result)) == FloatType(0.0));
-		CHECK(FloatType(vector_get_y(exp_result)) == infinity);
+		CHECK(round_to_float_type(FloatType(vector_get_x(exp_result))) == FloatType(0.0));
+		CHECK(round_to_float_type(FloatType(vector_get_y(exp_result))) == infinity);
 		CHECK(std::isnan(FloatType(vector_get_z(exp_result))));
-		CHECK(FloatType(vector_get_w(exp_result)) == FloatType(0.0));
-		CHECK(FloatType(vector_get_x(vector_exp(vector_set(FloatType(800.0))))) == infinity);
+		CHECK(round_to_float_type(FloatType(vector_get_w(exp_result))) == FloatType(0.0));
+		CHECK(round_to_float_type(FloatType(vector_get_x(vector_exp(vector_set(FloatType(800.0)))))) == infinity);
 
 		const Vector4Type log_result = vector_log(vector_set(FloatType(0.0), FloatType(-1.0), infinity, nan));
 		CHECK(FloatType(vector_get_x(log_result)) == -infinity);
@@ -2133,7 +2134,7 @@ void test_vector4_exp_log_impl(const FloatType threshold)
 		const FloatType denormal = std::numeric_limits<FloatType>::denorm_min();
 		const FloatType log_denormal = std::log(denormal);
 		CHECK(scalar_abs(FloatType(vector_get_x(vector_log(vector_set(denormal)))) - log_denormal) <= threshold * scalar_abs(log_denormal));
-		CHECK(FloatType(vector_get_x(vector_exp(vector_set(log_denormal)))) == denormal);
+		CHECK(round_to_float_type(FloatType(vector_get_x(vector_exp(vector_set(log_denormal))))) == denormal);
 #endif
 	}
 

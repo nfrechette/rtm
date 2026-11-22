@@ -16,6 +16,7 @@
 *  The documentation gives the quaternion basis: the Hamilton rule, the bivector basis (e32, e13, e21), and the rotation direction. The behavior does not change. The previous comments said that [xyz] is the real part and [w] is the imaginary part. [w] is the scalar (real) part
 *  The comments of `quat_from_euler` give the correct axes: the pitch is around -Y and the roll is around -X. The previous comments said +Y and +X. The behavior does not change
 *  On ARM64, the float64 results of `scalar_exp` and `vector_exp` can differ by 2 ulp from the other code paths. The 2.4.0 notes said that only the last bit can differ. The behavior does not change
+*  The documentation explains floating point contraction (docs/api_conventions.md). With GCC, the headers do not disable contraction: GCC uses `-ffp-contract=fast` by default in C++ and merges the operations of the inlined functions, and a pragma with other optimization options stops GCC from inlining the functions. To get the same results on all the targets with GCC, compile with `-ffp-contract=off`
 
 ### Deprecations
 
@@ -40,7 +41,7 @@
 
 *  Fix float32 `vector_acos(-0.0)` with SSE2 and WASM: the result was -pi/2 and is now pi/2
 *  Fix `quat_ensure_positive_w` without SIMD when [w] is -0.0: the function now tests the sign bit of [w] as the SSE2, WASM, and NEON code paths do. The previous code returned the input, and the SIMD code paths returned the negated input
-*  Disable floating point contraction in the headers with Clang, as with GCC. `float_control(precise, on)` does not disable it: Clang merged a multiply and an add into one FMA instruction in the scalar code, for example on ARM64 and with `-mfma`. Thus the scalar code path gave different results on different targets. Clang ignores `float_control` on some targets (for example ARMv7 and WASM), thus the headers disable contraction only on x86, x64, AArch64 (Clang 16+, Apple Clang 15+), and RISC-V (Clang 18+). With `-ffp-contract=fast`, LLVM Clang ignores the pragma: use `-ffp-contract=fast-honor-pragmas`
+*  Disable floating point contraction in the headers with Clang. `float_control(precise, on)` does not disable it: Clang merged a multiply and an add into one FMA instruction in the scalar code, for example on ARM64 and with `-mfma`. Thus the scalar code path gave different results on different targets. Clang ignores `float_control` on some targets (for example ARMv7 and WASM), thus the headers disable contraction only on x86, x64, AArch64 (Clang 16+, Apple Clang 15+), and RISC-V (Clang 18+). With `-ffp-contract=fast`, LLVM Clang ignores the pragma: use `-ffp-contract=fast-honor-pragmas`
 *  Fix `scalar_exp` and `vector_exp` without SIMD on 32-bit x86 with x87 (for example GCC with `-m32`). The x87 registers keep more precision than float32 and float64, thus the result had an error of up to a factor of sqrt(2)
 
 ## 2.4.0

@@ -357,9 +357,8 @@ namespace
 			// The NEON code path uses FMA and the scalar code path does not
 			return get_rounding_path_difference(function);
 #elif defined(RTM_COMPILER_GCC) && defined(__FP_FAST_FMAF)
-			// With -ffp-contract=fast (the default of GCC in the GNU dialects), GCC merges a multiply and an add
-			// into one FMA instruction after it inlines an RTM_FORCE_INLINE function: the pragma of the header does not apply.
-			// Thus the code paths can round different operations.
+			// GCC uses -ffp-contract=fast by default and the headers do not disable contraction with GCC.
+			// GCC merges a multiply and an add into one FMA instruction, thus the code paths can round different operations.
 			return (std::max)(get_simd_path_difference(function), get_rounding_path_difference(function));
 #else
 			return get_simd_path_difference(function);
@@ -547,9 +546,8 @@ namespace
 			// The NEON code path uses FMA and the scalar code path does not
 			return get_rounding_path_difference(function);
 #elif defined(RTM_COMPILER_GCC) && defined(__FP_FAST_FMA)
-			// With -ffp-contract=fast (the default of GCC in the GNU dialects), GCC merges a multiply and an add
-			// into one FMA instruction after it inlines an RTM_FORCE_INLINE function: the pragma of the header does not apply.
-			// Thus the code paths can round different operations.
+			// GCC uses -ffp-contract=fast by default and the headers do not disable contraction with GCC.
+			// GCC merges a multiply and an add into one FMA instruction, thus the code paths can round different operations.
 			return (std::max)(get_simd_path_difference(function), get_rounding_path_difference(function));
 #else
 			return get_simd_path_difference(function);
