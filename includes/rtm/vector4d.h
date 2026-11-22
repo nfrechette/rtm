@@ -543,9 +543,10 @@ namespace rtm
 	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE scalard RTM_SIMD_CALL vector_get_min_component_as_scalar(vector4d_arg0 input) RTM_NO_EXCEPT
 	{
 #if defined(RTM_SSE2_INTRINSICS)
-		__m128d xz_yw = _mm_min_pd(input.xy, input.zw);
+		// min(min(x, z), min(y, w)) with the semantics of vector_min
+		__m128d xz_yw = _mm_min_pd(input.zw, input.xy);
 		__m128d yw_yw = _mm_shuffle_pd(xz_yw, xz_yw, _MM_SHUFFLE2(0, 1));
-		return scalard{ _mm_min_pd(xz_yw, yw_yw) };
+		return scalard{ _mm_min_pd(yw_yw, xz_yw) };
 #else
 		return vector_get_min_component(input);
 #endif
@@ -561,9 +562,10 @@ namespace rtm
 	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE scalard RTM_SIMD_CALL vector_get_max_component_as_scalar(vector4d_arg0 input) RTM_NO_EXCEPT
 	{
 #if defined(RTM_SSE2_INTRINSICS)
-		__m128d xz_yw = _mm_max_pd(input.xy, input.zw);
+		// max(max(x, z), max(y, w)) with the semantics of vector_max
+		__m128d xz_yw = _mm_max_pd(input.zw, input.xy);
 		__m128d yw_yw = _mm_shuffle_pd(xz_yw, xz_yw, _MM_SHUFFLE2(0, 1));
-		return scalard{ _mm_max_pd(xz_yw, yw_yw) };
+		return scalard{ _mm_max_pd(yw_yw, xz_yw) };
 #else
 		return vector_get_max_component(input);
 #endif
@@ -1090,38 +1092,47 @@ namespace rtm
 #endif
 	}
 
-	/// Per component maximum of the two inputs: max(lhs, rhs)
+	/// Per component maximum of the two inputs: lhs < rhs ? rhs : lhs, as std::max.
+	/// When the inputs are equal (for example +0.0 and -0.0) or when one of them is NaN, the result is lhs.
+	/// All the code paths give the same result.
 	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE vector4d RTM_SIMD_CALL vector_max(vector4d_arg0 lhs, vector4d_arg1 rhs) RTM_NO_EXCEPT
 	{
 #if defined(RTM_SSE2_INTRINSICS)
-		return vector4d{ _mm_max_pd(lhs.xy, rhs.xy), _mm_max_pd(lhs.zw, rhs.zw) };
+		// maxpd returns its second input when the inputs are equal or when one of them is NaN
+		return vector4d{ _mm_max_pd(rhs.xy, lhs.xy), _mm_max_pd(rhs.zw, lhs.zw) };
 #elif defined(RTM_WASM128_INTRINSICS)
 		return vector4d{ wasm_f64x2_pmax(lhs.xy, rhs.xy), wasm_f64x2_pmax(lhs.zw, rhs.zw) };
 #elif defined(RTM_NEON64_INTRINSICS)
-		return vector4d{ vmaxq_f64(lhs.xy, rhs.xy), vmaxq_f64(lhs.zw, rhs.zw) };
+		// vmaxq follows IEEE 754: it returns NaN when one of the inputs is NaN
+		return vector4d{ vbslq_f64(vcltq_f64(lhs.xy, rhs.xy), rhs.xy, lhs.xy), vbslq_f64(vcltq_f64(lhs.zw, rhs.zw), rhs.zw, lhs.zw) };
 #else
 		return vector_set(scalar_max(lhs.x, rhs.x), scalar_max(lhs.y, rhs.y), scalar_max(lhs.z, rhs.z), scalar_max(lhs.w, rhs.w));
 #endif
 	}
 
-	/// Per component minimum of the two inputs: min(lhs, rhs)
+	/// Per component minimum of the two inputs: rhs < lhs ? rhs : lhs, as std::min.
+	/// When the inputs are equal (for example +0.0 and -0.0) or when one of them is NaN, the result is lhs.
+	/// All the code paths give the same result.
 	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE vector4d RTM_SIMD_CALL vector_min(vector4d_arg0 lhs, vector4d_arg1 rhs) RTM_NO_EXCEPT
 	{
 #if defined(RTM_SSE2_INTRINSICS)
-		return vector4d{ _mm_min_pd(lhs.xy, rhs.xy), _mm_min_pd(lhs.zw, rhs.zw) };
+		// minpd returns its second input when the inputs are equal or when one of them is NaN
+		return vector4d{ _mm_min_pd(rhs.xy, lhs.xy), _mm_min_pd(rhs.zw, lhs.zw) };
 #elif defined(RTM_WASM128_INTRINSICS)
 		return vector4d{ wasm_f64x2_pmin(lhs.xy, rhs.xy), wasm_f64x2_pmin(lhs.zw, rhs.zw) };
 #elif defined(RTM_NEON64_INTRINSICS)
-		return vector4d{ vminq_f64(lhs.xy, rhs.xy), vminq_f64(lhs.zw, rhs.zw) };
+		// vminq follows IEEE 754: it returns NaN when one of the inputs is NaN
+		return vector4d{ vbslq_f64(vcltq_f64(rhs.xy, lhs.xy), rhs.xy, lhs.xy), vbslq_f64(vcltq_f64(rhs.zw, lhs.zw), rhs.zw, lhs.zw) };
 #else
 		return vector_set(scalar_min(lhs.x, rhs.x), scalar_min(lhs.y, rhs.y), scalar_min(lhs.z, rhs.z), scalar_min(lhs.w, rhs.w));
 #endif
 	}
 
-	/// Per component clamping of an input between a minimum and a maximum value: min(max_value, max(min_value, input))
+	/// Per component clamping of an input between a minimum and a maximum value: min(max(input, min_value), max_value)
+	/// When the input is NaN, the result is NaN. The minimum must not be larger than the maximum.
 	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE vector4d RTM_SIMD_CALL vector_clamp(vector4d_arg0 input, vector4d_arg1 min_value, vector4d_arg2 max_value) RTM_NO_EXCEPT
 	{
-		return vector_min(max_value, vector_max(min_value, input));
+		return vector_min(vector_max(input, min_value), max_value);
 	}
 
 	/// Per component absolute of the input: abs(input)
@@ -3838,21 +3849,21 @@ namespace rtm
 	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE vector4d RTM_SIMD_CALL vector_sign(vector4d_arg0 input) RTM_NO_EXCEPT
 	{
 #if defined(RTM_SSE2_INTRINSICS)
+		// -0.0 is positive and NaN is not. We set the sign bit of 1.0 when the input is not positive.
 		const __m128d signs = _mm_set1_pd(-0.0);
 		const __m128d one = _mm_set1_pd(1.0);
-		// Mask out the sign bit
-		const __m128d sign_bits_xy = _mm_and_pd(input.xy, signs);
-		const __m128d sign_bits_zw = _mm_and_pd(input.zw, signs);
-		// Copy the sign bit onto +-1.0f
-		return vector4d{ _mm_or_pd(sign_bits_xy, one), _mm_or_pd(sign_bits_zw, one) };
+		const __m128d zero = _mm_setzero_pd();
+		const __m128d is_positive_xy = _mm_cmpge_pd(input.xy, zero);
+		const __m128d is_positive_zw = _mm_cmpge_pd(input.zw, zero);
+		return vector4d{ _mm_or_pd(_mm_andnot_pd(is_positive_xy, signs), one), _mm_or_pd(_mm_andnot_pd(is_positive_zw, signs), one) };
 #elif defined(RTM_WASM128_INTRINSICS)
+		// -0.0 is positive and NaN is not. We set the sign bit of 1.0 when the input is not positive.
 		const v128_t signs = wasm_f64x2_splat(-0.0);
 		const v128_t one = wasm_f64x2_splat(1.0);
-		// Mask out the sign bit
-		const v128_t sign_bits_xy = wasm_v128_and(input.xy, signs);
-		const v128_t sign_bits_zw = wasm_v128_and(input.zw, signs);
-		// Copy the sign bit onto +-1.0f
-		return vector4d{ wasm_v128_or(sign_bits_xy, one), wasm_v128_or(sign_bits_zw, one) };
+		const v128_t zero = wasm_f64x2_splat(0.0);
+		const v128_t is_positive_xy = wasm_f64x2_ge(input.xy, zero);
+		const v128_t is_positive_zw = wasm_f64x2_ge(input.zw, zero);
+		return vector4d{ wasm_v128_or(wasm_v128_andnot(signs, is_positive_xy), one), wasm_v128_or(wasm_v128_andnot(signs, is_positive_zw), one) };
 #else
 		const mask4d mask = vector_greater_equal(input, vector_zero());
 		return vector_select(mask, vector_set(1.0), vector_set(-1.0));

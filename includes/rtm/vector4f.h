@@ -540,10 +540,11 @@ namespace rtm
 	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE scalarf RTM_SIMD_CALL vector_get_min_component_as_scalar(vector4f_arg0 input) RTM_NO_EXCEPT
 	{
 #if defined(RTM_SSE2_INTRINSICS)
+		// min(min(x, z), min(y, w)) with the semantics of vector_min
 		__m128 zwzw = _mm_movehl_ps(input, input);
-		__m128 xz_yw_zz_ww = _mm_min_ps(input, zwzw);
+		__m128 xz_yw_zz_ww = _mm_min_ps(zwzw, input);
 		__m128 yw_yw_yw_yw = _mm_shuffle_ps(xz_yw_zz_ww, xz_yw_zz_ww, _MM_SHUFFLE(1, 1, 1, 1));
-		return scalarf{ _mm_min_ps(xz_yw_zz_ww, yw_yw_yw_yw) };
+		return scalarf{ _mm_min_ps(yw_yw_yw_yw, xz_yw_zz_ww) };
 #else
 		return vector_get_min_component(input);
 #endif
@@ -559,10 +560,11 @@ namespace rtm
 	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE scalarf RTM_SIMD_CALL vector_get_max_component_as_scalar(vector4f_arg0 input) RTM_NO_EXCEPT
 	{
 #if defined(RTM_SSE2_INTRINSICS)
+		// max(max(x, z), max(y, w)) with the semantics of vector_max
 		__m128 zwzw = _mm_movehl_ps(input, input);
-		__m128 xz_yw_zz_ww = _mm_max_ps(input, zwzw);
+		__m128 xz_yw_zz_ww = _mm_max_ps(zwzw, input);
 		__m128 yw_yw_yw_yw = _mm_shuffle_ps(xz_yw_zz_ww, xz_yw_zz_ww, _MM_SHUFFLE(1, 1, 1, 1));
-		return scalarf{ _mm_max_ps(xz_yw_zz_ww, yw_yw_yw_yw) };
+		return scalarf{ _mm_max_ps(yw_yw_yw_yw, xz_yw_zz_ww) };
 #else
 		return vector_get_max_component(input);
 #endif
@@ -1101,40 +1103,49 @@ namespace rtm
 #endif
 	}
 
-	/// Per component maximum of the two inputs: max(lhs, rhs)
+	/// Per component maximum of the two inputs: lhs < rhs ? rhs : lhs, as std::max.
+	/// When the inputs are equal (for example +0.0 and -0.0) or when one of them is NaN, the result is lhs.
+	/// All the code paths give the same result.
 	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE vector4f RTM_SIMD_CALL vector_max(vector4f_arg0 lhs, vector4f_arg1 rhs) RTM_NO_EXCEPT
 	{
 #if defined(RTM_SSE2_INTRINSICS)
-		return _mm_max_ps(lhs, rhs);
+		// maxps returns its second input when the inputs are equal or when one of them is NaN
+		return _mm_max_ps(rhs, lhs);
 #elif defined(RTM_WASM128_INTRINSICS)
 		// pmax has the same semantics as std::max and it is a single instruction on x64, unlike max which propagates NaN
 		return wasm_f32x4_pmax(lhs, rhs);
 #elif defined(RTM_NEON_INTRINSICS)
-		return vmaxq_f32(lhs, rhs);
+		// vmaxq follows IEEE 754: it returns NaN when one of the inputs is NaN
+		return vbslq_f32(vcltq_f32(lhs, rhs), rhs, lhs);
 #else
 		return vector_set(scalar_max(lhs.x, rhs.x), scalar_max(lhs.y, rhs.y), scalar_max(lhs.z, rhs.z), scalar_max(lhs.w, rhs.w));
 #endif
 	}
 
-	/// Per component minimum of the two inputs: min(lhs, rhs)
+	/// Per component minimum of the two inputs: rhs < lhs ? rhs : lhs, as std::min.
+	/// When the inputs are equal (for example +0.0 and -0.0) or when one of them is NaN, the result is lhs.
+	/// All the code paths give the same result.
 	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE vector4f RTM_SIMD_CALL vector_min(vector4f_arg0 lhs, vector4f_arg1 rhs) RTM_NO_EXCEPT
 	{
 #if defined(RTM_SSE2_INTRINSICS)
-		return _mm_min_ps(lhs, rhs);
+		// minps returns its second input when the inputs are equal or when one of them is NaN
+		return _mm_min_ps(rhs, lhs);
 #elif defined(RTM_WASM128_INTRINSICS)
 		// pmin has the same semantics as std::min and it is a single instruction on x64, unlike min which propagates NaN
 		return wasm_f32x4_pmin(lhs, rhs);
 #elif defined(RTM_NEON_INTRINSICS)
-		return vminq_f32(lhs, rhs);
+		// vminq follows IEEE 754: it returns NaN when one of the inputs is NaN
+		return vbslq_f32(vcltq_f32(rhs, lhs), rhs, lhs);
 #else
 		return vector_set(scalar_min(lhs.x, rhs.x), scalar_min(lhs.y, rhs.y), scalar_min(lhs.z, rhs.z), scalar_min(lhs.w, rhs.w));
 #endif
 	}
 
-	/// Per component clamping of an input between a minimum and a maximum value: min(max_value, max(min_value, input))
+	/// Per component clamping of an input between a minimum and a maximum value: min(max(input, min_value), max_value)
+	/// When the input is NaN, the result is NaN. The minimum must not be larger than the maximum.
 	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE vector4f RTM_SIMD_CALL vector_clamp(vector4f_arg0 input, vector4f_arg1 min_value, vector4f_arg2 max_value) RTM_NO_EXCEPT
 	{
-		return vector_min(max_value, vector_max(min_value, input));
+		return vector_min(vector_max(input, min_value), max_value);
 	}
 
 	/// Per component absolute of the input: abs(input)
@@ -4079,11 +4090,11 @@ namespace rtm
 #if defined(RTM_SSE2_INTRINSICS)
 		constexpr __m128 signs = RTM_VECTOR4F_MAKE(-0.0F, -0.0F, -0.0F, -0.0F);
 		constexpr __m128 one = RTM_VECTOR4F_MAKE(1.0F, 1.0F, 1.0F, 1.0F);
-		const __m128 sign_bits = _mm_and_ps(input, signs);	// Mask out the sign bit
-		return _mm_or_ps(sign_bits, one);					// Copy the sign bit onto +-1.0f
+		const __m128 is_positive = _mm_cmpge_ps(input, _mm_setzero_ps());	// -0.0 is positive and NaN is not
+		return _mm_or_ps(_mm_andnot_ps(is_positive, signs), one);			// Set the sign bit of 1.0 when the input is not positive
 #elif defined(RTM_WASM128_INTRINSICS)
-		const v128_t sign_bits = wasm_v128_and(input, wasm_f32x4_splat(-0.0F));	// Mask out the sign bit
-		return wasm_v128_or(sign_bits, wasm_f32x4_splat(1.0F));					// Copy the sign bit onto +-1.0f
+		const v128_t is_positive = wasm_f32x4_ge(input, wasm_f32x4_splat(0.0F));	// -0.0 is positive and NaN is not
+		return wasm_v128_or(wasm_v128_andnot(wasm_f32x4_splat(-0.0F), is_positive), wasm_f32x4_splat(1.0F));	// Set the sign bit of 1.0 when the input is not positive
 #else
 		const mask4f mask = vector_greater_equal(input, vector_zero());
 		return vector_select(mask, vector_set(1.0F), vector_set(-1.0F));

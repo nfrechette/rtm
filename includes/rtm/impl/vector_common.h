@@ -456,20 +456,24 @@ namespace rtm
 			RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE RTM_SIMD_CALL operator float() const RTM_NO_EXCEPT
 			{
 #if defined(RTM_SSE2_INTRINSICS)
+				// min(min(x, z), min(y, w)) with the semantics of vector_min: all the code paths use this order
 				__m128 zwzw = _mm_movehl_ps(value, value);
-				__m128 xz_yw_zz_ww = _mm_min_ps(value, zwzw);
+				__m128 xz_yw_zz_ww = _mm_min_ps(zwzw, value);
 				__m128 yw_yw_yw_yw = _mm_shuffle_ps(xz_yw_zz_ww, xz_yw_zz_ww, _MM_SHUFFLE(1, 1, 1, 1));
-				return _mm_cvtss_f32(_mm_min_ps(xz_yw_zz_ww, yw_yw_yw_yw));
+				return _mm_cvtss_f32(_mm_min_ps(yw_yw_yw_yw, xz_yw_zz_ww));
 #elif defined(RTM_WASM128_INTRINSICS)
 				v128_t zwzw = wasm_i32x4_shuffle(value, value, 2, 3, 2, 3);
 				v128_t xz_yw_zz_ww = wasm_f32x4_pmin(value, zwzw);
 				v128_t yw_yw_yw_yw = wasm_i32x4_shuffle(xz_yw_zz_ww, xz_yw_zz_ww, 1, 1, 1, 1);
 				return wasm_f32x4_extract_lane(wasm_f32x4_pmin(xz_yw_zz_ww, yw_yw_yw_yw), 0);
 #elif defined(RTM_NEON_INTRINSICS)
-				float32x2_t xy_zw = vpmin_f32(vget_low_f32(value), vget_high_f32(value));
-				return vget_lane_f32(vpmin_f32(xy_zw, xy_zw), 0);
+				const float32x2_t xy = vget_low_f32(value);
+				const float32x2_t zw = vget_high_f32(value);
+				const float32x2_t xz_yw = vbsl_f32(vclt_f32(zw, xy), zw, xy);
+				const float32x2_t yw_yw = vdup_lane_f32(xz_yw, 1);
+				return vget_lane_f32(vbsl_f32(vclt_f32(yw_yw, xz_yw), yw_yw, xz_yw), 0);
 #else
-				return scalar_min(scalar_min(value.x, value.y), scalar_min(value.z, value.w));
+				return scalar_min(scalar_min(value.x, value.z), scalar_min(value.y, value.w));
 #endif
 			}
 
@@ -485,20 +489,24 @@ namespace rtm
 			RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE RTM_SIMD_CALL operator float() const RTM_NO_EXCEPT
 			{
 #if defined(RTM_SSE2_INTRINSICS)
+				// max(max(x, z), max(y, w)) with the semantics of vector_max: all the code paths use this order
 				__m128 zwzw = _mm_movehl_ps(value, value);
-				__m128 xz_yw_zz_ww = _mm_max_ps(value, zwzw);
+				__m128 xz_yw_zz_ww = _mm_max_ps(zwzw, value);
 				__m128 yw_yw_yw_yw = _mm_shuffle_ps(xz_yw_zz_ww, xz_yw_zz_ww, _MM_SHUFFLE(1, 1, 1, 1));
-				return _mm_cvtss_f32(_mm_max_ps(xz_yw_zz_ww, yw_yw_yw_yw));
+				return _mm_cvtss_f32(_mm_max_ps(yw_yw_yw_yw, xz_yw_zz_ww));
 #elif defined(RTM_WASM128_INTRINSICS)
 				v128_t zwzw = wasm_i32x4_shuffle(value, value, 2, 3, 2, 3);
 				v128_t xz_yw_zz_ww = wasm_f32x4_pmax(value, zwzw);
 				v128_t yw_yw_yw_yw = wasm_i32x4_shuffle(xz_yw_zz_ww, xz_yw_zz_ww, 1, 1, 1, 1);
 				return wasm_f32x4_extract_lane(wasm_f32x4_pmax(xz_yw_zz_ww, yw_yw_yw_yw), 0);
 #elif defined(RTM_NEON_INTRINSICS)
-				float32x2_t xy_zw = vpmax_f32(vget_low_f32(value), vget_high_f32(value));
-				return vget_lane_f32(vpmax_f32(xy_zw, xy_zw), 0);
+				const float32x2_t xy = vget_low_f32(value);
+				const float32x2_t zw = vget_high_f32(value);
+				const float32x2_t xz_yw = vbsl_f32(vclt_f32(xy, zw), zw, xy);
+				const float32x2_t yw_yw = vdup_lane_f32(xz_yw, 1);
+				return vget_lane_f32(vbsl_f32(vclt_f32(xz_yw, yw_yw), yw_yw, xz_yw), 0);
 #else
-				return scalar_max(scalar_max(value.x, value.y), scalar_max(value.z, value.w));
+				return scalar_max(scalar_max(value.x, value.z), scalar_max(value.y, value.w));
 #endif
 			}
 
@@ -514,19 +522,20 @@ namespace rtm
 			RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE RTM_SIMD_CALL operator double() const RTM_NO_EXCEPT
 			{
 #if defined(RTM_SSE2_INTRINSICS)
-				__m128d xz_yw = _mm_min_pd(value.xy, value.zw);
+				// min(min(x, z), min(y, w)) with the semantics of vector_min: all the code paths use this order
+				__m128d xz_yw = _mm_min_pd(value.zw, value.xy);
 				__m128d yw_yw = _mm_shuffle_pd(xz_yw, xz_yw, 1);
-				return _mm_cvtsd_f64(_mm_min_pd(xz_yw, yw_yw));
+				return _mm_cvtsd_f64(_mm_min_pd(yw_yw, xz_yw));
 #elif defined(RTM_WASM128_INTRINSICS)
 				v128_t xz_yw = wasm_f64x2_pmin(value.xy, value.zw);
 				v128_t yw_yw = wasm_i64x2_shuffle(xz_yw, xz_yw, 1, 1);
 				return wasm_f64x2_extract_lane(wasm_f64x2_pmin(xz_yw, yw_yw), 0);
 #elif defined(RTM_NEON64_INTRINSICS)
-				float64x2_t xz_yw = vminq_f64(value.xy, value.zw);
-				float64x2_t yw_yw = vdupq_laneq_f64(xz_yw, 1);
-				return vgetq_lane_f64(vminq_f64(xz_yw, yw_yw), 0);
+				const float64x2_t xz_yw = vbslq_f64(vcltq_f64(value.zw, value.xy), value.zw, value.xy);
+				const float64x2_t yw_yw = vdupq_laneq_f64(xz_yw, 1);
+				return vgetq_lane_f64(vbslq_f64(vcltq_f64(yw_yw, xz_yw), yw_yw, xz_yw), 0);
 #else
-				return scalar_min(scalar_min(value.x, value.y), scalar_min(value.z, value.w));
+				return scalar_min(scalar_min(value.x, value.z), scalar_min(value.y, value.w));
 #endif
 			}
 
@@ -542,19 +551,20 @@ namespace rtm
 			RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE RTM_SIMD_CALL operator double() const RTM_NO_EXCEPT
 			{
 #if defined(RTM_SSE2_INTRINSICS)
-				__m128d xz_yw = _mm_max_pd(value.xy, value.zw);
+				// max(max(x, z), max(y, w)) with the semantics of vector_max: all the code paths use this order
+				__m128d xz_yw = _mm_max_pd(value.zw, value.xy);
 				__m128d yw_yw = _mm_shuffle_pd(xz_yw, xz_yw, 1);
-				return _mm_cvtsd_f64(_mm_max_pd(xz_yw, yw_yw));
+				return _mm_cvtsd_f64(_mm_max_pd(yw_yw, xz_yw));
 #elif defined(RTM_WASM128_INTRINSICS)
 				v128_t xz_yw = wasm_f64x2_pmax(value.xy, value.zw);
 				v128_t yw_yw = wasm_i64x2_shuffle(xz_yw, xz_yw, 1, 1);
 				return wasm_f64x2_extract_lane(wasm_f64x2_pmax(xz_yw, yw_yw), 0);
 #elif defined(RTM_NEON64_INTRINSICS)
-				float64x2_t xz_yw = vmaxq_f64(value.xy, value.zw);
-				float64x2_t yw_yw = vdupq_laneq_f64(xz_yw, 1);
-				return vgetq_lane_f64(vmaxq_f64(xz_yw, yw_yw), 0);
+				const float64x2_t xz_yw = vbslq_f64(vcltq_f64(value.xy, value.zw), value.zw, value.xy);
+				const float64x2_t yw_yw = vdupq_laneq_f64(xz_yw, 1);
+				return vgetq_lane_f64(vbslq_f64(vcltq_f64(xz_yw, yw_yw), yw_yw, xz_yw), 0);
 #else
-				return scalar_max(scalar_max(value.x, value.y), scalar_max(value.z, value.w));
+				return scalar_max(scalar_max(value.x, value.z), scalar_max(value.y, value.w));
 #endif
 			}
 

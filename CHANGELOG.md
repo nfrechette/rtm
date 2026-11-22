@@ -17,6 +17,10 @@
 *  The comments of `quat_from_euler` give the correct axes: the pitch is around -Y and the roll is around -X. The previous comments said +Y and +X. The behavior does not change
 *  On ARM64, the float64 results of `scalar_exp` and `vector_exp` can differ by 2 ulp from the other code paths. The 2.4.0 notes said that only the last bit can differ. The behavior does not change
 *  The documentation explains floating point contraction (docs/api_conventions.md). With GCC, the headers do not disable contraction: GCC uses `-ffp-contract=fast` by default in C++ and merges the operations of the inlined functions, and a pragma with other optimization options stops GCC from inlining the functions. To get the same results on all the targets with GCC, compile with `-ffp-contract=off`
+*  `vector_min`, `vector_max`, `scalar_min`, and `scalar_max` give the same result on all the code paths: `rhs < lhs ? rhs : lhs` for the minimum and `lhs < rhs ? rhs : lhs` for the maximum, as `std::min` and `std::max`. When the inputs are equal (for example +0.0 and -0.0) or when one of them is NaN, the result is `lhs`. Previously, SSE2 returned `rhs` and NEON returned NaN. On NEON, the minimum and the maximum use a compare and a select (two instructions) instead of one instruction
+*  `vector_clamp` and `scalar_clamp` compute `min(max(input, min_value), max_value)` on all the code paths: when the input is NaN, the result is NaN. Previously, `vector_clamp` computed `min(max_value, max(min_value, input))` and the result depended on the code path
+*  `vector_get_min_component` and `vector_get_max_component` compare the components in the same order on all the code paths: `min(min(x, z), min(y, w))`. The result for NaN and for +0.0 and -0.0 does not depend on the code path
+*  `vector_sign(-0.0)` returns 1.0 and `vector_sign(NaN)` returns -1.0 on all the code paths, as the documentation says (`input >= 0.0 ? 1.0 : -1.0`). Previously, SSE2 and WASM copied the sign bit and returned -1.0 for -0.0
 
 ### Deprecations
 
