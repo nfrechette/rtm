@@ -38,6 +38,7 @@
 ### Fixes
 
 *  Fix float32 `vector_acos(-0.0)` with SSE2 and WASM: the result was -pi/2 and is now pi/2
+*  Fix `quat_ensure_positive_w` without SIMD when [w] is -0.0: the function now tests the sign bit of [w] as the SSE2, WASM, and NEON code paths do. The previous code returned the input, and the SIMD code paths returned the negated input
 *  Disable floating point contraction in the headers with Clang, as with GCC. `float_control(precise, on)` does not disable it: Clang merged a multiply and an add into one FMA instruction in the scalar code, for example on ARM64 and with `-mfma`. Thus the scalar code path gave different results on different targets. Clang ignores `float_control` on some targets (for example ARMv7 and WASM), thus the headers disable contraction only on x86, x64, AArch64 (Clang 16+, Apple Clang 15+), and RISC-V (Clang 18+). With `-ffp-contract=fast`, LLVM Clang ignores the pragma: use `-ffp-contract=fast-honor-pragmas`
 *  Fix `scalar_exp` and `vector_exp` without SIMD on 32-bit x86 with x87 (for example GCC with `-m32`). The x87 registers keep more precision than float32 and float64, thus the result had an error of up to a factor of sqrt(2)
 

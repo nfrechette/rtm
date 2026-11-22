@@ -31,6 +31,8 @@
 #include "rtm/impl/bit_cast.impl.h"
 #include "rtm/impl/compiler_utils.h"
 
+#include <cmath>
+
 RTM_IMPL_FILE_PRAGMA_PUSH
 
 namespace rtm
@@ -64,7 +66,8 @@ namespace rtm
 #endif
 		return vreinterpretq_f32_u32(veorq_u32(input_u32, bias));
 #else
-		return quat_get_w(input) >= 0.f ? input : quat_neg(input);
+		// We test the sign bit as the SIMD code paths do: when [w] is -0.0, the result has a [w] of +0.0
+		return std::signbit(quat_get_w(input)) ? quat_neg(input) : input;
 #endif
 	}
 
