@@ -24,16 +24,26 @@
 
 #include "catch2.impl.h"
 
-#include <rtm/matrix3x3d.h>
 #include <rtm/mask4d.h>
 #include <rtm/mask4f.h>
+#include <rtm/matrix3x3d.h>
 #include <rtm/matrix3x3f.h>
+#include <rtm/matrix3x4d.h>
+#include <rtm/matrix3x4f.h>
+#include <rtm/matrix4x4d.h>
+#include <rtm/matrix4x4f.h>
 #include <rtm/quatd.h>
 #include <rtm/quatf.h>
 #include <rtm/scalard.h>
 #include <rtm/scalarf.h>
 #include <rtm/vector4d.h>
 #include <rtm/vector4f.h>
+#include <rtm/vqd.h>
+#include <rtm/vqf.h>
+#include <rtm/vqsd.h>
+#include <rtm/vqsf.h>
+#include <rtm/vqvd.h>
+#include <rtm/vqvf.h>
 #include <rtm/packing/quatf.h>
 
 #include "test_ulp_functions.h"
@@ -2177,6 +2187,59 @@ namespace
 		return "[" + get_bits_string(values[0]) + ", " + get_bits_string(values[1]) + ", " + get_bits_string(values[2]) + ", " + get_bits_string(values[3]) + "]";
 	}
 
+	// Returns the 8 input vectors of a transform function as text
+	template<typename FloatType>
+	std::string get_transform_input_string(const FloatType* input)
+	{
+		std::ostringstream stream;
+		stream << std::setprecision(std::numeric_limits<FloatType>::max_digits10);
+		for (uint32_t vector_index = 0; vector_index < 8; ++vector_index)
+		{
+			const FloatType* values = input + (vector_index * 4);
+			stream << (vector_index == 0 ? "" : ", ") << "[" << values[0] << ", " << values[1] << ", " << values[2] << ", " << values[3] << "]";
+		}
+		return stream.str();
+	}
+
+	// The largest differences between a matrix or transform function and the scalar code path, in the order of transform_function.
+	// We measured them with 4M random inputs on ARM64 (NEON and scalar), x64 (SSE4.1, AVX2 with FMA), and with 1M random inputs
+	// with GCC on ARM64, x64, and 32-bit x86 (x87), and on WASM, rounded up to a multiple of 0.5.
+	// The SSE2 and WASM code paths add the terms in a different order than the scalar code path.
+	// The other code paths also round different operations: NEON and GCC use FMA, and x87 has excess precision.
+	//                                                  3x3: mul  mul_v3 transp inverse det | 3x4: mul  mul_p3 mul_v3 transp inverse det | 4x4: mul  mul_v  transp inverse det | vq: mul  mul_p3 inverse | vqs: mul  mul_p3 inverse | vqv: mul  mul_p3 mul_inv inv_mul inv_mul_p3
+	constexpr double k_transform_simd_path_difference_f32[] =		{ 0.0, 0.0,   0.0,   0.0,    0.0,       0.0, 0.0,   0.0,   0.0,   0.0,    0.0,       0.0, 0.0,   0.0,   5.0,    2.0,      2.0, 2.0,   2.0,        2.0, 2.0,   1.0,        1.0, 2.0,   2.0,    3.0,    2.0 };
+	constexpr double k_transform_rounding_path_difference_f32[] =	{ 2.0, 2.0,   0.0,   6.0,    3.0,       2.0, 2.0,   2.0,   0.0,   7.0,    3.0,       3.0, 3.0,   0.0,   9.0,    3.0,      2.0, 2.0,   2.0,        2.0, 2.0,   2.0,        1.5, 1.0,   1.5,    2.5,    2.0 };
+	constexpr double k_transform_simd_path_difference_f64[] =		{ 0.0, 0.0,   0.0,   0.0,    0.0,       0.0, 0.0,   0.0,   0.0,   0.0,    0.0,       0.0, 0.0,   0.0,   4.0,    2.0,      3.0, 3.0,   3.0,        2.0, 2.0,   2.0,        1.5, 2.0,   2.0,    3.0,    3.0 };
+	constexpr double k_transform_rounding_path_difference_f64[] =	{ 2.0, 2.0,   0.0,   6.0,    3.0,       2.0, 2.0,   2.0,   0.0,   8.0,    3.0,       3.0, 3.0,   0.0,   8.0,    4.0,      3.0, 3.0,   2.0,        2.0, 2.0,   2.5,        2.0, 2.0,   2.0,    3.0,    3.0 };
+	static_assert(sizeof(k_transform_simd_path_difference_f32) / sizeof(double) == size_t(rtm_ulp_ref::transform_function::count), "Add a bound for each function");
+	static_assert(sizeof(k_transform_rounding_path_difference_f32) / sizeof(double) == size_t(rtm_ulp_ref::transform_function::count), "Add a bound for each function");
+	static_assert(sizeof(k_transform_simd_path_difference_f64) / sizeof(double) == size_t(rtm_ulp_ref::transform_function::count), "Add a bound for each function");
+	static_assert(sizeof(k_transform_rounding_path_difference_f64) / sizeof(double) == size_t(rtm_ulp_ref::transform_function::count), "Add a bound for each function");
+
+	// Returns true if the code path of the build can round other operations than the scalar code path
+	template<typename FloatType>
+	bool rounds_other_operations()
+	{
+#if defined(RTM_NEON_INTRINSICS)
+		return true;	// NEON uses FMA
+#elif defined(RTM_COMPILER_GCC) && (defined(__FP_FAST_FMAF) || defined(__FP_FAST_FMA))
+		return true;	// GCC merges a multiply and an add into one FMA instruction (see get_max_simd_path_difference)
+#else
+		return rtm_ulp_ref::has_excess_precision();
+#endif
+	}
+
+	// Returns the largest difference that we permit between a matrix or transform function and the scalar code path
+	template<typename FloatType>
+	double get_max_transform_path_difference(rtm_ulp_ref::transform_function function)
+	{
+		const bool is_float32 = std::is_same<FloatType, float>::value;
+		const uint32_t function_index = uint32_t(function);
+		const double simd_path_difference = is_float32 ? k_transform_simd_path_difference_f32[function_index] : k_transform_simd_path_difference_f64[function_index];
+		const double rounding_path_difference = is_float32 ? k_transform_rounding_path_difference_f32[function_index] : k_transform_rounding_path_difference_f64[function_index];
+		return rounds_other_operations<FloatType>() ? (std::max)(simd_path_difference, rounding_path_difference) : simd_path_difference;
+	}
+
 	// The functions in the list must give the same bits as the scalar code path
 	template<typename FloatType>
 	void test_bit_exact_function_impl(bit_exact_function function)
@@ -2307,6 +2370,410 @@ namespace
 	{
 		for (uint32_t function_index = 0; function_index < uint32_t(bit_exact_function::count); ++function_index)
 			test_bit_exact_function_impl<FloatType>(bit_exact_function(function_index));
+	}
+
+	//////////////////////////////////////////////////////////////////////////
+	// The matrix and transform functions
+	//////////////////////////////////////////////////////////////////////////
+
+	using rtm_ulp_ref::transform_function;
+
+	const char* get_transform_function_name(transform_function function)
+	{
+		static const char* const names[] =
+		{
+			"matrix3x3 matrix_mul", "matrix3x3 matrix_mul_vector3", "matrix3x3 matrix_transpose", "matrix3x3 matrix_inverse", "matrix3x3 matrix_determinant",
+			"matrix3x4 matrix_mul", "matrix3x4 matrix_mul_point3", "matrix3x4 matrix_mul_vector3", "matrix3x4 matrix_transpose", "matrix3x4 matrix_inverse", "matrix3x4 matrix_determinant",
+			"matrix4x4 matrix_mul", "matrix4x4 matrix_mul_vector", "matrix4x4 matrix_transpose", "matrix4x4 matrix_inverse", "matrix4x4 matrix_determinant",
+			"vq_mul", "vq_mul_point3", "vq_inverse",
+			"vqs_mul", "vqs_mul_point3", "vqs_inverse",
+			"vqv_mul", "vqv_mul_point3", "vqv_mul_inverse", "vqv_inverse_mul", "vqv_inverse_mul_point3",
+		};
+		static_assert(sizeof(names) / sizeof(names[0]) == size_t(transform_function::count), "Add the name of each function");
+
+		return names[uint32_t(function)];
+	}
+
+	// Writes the number of defined lanes of each output vector (0 when the function does not write the vector)
+	void get_transform_output_lanes(transform_function function, uint32_t* num_lanes)
+	{
+		uint32_t lanes[4] = { 0, 0, 0, 0 };
+		switch (function)
+		{
+		case transform_function::matrix3x3_mul:
+		case transform_function::matrix3x3_transpose:
+		case transform_function::matrix3x3_inverse:
+		case transform_function::matrix3x4_transpose:
+			lanes[0] = lanes[1] = lanes[2] = 3;	// The [w] component of each axis is undefined
+			break;
+		case transform_function::matrix3x4_mul:
+		case transform_function::matrix3x4_inverse:
+			lanes[0] = lanes[1] = lanes[2] = lanes[3] = 3;
+			break;
+		case transform_function::matrix4x4_mul:
+		case transform_function::matrix4x4_transpose:
+		case transform_function::matrix4x4_inverse:
+			lanes[0] = lanes[1] = lanes[2] = lanes[3] = 4;
+			break;
+		case transform_function::matrix4x4_mul_vector:
+			lanes[0] = 4;
+			break;
+		case transform_function::matrix3x3_determinant:
+		case transform_function::matrix3x4_determinant:
+		case transform_function::matrix4x4_determinant:
+			lanes[0] = 1;
+			break;
+		case transform_function::vq_mul:
+		case transform_function::vq_inverse:
+			lanes[0] = 4;	// Rotation
+			lanes[1] = 3;	// Translation
+			break;
+		case transform_function::vqs_mul:
+		case transform_function::vqs_inverse:
+			lanes[0] = 4;	// Rotation
+			lanes[1] = 4;	// Translation and scale
+			break;
+		case transform_function::vqv_mul:
+		case transform_function::vqv_mul_inverse:
+		case transform_function::vqv_inverse_mul:
+			lanes[0] = 4;	// Rotation
+			lanes[1] = 3;	// Translation
+			lanes[2] = 3;	// Scale
+			break;
+		default:
+			lanes[0] = 3;	// A 3D vector or point
+			break;
+		}
+
+		std::memcpy(num_lanes, lanes, sizeof(lanes));
+	}
+
+	// Writes the axes of a rotation and scale matrix: the axis i is the image of the unit vector i, multiplied by scale[i]
+	template<typename FloatType>
+	void get_rotation_scale_axes(const FloatType* rotation, const double* scale, FloatType* x_axis, FloatType* y_axis, FloatType* z_axis)
+	{
+		const reference_quat<double> rotation_quat = { double(rotation[0]), double(rotation[1]), double(rotation[2]), double(rotation[3]) };
+		FloatType* axes[3] = { x_axis, y_axis, z_axis };
+		for (uint32_t axis_index = 0; axis_index < 3; ++axis_index)
+		{
+			double unit_vector[3] = { 0.0, 0.0, 0.0 };
+			unit_vector[axis_index] = 1.0;
+
+			double axis[3];
+			rotate_vector(rotation_quat, unit_vector, axis);
+			for (uint32_t component_index = 0; component_index < 3; ++component_index)
+				axes[axis_index][component_index] = FloatType(axis[component_index] * scale[axis_index]);
+			axes[axis_index][3] = FloatType(0.0);
+		}
+	}
+
+	// Writes a random transform to 4 input vectors, in the layout of the function (see compute_transform_function_impl)
+	template<typename FloatType>
+	void get_random_transform(transform_function function, std::mt19937& generator, FloatType* vectors)
+	{
+		const uint32_t function_index = uint32_t(function);
+		const bool is_vq = function_index >= uint32_t(transform_function::vq_mul) && function_index <= uint32_t(transform_function::vq_inverse);
+		const bool is_vqs = function_index >= uint32_t(transform_function::vqs_mul) && function_index <= uint32_t(transform_function::vqs_inverse);
+		const bool is_vqv = function_index >= uint32_t(transform_function::vqv_mul);
+		const bool is_general_matrix = function == transform_function::matrix3x3_mul || function == transform_function::matrix3x3_mul_vector3 ||
+			function == transform_function::matrix3x3_transpose || function == transform_function::matrix3x3_determinant ||
+			function == transform_function::matrix3x4_transpose || function == transform_function::matrix3x4_determinant ||
+			function == transform_function::matrix4x4_mul || function == transform_function::matrix4x4_mul_vector ||
+			function == transform_function::matrix4x4_transpose || function == transform_function::matrix4x4_determinant;
+
+		if (is_general_matrix)
+		{
+			// Each component in the range [-scale, scale] with a random scale for the matrix
+			const double scale = std::ldexp(1.0, int(generator() % 17) - 8);
+			for (uint32_t value_index = 0; value_index < 16; ++value_index)
+				vectors[value_index] = get_random_value<FloatType>(generator, -scale, scale);
+			return;
+		}
+
+		FloatType rotation[4];
+		get_random_quat(generator, rotation);
+
+		double scale[3];
+		for (double& value : scale)
+			value = get_random_value<double>(generator, 0.5, 2.0);
+
+		FloatType translation[4];
+		for (uint32_t component_index = 0; component_index < 3; ++component_index)
+			translation[component_index] = get_random_value<FloatType>(generator, -100.0, 100.0);
+		translation[3] = FloatType(0.0);
+
+		if (is_vq || is_vqs || is_vqv)
+		{
+			std::memcpy(vectors, rotation, sizeof(rotation));
+			std::memcpy(vectors + 4, translation, sizeof(translation));
+			if (is_vqs)
+				vectors[7] = FloatType(scale[0]);	// The uniform scale is in [w]
+			for (uint32_t component_index = 0; component_index < 3; ++component_index)
+				vectors[8 + component_index] = FloatType(scale[component_index]);
+			vectors[11] = FloatType(0.0);
+			vectors[12] = vectors[13] = vectors[14] = vectors[15] = FloatType(0.0);
+			return;
+		}
+
+		// An affine matrix: rotation and scale, and translation in the W axis
+		get_rotation_scale_axes(rotation, scale, vectors, vectors + 4, vectors + 8);
+		std::memcpy(vectors + 12, translation, sizeof(translation));
+
+		if (function == transform_function::matrix4x4_inverse)
+		{
+			// A 4x4 matrix with a last column that is not [0, 0, 0, 1]. A small translation keeps the matrix far from singular.
+			for (uint32_t component_index = 0; component_index < 3; ++component_index)
+				vectors[12 + component_index] = FloatType(double(vectors[12 + component_index]) * 0.01);
+			vectors[3] = get_random_value<FloatType>(generator, -0.1, 0.1);
+			vectors[7] = get_random_value<FloatType>(generator, -0.1, 0.1);
+			vectors[11] = get_random_value<FloatType>(generator, -0.1, 0.1);
+			vectors[15] = FloatType(1.0);
+		}
+	}
+
+	// Writes the second transform, the matrix, or the point to the input vectors 4 to 7
+	template<typename FloatType>
+	void get_random_second_input(transform_function function, std::mt19937& generator, FloatType* vectors)
+	{
+		switch (function)
+		{
+		case transform_function::matrix3x3_mul_vector3:
+		case transform_function::matrix3x4_mul_point3:
+		case transform_function::matrix3x4_mul_vector3:
+		case transform_function::matrix4x4_mul_vector:
+		case transform_function::vq_mul_point3:
+		case transform_function::vqs_mul_point3:
+		case transform_function::vqv_mul_point3:
+		case transform_function::vqv_inverse_mul_point3:
+			for (uint32_t component_index = 0; component_index < 4; ++component_index)
+				vectors[component_index] = get_random_value<FloatType>(generator, -100.0, 100.0);
+			for (uint32_t value_index = 4; value_index < 16; ++value_index)
+				vectors[value_index] = FloatType(0.0);
+			break;
+		default:
+			get_random_transform(function, generator, vectors);
+			break;
+		}
+	}
+
+	// Writes the error scale of each output lane: the size of the terms that the function adds
+	template<typename FloatType, typename ReferenceType>
+	void get_transform_scales(transform_function function, const FloatType* input, const FloatType* reference_result, const uint32_t* num_lanes, ReferenceType* scales)
+	{
+		// The absolute value of the component of an input vector
+		const auto in = [input](uint32_t vector_index, uint32_t component_index) { return ReferenceType(std::fabs(input[(vector_index * 4) + component_index])); };
+		const auto out = [reference_result](uint32_t vector_index, uint32_t component_index) { return ReferenceType(std::fabs(reference_result[(vector_index * 4) + component_index])); };
+		const auto length3 = [input](uint32_t vector_index)
+		{
+			const FloatType* v = input + (vector_index * 4);
+			return std::sqrt(ReferenceType(v[0]) * ReferenceType(v[0]) + ReferenceType(v[1]) * ReferenceType(v[1]) + ReferenceType(v[2]) * ReferenceType(v[2]));
+		};
+
+		// By default, the largest component of the output vector
+		for (uint32_t vector_index = 0; vector_index < 4; ++vector_index)
+		{
+			ReferenceType largest = ReferenceType(0.0);
+			for (uint32_t lane_index = 0; lane_index < num_lanes[vector_index]; ++lane_index)
+				largest = (std::max)(largest, out(vector_index, lane_index));
+			for (uint32_t lane_index = 0; lane_index < 4; ++lane_index)
+				scales[(vector_index * 4) + lane_index] = largest;
+		}
+
+		switch (function)
+		{
+		case transform_function::matrix3x3_mul:
+		case transform_function::matrix3x4_mul:
+		case transform_function::matrix4x4_mul:
+		{
+			// result.axis[i][j] = sum(lhs.axis[i][k] * rhs.axis[k][j]), plus rhs.w_axis[j] for the W axis of a 3x4 matrix
+			const uint32_t num_axes = function == transform_function::matrix3x3_mul ? 3 : 4;
+			const uint32_t num_terms = function == transform_function::matrix4x4_mul ? 4 : 3;
+			for (uint32_t axis_index = 0; axis_index < num_axes; ++axis_index)
+			{
+				for (uint32_t lane_index = 0; lane_index < num_lanes[axis_index]; ++lane_index)
+				{
+					ReferenceType sum = (function == transform_function::matrix3x4_mul && axis_index == 3) ? in(7, lane_index) : ReferenceType(0.0);
+					for (uint32_t term_index = 0; term_index < num_terms; ++term_index)
+						sum += in(axis_index, term_index) * in(4 + term_index, lane_index);
+					scales[(axis_index * 4) + lane_index] = sum;
+				}
+			}
+			break;
+		}
+		case transform_function::matrix3x3_mul_vector3:
+		case transform_function::matrix3x4_mul_vector3:
+		case transform_function::matrix3x4_mul_point3:
+		case transform_function::matrix4x4_mul_vector:
+		{
+			// result[j] = sum(vector[k] * axis[k][j]), plus w_axis[j] for a point
+			const uint32_t num_terms = function == transform_function::matrix4x4_mul_vector ? 4 : 3;
+			for (uint32_t lane_index = 0; lane_index < num_lanes[0]; ++lane_index)
+			{
+				ReferenceType sum = function == transform_function::matrix3x4_mul_point3 ? in(3, lane_index) : ReferenceType(0.0);
+				for (uint32_t term_index = 0; term_index < num_terms; ++term_index)
+					sum += in(4, term_index) * in(term_index, lane_index);
+				scales[lane_index] = sum;
+			}
+			break;
+		}
+		case transform_function::matrix3x3_determinant:
+		case transform_function::matrix3x4_determinant:
+		case transform_function::matrix4x4_determinant:
+		{
+			// The bound of Hadamard: the product of the lengths of the axes
+			const uint32_t num_axes = function == transform_function::matrix4x4_determinant ? 4 : 3;
+			ReferenceType product = ReferenceType(1.0);
+			for (uint32_t axis_index = 0; axis_index < num_axes; ++axis_index)
+			{
+				ReferenceType length_squared = ReferenceType(0.0);
+				for (uint32_t component_index = 0; component_index < num_axes; ++component_index)
+					length_squared += in(axis_index, component_index) * in(axis_index, component_index);
+				product *= std::sqrt(length_squared);
+			}
+			scales[0] = product;
+			break;
+		}
+		case transform_function::matrix3x4_inverse:
+		{
+			// The inverse translation is -translation * inverse(rotation and scale)
+			for (uint32_t lane_index = 0; lane_index < 3; ++lane_index)
+			{
+				ReferenceType sum = ReferenceType(0.0);
+				for (uint32_t term_index = 0; term_index < 3; ++term_index)
+					sum += in(3, term_index) * out(term_index, lane_index);
+				scales[12 + lane_index] = (std::max)(sum, out(3, lane_index));
+			}
+			break;
+		}
+		case transform_function::matrix3x3_transpose:
+		case transform_function::matrix3x3_inverse:
+		case transform_function::matrix3x4_transpose:
+		case transform_function::matrix4x4_transpose:
+		case transform_function::matrix4x4_inverse:
+			break;
+		default:
+		{
+			// A VQ, VQS, or VQV function: the rotation is a unit quaternion. A translation or a point is the sum of
+			// the inputs, rotated and scaled: we use the sum of the lengths of the translations and the point,
+			// multiplied by the square of the largest scale factor (or of its reciprocal).
+			ReferenceType largest_scale = ReferenceType(1.0);
+			const bool has_scale = uint32_t(function) >= uint32_t(transform_function::vqs_mul);
+			if (has_scale)
+			{
+				const bool is_vqs = uint32_t(function) <= uint32_t(transform_function::vqs_inverse);
+				const uint32_t scale_values[] = { 7, 23, 8, 9, 10, 24, 25, 26 };
+				for (uint32_t value_index = 0; value_index < (is_vqs ? 2U : 8U); ++value_index)
+				{
+					const ReferenceType value = ReferenceType(std::fabs(input[scale_values[value_index]]));
+					if (value != ReferenceType(0.0))
+						largest_scale = (std::max)(largest_scale, (std::max)(value, ReferenceType(1.0) / value));
+				}
+			}
+
+			const ReferenceType translation_scale = (length3(1) + length3(4) + length3(5)) * largest_scale * largest_scale;
+			const bool writes_point = num_lanes[1] == 0;
+			if (writes_point)
+			{
+				for (uint32_t lane_index = 0; lane_index < 4; ++lane_index)
+					scales[lane_index] = translation_scale;
+			}
+			else
+			{
+				for (uint32_t lane_index = 0; lane_index < 4; ++lane_index)
+					scales[lane_index] = ReferenceType(1.0);	// The rotation
+				for (uint32_t lane_index = 0; lane_index < 3; ++lane_index)
+					scales[4 + lane_index] = translation_scale;
+			}
+			break;
+		}
+		}
+	}
+
+	// The matrix and transform functions must give results near the scalar code path.
+	// The unit is the ulp of the largest component of the output vector: the error of a component is relative to the size of the vector.
+	// A determinant uses the product of the lengths of the axes (the bound of Hadamard).
+	template<typename FloatType>
+	void test_transform_function_impl(transform_function function)
+	{
+		using reference_type = typename ulp_traits<FloatType>::reference_type;
+
+		std::mt19937 generator(3000 + uint32_t(function));
+
+		uint32_t num_lanes[4];
+		get_transform_output_lanes(function, num_lanes);
+
+		std::vector<FloatType> inputs;
+
+		// The identity
+		{
+			const FloatType identity[32] =
+			{
+				FloatType(1.0), FloatType(0.0), FloatType(0.0), FloatType(0.0),
+				FloatType(0.0), FloatType(1.0), FloatType(0.0), FloatType(1.0),
+				FloatType(0.0), FloatType(0.0), FloatType(1.0), FloatType(0.0),
+				FloatType(0.0), FloatType(0.0), FloatType(0.0), FloatType(1.0),
+				FloatType(1.0), FloatType(0.0), FloatType(0.0), FloatType(0.0),
+				FloatType(0.0), FloatType(1.0), FloatType(0.0), FloatType(1.0),
+				FloatType(0.0), FloatType(0.0), FloatType(1.0), FloatType(0.0),
+				FloatType(0.0), FloatType(0.0), FloatType(0.0), FloatType(1.0),
+			};
+			inputs.insert(inputs.end(), std::begin(identity), std::end(identity));
+		}
+
+		for (uint32_t call_index = 0; call_index < k_num_random_inputs / 4; ++call_index)
+		{
+			FloatType values[32];
+			get_random_transform(function, generator, values);
+			get_random_second_input(function, generator, values + 16);
+			inputs.insert(inputs.end(), std::begin(values), std::end(values));
+		}
+
+		double largest_path_difference = 0.0;
+		size_t largest_path_difference_call = 0;
+
+		for (size_t call_index = 0; call_index < inputs.size() / 32; ++call_index)
+		{
+			const FloatType* input = &inputs[call_index * 32];
+
+			FloatType result[16];
+			FloatType reference_path_result[16];
+			std::fill(std::begin(result), std::end(result), FloatType(0.0));
+			std::fill(std::begin(reference_path_result), std::end(reference_path_result), FloatType(0.0));
+			compute_transform_function_impl(function, input, result);
+			rtm_ulp_ref::compute_transform_function(function, input, reference_path_result);
+
+			reference_type scales[16];
+			get_transform_scales(function, input, reference_path_result, num_lanes, scales);
+
+			for (uint32_t vector_index = 0; vector_index < 4; ++vector_index)
+			{
+				const FloatType* result_vector = &result[vector_index * 4];
+				const FloatType* reference_vector = &reference_path_result[vector_index * 4];
+
+				for (uint32_t lane_index = 0; lane_index < num_lanes[vector_index]; ++lane_index)
+				{
+					const double path_difference = get_error(error_unit::scaled_ulp, result_vector[lane_index], reference_type(reference_vector[lane_index]), scales[(vector_index * 4) + lane_index]);
+					if (path_difference > largest_path_difference)
+					{
+						largest_path_difference = path_difference;
+						largest_path_difference_call = call_index;
+					}
+				}
+			}
+		}
+
+		const double max_path_difference = get_max_transform_path_difference<FloatType>(function);
+
+		INFO(get_transform_function_name(function) << ": the largest difference with the scalar code path is " << largest_path_difference
+			<< " ulp of the largest component for the input " << get_transform_input_string(&inputs[largest_path_difference_call * 32]));
+		CHECK(largest_path_difference <= max_path_difference);
+	}
+
+	template<typename FloatType>
+	void test_transform_impl()
+	{
+		for (uint32_t function_index = 0; function_index < uint32_t(transform_function::count); ++function_index)
+			test_transform_function_impl<FloatType>(transform_function(function_index));
 	}
 
 	template<typename FloatType>
@@ -2441,6 +2908,16 @@ TEST_CASE("vector4f math bit exact code paths", "[math][vector4][ulp]")
 TEST_CASE("vector4d math bit exact code paths", "[math][vector4][ulp]")
 {
 	test_bit_exact_impl<double>();
+}
+
+TEST_CASE("matrix and transform float32 code paths", "[math][matrix][ulp]")
+{
+	test_transform_impl<float>();
+}
+
+TEST_CASE("matrix and transform float64 code paths", "[math][matrix][ulp]")
+{
+	test_transform_impl<double>();
 }
 
 TEST_CASE("quatf math normalize_deterministic code paths", "[math][quat][ulp]")

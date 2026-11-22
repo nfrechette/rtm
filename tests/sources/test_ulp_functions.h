@@ -268,4 +268,112 @@ namespace
 		case bit_exact_function::count:				break;
 		}
 	}
+
+	// The matrix and transform types of a float type
+	template<typename FloatType>
+	struct transform_types;
+
+	template<>
+	struct transform_types<float>
+	{
+		using matrix3x3 = rtm::matrix3x3f;
+		using matrix3x4 = rtm::matrix3x4f;
+		using matrix4x4 = rtm::matrix4x4f;
+	};
+
+	template<>
+	struct transform_types<double>
+	{
+		using matrix3x3 = rtm::matrix3x3d;
+		using matrix3x4 = rtm::matrix3x4d;
+		using matrix4x4 = rtm::matrix4x4d;
+	};
+
+	template<typename MatrixType, typename FloatType>
+	void store_matrix_axes(const MatrixType& matrix, FloatType* output)
+	{
+		rtm::vector_store(matrix.x_axis, output);
+		rtm::vector_store(matrix.y_axis, output + 4);
+		rtm::vector_store(matrix.z_axis, output + 8);
+	}
+
+	template<typename MatrixType, typename FloatType>
+	void store_matrix_axes4(const MatrixType& matrix, FloatType* output)
+	{
+		store_matrix_axes(matrix, output);
+		rtm::vector_store(matrix.w_axis, output + 12);
+	}
+
+	// Computes a matrix or a transform function. The input has 8 vectors and the output has 4 vectors.
+	//    - A matrix function reads the axes of the first matrix from the vectors 0 to 3, and the axes of the second
+	//      matrix or the vector from the vectors 4 to 7. It writes the axes of the result to the output vectors.
+	//    - A VQ, VQS, or VQV function reads the first transform from the vectors 0 to 3: the rotation, the translation
+	//      (VQS: the translation and the scale in [w]), and the scale (VQV). It reads the second transform or the point
+	//      from the vectors 4 to 7. It writes the rotation, the translation, and the scale of the result in this order.
+	//    - A determinant is in the lane 0 of the output vector 0.
+	template<typename FloatType>
+	void compute_transform_function_impl(rtm_ulp_ref::transform_function function, const FloatType* input, FloatType* output)
+	{
+		using rtm_ulp_ref::transform_function;
+		using matrix3x3 = typename transform_types<FloatType>::matrix3x3;
+		using matrix3x4 = typename transform_types<FloatType>::matrix3x4;
+		using matrix4x4 = typename transform_types<FloatType>::matrix4x4;
+
+		const auto v0 = rtm::vector_load(input + 0);
+		const auto v1 = rtm::vector_load(input + 4);
+		const auto v2 = rtm::vector_load(input + 8);
+		const auto v3 = rtm::vector_load(input + 12);
+		const auto v4 = rtm::vector_load(input + 16);
+		const auto v5 = rtm::vector_load(input + 20);
+		const auto v6 = rtm::vector_load(input + 24);
+		const auto v7 = rtm::vector_load(input + 28);
+		const auto q0 = rtm::quat_load(input + 0);
+		const auto q4 = rtm::quat_load(input + 16);
+
+		const matrix3x3 m33_lhs = rtm::matrix_set(v0, v1, v2);
+		const matrix3x3 m33_rhs = rtm::matrix_set(v4, v5, v6);
+		const matrix3x4 m34_lhs = rtm::matrix_set(v0, v1, v2, v3);
+		const matrix3x4 m34_rhs = rtm::matrix_set(v4, v5, v6, v7);
+		const matrix4x4 m44_lhs = rtm::matrix_set(v0, v1, v2, v3);
+		const matrix4x4 m44_rhs = rtm::matrix_set(v4, v5, v6, v7);
+
+		const auto vq_lhs = rtm::vq_set(q0, v1);
+		const auto vq_rhs = rtm::vq_set(q4, v5);
+		const auto vqs_lhs = rtm::vqs_set(q0, v1, input[7]);
+		const auto vqs_rhs = rtm::vqs_set(q4, v5, input[23]);
+		const auto vqv_lhs = rtm::vqv_set(q0, v1, v2);
+		const auto vqv_rhs = rtm::vqv_set(q4, v5, v6);
+
+		switch (function)
+		{
+		case transform_function::matrix3x3_mul:				store_matrix_axes(rtm::matrix_mul(m33_lhs, m33_rhs), output); break;
+		case transform_function::matrix3x3_mul_vector3:		rtm::vector_store(rtm::matrix_mul_vector3(v4, m33_lhs), output); break;
+		case transform_function::matrix3x3_transpose:		store_matrix_axes(rtm::matrix_transpose(m33_lhs), output); break;
+		case transform_function::matrix3x3_inverse:			store_matrix_axes(rtm::matrix_inverse(m33_lhs), output); break;
+		case transform_function::matrix3x3_determinant:		output[0] = FloatType(rtm::scalar_cast(rtm::matrix_determinant(m33_lhs))); break;
+		case transform_function::matrix3x4_mul:				store_matrix_axes4(rtm::matrix_mul(m34_lhs, m34_rhs), output); break;
+		case transform_function::matrix3x4_mul_point3:		rtm::vector_store(rtm::matrix_mul_point3(v4, m34_lhs), output); break;
+		case transform_function::matrix3x4_mul_vector3:		rtm::vector_store(rtm::matrix_mul_vector3(v4, m34_lhs), output); break;
+		case transform_function::matrix3x4_transpose:		store_matrix_axes(rtm::matrix_transpose(m34_lhs), output); break;
+		case transform_function::matrix3x4_inverse:			store_matrix_axes4(rtm::matrix_inverse(m34_lhs), output); break;
+		case transform_function::matrix3x4_determinant:		output[0] = FloatType(rtm::scalar_cast(rtm::matrix_determinant(m34_lhs))); break;
+		case transform_function::matrix4x4_mul:				store_matrix_axes4(rtm::matrix_mul(m44_lhs, m44_rhs), output); break;
+		case transform_function::matrix4x4_mul_vector:		rtm::vector_store(rtm::matrix_mul_vector(v4, m44_lhs), output); break;
+		case transform_function::matrix4x4_transpose:		store_matrix_axes4(rtm::matrix_transpose(m44_lhs), output); break;
+		case transform_function::matrix4x4_inverse:			store_matrix_axes4(rtm::matrix_inverse(m44_lhs), output); break;
+		case transform_function::matrix4x4_determinant:		output[0] = FloatType(rtm::scalar_cast(rtm::matrix_determinant(m44_lhs))); break;
+		case transform_function::vq_mul:					{ const auto r = rtm::vq_mul(vq_lhs, vq_rhs); rtm::quat_store(r.rotation, output); rtm::vector_store(r.translation, output + 4); break; }
+		case transform_function::vq_mul_point3:				rtm::vector_store(rtm::vq_mul_point3(v4, vq_lhs), output); break;
+		case transform_function::vq_inverse:				{ const auto r = rtm::vq_inverse(vq_lhs); rtm::quat_store(r.rotation, output); rtm::vector_store(r.translation, output + 4); break; }
+		case transform_function::vqs_mul:					{ const auto r = rtm::vqs_mul(vqs_lhs, vqs_rhs); rtm::quat_store(r.rotation, output); rtm::vector_store(r.translation_scale, output + 4); break; }
+		case transform_function::vqs_mul_point3:			rtm::vector_store(rtm::vqs_mul_point3(v4, vqs_lhs), output); break;
+		case transform_function::vqs_inverse:				{ const auto r = rtm::vqs_inverse(vqs_lhs); rtm::quat_store(r.rotation, output); rtm::vector_store(r.translation_scale, output + 4); break; }
+		case transform_function::vqv_mul:					{ const auto r = rtm::vqv_mul(vqv_lhs, vqv_rhs); rtm::quat_store(r.rotation, output); rtm::vector_store(r.translation, output + 4); rtm::vector_store(r.scale, output + 8); break; }
+		case transform_function::vqv_mul_point3:			rtm::vector_store(rtm::vqv_mul_point3(v4, vqv_lhs), output); break;
+		case transform_function::vqv_mul_inverse:			{ const auto r = rtm::vqv_mul_inverse(vqv_lhs, vqv_rhs); rtm::quat_store(r.rotation, output); rtm::vector_store(r.translation, output + 4); rtm::vector_store(r.scale, output + 8); break; }
+		case transform_function::vqv_inverse_mul:			{ const auto r = rtm::vqv_inverse_mul(vqv_lhs, vqv_rhs); rtm::quat_store(r.rotation, output); rtm::vector_store(r.translation, output + 4); rtm::vector_store(r.scale, output + 8); break; }
+		case transform_function::vqv_inverse_mul_point3:	rtm::vector_store(rtm::vqv_inverse_mul_point3(v4, vqv_lhs), output); break;
+		case transform_function::count:						break;
+		}
+	}
 }

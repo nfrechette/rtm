@@ -115,6 +115,22 @@ namespace rtm_ulp_ref
 	void compute_bit_exact_function(bit_exact_function function, const float* input0, const float* input1, const float* input2, float* output);
 	void compute_bit_exact_function(bit_exact_function function, const double* input0, const double* input1, const double* input2, double* output);
 
+	// The matrix and transform functions (see compute_transform_function_impl)
+	enum class transform_function
+	{
+		matrix3x3_mul, matrix3x3_mul_vector3, matrix3x3_transpose, matrix3x3_inverse, matrix3x3_determinant,
+		matrix3x4_mul, matrix3x4_mul_point3, matrix3x4_mul_vector3, matrix3x4_transpose, matrix3x4_inverse, matrix3x4_determinant,
+		matrix4x4_mul, matrix4x4_mul_vector, matrix4x4_transpose, matrix4x4_inverse, matrix4x4_determinant,
+		vq_mul, vq_mul_point3, vq_inverse,
+		vqs_mul, vqs_mul_point3, vqs_inverse,
+		vqv_mul, vqv_mul_point3, vqv_mul_inverse, vqv_inverse_mul, vqv_inverse_mul_point3,
+		count,
+	};
+
+	// Computes the function with the scalar code path. The input has 8 vectors (32 values) and the output has 4 vectors (16 values).
+	void compute_transform_function(transform_function function, const float* input, float* output);
+	void compute_transform_function(transform_function function, const double* input, double* output);
+
 	void quat_normalize_deterministic(const float* input, float* output);
 	void quat_normalize_deterministic(const double* input, double* output);
 

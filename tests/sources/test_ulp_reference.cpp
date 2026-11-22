@@ -36,16 +36,26 @@
 
 #define rtm rtm_ref
 
-#include <rtm/matrix3x3d.h>
 #include <rtm/mask4d.h>
 #include <rtm/mask4f.h>
+#include <rtm/matrix3x3d.h>
 #include <rtm/matrix3x3f.h>
+#include <rtm/matrix3x4d.h>
+#include <rtm/matrix3x4f.h>
+#include <rtm/matrix4x4d.h>
+#include <rtm/matrix4x4f.h>
 #include <rtm/quatd.h>
 #include <rtm/quatf.h>
 #include <rtm/scalard.h>
 #include <rtm/scalarf.h>
 #include <rtm/vector4d.h>
 #include <rtm/vector4f.h>
+#include <rtm/vqd.h>
+#include <rtm/vqf.h>
+#include <rtm/vqsd.h>
+#include <rtm/vqsf.h>
+#include <rtm/vqvd.h>
+#include <rtm/vqvf.h>
 #include <rtm/packing/quatf.h>
 
 #include <cfloat>
@@ -77,6 +87,16 @@ namespace rtm_ulp_ref
 	void compute_bit_exact_function(bit_exact_function function, const double* input0, const double* input1, const double* input2, double* output)
 	{
 		compute_bit_exact_function_impl(function, input0, input1, input2, output);
+	}
+
+	void compute_transform_function(transform_function function, const float* input, float* output)
+	{
+		compute_transform_function_impl(function, input, output);
+	}
+
+	void compute_transform_function(transform_function function, const double* input, double* output)
+	{
+		compute_transform_function_impl(function, input, output);
 	}
 
 	void quat_normalize_deterministic(const float* input, float* output)
