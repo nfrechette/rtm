@@ -94,6 +94,27 @@ namespace rtm_ulp_ref
 	void compute_vector_function(ulp_function function, const float* input0, const float* input1, const float* input2, float* output);
 	void compute_vector_function(ulp_function function, const double* input0, const double* input1, const double* input2, double* output);
 
+	// The functions that must give the same bits on all the code paths (see compute_bit_exact_function_impl)
+	enum class bit_exact_function
+	{
+		add, sub, mul, div, mul_scalar, neg, abs, min, max, clamp, sign, copy_sign,
+		floor, ceil, round_bankers, round_symmetric, fraction,
+		logical_and, logical_or, logical_xor,
+		equal, not_equal, less_than, less_equal, greater_than, greater_equal, finite, select,
+		all_equal, all_not_equal, all_less_than, all_less_equal, all_greater_than, all_greater_equal,
+		any_equal, any_not_equal, any_less_than, any_less_equal, any_greater_than, any_greater_equal,
+		is_finite, all_near_equal, any_near_equal,
+		mask_and, mask_or, mask_xor, mask_not, mask_all_true, mask_any_true, mask_all_equal, mask_any_equal, mask_get,
+		load1, load2, load3, broadcast, store1, store2, store3,
+		set_components, set_component, get_components, get_component, dup_x, dup_y, dup_z, dup_w, min_max_component,
+		mix0, mix1, mix2,
+		count,
+	};
+
+	// Computes the function with the scalar code path. See compute_bit_exact_function_impl for the inputs and the output.
+	void compute_bit_exact_function(bit_exact_function function, const float* input0, const float* input1, const float* input2, float* output);
+	void compute_bit_exact_function(bit_exact_function function, const double* input0, const double* input1, const double* input2, double* output);
+
 	void quat_normalize_deterministic(const float* input, float* output);
 	void quat_normalize_deterministic(const double* input, double* output);
 

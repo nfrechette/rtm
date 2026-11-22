@@ -25,6 +25,8 @@
 #include "catch2.impl.h"
 
 #include <rtm/matrix3x3d.h>
+#include <rtm/mask4d.h>
+#include <rtm/mask4f.h>
 #include <rtm/matrix3x3f.h>
 #include <rtm/quatd.h>
 #include <rtm/quatf.h>
@@ -42,6 +44,7 @@
 #include <cstdint>
 #include <cstring>
 #include <iomanip>
+#include <iterator>
 #include <limits>
 #include <random>
 #include <sstream>
@@ -2014,6 +2017,298 @@ namespace
 		CHECK(largest_path_difference <= max_path_difference);
 	}
 
+	//////////////////////////////////////////////////////////////////////////
+	// The functions that must give the same bits on all the code paths
+	//////////////////////////////////////////////////////////////////////////
+
+	using rtm_ulp_ref::bit_exact_function;
+
+	const char* get_bit_exact_function_name(bit_exact_function function)
+	{
+		static const char* const names[] =
+		{
+			"add", "sub", "mul", "div", "mul_scalar", "neg", "abs", "min", "max", "clamp", "sign", "copy_sign",
+			"floor", "ceil", "round_bankers", "round_symmetric", "fraction",
+			"and", "or", "xor",
+			"equal", "not_equal", "less_than", "less_equal", "greater_than", "greater_equal", "finite", "select",
+			"all_equal", "all_not_equal", "all_less_than", "all_less_equal", "all_greater_than", "all_greater_equal",
+			"any_equal", "any_not_equal", "any_less_than", "any_less_equal", "any_greater_than", "any_greater_equal",
+			"is_finite", "all_near_equal", "any_near_equal",
+			"mask_and", "mask_or", "mask_xor", "mask_not", "mask_all_true", "mask_any_true", "mask_all_equal", "mask_any_equal", "mask_get",
+			"load1", "load2", "load3", "broadcast", "store1", "store2", "store3",
+			"set_components", "set_component", "get_components", "get_component", "dup_x", "dup_y", "dup_z", "dup_w", "min_max_component",
+			"mix0", "mix1", "mix2",
+		};
+		static_assert(sizeof(names) / sizeof(names[0]) == size_t(bit_exact_function::count), "Add the name of each function");
+
+		return names[uint32_t(function)];
+	}
+
+	// Computes the scalar function of the code path of the build for each lane, when one exists. Returns false otherwise.
+	template<typename FloatType>
+	bool compute_bit_exact_alternative(bit_exact_function function, const FloatType* input0, const FloatType* input1, const FloatType* input2, FloatType* output)
+	{
+		if (function == bit_exact_function::mul_scalar)
+		{
+			vector_store(vector_mul(vector_load(input0), scalar_set(input1[0])), output);
+			return true;
+		}
+
+		for (uint32_t lane_index = 0; lane_index < 4; ++lane_index)
+		{
+			const auto value0 = scalar_set(input0[lane_index]);
+			const auto value1 = scalar_set(input1[lane_index]);
+			const auto value2 = scalar_set(input2[lane_index]);
+
+			FloatType result;
+			switch (function)
+			{
+			case bit_exact_function::add:				result = scalar_cast(scalar_add(value0, value1)); break;
+			case bit_exact_function::sub:				result = scalar_cast(scalar_sub(value0, value1)); break;
+			case bit_exact_function::mul:				result = scalar_cast(scalar_mul(value0, value1)); break;
+			case bit_exact_function::div:				result = scalar_cast(scalar_div(value0, value1)); break;
+			case bit_exact_function::abs:				result = scalar_cast(scalar_abs(value0)); break;
+			case bit_exact_function::min:				result = scalar_cast(scalar_min(value0, value1)); break;
+			case bit_exact_function::max:				result = scalar_cast(scalar_max(value0, value1)); break;
+			case bit_exact_function::clamp:				result = scalar_cast(scalar_clamp(value0, value1, value2)); break;
+			case bit_exact_function::floor:				result = scalar_cast(scalar_floor(value0)); break;
+			case bit_exact_function::ceil:				result = scalar_cast(scalar_ceil(value0)); break;
+			case bit_exact_function::round_bankers:		result = scalar_cast(scalar_round_bankers(value0)); break;
+			case bit_exact_function::round_symmetric:	result = scalar_cast(scalar_round_symmetric(value0)); break;
+			case bit_exact_function::equal:				result = get_bool_value<FloatType>(scalar_equal(value0, value1)); break;
+			case bit_exact_function::less_than:			result = get_bool_value<FloatType>(scalar_lower_than(value0, value1)); break;
+			case bit_exact_function::less_equal:		result = get_bool_value<FloatType>(scalar_lower_equal(value0, value1)); break;
+			case bit_exact_function::greater_than:		result = get_bool_value<FloatType>(scalar_greater_than(value0, value1)); break;
+			case bit_exact_function::greater_equal:		result = get_bool_value<FloatType>(scalar_greater_equal(value0, value1)); break;
+			case bit_exact_function::finite:			result = get_bool_value<FloatType>(scalar_is_finite(value0)); break;
+			default:									return false;
+			}
+
+			output[lane_index] = result;
+		}
+
+		return true;
+	}
+
+	// Returns the edge values of the bit-exact functions
+	template<typename FloatType>
+	std::vector<FloatType> get_bit_exact_edge_values()
+	{
+		using limits = std::numeric_limits<FloatType>;
+		const FloatType mantissa_shift = FloatType(std::ldexp(1.0, limits::digits - 1));	// 2^23 or 2^52
+
+		const FloatType values[] =
+		{
+			FloatType(0.0), FloatType(-0.0), FloatType(1.0), FloatType(-1.0), FloatType(0.5), FloatType(-0.5),
+			FloatType(1.5), FloatType(-1.5), FloatType(2.5), FloatType(-2.5), FloatType(-3.5),
+			std::nextafter(FloatType(0.5), FloatType(0.0)), std::nextafter(FloatType(-0.5), FloatType(0.0)),
+			limits::infinity(), -limits::infinity(), limits::quiet_NaN(), -limits::quiet_NaN(),
+			(limits::max)(), -(limits::max)(), (limits::min)(), -(limits::min)(), limits::denorm_min(), -limits::denorm_min(),
+			mantissa_shift, -mantissa_shift, mantissa_shift + FloatType(1.0), -(mantissa_shift + FloatType(1.0)), mantissa_shift - FloatType(0.5),
+			FloatType(2147483648.0), FloatType(-2147483648.0), FloatType(4294967296.5),
+		};
+
+		return std::vector<FloatType>(std::begin(values), std::end(values));
+	}
+
+	// Returns a random input value: an edge value, a random bit pattern, a multiple of 0.25, or a value in [-10, 10]
+	template<typename FloatType>
+	FloatType get_bit_exact_random_value(std::mt19937& generator, const std::vector<FloatType>& edge_values)
+	{
+		switch (generator() % 4)
+		{
+		case 0:		return edge_values[generator() % edge_values.size()];
+		case 1:		return get_random_bits<FloatType>(generator);
+		case 2:		return FloatType(int32_t(generator() % 161) - 80) * FloatType(0.25);
+		default:	return get_random_value<FloatType>(generator, -10.0, 10.0);
+		}
+	}
+
+	// Changes the inputs of the functions that have conditions on their inputs
+	template<typename FloatType>
+	void fix_bit_exact_inputs(bit_exact_function function, FloatType* input0, FloatType* input1, FloatType* input2)
+	{
+		(void)input0;
+
+		if (function == bit_exact_function::clamp)
+		{
+			// The minimum must not be larger than the maximum, and the limits must not be NaN
+			for (uint32_t lane_index = 0; lane_index < 4; ++lane_index)
+			{
+				const FloatType min_value = std::isnan(input1[lane_index]) ? FloatType(-1.0) : input1[lane_index];
+				const FloatType max_value = std::isnan(input2[lane_index]) ? FloatType(1.0) : input2[lane_index];
+				input1[lane_index] = (std::min)(min_value, max_value);
+				input2[lane_index] = (std::max)(min_value, max_value);
+			}
+		}
+		else if (function == bit_exact_function::all_near_equal || function == bit_exact_function::any_near_equal)
+		{
+			// The threshold must be a positive value
+			input2[0] = std::isnan(input2[0]) ? FloatType(0.5) : std::fabs(input2[0]);
+		}
+	}
+
+	// Returns true if the two values have the same bits. All the NaN values are equal.
+	template<typename FloatType>
+	bool has_same_bits(FloatType lhs, FloatType rhs)
+	{
+		if (std::isnan(lhs) || std::isnan(rhs))
+			return std::isnan(lhs) && std::isnan(rhs);
+
+		return std::memcmp(&lhs, &rhs, sizeof(FloatType)) == 0;
+	}
+
+	// Returns the value and its bits as text
+	template<typename FloatType>
+	std::string get_bits_string(FloatType value)
+	{
+		using uint_type = typename std::make_unsigned<typename ulp_traits<FloatType>::int_type>::type;
+		uint_type bits;
+		std::memcpy(&bits, &value, sizeof(FloatType));
+
+		std::ostringstream stream;
+		stream << std::setprecision(std::numeric_limits<FloatType>::max_digits10) << value << " (0x" << std::hex << uint64_t(bits) << ")";
+		return stream.str();
+	}
+
+	template<typename FloatType>
+	std::string get_vector_bits_string(const FloatType* values)
+	{
+		return "[" + get_bits_string(values[0]) + ", " + get_bits_string(values[1]) + ", " + get_bits_string(values[2]) + ", " + get_bits_string(values[3]) + "]";
+	}
+
+	// The functions in the list must give the same bits as the scalar code path
+	template<typename FloatType>
+	void test_bit_exact_function_impl(bit_exact_function function)
+	{
+		const std::vector<FloatType> edge_values = get_bit_exact_edge_values<FloatType>();
+		std::mt19937 generator(2000 + uint32_t(function));
+
+		input_set<FloatType> inputs;
+
+		// Each edge value with each edge value
+		for (size_t index0 = 0; index0 < edge_values.size(); ++index0)
+		{
+			FloatType values0[4];
+			FloatType values1[4];
+			FloatType values2[4];
+			for (uint32_t lane_index = 0; lane_index < 4; ++lane_index)
+			{
+				values0[lane_index] = edge_values[(index0 + lane_index) % edge_values.size()];
+				values2[lane_index] = edge_values[(index0 + (lane_index * 7)) % edge_values.size()];
+			}
+
+			for (size_t index1 = 0; index1 < edge_values.size(); ++index1)
+			{
+				for (uint32_t lane_index = 0; lane_index < 4; ++lane_index)
+					values1[lane_index] = edge_values[(index1 + (lane_index * 3)) % edge_values.size()];
+
+				FloatType fixed_values1[4];
+				FloatType fixed_values2[4];
+				std::memcpy(fixed_values1, values1, sizeof(values1));
+				std::memcpy(fixed_values2, values2, sizeof(values2));
+				fix_bit_exact_inputs(function, values0, fixed_values1, fixed_values2);
+				inputs.add_call(values0, fixed_values1, fixed_values2);
+			}
+		}
+
+		// Random values. A quarter of the lanes of input1 are equal to input0.
+		for (uint32_t call_index = 0; call_index < k_num_random_inputs / 4; ++call_index)
+		{
+			FloatType values0[4];
+			FloatType values1[4];
+			FloatType values2[4];
+			for (uint32_t lane_index = 0; lane_index < 4; ++lane_index)
+			{
+				values0[lane_index] = get_bit_exact_random_value(generator, edge_values);
+				values1[lane_index] = (generator() % 4) == 0 ? values0[lane_index] : get_bit_exact_random_value(generator, edge_values);
+				values2[lane_index] = get_bit_exact_random_value(generator, edge_values);
+			}
+
+			fix_bit_exact_inputs(function, values0, values1, values2);
+			inputs.add_call(values0, values1, values2);
+		}
+
+		// With excess precision (x87), the scalar code path does not round abs(lhs - rhs) to the float type before the
+		// comparison with the threshold. Thus the result of near_equal can differ when the difference is near the threshold.
+		if (rtm_ulp_ref::has_excess_precision() && (function == bit_exact_function::all_near_equal || function == bit_exact_function::any_near_equal))
+			return;
+
+		// With excess precision (x87), the scalar code path rounds float64 arithmetic twice
+		const bool allows_one_ulp = rtm_ulp_ref::has_excess_precision() && std::is_same<FloatType, double>::value &&
+			(function == bit_exact_function::add || function == bit_exact_function::sub || function == bit_exact_function::mul ||
+			 function == bit_exact_function::div || function == bit_exact_function::mul_scalar || function == bit_exact_function::fraction);
+
+		size_t num_differences = 0;
+		std::string first_difference;
+
+		for (size_t call_index = 0; call_index < inputs.get_num_calls(); ++call_index)
+		{
+			const FloatType* input0 = &inputs.input0[call_index * 4];
+			const FloatType* input1 = &inputs.input1[call_index * 4];
+			const FloatType* input2 = &inputs.input2[call_index * 4];
+
+			if (ulp_traits<FloatType>::flushes_denormals())
+			{
+				// The SIMD code path flushes the denormal inputs to zero
+				bool has_denormal = false;
+				for (uint32_t lane_index = 0; lane_index < 4; ++lane_index)
+					has_denormal |= is_denormal(input0[lane_index]) || is_denormal(input1[lane_index]) || is_denormal(input2[lane_index]);
+				if (has_denormal)
+					continue;
+			}
+
+			FloatType reference_path_result[4];
+			FloatType results[2][4];
+			rtm_ulp_ref::compute_bit_exact_function(function, input0, input1, input2, reference_path_result);
+			compute_bit_exact_function_impl(function, input0, input1, input2, results[0]);
+			const uint32_t num_results = compute_bit_exact_alternative(function, input0, input1, input2, results[1]) ? 2 : 1;
+
+			for (uint32_t result_index = 0; result_index < num_results; ++result_index)
+			{
+				const FloatType* result = results[result_index];
+
+				bool is_same = true;
+				for (uint32_t lane_index = 0; lane_index < 4; ++lane_index)
+				{
+					FloatType lhs = result[lane_index];
+					FloatType rhs = reference_path_result[lane_index];
+					if (ulp_traits<FloatType>::flushes_denormals())
+					{
+						// The SIMD code path flushes the denormal results to zero
+						lhs = is_denormal(lhs) ? std::copysign(FloatType(0.0), lhs) : lhs;
+						rhs = is_denormal(rhs) ? std::copysign(FloatType(0.0), rhs) : rhs;
+					}
+
+					if (!has_same_bits(lhs, rhs) && !(allows_one_ulp && get_ulp_distance(lhs, rhs) <= 1))
+						is_same = false;
+				}
+
+				if (is_same)
+					continue;
+
+				if (num_differences == 0)
+				{
+					first_difference = std::string(result_index == 0 ? "the vector function" : "the scalar function")
+						+ " returns " + get_vector_bits_string(result) + " and the scalar code path returns " + get_vector_bits_string(reference_path_result)
+						+ " for the inputs " + get_vector_bits_string(input0) + ", " + get_vector_bits_string(input1) + ", " + get_vector_bits_string(input2);
+				}
+
+				num_differences++;
+			}
+		}
+
+		INFO(get_bit_exact_function_name(function) << ": " << num_differences << " differences with the scalar code path. The first: " << first_difference);
+		CHECK(num_differences == 0);
+	}
+
+	template<typename FloatType>
+	void test_bit_exact_impl()
+	{
+		for (uint32_t function_index = 0; function_index < uint32_t(bit_exact_function::count); ++function_index)
+			test_bit_exact_function_impl<FloatType>(bit_exact_function(function_index));
+	}
+
 	template<typename FloatType>
 	void test_vector_products_ulp_impl()
 	{
@@ -2136,6 +2431,16 @@ TEST_CASE("quatf math ulp", "[math][quat][ulp]")
 TEST_CASE("quatd math ulp", "[math][quat][ulp]")
 {
 	test_quat_ulp_impl<double>();
+}
+
+TEST_CASE("vector4f math bit exact code paths", "[math][vector4][ulp]")
+{
+	test_bit_exact_impl<float>();
+}
+
+TEST_CASE("vector4d math bit exact code paths", "[math][vector4][ulp]")
+{
+	test_bit_exact_impl<double>();
 }
 
 TEST_CASE("quatf math normalize_deterministic code paths", "[math][quat][ulp]")

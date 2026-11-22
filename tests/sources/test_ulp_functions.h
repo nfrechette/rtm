@@ -31,6 +31,8 @@
 
 #include "test_ulp_reference.h"
 
+#include <cstring>
+
 namespace
 {
 	// Writes a scalar result to the 4 lanes of the output
@@ -132,6 +134,138 @@ namespace
 		case ulp_function::quat_from_positive_w:
 			compute_float32_only_function(function, input0, output);
 			break;
+		}
+	}
+
+	// Returns 1.0 for true and 0.0 for false
+	template<typename FloatType>
+	FloatType get_bool_value(bool value)
+	{
+		return value ? FloatType(1.0) : FloatType(0.0);
+	}
+
+	// Writes 4 bool values
+	template<typename FloatType>
+	void store_bool_results(bool value0, bool value1, bool value2, bool value3, FloatType* output)
+	{
+		output[0] = get_bool_value<FloatType>(value0);
+		output[1] = get_bool_value<FloatType>(value1);
+		output[2] = get_bool_value<FloatType>(value2);
+		output[3] = get_bool_value<FloatType>(value3);
+	}
+
+	// Computes a function that must give the same bits on all the code paths. The function writes the 4 lanes of the output.
+	//    - The vector arguments come from input0, input1, and input2, in order. mul_scalar and the set functions read
+	//      their scalars from input1. all_near_equal and any_near_equal read the threshold from input2[0].
+	//    - A mask result is 1.0 or 0.0 in each lane (with vector_select).
+	//    - The all_* and any_* functions write the result for 4, 3, and 2 components in the lanes 0, 1, and 2.
+	//    - The mask_* functions use the masks less_than(input0, input1) and less_equal(input1, input2).
+	//    - The store functions write over a copy of input2.
+	template<typename FloatType>
+	void compute_bit_exact_function_impl(rtm_ulp_ref::bit_exact_function function, const FloatType* input0, const FloatType* input1, const FloatType* input2, FloatType* output)
+	{
+		using rtm_ulp_ref::bit_exact_function;
+		using rtm::mix4;
+		using rtm::component4;
+
+		const auto v0 = rtm::vector_load(input0);
+		const auto v1 = rtm::vector_load(input1);
+		const auto v2 = rtm::vector_load(input2);
+		const auto one = rtm::vector_set(FloatType(1.0));
+		const auto zero = rtm::vector_set(FloatType(0.0));
+		const auto mask0 = rtm::vector_less_than(v0, v1);
+		const auto mask1 = rtm::vector_less_equal(v1, v2);
+		const FloatType threshold = input2[0];
+
+		switch (function)
+		{
+		case bit_exact_function::add:				rtm::vector_store(rtm::vector_add(v0, v1), output); break;
+		case bit_exact_function::sub:				rtm::vector_store(rtm::vector_sub(v0, v1), output); break;
+		case bit_exact_function::mul:				rtm::vector_store(rtm::vector_mul(v0, v1), output); break;
+		case bit_exact_function::div:				rtm::vector_store(rtm::vector_div(v0, v1), output); break;
+		case bit_exact_function::mul_scalar:		rtm::vector_store(rtm::vector_mul(v0, input1[0]), output); break;
+		case bit_exact_function::neg:				rtm::vector_store(rtm::vector_neg(v0), output); break;
+		case bit_exact_function::abs:				rtm::vector_store(rtm::vector_abs(v0), output); break;
+		case bit_exact_function::min:				rtm::vector_store(rtm::vector_min(v0, v1), output); break;
+		case bit_exact_function::max:				rtm::vector_store(rtm::vector_max(v0, v1), output); break;
+		case bit_exact_function::clamp:				rtm::vector_store(rtm::vector_clamp(v0, v1, v2), output); break;
+		case bit_exact_function::sign:				rtm::vector_store(rtm::vector_sign(v0), output); break;
+		case bit_exact_function::copy_sign:			rtm::vector_store(rtm::vector_copy_sign(v0, v1), output); break;
+		case bit_exact_function::floor:				rtm::vector_store(rtm::vector_floor(v0), output); break;
+		case bit_exact_function::ceil:				rtm::vector_store(rtm::vector_ceil(v0), output); break;
+		case bit_exact_function::round_bankers:		rtm::vector_store(rtm::vector_round_bankers(v0), output); break;
+		case bit_exact_function::round_symmetric:	rtm::vector_store(rtm::vector_round_symmetric(v0), output); break;
+		case bit_exact_function::fraction:			rtm::vector_store(rtm::vector_fraction(v0), output); break;
+		case bit_exact_function::logical_and:		rtm::vector_store(rtm::vector_and(v0, v1), output); break;
+		case bit_exact_function::logical_or:		rtm::vector_store(rtm::vector_or(v0, v1), output); break;
+		case bit_exact_function::logical_xor:		rtm::vector_store(rtm::vector_xor(v0, v1), output); break;
+		case bit_exact_function::equal:				rtm::vector_store(rtm::vector_select(rtm::vector_equal(v0, v1), one, zero), output); break;
+		case bit_exact_function::not_equal:			rtm::vector_store(rtm::vector_select(rtm::vector_not_equal(v0, v1), one, zero), output); break;
+		case bit_exact_function::less_than:			rtm::vector_store(rtm::vector_select(rtm::vector_less_than(v0, v1), one, zero), output); break;
+		case bit_exact_function::less_equal:		rtm::vector_store(rtm::vector_select(rtm::vector_less_equal(v0, v1), one, zero), output); break;
+		case bit_exact_function::greater_than:		rtm::vector_store(rtm::vector_select(rtm::vector_greater_than(v0, v1), one, zero), output); break;
+		case bit_exact_function::greater_equal:		rtm::vector_store(rtm::vector_select(rtm::vector_greater_equal(v0, v1), one, zero), output); break;
+		case bit_exact_function::finite:			rtm::vector_store(rtm::vector_select(rtm::vector_finite(v0), one, zero), output); break;
+		case bit_exact_function::select:			rtm::vector_store(rtm::vector_select(mask0, v1, v2), output); break;
+		case bit_exact_function::all_equal:			store_bool_results(rtm::vector_all_equal(v0, v1), rtm::vector_all_equal3(v0, v1), rtm::vector_all_equal2(v0, v1), false, output); break;
+		case bit_exact_function::all_not_equal:		store_bool_results(rtm::vector_all_not_equal(v0, v1), rtm::vector_all_not_equal3(v0, v1), rtm::vector_all_not_equal2(v0, v1), false, output); break;
+		case bit_exact_function::all_less_than:		store_bool_results(rtm::vector_all_less_than(v0, v1), rtm::vector_all_less_than3(v0, v1), rtm::vector_all_less_than2(v0, v1), false, output); break;
+		case bit_exact_function::all_less_equal:	store_bool_results(rtm::vector_all_less_equal(v0, v1), rtm::vector_all_less_equal3(v0, v1), rtm::vector_all_less_equal2(v0, v1), false, output); break;
+		case bit_exact_function::all_greater_than:	store_bool_results(rtm::vector_all_greater_than(v0, v1), rtm::vector_all_greater_than3(v0, v1), rtm::vector_all_greater_than2(v0, v1), false, output); break;
+		case bit_exact_function::all_greater_equal:	store_bool_results(rtm::vector_all_greater_equal(v0, v1), rtm::vector_all_greater_equal3(v0, v1), rtm::vector_all_greater_equal2(v0, v1), false, output); break;
+		case bit_exact_function::any_equal:			store_bool_results(rtm::vector_any_equal(v0, v1), rtm::vector_any_equal3(v0, v1), rtm::vector_any_equal2(v0, v1), false, output); break;
+		case bit_exact_function::any_not_equal:		store_bool_results(rtm::vector_any_not_equal(v0, v1), rtm::vector_any_not_equal3(v0, v1), rtm::vector_any_not_equal2(v0, v1), false, output); break;
+		case bit_exact_function::any_less_than:		store_bool_results(rtm::vector_any_less_than(v0, v1), rtm::vector_any_less_than3(v0, v1), rtm::vector_any_less_than2(v0, v1), false, output); break;
+		case bit_exact_function::any_less_equal:	store_bool_results(rtm::vector_any_less_equal(v0, v1), rtm::vector_any_less_equal3(v0, v1), rtm::vector_any_less_equal2(v0, v1), false, output); break;
+		case bit_exact_function::any_greater_than:	store_bool_results(rtm::vector_any_greater_than(v0, v1), rtm::vector_any_greater_than3(v0, v1), rtm::vector_any_greater_than2(v0, v1), false, output); break;
+		case bit_exact_function::any_greater_equal:	store_bool_results(rtm::vector_any_greater_equal(v0, v1), rtm::vector_any_greater_equal3(v0, v1), rtm::vector_any_greater_equal2(v0, v1), false, output); break;
+		case bit_exact_function::is_finite:			store_bool_results(rtm::vector_is_finite(v0), rtm::vector_is_finite3(v0), rtm::vector_is_finite2(v0), false, output); break;
+		case bit_exact_function::all_near_equal:	store_bool_results(rtm::vector_all_near_equal(v0, v1, threshold), rtm::vector_all_near_equal3(v0, v1, threshold), rtm::vector_all_near_equal2(v0, v1, threshold), false, output); break;
+		case bit_exact_function::any_near_equal:	store_bool_results(rtm::vector_any_near_equal(v0, v1, threshold), rtm::vector_any_near_equal3(v0, v1, threshold), rtm::vector_any_near_equal2(v0, v1, threshold), false, output); break;
+		case bit_exact_function::mask_and:			rtm::vector_store(rtm::vector_select(rtm::mask_and(mask0, mask1), one, zero), output); break;
+		case bit_exact_function::mask_or:			rtm::vector_store(rtm::vector_select(rtm::mask_or(mask0, mask1), one, zero), output); break;
+		case bit_exact_function::mask_xor:			rtm::vector_store(rtm::vector_select(rtm::mask_xor(mask0, mask1), one, zero), output); break;
+		case bit_exact_function::mask_not:			rtm::vector_store(rtm::vector_select(rtm::mask_not(mask0), one, zero), output); break;
+		case bit_exact_function::mask_all_true:		store_bool_results(rtm::mask_all_true(mask0), rtm::mask_all_true3(mask0), rtm::mask_all_true2(mask0), false, output); break;
+		case bit_exact_function::mask_any_true:		store_bool_results(rtm::mask_any_true(mask0), rtm::mask_any_true3(mask0), rtm::mask_any_true2(mask0), false, output); break;
+		case bit_exact_function::mask_all_equal:	store_bool_results(rtm::mask_all_equal(mask0, mask1), rtm::mask_all_equal3(mask0, mask1), rtm::mask_all_equal2(mask0, mask1), false, output); break;
+		case bit_exact_function::mask_any_equal:	store_bool_results(rtm::mask_any_equal(mask0, mask1), rtm::mask_any_equal3(mask0, mask1), rtm::mask_any_equal2(mask0, mask1), false, output); break;
+		case bit_exact_function::mask_get:			store_bool_results(rtm::mask_get_x(mask0) != 0, rtm::mask_get_y(mask0) != 0, rtm::mask_get_z(mask0) != 0, rtm::mask_get_w(mask0) != 0, output); break;
+		case bit_exact_function::load1:				rtm::vector_store(rtm::vector_load1(input0), output); break;
+		case bit_exact_function::load2:				rtm::vector_store(rtm::vector_load2(input0), output); break;
+		case bit_exact_function::load3:				rtm::vector_store(rtm::vector_load3(input0), output); break;
+		case bit_exact_function::broadcast:			rtm::vector_store(rtm::vector_broadcast(input0), output); break;
+		case bit_exact_function::store1:			std::memcpy(output, input2, sizeof(FloatType) * 4); rtm::vector_store1(v0, output); break;
+		case bit_exact_function::store2:			std::memcpy(output, input2, sizeof(FloatType) * 4); rtm::vector_store2(v0, output); break;
+		case bit_exact_function::store3:			std::memcpy(output, input2, sizeof(FloatType) * 4); rtm::vector_store3(v0, output); break;
+		case bit_exact_function::set_components:	rtm::vector_store(rtm::vector_set_w(rtm::vector_set_z(rtm::vector_set_y(rtm::vector_set_x(v0, input1[0]), input1[1]), input1[2]), input1[3]), output); break;
+		case bit_exact_function::set_component:		rtm::vector_store(rtm::vector_set_component(rtm::vector_set_component(v0, input1[1], component4::y), input1[3], component4::w), output); break;
+		case bit_exact_function::get_components:
+			output[0] = FloatType(rtm::scalar_cast(rtm::vector_get_x_as_scalar(v0)));
+			output[1] = FloatType(rtm::scalar_cast(rtm::vector_get_y_as_scalar(v0)));
+			output[2] = FloatType(rtm::scalar_cast(rtm::vector_get_z_as_scalar(v0)));
+			output[3] = FloatType(rtm::scalar_cast(rtm::vector_get_w_as_scalar(v0)));
+			break;
+		case bit_exact_function::get_component:
+			output[0] = FloatType(rtm::scalar_cast(rtm::vector_get_component_as_scalar(v0, component4::x)));
+			output[1] = FloatType(rtm::scalar_cast(rtm::vector_get_component_as_scalar(v0, component4::y)));
+			output[2] = FloatType(rtm::scalar_cast(rtm::vector_get_component_as_scalar(v0, component4::z)));
+			output[3] = FloatType(rtm::scalar_cast(rtm::vector_get_component_as_scalar(v0, component4::w)));
+			break;
+		case bit_exact_function::dup_x:				rtm::vector_store(rtm::vector_dup_x(v0), output); break;
+		case bit_exact_function::dup_y:				rtm::vector_store(rtm::vector_dup_y(v0), output); break;
+		case bit_exact_function::dup_z:				rtm::vector_store(rtm::vector_dup_z(v0), output); break;
+		case bit_exact_function::dup_w:				rtm::vector_store(rtm::vector_dup_w(v0), output); break;
+		case bit_exact_function::min_max_component:
+			output[0] = FloatType(rtm::scalar_cast(rtm::vector_get_min_component_as_scalar(v0)));
+			output[1] = FloatType(rtm::scalar_cast(rtm::vector_get_max_component_as_scalar(v0)));
+			output[2] = FloatType(0.0);
+			output[3] = FloatType(0.0);
+			break;
+		case bit_exact_function::mix0:				rtm::vector_store(rtm::vector_mix<mix4::x, mix4::b, mix4::w, mix4::a>(v0, v1), output); break;
+		case bit_exact_function::mix1:				rtm::vector_store(rtm::vector_mix<mix4::c, mix4::y, mix4::d, mix4::z>(v0, v1), output); break;
+		case bit_exact_function::mix2:				rtm::vector_store(rtm::vector_mix<mix4::w, mix4::w, mix4::a, mix4::d>(v0, v1), output); break;
+		case bit_exact_function::count:				break;
 		}
 	}
 }
