@@ -31,6 +31,8 @@
 #include <rtm/vector4f.h>
 #include <rtm/vector4d.h>
 
+#include "test_float_utils.h"
+
 #include <cmath>
 #include <limits>
 
@@ -242,8 +244,9 @@ static void test_scalar_impl(const FloatType threshold, const FloatType trig_thr
 		CHECK(scalar_abs(scalar_cast(scalar_exp(scalar_set(input))) - ref) <= threshold * ref);
 	}
 
-	CHECK(scalar_exp(-infinity) == FloatType(0.0));
-	CHECK(scalar_exp(infinity) == infinity);
+	// With x87, the result is not 0.0 or infinity before the store (see round_to_float_type)
+	CHECK(round_to_float_type(scalar_exp(-infinity)) == FloatType(0.0));
+	CHECK(round_to_float_type(scalar_exp(infinity)) == infinity);
 	CHECK(std::isnan(scalar_exp(nan)));
 
 	// The error of log is relative to the result, or absolute when the result is near zero

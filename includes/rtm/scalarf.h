@@ -203,19 +203,20 @@ namespace rtm
 
 #if defined(RTM_SSE2_INTRINSICS)
 	/// Returns the input if it is within the min/max values otherwise the
-	/// exceeded boundary is returned.
+	/// exceeded boundary is returned: min(max(input, min), max). When the input is NaN, the result is NaN.
 	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE scalarf RTM_SIMD_CALL scalar_clamp(scalarf_arg0 input, scalarf_arg1 min, scalarf_arg2 max) RTM_NO_EXCEPT
 	{
-		return scalarf{ _mm_min_ss(_mm_max_ss(input.value, min.value), max.value) };
+		// min(max(input, min), max) with the semantics of scalar_min and scalar_max
+		return scalarf{ _mm_min_ss(max.value, _mm_max_ss(min.value, input.value)) };
 	}
 #endif
 
 	/// Returns the input if it is within the min/max values otherwise the
-	/// exceeded boundary is returned.
+	/// exceeded boundary is returned: min(max(input, min), max). When the input is NaN, the result is NaN.
 	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE float scalar_clamp(float input, float min, float max) RTM_NO_EXCEPT
 	{
 #if defined(RTM_SSE2_INTRINSICS)
-		return _mm_cvtss_f32(_mm_min_ss(_mm_max_ss(_mm_set_ps1(input), _mm_set_ps1(min)), _mm_set_ps1(max)));
+		return _mm_cvtss_f32(_mm_min_ss(_mm_set_ps1(max), _mm_max_ss(_mm_set_ps1(min), _mm_set_ps1(input))));
 #else
 		return (std::min)((std::max)(input, min), max);
 #endif
@@ -486,36 +487,42 @@ namespace rtm
 	}
 
 #if defined(RTM_SSE2_INTRINSICS)
-	/// Returns the smallest of the two inputs.
+	/// Returns the smallest of the two inputs: rhs < lhs ? rhs : lhs, as std::min.
+	/// When the inputs are equal (for example +0.0 and -0.0) or when one of them is NaN, the result is lhs.
 	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE scalarf RTM_SIMD_CALL scalar_min(scalarf_arg0 lhs, scalarf_arg1 rhs) RTM_NO_EXCEPT
 	{
-		return scalarf{ _mm_min_ss(lhs.value, rhs.value) };
+		// minss returns its second input when the inputs are equal or when one of them is NaN
+		return scalarf{ _mm_min_ss(rhs.value, lhs.value) };
 	}
 #endif
 
-	/// Returns the smallest of the two inputs.
+	/// Returns the smallest of the two inputs: rhs < lhs ? rhs : lhs, as std::min.
+	/// When the inputs are equal (for example +0.0 and -0.0) or when one of them is NaN, the result is lhs.
 	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE float scalar_min(float left, float right) RTM_NO_EXCEPT
 	{
 #if defined(RTM_SSE2_INTRINSICS)
-		return _mm_cvtss_f32(_mm_min_ss(_mm_set_ps1(left), _mm_set_ps1(right)));
+		return _mm_cvtss_f32(_mm_min_ss(_mm_set_ps1(right), _mm_set_ps1(left)));
 #else
 		return (std::min)(left, right);
 #endif
 	}
 
 #if defined(RTM_SSE2_INTRINSICS)
-	/// Returns the largest of the two inputs.
+	/// Returns the largest of the two inputs: lhs < rhs ? rhs : lhs, as std::max.
+	/// When the inputs are equal (for example +0.0 and -0.0) or when one of them is NaN, the result is lhs.
 	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE scalarf RTM_SIMD_CALL scalar_max(scalarf_arg0 lhs, scalarf_arg1 rhs) RTM_NO_EXCEPT
 	{
-		return scalarf{ _mm_max_ss(lhs.value, rhs.value) };
+		// maxss returns its second input when the inputs are equal or when one of them is NaN
+		return scalarf{ _mm_max_ss(rhs.value, lhs.value) };
 	}
 #endif
 
-	/// Returns the largest of the two inputs.
+	/// Returns the largest of the two inputs: lhs < rhs ? rhs : lhs, as std::max.
+	/// When the inputs are equal (for example +0.0 and -0.0) or when one of them is NaN, the result is lhs.
 	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE float scalar_max(float left, float right) RTM_NO_EXCEPT
 	{
 #if defined(RTM_SSE2_INTRINSICS)
-		return _mm_cvtss_f32(_mm_max_ss(_mm_set_ps1(left), _mm_set_ps1(right)));
+		return _mm_cvtss_f32(_mm_max_ss(_mm_set_ps1(right), _mm_set_ps1(left)));
 #else
 		return (std::max)(left, right);
 #endif
