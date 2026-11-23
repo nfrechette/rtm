@@ -509,6 +509,17 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#floating-point-contraction" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Floating point contraction
+      
+    </span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -2263,6 +2274,17 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#floating-point-contraction" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Floating point contraction
+      
+    </span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -2377,6 +2399,14 @@
 <p>The components obey the Hamilton rule: <code>i^2 = j^2 = k^2 = ijk = -1</code> and <code>ij = k</code>. Here <code>i</code>, <code>j</code>, and <code>k</code> are the units of the [x], [y], and [z] components.</p>
 <p>The library uses row vectors, thus <code>quat_mul(lhs, rhs)</code> applies <code>lhs</code> first and <code>rhs</code> second: <code>local_to_world = quat_mul(local_to_object, object_to_world)</code>. With the Hamilton notation, <code>quat_mul(lhs, rhs)</code> returns the product <code>rhs * lhs</code>. For example, <code>quat_mul(i, j)</code> returns <code>-k</code> and <code>quat_mul(j, i)</code> returns <code>k</code>.</p>
 <p><code>quat_mul_vector3(v, q)</code> returns the Hamilton product <code>q * v * conjugate(q)</code>. <code>matrix_from_quat(q)</code> returns the same rotation as a matrix for row vectors: <code>matrix_mul_vector3(v, matrix_from_quat(q))</code> is equal to <code>quat_mul_vector3(v, q)</code>.</p>
+<h2 id="floating-point-contraction">Floating point contraction<a class="headerlink" href="#floating-point-contraction" title="Permanent link">&para;</a></h2>
+<p>A compiler can merge a multiply and an add into one FMA instruction. This is floating point contraction. The FMA does not round the product, thus the result can change with the compiler, the flags, and the target. For the same input, the scalar code path gives the same result on all the targets only when the compiler does not merge these operations.</p>
+<ul>
+<li>With MSVC, the headers set <code>float_control(precise, on)</code>. Do not use <code>/fp:fast</code> or <code>/fp:contract</code>.</li>
+<li>With Clang, the headers disable contraction on x86, x64, AArch64 (Clang 16 and later, Apple Clang 15 and later), and RISC-V (Clang 18 and later). With <code>-ffp-contract=fast</code>, LLVM Clang ignores the pragma after it inlines a function. Use <code>-ffp-contract=on</code>, <code>-ffp-contract=off</code>, or <code>-ffp-contract=fast-honor-pragmas</code>.</li>
+<li>With GCC, the headers do not disable contraction. GCC uses <code>-ffp-contract=fast</code> by default in C++, and it merges the operations of a function after it inlines the function in the code of the caller. A pragma in the headers does not stop this. Also, GCC does not inline a function when its optimization options are not the same as those of the caller: such a pragma makes the code slower. Compile with <code>-ffp-contract=off</code> to get the same results on all the targets.</li>
+</ul>
+<p>The NEON code path uses FMA instructions on purpose. Thus its results can differ in the last bits from the other code paths.</p>
 
 
 

@@ -6345,15 +6345,15 @@
 <h3 id="vector_max">vector_max<a class="headerlink" href="#vector_max" title="Permanent link">&para;</a></h3>
 <div class="highlight"><pre><span></span><code><span class="n">vector4d</span><span class="w"> </span><span class="n">vector_max</span><span class="p">(</span><span class="n">vector4d</span><span class="w"> </span><span class="n">lhs</span><span class="p">,</span><span class="w"> </span><span class="n">vector4d</span><span class="w"> </span><span class="n">rhs</span><span class="p">)</span>
 </code></pre></div>
-<p>Per component maximum of the two inputs: max(lhs, rhs).</p>
+<p>Per component maximum of the two inputs: lhs &lt; rhs ? rhs : lhs, as std::max. When the inputs are equal (for example +0.0 and -0.0) or when one of them is NaN, the result is lhs. All the code paths give the same result.</p>
 <h3 id="vector_min">vector_min<a class="headerlink" href="#vector_min" title="Permanent link">&para;</a></h3>
 <div class="highlight"><pre><span></span><code><span class="n">vector4d</span><span class="w"> </span><span class="n">vector_min</span><span class="p">(</span><span class="n">vector4d</span><span class="w"> </span><span class="n">lhs</span><span class="p">,</span><span class="w"> </span><span class="n">vector4d</span><span class="w"> </span><span class="n">rhs</span><span class="p">)</span>
 </code></pre></div>
-<p>Per component minimum of the two inputs: min(lhs, rhs).</p>
+<p>Per component minimum of the two inputs: rhs &lt; lhs ? rhs : lhs, as std::min. When the inputs are equal (for example +0.0 and -0.0) or when one of them is NaN, the result is lhs. All the code paths give the same result.</p>
 <h3 id="vector_clamp">vector_clamp<a class="headerlink" href="#vector_clamp" title="Permanent link">&para;</a></h3>
 <div class="highlight"><pre><span></span><code><span class="n">vector4d</span><span class="w"> </span><span class="n">vector_clamp</span><span class="p">(</span><span class="n">vector4d</span><span class="w"> </span><span class="n">input</span><span class="p">,</span><span class="w"> </span><span class="n">vector4d</span><span class="w"> </span><span class="n">min_value</span><span class="p">,</span><span class="w"> </span><span class="n">vector4d</span><span class="w"> </span><span class="n">max_value</span><span class="p">)</span>
 </code></pre></div>
-<p>Per component clamping of an input between a minimum and a maximum value: min(max_value, max(min_value, input)).</p>
+<p>Per component clamping of an input between a minimum and a maximum value: min(max(input, min_value), max_value) When the input is NaN, the result is NaN. The minimum must not be larger than the maximum.</p>
 <h3 id="vector_abs">vector_abs<a class="headerlink" href="#vector_abs" title="Permanent link">&para;</a></h3>
 <div class="highlight"><pre><span></span><code><span class="n">vector4d</span><span class="w"> </span><span class="n">vector_abs</span><span class="p">(</span><span class="n">vector4d</span><span class="w"> </span><span class="n">input</span><span class="p">)</span>
 </code></pre></div>

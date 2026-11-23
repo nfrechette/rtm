@@ -3122,7 +3122,7 @@
 <h3 id="scalar_clamp">scalar_clamp<a class="headerlink" href="#scalar_clamp" title="Permanent link">&para;</a></h3>
 <div class="highlight"><pre><span></span><code><span class="kt">double</span><span class="w"> </span><span class="n">scalar_clamp</span><span class="p">(</span><span class="kt">double</span><span class="w"> </span><span class="n">input</span><span class="p">,</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="n">min</span><span class="p">,</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="n">max</span><span class="p">)</span>
 </code></pre></div>
-<p>Returns the input if it is within the min/max values otherwise the exceeded boundary is returned.</p>
+<p>Returns the input if it is within the min/max values otherwise the exceeded boundary is returned: min(max(input, min), max). When the input is NaN, the result is NaN.</p>
 <h3 id="scalar_abs">scalar_abs<a class="headerlink" href="#scalar_abs" title="Permanent link">&para;</a></h3>
 <div class="highlight"><pre><span></span><code><span class="kt">double</span><span class="w"> </span><span class="n">scalar_abs</span><span class="p">(</span><span class="kt">double</span><span class="w"> </span><span class="n">input</span><span class="p">)</span>
 </code></pre></div>
@@ -3182,11 +3182,11 @@
 <h3 id="scalar_min">scalar_min<a class="headerlink" href="#scalar_min" title="Permanent link">&para;</a></h3>
 <div class="highlight"><pre><span></span><code><span class="kt">double</span><span class="w"> </span><span class="n">scalar_min</span><span class="p">(</span><span class="kt">double</span><span class="w"> </span><span class="n">left</span><span class="p">,</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="n">right</span><span class="p">)</span>
 </code></pre></div>
-<p>Returns the smallest of the two inputs.</p>
+<p>Returns the smallest of the two inputs: rhs &lt; lhs ? rhs : lhs, as std::min. When the inputs are equal (for example +0.0 and -0.0) or when one of them is NaN, the result is lhs.</p>
 <h3 id="scalar_max">scalar_max<a class="headerlink" href="#scalar_max" title="Permanent link">&para;</a></h3>
 <div class="highlight"><pre><span></span><code><span class="kt">double</span><span class="w"> </span><span class="n">scalar_max</span><span class="p">(</span><span class="kt">double</span><span class="w"> </span><span class="n">left</span><span class="p">,</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="n">right</span><span class="p">)</span>
 </code></pre></div>
-<p>Returns the largest of the two inputs.</p>
+<p>Returns the largest of the two inputs: lhs &lt; rhs ? rhs : lhs, as std::max. When the inputs are equal (for example +0.0 and -0.0) or when one of them is NaN, the result is lhs.</p>
 <h3 id="scalar_equal">scalar_equal<a class="headerlink" href="#scalar_equal" title="Permanent link">&para;</a></h3>
 <div class="highlight"><pre><span></span><code><span class="k">constexpr</span><span class="w"> </span><span class="kt">bool</span><span class="w"> </span><span class="n">scalar_equal</span><span class="p">(</span><span class="kt">double</span><span class="w"> </span><span class="n">lhs</span><span class="p">,</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="n">rhs</span><span class="p">)</span>
 </code></pre></div>
