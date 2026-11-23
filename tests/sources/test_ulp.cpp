@@ -609,6 +609,7 @@ namespace
 
 #if defined(RTM_NEON_INTRINSICS)
 		// With NEON, the float32 scalar trigonometric functions, vector_asin, and vector_acos call the C library.
+		// With ARMv7, vector_atan2 also calls it (scalar_atan2 for each lane).
 		// The quaternion functions that call scalar_sincos or scalar_acos also call it.
 		switch (function)
 		{
@@ -616,8 +617,13 @@ namespace
 		case ulp_function::cos:
 		case ulp_function::tan:
 		case ulp_function::atan:
-		case ulp_function::atan2:
 			return is_alternative;
+		case ulp_function::atan2:
+#if defined(RTM_NEON64_INTRINSICS)
+			return is_alternative;
+#else
+			return true;
+#endif
 		case ulp_function::asin:
 		case ulp_function::acos:
 		case ulp_function::quat_slerp:

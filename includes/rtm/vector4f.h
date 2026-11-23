@@ -36,6 +36,7 @@
 #include "rtm/impl/memory_utils.h"
 #include "rtm/impl/vector_common.h"
 
+#include <cstdint>
 #include <cstring>
 #include <limits>
 
@@ -44,6 +45,38 @@ RTM_IMPL_FILE_PRAGMA_PUSH
 namespace rtm
 {
 	RTM_IMPL_VERSION_NAMESPACE_BEGIN
+
+#if defined(RTM_SSE2_INTRINSICS)
+	namespace rtm_impl
+	{
+		// MSVC (VS2019, VS2022, and VS2026 up to 18.2) replaces _mm_load_ss and _mm_load_sd with a load of 16 bytes when the code
+		// also loads 16 bytes from the same address. Then the upper components are not zero.
+		// An integer load (movd) and _mm_loadl_pd into a zero vector do not have this problem.
+		// VS2026 18.6 (19.51.36246) does not have this bug. We did not examine the versions 18.3 to 18.5.
+
+		// Loads one float into [x] and sets [yzw] to zero
+		RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE __m128 RTM_SIMD_CALL vector4f_load_x_zero(const float* input) RTM_NO_EXCEPT
+		{
+#if defined(RTM_COMPILER_MSVC) && _MSC_FULL_VER < 195136246
+			int32_t bits;
+			std::memcpy(&bits, input, sizeof(bits));
+			return _mm_castsi128_ps(_mm_cvtsi32_si128(bits));
+#else
+			return _mm_load_ss(input);
+#endif
+		}
+
+		// Loads two floats into [xy] and sets [zw] to zero
+		RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE __m128 RTM_SIMD_CALL vector4f_load_xy_zero(const float* input) RTM_NO_EXCEPT
+		{
+#if defined(RTM_COMPILER_MSVC) && _MSC_FULL_VER < 195136246
+			return _mm_castpd_ps(_mm_loadl_pd(_mm_setzero_pd(), bit_cast<const double*>(input)));
+#else
+			return _mm_castpd_ps(_mm_load_sd(bit_cast<const double*>(input)));
+#endif
+		}
+	}
+#endif
 
 	//////////////////////////////////////////////////////////////////////////
 	/// \name Setters, getters, and casts
@@ -69,7 +102,7 @@ namespace rtm
 	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE vector4f RTM_SIMD_CALL vector_load1(const float* input) RTM_NO_EXCEPT
 	{
 #if defined(RTM_SSE2_INTRINSICS)
-		return _mm_load_ss(input);
+		return rtm_impl::vector4f_load_x_zero(input);
 #elif defined(RTM_WASM128_INTRINSICS)
 		return wasm_v128_load32_zero(input);
 #elif defined(RTM_NEON_INTRINSICS)
@@ -83,7 +116,7 @@ namespace rtm
 	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE vector4f RTM_SIMD_CALL vector_load2(const float* input) RTM_NO_EXCEPT
 	{
 #if defined(RTM_SSE2_INTRINSICS)
-		return _mm_castpd_ps(_mm_load_sd(rtm_impl::bit_cast<const double*>(input)));
+		return rtm_impl::vector4f_load_xy_zero(input);
 #elif defined(RTM_WASM128_INTRINSICS)
 		return wasm_v128_load64_zero(input);
 #elif defined(RTM_NEON_INTRINSICS)
@@ -98,8 +131,8 @@ namespace rtm
 	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE vector4f RTM_SIMD_CALL vector_load3(const float* input) RTM_NO_EXCEPT
 	{
 #if defined(RTM_SSE2_INTRINSICS)
-		const __m128 xy = _mm_castpd_ps(_mm_load_sd(rtm_impl::bit_cast<const double*>(input)));
-		const __m128 z = _mm_load_ss(input + 2);
+		const __m128 xy = rtm_impl::vector4f_load_xy_zero(input);
+		const __m128 z = rtm_impl::vector4f_load_x_zero(input + 2);
 		return _mm_movelh_ps(xy, z);
 #elif defined(RTM_WASM128_INTRINSICS)
 		return wasm_v128_load32_lane(input + 2, wasm_v128_load64_zero(input), 2);
@@ -130,7 +163,7 @@ namespace rtm
 	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE vector4f RTM_SIMD_CALL vector_load2(const float2f* input) RTM_NO_EXCEPT
 	{
 #if defined(RTM_SSE2_INTRINSICS)
-		return _mm_castpd_ps(_mm_load_sd(rtm_impl::bit_cast<const double*>(&input->x)));
+		return rtm_impl::vector4f_load_xy_zero(&input->x);
 #elif defined(RTM_WASM128_INTRINSICS)
 		return wasm_v128_load64_zero(&input->x);
 #elif defined(RTM_NEON_INTRINSICS)
@@ -145,8 +178,8 @@ namespace rtm
 	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE vector4f RTM_SIMD_CALL vector_load3(const float3f* input) RTM_NO_EXCEPT
 	{
 #if defined(RTM_SSE2_INTRINSICS)
-		const __m128 xy = _mm_castpd_ps(_mm_load_sd(rtm_impl::bit_cast<const double*>(&input->x)));
-		const __m128 z = _mm_load_ss(&input->z);
+		const __m128 xy = rtm_impl::vector4f_load_xy_zero(&input->x);
+		const __m128 z = rtm_impl::vector4f_load_x_zero(&input->z);
 		return _mm_movelh_ps(xy, z);
 #elif defined(RTM_WASM128_INTRINSICS)
 		return wasm_v128_load32_lane(&input->z, wasm_v128_load64_zero(&input->x), 2);

@@ -45,6 +45,7 @@
 
 ### Fixes
 
+*  Work around an MSVC optimizer bug (VS2019, VS2022, and VS2026 up to 18.2) in the float32 `vector_load1`, `vector_load2`, and `vector_load3`: when the code also loaded 16 bytes from the same address, MSVC replaced `_mm_load_ss` and `_mm_load_sd` with that load, and the [yzw], [zw], or [w] components were not zero. With MSVC before VS2026 18.6, these functions now use an integer load and `_mm_loadl_pd` into a zero vector
 *  Fix float32 `vector_acos(-0.0)` with SSE2 and WASM: the result was -pi/2 and is now pi/2
 *  Fix `quat_ensure_positive_w` without SIMD when [w] is -0.0: the function now tests the sign bit of [w] as the SSE2, WASM, and NEON code paths do. The previous code returned the input, and the SIMD code paths returned the negated input
 *  Disable floating point contraction in the headers with Clang. `float_control(precise, on)` does not disable it: Clang merged a multiply and an add into one FMA instruction in the scalar code, for example on ARM64 and with `-mfma`. Thus the scalar code path gave different results on different targets. Clang ignores `float_control` on some targets (for example ARMv7 and WASM), thus the headers disable contraction only on x86, x64, AArch64 (Clang 16+, Apple Clang 15+), and RISC-V (Clang 18+). With `-ffp-contract=fast`, LLVM Clang ignores the pragma: use `-ffp-contract=fast-honor-pragmas`
