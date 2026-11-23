@@ -67,7 +67,9 @@ namespace rtm
 		return vreinterpretq_f32_u32(veorq_u32(input_u32, bias));
 #else
 		// We test the sign bit as the SIMD code paths do: when [w] is -0.0, the result has a [w] of +0.0
-		return std::signbit(quat_get_w(input)) ? quat_neg(input) : input;
+		// Older libc++ versions declare std::signbit as a template for arithmetic types only: give it a float
+		const float input_w = quat_get_w(input);
+		return std::signbit(input_w) ? quat_neg(input) : input;
 #endif
 	}
 
