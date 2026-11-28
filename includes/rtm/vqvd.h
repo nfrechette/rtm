@@ -55,14 +55,14 @@ namespace rtm
 	RTM_IMPL_VERSION_NAMESPACE_BEGIN
 
 	/// Casts a VQV transform float32 variant to a float64 variant.
-	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE vqvd RTM_SIMD_CALL vqv_cast(vqvf_arg0 input) RTM_NO_EXCEPT
+	RTM_NO_DISCARD RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE vqvd RTM_SIMD_CALL vqv_cast(vqvf_arg0 input) RTM_NO_EXCEPT
 	{
 		return vqvd{ quat_cast(input.rotation), vector_cast(input.translation), vector_cast(input.scale) };
 	}
 
 	/// Converts a pure rotation 3x3 matrix into a VQV transform.
 	/// The translation/scale will be the identity.
-	RTM_DISABLE_SECURITY_COOKIE_CHECK inline vqvd RTM_SIMD_CALL vqv_from_matrix(matrix3x3d_arg0 input) RTM_NO_EXCEPT
+	RTM_NO_DISCARD RTM_DISABLE_SECURITY_COOKIE_CHECK inline vqvd RTM_SIMD_CALL vqv_from_matrix(matrix3x3d_arg0 input) RTM_NO_EXCEPT
 	{
 		const quatd rotation = rtm_impl::quat_from_matrix(input.x_axis, input.y_axis, input.z_axis);
 		const vector4d translation = vector_zero();
@@ -71,7 +71,7 @@ namespace rtm
 	}
 
 	/// Converts a 3x4 affine matrix into a VQV transform.
-	RTM_DISABLE_SECURITY_COOKIE_CHECK inline vqvd RTM_SIMD_CALL vqv_from_matrix(matrix3x4d_arg0 input) RTM_NO_EXCEPT
+	RTM_NO_DISCARD RTM_DISABLE_SECURITY_COOKIE_CHECK inline vqvd RTM_SIMD_CALL vqv_from_matrix(matrix3x4d_arg0 input) RTM_NO_EXCEPT
 	{
 		// Let us define the following:
 		// A = S * R * T
@@ -361,7 +361,7 @@ namespace rtm
 	/// Multiplication order is as follow: local_to_world = vqv_mul(local_to_object, object_to_world)
 	/// NOTE: When scale is present, multiplication will not properly handle skew/shear,
 	/// use affine matrices if you have issues.
-	RTM_DISABLE_SECURITY_COOKIE_CHECK inline vqvd RTM_SIMD_CALL vqv_mul(vqvd_arg0 lhs, vqvd_arg1 rhs) RTM_NO_EXCEPT
+	RTM_NO_DISCARD RTM_DISABLE_SECURITY_COOKIE_CHECK inline vqvd RTM_SIMD_CALL vqv_mul(vqvd_arg0 lhs, vqvd_arg1 rhs) RTM_NO_EXCEPT
 	{
 		const vector4d min_scale = vector_min(lhs.scale, rhs.scale);
 		const vector4d scale = vector_mul(lhs.scale, rhs.scale);
@@ -390,7 +390,7 @@ namespace rtm
 	/// Multiplication order is as follow: local_to_world = vqv_mul(local_to_object, object_to_world)
 	/// Deprecated: use a VQ transform and vq_mul(..) instead.
 	RTM_DEPRECATED("Use a VQ transform and 'vq_mul' instead. To be removed in 2.6.")
-	RTM_DISABLE_SECURITY_COOKIE_CHECK inline vqvd RTM_SIMD_CALL vqv_mul_no_scale(vqvd_arg0 lhs, vqvd_arg1 rhs) RTM_NO_EXCEPT
+	RTM_NO_DISCARD RTM_DISABLE_SECURITY_COOKIE_CHECK inline vqvd RTM_SIMD_CALL vqv_mul_no_scale(vqvd_arg0 lhs, vqvd_arg1 rhs) RTM_NO_EXCEPT
 	{
 		const quatd rotation = quat_mul(lhs.rotation, rhs.rotation);
 		const vector4d translation = vector_add(quat_mul_vector3(lhs.translation, rhs.rotation), rhs.translation);
@@ -399,7 +399,7 @@ namespace rtm
 
 	/// Multiplies a VQV transform and a 3D point.
 	/// Multiplication order is as follow: world_position = vqv_mul_point3(local_position, local_to_world)
-	RTM_DISABLE_SECURITY_COOKIE_CHECK inline vector4d RTM_SIMD_CALL vqv_mul_point3(vector4d_arg0 point, vqvd_arg1 vqv) RTM_NO_EXCEPT
+	RTM_NO_DISCARD RTM_DISABLE_SECURITY_COOKIE_CHECK inline vector4d RTM_SIMD_CALL vqv_mul_point3(vector4d_arg0 point, vqvd_arg1 vqv) RTM_NO_EXCEPT
 	{
 		return vector_add(quat_mul_vector3(vector_mul(point, vqv.scale), vqv.rotation), vqv.translation);
 	}
@@ -408,7 +408,7 @@ namespace rtm
 	/// Multiplication order is as follow: world_position = vqv_mul_point3_no_scale(local_position, local_to_world)
 	/// Deprecated: use a VQ transform and vq_mul_point3(..) instead.
 	RTM_DEPRECATED("Use a VQ transform and 'vq_mul_point3' instead. To be removed in 2.6.")
-	RTM_DISABLE_SECURITY_COOKIE_CHECK inline vector4d RTM_SIMD_CALL vqv_mul_point3_no_scale(vector4d_arg0 point, vqvd_arg1 vqv) RTM_NO_EXCEPT
+	RTM_NO_DISCARD RTM_DISABLE_SECURITY_COOKIE_CHECK inline vector4d RTM_SIMD_CALL vqv_mul_point3_no_scale(vector4d_arg0 point, vqvd_arg1 vqv) RTM_NO_EXCEPT
 	{
 		return vector_add(quat_mul_vector3(point, vqv.rotation), vqv.translation);
 	}
@@ -419,7 +419,7 @@ namespace rtm
 	/// then the rotation, then the scale.
 	/// If the scale contains zero, the result is undefined.
 	/// For a safe alternative, supply a fallback scale value and a threshold.
-	RTM_DISABLE_SECURITY_COOKIE_CHECK inline vector4d RTM_SIMD_CALL vqv_inverse_mul_point3(vector4d_arg0 point, vqvd_arg1 vqv) RTM_NO_EXCEPT
+	RTM_NO_DISCARD RTM_DISABLE_SECURITY_COOKIE_CHECK inline vector4d RTM_SIMD_CALL vqv_inverse_mul_point3(vector4d_arg0 point, vqvd_arg1 vqv) RTM_NO_EXCEPT
 	{
 		return vector_div(quat_mul_vector3(vector_sub(point, vqv.translation), quat_conjugate(vqv.rotation)), vqv.scale);
 	}
@@ -429,7 +429,7 @@ namespace rtm
 	/// If a scale component has an absolute value below or equal to the supplied threshold,
 	/// the function uses the fallback scale component instead.
 	/// The default threshold is the smallest normal value. It prevents a division by zero.
-	RTM_DISABLE_SECURITY_COOKIE_CHECK inline vector4d RTM_SIMD_CALL vqv_inverse_mul_point3(vector4d_arg0 point, vqvd_arg1 vqv, vector4d_arg2 fallback_scale, double threshold = (std::numeric_limits<double>::min)()) RTM_NO_EXCEPT
+	RTM_NO_DISCARD RTM_DISABLE_SECURITY_COOKIE_CHECK inline vector4d RTM_SIMD_CALL vqv_inverse_mul_point3(vector4d_arg0 point, vqvd_arg1 vqv, vector4d_arg2 fallback_scale, double threshold = (std::numeric_limits<double>::min)()) RTM_NO_EXCEPT
 	{
 		return vqv_inverse_mul_point3(point, rtm_impl::vqv_with_fallback_scale(vqv, fallback_scale, threshold));
 	}
@@ -443,7 +443,7 @@ namespace rtm
 	/// When a scale component is negative, the function goes through a matrix, as vqv_mul does.
 	/// If the scale of rhs contains zero, the result is undefined.
 	/// For a safe alternative, supply a fallback scale value and a threshold.
-	RTM_DISABLE_SECURITY_COOKIE_CHECK inline vqvd RTM_SIMD_CALL vqv_mul_inverse(vqvd_arg0 lhs, vqvd_arg1 rhs) RTM_NO_EXCEPT
+	RTM_NO_DISCARD RTM_DISABLE_SECURITY_COOKIE_CHECK inline vqvd RTM_SIMD_CALL vqv_mul_inverse(vqvd_arg0 lhs, vqvd_arg1 rhs) RTM_NO_EXCEPT
 	{
 		const vector4d min_scale = vector_min(lhs.scale, rhs.scale);
 		const vector4d scale = vector_div(lhs.scale, rhs.scale);
@@ -474,7 +474,7 @@ namespace rtm
 	/// If a scale component of rhs has an absolute value below or equal to the supplied threshold,
 	/// the function uses the fallback scale component instead.
 	/// The default threshold is the smallest normal value. It prevents a division by zero.
-	RTM_DISABLE_SECURITY_COOKIE_CHECK inline vqvd RTM_SIMD_CALL vqv_mul_inverse(vqvd_arg0 lhs, vqvd_arg1 rhs, vector4d_arg2 fallback_scale, double threshold = (std::numeric_limits<double>::min)()) RTM_NO_EXCEPT
+	RTM_NO_DISCARD RTM_DISABLE_SECURITY_COOKIE_CHECK inline vqvd RTM_SIMD_CALL vqv_mul_inverse(vqvd_arg0 lhs, vqvd_arg1 rhs, vector4d_arg2 fallback_scale, double threshold = (std::numeric_limits<double>::min)()) RTM_NO_EXCEPT
 	{
 		return vqv_mul_inverse(lhs, rtm_impl::vqv_with_fallback_scale(rhs, fallback_scale, threshold));
 	}
@@ -488,7 +488,7 @@ namespace rtm
 	/// When a scale component is negative, the function goes through a matrix, as vqv_mul does.
 	/// If the scale of lhs contains zero, the result is undefined.
 	/// For a safe alternative, supply a fallback scale value and a threshold.
-	RTM_DISABLE_SECURITY_COOKIE_CHECK inline vqvd RTM_SIMD_CALL vqv_inverse_mul(vqvd_arg0 lhs, vqvd_arg1 rhs) RTM_NO_EXCEPT
+	RTM_NO_DISCARD RTM_DISABLE_SECURITY_COOKIE_CHECK inline vqvd RTM_SIMD_CALL vqv_inverse_mul(vqvd_arg0 lhs, vqvd_arg1 rhs) RTM_NO_EXCEPT
 	{
 		const vector4d min_scale = vector_min(lhs.scale, rhs.scale);
 		const vector4d scale = vector_div(rhs.scale, lhs.scale);
@@ -520,7 +520,7 @@ namespace rtm
 	/// If a scale component of lhs has an absolute value below or equal to the supplied threshold,
 	/// the function uses the fallback scale component instead.
 	/// The default threshold is the smallest normal value. It prevents a division by zero.
-	RTM_DISABLE_SECURITY_COOKIE_CHECK inline vqvd RTM_SIMD_CALL vqv_inverse_mul(vqvd_arg0 lhs, vqvd_arg1 rhs, vector4d_arg2 fallback_scale, double threshold = (std::numeric_limits<double>::min)()) RTM_NO_EXCEPT
+	RTM_NO_DISCARD RTM_DISABLE_SECURITY_COOKIE_CHECK inline vqvd RTM_SIMD_CALL vqv_inverse_mul(vqvd_arg0 lhs, vqvd_arg1 rhs, vector4d_arg2 fallback_scale, double threshold = (std::numeric_limits<double>::min)()) RTM_NO_EXCEPT
 	{
 		return vqv_inverse_mul(rtm_impl::vqv_with_fallback_scale(lhs, fallback_scale, threshold), rhs);
 	}
@@ -531,7 +531,7 @@ namespace rtm
 	/// WARNING: A VQV transform cannot hold the inverse when the scale is not uniform.
 	/// The result is incorrect for a point and for a multiplication.
 	RTM_DEPRECATED("Use 'vqv_inverse_mul_point3', 'vqv_mul_inverse', or 'vqv_inverse_mul' instead. To be removed in 2.6.")
-	RTM_DISABLE_SECURITY_COOKIE_CHECK inline vqvd RTM_SIMD_CALL vqv_inverse(vqvd_arg0 input) RTM_NO_EXCEPT
+	RTM_NO_DISCARD RTM_DISABLE_SECURITY_COOKIE_CHECK inline vqvd RTM_SIMD_CALL vqv_inverse(vqvd_arg0 input) RTM_NO_EXCEPT
 	{
 		const quatd inv_rotation = quat_conjugate(input.rotation);
 		const vector4d inv_scale = vector_reciprocal(input.scale);
@@ -546,7 +546,7 @@ namespace rtm
 	/// WARNING: A VQV transform cannot hold the inverse when the scale is not uniform.
 	/// The result is incorrect for a point and for a multiplication.
 	RTM_DEPRECATED("Use 'vqv_inverse_mul_point3', 'vqv_mul_inverse', or 'vqv_inverse_mul' instead. To be removed in 2.6.")
-	RTM_DISABLE_SECURITY_COOKIE_CHECK inline vqvd RTM_SIMD_CALL vqv_inverse(vqvd_arg0 input, vector4d_arg1 fallback_scale, double threshold = (std::numeric_limits<double>::min)()) RTM_NO_EXCEPT
+	RTM_NO_DISCARD RTM_DISABLE_SECURITY_COOKIE_CHECK inline vqvd RTM_SIMD_CALL vqv_inverse(vqvd_arg0 input, vector4d_arg1 fallback_scale, double threshold = (std::numeric_limits<double>::min)()) RTM_NO_EXCEPT
 	{
 		const quatd inv_rotation = quat_conjugate(input.rotation);
 		const mask4d is_scale_zero = vector_less_equal(vector_abs(input.scale), vector_set(threshold));
@@ -560,7 +560,7 @@ namespace rtm
 	/// The resulting VQV transform will have the input scale.
 	/// Deprecated: use a VQ transform and vq_inverse(..) instead.
 	RTM_DEPRECATED("Use a VQ transform and 'vq_inverse' instead. To be removed in 2.6.")
-	RTM_DISABLE_SECURITY_COOKIE_CHECK inline vqvd RTM_SIMD_CALL vqv_inverse_no_scale(vqvd_arg0 input) RTM_NO_EXCEPT
+	RTM_NO_DISCARD RTM_DISABLE_SECURITY_COOKIE_CHECK inline vqvd RTM_SIMD_CALL vqv_inverse_no_scale(vqvd_arg0 input) RTM_NO_EXCEPT
 	{
 		const quatd inv_rotation = quat_conjugate(input.rotation);
 		const vector4d inv_translation = vector_neg(quat_mul_vector3(input.translation, inv_rotation));
@@ -568,7 +568,7 @@ namespace rtm
 	}
 
 	/// Returns a VQV transforms with the rotation part normalized.
-	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE vqvd RTM_SIMD_CALL vqv_normalize(vqvd_arg0 input) RTM_NO_EXCEPT
+	RTM_NO_DISCARD RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE vqvd RTM_SIMD_CALL vqv_normalize(vqvd_arg0 input) RTM_NO_EXCEPT
 	{
 		const quatd rotation = quat_normalize(input.rotation);
 		return vqv_set(rotation, input.translation, input.scale);
@@ -579,7 +579,7 @@ namespace rtm
 	/// Interpolation is stable and will return 'start' when alpha is 0.0 and 'end' when it is 1.0.
 	/// This is the same instruction count when FMA is present but it might be slightly slower
 	/// due to the extra multiplication compared to: start + (alpha * (end - start)).
-	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE vqvd RTM_SIMD_CALL vqv_lerp(vqvd_arg0 start, vqvd_arg1 end, double alpha) RTM_NO_EXCEPT
+	RTM_NO_DISCARD RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE vqvd RTM_SIMD_CALL vqv_lerp(vqvd_arg0 start, vqvd_arg1 end, double alpha) RTM_NO_EXCEPT
 	{
 		const quatd rotation = quat_lerp(start.rotation, end.rotation, alpha);
 		const vector4d translation = vector_lerp(start.translation, end.translation, alpha);
@@ -593,7 +593,7 @@ namespace rtm
 	/// Interpolation is stable and will return 'start' when alpha is 0.0 and 'end' when it is 1.0.
 	/// This is the same instruction count when FMA is present but it might be slightly slower
 	/// due to the extra multiplication compared to: start + (alpha * (end - start)).
-	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE vqvd RTM_SIMD_CALL vqv_lerp(vqvd_arg0 start, vqvd_arg1 end, scalard_argn alpha) RTM_NO_EXCEPT
+	RTM_NO_DISCARD RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE vqvd RTM_SIMD_CALL vqv_lerp(vqvd_arg0 start, vqvd_arg1 end, scalard_argn alpha) RTM_NO_EXCEPT
 	{
 		const quatd rotation = quat_lerp(start.rotation, end.rotation, alpha);
 		const vector4d translation = vector_lerp(start.translation, end.translation, alpha);
@@ -610,7 +610,7 @@ namespace rtm
 	/// The resulting VQV transform will have the start scale.
 	/// Deprecated: use a VQ transform and vq_lerp(..) instead.
 	RTM_DEPRECATED("Use a VQ transform and 'vq_lerp' instead. To be removed in 2.6.")
-	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE vqvd RTM_SIMD_CALL vqv_lerp_no_scale(vqvd_arg0 start, vqvd_arg1 end, double alpha) RTM_NO_EXCEPT
+	RTM_NO_DISCARD RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE vqvd RTM_SIMD_CALL vqv_lerp_no_scale(vqvd_arg0 start, vqvd_arg1 end, double alpha) RTM_NO_EXCEPT
 	{
 		const quatd rotation = quat_lerp(start.rotation, end.rotation, alpha);
 		const vector4d translation = vector_lerp(start.translation, end.translation, alpha);
@@ -626,7 +626,7 @@ namespace rtm
 	/// The resulting VQV transform will have the start scale.
 	/// Deprecated: use a VQ transform and vq_lerp(..) instead.
 	RTM_DEPRECATED("Use a VQ transform and 'vq_lerp' instead. To be removed in 2.6.")
-	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE vqvd RTM_SIMD_CALL vqv_lerp_no_scale(vqvd_arg0 start, vqvd_arg1 end, scalard_argn alpha) RTM_NO_EXCEPT
+	RTM_NO_DISCARD RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE vqvd RTM_SIMD_CALL vqv_lerp_no_scale(vqvd_arg0 start, vqvd_arg1 end, scalard_argn alpha) RTM_NO_EXCEPT
 	{
 		const quatd rotation = quat_lerp(start.rotation, end.rotation, alpha);
 		const vector4d translation = vector_lerp(start.translation, end.translation, alpha);
@@ -655,7 +655,7 @@ namespace rtm
 	/// The function interpolates the rotation with quat_slerp(..), the translation with vector_lerp(..),
 	/// and the scale with vector_eerp(..). If the two scales of a component have a different sign or if
 	/// one scale is zero, the function uses vector_lerp(..) for that component.
-	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE vqvd RTM_SIMD_CALL vqv_slerp(vqvd_arg0 start, vqvd_arg1 end, double alpha) RTM_NO_EXCEPT
+	RTM_NO_DISCARD RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE vqvd RTM_SIMD_CALL vqv_slerp(vqvd_arg0 start, vqvd_arg1 end, double alpha) RTM_NO_EXCEPT
 	{
 		const quatd rotation = quat_slerp(start.rotation, end.rotation, alpha);
 		const vector4d translation = vector_lerp(start.translation, end.translation, alpha);
@@ -668,7 +668,7 @@ namespace rtm
 	/// The function interpolates the rotation with quat_slerp(..), the translation with vector_lerp(..),
 	/// and the scale with vector_eerp(..). If the two scales of a component have a different sign or if
 	/// one scale is zero, the function uses vector_lerp(..) for that component.
-	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE vqvd RTM_SIMD_CALL vqv_slerp(vqvd_arg0 start, vqvd_arg1 end, scalard_argn alpha) RTM_NO_EXCEPT
+	RTM_NO_DISCARD RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE vqvd RTM_SIMD_CALL vqv_slerp(vqvd_arg0 start, vqvd_arg1 end, scalard_argn alpha) RTM_NO_EXCEPT
 	{
 		const quatd rotation = quat_slerp(start.rotation, end.rotation, alpha);
 		const vector4d translation = vector_lerp(start.translation, end.translation, alpha);
@@ -681,7 +681,7 @@ namespace rtm
 	/// See quat_slerp(..)
 	/// Deprecated: use a VQ transform and vq_slerp(..) instead.
 	RTM_DEPRECATED("Use a VQ transform and 'vq_slerp' instead. To be removed in 2.6.")
-	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE vqvd RTM_SIMD_CALL vqv_slerp_no_scale(vqvd_arg0 start, vqvd_arg1 end, double alpha) RTM_NO_EXCEPT
+	RTM_NO_DISCARD RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE vqvd RTM_SIMD_CALL vqv_slerp_no_scale(vqvd_arg0 start, vqvd_arg1 end, double alpha) RTM_NO_EXCEPT
 	{
 		const quatd rotation = quat_slerp(start.rotation, end.rotation, alpha);
 		const vector4d translation = vector_lerp(start.translation, end.translation, alpha);
@@ -693,7 +693,7 @@ namespace rtm
 	/// See quat_slerp(..)
 	/// Deprecated: use a VQ transform and vq_slerp(..) instead.
 	RTM_DEPRECATED("Use a VQ transform and 'vq_slerp' instead. To be removed in 2.6.")
-	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE vqvd RTM_SIMD_CALL vqv_slerp_no_scale(vqvd_arg0 start, vqvd_arg1 end, scalard_argn alpha) RTM_NO_EXCEPT
+	RTM_NO_DISCARD RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE vqvd RTM_SIMD_CALL vqv_slerp_no_scale(vqvd_arg0 start, vqvd_arg1 end, scalard_argn alpha) RTM_NO_EXCEPT
 	{
 		const quatd rotation = quat_slerp(start.rotation, end.rotation, alpha);
 		const vector4d translation = vector_lerp(start.translation, end.translation, alpha);
@@ -702,7 +702,7 @@ namespace rtm
 #endif
 
 	/// Returns true if the input VQV does not contain any NaN or Inf, otherwise false.
-	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE bool RTM_SIMD_CALL vqv_is_finite(vqvd_arg0 input) RTM_NO_EXCEPT
+	RTM_NO_DISCARD RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE bool RTM_SIMD_CALL vqv_is_finite(vqvd_arg0 input) RTM_NO_EXCEPT
 	{
 		return quat_is_finite(input.rotation) && vector_is_finite3(input.translation) && vector_is_finite3(input.scale);
 	}

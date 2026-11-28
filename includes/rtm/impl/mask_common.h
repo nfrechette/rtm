@@ -156,7 +156,7 @@ namespace rtm
 	}
 
 	/// Creates a mask4 from all 4 bool components.
-	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE constexpr rtm_impl::mask4_bool_set RTM_SIMD_CALL mask_set(bool x, bool y, bool z, bool w) RTM_NO_EXCEPT
+	RTM_NO_DISCARD RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE constexpr rtm_impl::mask4_bool_set RTM_SIMD_CALL mask_set(bool x, bool y, bool z, bool w) RTM_NO_EXCEPT
 	{
 		return rtm_impl::mask4_bool_set{ x, y, z, w };
 	}
@@ -207,7 +207,7 @@ namespace rtm
 	}
 
 	/// Creates a mask4 from 4 uint32 components.
-	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE constexpr rtm_impl::mask4_uint32_set RTM_SIMD_CALL mask_set(uint32_t x, uint32_t y, uint32_t z, uint32_t w) RTM_NO_EXCEPT
+	RTM_NO_DISCARD RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE constexpr rtm_impl::mask4_uint32_set RTM_SIMD_CALL mask_set(uint32_t x, uint32_t y, uint32_t z, uint32_t w) RTM_NO_EXCEPT
 	{
 		return rtm_impl::mask4_uint32_set{ x, y, z, w };
 	}
@@ -254,19 +254,19 @@ namespace rtm
 	}
 
 	/// Creates a mask4 from 4 uint64 components.
-	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE constexpr rtm_impl::mask4_uint64_set RTM_SIMD_CALL mask_set(uint64_t x, uint64_t y, uint64_t z, uint64_t w) RTM_NO_EXCEPT
+	RTM_NO_DISCARD RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE constexpr rtm_impl::mask4_uint64_set RTM_SIMD_CALL mask_set(uint64_t x, uint64_t y, uint64_t z, uint64_t w) RTM_NO_EXCEPT
 	{
 		return rtm_impl::mask4_uint64_set{ x, y, z, w };
 	}
 
 	/// Creates a mask4 with all 4 components set to true.
-	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE constexpr rtm_impl::mask4_bool_set RTM_SIMD_CALL mask_true() RTM_NO_EXCEPT
+	RTM_NO_DISCARD RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE constexpr rtm_impl::mask4_bool_set RTM_SIMD_CALL mask_true() RTM_NO_EXCEPT
 	{
 		return rtm_impl::mask4_bool_set{ true, true, true, true };
 	}
 
 	/// Creates a mask4 with all 4 components set to false.
-	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE constexpr rtm_impl::mask4_bool_set RTM_SIMD_CALL mask_false() RTM_NO_EXCEPT
+	RTM_NO_DISCARD RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE constexpr rtm_impl::mask4_bool_set RTM_SIMD_CALL mask_false() RTM_NO_EXCEPT
 	{
 		return rtm_impl::mask4_bool_set{ false, false, false, false };
 	}

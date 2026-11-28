@@ -25,6 +25,7 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 #include "rtm/impl/detect_compiler.h"
+#include "rtm/impl/detect_cpp_version.h"
 
 // Because this library is made entirely of headers, we have no control over the
 // compilation flags used. However, in some cases, certain options must be forced.
@@ -129,6 +130,18 @@
 	#define RTM_FORCE_NOINLINE __attribute__((noinline))
 #else
 	#define RTM_FORCE_NOINLINE
+#endif
+
+// Marks a function whose return value must be used.
+// With C++17 and later, the compiler gives a warning when the caller does not use the return value.
+// With an earlier version, the macro is empty.
+// To use a different attribute, or none, define RTM_NO_DISCARD before you include RTM.
+#if !defined(RTM_NO_DISCARD)
+	#if RTM_CPP_VERSION >= RTM_CPP_VERSION_17
+		#define RTM_NO_DISCARD [[nodiscard]]
+	#else
+		#define RTM_NO_DISCARD
+	#endif
 #endif
 
 // Joins two pre-processor tokens: RTM_JOIN_TOKENS(foo, bar) yields 'foobar'

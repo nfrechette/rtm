@@ -90,7 +90,7 @@ RTM_IMPL_FILE_PRAGMA_PUSH
 		template<bool sign_bias> RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE constexpr bool operator!=(RTM_JOIN_TOKENS(float_constant_, name) <sign_bias> lhs, float rhs) noexcept { return float(lhs) != rhs; } \
 	} \
 	/* Function user code calls to return the constant value */ \
-	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE constexpr RTM_JOIN_TOKENS(rtm_impl::float_constant_, name) <true> name() noexcept { return RTM_JOIN_TOKENS(rtm_impl::float_constant_, name) <true>{}; }
+	RTM_NO_DISCARD RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE constexpr RTM_JOIN_TOKENS(rtm_impl::float_constant_, name) <true> name() noexcept { return RTM_JOIN_TOKENS(rtm_impl::float_constant_, name) <true>{}; }
 
 namespace rtm
 {

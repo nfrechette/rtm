@@ -52,6 +52,7 @@ PREDEFINED             = RTM_NO_INTRINSICS \
                          RTM_FORCE_INLINE=inline \
                          RTM_SIMD_CALL= \
                          RTM_NO_EXCEPT= \
+                         RTM_NO_DISCARD= \
                          "RTM_DEPRECATED(msg)=[[deprecated(msg)]]" \
                          RTM_IMPL_VERSION_NAMESPACE_BEGIN= \
                          RTM_IMPL_VERSION_NAMESPACE_END= \

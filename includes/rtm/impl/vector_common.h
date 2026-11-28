@@ -40,7 +40,7 @@ namespace rtm
 	RTM_IMPL_VERSION_NAMESPACE_BEGIN
 
 	/// Creates a vector4 from all 4 components.
-	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE vector4f RTM_SIMD_CALL vector_set(float x, float y, float z, float w) RTM_NO_EXCEPT
+	RTM_NO_DISCARD RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE vector4f RTM_SIMD_CALL vector_set(float x, float y, float z, float w) RTM_NO_EXCEPT
 	{
 #if defined(RTM_SSE2_INTRINSICS)
 		return _mm_set_ps(w, z, y, x);
@@ -56,7 +56,7 @@ namespace rtm
 	}
 
 	/// Creates a vector4 from the [xyz] components and sets [w] to 0.0.
-	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE vector4f RTM_SIMD_CALL vector_set(float x, float y, float z) RTM_NO_EXCEPT
+	RTM_NO_DISCARD RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE vector4f RTM_SIMD_CALL vector_set(float x, float y, float z) RTM_NO_EXCEPT
 	{
 #if defined(RTM_SSE2_INTRINSICS)
 		return _mm_set_ps(0.0F, z, y, x);
@@ -72,7 +72,7 @@ namespace rtm
 	}
 
 	/// Creates a vector4 from a single value for all 4 components.
-	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE vector4f RTM_SIMD_CALL vector_set(float xyzw) RTM_NO_EXCEPT
+	RTM_NO_DISCARD RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE vector4f RTM_SIMD_CALL vector_set(float xyzw) RTM_NO_EXCEPT
 	{
 #if defined(RTM_SSE2_INTRINSICS)
 		return _mm_set_ps1(xyzw);
@@ -87,7 +87,7 @@ namespace rtm
 
 #if defined(RTM_SSE2_INTRINSICS)
 	/// Creates a vector4 from all 4 components.
-	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE vector4f RTM_SIMD_CALL vector_set(scalarf_arg0 x, scalarf_arg1 y, scalarf_arg2 z, scalarf_arg3 w) RTM_NO_EXCEPT
+	RTM_NO_DISCARD RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE vector4f RTM_SIMD_CALL vector_set(scalarf_arg0 x, scalarf_arg1 y, scalarf_arg2 z, scalarf_arg3 w) RTM_NO_EXCEPT
 	{
 		const __m128 xy = _mm_unpacklo_ps(x.value, y.value);
 		const __m128 zw = _mm_unpacklo_ps(z.value, w.value);
@@ -95,7 +95,7 @@ namespace rtm
 	}
 
 	/// Creates a vector4 from the [xyz] components and sets [w] to 0.0.
-	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE vector4f RTM_SIMD_CALL vector_set(scalarf_arg0 x, scalarf_arg1 y, scalarf_arg2 z) RTM_NO_EXCEPT
+	RTM_NO_DISCARD RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE vector4f RTM_SIMD_CALL vector_set(scalarf_arg0 x, scalarf_arg1 y, scalarf_arg2 z) RTM_NO_EXCEPT
 	{
 		const __m128 xy = _mm_unpacklo_ps(x.value, y.value);
 		const __m128 zw = _mm_unpacklo_ps(z.value, _mm_setzero_ps());
@@ -103,14 +103,14 @@ namespace rtm
 	}
 
 	/// Creates a vector4 from a single value for all 4 components.
-	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE vector4f RTM_SIMD_CALL vector_set(scalarf_arg0 xyzw) RTM_NO_EXCEPT
+	RTM_NO_DISCARD RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE vector4f RTM_SIMD_CALL vector_set(scalarf_arg0 xyzw) RTM_NO_EXCEPT
 	{
 		return _mm_shuffle_ps(xyzw.value, xyzw.value, _MM_SHUFFLE(0, 0, 0, 0));
 	}
 #endif
 
 	/// Creates a vector4 from all 4 components.
-	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE vector4d RTM_SIMD_CALL vector_set(double x, double y, double z, double w) RTM_NO_EXCEPT
+	RTM_NO_DISCARD RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE vector4d RTM_SIMD_CALL vector_set(double x, double y, double z, double w) RTM_NO_EXCEPT
 	{
 #if defined(RTM_SSE2_INTRINSICS)
 		return vector4d{ _mm_set_pd(y, x), _mm_set_pd(w, z) };
@@ -124,7 +124,7 @@ namespace rtm
 	}
 
 	/// Creates a vector4 from the [xyz] components and sets [w] to 0.0.
-	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE vector4d RTM_SIMD_CALL vector_set(double x, double y, double z) RTM_NO_EXCEPT
+	RTM_NO_DISCARD RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE vector4d RTM_SIMD_CALL vector_set(double x, double y, double z) RTM_NO_EXCEPT
 	{
 #if defined(RTM_SSE2_INTRINSICS)
 		return vector4d{ _mm_set_pd(y, x), _mm_set_pd(0.0, z) };
@@ -138,7 +138,7 @@ namespace rtm
 	}
 
 	/// Creates a vector4 from a single value for all 4 components.
-	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE vector4d RTM_SIMD_CALL vector_set(double xyzw) RTM_NO_EXCEPT
+	RTM_NO_DISCARD RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE vector4d RTM_SIMD_CALL vector_set(double xyzw) RTM_NO_EXCEPT
 	{
 #if defined(RTM_SSE2_INTRINSICS)
 		const __m128d xyzw_pd = _mm_set1_pd(xyzw);
@@ -156,7 +156,7 @@ namespace rtm
 
 #if defined(RTM_SSE2_INTRINSICS)
 	/// Creates a vector4 from all 4 components.
-	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE vector4d RTM_SIMD_CALL vector_set(scalard_arg0 x, scalard_arg1 y, scalard_arg2 z, scalard_arg3 w) RTM_NO_EXCEPT
+	RTM_NO_DISCARD RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE vector4d RTM_SIMD_CALL vector_set(scalard_arg0 x, scalard_arg1 y, scalard_arg2 z, scalard_arg3 w) RTM_NO_EXCEPT
 	{
 		const __m128d xy = _mm_unpacklo_pd(x.value, y.value);
 		const __m128d zw = _mm_unpacklo_pd(z.value, w.value);
@@ -164,7 +164,7 @@ namespace rtm
 	}
 
 	/// Creates a vector4 from the [xyz] components and sets [w] to 0.0.
-	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE vector4d RTM_SIMD_CALL vector_set(scalard_arg0 x, scalard_arg1 y, scalard_arg2 z) RTM_NO_EXCEPT
+	RTM_NO_DISCARD RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE vector4d RTM_SIMD_CALL vector_set(scalard_arg0 x, scalard_arg1 y, scalard_arg2 z) RTM_NO_EXCEPT
 	{
 		const __m128d xy = _mm_unpacklo_pd(x.value, y.value);
 		const __m128d zw = _mm_unpacklo_pd(z.value, _mm_setzero_pd());
@@ -172,7 +172,7 @@ namespace rtm
 	}
 
 	/// Creates a vector4 from a single value for all 4 components.
-	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE vector4d RTM_SIMD_CALL vector_set(scalard_arg0 xyzw) RTM_NO_EXCEPT
+	RTM_NO_DISCARD RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE vector4d RTM_SIMD_CALL vector_set(scalard_arg0 xyzw) RTM_NO_EXCEPT
 	{
 		const __m128d xyzw_pd = _mm_shuffle_pd(xyzw.value, xyzw.value, 0);
 		return vector4d{ xyzw_pd, xyzw_pd };
@@ -573,13 +573,13 @@ namespace rtm
 	}
 
 	/// Returns a vector consisting of all zeros.
-	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE constexpr rtm_impl::vector_zero_impl RTM_SIMD_CALL vector_zero() RTM_NO_EXCEPT
+	RTM_NO_DISCARD RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE constexpr rtm_impl::vector_zero_impl RTM_SIMD_CALL vector_zero() RTM_NO_EXCEPT
 	{
 		return rtm_impl::vector_zero_impl();
 	}
 
 	/// Returns a unit vector pointing in the forward direction of the default coordinate system (Z+).
-	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE constexpr rtm_impl::vector_constant_impl<rtm_impl::vector_constant::zero, rtm_impl::vector_constant::zero, rtm_impl::vector_constant::one, rtm_impl::vector_constant::zero> RTM_SIMD_CALL vector_coord_forward() RTM_NO_EXCEPT
+	RTM_NO_DISCARD RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE constexpr rtm_impl::vector_constant_impl<rtm_impl::vector_constant::zero, rtm_impl::vector_constant::zero, rtm_impl::vector_constant::one, rtm_impl::vector_constant::zero> RTM_SIMD_CALL vector_coord_forward() RTM_NO_EXCEPT
 	{
 		return rtm_impl::vector_constant_impl<
 			rtm_impl::vector_constant::zero,
@@ -589,7 +589,7 @@ namespace rtm
 	}
 
 	/// Returns a unit vector pointing in the up direction of the default coordinate system (Y+).
-	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE constexpr rtm_impl::vector_constant_impl<rtm_impl::vector_constant::zero, rtm_impl::vector_constant::one, rtm_impl::vector_constant::zero, rtm_impl::vector_constant::zero> RTM_SIMD_CALL vector_coord_up() RTM_NO_EXCEPT
+	RTM_NO_DISCARD RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE constexpr rtm_impl::vector_constant_impl<rtm_impl::vector_constant::zero, rtm_impl::vector_constant::one, rtm_impl::vector_constant::zero, rtm_impl::vector_constant::zero> RTM_SIMD_CALL vector_coord_up() RTM_NO_EXCEPT
 	{
 		return rtm_impl::vector_constant_impl<
 			rtm_impl::vector_constant::zero,
@@ -599,7 +599,7 @@ namespace rtm
 	}
 
 	/// Returns a unit vector pointing in the cross direction of the default coordinate system (X+).
-	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE constexpr rtm_impl::vector_constant_impl<rtm_impl::vector_constant::one, rtm_impl::vector_constant::zero, rtm_impl::vector_constant::zero, rtm_impl::vector_constant::zero> RTM_SIMD_CALL vector_coord_cross() RTM_NO_EXCEPT
+	RTM_NO_DISCARD RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE constexpr rtm_impl::vector_constant_impl<rtm_impl::vector_constant::one, rtm_impl::vector_constant::zero, rtm_impl::vector_constant::zero, rtm_impl::vector_constant::zero> RTM_SIMD_CALL vector_coord_cross() RTM_NO_EXCEPT
 	{
 		return rtm_impl::vector_constant_impl<
 			rtm_impl::vector_constant::one,
@@ -609,37 +609,37 @@ namespace rtm
 	}
 
 	/// Loads an unaligned vector4 from memory.
-	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE constexpr rtm_impl::vector_unaligned_loader<rtm_impl::vector_unaligned_loader_width::vec4> RTM_SIMD_CALL vector_load(const uint8_t* input) RTM_NO_EXCEPT
+	RTM_NO_DISCARD RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE constexpr rtm_impl::vector_unaligned_loader<rtm_impl::vector_unaligned_loader_width::vec4> RTM_SIMD_CALL vector_load(const uint8_t* input) RTM_NO_EXCEPT
 	{
 		return rtm_impl::vector_unaligned_loader<rtm_impl::vector_unaligned_loader_width::vec4>{ input };
 	}
 
 	/// Loads an unaligned vector1 from memory and sets the [yzw] components to zero.
-	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE constexpr rtm_impl::vector_unaligned_loader<rtm_impl::vector_unaligned_loader_width::vec1> RTM_SIMD_CALL vector_load1(const uint8_t* input) RTM_NO_EXCEPT
+	RTM_NO_DISCARD RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE constexpr rtm_impl::vector_unaligned_loader<rtm_impl::vector_unaligned_loader_width::vec1> RTM_SIMD_CALL vector_load1(const uint8_t* input) RTM_NO_EXCEPT
 	{
 		return rtm_impl::vector_unaligned_loader<rtm_impl::vector_unaligned_loader_width::vec1>{ input };
 	}
 
 	/// Loads an unaligned vector2 from memory and sets the [zw] components to zero.
-	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE constexpr rtm_impl::vector_unaligned_loader<rtm_impl::vector_unaligned_loader_width::vec2> RTM_SIMD_CALL vector_load2(const uint8_t* input) RTM_NO_EXCEPT
+	RTM_NO_DISCARD RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE constexpr rtm_impl::vector_unaligned_loader<rtm_impl::vector_unaligned_loader_width::vec2> RTM_SIMD_CALL vector_load2(const uint8_t* input) RTM_NO_EXCEPT
 	{
 		return rtm_impl::vector_unaligned_loader<rtm_impl::vector_unaligned_loader_width::vec2>{ input };
 	}
 
 	/// Loads an unaligned vector3 from memory and sets the [w] component to zero.
-	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE constexpr rtm_impl::vector_unaligned_loader<rtm_impl::vector_unaligned_loader_width::vec3> RTM_SIMD_CALL vector_load3(const uint8_t* input) RTM_NO_EXCEPT
+	RTM_NO_DISCARD RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE constexpr rtm_impl::vector_unaligned_loader<rtm_impl::vector_unaligned_loader_width::vec3> RTM_SIMD_CALL vector_load3(const uint8_t* input) RTM_NO_EXCEPT
 	{
 		return rtm_impl::vector_unaligned_loader<rtm_impl::vector_unaligned_loader_width::vec3>{ input };
 	}
 
 	/// Coerces an vector4 input into a scalar by grabbing the first SIMD lane.
-	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE constexpr rtm_impl::vector4f_to_scalarf RTM_SIMD_CALL vector_as_scalar(vector4f_arg0 input) RTM_NO_EXCEPT
+	RTM_NO_DISCARD RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE constexpr rtm_impl::vector4f_to_scalarf RTM_SIMD_CALL vector_as_scalar(vector4f_arg0 input) RTM_NO_EXCEPT
 	{
 		return rtm_impl::vector4f_to_scalarf{ input };
 	}
 
 	/// Coerces an vector4 input into a scalar by grabbing the first SIMD lane.
-	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE constexpr rtm_impl::vector4d_to_scalard RTM_SIMD_CALL vector_as_scalar(vector4d_arg0 input) RTM_NO_EXCEPT
+	RTM_NO_DISCARD RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE constexpr rtm_impl::vector4d_to_scalard RTM_SIMD_CALL vector_as_scalar(vector4d_arg0 input) RTM_NO_EXCEPT
 	{
 		return rtm_impl::vector4d_to_scalard{ input };
 	}

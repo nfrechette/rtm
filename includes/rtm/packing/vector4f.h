@@ -220,7 +220,7 @@ namespace rtm
 	/// The input must point to four values. It needs only the alignment of uint16_t.
 	/// The conversion is exact. A NaN stays a NaN, but its payload can change.
 	/// x64 and x86 use F16C when it is enabled (for example with -mf16c, or with /arch:AVX2 on MSVC).
-	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE vector4f RTM_SIMD_CALL vector_unpack_half(const uint16_t* input) RTM_NO_EXCEPT
+	RTM_NO_DISCARD RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE vector4f RTM_SIMD_CALL vector_unpack_half(const uint16_t* input) RTM_NO_EXCEPT
 	{
 #if defined(RTM_SSE2_INTRINSICS)
 #if defined(RTM_IMPL_F16C_SUPPORTED)
