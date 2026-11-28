@@ -87,3 +87,7 @@
 // This is sometimes necessary if you compile with a modern compiler but use an older stdlib
 // that does not contain the bit_cast header
 //#define RTM_NO_BIT_CAST
+
+// With C++17 and later, RTM_NO_DISCARD is [[nodiscard]]. With an earlier version, it is empty.
+// To use a different attribute, or none, define RTM_NO_DISCARD before you include RTM
+//#define RTM_NO_DISCARD
