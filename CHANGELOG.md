@@ -88,7 +88,7 @@
 *  Add the transpose macros `RTM_MATRIXF_TRANSPOSE_2X2`, `RTM_MATRIXD_TRANSPOSE_2X2`, `RTM_MATRIXD_TRANSPOSE_3X4`, `RTM_MATRIXD_TRANSPOSE_4X3`, and `RTM_MATRIXD_TRANSPOSE_4X4`
 *  Add `rtm/config.h`: the header lists and documents the macros that configure RTM
 *  Add `RTM_NO_BIT_CAST` to not use `std::bit_cast` with C++20 and later. RTM also defines it when the `<bit>` header is not available
-*  Add the `RTM_NO_DISCARD` macro: it is `[[nodiscard]]` with C++17 and later, and empty with an earlier version. To use a different attribute, or none, define it before you include RTM
+*  Add the `RTM_NO_DISCARD` macro: it is `[[nodiscard]]` with C++17 and later, and empty with an earlier version. All the public functions that return a value use it. With C++17 and later, the compiler gives a warning when the caller does not use the return value. To use a different attribute, or none, define `RTM_NO_DISCARD` before you include RTM
 *  Add an API reference site: Doxygen reads the `///` comments, and MkDocs makes the site for develop and for each release
 
 ### Platforms and tools

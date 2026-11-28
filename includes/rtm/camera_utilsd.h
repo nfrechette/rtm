@@ -50,7 +50,7 @@ namespace rtm
 	///    - X axis: right direction
 	///    - Y axis: up direction
 	///    - Z axis: forward/look direction
-	RTM_DISABLE_SECURITY_COOKIE_CHECK inline matrix3x4d RTM_SIMD_CALL matrix_look_to(vector4d_arg0 position, vector4d_arg1 direction, vector4d_arg2 up) RTM_NO_EXCEPT
+	RTM_NO_DISCARD RTM_DISABLE_SECURITY_COOKIE_CHECK inline matrix3x4d RTM_SIMD_CALL matrix_look_to(vector4d_arg0 position, vector4d_arg1 direction, vector4d_arg2 up) RTM_NO_EXCEPT
 	{
 		RTM_ASSERT(vector_is_finite3(position), "Look position must be finite");
 		RTM_ASSERT(!vector_all_equal3(direction, vector_zero()) && vector_is_finite3(direction), "Look towards direction must be non-zero and finite");
@@ -76,7 +76,7 @@ namespace rtm
 	///    - X axis: right direction
 	///    - Y axis: up direction
 	///    - Z axis: forward/look direction
-	RTM_DISABLE_SECURITY_COOKIE_CHECK inline matrix3x4d RTM_SIMD_CALL matrix_look_at(vector4d_arg0 position, vector4d_arg1 location, vector4d_arg2 up) RTM_NO_EXCEPT
+	RTM_NO_DISCARD RTM_DISABLE_SECURITY_COOKIE_CHECK inline matrix3x4d RTM_SIMD_CALL matrix_look_at(vector4d_arg0 position, vector4d_arg1 location, vector4d_arg2 up) RTM_NO_EXCEPT
 	{
 		vector4d look_direction = vector_sub(location, position);
 		return matrix_look_to(position, look_direction, up);
@@ -98,7 +98,7 @@ namespace rtm
 	///    - X axis: right direction
 	///    - Y axis: up direction
 	///    - Z axis: forward/look direction
-	RTM_DISABLE_SECURITY_COOKIE_CHECK inline matrix3x4d RTM_SIMD_CALL view_look_to(vector4d_arg0 position, vector4d_arg1 direction, vector4d_arg2 up) RTM_NO_EXCEPT
+	RTM_NO_DISCARD RTM_DISABLE_SECURITY_COOKIE_CHECK inline matrix3x4d RTM_SIMD_CALL view_look_to(vector4d_arg0 position, vector4d_arg1 direction, vector4d_arg2 up) RTM_NO_EXCEPT
 	{
 		RTM_ASSERT(vector_is_finite3(position), "Look position must be finite");
 		RTM_ASSERT(!vector_all_equal3(direction, vector_zero()) && vector_is_finite3(direction), "Look towards direction must be non-zero and finite");
@@ -147,7 +147,7 @@ namespace rtm
 	///    - X axis: right direction
 	///    - Y axis: up direction
 	///    - Z axis: forward/look direction
-	RTM_DISABLE_SECURITY_COOKIE_CHECK inline matrix3x4d RTM_SIMD_CALL view_look_at(vector4d_arg0 position, vector4d_arg1 location, vector4d_arg2 up) RTM_NO_EXCEPT
+	RTM_NO_DISCARD RTM_DISABLE_SECURITY_COOKIE_CHECK inline matrix3x4d RTM_SIMD_CALL view_look_at(vector4d_arg0 position, vector4d_arg1 location, vector4d_arg2 up) RTM_NO_EXCEPT
 	{
 		vector4d look_direction = vector_sub(location, position);
 		return view_look_to(position, look_direction, up);
@@ -159,7 +159,7 @@ namespace rtm
 	///    - X axis: right direction
 	///    - Y axis: up direction
 	///    - Z axis: forward/look direction
-	RTM_DISABLE_SECURITY_COOKIE_CHECK inline matrix4x4d RTM_SIMD_CALL proj_perspective(double view_width, double view_height, double near_distance, double far_distance) RTM_NO_EXCEPT
+	RTM_NO_DISCARD RTM_DISABLE_SECURITY_COOKIE_CHECK inline matrix4x4d RTM_SIMD_CALL proj_perspective(double view_width, double view_height, double near_distance, double far_distance) RTM_NO_EXCEPT
 	{
 		RTM_ASSERT(view_width > 1.0E-8, "View width must be non-zero and positive");
 		RTM_ASSERT(view_height > 1.0E-8, "View height must be non-zero and positive");
@@ -183,7 +183,7 @@ namespace rtm
 	///    - X axis: right direction
 	///    - Y axis: up direction
 	///    - Z axis: forward/look direction
-	RTM_DISABLE_SECURITY_COOKIE_CHECK inline matrix4x4d RTM_SIMD_CALL proj_perspective_fov(double fov_angle_y, double aspect_ratio, double near_distance, double far_distance) RTM_NO_EXCEPT
+	RTM_NO_DISCARD RTM_DISABLE_SECURITY_COOKIE_CHECK inline matrix4x4d RTM_SIMD_CALL proj_perspective_fov(double fov_angle_y, double aspect_ratio, double near_distance, double far_distance) RTM_NO_EXCEPT
 	{
 		RTM_ASSERT(fov_angle_y > 2.0E-8, "View FoV must be non-zero and positive");
 		RTM_ASSERT(aspect_ratio > 1.0E-8, "View aspect ratio must be non-zero and positive");
@@ -212,7 +212,7 @@ namespace rtm
 	///    - X axis: right direction
 	///    - Y axis: up direction
 	///    - Z axis: forward/look direction
-	RTM_DISABLE_SECURITY_COOKIE_CHECK inline matrix4x4d RTM_SIMD_CALL proj_orthographic(double view_width, double view_height, double near_distance, double far_distance) RTM_NO_EXCEPT
+	RTM_NO_DISCARD RTM_DISABLE_SECURITY_COOKIE_CHECK inline matrix4x4d RTM_SIMD_CALL proj_orthographic(double view_width, double view_height, double near_distance, double far_distance) RTM_NO_EXCEPT
 	{
 		RTM_ASSERT(view_width > 1.0E-8, "View width must be non-zero and positive");
 		RTM_ASSERT(view_height > 1.0E-8, "View height must be non-zero and positive");

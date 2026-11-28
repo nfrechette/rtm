@@ -41,7 +41,7 @@ namespace rtm
 
 	/// Returns the quaternion on the hypersphere with a positive [w] component
 	/// that represents the same 3D rotation as the input.
-	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE quatf RTM_SIMD_CALL quat_ensure_positive_w(quatf_arg0 input) RTM_NO_EXCEPT
+	RTM_NO_DISCARD RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE quatf RTM_SIMD_CALL quat_ensure_positive_w(quatf_arg0 input) RTM_NO_EXCEPT
 	{
 #if defined(RTM_SSE2_INTRINSICS)
 		constexpr __m128 sign_bit = RTM_VECTOR4F_MAKE(-0.0F, -0.0F, -0.0F, -0.0F);
@@ -79,7 +79,7 @@ namespace rtm
 	/// be very accurate when [w] is reconstructed. As such, the resulting quaternion
 	/// might be near but not quite normalized. If high accuracy is required, make
 	/// sure to normalize explicitly afterwards.
-	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE quatf RTM_SIMD_CALL quat_from_positive_w(vector4f_arg0 input) RTM_NO_EXCEPT
+	RTM_NO_DISCARD RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE quatf RTM_SIMD_CALL quat_from_positive_w(vector4f_arg0 input) RTM_NO_EXCEPT
 	{
 		// w_squared can be negative either due to rounding or due to quantization imprecision, we take the absolute value
 		// to ensure the resulting quaternion is always normalized with a positive W component

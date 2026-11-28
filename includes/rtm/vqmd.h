@@ -144,7 +144,7 @@ namespace rtm
 	}
 
 	/// Casts a VQM transform float32 variant to a float64 variant.
-	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE vqmd RTM_SIMD_CALL vqm_cast(const vqmf& input) RTM_NO_EXCEPT
+	RTM_NO_DISCARD RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE vqmd RTM_SIMD_CALL vqm_cast(const vqmf& input) RTM_NO_EXCEPT
 	{
 		vqmd result;
 		result.rotation = quat_cast(input.rotation);
@@ -161,13 +161,13 @@ namespace rtm
 
 	/// Creates a VQM transform from a rotation quaternion, a translation, and a 3x3 scale/shear matrix.
 	/// The scale/shear matrix applies before the rotation: p' = p * M * R + t.
-	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE vqmd RTM_SIMD_CALL vqm_set(quatd_arg0 rotation, vector4d_arg1 translation, matrix3x3d_arg0 scale_shear) RTM_NO_EXCEPT
+	RTM_NO_DISCARD RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE vqmd RTM_SIMD_CALL vqm_set(quatd_arg0 rotation, vector4d_arg1 translation, matrix3x3d_arg0 scale_shear) RTM_NO_EXCEPT
 	{
 		return rtm_impl::vqm_set_flag_if_identity(rtm_impl::vqm_set_no_flag(rotation, translation, scale_shear));
 	}
 
 	/// Creates a VQM transform from a rotation quaternion, a translation, and a 3D scale.
-	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE vqmd RTM_SIMD_CALL vqm_set(quatd_arg0 rotation, vector4d_arg1 translation, vector4d_arg2 scale) RTM_NO_EXCEPT
+	RTM_NO_DISCARD RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE vqmd RTM_SIMD_CALL vqm_set(quatd_arg0 rotation, vector4d_arg1 translation, vector4d_arg2 scale) RTM_NO_EXCEPT
 	{
 		if (vector_all_equal3(scale, vector_set(1.0)))
 			return rtm_impl::vqm_set_identity_scale_shear(rotation, translation);
@@ -185,7 +185,7 @@ namespace rtm
 
 	/// Returns the scale/shear part of a VQM transform as a 3x3 matrix.
 	/// The matrix applies before the rotation: p' = p * M * R + t.
-	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE matrix3x3d RTM_SIMD_CALL vqm_get_scale_shear(vqmd_arg0 input) RTM_NO_EXCEPT
+	RTM_NO_DISCARD RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE matrix3x3d RTM_SIMD_CALL vqm_get_scale_shear(vqmd_arg0 input) RTM_NO_EXCEPT
 	{
 		if (rtm_impl::vqm_has_identity_scale_shear(input))
 			return matrix_identity();
@@ -198,7 +198,7 @@ namespace rtm
 	/// The rotation part is a pure rotation. If the matrix contains a reflection, the
 	/// scale/shear part contains it.
 	/// More than one VQM transform gives the same matrix. The function returns one of them.
-	RTM_DISABLE_SECURITY_COOKIE_CHECK inline vqmd RTM_SIMD_CALL vqm_from_matrix(matrix3x3d_arg0 input) RTM_NO_EXCEPT
+	RTM_NO_DISCARD RTM_DISABLE_SECURITY_COOKIE_CHECK inline vqmd RTM_SIMD_CALL vqm_from_matrix(matrix3x3d_arg0 input) RTM_NO_EXCEPT
 	{
 		// Let A be the input matrix. We find a rotation matrix R and a scale/shear matrix M with:
 		// A = M * R
@@ -312,7 +312,7 @@ namespace rtm
 
 	/// Converts a 3x4 affine matrix into a VQM transform.
 	/// See vqm_from_matrix(matrix3x3d) for the rotation and the scale/shear parts.
-	RTM_DISABLE_SECURITY_COOKIE_CHECK inline vqmd RTM_SIMD_CALL vqm_from_matrix(matrix3x4d_arg0 input) RTM_NO_EXCEPT
+	RTM_NO_DISCARD RTM_DISABLE_SECURITY_COOKIE_CHECK inline vqmd RTM_SIMD_CALL vqm_from_matrix(matrix3x4d_arg0 input) RTM_NO_EXCEPT
 	{
 		const matrix3x3d rotation_scale_shear = matrix_set(input.x_axis, input.y_axis, input.z_axis);
 
@@ -325,13 +325,13 @@ namespace rtm
 	}
 
 	/// Returns the rotation part of a VQM transform.
-	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE quatd RTM_SIMD_CALL vqm_get_rotation(vqmd_arg0 input) RTM_NO_EXCEPT
+	RTM_NO_DISCARD RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE quatd RTM_SIMD_CALL vqm_get_rotation(vqmd_arg0 input) RTM_NO_EXCEPT
 	{
 		return input.rotation;
 	}
 
 	/// Sets the rotation part of a VQM and returns the new value.
-	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE vqmd RTM_SIMD_CALL vqm_set_rotation(vqmd_arg0 input, quatd_arg1 rotation) RTM_NO_EXCEPT
+	RTM_NO_DISCARD RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE vqmd RTM_SIMD_CALL vqm_set_rotation(vqmd_arg0 input, quatd_arg1 rotation) RTM_NO_EXCEPT
 	{
 		vqmd result = input;
 		result.rotation = rotation;
@@ -339,13 +339,13 @@ namespace rtm
 	}
 
 	/// Returns the translation part of a VQM transform. The [w] component is undefined.
-	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE vector4d RTM_SIMD_CALL vqm_get_translation(vqmd_arg0 input) RTM_NO_EXCEPT
+	RTM_NO_DISCARD RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE vector4d RTM_SIMD_CALL vqm_get_translation(vqmd_arg0 input) RTM_NO_EXCEPT
 	{
 		return input.translation_m22;
 	}
 
 	/// Sets the translation part of a VQM and returns the new value.
-	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE vqmd RTM_SIMD_CALL vqm_set_translation(vqmd_arg0 input, vector4d_arg1 translation) RTM_NO_EXCEPT
+	RTM_NO_DISCARD RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE vqmd RTM_SIMD_CALL vqm_set_translation(vqmd_arg0 input, vector4d_arg1 translation) RTM_NO_EXCEPT
 	{
 		// The [w] lane holds m22
 		vqmd result = input;
@@ -356,7 +356,7 @@ namespace rtm
 	/// Returns the scale part of a VQM transform: the diagonal of the scale/shear matrix [m00, m11, m22].
 	/// The rows of the scale/shear matrix are the x, y, and z axes. When the matrix contains shear,
 	/// the scale is not the length of a row. Use vqm_get_scale_shear to get the full matrix.
-	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE vector4d RTM_SIMD_CALL vqm_get_scale(vqmd_arg0 input) RTM_NO_EXCEPT
+	RTM_NO_DISCARD RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE vector4d RTM_SIMD_CALL vqm_get_scale(vqmd_arg0 input) RTM_NO_EXCEPT
 	{
 		// The scale is [m00, m11, m22]
 		const vector4d m00_m11 = vector_mix<mix4::x, mix4::b, mix4::z, mix4::w>(input.x_axis_m20, input.y_axis_m21);
@@ -365,7 +365,7 @@ namespace rtm
 
 	/// Sets the scale part of a VQM and returns the new value.
 	/// The function sets the diagonal of the scale/shear matrix and keeps the other entries (the shear).
-	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE vqmd RTM_SIMD_CALL vqm_set_scale(vqmd_arg0 input, vector4d_arg1 scale) RTM_NO_EXCEPT
+	RTM_NO_DISCARD RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE vqmd RTM_SIMD_CALL vqm_set_scale(vqmd_arg0 input, vector4d_arg1 scale) RTM_NO_EXCEPT
 	{
 		// The scale is [m00, m11, m22]
 		// When the m22 slot holds the flag, the other entries hold their identity values and the new m22 replaces the flag
@@ -379,13 +379,13 @@ namespace rtm
 
 	/// Sets the scale/shear part of a VQM and returns the new value.
 	/// The matrix applies before the rotation: p' = p * M * R + t.
-	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE vqmd RTM_SIMD_CALL vqm_set_scale_shear(vqmd_arg0 input, matrix3x3d_arg1 scale_shear) RTM_NO_EXCEPT
+	RTM_NO_DISCARD RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE vqmd RTM_SIMD_CALL vqm_set_scale_shear(vqmd_arg0 input, matrix3x3d_arg1 scale_shear) RTM_NO_EXCEPT
 	{
 		return vqm_set(input.rotation, input.translation_m22, scale_shear);
 	}
 
 	/// Adds two VQM transforms.
-	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE vqmd RTM_SIMD_CALL vqm_add(vqmd_arg0 lhs, vqmd_arg1 rhs) RTM_NO_EXCEPT
+	RTM_NO_DISCARD RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE vqmd RTM_SIMD_CALL vqm_add(vqmd_arg0 lhs, vqmd_arg1 rhs) RTM_NO_EXCEPT
 	{
 		// T2 + T1 = [v2, q2, M2] + [v1, q1, M1] = [v2 + v1, q2 + q1, M2 + M1]
 		// Each register holds components of only one part. Thus a sum of the registers gives the sum of the parts.
@@ -401,7 +401,7 @@ namespace rtm
 
 	/// Multiplies two VQM transforms.
 	/// Multiplication order is as follow: local_to_world = vqm_mul(local_to_object, object_to_world)
-	RTM_DISABLE_SECURITY_COOKIE_CHECK inline vqmd RTM_SIMD_CALL vqm_mul(vqmd_arg0 lhs, vqmd_arg1 rhs) RTM_NO_EXCEPT
+	RTM_NO_DISCARD RTM_DISABLE_SECURITY_COOKIE_CHECK inline vqmd RTM_SIMD_CALL vqm_mul(vqmd_arg0 lhs, vqmd_arg1 rhs) RTM_NO_EXCEPT
 	{
 		// lhs = [v1, q1, M1] and rhs = [v2, q2, M2]
 		// result = [v1 * M2 * R2 + v2, quat_mul(q1, q2), (M1 * R1) * (M2 * R1^T)]
@@ -439,7 +439,7 @@ namespace rtm
 	}
 
 	/// Multiplies a VQM transform with a scalar.
-	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE vqmd RTM_SIMD_CALL vqm_mul(vqmd_arg0 vqm, double scalar) RTM_NO_EXCEPT
+	RTM_NO_DISCARD RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE vqmd RTM_SIMD_CALL vqm_mul(vqmd_arg0 vqm, double scalar) RTM_NO_EXCEPT
 	{
 		// T * s = [v, q, M] * s = [v * s, q * s, M * s]
 		// The result does not hold the flag
@@ -456,7 +456,7 @@ namespace rtm
 
 	/// Multiplies a VQM transform and a 3D point.
 	/// Multiplication order is as follow: world_position = vqm_mul_point3(local_position, local_to_world)
-	RTM_DISABLE_SECURITY_COOKIE_CHECK inline vector4d RTM_SIMD_CALL vqm_mul_point3(vector4d_arg0 point, vqmd_arg1 vqm) RTM_NO_EXCEPT
+	RTM_NO_DISCARD RTM_DISABLE_SECURITY_COOKIE_CHECK inline vector4d RTM_SIMD_CALL vqm_mul_point3(vector4d_arg0 point, vqmd_arg1 vqm) RTM_NO_EXCEPT
 	{
 		// p' = p * M * R + v
 
@@ -469,7 +469,7 @@ namespace rtm
 
 	/// Multiplies a VQM transform and a 3D vector. The translation does not apply.
 	/// Multiplication order is as follow: world_direction = vqm_mul_vector3(local_direction, local_to_world)
-	RTM_DISABLE_SECURITY_COOKIE_CHECK inline vector4d RTM_SIMD_CALL vqm_mul_vector3(vector4d_arg0 vec3, vqmd_arg1 vqm) RTM_NO_EXCEPT
+	RTM_NO_DISCARD RTM_DISABLE_SECURITY_COOKIE_CHECK inline vector4d RTM_SIMD_CALL vqm_mul_vector3(vector4d_arg0 vec3, vqmd_arg1 vqm) RTM_NO_EXCEPT
 	{
 		// vec3' = vec3 * M * R
 
@@ -512,7 +512,7 @@ namespace rtm
 	/// Returns the inverse of the input VQM transform.
 	/// If the scale/shear part has a zero determinant (e.g. zero scale), the result is undefined.
 	/// For a safe alternative, supply a fallback scale value and a threshold.
-	RTM_DISABLE_SECURITY_COOKIE_CHECK inline vqmd RTM_SIMD_CALL vqm_inverse(vqmd_arg0 input) RTM_NO_EXCEPT
+	RTM_NO_DISCARD RTM_DISABLE_SECURITY_COOKIE_CHECK inline vqmd RTM_SIMD_CALL vqm_inverse(vqmd_arg0 input) RTM_NO_EXCEPT
 	{
 		if (rtm_impl::vqm_has_identity_scale_shear(input))
 			return rtm_impl::vqm_inverse_identity_scale_shear(input);
@@ -526,7 +526,7 @@ namespace rtm
 	/// supplied threshold, the function uses the fallback scale in place of the scale/shear part.
 	/// The default threshold is the smallest normal value. It prevents a division by zero.
 	/// The fallback scale part has no shear. It must not contain a zero scale.
-	RTM_DISABLE_SECURITY_COOKIE_CHECK inline vqmd RTM_SIMD_CALL vqm_inverse(vqmd_arg0 input, vector4d_arg1 fallback_scale, double threshold = (std::numeric_limits<double>::min)()) RTM_NO_EXCEPT
+	RTM_NO_DISCARD RTM_DISABLE_SECURITY_COOKIE_CHECK inline vqmd RTM_SIMD_CALL vqm_inverse(vqmd_arg0 input, vector4d_arg1 fallback_scale, double threshold = (std::numeric_limits<double>::min)()) RTM_NO_EXCEPT
 	{
 		if (rtm_impl::vqm_has_identity_scale_shear(input))
 			return rtm_impl::vqm_inverse_identity_scale_shear(input);
@@ -546,7 +546,7 @@ namespace rtm
 	}
 
 	/// Converts a VQM transform into a 3x4 affine matrix.
-	RTM_DISABLE_SECURITY_COOKIE_CHECK inline matrix3x4d RTM_SIMD_CALL matrix_from_vqm(vqmd_arg0 input) RTM_NO_EXCEPT
+	RTM_NO_DISCARD RTM_DISABLE_SECURITY_COOKIE_CHECK inline matrix3x4d RTM_SIMD_CALL matrix_from_vqm(vqmd_arg0 input) RTM_NO_EXCEPT
 	{
 		const matrix3x3d scale_shear = vqm_get_scale_shear(input);
 
@@ -559,7 +559,7 @@ namespace rtm
 	}
 
 	/// Returns a VQM transform with the rotation part normalized.
-	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE vqmd RTM_SIMD_CALL vqm_normalize(vqmd_arg0 input) RTM_NO_EXCEPT
+	RTM_NO_DISCARD RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE vqmd RTM_SIMD_CALL vqm_normalize(vqmd_arg0 input) RTM_NO_EXCEPT
 	{
 		vqmd result = input;
 		result.rotation = quat_normalize(input.rotation);
@@ -570,7 +570,7 @@ namespace rtm
 	/// The function interpolates the rotation with quat_lerp(..). It interpolates the
 	/// translation and each axis of the scale/shear part with vector_lerp(..).
 	/// The formula used is: ((1.0 - alpha) * start) + (alpha * end).
-	RTM_DISABLE_SECURITY_COOKIE_CHECK inline vqmd RTM_SIMD_CALL vqm_lerp(vqmd_arg0 start, vqmd_arg1 end, double alpha) RTM_NO_EXCEPT
+	RTM_NO_DISCARD RTM_DISABLE_SECURITY_COOKIE_CHECK inline vqmd RTM_SIMD_CALL vqm_lerp(vqmd_arg0 start, vqmd_arg1 end, double alpha) RTM_NO_EXCEPT
 	{
 		vqmd result;
 		result.rotation = quat_lerp(start.rotation, end.rotation, alpha);
@@ -597,7 +597,7 @@ namespace rtm
 	/// The function interpolates the rotation with quat_lerp(..). It interpolates the
 	/// translation and each axis of the scale/shear part with vector_lerp(..).
 	/// The formula used is: ((1.0 - alpha) * start) + (alpha * end).
-	RTM_DISABLE_SECURITY_COOKIE_CHECK inline vqmd RTM_SIMD_CALL vqm_lerp(vqmd_arg0 start, vqmd_arg1 end, scalard_arg2 alpha) RTM_NO_EXCEPT
+	RTM_NO_DISCARD RTM_DISABLE_SECURITY_COOKIE_CHECK inline vqmd RTM_SIMD_CALL vqm_lerp(vqmd_arg0 start, vqmd_arg1 end, scalard_arg2 alpha) RTM_NO_EXCEPT
 	{
 		vqmd result;
 		result.rotation = quat_lerp(start.rotation, end.rotation, alpha);
@@ -660,7 +660,7 @@ namespace rtm
 	/// vector_eerp(..) and the remaining shear with vector_lerp(..).
 	/// If the two values of a scale have a different sign or if one value is zero, the function
 	/// interpolates that lane of the rows of the scale/shear part with vector_lerp(..).
-	RTM_DISABLE_SECURITY_COOKIE_CHECK inline vqmd RTM_SIMD_CALL vqm_slerp(vqmd_arg0 start, vqmd_arg1 end, double alpha) RTM_NO_EXCEPT
+	RTM_NO_DISCARD RTM_DISABLE_SECURITY_COOKIE_CHECK inline vqmd RTM_SIMD_CALL vqm_slerp(vqmd_arg0 start, vqmd_arg1 end, double alpha) RTM_NO_EXCEPT
 	{
 		const quatd rotation = quat_slerp(start.rotation, end.rotation, alpha);
 		const vector4d translation = vector_lerp(start.translation_m22, end.translation_m22, alpha);
@@ -680,7 +680,7 @@ namespace rtm
 	/// vector_eerp(..) and the remaining shear with vector_lerp(..).
 	/// If the two values of a scale have a different sign or if one value is zero, the function
 	/// interpolates that lane of the rows of the scale/shear part with vector_lerp(..).
-	RTM_DISABLE_SECURITY_COOKIE_CHECK inline vqmd RTM_SIMD_CALL vqm_slerp(vqmd_arg0 start, vqmd_arg1 end, scalard_arg2 alpha) RTM_NO_EXCEPT
+	RTM_NO_DISCARD RTM_DISABLE_SECURITY_COOKIE_CHECK inline vqmd RTM_SIMD_CALL vqm_slerp(vqmd_arg0 start, vqmd_arg1 end, scalard_arg2 alpha) RTM_NO_EXCEPT
 	{
 		const quatd rotation = quat_slerp(start.rotation, end.rotation, alpha);
 		const vector4d translation = vector_lerp(start.translation_m22, end.translation_m22, alpha);
@@ -695,7 +695,7 @@ namespace rtm
 #endif
 
 	/// Returns true if the input VQM does not contain any NaN or Inf, otherwise false.
-	RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE bool RTM_SIMD_CALL vqm_is_finite(vqmd_arg0 input) RTM_NO_EXCEPT
+	RTM_NO_DISCARD RTM_DISABLE_SECURITY_COOKIE_CHECK RTM_FORCE_INLINE bool RTM_SIMD_CALL vqm_is_finite(vqmd_arg0 input) RTM_NO_EXCEPT
 	{
 		// All the lanes are used. The flag is a NaN, thus the function tests m22 without it.
 		return quat_is_finite(input.rotation)
